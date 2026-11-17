@@ -71,7 +71,8 @@ export const hasGrids = (registry: PluginRegistry): boolean =>
 /**
  * Tab and Shift-Tab move to the next and the previous slot. Tab in the last
  * slot adds a row first. Shift-Tab in the first slot is left alone, so focus
- * leaves the editor the way it does anywhere else.
+ * leaves the editor the way it does anywhere else, even from a list in that
+ * slot (see `outsideGrids`).
  */
 const nextSlot: Command = (state, dispatch) => {
     if (goToNextSlot(1)(state, dispatch)) {
@@ -80,14 +81,27 @@ const nextSlot: Command = (state, dispatch) => {
     if (!isInGrid(state)) {
         return false;
     }
+    if (dispatch === undefined) {
+        return addRowBelow(state);
+    }
     // The new row and the move into it are one transaction, so one undo step.
     return addRowBelow(state, (added) => {
         goToNextSlot(1)(state.apply(added), (moved) => added.setSelection(moved.selection));
-        dispatch?.(added);
+        dispatch(added);
     });
 };
 
 export const gridKeys = (): PmPlugin => keymap({ Tab: nextSlot, 'Shift-Tab': goToNextSlot(-1) });
+
+/**
+ * A command that does nothing in a grid. In a slot, Tab and Shift-Tab belong
+ * to the grid keys, so a list there must not take the Shift-Tab they leave to
+ * the browser.
+ */
+export const outsideGrids =
+    (command: Command): Command =>
+    (state, dispatch, view) =>
+        !isInGrid(state) && command(state, dispatch, view);
 
 /** Selecting across slots, keeping each grid rectangular, clearing selected slots on Backspace and Delete. */
 export const gridEditing = (): PmPlugin => engineGridEditing();

@@ -11,6 +11,7 @@ import { type HtmlSpec, type StyleMap, withRootStyle } from './htmlSpec';
 import {
     type BlockAttributeDefinition,
     type BlockDefinition,
+    type GridRole,
     type HotkeyHandler,
     type InlineDefinition,
     type MarkDefinition,
@@ -567,6 +568,47 @@ const addContent = (draft: Draft, content: RteContent | undefined, owner: string
     }
 };
 
+/** The roles a grid's and a row's parts must have. A slot holds blocks instead. */
+const PART_ROLES: Partial<Record<GridRole, readonly GridRole[]>> = {
+    grid: ['row'],
+    row: ['slot', 'headerSlot'],
+};
+
+/**
+ * A grid is `{ parts }` of rows, a row is `{ parts }` of slots, and a slot
+ * holds `{ blocks }`. Any other shape breaks grid editing at the first
+ * keystroke, so it is rejected here, where the plugin can be named.
+ */
+const assertGridShapes = (draft: Draft): void => {
+    for (const [type, definition] of draft.blocks) {
+        const role = definition.gridRole;
+        if (role === undefined) {
+            continue;
+        }
+        const owner = draft.blockOwners.get(type) ?? type;
+        const { content } = definition;
+        const partRoles = PART_ROLES[role];
+        if (partRoles === undefined) {
+            if (typeof content !== 'object' || !('blocks' in content)) {
+                throw new Error(`Plugin "${owner}" makes "${type}" a ${role}, which holds \`{ blocks }\`.`);
+            }
+            continue;
+        }
+        const roles = partRoles.join(' or ');
+        if (typeof content !== 'object' || !('parts' in content)) {
+            throw new Error(
+                `Plugin "${owner}" makes "${type}" a ${role}, whose content is \`{ parts }\` of ${roles} blocks.`,
+            );
+        }
+        for (const part of content.parts) {
+            const partRole = draft.blocks.get(part)?.gridRole;
+            if (partRole === undefined || !partRoles.includes(partRole)) {
+                throw new Error(`Plugin "${owner}" makes "${type}" a ${role}, but its part "${part}" is no ${roles}.`);
+            }
+        }
+    }
+};
+
 export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]): PluginRegistry => {
     const draft: Draft = {
         blocks: new Map<string, BlockDefinition>([[PARAGRAPH, paragraphBlock]]),
@@ -611,6 +653,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
                 );
         }
     }
+    assertGridShapes(draft);
 
     return {
         blocks: draft.blocks,

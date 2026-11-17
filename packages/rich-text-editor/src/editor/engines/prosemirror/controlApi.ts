@@ -134,21 +134,33 @@ const blocksAt = (state: EditorState): Pick<RteSelectionSnapshot, 'block' | 'blo
     return { block, blocks };
 };
 
-const snapshotOf = (state: EditorState): RteSelectionSnapshot => {
+const kindOf = (state: EditorState, grid: RteSelectionSnapshot['grid']): RteSelectionSnapshot['kind'] => {
+    if (grid !== null) {
+        return 'grid';
+    }
+    return state.selection instanceof NodeSelection ? 'node' : 'text';
+};
+
+const selectedTextOf = (state: EditorState, grid: RteSelectionSnapshot['grid']): string => {
     const { selection } = state;
-    const { from, to, empty } = selection;
-    const grid = gridOfSelection(selection);
+    if (selection.empty) {
+        return '';
+    }
+    // Selected slots are read one by one, so slots outside the selection stay out.
+    if (grid !== null) {
+        return textOfSelectedSlots(state.doc, selection);
+    }
+    // Void nodes (a mention, a line break) contribute nothing: only readable text.
+    return state.doc.textBetween(selection.from, selection.to, ' ');
+};
+
+const snapshotOf = (state: EditorState): RteSelectionSnapshot => {
+    const grid = gridOfSelection(state.selection);
     return {
-        kind: grid !== null ? 'grid' : selection instanceof NodeSelection ? 'node' : 'text',
+        kind: kindOf(state, grid),
         grid,
-        isCollapsed: empty,
-        // Void nodes (a mention, a line break) contribute nothing: only readable text.
-        // Selected slots are read one by one, so slots outside the selection stay out.
-        text: empty
-            ? ''
-            : grid !== null
-              ? textOfSelectedSlots(state.doc, selection)
-              : state.doc.textBetween(from, to, ' '),
+        isCollapsed: state.selection.empty,
+        text: selectedTextOf(state, grid),
         ...blocksAt(state),
         marks: marksAt(state),
         history: { canUndo: undoDepth(state) > 0, canRedo: redoDepth(state) > 0 },
@@ -452,16 +464,20 @@ const createHistoryApi = (getView: () => EditorView): EditorControlApi['history'
 export type OpenEditors = { type: string | null; repaint: () => void };
 
 /**
- * A block with its content, as `insert` takes one: in place of an empty
- * top-level block, or after the top-level block the caret is in, with the
- * caret at its first place for text.
+ * A block with its content, as `insert` takes one: in place of a selected
+ * top-level block or an empty one, or after the top-level block the caret is
+ * in, with the caret at its first place for text.
  */
 const insertWhole = (view: EditorView, node: PmNode): void => {
-    const { $from } = view.state.selection;
+    const { selection } = view.state;
+    const { $from } = selection;
     const transaction = view.state.tr;
     const top = $from.depth >= 1 ? $from.node(1) : null;
     let position = view.state.doc.content.size;
-    if (top !== null && top.isTextblock && top.content.size === 0) {
+    if (selection instanceof NodeSelection && $from.depth === 0) {
+        position = selection.from;
+        transaction.replaceWith(position, selection.to, node);
+    } else if (top !== null && top.isTextblock && top.content.size === 0) {
         position = $from.before(1);
         transaction.replaceWith(position, $from.after(1), node);
     } else {

@@ -3,6 +3,7 @@
 // @vitest-environment happy-dom
 
 import { type Node as PmNode } from 'prosemirror-model';
+import { NodeSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -157,6 +158,23 @@ describe('the selection snapshot over a grid', () => {
     });
 });
 
+/** A slot holding a list of two items, the second reading `a1`. */
+const listSlot = (): RteBlockNode =>
+    ({
+        type: 'slot',
+        colspan: 1,
+        rowspan: 1,
+        children: [
+            {
+                type: 'bulletList',
+                children: [
+                    { type: 'listItem', children: [paragraph(text('item'))] },
+                    { type: 'listItem', children: [paragraph(text('a1'))] },
+                ],
+            },
+        ],
+    }) as RteBlockNode;
+
 describe('Tab and Shift-Tab in a grid', () => {
     it('move to the next and the previous slot', () => {
         const editor = editorWith(plugins, [grid(band(slot('a1'), slot('b1')), band(slot('a2'), slot('b2')))]);
@@ -191,25 +209,44 @@ describe('Tab and Shift-Tab in a grid', () => {
     });
 
     it('take Tab from a list inside a slot', () => {
-        const listSlot = {
-            type: 'slot',
-            colspan: 1,
-            rowspan: 1,
-            children: [
-                {
-                    type: 'bulletList',
-                    children: [
-                        { type: 'listItem', children: [paragraph(text('item'))] },
-                        { type: 'listItem', children: [paragraph(text('a1'))] },
-                    ],
-                },
-            ],
-        } as RteBlockNode;
-        const editor = editorWith(plugins, [grid(band(listSlot, slot('b1')))]);
+        const editor = editorWith(plugins, [grid(band(listSlot(), slot('b1')))]);
         editor.caretAfter('a1');
 
         expect(press(editor.view, 'Tab')).toBe(true);
         expect(editor.view.state.selection.$from.parent.textContent).toBe('b1');
+    });
+
+    // Tab from that list moves to the next slot, so Shift-Tab must not outdent it either.
+    it('leave Shift-Tab from a list in the first slot to the browser, not to the list', () => {
+        const editor = editorWith(plugins, [grid(band(listSlot(), slot('b1')))]);
+        editor.caretAfter('a1');
+        const before = editor.view.state.doc;
+
+        expect(press(editor.view, 'Tab', { shiftKey: true })).toBe(false);
+        expect(editor.view.state.doc.eq(before)).toBe(true);
+    });
+
+    it('still outdent a list outside a grid', () => {
+        const editor = editorWith(plugins, [
+            {
+                type: 'bulletList',
+                children: [
+                    {
+                        type: 'listItem',
+                        children: [
+                            paragraph(text('item')),
+                            {
+                                type: 'bulletList',
+                                children: [{ type: 'listItem', children: [paragraph(text('nested'))] }],
+                            },
+                        ],
+                    },
+                ],
+            } as RteBlockNode,
+        ]);
+        editor.caretAfter('nested');
+
+        expect(press(editor.view, 'Tab', { shiftKey: true })).toBe(true);
     });
 
     it('do nothing outside a grid', () => {
@@ -217,6 +254,19 @@ describe('Tab and Shift-Tab in a grid', () => {
         editor.caretAfter('plain');
 
         expect(press(editor.view, 'Tab')).toBe(false);
+    });
+});
+
+describe('a selection of slots', () => {
+    it('empties the selected slots on Backspace, and keeps the grid', () => {
+        const editor = editorWith(plugins, [grid(band(slot('a1'), slot('b1')), band(slot('a2'), slot('b2')))]);
+        const { view } = editor;
+        const { doc } = view.state;
+        view.dispatch(view.state.tr.setSelection(slotSelection(doc, slotAt(doc, 'a1'), slotAt(doc, 'a2'))));
+
+        expect(press(view, 'Backspace')).toBe(true);
+        const emptied = { ...slot(''), children: [paragraph()] } as RteBlockNode;
+        expect(editor.stored()).toEqual([grid(band(emptied, slot('b1')), band(emptied, slot('b2')))]);
     });
 });
 
@@ -247,5 +297,34 @@ describe('inserting a grid whole', () => {
         expect(doc.child(1).type.name).toBe('outer');
         expect(doc.child(2).textContent).toBe('after');
         expect(caretSlot(editor.view)).toBe('a');
+    });
+
+    it('replaces a selected top-level block', () => {
+        const editor = editorWith(plugins, [paragraph(text('before')), paragraph(text('selected'))]);
+        const { view } = editor;
+        view.dispatch(
+            view.state.tr.setSelection(NodeSelection.create(view.state.doc, view.state.doc.child(0).nodeSize)),
+        );
+
+        editor.api.insert('outer', { children: [band(slot('a'), slot('b'))] });
+
+        const { doc } = view.state;
+        expect(doc.childCount).toBe(2);
+        expect(doc.child(0).textContent).toBe('before');
+        expect(doc.child(1).type.name).toBe('outer');
+        expect(caretSlot(view)).toBe('a');
+    });
+
+    it('goes after the grid the caret is in, never inside a slot', () => {
+        const editor = editorWith(plugins, [grid(band(slot('a1'), slot('b1')))]);
+        editor.caretAfter('a1');
+
+        editor.api.insert('outer', { children: [band(slot('x'), slot('y'))] });
+
+        const { doc } = editor.view.state;
+        expect(doc.childCount).toBe(2);
+        expect(doc.child(0).textContent).toBe('a1b1');
+        expect(doc.child(1).textContent).toBe('xy');
+        expect(caretSlot(editor.view)).toBe('x');
     });
 });

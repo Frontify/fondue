@@ -31,7 +31,7 @@ import { autolinkOnEnter, markPatternRule } from './autolink';
 import { keepCarriedAttrs, withCarriedAttrs } from './carriedAttrs';
 import { undoStep } from './controlApi';
 import { EXTRA_ATTR } from './documentConversion';
-import { gridEditing, gridKeys, hasGrids } from './grid';
+import { gridEditing, gridKeys, hasGrids, outsideGrids } from './grid';
 import { deleteEmptyBlockBesideList, listKeys } from './lists';
 import {
     type RuleContext,
@@ -58,8 +58,9 @@ import {
  *    key lists would claim (`blurOnBreak` takes Enter).
  * 4. Grid keys (Tab, Shift-Tab between slots), then grid editing (selecting
  *    across slots, arrows at a slot's edge, Backspace and Delete over selected
- *    slots); only present when a grid exists. Before the list keys: Tab in a
- *    list inside a slot moves to the next slot.
+ *    slots); only present when a grid exists. Before the list keys: Tab and
+ *    Shift-Tab in a list inside a slot move between slots, and the list keys
+ *    leave Shift-Tab in the first slot to the browser.
  *    Then list keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
  * 5. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`); held until a composition ends.
  * 6. Enter keeping the attributes every text block carries, then the baseline
@@ -73,6 +74,13 @@ import {
 export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api: EditorControlApi): PmPlugin[] => {
     const hasLists = registry.itemTypeByList.size > 0;
     const hasGrid = hasGrids(registry);
+    // In a grid, Shift-Tab in the first slot goes to the browser, even from a list.
+    const lists = Object.fromEntries(
+        Object.entries(listKeys(api, registry.itemTypeByList)).map(([key, command]) => [
+            key,
+            hasGrid && key === 'Shift-Tab' ? outsideGrids(command) : command,
+        ]),
+    );
 
     return [
         // 1
@@ -90,7 +98,7 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         characterHotkeys(registry.hotkeys, api),
         // 4
         ...(hasGrid ? [gridKeys(), gridEditing()] : []),
-        ...(hasLists ? [keymap(listKeys(api, registry.itemTypeByList))] : []),
+        ...(hasLists ? [keymap(lists)] : []),
         // 5
         ...typingRewrites(registry, schema),
         // 6
