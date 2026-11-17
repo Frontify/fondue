@@ -12,7 +12,6 @@ import {
     isEmpty,
     type MarkClearRule,
     type MarkDefinition,
-    type MarkIgnoreRule,
     type MarkParseRule,
     type ParseRule,
     type InsertTextOptions,
@@ -84,8 +83,8 @@ export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlock>(
     });
 
 /**
- * The document as an HTML string: the markup `RichTextRenderer` draws, minus its screen-reader-only text (a
- * link's new-tab note), which would show without the stylesheet. No React or browser needed. Uses `defaultContent` when given no
+ * The document as an HTML string, the same markup the editor copies to the
+ * clipboard. No React or browser needed. Uses `defaultContent` when given no
  * `plugins`; `wrap: false` leaves out the root element. Style it with this
  * package's stylesheet (emails need the styles inlined).
  * @example
@@ -145,13 +144,7 @@ export { underlineContent, underlinePlugin } from './plugins/Underline';
 
 export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
-export {
-    type LinkDestination,
-    type LinkPluginOptions,
-    type LinkPolicy,
-    type LinkScheme,
-    type LinkSearch,
-} from './plugins/Link';
+export { type LinkDestination, type LinkPluginOptions, type LinkSearch } from './plugins/Link';
 export {
     type MentionContentOptions,
     type MentionItem,
@@ -190,7 +183,6 @@ type Parse<TValue> = ParseRule<TValue>;
 type MarkParse<TValue> = MarkParseRule<TValue>;
 type StyleParse<TValue> = StyleParseRule<TValue>;
 type MarkClear = MarkClearRule;
-type MarkIgnore = MarkIgnoreRule;
 type DefaultStyleType = DefaultStyle;
 type Html = HtmlSpec;
 
@@ -216,7 +208,6 @@ export declare namespace RtePlugin {
     export type MarkParseRule<TValue> = MarkParse<TValue>;
     export type StyleParseRule<TValue> = StyleParse<TValue>;
     export type MarkClearRule = MarkClear; // NOSONAR
-    export type MarkIgnoreRule = MarkIgnore; // NOSONAR
     export type DefaultStyle = DefaultStyleType; // NOSONAR
     export type HtmlSpec = Html;
     export type Content = RteContent;

@@ -7,7 +7,6 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
-import { type LinkPolicy } from '../helpers/policy';
 
 import { type DestinationSearch, useDestinationSearch } from './useDestinationSearch';
 
@@ -35,12 +34,12 @@ type ProbeProps = {
     query: string;
 };
 
-const mountHook = (search: LinkSearch | undefined, initialQuery: string, policy: LinkPolicy = {}) => {
+const mountHook = (search: LinkSearch | undefined, initialQuery: string) => {
     const container = window.document.createElement('div');
     const root = createRoot(container);
     let latest: DestinationSearch = { status: 'idle' };
     const Probe = ({ query }: ProbeProps) => {
-        latest = useDestinationSearch(search, query, policy);
+        latest = useDestinationSearch(search, query);
         return null;
     };
     act(() => root.render(<Probe query={initialQuery} />));
@@ -136,14 +135,14 @@ describe('the destination search', () => {
         expect(signals[0]?.aborted).toBe(true);
     });
 
-    it('drops destinations the policy refuses', async () => {
+    it('drops destinations with an unsafe target', async () => {
         const search: LinkSearch = () =>
             Promise.resolve([PAGE, ELSEWHERE, { id: 'c', label: 'Script', href: 'javascript:alert(1)' }]);
-        const hook = mountHook(search, 'a', { allowedHosts: ['frontify.com'] });
+        const hook = mountHook(search, 'a');
 
         await advance(200);
 
-        expect(hook.current()).toEqual({ status: 'done', results: [PAGE] });
+        expect(hook.current()).toEqual({ status: 'done', results: [PAGE, ELSEWHERE] });
     });
 
     it('reports a failed search with no results', async () => {

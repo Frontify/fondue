@@ -11,7 +11,6 @@ import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
 import { type LinkSearch } from '../helpers/destination';
 import { registerNewLinkForm } from '../helpers/newLinkForms';
-import { type LinkPolicy } from '../helpers/policy';
 import { type LinkValue } from '../helpers/value';
 
 import { LinkTargetForm } from './LinkTargetForm';
@@ -35,7 +34,7 @@ const decideNewLinkAction = ({ selection, value, text }: NewLinkActionOptions): 
     return { kind: 'insert', text, value };
 };
 
-type LinkToolbarButtonProps = ToolbarItemProps & { policy: LinkPolicy; search?: LinkSearch };
+type LinkToolbarButtonProps = ToolbarItemProps & { search?: LinkSearch };
 
 /**
  * The toolbar entry point. On a link it opens the link's own editor; on selected
@@ -50,7 +49,6 @@ export const LinkToolbarButton = ({
     toggle,
     openEditor,
     shortcut,
-    policy,
     search,
 }: LinkToolbarButtonProps): ReactNode => {
     const inLink = selectedNode !== null;
@@ -100,7 +98,6 @@ export const LinkToolbarButton = ({
                         initial={{ href: '' }}
                         kind="create"
                         text={selection.text}
-                        policy={policy}
                         search={search}
                         onSave={(value, text) => {
                             const action = decideNewLinkAction({ selection, value, text });

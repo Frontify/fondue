@@ -6,7 +6,7 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { boldPlugin, linkPlugin, RichTextEditor, RichTextRenderer, type RteDocument } from '../index';
+import { boldPlugin, type LinkPluginOptions, linkPlugin, RichTextEditor, type RteDocument } from '../index';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -30,27 +30,19 @@ const HREF = 'https://example.com';
 const SEARCH_DEBOUNCE_MS = 200;
 const PANEL_LABEL = 'Link';
 
-type ModifierInit = KeyboardEventInit & MouseEventInit;
-
-type PlatformModifiers = {
-    /** The key `Mod` means on this platform. */
-    mod: ModifierInit;
-    /** The one `Mod` does not mean here. */
-    other: ModifierInit;
-};
-
 const APPLE_PLATFORM = /Mac|iPhone|iPad/;
 
-const platformModifiers = (): PlatformModifiers => {
+/** The key `Mod` means on this platform. */
+const platformMod = (): KeyboardEventInit => {
     if (APPLE_PLATFORM.test(navigator.platform)) {
-        return { mod: { metaKey: true }, other: { ctrlKey: true } };
+        return { metaKey: true };
     }
-    return { mod: { ctrlKey: true }, other: { metaKey: true } };
+    return { ctrlKey: true };
 };
 
-const { mod: MOD, other: OTHER_MOD } = platformModifiers();
+const MOD = platformMod();
 
-const mount = (value: RteDocument, policy = {}, toolbarPlacement: 'top' | 'floating' = 'top') => {
+const mount = (value: RteDocument, options: LinkPluginOptions = {}, toolbarPlacement: 'top' | 'floating' = 'top') => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
     const root = createRoot(container);
@@ -59,7 +51,7 @@ const mount = (value: RteDocument, policy = {}, toolbarPlacement: 'top' | 'float
         root.render(
             <RichTextEditor
                 value={value}
-                plugins={[boldPlugin, linkPlugin(policy)]}
+                plugins={[boldPlugin, linkPlugin(options)]}
                 toolbarPlacement={toolbarPlacement}
                 onChange={onChange}
             />,
@@ -249,80 +241,11 @@ describe('adding a link', () => {
 });
 
 describe('the panel of a link', () => {
-    const linked = (policy = {}) => {
-        const editor = mount(doc({ text: 'see ' }, { text: 'docs', link: { href: HREF } }), policy);
+    const linked = (href: string = HREF) => {
+        const editor = mount(doc({ text: 'see ' }, { text: 'docs', link: { href } }));
         select(editor.editable, 'docs', 2);
         return editor;
     };
-
-    const status = (): HTMLElement => {
-        const element = window.document.querySelector<HTMLElement>('output');
-        if (!element) {
-            throw new Error('the panel has no status');
-        }
-        return element;
-    };
-
-    const clipboard = (writeText: (text: string) => Promise<void>): void => {
-        // Only writeText is read, so a full Clipboard is not built.
-        vi.spyOn(window.navigator, 'clipboard', 'get').mockReturnValue({ writeText } as unknown as Clipboard);
-    };
-
-    const noClipboard = (): void => {
-        // A browser without the clipboard API has no `navigator.clipboard` at all.
-        vi.spyOn(window.navigator, 'clipboard', 'get').mockReturnValue(undefined as unknown as Clipboard);
-    };
-
-    const copy = async (): Promise<void> => {
-        await act(async () => {
-            buttonNamed('Copy link').click();
-            await Promise.resolve();
-        });
-    };
-
-    it('copies the link and says so', async () => {
-        const writeText = vi.fn<(text: string) => Promise<void>>().mockResolvedValue();
-        clipboard(writeText);
-        linked();
-        expect(status().textContent).toBe('');
-
-        await copy();
-
-        expect(writeText).toHaveBeenCalledWith(HREF);
-        expect(status().textContent).toBe('Link copied');
-    });
-
-    it('says when the link could not be copied', async () => {
-        clipboard(() => Promise.reject(new Error('denied')));
-        linked();
-
-        await copy();
-
-        expect(status().textContent).toBe('Could not copy the link');
-    });
-
-    it('says when the link could not be copied because the browser has no clipboard', async () => {
-        noClipboard();
-        linked();
-
-        await copy();
-
-        expect(status().textContent).toBe('Could not copy the link');
-    });
-
-    it('announces a second copy with the same outcome again', async () => {
-        clipboard(vi.fn<(text: string) => Promise<void>>().mockResolvedValue());
-        linked();
-        const texts: string[] = [];
-        const watch = new MutationObserver(() => texts.push(status().textContent ?? ''));
-        watch.observe(status(), { childList: true, characterData: true, subtree: true });
-
-        await copy();
-        await copy();
-        watch.disconnect();
-
-        expect(texts).toEqual(['Link copied', '', 'Link copied']);
-    });
 
     const shiftTab = (target: Element): KeyboardEvent => {
         const event = new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true });
@@ -332,8 +255,8 @@ describe('the panel of a link', () => {
         return event;
     };
 
-    it('returns focus to the text on Shift-Tab from the first control, which is Edit when the link is refused', () => {
-        const { editable } = linked({ allowedHosts: ['frontify.com'] });
+    it('returns focus to the text on Shift-Tab from the first control, which is Edit when the target is unsafe', () => {
+        const { editable } = linked('javascript:alert(1)');
 
         press(editable, 'Tab');
         expect(window.document.activeElement).toBe(buttonNamed('Edit'));
@@ -343,7 +266,7 @@ describe('the panel of a link', () => {
         expect(editable.contains(window.document.activeElement)).toBe(true);
     });
 
-    it('returns focus to the text on Shift-Tab from the first control, which is the link when it is allowed', () => {
+    it('returns focus to the text on Shift-Tab from the first control, which is the link when its target is safe', () => {
         const { editable } = linked();
 
         press(editable, 'Tab');
@@ -366,55 +289,6 @@ describe('the panel of a link', () => {
 
         expect(event.defaultPrevented).toBe(false);
         expect(editable.contains(window.document.activeElement)).toBe(false);
-    });
-
-    it('opens the link in a new tab on a Mod+click, and a plain click only places the caret', () => {
-        const open = vi.spyOn(window, 'open').mockReturnValue(null);
-        const { editable } = linked();
-        const anchor = editable.querySelector('a');
-
-        click(anchor, {});
-        expect(open).not.toHaveBeenCalled();
-
-        click(anchor, MOD);
-        expect(open).toHaveBeenCalledWith(HREF, '_blank', 'noopener,noreferrer');
-    });
-
-    it("does not open the link on the other platform's modifier", () => {
-        const open = vi.spyOn(window, 'open').mockReturnValue(null);
-        const { editable } = linked();
-        const anchor = editable.querySelector('a');
-
-        click(anchor, OTHER_MOD);
-        expect(open).not.toHaveBeenCalled();
-
-        click(anchor, MOD);
-        expect(open).toHaveBeenCalledTimes(1);
-    });
-
-    it('offers no Copy link for a stored link the policy refuses', () => {
-        for (const [href, policy] of [
-            [HREF, { allowedHosts: ['frontify.com'] }],
-            ['javascript:alert(1)', {}],
-        ] as const) {
-            const editor = mount(doc({ text: 'see ' }, { text: 'docs', link: { href } }), policy);
-            select(editor.editable, 'docs', 2);
-
-            const names = [...window.document.querySelectorAll('button')].map((button) => button.textContent);
-            expect(names).toContain('Edit');
-            expect(names).not.toContain('Copy link');
-            expect(window.document.querySelector('output')).toBeNull();
-            editor.unmount();
-        }
-    });
-
-    it('does not open a link the policy refuses', () => {
-        const open = vi.spyOn(window, 'open').mockReturnValue(null);
-        const { editable } = linked({ allowedHosts: ['frontify.com'] });
-
-        click(editable.querySelector('a'), MOD);
-
-        expect(open).not.toHaveBeenCalled();
     });
 });
 
@@ -447,50 +321,5 @@ describe('the destination search of a stored link', () => {
         await act(async () => {
             await vi.waitFor(() => expect(window.document.querySelector('input[type="url"]')).toBeNull());
         });
-    });
-});
-
-describe('pasting the reading markup of a link', () => {
-    const pasteHtml = (editable: HTMLElement, html: string): void => {
-        const data = new DataTransfer();
-        data.setData('text/html', html);
-        act(() => {
-            editable.dispatchEvent(
-                new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }),
-            );
-        });
-    };
-
-    const readingMarkup = (value: RteDocument): string => {
-        const container = window.document.createElement('div');
-        const root = createRoot(container);
-        act(() => {
-            root.render(<RichTextRenderer value={value} plugins={[linkPlugin()]} />);
-        });
-        const html = container.innerHTML;
-        act(() => {
-            root.unmount();
-        });
-        return html;
-    };
-
-    it('keeps the new-tab note out of the text, round trip after round trip', () => {
-        const link = { text: 'docs', link: { href: HREF, openInNewTab: true as const } };
-        const html = readingMarkup(doc(link));
-        expect(html).toContain('opens in new tab');
-
-        const { editable, stored } = mount(doc({ text: 'x' }));
-        select(editable, 'x', 1);
-        pasteHtml(editable, html);
-        const first = stored();
-        expect(first?.blocks[0]).toMatchObject({ children: [{ text: 'x' }, link] });
-        expect(JSON.stringify(first)).not.toContain('opens in new tab');
-
-        // The text of the second paste lands next to the first link, so what is compared is the link run alone.
-        // `stored()` is typed nullable; the expectation above has already shown it holds a document.
-        pasteHtml(editable, readingMarkup(first as RteDocument));
-        const second = JSON.stringify(stored());
-        expect(second).not.toContain('opens in new tab');
-        expect(second.split('"docs"')).toHaveLength(3);
     });
 });

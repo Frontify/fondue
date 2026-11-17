@@ -1,16 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/**
- * The schemes a link may use, which leaves out `javascript:` and `data:`
- */
-export const LINK_SCHEMES = ['https', 'http', 'mailto', 'tel'] as const;
-
-export type LinkScheme = (typeof LINK_SCHEMES)[number];
-
-/**
- * The link schemes as an href starts with them, colon included
- */
-const SAFE_SCHEMES = new Set<string>(LINK_SCHEMES.map((scheme) => `${scheme}:`));
+/** The schemes a link may use. Everything else — `javascript:`, `data:` — never becomes one. */
+const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
 
 /**
  * `localhost:3000`, `example.com:8080/x`: a host and a port, which reads like a
