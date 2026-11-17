@@ -572,11 +572,11 @@ describe('the editable element', () => {
 
     describe('described by its plugins', () => {
         const submitHint = definePlugin({ id: 'submit-hint', description: 'Press Enter to submit.' });
-        const resetHint = definePlugin({ id: 'reset-hint', description: 'Press Mod-backslash to reset.' });
+        const leaveHint = definePlugin({ id: 'leave-hint', description: 'Press Tab to leave.' });
 
         it("points at one hidden element holding every description, after the host's own", () => {
             const { container, ready } = mount(() => (
-                <RichTextEditor plugins={[submitHint, resetHint]} aria-describedby="help" />
+                <RichTextEditor plugins={[submitHint, leaveHint]} aria-describedby="help" />
             ));
             ready();
 
@@ -584,7 +584,7 @@ describe('the editable element', () => {
             const description = window.document.getElementById(ids[1] ?? '');
             expect(ids[0]).toBe('help');
             expect(ids).toHaveLength(2);
-            expect(description?.textContent).toBe('Press Enter to submit. Press Mod-backslash to reset.');
+            expect(description?.textContent).toBe('Press Enter to submit. Press Tab to leave.');
         });
 
         it('points at it alone when the host described nothing', () => {
@@ -1251,27 +1251,7 @@ describe('the toolbar from the keyboard', () => {
         expect(radios.map((radio) => radio.getAttribute('aria-checked'))).toEqual(['true', 'false', 'false', 'false']);
     });
 
-    it('names on each alignment button the key that sets that alignment', () => {
-        const { container, ready, stored } = mount((onChange) => (
-            <RichTextEditor value={paragraph('text')} onChange={onChange} plugins={plugins} toolbarPlacement="top" />
-        ));
-        ready();
-        const editable = editableIn(container);
-        act(() => editable.focus());
-        selectAll(editable);
-        const radios = [...container.querySelectorAll('[role="radiogroup"] [role="radio"]')];
-        const alignments = ['left', 'center', 'right', 'justify'];
-
-        for (const [index, alignment] of alignments.entries()) {
-            const keys = radios[index]?.getAttribute('aria-keyshortcuts')?.split('+') ?? [];
-            const key = keys.pop() ?? '';
-            // keyCode is what the keymap reads for a shifted letter.
-            press(editable, key, { ...mod, shiftKey: keys.includes('Shift'), keyCode: key.charCodeAt(0) });
-            expect(stored()?.blocks[0]).toMatchObject({ align: alignment });
-        }
-    });
-
-    it('does with a click what its key does, and says so', () => {
+    it('sets and clears the alignment with a click, and says so', () => {
         vi.useFakeTimers();
         teardown.push(() => vi.useRealTimers());
         const { container, ready, stored } = mount((onChange) => (
@@ -2872,53 +2852,6 @@ describe('the reset formatting button', () => {
 
         expect(stored()?.blocks).toEqual([
             { type: 'paragraph', children: [{ text: 'linked', link: { href: 'https://example.com' } }] },
-        ]);
-    });
-});
-
-describe('the clear formatting key', () => {
-    it('removes the marks but the link, and leaves the list, the block type and the alignment', () => {
-        const link = { href: 'https://example.com' };
-        const value: RteDocument = {
-            version: 1,
-            blocks: [
-                {
-                    type: 'bulletList',
-                    children: [
-                        {
-                            type: 'listItem',
-                            children: [
-                                {
-                                    type: 'paragraph',
-                                    align: 'center',
-                                    children: [{ text: 'linked', bold: true, link }],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
-        const { container, ready, stored } = mount((onChange) => (
-            <RichTextEditor value={value} onChange={onChange} plugins={defaultPlugins} toolbarPlacement="top" />
-        ));
-        ready();
-        const editable = editableIn(container);
-        act(() => editable.focus());
-        press(editable, 'a', mod);
-
-        press(editable, '\\', mod);
-
-        expect(stored()?.blocks).toEqual([
-            {
-                type: 'bulletList',
-                children: [
-                    {
-                        type: 'listItem',
-                        children: [{ type: 'paragraph', align: 'center', children: [{ text: 'linked', link }] }],
-                    },
-                ],
-            },
         ]);
     });
 });

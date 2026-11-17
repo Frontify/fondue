@@ -357,17 +357,15 @@ describe('blurOnBreakPlugin', () => {
 });
 
 describe('alignPlugin', () => {
-    const keyOf = (shortcut: string) => alignPlugin.hotkeys?.[shortcut];
-
     it.each([
-        ['Mod-Shift-l', 'left', 'Aligned left'],
-        ['Mod-Shift-e', 'center', 'Centered'],
-        ['Mod-Shift-r', 'right', 'Aligned right'],
-        ['Mod-Shift-j', 'justify', 'Justified'],
-    ])('%s sets %s on the selected blocks and says %s', (shortcut, value, announcement) => {
+        ['Align left', 'left', 'Aligned left'],
+        ['Align center', 'center', 'Centered'],
+        ['Align right', 'right', 'Aligned right'],
+        ['Justify', 'justify', 'Justified'],
+    ])('%s sets %s on the selected blocks and says %s', (name, value, announcement) => {
         const { api, calls } = recordingApi();
 
-        keyOf(shortcut)?.(api);
+        clickToolbarButton({ plugin: alignPlugin, api, name });
 
         expect(calls).toEqual([`blocks.updateAttributes {"align":"${value}"}`, `announce ${announcement}`]);
     });
@@ -375,7 +373,7 @@ describe('alignPlugin', () => {
     it('clears the alignment when the block the selection starts in already has it, and says so', () => {
         const { api, calls } = recordingApi({ align: 'center' });
 
-        keyOf('Mod-Shift-e')?.(api);
+        clickToolbarButton({ plugin: alignPlugin, api, name: 'Align center' });
 
         expect(calls).toEqual(['blocks.updateAttributes {"align":null}', 'announce Alignment cleared']);
     });
@@ -383,7 +381,7 @@ describe('alignPlugin', () => {
     it('sets the alignment when that block has another one', () => {
         const { api, calls } = recordingApi({ align: 'left' });
 
-        keyOf('Mod-Shift-e')?.(api);
+        clickToolbarButton({ plugin: alignPlugin, api, name: 'Align center' });
 
         expect(calls).toEqual(['blocks.updateAttributes {"align":"center"}', 'announce Centered']);
     });
@@ -391,46 +389,13 @@ describe('alignPlugin', () => {
     it('says nothing when no block changed', () => {
         const { api, calls } = recordingApi({ reportsChange: false });
 
-        keyOf('Mod-Shift-e')?.(api);
+        clickToolbarButton({ plugin: alignPlugin, api, name: 'Align center' });
 
         expect(calls).toEqual(['blocks.updateAttributes {"align":"center"}']);
-    });
-
-    it('does with a toolbar button what its key does', () => {
-        const pressed = recordingApi();
-        const cleared = recordingApi({ align: 'center' });
-        const plugin = alignPlugin;
-
-        clickToolbarButton({ plugin, api: pressed.api, name: 'Align center' });
-        clickToolbarButton({ plugin, api: cleared.api, name: 'Align center' });
-
-        expect(pressed.calls).toEqual(['blocks.updateAttributes {"align":"center"}', 'announce Centered']);
-        expect(cleared.calls).toEqual(['blocks.updateAttributes {"align":null}', 'announce Alignment cleared']);
     });
 });
 
 describe('resetFormattingPlugin', () => {
-    const clearKey = () => resetFormattingPlugin.hotkeys?.['Mod-\\'];
-
-    it('clears the marks of the block with Mod-\\, those that survive a clear excepted, and says so', () => {
-        const { api, calls } = recordingApi();
-
-        clearKey()?.(api);
-
-        expect(calls).toEqual([
-            'marks.removeAll {"scope":"block","keepSurviving":true}',
-            'announce Formatting cleared',
-        ]);
-    });
-
-    it('says nothing when Mod-\\ removed no mark', () => {
-        const { api, calls } = recordingApi({ reportsChange: false });
-
-        clearKey()?.(api);
-
-        expect(calls).toEqual(['marks.removeAll {"scope":"block","keepSurviving":true}']);
-    });
-
     it('resets the marks, the block type and the attributes with its button, as one group, and says so', () => {
         const { api, calls } = recordingApi();
 

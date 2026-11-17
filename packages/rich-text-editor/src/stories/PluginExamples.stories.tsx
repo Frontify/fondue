@@ -525,9 +525,6 @@ export const Align: Story = {
 
         return (
             <div className={LAYOUT}>
-                <p className={HINT}>
-                    Mod-Shift-L aligns left, Mod-Shift-E centres, Mod-Shift-R aligns right and Mod-Shift-J justifies.
-                </p>
                 <div className={FRAME}>
                     <RichTextEditor value={doc} onChange={setDoc} plugins={[alignPlugin]} />
                 </div>
@@ -865,8 +862,8 @@ export const ResetFormatting: Story = {
         return (
             <div className={LAYOUT}>
                 <p className={HINT}>
-                    Put the caret in a block (or select some text), then hit the eraser button or press Mod-\ . One undo
-                    brings everything back.
+                    Put the caret in a block (or select some text), then hit the eraser button. One undo brings
+                    everything back.
                 </p>
                 <div className={FRAME}>
                     <RichTextEditor

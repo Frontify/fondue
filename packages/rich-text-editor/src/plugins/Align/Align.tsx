@@ -12,7 +12,6 @@ import {
     defineContent,
     definePlugin,
     type EditorControlApi,
-    type HotkeyHandler,
     type RteSelectionSnapshot,
     type StyleMap,
     type ToolbarItemProps,
@@ -57,24 +56,20 @@ export const alignContent = defineContent({
 
 type AlignValue = NonNullable<AlignAttribute['align']>;
 
-/** The keys are literals because a computed key keeps this plugin in the renderer; this type ties each alignment to one. */
-type AlignShortcut = 'Mod-Shift-l' | 'Mod-Shift-e' | 'Mod-Shift-r' | 'Mod-Shift-j';
-
 type Alignment = {
     value: AlignValue;
     icon: FondueIcon;
     title: string;
-    shortcut: AlignShortcut;
 };
 
 const ALIGNMENTS: readonly Alignment[] = [
-    { value: 'left', icon: IconTextAlignmentLeft, title: 'Align left', shortcut: 'Mod-Shift-l' },
-    { value: 'center', icon: IconTextAlignmentCentre, title: 'Align center', shortcut: 'Mod-Shift-e' },
-    { value: 'right', icon: IconTextAlignmentRight, title: 'Align right', shortcut: 'Mod-Shift-r' },
-    { value: 'justify', icon: IconTextAlignmentJustify, title: 'Justify', shortcut: 'Mod-Shift-j' },
+    { value: 'left', icon: IconTextAlignmentLeft, title: 'Align left' },
+    { value: 'center', icon: IconTextAlignmentCentre, title: 'Align center' },
+    { value: 'right', icon: IconTextAlignmentRight, title: 'Align right' },
+    { value: 'justify', icon: IconTextAlignmentJustify, title: 'Justify' },
 ];
 
-/** What the alignment buttons and keys say to screen readers: the alignment chosen, or that it was removed. */
+/** What the alignment buttons say to screen readers: the alignment chosen, or that it was removed. */
 const ALIGN_STRINGS = Object.freeze({
     left: 'Aligned left',
     center: 'Centered',
@@ -92,7 +87,6 @@ type ChooseAlignmentParams = {
     value: AlignValue;
 };
 
-/** What the toolbar button and its key share. */
 const chooseAlignment = ({ api, value }: ChooseAlignmentParams): void => {
     let next: AlignValue | null = value;
     let announcement: string = ALIGN_STRINGS[value];
@@ -114,7 +108,7 @@ const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
         // One choice of four, so a radio group: the checked one is the
         // block's alignment.
         <div role="radiogroup" aria-label={label} className={styles.group}>
-            {ALIGNMENTS.map(({ value, icon: Icon, title, shortcut }) => (
+            {ALIGNMENTS.map(({ value, icon: Icon, title }) => (
                 // A <button> underneath, which the toolbar gives its tabIndex.
                 // oxlint-disable-next-line jsx-a11y/interactive-supports-focus
                 <ToolbarButton
@@ -122,7 +116,6 @@ const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
                     role="radio"
                     aria-checked={current === value}
                     title={title}
-                    shortcut={shortcut}
                     onClick={() => {
                         chooseAlignment({ api, value });
                     }}
@@ -134,28 +127,12 @@ const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
     );
 };
 
-const hotkeys = {
-    'Mod-Shift-l': (api) => {
-        chooseAlignment({ api, value: 'left' });
-    },
-    'Mod-Shift-e': (api) => {
-        chooseAlignment({ api, value: 'center' });
-    },
-    'Mod-Shift-r': (api) => {
-        chooseAlignment({ api, value: 'right' });
-    },
-    'Mod-Shift-j': (api) => {
-        chooseAlignment({ api, value: 'justify' });
-    },
-} satisfies Record<AlignShortcut, HotkeyHandler>;
-
 /**
- * Text alignment, with a four-way radio group in the toolbar and a key for each alignment
+ * Text alignment, with a four-way radio group in the toolbar
  */
 export const alignPlugin = /* @__PURE__ */ definePlugin({
     id: 'align',
     content: alignContent,
     toolbarGroup: 'align',
     toolbar: [{ label: 'Alignment', render: AlignToolbar, floating: 'inline' }],
-    hotkeys,
 });
