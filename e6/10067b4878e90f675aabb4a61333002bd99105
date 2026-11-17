@@ -1,0 +1,31 @@
+packages/components/src/components/Tabs/__tests__/Tabs.ct.tsx
+  s_2be6c7bdb9ee3b::t_a5b6bdc2ea69ee 7,689-690,692,695-697,699,702,705,707,711,718-721,724,726,729-737,740,743,747,750-751
+  s_2be6c7bdb9ee3b::t_7922ef95814314 8,688,691,693-694,700-701,703-704,706,708-710,712-717,722-723,725,727-728,738-739,741-742,744-746,748,752
+  s_2be6c7bdb9ee3b::t_d5715be8a7b13e 698
+  s_2be6c7bdb9ee3b::t_62c73d16995eda 749
+  s_2be6c7bdb9ee3b::t_0f16c336310535 753
+.changeset/tabs-single-active-tab-change.md
+  s_2be6c7bdb9ee3b::t_4a8edba459cd31 2
+  s_2be6c7bdb9ee3b::t_7922ef95814314 1,3-5
+packages/components/src/components/Tabs/__tests__/ControlledTabs.tsx
+  s_2be6c7bdb9ee3b::t_f8bc6428efafff 1-2,4,6-11,14-25,27-29,31-33,35-39
+  s_2be6c7bdb9ee3b::t_a5b6bdc2ea69ee 3,5,12-13,26,30,34
+packages/components/src/components/Tabs/Tabs.tsx
+  s_2be6c7bdb9ee3b::t_7922ef95814314 105-106,109-116
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e610067b4878e90f675aabb4a61333002bd99105",
+  "prompts": {},
+  "sessions": {
+    "s_2be6c7bdb9ee3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b8b19b29-0dd3-4b2a-b910-4c232fe0baf2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

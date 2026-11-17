@@ -1,0 +1,40 @@
+.changeset/rte-renderer-content-registry.md
+  s_db1d4607d5e58e::t_d69187a332a446 5
+packages/rich-text-editor/src/plugins/FontColor/FontColor.tsx
+  s_db1d4607d5e58e::t_3ec7e39cfe77e5 10-11
+  s_db1d4607d5e58e::t_b20b65e252b938 33,39-42,45-46
+  s_db1d4607d5e58e::t_7fe952600a2df4 26
+  s_db1d4607d5e58e::t_56a3fd6967e383 3
+  s_db1d4607d5e58e::t_8b49fe41254de3 37-38,43-44,47,49
+  s_db1d4607d5e58e::t_0d1265e8ba8ead 12
+packages/rich-text-editor/src/core/index.ts
+  s_db1d4607d5e58e::t_8304800728286a 106
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.tsx
+  s_db1d4607d5e58e::t_34188fffdd2e04 15
+  s_db1d4607d5e58e::t_cc160becfd17f0 89-90,93
+packages/rich-text-editor/src/core/storedColor.ts
+  s_db1d4607d5e58e::t_f8a838a0c7d5fa 19-42
+packages/rich-text-editor/src/plugins/FontColor/FontColor.spec.ts
+  s_db1d4607d5e58e::t_9153416ad9ed60 23-30,35-37
+  s_db1d4607d5e58e::t_55cc86f5067d36 5
+  s_db1d4607d5e58e::t_a2c681d22090c7 31-34,43-49,51-52,55-56,59
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.spec.tsx
+  s_db1d4607d5e58e::t_0a6e2b085e114d 137,139
+  s_db1d4607d5e58e::t_9d00d7ae348e4e 215,217
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d0cd9c9dfe1665e158d64a4a5a8c8080a5939044",
+  "prompts": {},
+  "sessions": {
+    "s_db1d4607d5e58e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1084a074-7586-420c-8797-a9dbcd3c7659",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

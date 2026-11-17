@@ -1,0 +1,61 @@
+packages/rich-text-editor/src/plugins/CheckList/CheckList.tsx
+  s_e090dd636f75c9::t_0584ca785ec968 14-15,22,31,33-70,83,85,87,89,116,120,122,128,153,156,162,164,172-178,191,195-197
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_e090dd636f75c9::t_0584ca785ec968 5,7-9,13,15,17-24,34-36,38-40,59-60,64,66-67,160,288,291-320
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.spec.tsx
+  s_e090dd636f75c9::t_0584ca785ec968 307-325
+packages/rich-text-editor/src/core/plugin.ts
+  s_e090dd636f75c9::t_0584ca785ec968 298-299,301-304
+packages/rich-text-editor/src/editor/engines/prosemirror/ruleContext.ts
+  s_e090dd636f75c9::t_0584ca785ec968 1-52
+.changeset/rte-editing-extras.md
+  s_e090dd636f75c9::t_0584ca785ec968 1-4
+.github/workflows/pull-request-security-audit.yaml
+  s_e090dd636f75c9::t_0584ca785ec968 24
+packages/rich-text-editor/src/__tests__/htmlParity.spec.tsx
+  s_e090dd636f75c9::t_0584ca785ec968 77-81
+packages/rich-text-editor/package.json
+  s_e090dd636f75c9::t_0584ca785ec968 61,68
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_e090dd636f75c9::t_0584ca785ec968 106-123,129-198
+  s_e090dd636f75c9::t_e2ee7058c027c4 199-200
+packages/rich-text-editor/src/editor/richTextEditor.module.scss
+  s_e090dd636f75c9::t_0584ca785ec968 42-48
+  s_e090dd636f75c9::t_393f8a072a6428 41
+packages/rich-text-editor/src/plugins/CheckList/CheckList.spec.ts
+  s_e090dd636f75c9::t_0584ca785ec968 23-32
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_e090dd636f75c9::t_0584ca785ec968 313
+packages/rich-text-editor/src/__tests__/formatRegression.spec.tsx
+  s_e090dd636f75c9::t_0584ca785ec968 345
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.ts
+  s_e090dd636f75c9::t_0584ca785ec968 3,128-129
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_e090dd636f75c9::t_0584ca785ec968 565-576,1187-1242
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.spec.tsx
+  s_e090dd636f75c9::t_0584ca785ec968 5-7,9,104-386
+.github/actions/setup/action.yaml
+  s_e090dd636f75c9::t_0584ca785ec968 23
+packages/rich-text-editor/src/__tests__/goldens/check-list.json
+  s_e090dd636f75c9::t_0584ca785ec968 108-121
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.ts
+  s_e090dd636f75c9::t_0584ca785ec968 1-269
+pnpm-lock.yaml
+  s_e090dd636f75c9::t_8433ced5a83ac1 750-752,771-773,9004-9006,19114-19119
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "726075c5cc18630fc6611071cd06f0370a8f4907",
+  "prompts": {},
+  "sessions": {
+    "s_e090dd636f75c9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c7d6ea89-316e-49b8-b097-cf331faa9e19",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
