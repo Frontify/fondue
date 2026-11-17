@@ -20,6 +20,13 @@ The renderer needs no editing code, so it reads only each feature's content, not
 With no `plugins` it uses `defaultContent`. Pass your own content, or your plugins, when the
 document holds more than the defaults.
 
+A host that sets its own text looks passes the same `presets` to both sides:
+
+```tsx
+<RichTextEditor plugins={[textStylePlugin({ presets }), boldPlugin]} value={doc} onChange={setDoc} />
+<RichTextRenderer plugins={[textStyleContent({ presets }), boldContent]} value={doc} />
+```
+
 ## Writing a plugin
 
 A feature has two parts. Its content (`defineContent`) says what exists: blocks, marks and
