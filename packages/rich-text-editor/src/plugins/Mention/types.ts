@@ -24,17 +24,6 @@ export type MentionItem = MentionValue & {
 };
 
 /**
- * What the app knows now about a stored mention, by its id. The stored value
- * never changes: this only decides what is shown.
- */
-export type MentionResolution =
-    | { status: 'current'; username: string; name: string }
-    | { status: 'unavailable' }
-    | { status: 'unknown' };
-
-export type MentionResolve = (mention: MentionValue) => MentionResolution;
-
-/**
  * Where a mention links to, such as the profile of a person or group. Returns `undefined` when the mention has no page.
  */
 export type MentionHref = (mention: MentionValue) => string | undefined;
