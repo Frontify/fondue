@@ -29,6 +29,8 @@ import { toolbarItemProps } from './toolbarItem';
 type Block = RteSelectionSnapshot['block'] & object;
 
 const snapshot = (overrides: Partial<RteSelectionSnapshot> = {}): RteSelectionSnapshot => ({
+    kind: 'text',
+    grid: null,
     isCollapsed: true,
     text: '',
     block: { type: PARAGRAPH },
