@@ -17,6 +17,7 @@ import {
     type PasteHandler,
     type RteBlockCommand,
     type RteBlockNode,
+    type RteCommandAvailability,
     type RteContent,
     type RteEditView,
     type RteIcon,
@@ -198,6 +199,7 @@ export declare namespace RtePlugin {
     export type SelectionSnapshot = RteSelectionSnapshot;
     export type MarkState = RteMarkState;
     export type BlockCommand = RteBlockCommand;
+    export type CommandAvailability = RteCommandAvailability;
     export type ToolbarItemProps = ToolbarProps;
     export type ToolbarGroup = RteToolbarGroup;
     export type PasteHandler = OnPaste;
