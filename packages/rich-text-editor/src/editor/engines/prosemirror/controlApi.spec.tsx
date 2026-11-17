@@ -131,6 +131,27 @@ describe('the selection snapshot', () => {
         expect(JSON.stringify([block, blocks])).not.toContain('tok');
     });
 
+    it('reports a caret or a range of text as a text selection', () => {
+        const editor = editorWith(plugins, [paragraph(text('hello'))]);
+        editor.select('ell');
+
+        const { kind, grid } = editor.api.selection.get();
+
+        expect(kind).toBe('text');
+        expect(grid).toBeNull();
+    });
+
+    it('reports a selected void block as a node selection', () => {
+        const editor = editorWith(plugins, [paragraph(text('a')), { type: 'divider' }, paragraph(text('b'))]);
+        const { view } = editor;
+        view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, 3)));
+
+        const { kind, grid } = editor.api.selection.get();
+
+        expect(kind).toBe('node');
+        expect(grid).toBeNull();
+    });
+
     it('reports the marks typing at a caret would carry', () => {
         const editor = editorWith(plugins, [paragraph(text('plain '), text('bold', { bold: true }))]);
         editor.caretAfter('bo');

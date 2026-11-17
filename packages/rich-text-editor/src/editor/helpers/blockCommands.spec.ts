@@ -52,6 +52,8 @@ describe('the active command', () => {
 
         expect(
             activeCommand([TEXT_COMMAND, heading], {
+                kind: 'text' as const,
+                grid: null,
                 isCollapsed: true,
                 text: '',
                 block: { type: 'x' },
@@ -72,6 +74,8 @@ describe('the active command', () => {
         const blocks = ['paragraph', 'listItem', 'numberedList', 'listItem', 'bulletList'].map((type) => ({ type }));
 
         const selection = {
+            kind: 'text' as const,
+            grid: null,
             isCollapsed: true,
             text: '',
             block: blocks[0] ?? null,
@@ -85,6 +89,8 @@ describe('the active command', () => {
 
     it('is the built-in Text only on a paragraph that is not in a list', () => {
         const selection = (types: string[]) => ({
+            kind: 'text' as const,
+            grid: null,
             isCollapsed: true,
             text: '',
             block: { type: types[0] ?? '' },

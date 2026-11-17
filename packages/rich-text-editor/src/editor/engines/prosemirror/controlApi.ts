@@ -127,6 +127,9 @@ const blocksAt = (state: EditorState): Pick<RteSelectionSnapshot, 'block' | 'blo
 const snapshotOf = (state: EditorState): RteSelectionSnapshot => {
     const { from, to, empty } = state.selection;
     return {
+        // No selection the engine makes spans a grid yet, so `grid` stays empty.
+        kind: state.selection instanceof NodeSelection ? 'node' : 'text',
+        grid: null,
         isCollapsed: empty,
         // Void nodes (a mention, a line break) contribute nothing: only readable text.
         text: empty ? '' : state.doc.textBetween(from, to, ' '),
