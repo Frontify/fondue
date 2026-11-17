@@ -1,13 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ThemeProvider } from '@frontify/fondue-components';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useEffect, useRef, useState } from 'react';
+import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 
 // Stories import only the package public API. The plugins have their own story
 // file (`PluginExamples.stories.tsx`); this one is about the editor itself — the props
 // that are its own rather than a plugin's.
 import {
     boldPlugin,
+    bulletListPlugin,
+    checkListPlugin,
     columnBreakPlugin,
     defaultPlugins,
     definePlugin,
@@ -15,10 +18,14 @@ import {
     linkPlugin,
     type MentionItem,
     mentionPlugin,
+    quotePlugin,
     type RteDocument,
     type RtePlugin,
     RichTextEditor,
     RichTextRenderer,
+    textStylePlugin,
+    type TextStylePluginOptions,
+    type TextStylePresets,
 } from '../index';
 
 /** Who can be mentioned is the app's business, which is why the mention plugin requires it as an option. */
@@ -821,4 +828,310 @@ export const TwoEditors: Story = {
             </div>
         );
     },
+};
+
+/** The guideline settings a host defines around its editors; the presets below read them. */
+type GuidelineVariables = Record<`--f-theme-settings-${string}`, string>;
+
+const LIGHT_GUIDELINE: GuidelineVariables = {
+    '--f-theme-settings-heading1-font-family': 'Georgia, serif',
+    '--f-theme-settings-heading1-font-size': '36px',
+    '--f-theme-settings-heading1-color': 'rgb(120, 40, 20)',
+    '--f-theme-settings-heading2-font-size': '28px',
+    '--f-theme-settings-heading2-text-transform': 'uppercase',
+    '--f-theme-settings-custom1-letter-spacing': '0.1em',
+    '--f-theme-settings-custom2-color': 'rgb(30, 90, 60)',
+    '--f-theme-settings-image-title-color': 'rgb(20, 60, 120)',
+    '--f-theme-settings-image-caption-font-size': '11px',
+    '--f-theme-settings-body-font-size': '16px',
+    '--f-theme-settings-body-color': 'rgb(40, 40, 60)',
+    '--f-theme-settings-quote-font-style': 'italic',
+    '--f-theme-settings-quote-color': 'rgb(90, 50, 110)',
+    '--f-theme-settings-link-color': 'rgb(190, 40, 90)',
+    '--f-theme-settings-link-font-weight': '600',
+};
+
+const DARK_GUIDELINE: GuidelineVariables = {
+    '--f-theme-settings-heading1-font-family': 'Georgia, serif',
+    '--f-theme-settings-heading1-font-size': '36px',
+    '--f-theme-settings-heading1-color': 'rgb(255, 190, 150)',
+    '--f-theme-settings-heading2-font-size': '28px',
+    '--f-theme-settings-heading2-text-transform': 'uppercase',
+    '--f-theme-settings-custom1-letter-spacing': '0.1em',
+    '--f-theme-settings-custom2-color': 'rgb(150, 230, 190)',
+    '--f-theme-settings-image-title-color': 'rgb(150, 190, 255)',
+    '--f-theme-settings-image-caption-font-size': '11px',
+    '--f-theme-settings-body-font-size': '16px',
+    '--f-theme-settings-body-color': 'rgb(220, 220, 235)',
+    '--f-theme-settings-quote-font-style': 'italic',
+    '--f-theme-settings-quote-color': 'rgb(210, 170, 235)',
+    '--f-theme-settings-link-color': 'rgb(255, 150, 190)',
+    '--f-theme-settings-link-font-weight': '600',
+};
+
+/**
+ * Each preset reads the guideline variables the host defines. `heading3` reads one that
+ * no section defines, so it keeps Fondue's look.
+ */
+const GUIDELINE_PRESETS: TextStylePluginOptions['presets'] = {
+    heading1: {
+        fontFamily: 'var(--f-theme-settings-heading1-font-family)',
+        fontSize: 'var(--f-theme-settings-heading1-font-size)',
+        color: 'var(--f-theme-settings-heading1-color)',
+    },
+    heading2: {
+        fontSize: 'var(--f-theme-settings-heading2-font-size)',
+        textTransform: 'var(--f-theme-settings-heading2-text-transform)',
+    },
+    heading3: { fontSize: 'var(--f-theme-settings-heading3-font-size)' },
+    custom1: { letterSpacing: 'var(--f-theme-settings-custom1-letter-spacing)' },
+    custom2: { color: 'var(--f-theme-settings-custom2-color)' },
+    imageTitle: { color: 'var(--f-theme-settings-image-title-color)' },
+    imageCaption: { fontSize: 'var(--f-theme-settings-image-caption-font-size)' },
+    body: {
+        fontSize: 'var(--f-theme-settings-body-font-size)',
+        color: 'var(--f-theme-settings-body-color)',
+    },
+    // The quote's line height is one no section defines, so it keeps Fondue's look.
+    quote: {
+        fontStyle: 'var(--f-theme-settings-quote-font-style)',
+        lineHeight: 'var(--f-theme-settings-quote-line-height)',
+        color: 'var(--f-theme-settings-quote-color)',
+    },
+    link: {
+        fontWeight: 'var(--f-theme-settings-link-font-weight)',
+        color: 'var(--f-theme-settings-link-color)',
+    },
+};
+
+const HOST_STYLING_PLUGINS = [
+    textStylePlugin({ presets: GUIDELINE_PRESETS }),
+    bulletListPlugin,
+    checkListPlugin,
+    quotePlugin,
+    linkPlugin,
+];
+
+const HOST_STYLING_DOCUMENT: RteDocument = {
+    version: 1,
+    blocks: [
+        { type: 'textStyle', style: 'heading1', children: [{ text: 'Heading 1' }] },
+        { type: 'textStyle', style: 'heading2', children: [{ text: 'Heading 2' }] },
+        { type: 'textStyle', style: 'heading3', children: [{ text: 'Heading 3, Fondue look' }] },
+        { type: 'textStyle', style: 'heading4', children: [{ text: 'Heading 4' }] },
+        { type: 'textStyle', style: 'custom1', children: [{ text: 'Custom 1' }] },
+        { type: 'textStyle', style: 'custom2', children: [{ text: 'Custom 2' }] },
+        { type: 'textStyle', style: 'custom3', children: [{ text: 'Custom 3' }] },
+        { type: 'textStyle', style: 'imageTitle', children: [{ text: 'Image title' }] },
+        { type: 'textStyle', style: 'imageCaption', children: [{ text: 'Image caption' }] },
+        { type: 'paragraph', children: [{ text: 'Body text takes the body look.' }] },
+        {
+            type: 'bulletList',
+            children: [{ type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'A bullet item' }] }] }],
+        },
+        {
+            type: 'checkList',
+            children: [
+                {
+                    type: 'checkItem',
+                    checked: false,
+                    children: [{ type: 'paragraph', children: [{ text: 'A check item' }] }],
+                },
+            ],
+        },
+        { type: 'quote', children: [{ text: 'A quote takes the quote look.' }] },
+        {
+            type: 'paragraph',
+            children: [
+                { text: 'A ' },
+                { text: 'link', link: { href: 'https://example.com' } },
+                { text: ' takes the link look.' },
+            ],
+        },
+    ],
+};
+
+type HostStylingSectionProps = {
+    title: string;
+    guideline: GuidelineVariables;
+};
+
+const HostStylingSection = ({ title, guideline }: HostStylingSectionProps) => {
+    const [doc, setDoc] = useState<RteDocument>(HOST_STYLING_DOCUMENT);
+
+    return (
+        // A CSS variable is not a CSSProperties key, which only the cast tells the compiler.
+        <div className="tw-grid tw-gap-4 tw-bg-surface tw-p-4" style={guideline as CSSProperties}>
+            <p className="tw-m-0 tw-body-small tw-text-secondary">{title}</p>
+            <div className="tw-grid tw-grid-cols-2 tw-gap-4">
+                <div className={FRAME}>
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={HOST_STYLING_PLUGINS} />
+                </div>
+                <div className={FRAME}>
+                    <RichTextRenderer value={doc} plugins={HOST_STYLING_PLUGINS} />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const PRESETS_DEFAULT: TextStylePresets = {
+    heading1: { fontFamily: 'Georgia, serif', fontSize: '36px', color: 'rgb(120, 40, 20)' },
+    heading2: { textTransform: 'uppercase' },
+    custom1: { letterSpacing: '0.1em' },
+    custom2: { color: 'rgb(30, 90, 60)' },
+    custom3: { fontWeight: '700' },
+    imageTitle: { color: 'rgb(20, 60, 120)' },
+    imageCaption: { fontSize: '11px' },
+    body: { fontSize: '16px', lineHeight: '1.7', color: 'rgb(40, 40, 60)' },
+    quote: { fontStyle: 'italic', color: 'rgb(90, 50, 110)' },
+    link: { fontWeight: '600', color: 'rgb(190, 40, 90)' },
+};
+
+const PRESETS_TEXT_STYLE_KEYS = [
+    'heading1',
+    'heading2',
+    'heading3',
+    'heading4',
+    'custom1',
+    'custom2',
+    'custom3',
+    'imageTitle',
+    'imageCaption',
+];
+
+const PRESETS_FIELDS = [
+    'fontFamily',
+    'fontSize',
+    'fontWeight',
+    'fontStyle',
+    'lineHeight',
+    'letterSpacing',
+    'textTransform',
+    'textDecoration',
+    'marginTop',
+    'marginBottom',
+    'color',
+];
+
+const PRESETS_LEGEND_LINES = [
+    `Keys, one per text style: ${PRESETS_TEXT_STYLE_KEYS.join(', ')}.`,
+    'Keys for the rest: body (plain paragraphs and list items), quote, link.',
+    `Fields: ${PRESETS_FIELDS.join(', ')}.`,
+    'A link takes no textDecoration, marginTop or marginBottom.',
+    "A key or field left out keeps Fondue's look.",
+    'A value that could end its CSS declaration early throws.',
+];
+
+const PRESETS_CODE_INDENT = 4;
+const PRESETS_LEGEND = 'tw-m-0 tw-pl-4 tw-body-small tw-text-secondary';
+const PRESETS_ERROR = 'tw-m-0 tw-rounded tw-bg-surface-dim tw-p-3 tw-body-small tw-text-primary';
+
+const presetsConfigurationCode = (presets: TextStylePresets): string =>
+    `textStylePlugin({ presets: ${JSON.stringify(presets, null, PRESETS_CODE_INDENT)} })`;
+
+type PresetsPluginsResult = { status: 'ready'; plugins: RtePlugin[] } | { status: 'invalid'; message: string };
+
+// textStylePlugin throws on a value that could end its CSS declaration early, so a bad Controls entry is reported here.
+const presetsPluginsFor = (presets: TextStylePresets): PresetsPluginsResult => {
+    try {
+        return {
+            status: 'ready',
+            plugins: [textStylePlugin({ presets }), bulletListPlugin, checkListPlugin, quotePlugin, linkPlugin],
+        };
+    } catch (error) {
+        if (error instanceof Error) {
+            return { status: 'invalid', message: error.message };
+        }
+        throw error;
+    }
+};
+
+type PresetsSurfacesProps = {
+    presets: TextStylePresets;
+    doc: RteDocument;
+    onChange: (doc: RteDocument) => void;
+};
+
+const PresetsSurfaces = ({ presets, doc, onChange }: PresetsSurfacesProps) => {
+    const result = useMemo(() => presetsPluginsFor(presets), [presets]);
+
+    switch (result.status) {
+        case 'invalid':
+            return (
+                <p role="alert" className={PRESETS_ERROR}>
+                    {result.message}
+                </p>
+            );
+        case 'ready':
+            return (
+                <div className="tw-grid tw-grid-cols-2 tw-gap-4">
+                    <div className={FRAME}>
+                        <RichTextEditor value={doc} onChange={onChange} plugins={result.plugins} />
+                    </div>
+                    <div className={FRAME}>
+                        <RichTextRenderer value={doc} plugins={result.plugins} />
+                    </div>
+                </div>
+            );
+    }
+};
+
+type PresetsPlaygroundProps = {
+    presets: TextStylePresets;
+};
+
+const PresetsPlayground = ({ presets }: PresetsPlaygroundProps) => {
+    const [doc, setDoc] = useState<RteDocument>(HOST_STYLING_DOCUMENT);
+
+    return (
+        <div className="tw-grid tw-gap-4 tw-p-4 tw-font-primary">
+            <pre className={JSON_PANEL}>
+                <code>{presetsConfigurationCode(presets)}</code>
+            </pre>
+            <ul className={PRESETS_LEGEND}>
+                {PRESETS_LEGEND_LINES.map((line) => (
+                    <li key={line}>{line}</li>
+                ))}
+            </ul>
+            {/* The plugin list is read at mount, so a change to the presets remounts both surfaces. */}
+            <PresetsSurfaces key={JSON.stringify(presets)} presets={presets} doc={doc} onChange={setDoc} />
+        </div>
+    );
+};
+
+type PresetsStoryArgs = {
+    presets: TextStylePresets;
+};
+
+/**
+ * The configuration of `textStylePlugin({ presets })` as plain values, printed above the editor and the renderer.
+ * Edit `presets` in Controls and both surfaces redraw.
+ */
+export const Presets: StoryObj<PresetsStoryArgs> = {
+    args: { presets: PRESETS_DEFAULT },
+    argTypes: { presets: { control: 'object' } },
+    // The meta's editor props are not this story's args, so Controls lists only the presets.
+    parameters: { controls: { include: ['presets'] } },
+    render: ({ presets }) => <PresetsPlayground presets={presets} />,
+};
+
+/**
+ * The usual production setup: the values are `var(--f-theme-settings-…)`, so one editor configuration follows the section (light or dark) it sits in.
+ * A host sets the look of each text style, body text, quotes and links with `textStylePlugin({ presets })`, usually from its guideline settings.
+ * Anything the host leaves out, or a variable nobody defines, keeps Fondue's look.
+ * The editor and the renderer draw the same.
+ */
+export const PresetsFromGuidelineVariables: Story = {
+    name: 'Presets from guideline variables',
+    render: () => (
+        <div className="tw-grid tw-font-primary">
+            <ThemeProvider theme="light">
+                <HostStylingSection title="Light section" guideline={LIGHT_GUIDELINE} />
+            </ThemeProvider>
+            <ThemeProvider theme="dark">
+                <HostStylingSection title="Dark section" guideline={DARK_GUIDELINE} />
+            </ThemeProvider>
+        </div>
+    ),
 };
