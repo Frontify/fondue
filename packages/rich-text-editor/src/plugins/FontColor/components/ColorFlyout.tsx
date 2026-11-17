@@ -76,6 +76,8 @@ export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProp
     // Whether a colour was dragged or typed since opening. The value alone cannot
     // say: white typed over uncoloured text equals the white the picker starts at.
     const choseRef = useRef(false);
+    // Until typed in, the hex field only mirrors the draft, so it holds no choice.
+    const typedRef = useRef(false);
 
     const { returnToText, contentProps } = useFocusAfterClose(api);
 
@@ -110,10 +112,15 @@ export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProp
     };
 
     const save = (): void => {
-        const picked = readHexField(pickerRef.current, draft.alpha) ?? draft;
-        // Nothing picked or typed: an unreadable colour would otherwise be
-        // overwritten with the white the picker starts at.
-        if (!choseRef.current || encodePickerColor(picked) === storedColor) {
+        let picked: PickerColor | undefined;
+        if (typedRef.current) {
+            picked = readHexField(pickerRef.current, draft.alpha);
+        }
+        if (picked === undefined && choseRef.current) {
+            picked = draft;
+        }
+        // Keeps an unreadable stored colour from being overwritten with the picker's starting white.
+        if (picked === undefined || encodePickerColor(picked) === storedColor) {
             close();
             return;
         }
@@ -135,6 +142,7 @@ export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProp
             onOpenChange={(next) => {
                 if (next) {
                     choseRef.current = false;
+                    typedRef.current = false;
                     setDraft(currentColor ?? NO_COLOR_DRAFT);
                     setOpen(true);
                 } else {
@@ -207,12 +215,14 @@ export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProp
                             if (!(target instanceof HTMLInputElement) || !target.matches(HEX_FIELD_SELECTOR)) {
                                 return;
                             }
-                            // A readable hex is a choice; an unfinished one after it keeps that choice.
-                            if (readHexField(pickerRef.current, draft.alpha) !== undefined) {
-                                choseRef.current = true;
+                            typedRef.current = true;
+                            if (!isCompleteHex(target.value)) {
+                                return;
                             }
-                            if (isCompleteHex(target.value)) {
-                                setDraft(readHexField(pickerRef.current, draft.alpha) ?? draft);
+                            const typed = readHexField(pickerRef.current, draft.alpha);
+                            if (typed !== undefined) {
+                                choseRef.current = true;
+                                setDraft(typed);
                             }
                         }}
                     >
