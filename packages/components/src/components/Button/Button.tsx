@@ -62,13 +62,7 @@ export type ButtonProps = CommonGlobalProps & {
     form?: string;
     'aria-label'?: string;
     'aria-describedby'?: string;
-    /**
-     * Shows the pressed state when `true` or `"mixed"`, for a toggle button such as Bold.
-     */
     'aria-pressed'?: AriaAttributes['aria-pressed'];
-    /**
-     * Shows the pressed state when `true`, for a button with `role="radio"` in a group such as text alignment.
-     */
     'aria-checked'?: AriaAttributes['aria-checked'];
     role?: ButtonRole;
     'data-test-id'?: string;
