@@ -199,7 +199,7 @@ export const tokenPlugin = ({
                     parse: [
                         {
                             tag: 'a[data-token]',
-                            value: (element) => ({ id: element.getAttribute('data-token') ?? '' }),
+                            value: (element) => ({ id: element.dataset.token ?? '' }),
                         },
                     ],
                 }),
