@@ -1,0 +1,20 @@
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.tsx
+  s_f14f850d92b8d2::t_5f58b01710b23c 120
+  s_f14f850d92b8d2::t_1a3969cec63177 77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4072eb10dfb197a6f6996e98bd0ad0bc55b78116",
+  "prompts": {},
+  "sessions": {
+    "s_f14f850d92b8d2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b6405031-b112-4a5e-8b9d-72a1169049db",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

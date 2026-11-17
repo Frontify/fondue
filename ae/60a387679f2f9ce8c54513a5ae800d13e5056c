@@ -1,0 +1,20 @@
+package.json
+  s_ee158ec7e1d89d::t_7cbae14e7445a6 33
+  s_ee158ec7e1d89d::t_ca832241863499 19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "ae60a387679f2f9ce8c54513a5ae800d13e5056c",
+  "prompts": {},
+  "sessions": {
+    "s_ee158ec7e1d89d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3e521a17-ecf3-4dd2-b381-715a5d5fc7ef",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
