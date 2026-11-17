@@ -3,13 +3,7 @@
 import { chainCommands, setBlockType as pmSetBlockType, toggleMark as pmToggleMark } from 'prosemirror-commands';
 import { redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
 import { undoInputRule } from 'prosemirror-inputrules';
-import {
-    type Mark as PmMark,
-    type MarkType as PmMarkType,
-    type Node as PmNode,
-    type NodeType as PmNodeType,
-    type Schema,
-} from 'prosemirror-model';
+import { type Mark as PmMark, type MarkType as PmMarkType, type Schema } from 'prosemirror-model';
 import { type Command, type EditorState, NodeSelection, TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
@@ -21,7 +15,8 @@ import {
     type RteSelectionSnapshot,
 } from '#/core';
 
-import { EXTRA_ATTR, markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
+import { keepCarriedAttrs } from './carriedAttrs';
+import { markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
 import { createListApi, liftOutOfLists } from './lists';
 import { warnUnknownType } from './warnings';
 
@@ -274,27 +269,6 @@ const createMarkApi = (getView: () => EditorView, schema: Schema): EditorControl
 });
 
 // --- Blocks ---
-
-/**
- * Attributes for a block turned into another type: the ones every text block
- * carries (alignment) stay as they were, under the new type's own. Per block,
- * as the engine's `setBlockType` takes them, since blocks differ.
- */
-export const keepCarriedAttrs =
-    (
-        { blockAttributes }: PluginRegistry,
-        nodeType: PmNodeType,
-        attributes: Record<string, unknown> | undefined,
-    ): ((node: PmNode) => Record<string, unknown>) =>
-    (node) => ({
-        ...Object.fromEntries(
-            // The extras ride along: they are the block's stored keys no plugin declares.
-            [...blockAttributes.keys(), EXTRA_ATTR]
-                .filter((name) => name in node.attrs && name in (nodeType.spec.attrs ?? {}))
-                .map((name) => [name, node.attrs[name]]),
-        ),
-        ...attributes,
-    });
 
 /**
  * Block types and the attributes on them. Which block the selection is in is
