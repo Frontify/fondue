@@ -48,13 +48,4 @@
     // A div of the plugin's own around editable text: it keeps the editor's
     // `pre-wrap` even where a host styles every div with its own white-space.
     white-space: inherit;
-
-    /**
-     * An item holds blocks, so its text sits in a paragraph that must not add
-     * space. A descendant rather than a child selector: in the editor the
-     * paragraph sits inside the node view's content hole.
-     */
-    p {
-        margin: 0;
-    }
 }

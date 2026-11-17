@@ -490,6 +490,23 @@ describe('textStylePlugin', () => {
 
         expect(Object.keys(hotkeys)).toEqual(['Mod-Alt-2']);
     });
+
+    it('adds no toolbar item, command, hotkey or input rule when the editor offers no styles', () => {
+        const plugin = textStylePlugin({ styles: [] });
+
+        expect(plugin.toolbar ?? []).toEqual([]);
+        expect(plugin.commands ?? []).toEqual([]);
+        expect(plugin.hotkeys ?? {}).toEqual({});
+        expect(plugin.inputRules ?? []).toEqual([]);
+    });
+
+    it('adds no toolbar item when the only style is the paragraph, since there is nothing to choose', () => {
+        expect(textStylePlugin({ styles: ['paragraph'] }).toolbar ?? []).toEqual([]);
+    });
+
+    it('adds a toolbar item when the editor offers a style to choose', () => {
+        expect(textStylePlugin({ styles: ['paragraph', 'heading1'] }).toolbar).toHaveLength(1);
+    });
 });
 
 describe('columnBreakPlugin', () => {
