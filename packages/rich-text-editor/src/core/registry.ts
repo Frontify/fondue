@@ -10,11 +10,8 @@ import { parseHotkey } from './hotkeys';
 import {
     type BlockDefinition,
     type HotkeyHandler,
-    type MarkParseRule,
     onlyTypeOf,
     type PasteHandler,
-    type PasteTransform,
-    type PasteTransformContext,
     type RteBlockCommand,
     type RteCommandTarget,
     type RteContent,
@@ -28,7 +25,6 @@ import {
     type SelectedNode,
     type ToolbarItemProps,
 } from './plugin';
-import { readTagRule } from './tagRule';
 import { PARAGRAPH } from './vocabulary';
 
 /**
@@ -113,8 +109,6 @@ export type PluginRegistry = ContentRegistry & {
     inputRules: readonly RteInputRule[];
     /** Every plugin's `onPaste`, in mount order; they run until one handles the paste. */
     pasteHandlers: readonly PasteHandler[];
-    /** Every plugin's `pasteTransforms`, in mount order, each shared one once. */
-    pasteTransforms: readonly PasteTransform[];
     /** The toolbar's controls, in mount order. */
     toolbarItems: readonly ToolbarEntry[];
     /** Every block command the plugins offer, in mount order. */
@@ -447,7 +441,6 @@ type Draft = {
     shortcuts: RteShortcut[];
     inputRules: RteInputRule[];
     pasteHandlers: PasteHandler[];
-    pasteTransforms: Map<string, PasteTransform>;
     toolbarItems: ToolbarEntry[];
     toolbarGroupOwners: Map<string, ToolbarGroupOwner>;
     commands: RteBlockCommand[];
@@ -457,7 +450,6 @@ type Draft = {
     seenIds: Map<string, number>;
     duplicateIds: Set<string>;
     editOwners: Map<string, string>;
-    pasteTransformOwners: Map<string, string>;
 };
 
 const addHotkey = (draft: Draft, keys: string, handler: HotkeyHandler): void => {
@@ -568,11 +560,6 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
     if (plugin.onPaste) {
         draft.pasteHandlers.push(plugin.onPaste);
     }
-    for (const transform of plugin.pasteTransforms ?? []) {
-        register('paste transform', draft.pasteTransforms, draft.pasteTransformOwners, plugin.id, {
-            [transform.id]: transform,
-        });
-    }
     for (const command of plugin.commands ?? []) {
         addCommand(draft, plugin.id, command);
     }
@@ -590,7 +577,6 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         shortcuts: [...EDITOR_SHORTCUT_ROWS],
         inputRules: [],
         pasteHandlers: [],
-        pasteTransforms: new Map(),
         toolbarItems: [],
         toolbarGroupOwners: new Map(),
         commands: [],
@@ -599,7 +585,6 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         seenIds: new Map(),
         duplicateIds: new Set(),
         editOwners: new Map(),
-        pasteTransformOwners: new Map(),
     };
 
     const ids: string[] = [];
@@ -623,25 +608,8 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         shortcuts: draft.shortcuts,
         inputRules: forMatching(draft.inputRules),
         pasteHandlers: draft.pasteHandlers,
-        pasteTransforms: [...draft.pasteTransforms.values()],
         toolbarItems: draft.toolbarItems,
         commands: draft.commands,
         descriptions: draft.descriptions,
     };
-};
-
-/** Style and clear rules have no tag, so they read no element of their own. */
-const readsElement = (rule: MarkParseRule<unknown>, element: HTMLElement): boolean => {
-    if (rule.tag === undefined || !element.matches(rule.tag)) {
-        return false;
-    }
-    return readTagRule(rule, element).kind !== 'unread';
-};
-
-export const isClaimedBy = (registry: ContentRegistry): PasteTransformContext['isClaimed'] => {
-    const rules: MarkParseRule<unknown>[] = [];
-    for (const node of [...registry.blocks.values(), ...registry.inlines.values(), ...registry.marks.values()]) {
-        rules.push(...node.parse);
-    }
-    return (element) => rules.some((rule) => readsElement(rule, element));
 };

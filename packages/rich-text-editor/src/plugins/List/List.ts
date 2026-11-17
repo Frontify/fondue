@@ -15,9 +15,7 @@ import {
 
 import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
 
-import { BULLET_LIST_TAG, LIST_ITEM_TAG, NUMBERED_LIST_TAG, NUMBERED_LIST_START_ATTRIBUTE } from './helpers/listMarkup';
 import styles from './list.module.scss';
-import { PASTED_LISTS } from './pastedLists';
 
 /**
  * A list item, holding a paragraph and any lists nested under it
@@ -47,8 +45,8 @@ type NumberedListValue = { start: number | null };
 const listItem = defineBlock({
     // The paragraph comes first: it is what a new item is filled with.
     content: { blocks: [PARAGRAPH, ANY_LIST] },
-    toHtml: () => ({ tag: LIST_ITEM_TAG, attrs: { class: styles.item }, children: true }),
-    parse: [{ tag: LIST_ITEM_TAG }],
+    toHtml: () => ({ tag: 'li', attrs: { class: styles.item }, children: true }),
+    parse: [{ tag: 'li' }],
 });
 
 /**
@@ -56,8 +54,8 @@ const listItem = defineBlock({
  */
 const bulletList = defineBlock({
     content: { items: 'listItem' },
-    toHtml: () => ({ tag: BULLET_LIST_TAG, attrs: { class: styles.bulletList }, children: true }),
-    parse: [{ tag: BULLET_LIST_TAG }],
+    toHtml: () => ({ tag: 'ul', attrs: { class: styles.bulletList }, children: true }),
+    parse: [{ tag: 'ul' }],
 });
 
 /**
@@ -113,19 +111,13 @@ const numberedList = defineBlock<NumberedListValue>({
         if (first !== undefined && first.length > MARKER_DIGITS) {
             style = { [EXTRA_DIGITS_PROPERTY]: String(first.length - MARKER_DIGITS) };
         }
-        return {
-            tag: NUMBERED_LIST_TAG,
-            attrs: { class: styles.numberedList, [NUMBERED_LIST_START_ATTRIBUTE]: first, style },
-            children: true,
-        };
+        return { tag: 'ol', attrs: { class: styles.numberedList, start: first, style }, children: true };
     },
     parse: [
         {
-            tag: NUMBERED_LIST_TAG,
+            tag: 'ol',
             value: (element) => {
-                const start = storedStart(
-                    Number.parseInt(element.getAttribute(NUMBERED_LIST_START_ATTRIBUTE) ?? '', 10),
-                );
+                const start = storedStart(Number.parseInt(element.getAttribute('start') ?? '', 10));
                 if (start === null) {
                     return {};
                 }
@@ -177,7 +169,6 @@ const listPlugin = ({ id, content, type, icon, label, keywords, markdown, shortc
         toolbarGroup: TOOLBAR_GROUPS.lists,
         toolbar: [{ toggles: type, label, icon, shortcut, menu: { keywords } }],
         inputRules: markdown.map((match) => ({ kind: 'list' as const, match, list: type })),
-        pasteTransforms: [PASTED_LISTS],
     });
 
 /**
