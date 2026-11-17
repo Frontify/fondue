@@ -19,7 +19,7 @@ export type ParseHtmlOptions = {
 const NO_DOCUMENT = 'parseHtml needs a `document` option where there is no browser, for example one from happy-dom.';
 
 const pageDocument = (): Document => {
-    if (typeof globalThis.document === 'undefined') {
+    if (globalThis.document === undefined) {
         throw new TypeError(NO_DOCUMENT);
     }
     return globalThis.document;
