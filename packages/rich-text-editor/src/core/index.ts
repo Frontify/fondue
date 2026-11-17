@@ -49,6 +49,8 @@ export {
     safeStyleEntries,
     type StyleMap,
 } from './htmlSpec';
+export { DOCUMENT_GAP_VARIABLES, OWN_MARGIN_VARIABLES } from './documentContract';
+export { lookProperties, type TextLook } from './look';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,
