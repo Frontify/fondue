@@ -100,15 +100,14 @@ export const serializeToHtml = <TBlock extends RteBlockNode = RteBlock>(
  * without the clean-up only a clipboard needs (Word, Outlook, Google Docs). What
  * no plugin reads stays as its text. Opens what `serializeToHtml` saved. Uses
  * `defaultContent` when given no `plugins`, and the page's `document` when
- * given none; without a browser, pass one from a DOM library.
+ * given none; without a browser, pass one from a DOM library. The blocks are
+ * whatever the plugins read, so the document's block type is the open one.
  *
  * @example
  * const value = parseHtml(storedHtml, { plugins: [...defaultContent, mentionContent()] });
  */
-export const parseHtml = <TBlock extends RteBlockNode = RteBlock>(
-    html: string,
-    options: ParseHtmlOptions = {},
-): RteDocument<TBlock> => parse<TBlock>(html, { ...options, plugins: options.plugins ?? defaultContent });
+export const parseHtml = (html: string, options: ParseHtmlOptions = {}): RteDocument<RteBlockNode> =>
+    parse(html, { ...options, plugins: options.plugins ?? defaultContent });
 
 // --- Document format ---
 

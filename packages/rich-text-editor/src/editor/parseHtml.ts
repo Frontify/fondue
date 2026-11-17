@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { buildPluginRegistry, type RteBlockNode, type RteContent, type RteDocumentOf, type RtePlugin } from '#/core';
+import { buildPluginRegistry, type RteContent, type RteDocumentOf, type RtePlugin } from '#/core';
 import { parseHtmlDocument } from '#/editor/engines/prosemirror';
 
 export type ParseHtmlOptions = {
@@ -26,9 +26,7 @@ const pageDocument = (): Document => {
 };
 
 /** HTML as a document, read by the rules the editor reads a paste with. */
-export const parseHtml = <TBlock extends RteBlockNode>(
-    html: string,
-    { plugins = [], document = pageDocument() }: ParseHtmlOptions = {},
-): RteDocumentOf<TBlock> =>
-    // The plugins decide which blocks come out; `TBlock` names them for the caller, as the editor's `onChange` does.
-    parseHtmlDocument({ html, registry: buildPluginRegistry(plugins), document }) as RteDocumentOf<TBlock>;
+export const parseHtml = (html: string, { plugins = [], document }: ParseHtmlOptions = {}): RteDocumentOf => {
+    const registry = buildPluginRegistry(plugins);
+    return parseHtmlDocument({ html, registry, document: document ?? pageDocument() });
+};
