@@ -7,10 +7,13 @@ import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 
 const localesDir = resolve(__dirname, 'src/locales');
+const SOURCE_EXTENSION = '.ts';
+/** The files beside the locales that are no locale of their own. */
+const NOT_A_LOCALE = ['index.ts', 'types.ts'];
 const localeEntries = Object.fromEntries(
     readdirSync(localesDir)
-        .filter((file) => file.endsWith('.ts') && !['index.ts', 'types.ts'].includes(file))
-        .map((file) => [basename(file, '.ts'), resolve(localesDir, file)]),
+        .filter((file) => file.endsWith(SOURCE_EXTENSION) && !NOT_A_LOCALE.includes(file))
+        .map((file) => [basename(file, SOURCE_EXTENSION), resolve(localesDir, file)]),
 );
 
 export default defineConfig({

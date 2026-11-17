@@ -9,6 +9,8 @@ import { type ComponentType } from 'react';
 import '@frontify/fondue-tokens/styles';
 import '@frontify/fondue-components/styles';
 
+import * as locales from '../src/locales';
+
 import './styles.css';
 
 type Globals = {
@@ -17,7 +19,7 @@ type Globals = {
 };
 
 /** The languages the editor ships, as `ThemeProvider`'s `lang` names them. */
-const LANGUAGES = ['en-US', 'de-CH', 'de-DE', 'es-ES', 'fr-CH', 'fr-FR', 'it-CH', 'it-IT', 'nl-NL', 'pl-PL', 'pt-PT'];
+const LANGUAGES = Object.values(locales).map((locale) => locale.lang);
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {
     // Storybook types globals as a loose record, and `globalTypes` below declares `theme` with only these values.

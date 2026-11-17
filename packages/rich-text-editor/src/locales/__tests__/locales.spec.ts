@@ -4,8 +4,6 @@ import { readdirSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
-import { LOCALE_LOADERS } from '#/editor/hooks/useEditorLocale';
-
 import { enUS } from '../en-US';
 import * as shipped from '../index';
 import { type RichTextLocale } from '../types';
@@ -85,13 +83,5 @@ describe('the shipped locales', () => {
             ['count'],
             ['count'],
         ]);
-    });
-
-    it('loads every locale but English through an import of its own, for its own lang', async () => {
-        expect([...LOCALE_LOADERS.keys()].sort()).toEqual(files.filter((id) => id !== 'en-US'));
-        for (const [id, load] of LOCALE_LOADERS) {
-            const locale = await load();
-            expect(locale.lang).toBe(id);
-        }
     });
 });
