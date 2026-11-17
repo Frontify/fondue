@@ -13,7 +13,6 @@ import {
     type PasteHandler,
     type RteBlockCommand,
     type RteBlockNode,
-    type RteCommandAvailability,
     type RteInlineNode,
     type RtePlugin as CorePlugin,
     type RteSelectionSnapshot,
@@ -170,7 +169,6 @@ export declare namespace RtePlugin {
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
     export type BlockCommand = RteBlockCommand;
-    export type CommandAvailability = RteCommandAvailability;
     export type PasteHandler = OnPaste;
     export type HtmlSpec = Html;
 }

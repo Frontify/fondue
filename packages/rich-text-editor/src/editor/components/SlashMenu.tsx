@@ -6,10 +6,10 @@ import { Flyout } from '@frontify/fondue-components';
 import { Anchor as FlyoutAnchor } from '@radix-ui/react-popover';
 import { type ReactNode, type RefObject, useEffect, useId, useRef, useState } from 'react';
 
-import { PARAGRAPH, type RteBlockCommand, type RteCommandAvailability } from '#/core';
+import { PARAGRAPH, type RteBlockCommand } from '#/core';
 import { MENU_ICON_SIZE } from '#/ui/toolbarIconSize';
 
-import { availabilityOf, matchCommands } from '../helpers/blockCommands';
+import { availableCommands, matchCommands } from '../helpers/blockCommands';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
 import { useSelectionAnchor } from '../hooks/useSelectionAnchor';
 import { type RichTextEditorLabels } from '../labels';
@@ -48,8 +48,7 @@ const describeCount = (count: number, labels: RichTextEditorLabels): string =>
  * - Backspacing over the `/` — or anything moving the caret out of the text it
  *   is in — closes it too, and so does a space typed where nothing matches.
  * - Running a command first removes the `/query`, then runs it on what is left.
- * - A command that cannot run on the selection stays listed with its reason;
- *   Enter, Tab or a click on it does nothing and leaves the menu open.
+ * - A command that cannot run on the selection is left out.
  *
  * Focus never leaves the text: the menu is a listbox the editable element
  * points at with `aria-activedescendant`. The keys it takes are caught before
@@ -80,7 +79,7 @@ export const SlashMenu = ({
         setSession(next);
     };
 
-    const listed = inListOrder(commands);
+    const listed = inListOrder(availableCommands(commands, api.selection.get()));
     const matches = session === null ? [] : inListOrder(matchCommands(listed, session.query));
     const matchesRef = useRef(matches);
     matchesRef.current = matches;
@@ -116,9 +115,6 @@ export const SlashMenu = ({
     }, [api, editorState]);
 
     const run = (command: RteBlockCommand): void => {
-        if (!availabilityOf(command, api.selection.get()).enabled) {
-            return;
-        }
         const typed = api.text.beforeCaret().length;
         updateSession(null);
         api.text.deleteBefore(typed);
@@ -163,7 +159,6 @@ export const SlashMenu = ({
                     if (command === undefined) {
                         return;
                     }
-                    // A disabled one is still taken: Enter must not split the block under the menu.
                     consume();
                     runRef.current(command);
                     break;
@@ -188,7 +183,6 @@ export const SlashMenu = ({
             editorState={editorState}
             editableRef={editableRef}
             commands={matches}
-            availabilityOf={(command) => availabilityOf(command, api.selection.get())}
             index={Math.min(session.index, Math.max(matches.length - 1, 0))}
             onHover={(index) => updateSession({ ...session, index })}
             onRun={run}
@@ -204,7 +198,6 @@ const SlashList = ({
     editorState,
     editableRef,
     commands,
-    availabilityOf: availability,
     index,
     onHover,
     onRun,
@@ -216,8 +209,6 @@ const SlashList = ({
     editableRef: RefObject<HTMLElement | null>;
     /** The matches, in list order. */
     commands: readonly RteBlockCommand[];
-    /** Whether a command can run on the selection now. */
-    availabilityOf: (command: RteBlockCommand) => RteCommandAvailability;
     index: number;
     onHover: (index: number) => void;
     onRun: (command: RteBlockCommand) => void;
@@ -305,7 +296,6 @@ const SlashList = ({
                                                     key={command.id}
                                                     id={optionId(position)}
                                                     command={command}
-                                                    availability={availability(command)}
                                                     isActive={position === index}
                                                     onHover={() => onHover(position)}
                                                     onRun={() => onRun(command)}
@@ -326,19 +316,14 @@ const SlashList = ({
 type SlashOptionProps = {
     id: string;
     command: RteBlockCommand;
-    availability: RteCommandAvailability;
     isActive: boolean;
     onHover: () => void;
     onRun: () => void;
 };
 
-const SlashOption = ({ id, command, availability, isActive, onHover, onRun }: SlashOptionProps): ReactNode => {
+const SlashOption = ({ id, command, isActive, onHover, onRun }: SlashOptionProps): ReactNode => {
     const { icon: Icon } = command;
-    const classNames = [
-        styles.option,
-        isActive ? styles.optionActive : '',
-        availability.enabled ? '' : styles.optionUnavailable,
-    ];
+    const classNames = [styles.option, isActive ? styles.optionActive : ''];
     return (
         // The keyboard drives the list from the text; the mouse picks here.
         // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
@@ -347,9 +332,6 @@ const SlashOption = ({ id, command, availability, isActive, onHover, onRun }: Sl
             role="option"
             tabIndex={-1}
             aria-selected={isActive}
-            // Still reachable with the arrows, so its reason is read: listed, inert.
-            aria-disabled={availability.enabled ? undefined : true}
-            aria-describedby={availability.enabled ? undefined : `${id}-reason`}
             onClick={onRun}
             onMouseMove={isActive ? undefined : onHover}
             className={classNames.filter(Boolean).join(' ')}
@@ -357,16 +339,7 @@ const SlashOption = ({ id, command, availability, isActive, onHover, onRun }: Sl
             <span aria-hidden className={styles.icon}>
                 {Icon === undefined ? null : <Icon size={MENU_ICON_SIZE} />}
             </span>
-            {availability.enabled ? (
-                <span>{command.label}</span>
-            ) : (
-                <span className={styles.text}>
-                    <span>{command.label}</span>
-                    <span id={`${id}-reason`} className={styles.reason}>
-                        {availability.reason}
-                    </span>
-                </span>
-            )}
+            <span>{command.label}</span>
         </div>
     );
 };
