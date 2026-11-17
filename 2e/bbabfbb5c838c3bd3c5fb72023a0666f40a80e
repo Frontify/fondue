@@ -1,0 +1,68 @@
+.github/workflows/rich-text-editor-pull-requests.yaml
+  s_53de767222940a::t_8aedf05a9509cd 7-12,14-18
+packages/rich-text-editor/src/editor/engines/prosemirror/paste.spec.tsx
+  s_53de767222940a::t_8aedf05a9509cd 92-112,157-159,163-187
+  s_53de767222940a::t_fb117041ed9f43 188
+packages/rich-text-editor/src/plugins/Subscript/Subscript.ts
+  s_53de767222940a::t_8aedf05a9509cd 7-8,30
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.spec.tsx
+  s_53de767222940a::t_8aedf05a9509cd 131-148
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_53de767222940a::t_8aedf05a9509cd 82
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_53de767222940a::t_8aedf05a9509cd 43
+packages/rich-text-editor/src/plugins/shared/helpers/declaredStyle.ts
+  s_53de767222940a::t_8aedf05a9509cd 3-4,25-29,33-39,44-75,81-104,110-111
+packages/rich-text-editor/src/plugins/Superscript/Superscript.ts
+  s_53de767222940a::t_8aedf05a9509cd 7-8,30
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.ts
+  s_53de767222940a::t_8aedf05a9509cd 131,135,150
+packages/rich-text-editor/src/plugins/FontColor/FontColor.spec.ts
+  s_53de767222940a::t_8aedf05a9509cd 7-8,16-17
+packages/rich-text-editor/src/editor/engines/prosemirror/textRules.spec.tsx
+  s_53de767222940a::t_8aedf05a9509cd 148-159
+packages/rich-text-editor/src/core/plugin.ts
+  s_53de767222940a::t_8aedf05a9509cd 341,413,428,439-442
+packages/rich-text-editor/src/plugins/Strikethrough/Strikethrough.ts
+  s_53de767222940a::t_8aedf05a9509cd 7,27
+storybook-docs/.storybook/tailwind.config.ts
+  s_53de767222940a::t_8aedf05a9509cd 22
+packages/rich-text-editor/src/plugins/Italic/Italic.ts
+  s_53de767222940a::t_8aedf05a9509cd 7-8,30-31
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_53de767222940a::t_8aedf05a9509cd 237-264,288-295
+  s_53de767222940a::t_5540450ca2e714 296
+packages/rich-text-editor/src/editor/engines/prosemirror/ruleContext.ts
+  s_53de767222940a::t_99738002353fb5 65
+  s_53de767222940a::t_8aedf05a9509cd 40-49
+packages/rich-text-editor/src/plugins/Underline/Underline.ts
+  s_53de767222940a::t_8aedf05a9509cd 7,27
+storybook-docs/.storybook/main.ts
+  s_53de767222940a::t_8aedf05a9509cd 26-32,42,71,81,123
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteRules.ts
+  s_53de767222940a::t_8aedf05a9509cd 30-33,54,60-67,72,75,79-92,94-99,102-104,110,117-121,127-128,136,140-144,160-164,171
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_53de767222940a::t_8aedf05a9509cd 30,265-271
+packages/rich-text-editor/src/core/index.ts
+  s_53de767222940a::t_8aedf05a9509cd 55
+packages/rich-text-editor/src/index.ts
+  s_53de767222940a::t_8aedf05a9509cd 12,29,173,192
+packages/rich-text-editor/src/plugins/Bold/Bold.ts
+  s_53de767222940a::t_8aedf05a9509cd 7,32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2ebbabfbb5c838c3bd3c5fb72023a0666f40a80e",
+  "prompts": {},
+  "sessions": {
+    "s_53de767222940a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f9b7337-8455-4b7f-ac95-dde194f54be3",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

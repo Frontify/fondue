@@ -1,0 +1,39 @@
+packages/components/src/components/DatePicker/styles/datePickerCalendar.module.scss
+  s_630c72136f33a6::t_11abaf34e029b1 63
+  s_630c72136f33a6::t_f72b5e59cfc53b 62,64-66
+packages/components/src/components/DatePicker/__tests__/RangeDatePicker.ct.tsx
+  s_630c72136f33a6::t_7516239945dd42 162
+  s_630c72136f33a6::t_eeab8d30d39d5a 125-136
+  s_630c72136f33a6::t_c60779a2d91354 120
+  s_630c72136f33a6::t_8379b2882795b1 99-119,121-124,137-146,148-161,163-165
+  s_630c72136f33a6::t_62ca56d530dec2 147
+packages/components/src/components/DatePicker/DatePicker.stories.tsx
+  s_630c72136f33a6::t_9c498825373ff4 101-120
+packages/components/src/components/Button/Button.tsx
+  s_630c72136f33a6::t_927194c9206885 63
+packages/components/src/components/DatePicker/DatePickerCalendar.tsx
+  s_630c72136f33a6::t_99580c2d7fb714 90-91
+  s_630c72136f33a6::t_88c66897a87b8a 24,26
+  s_630c72136f33a6::t_b22baabab01e87 232,247
+  s_630c72136f33a6::t_73f7ea212b8b14 189,204
+  s_630c72136f33a6::t_8a67893dfa0fad 60-63,71-72
+  s_630c72136f33a6::t_a0b8b1cf38bdcc 49-52
+packages/components/src/components/DatePicker/DatePicker.metadata.json
+  s_630c72136f33a6::t_b5304d1054c60d 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "08f8b593c631d6ea851269fc91665b327bbaa2ee",
+  "prompts": {},
+  "sessions": {
+    "s_630c72136f33a6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3ccaaab2-e755-495d-9609-8e04a4184e0a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  }
+}
