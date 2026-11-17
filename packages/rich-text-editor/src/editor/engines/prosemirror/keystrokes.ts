@@ -31,6 +31,7 @@ import { autolinkOnEnter, markPatternRule } from './autolink';
 import { keepCarriedAttrs, withCarriedAttrs } from './carriedAttrs';
 import { undoStep } from './controlApi';
 import { EXTRA_ATTR } from './documentConversion';
+import { gridEditing, gridKeys, hasGrids } from './grid';
 import { deleteEmptyBlockBesideList, listKeys } from './lists';
 import {
     type RuleContext,
@@ -55,7 +56,11 @@ import {
  *    Backspace right after takes the link back.
  * 3. Feature hotkeys (Mod-b, ...). Before the list keys so a feature can take a
  *    key lists would claim (`blurOnBreak` takes Enter).
- * 4. List keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
+ * 4. Grid keys (Tab, Shift-Tab between slots), then grid editing (selecting
+ *    across slots, arrows at a slot's edge, Backspace and Delete over selected
+ *    slots); only present when a grid exists. Before the list keys: Tab in a
+ *    list inside a slot moves to the next slot.
+ *    Then list keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
  * 5. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`); held until a composition ends.
  * 6. Enter keeping the attributes every text block carries, then the baseline
  *    keymap, plus Backspace resetting an emptied first heading, and Backspace
@@ -67,6 +72,7 @@ import {
 
 export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api: EditorControlApi): PmPlugin[] => {
     const hasLists = registry.itemTypeByList.size > 0;
+    const hasGrid = hasGrids(registry);
 
     return [
         // 1
@@ -83,6 +89,7 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         keymap(featureHotkeys(registry.hotkeys, api)),
         characterHotkeys(registry.hotkeys, api),
         // 4
+        ...(hasGrid ? [gridKeys(), gridEditing()] : []),
         ...(hasLists ? [keymap(listKeys(api, registry.itemTypeByList))] : []),
         // 5
         ...typingRewrites(registry, schema),

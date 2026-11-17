@@ -34,6 +34,7 @@ export {
     defineMark,
     definePlugin,
     type EditProps,
+    type GridRole,
     type HotkeyHandler,
     type InlineDefinition,
     type MarkClearRule,

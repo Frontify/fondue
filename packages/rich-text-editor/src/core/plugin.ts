@@ -278,6 +278,12 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
     /** The block's markup. `children: true` is where its content goes. */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<Partial<TValue>>[];
+    /**
+     * The block's place in a grid: a block laid out in rows and columns that
+     * the editor edits as one, with a selection that spans slots, and keys
+     * that move from slot to slot. See `GridRole`.
+     */
+    gridRole?: GridRole;
     render?: {
         /**
          * Readonly view in place of `toHtml`. `style` carries what every text
@@ -286,6 +292,19 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
         component?: ComponentType<{ value: TValue; children?: ReactNode; style?: CSSProperties }>;
     };
 };
+
+/**
+ * Where a block sits in a grid:
+ * - `'grid'`       → the grid itself; its content is `{ parts }` of `'row'` blocks
+ * - `'row'`        → one row; its content is `{ parts }` of slot blocks
+ * - `'slot'`       → one place in a row, holding blocks
+ * - `'headerSlot'` → a slot that labels its row or column
+ *
+ * A slot may cover several columns or rows. To keep that, it declares
+ * `colspan` and `rowspan` (whole numbers, default 1) and `colwidth`
+ * (default null) in its `defaults`; left out, they exist only while editing.
+ */
+export type GridRole = 'grid' | 'row' | 'slot' | 'headerSlot';
 
 /**
  * What a block holds:

@@ -7,6 +7,7 @@ import {
     type DefaultStyle,
     type EditorControlApi,
     type EditProps,
+    type GridRole,
     type HtmlSpec,
     type InlineDefinition,
     isEmpty,
@@ -172,6 +173,7 @@ type StyleParse<TValue> = StyleParseRule<TValue>;
 type MarkClear = MarkClearRule;
 type DefaultStyleType = DefaultStyle;
 type Html = HtmlSpec;
+type RteGridRole = GridRole;
 
 // oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
 export declare namespace RtePlugin {
@@ -184,6 +186,7 @@ export declare namespace RtePlugin {
     export type ToolbarGroup = RteToolbarGroup;
     export type PasteHandler = OnPaste;
     export type BlockDefinition<TValue = Record<string, unknown>> = BlockDef<TValue>;
+    export type GridRole = RteGridRole;
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
     export type EditProps<TValue, TCurrent = TValue> = EditComponentProps<TValue, TCurrent>;

@@ -117,6 +117,11 @@ export type EditorControlApi = {
      * Insert a node at the selection — how void blocks (a column break) and
      * inline elements (mentions) get added, with `value` as what it stores.
      * The caret ends up after what was inserted.
+     *
+     * A block whose `value` holds `children` comes in whole, as the document
+     * format writes it: in place of an empty top-level block, or after the
+     * top-level block the caret is in, with the caret at its first place for
+     * text.
      */
     insert(type: string, value?: Record<string, unknown>): void;
     /** Insert plain text at the selection, carrying the marks typing there would. */

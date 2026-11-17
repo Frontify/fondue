@@ -255,7 +255,7 @@ const childrenToEngine = (
         ? inlinesToEngine(children as RteInlineNode[], schema)
         : (children as RteBlockNode[]).map((child) => blockToEngine(child, schema));
 
-const blockToEngine = (block: RteBlockNode, schema: Schema): PmNode => {
+export const blockToEngine = (block: RteBlockNode, schema: Schema): PmNode => {
     // A block this editor handed out: reuse the node it came from (see `engineNodeOf`).
     const known = engineNodeOf.get(block);
     if (known !== undefined && known.type.schema === schema) {

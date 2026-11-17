@@ -4,19 +4,28 @@ import { chainCommands, setBlockType as pmSetBlockType } from 'prosemirror-comma
 import { redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
 import { undoInputRule } from 'prosemirror-inputrules';
 import { type Mark as PmMark, type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
-import { type Command, type EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
+import {
+    type Command,
+    type EditorState,
+    NodeSelection,
+    Selection,
+    TextSelection,
+    type Transaction,
+} from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import {
     type EditorControlApi,
     INLINE_PLACEHOLDER,
     type PluginRegistry,
+    type RteBlockNode,
     type RteMarkState,
     type RteSelectionSnapshot,
 } from '#/core';
 
 import { keepCarriedAttrs } from './carriedAttrs';
-import { markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
+import { blockToEngine, markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
+import { gridOfSelection, textOfSelectedSlots } from './grid';
 import { createListApi, liftOutOfLists } from './lists';
 import { warnUnknownType } from './warnings';
 
@@ -30,7 +39,8 @@ import { warnUnknownType } from './warnings';
  * this api. No method is called until the view exists.
  *
  * Layout: `createControlApi` (the whole api) is at the bottom, assembled from
- * the selection snapshot, then marks, then blocks. Lists live in `./lists.ts`.
+ * the selection snapshot, then marks, then blocks. Lists live in `./lists.ts`,
+ * grids in `./grid.ts`.
  */
 
 // --- Selection snapshot: what all feature UI renders from ---
@@ -125,14 +135,20 @@ const blocksAt = (state: EditorState): Pick<RteSelectionSnapshot, 'block' | 'blo
 };
 
 const snapshotOf = (state: EditorState): RteSelectionSnapshot => {
-    const { from, to, empty } = state.selection;
+    const { selection } = state;
+    const { from, to, empty } = selection;
+    const grid = gridOfSelection(selection);
     return {
-        // No selection the engine makes spans a grid yet, so `grid` stays empty.
-        kind: state.selection instanceof NodeSelection ? 'node' : 'text',
-        grid: null,
+        kind: grid !== null ? 'grid' : selection instanceof NodeSelection ? 'node' : 'text',
+        grid,
         isCollapsed: empty,
         // Void nodes (a mention, a line break) contribute nothing: only readable text.
-        text: empty ? '' : state.doc.textBetween(from, to, ' '),
+        // Selected slots are read one by one, so slots outside the selection stay out.
+        text: empty
+            ? ''
+            : grid !== null
+              ? textOfSelectedSlots(state.doc, selection)
+              : state.doc.textBetween(from, to, ' '),
         ...blocksAt(state),
         marks: marksAt(state),
         history: { canUndo: undoDepth(state) > 0, canRedo: redoDepth(state) > 0 },
@@ -435,6 +451,28 @@ const createHistoryApi = (getView: () => EditorView): EditorControlApi['history'
 /** Which type's editing UI is open, and how to redraw the views that show it. */
 export type OpenEditors = { type: string | null; repaint: () => void };
 
+/**
+ * A block with its content, as `insert` takes one: in place of an empty
+ * top-level block, or after the top-level block the caret is in, with the
+ * caret at its first place for text.
+ */
+const insertWhole = (view: EditorView, node: PmNode): void => {
+    const { $from } = view.state.selection;
+    const transaction = view.state.tr;
+    const top = $from.depth >= 1 ? $from.node(1) : null;
+    let position = view.state.doc.content.size;
+    if (top !== null && top.isTextblock && top.content.size === 0) {
+        position = $from.before(1);
+        transaction.replaceWith(position, $from.after(1), node);
+    } else {
+        position = top === null ? position : $from.after(1);
+        transaction.insert(position, node);
+    }
+    transaction.setSelection(Selection.near(transaction.doc.resolve(position + 1)));
+    view.dispatch(transaction.scrollIntoView());
+    view.focus();
+};
+
 /** The flat members act on the editor as a whole rather than on one kind of thing in it. */
 export const createControlApi = (
     getView: () => EditorView,
@@ -455,6 +493,10 @@ export const createControlApi = (
             return;
         }
         const view = getView();
+        if (!nodeType.isInline && value !== undefined && 'children' in value) {
+            insertWhole(view, blockToEngine({ ...value, type } as RteBlockNode, schema));
+            return;
+        }
         const transaction = view.state.tr;
         const { selection } = view.state;
         // A block goes in AFTER selected text rather than over it; a selected node is replaced.
