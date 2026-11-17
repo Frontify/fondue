@@ -4,31 +4,19 @@ import { createElement, type ReactNode } from 'react';
 
 import {
     type BlockDefinition,
-    type DefaultStyle,
     type EditorControlApi,
     type EditProps,
     type HtmlSpec,
     type InlineDefinition,
     isEmpty,
-    type MarkClearRule,
     type MarkDefinition,
-    type MarkParseRule,
-    type ParseRule,
     type PasteHandler,
     type RteBlockCommand,
     type RteBlockNode,
     type RteCommandAvailability,
-    type RteContent,
-    type RteEditView,
-    type RteIcon,
     type RteInlineNode,
     type RtePlugin as CorePlugin,
-    type RteMarkState,
     type RteSelectionSnapshot,
-    type RteToolbarEntry,
-    type RteToolbarGroup,
-    type RtePluginDefinition,
-    type StyleParseRule,
     type ToolbarItemProps,
     toPlainText as plainText,
     type ToPlainTextOptions,
@@ -145,6 +133,7 @@ export {
 export { type TextLook } from './core';
 export {
     type LinkLook,
+    type TextStyleContentOptions,
     type TextStyleName,
     type TextStylePluginOptions,
     type TextStylePresets,
@@ -153,12 +142,12 @@ export { type TypographyGroup, type TypographyPluginOptions } from './plugins/Ty
 
 // --- Plugin authoring ---
 
-export { ANY_LIST, defineBlock, defineContent, defineInline, defineMark, definePlugin } from './core';
+export { defineBlock, defineContent, defineInline, defineMark, definePlugin } from './core';
 
 /** A plugin. The types to write one with are nested: `RtePlugin.EditorControlApi`, `RtePlugin.BlockDefinition<T>`, … */
 export type RtePlugin = CorePlugin;
 
-// Aliases so a namespace member doesn't refer to itself (`type ParseRule<T> = ParseRule<T>`).
+// Aliases so a namespace member doesn't refer to itself (`type HtmlSpec = HtmlSpec`).
 type ControlApi = EditorControlApi;
 type ToolbarProps = ToolbarItemProps;
 type OnPaste = PasteHandler;
@@ -166,39 +155,21 @@ type BlockDef<TValue> = BlockDefinition<TValue>;
 type MarkDef<TValue> = MarkDefinition<TValue>;
 type InlineDef<TValue> = InlineDefinition<TValue>;
 type EditComponentProps<TValue, TCurrent> = EditProps<TValue, TCurrent>;
-type Parse<TValue> = ParseRule<TValue>;
-type MarkParse<TValue> = MarkParseRule<TValue>;
-type StyleParse<TValue> = StyleParseRule<TValue>;
-type MarkClear = MarkClearRule;
-type DefaultStyleType = DefaultStyle;
 type Html = HtmlSpec;
 
 // oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
 export declare namespace RtePlugin {
     export type EditorControlApi = ControlApi;
     export type SelectionSnapshot = RteSelectionSnapshot;
-    export type MarkState = RteMarkState;
-    export type BlockCommand = RteBlockCommand;
-    export type CommandAvailability = RteCommandAvailability;
     export type ToolbarItemProps = ToolbarProps;
-    export type ToolbarGroup = RteToolbarGroup;
-    export type PasteHandler = OnPaste;
+    export type EditProps<TValue, TCurrent = TValue> = EditComponentProps<TValue, TCurrent>;
+    export type BlockNode = RteBlockNode;
+    export type InlineNode = RteInlineNode;
     export type BlockDefinition<TValue = Record<string, unknown>> = BlockDef<TValue>;
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
-    export type EditProps<TValue, TCurrent = TValue> = EditComponentProps<TValue, TCurrent>;
-    export type ParseRule<TValue> = Parse<TValue>;
-    export type MarkParseRule<TValue> = MarkParse<TValue>;
-    export type StyleParseRule<TValue> = StyleParse<TValue>;
-    // A namespace member cannot take the name of the type it renames, so each of these needs an alias outside.
-    export type MarkClearRule = MarkClear; // NOSONAR
-    export type DefaultStyle = DefaultStyleType; // NOSONAR
+    export type BlockCommand = RteBlockCommand;
+    export type CommandAvailability = RteCommandAvailability;
+    export type PasteHandler = OnPaste;
     export type HtmlSpec = Html;
-    export type Content = RteContent;
-    export type ToolbarEntry = RteToolbarEntry;
-    export type EditView = RteEditView;
-    export type Icon = RteIcon;
-    export type Definition = RtePluginDefinition;
-    export type BlockNode = RteBlockNode;
-    export type InlineNode = RteInlineNode;
 }

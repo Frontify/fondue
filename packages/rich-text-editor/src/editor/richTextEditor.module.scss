@@ -18,11 +18,12 @@
 }
 
 /**
- * The toolbar row and the text. A layer of its own, so the row's z-index only
- * lifts it over the text scrolled under it, never over a tooltip or flyout
- * portalled to the page.
+ * The top toolbar, the notice and the content. Its own stacking context keeps
+ * the toolbar's z-index inside the editor: it lifts the toolbar over the text
+ * scrolling under it, but not over the page's menus and flyouts, which leave
+ * `z-index` unset and rely on coming later in the page.
  */
-.frame {
+.body {
     isolation: isolate;
 }
 
