@@ -1,20 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ComponentType, type ReactNode } from 'react';
-
 import { type DefaultStyle, defineContent, defineMark, definePlugin, type RteHotkey } from '#/core';
 
 import { withoutDecorationLine } from '../shared/helpers/declaredStyle';
-import { isLinkablePaste, LINKABLE_ADDRESS, toHref } from '../shared/helpers/href';
+import { isLinkablePaste, isSafeHref, LINKABLE_ADDRESS, toHref } from '../shared/helpers/href';
 
 import { LinkEditor } from './components/LinkEditor';
 import { LinkToolbarButton } from './components/LinkToolbarButton';
 import { LINKABLE_ADDRESS_TRIM } from './helpers/address';
 import { type LinkSearch } from './helpers/destination';
 import { openNewLinkForm } from './helpers/newLinkForms';
-import { NEW_TAB_NOTE_ATTRIBUTE, NEW_TAB_REL, NEW_TAB_TARGET } from './helpers/newTab';
-import { allowsHref, type LinkPolicy } from './helpers/policy';
-import { NEW_TAB_NOTE } from './helpers/strings';
+import { NEW_TAB_REL, NEW_TAB_TARGET } from './helpers/newTab';
 import { type LinkValue } from './helpers/value';
 import styles from './link.module.scss';
 
@@ -26,14 +22,12 @@ export type LinkMark = {
     link?: LinkValue;
 };
 
-export type LinkPluginOptions = LinkPolicy & {
+export type LinkPluginOptions = {
     /**
      * Offers the app's own pages as link targets while the author types. Editing only: the content never needs it.
      */
     search?: LinkSearch;
 };
-
-const NEW_TAB_NOTE_SELECTOR = `span[${NEW_TAB_NOTE_ATTRIBUTE}]`;
 
 const withoutUnderline = (value: string): string => withoutDecorationLine(value, 'underline');
 
@@ -42,12 +36,16 @@ const LINK_DEFAULT_STYLES: readonly DefaultStyle[] = [
     { property: 'text-decoration-line', scope: 'inside', strip: withoutUnderline },
 ];
 
-/**
- * A stored link as the reader and the export draw it: without its target when the policy refuses it.
- */
-type DrawnLink = { kind: 'refused' } | { kind: 'sameTab'; href: string } | { kind: 'newTab'; href: string };
+type LinkAnchorAttrs = {
+    href?: string;
+    target?: string;
+    rel?: string;
+};
 
-const drawnLink = (policy: LinkPolicy, value: unknown): DrawnLink => {
+/**
+ * A stored link's anchor attributes, without its target when that target is not safe.
+ */
+const anchorAttrs = (value: unknown): LinkAnchorAttrs => {
     // A stored document may hold anything here (`{}`, `true`), so its shape is not taken on trust.
     let link: Partial<LinkValue> | null = null;
     if (typeof value === 'object') {
@@ -55,149 +53,56 @@ const drawnLink = (policy: LinkPolicy, value: unknown): DrawnLink => {
         link = value as Partial<LinkValue> | null;
     }
     const href = link?.href;
-    if (!allowsHref(policy, href)) {
-        return { kind: 'refused' };
+    if (!isSafeHref(href)) {
+        return {};
     }
     if (link?.openInNewTab === true) {
-        return { kind: 'newTab', href };
+        return { href, target: NEW_TAB_TARGET, rel: NEW_TAB_REL };
     }
-    return { kind: 'sameTab', href };
+    return { href };
 };
 
 /**
- * Shared by the reader and the export, which each add the class themselves.
+ * Links as a mark on text, written as `<a href>`.
+ * Only web, mail, phone and relative targets count, so a `javascript:` URL is never clickable.
  */
-type LinkAnchorAttrs = {
-    href?: string;
-    target?: string;
-    rel?: string;
-};
+export const linkContent = defineContent({
+    marks: {
+        link: defineMark<LinkValue>({
+            // Outside every other mark, so a partly styled link renders as one anchor, not cut up by a colour or an emphasis inside.
+            nesting: -2,
+            // Typing at the end of a link does not extend it.
+            inclusive: false,
+            // Clearing formatting is about how text looks; where a link goes is not.
+            survivesClear: true,
 
-const anchorAttrs = (drawn: DrawnLink): LinkAnchorAttrs => {
-    switch (drawn.kind) {
-        case 'refused':
-            return {};
-        case 'sameTab':
-            return { href: drawn.href };
-        case 'newTab':
-            return { href: drawn.href, target: NEW_TAB_TARGET, rel: NEW_TAB_REL };
-    }
-};
-
-/**
- * The marker attribute on the hidden note, spread because JSX has no computed attribute names.
- */
-const NEW_TAB_NOTE_MARKER = { [NEW_TAB_NOTE_ATTRIBUTE]: '' };
-
-/**
- * The note only a screen reader hears, on a link that opens a new tab. Same wording as the editing panel.
- */
-const newTabNote = (drawn: DrawnLink): ReactNode => {
-    switch (drawn.kind) {
-        case 'refused':
-        case 'sameTab':
-            return null;
-        case 'newTab':
-            return (
-                <span className={styles.visuallyHidden} {...NEW_TAB_NOTE_MARKER}>
-                    {NEW_TAB_NOTE}
-                </span>
-            );
-    }
-};
-
-type LinkReaderProps = {
-    value: LinkValue;
-    children: ReactNode;
-    policy: LinkPolicy;
-};
-
-/**
- * A link in the reader: the export's markup, plus the new-tab note.
- */
-const LinkReader = ({ value, children, policy }: LinkReaderProps): ReactNode => {
-    const drawn = drawnLink(policy, value);
-    return (
-        // A refused link keeps its anchor without a target, as the export writes it.
-        <a {...anchorAttrs(drawn)} className={styles.link}>
-            {children}
-            {newTabNote(drawn)}
-        </a>
-    );
-};
-
-type BoundLinkReaderProps = Omit<LinkReaderProps, 'policy'>;
-
-/**
- * Keyed by policy, so a `linkPlugin()` created on every render keeps its links mounted and focused.
- */
-const readers = new Map<string, ComponentType<BoundLinkReaderProps>>();
-
-const readerFor = (policy: LinkPolicy): ComponentType<BoundLinkReaderProps> => {
-    const key = JSON.stringify([policy.allowedSchemes ?? null, policy.allowedHosts ?? null]);
-    const known = readers.get(key);
-    if (known !== undefined) {
-        return known;
-    }
-    const reader = (props: BoundLinkReaderProps): ReactNode => <LinkReader {...props} policy={policy} />;
-    readers.set(key, reader);
-    return reader;
-};
-
-/**
- * A link is a mark: the text stays text, and the target rides along on it.
- *
- * Only the links the policy allows are links: anything else pasted in stays
- * plain text, and a stored one is written out without its target, so a
- * `javascript:` URL is never clickable. By default that is any web, mail or
- * phone link, and any relative one.
- *
- * @example
- * const content = linkContent({ allowedSchemes: ['https'] });
- */
-export const linkContent = (policy: LinkPolicy = {}) =>
-    defineContent({
-        marks: {
-            link: defineMark<LinkValue>({
-                // Outside every other mark, so a partly styled link renders as one anchor, not cut up by a colour or an emphasis inside.
-                nesting: -2,
-                // Typing at the end of a link does not extend it.
-                inclusive: false,
-                // Clearing formatting is about how text looks; where a link goes is not.
-                survivesClear: true,
-
-                // With no text of its own, so a copy pasted back adds none.
-                toHtml: (value) => ({
-                    tag: 'a',
-                    attrs: { ...anchorAttrs(drawnLink(policy, value)), class: styles.link },
-                    children: true,
-                }),
-
-                render: { component: readerFor(policy) },
-
-                // A pasted span inside a link, such as Google Docs writes, repeats the underline the link already shows.
-                defaultStyles: LINK_DEFAULT_STYLES,
-
-                parse: [
-                    // The reader's hidden note is not link text when its markup is pasted back.
-                    { tag: NEW_TAB_NOTE_SELECTOR, ignore: true },
-                    {
-                        tag: 'a[href]',
-                        value: (element) => {
-                            const href = element.getAttribute('href') ?? '';
-                            if (!allowsHref(policy, href)) {
-                                return null;
-                            }
-                            if (element.getAttribute('target') === '_blank') {
-                                return { href, openInNewTab: true as const };
-                            }
-                            return { href };
-                        },
-                    },
-                ],
+            toHtml: (value) => ({
+                tag: 'a',
+                attrs: { ...anchorAttrs(value), class: styles.link },
+                children: true,
             }),
-        },
-    });
+
+            // A pasted span inside a link, such as Google Docs writes, repeats the underline the link already shows.
+            defaultStyles: LINK_DEFAULT_STYLES,
+
+            parse: [
+                {
+                    tag: 'a[href]',
+                    value: (element) => {
+                        const href = element.getAttribute('href') ?? '';
+                        if (!isSafeHref(href)) {
+                            return null;
+                        }
+                        if (element.getAttribute('target') === NEW_TAB_TARGET) {
+                            return { href, openInNewTab: true as const };
+                        }
+                        return { href };
+                    },
+                },
+            ],
+        }),
+    },
+});
 
 // The key is a literal because a computed key keeps this plugin in the renderer; HOTKEY's type ties it to this key.
 const hotkeys = {
@@ -222,36 +127,36 @@ const HOTKEY: keyof typeof hotkeys = 'Mod-k';
 /**
  * Links, made with a toolbar button or `Mod-k` and edited in a flyout while the caret is inside.
  * A web, mail or phone address followed by a space becomes a link, and pasting one links the
- * selected text, or goes in linked at a caret outside a link. The policy decides which links are
- * allowed, and `search` offers the app's own pages as targets.
+ * selected text, or goes in linked at a caret outside a link. `search` offers the app's own
+ * pages as targets.
  *
  * @example
- * const links = linkPlugin({ allowedSchemes: ['https', 'mailto'], search });
+ * const links = linkPlugin({ search });
  */
-export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) =>
+export const linkPlugin = ({ search }: LinkPluginOptions = {}) =>
     /* @__PURE__ */ definePlugin({
-        content: linkContent(policy),
+        content: linkContent,
         toolbarGroup: 'link',
         toolbar: [
             {
                 label: 'Link',
                 shortcut: HOTKEY,
-                render: (props) => <LinkToolbarButton {...props} policy={policy} search={search} />,
+                render: (props) => <LinkToolbarButton {...props} search={search} />,
             },
         ],
         edit: {
-            link: (props) => <LinkEditor {...props} policy={policy} search={search} />,
+            link: (props) => <LinkEditor {...props} search={search} />,
         },
         hotkeys,
-        // The pattern names only typed schemes, and the policy still decides which become links.
         inputRules: [
             {
                 kind: 'markPattern',
                 pattern: LINKABLE_ADDRESS,
                 mark: 'link',
                 trim: LINKABLE_ADDRESS_TRIM,
+                // The pattern names only safe schemes; the check still refuses an address too long to keep.
                 value: (href) => {
-                    if (allowsHref(policy, href)) {
+                    if (isSafeHref(href)) {
                         return { href };
                     }
                     return null;
@@ -265,7 +170,7 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) =>
             if (isLinkablePaste(typed)) {
                 href = toHref(typed);
             }
-            if (href === null || !allowsHref(policy, href)) {
+            if (href === null) {
                 return false;
             }
             if (isCollapsed) {
