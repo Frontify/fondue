@@ -1,0 +1,21 @@
+packages/rich-text-editor/src/renderer/documentTree.ts
+  s_8282e3f2640093::t_9fdb4e4810cb0f 241-249,262-265
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_8282e3f2640093::t_9fdb4e4810cb0f 231-265
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "58377f07c9d5a5ebd033d67ba19a79ea73e7604d",
+  "prompts": {},
+  "sessions": {
+    "s_8282e3f2640093": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "09e96eb6-2aed-4563-bae3-8725ecdaff1d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
