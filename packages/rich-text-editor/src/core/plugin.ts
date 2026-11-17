@@ -278,6 +278,12 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
     /** The block's markup. `children: true` is where its content goes. */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<Partial<TValue>>[];
+    /**
+     * The block's place in a grid: a block laid out in rows and columns that
+     * the editor edits as one, with a selection that spans slots, and keys
+     * that move from slot to slot. See `GridRole`.
+     */
+    gridRole?: GridRole;
     render?: {
         /**
          * Readonly view in place of `toHtml`. `style` carries what every text
@@ -285,6 +291,39 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
          */
         component?: ComponentType<{ value: TValue; children?: ReactNode; style?: CSSProperties }>;
     };
+};
+
+/**
+ * Where a block sits in a grid:
+ * - `'grid'`       → the grid itself; its content is `{ parts }` of `'row'` blocks
+ * - `'row'`        → one row; its content is `{ parts }` of slot blocks
+ * - `'slot'`       → one place in a row, holding `{ blocks }`
+ * - `'headerSlot'` → a slot that labels its row or column
+ *
+ * A slot that keeps its spans declares `colspan` and `rowspan` in its
+ * `defaults`; left out, they exist only while editing.
+ */
+export type GridRole = 'grid' | 'row' | 'slot' | 'headerSlot';
+
+const MAX_GRID_SPAN = 50;
+
+/** A slot's span, stored or from markup: a whole number from 1 to 50, 1 when unreadable. */
+const numberOf = (value: unknown): number => {
+    if (typeof value === 'number') {
+        return value;
+    }
+    if (typeof value === 'string') {
+        return Number.parseInt(value, 10);
+    }
+    return Number.NaN;
+};
+
+export const gridSpanOf = (value: unknown): number => {
+    const span = numberOf(value);
+    if (!Number.isFinite(span) || span < 1) {
+        return 1;
+    }
+    return Math.min(Math.floor(span), MAX_GRID_SPAN);
 };
 
 /**
