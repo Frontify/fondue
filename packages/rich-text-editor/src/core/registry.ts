@@ -37,7 +37,7 @@ export type OwnType =
     | { kind: 'mark'; type: string }
     /** A block holding items: `content: { items }`. */
     | { kind: 'list'; type: string }
-    /** A block holding other blocks, `content: { blocks }` — a list item. */
+    /** A block holding other blocks, `content: { blocks }` (a list item) or `content: { parts }` (a block made of fixed parts). */
     | { kind: 'container'; type: string }
     | { kind: 'textBlock'; type: string }
     /** A block holding nothing — a column break. */
@@ -124,7 +124,8 @@ const defaultFloatingPlacement = (own: OwnType): ToolbarEntry['floating'] =>
     own.kind === 'mark' ? 'inline' : 'hidden';
 
 /**
- * A block type, by what its content holds: nothing, text, items or other blocks.
+ * A block type, by what its content holds: nothing, text, items, or other
+ * blocks or parts. Neither of the last two is something a selection turns into.
  */
 const ownBlockTypeOf = (block: BlockDefinition, type: string): OwnType => {
     if (block.content === undefined) {

@@ -293,8 +293,14 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
  * - `'text'`        → text and inline elements (paragraph, quote, heading)
  * - `{ items }`     → a list of that item type
  * - `{ blocks }`    → those block types (a list item)
+ * - `{ parts }`     → one or more of those types, in any order, which exist
+ *                     only inside this block (the rows of a grid, the
+ *                     slots of a row).
+ *                     A part never stands on its own in the document and is
+ *                     never offered as something to insert or turn into.
+ *                     Unlike `{ items }`, the block is not a list.
  */
-export type ContentModel = 'text' | { items: string } | { blocks: readonly string[] };
+export type ContentModel = 'text' | { items: string } | { blocks: readonly string[] } | { parts: readonly string[] };
 
 /**
  * A mark that is only a tag: `tag` stands in for `toHtml` and, unless given, `parse`
