@@ -2,7 +2,7 @@
 
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/experimental-ct-react';
-import { type Page } from '@playwright/test';
+import { type Locator, type Page } from '@playwright/test';
 
 import { RichTextEditor, RichTextRenderer, type RteDocument } from '../../index';
 
@@ -249,6 +249,35 @@ test.describe('editor', () => {
         await page.keyboard.type('- item');
 
         await expect(editable.locator('ul > li')).toHaveText('item');
+    });
+});
+
+// Narrow enough that the top row moves some controls behind More.
+const NARROW_EDITOR_WIDTH = 360;
+
+/** Whether nothing else is drawn over the middle of the element. */
+const isOnTop = (element: Locator): Promise<boolean> =>
+    element.evaluate((node) => {
+        const box = node.getBoundingClientRect();
+        const hit = node.ownerDocument.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
+        return hit !== null && node.contains(hit);
+    });
+
+test.describe('toolbar', () => {
+    test('draws the tooltip of a control behind More over the top row', async ({ mount, page }) => {
+        await mount(
+            <div style={{ inlineSize: NARROW_EDITOR_WIDTH }}>
+                <RichTextEditor />
+            </div>,
+        );
+        await page.getByRole('textbox').click();
+        await page.getByRole('button', { name: 'More' }).focus();
+        // From the keyboard, the panel takes the focus, and the focused control shows its tooltip.
+        await page.keyboard.press('Enter');
+
+        const tooltip = page.getByRole('tooltip');
+        await expect(tooltip).toBeVisible();
+        expect(await isOnTop(tooltip)).toBe(true);
     });
 });
 

@@ -17,6 +17,15 @@
     display: contents;
 }
 
+/**
+ * The toolbar row and the text. A layer of its own, so the row's z-index only
+ * lifts it over the text scrolled under it, never over a tooltip or flyout
+ * portalled to the page.
+ */
+.frame {
+    isolation: isolate;
+}
+
 /** Why the content cannot be edited, kept off its first line like the toolbar. */
 .notice {
     margin-bottom: var(--spacing-x-small);
