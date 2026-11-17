@@ -142,18 +142,12 @@ describe('the table menu', () => {
         expect(itemNamed(items, 'Add header column')).toBeDefined();
     });
 
-    it('offers merging only over cells that can merge, and splitting only a merged cell, saying why', () => {
+    it('leaves out merging and splitting when the selection cannot be merged or split', () => {
         const items = openMenu(show(IN_TABLE, fakeGrid(shapeOf({}), { merge: false, split: false })));
 
-        const merge = itemNamed(items, 'Merge cells');
-        const split = itemNamed(items, 'Split cell');
-        expect(merge?.getAttribute('aria-disabled')).toBe('true');
-        expect(window.document.getElementById(merge?.getAttribute('aria-describedby') ?? '')?.textContent).toBe(
-            'Select two or more cells to merge',
-        );
-        expect(window.document.getElementById(split?.getAttribute('aria-describedby') ?? '')?.textContent).toBe(
-            'Only a merged cell can be split',
-        );
+        expect(itemNamed(items, 'Merge cells')).toBeUndefined();
+        expect(itemNamed(items, 'Split cell')).toBeUndefined();
+        expect(itemNamed(items, 'Delete table')).toBeDefined();
     });
 
     it('merges when it can', () => {
