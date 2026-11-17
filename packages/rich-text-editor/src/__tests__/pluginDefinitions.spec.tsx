@@ -23,7 +23,6 @@ import {
     columnBreakPlugin,
     defaultPlugins,
     mentionPlugin,
-    type MentionPluginOptions,
     numberedListPlugin,
     resetFormattingPlugin,
     RichTextRenderer,
@@ -187,105 +186,6 @@ describe('mentionPlugin', () => {
         expect(mentions.map((mention) => mention.querySelector('svg') !== null)).toEqual([false, true, false]);
         act(() => root.unmount());
     });
-
-    it('writes what the app resolves into the exported HTML, and the same as no resolver for unknown', () => {
-        const doc = {
-            version: 1 as const,
-            blocks: [
-                { type: 'paragraph', children: [{ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' }] },
-            ],
-        };
-        const written = (options: Omit<MentionPluginOptions, 'items'>): string =>
-            serializeToHtml(doc, {
-                plugins: [...defaultPlugins, mentionPlugin({ ...options, items: [] })],
-                wrap: false,
-            });
-
-        expect(written({ href: () => '/u' })).toContain('<bdi>@jane</bdi>');
-        expect(
-            written({ href: () => '/u', resolve: () => ({ status: 'current', username: 'j', name: 'J' }) }),
-        ).toContain('<bdi>@j</bdi>');
-        // Exports keep `@` and the label; the unavailable note is only for reading.
-        const unavailable = written({ href: () => '/u', resolve: () => ({ status: 'unavailable' }) });
-        expect(unavailable).toContain('<bdi>@jane</bdi>');
-        expect(unavailable).not.toContain('(unavailable)');
-        expect(written({ href: () => '/u', resolve: () => ({ status: 'unknown' }) })).toBe(
-            written({ href: () => '/u' }),
-        );
-    });
-
-    it('draws what the app resolves, isolated, and leaves the stored value as it was', () => {
-        const resolutions = {
-            ana: { status: 'current', username: 'ana.m', name: 'Ana Meier' },
-            bob: { status: 'unavailable' },
-            cy: { status: 'unknown' },
-        } as const;
-        const plugins = [
-            mentionPlugin({
-                items: [],
-                href: (mention) => `/u/${mention.id}`,
-                // The document below only mentions the ids that `resolutions` lists.
-                resolve: (mention) => resolutions[mention.id as keyof typeof resolutions],
-            }),
-        ];
-        const doc = {
-            version: 1 as const,
-            blocks: [
-                {
-                    type: 'paragraph',
-                    children: ['ana', 'bob', 'cy'].map((id) => ({
-                        type: 'mention',
-                        id,
-                        username: id,
-                        name: `Name ${id}`,
-                    })),
-                },
-            ],
-        };
-        const container = window.document.createElement('div');
-        const root = createRoot(container);
-
-        act(() => root.render(<RichTextRenderer value={doc} plugins={plugins} />));
-        const mentions = [...container.querySelectorAll('[data-mention-id]')];
-
-        expect(mentions.map((mention) => mention.tagName)).toEqual(['A', 'SPAN', 'A']);
-        expect(mentions.map((mention) => mention.textContent)).toEqual(['@ana.m', '@bob (unavailable)', '@cy']);
-        expect(mentions.map((mention) => mention.getAttribute('title'))).toEqual(['Ana Meier', 'Name bob', 'Name cy']);
-        expect(mentions.map((mention) => mention.querySelector('bdi')?.textContent)).toEqual(['@ana.m', '@bob', '@cy']);
-        expect(mentions.map((mention) => mention.getAttribute('data-mention-username'))).toEqual(['ana', 'bob', 'cy']);
-        expect(mentions.map((mention) => mention.getAttribute('data-mention-name'))).toEqual([
-            'Name ana',
-            'Name bob',
-            'Name cy',
-        ]);
-        act(() => root.unmount());
-    });
-
-    it('pastes back an empty stored name as empty, never the name shown', () => {
-        const plugins = [
-            mentionPlugin({
-                items: [],
-                href: (mention) => `/u/${mention.id}`,
-                resolve: () => ({ status: 'current', username: 'jj', name: 'Jane Smith' }),
-            }),
-        ];
-        const html = serializeToHtml(
-            {
-                version: 1,
-                blocks: [
-                    { type: 'paragraph', children: [{ type: 'mention', id: 'jane', username: 'jane', name: '' }] },
-                ],
-            },
-            { plugins },
-        );
-        const element = window.document.createElement('div');
-        element.innerHTML = html;
-        const anchor = element.querySelector<HTMLElement>('[data-mention-id]');
-
-        const parsed = plugins[0]?.content?.inlines?.mention?.parse[0]?.value?.(anchor as HTMLElement);
-
-        expect(parsed).toEqual({ id: 'jane', username: 'jane', name: '' });
-    });
 });
 
 describe('blurOnBreakPlugin', () => {
@@ -357,17 +257,15 @@ describe('blurOnBreakPlugin', () => {
 });
 
 describe('alignPlugin', () => {
-    const keyOf = (shortcut: string) => alignPlugin.hotkeys?.[shortcut]?.run;
-
     it.each([
-        ['Mod-Shift-l', 'left', 'Aligned left'],
-        ['Mod-Shift-e', 'center', 'Centered'],
-        ['Mod-Shift-r', 'right', 'Aligned right'],
-        ['Mod-Shift-j', 'justify', 'Justified'],
-    ])('%s sets %s on the selected blocks and says %s', (shortcut, value, announcement) => {
+        ['Align left', 'left', 'Aligned left'],
+        ['Align center', 'center', 'Centered'],
+        ['Align right', 'right', 'Aligned right'],
+        ['Justify', 'justify', 'Justified'],
+    ])('%s sets %s on the selected blocks and says %s', (name, value, announcement) => {
         const { api, calls } = recordingApi();
 
-        keyOf(shortcut)?.(api);
+        clickToolbarButton({ plugin: alignPlugin, api, name });
 
         expect(calls).toEqual([`blocks.updateAttributes {"align":"${value}"}`, `announce ${announcement}`]);
     });
@@ -375,7 +273,7 @@ describe('alignPlugin', () => {
     it('clears the alignment when the block the selection starts in already has it, and says so', () => {
         const { api, calls } = recordingApi({ align: 'center' });
 
-        keyOf('Mod-Shift-e')?.(api);
+        clickToolbarButton({ plugin: alignPlugin, api, name: 'Align center' });
 
         expect(calls).toEqual(['blocks.updateAttributes {"align":null}', 'announce Alignment cleared']);
     });
@@ -383,7 +281,7 @@ describe('alignPlugin', () => {
     it('sets the alignment when that block has another one', () => {
         const { api, calls } = recordingApi({ align: 'left' });
 
-        keyOf('Mod-Shift-e')?.(api);
+        clickToolbarButton({ plugin: alignPlugin, api, name: 'Align center' });
 
         expect(calls).toEqual(['blocks.updateAttributes {"align":"center"}', 'announce Centered']);
     });
@@ -391,46 +289,13 @@ describe('alignPlugin', () => {
     it('says nothing when no block changed', () => {
         const { api, calls } = recordingApi({ reportsChange: false });
 
-        keyOf('Mod-Shift-e')?.(api);
+        clickToolbarButton({ plugin: alignPlugin, api, name: 'Align center' });
 
         expect(calls).toEqual(['blocks.updateAttributes {"align":"center"}']);
-    });
-
-    it('does with a toolbar button what its key does', () => {
-        const pressed = recordingApi();
-        const cleared = recordingApi({ align: 'center' });
-        const plugin = alignPlugin;
-
-        clickToolbarButton({ plugin, api: pressed.api, name: 'Align center' });
-        clickToolbarButton({ plugin, api: cleared.api, name: 'Align center' });
-
-        expect(pressed.calls).toEqual(['blocks.updateAttributes {"align":"center"}', 'announce Centered']);
-        expect(cleared.calls).toEqual(['blocks.updateAttributes {"align":null}', 'announce Alignment cleared']);
     });
 });
 
 describe('resetFormattingPlugin', () => {
-    const clearKey = () => resetFormattingPlugin.hotkeys?.['Mod-\\']?.run;
-
-    it('clears the marks of the block with Mod-\\, those that survive a clear excepted, and says so', () => {
-        const { api, calls } = recordingApi();
-
-        clearKey()?.(api);
-
-        expect(calls).toEqual([
-            'marks.removeAll {"scope":"block","keepSurviving":true}',
-            'announce Formatting cleared',
-        ]);
-    });
-
-    it('says nothing when Mod-\\ removed no mark', () => {
-        const { api, calls } = recordingApi({ reportsChange: false });
-
-        clearKey()?.(api);
-
-        expect(calls).toEqual(['marks.removeAll {"scope":"block","keepSurviving":true}']);
-    });
-
     it('resets the marks, the block type and the attributes with its button, as one group, and says so', () => {
         const { api, calls } = recordingApi();
 

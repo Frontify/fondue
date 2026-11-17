@@ -107,4 +107,3 @@ export {
     PARAGRAPH,
     WORD_START_CONTEXT,
 } from './vocabulary';
-export { warnOnce } from './warnings';

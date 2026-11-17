@@ -53,13 +53,6 @@ export const MentionLink = ({ value, display, placesCaret }: MentionLinkProps): 
         case 'text':
             element = <span {...attributes}>{name}</span>;
             break;
-        case 'unavailable':
-            element = (
-                <span {...attributes}>
-                    {name} {display.note}
-                </span>
-            );
-            break;
         default:
             // Adding a display status fails to compile here until it is handled.
             throw new Error(`Unhandled mention display: ${JSON.stringify(display satisfies never)}`);

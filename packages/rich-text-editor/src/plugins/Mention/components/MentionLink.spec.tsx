@@ -22,7 +22,6 @@ declare global {
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 const JANE = { id: 'jane', username: 'jane', name: 'Jane Doe' };
-const resolve = () => ({ status: 'unavailable' }) as const;
 
 const teardown: (() => void)[] = [];
 afterEach(() => {
@@ -43,20 +42,20 @@ const mount = (node: ReactNode): HTMLElement => {
     return container;
 };
 
-describe('an unavailable mention', () => {
-    const display = mentionDisplay(JANE, { resolve, trigger: '@' });
-
-    it('is text with the note after its isolated name, and no tab stop', () => {
-        const container = mount(<MentionLink value={JANE} display={display} placesCaret={false} />);
+describe('a mention with nowhere to link to', () => {
+    it('is text with its name isolated, and no tab stop', () => {
+        const container = mount(
+            <MentionLink value={JANE} display={mentionDisplay(JANE, { trigger: '@' })} placesCaret={false} />,
+        );
         const mention = container.querySelector('span[data-mention-id]');
 
-        expect(mention?.textContent).toBe('@jane (unavailable)');
+        expect(mention?.textContent).toBe('@jane');
         expect(mention?.querySelector('bdi')?.textContent).toBe('@jane');
         expect(mention?.hasAttribute('tabindex')).toBe(false);
     });
 
     it('stays out of the tab order in the reading view', () => {
-        const Component = mentionContent({ resolve }).inlines?.mention?.render?.component;
+        const Component = mentionContent().inlines?.mention?.render?.component;
         if (!Component) {
             throw new Error('no reading view');
         }
@@ -92,7 +91,6 @@ describe('a click on a linked mention', () => {
                 items={() => []}
                 trigger="@"
                 href={href}
-                resolve={undefined}
             />,
         );
 

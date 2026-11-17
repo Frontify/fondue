@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import { type MentionResolve, type MentionValue } from '../types';
+import { type MentionValue } from '../types';
 
 import { mentionAttributes, mentionDisplay } from './display';
 
@@ -10,34 +10,12 @@ const JANE: MentionValue = { id: 'jane', username: 'jane', name: 'Jane Doe' };
 const href = (mention: MentionValue): string => `/u/${mention.id}`;
 
 describe('mentionDisplay', () => {
-    afterEach(() => {
-        vi.restoreAllMocks();
-    });
-
-    it('shows the stored value with no resolver, or one that does not know', () => {
-        const stored = { status: 'linked', label: '@jane', title: 'Jane Doe', href: '/u/jane' };
-
-        expect(mentionDisplay(JANE, { href, trigger: '@' })).toEqual(stored);
-        expect(mentionDisplay(JANE, { href, trigger: '@', resolve: () => ({ status: 'unknown' }) })).toEqual(stored);
-    });
-
-    it('shows the current username and name, linking to the stored id', () => {
-        const resolve = () => ({ status: 'current', username: 'jane.s', name: 'Jane Smith' }) as const;
-
-        expect(mentionDisplay(JANE, { href, trigger: '#', resolve })).toEqual({
+    it('shows the stored username after the trigger, linking to the stored id', () => {
+        expect(mentionDisplay(JANE, { href, trigger: '#' })).toEqual({
             status: 'linked',
-            label: '#jane.s',
-            title: 'Jane Smith',
-            href: '/u/jane',
-        });
-    });
-
-    it('shows the stored username as unavailable, with its stored name and no link', () => {
-        expect(mentionDisplay(JANE, { href, trigger: '@', resolve: () => ({ status: 'unavailable' }) })).toEqual({
-            status: 'unavailable',
-            label: '@jane',
-            note: '(unavailable)',
+            label: '#jane',
             title: 'Jane Doe',
+            href: '/u/jane',
         });
     });
 
@@ -47,42 +25,10 @@ describe('mentionDisplay', () => {
         expect(mentionDisplay(JANE, { trigger: '@', href: () => 'javascript:alert(1)' }).status).toBe('text');
     });
 
-    it('removes control and bidirectional characters from what it shows, stored or resolved', () => {
+    it('removes control and bidirectional characters from what it shows', () => {
         const dirty = { id: 'x', username: 'a\u202Eb\u001B', name: 'N\u2066ame' };
 
         expect(mentionDisplay(dirty, { trigger: '@' })).toMatchObject({ label: '@ab', title: 'Name' });
-        expect(
-            mentionDisplay(dirty, {
-                trigger: '@',
-                resolve: () => ({ status: 'current', username: 'c\u202Ad', name: 'E\u0007f' }),
-            }),
-        ).toMatchObject({ label: '@cd', title: 'Ef' });
-    });
-
-    it('keeps the stored value when the current username is empty once cleaned', () => {
-        expect(
-            mentionDisplay(JANE, {
-                trigger: '@',
-                resolve: () => ({ status: 'current', username: '\u202E', name: 'X' }),
-            }),
-        ).toMatchObject({ label: '@jane', title: 'Jane Doe' });
-    });
-
-    it('does not catch a resolver that throws, so the error reaches the app', () => {
-        const resolve = () => {
-            throw new Error('offline');
-        };
-
-        expect(() => mentionDisplay(JANE, { href, trigger: '@', resolve })).toThrow('offline');
-    });
-
-    it('shows the stored value for a resolver answer with no known status', () => {
-        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-        // A resolver written in JS can answer anything.
-        const resolve = (() => ({ status: 'renamed' })) as unknown as MentionResolve;
-
-        expect(mentionDisplay({ ...JANE, id: 'odd' }, { trigger: '@', resolve }).label).toBe('@jane');
-        expect(warn).toHaveBeenCalledOnce();
     });
 
     it('names an empty stored username by its kind instead of a bare trigger', () => {
@@ -91,9 +37,6 @@ describe('mentionDisplay', () => {
         expect(mentionDisplay(empty, { trigger: '@' }).label).toBe('Unknown person');
         expect(mentionDisplay({ ...empty, kind: 'group' }, { trigger: '@' }).label).toBe('Unknown group');
         expect(mentionDisplay({ ...empty, kind: 'all' }, { trigger: '@' }).label).toBe('Unknown mention');
-        expect(mentionDisplay(empty, { trigger: '@', resolve: () => ({ status: 'unavailable' }) }).label).toBe(
-            'Unknown person',
-        );
     });
 
     // Stored documents are not validated, so a field can be missing or the wrong type.
