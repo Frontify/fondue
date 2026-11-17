@@ -900,7 +900,8 @@ export const Table: Story = {
             <div className={LAYOUT}>
                 <p className={HINT}>
                     Type / on the empty line for Table. Tab moves between cells. With the caret in a table, the Table
-                    button in the toolbar adds and deletes rows and columns and toggles the headers.
+                    button in the toolbar adds and deletes rows and columns and toggles the headers. Drag across cells
+                    and choose Merge cells to merge them; Split cell takes a merged cell apart.
                 </p>
                 <div className="tw-flex tw-flex-col tw-gap-4">
                     <div className={FRAME}>

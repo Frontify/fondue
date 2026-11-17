@@ -21,7 +21,9 @@ import {
     deleteTable as removeGrid,
     goToNextCell as goToNextSlot,
     isInTable as isInGrid,
+    mergeCells as mergeSlots,
     selectedRect,
+    splitCell as splitSlot,
     tableEditing as engineGridEditing,
     TableMap as GridMap,
     toggleHeader,
@@ -242,5 +244,10 @@ export const createGridApi = (getView: () => EditorView): EditorControlApi['grid
         removeSelected: (axis) => run(REMOVE_SELECTED[axis]),
         removeGrid: () => run(removeGrid),
         toggleHeader: (axis) => run(toggleHeader(axis)),
+        mergeSlots: () => run(mergeSlots),
+        splitSlot: () => run(splitSlot),
+        // Without a dispatch, a command only says whether it would apply.
+        canMergeSlots: () => mergeSlots(getView().state),
+        canSplitSlot: () => splitSlot(getView().state),
     };
 };

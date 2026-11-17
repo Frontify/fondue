@@ -2,13 +2,14 @@
 
 import { Dropdown } from '@frontify/fondue-components';
 import { IconTable } from '@frontify/fondue-icons';
-import { type ReactNode } from 'react';
+import { type ReactNode, useId } from 'react';
 
 import { type EditorControlApi, type RteSelectionSnapshot } from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
+import styles from '../table.module.scss';
 
 /** Until the editor's locale files exist, like every shipped plugin. */
 const TEXT = {
@@ -24,9 +25,15 @@ const TEXT = {
     addHeaderColumn: 'Add header column',
     removeHeaderColumn: 'Remove header column',
     deleteTable: 'Delete table',
+    mergeCells: 'Merge cells',
+    splitCell: 'Split cell',
+    // Written for the common case, fewer than two selected; also shown when a
+    // merged cell sticks out of the selection.
+    cannotMerge: 'Select two or more cells to merge',
+    cannotSplit: 'Only a merged cell can be split',
 } as const;
 
-type MenuItem = { id: string; label: string; run: () => void; isAvailable?: boolean };
+type MenuItem = { id: string; label: string; run: () => void; isAvailable?: boolean; reason?: string };
 
 type TableMenuProps = {
     api: EditorControlApi;
@@ -58,6 +65,18 @@ const menuItems = (api: EditorControlApi, shape: Shape): MenuItem[] => [
         isAvailable: shape.selectedRows < shape.rows,
     },
     {
+        id: 'merge-cells',
+        label: TEXT.mergeCells,
+        run: () => api.grid.mergeSlots(),
+        reason: api.grid.canMergeSlots() ? undefined : TEXT.cannotMerge,
+    },
+    {
+        id: 'split-cell',
+        label: TEXT.splitCell,
+        run: () => api.grid.splitSlot(),
+        reason: api.grid.canSplitSlot() ? undefined : TEXT.cannotSplit,
+    },
+    {
         id: 'header-row',
         label: shape.headerRow ? TEXT.removeHeaderRow : TEXT.addHeaderRow,
         run: () => api.grid.toggleHeader('row'),
@@ -72,6 +91,7 @@ const menuItems = (api: EditorControlApi, shape: Shape): MenuItem[] => [
 
 /** Shown only while the selection is in a table. */
 export const TableMenu = ({ api, selection }: TableMenuProps): ReactNode => {
+    const menuId = useId();
     const { returnToText, contentProps } = useFocusAfterClose(api);
     // `shape()` answers for any grid; this keeps the menu to tables.
     if (!selection.blocks.some((block) => block.type === 'table')) {
@@ -91,18 +111,38 @@ export const TableMenu = ({ api, selection }: TableMenuProps): ReactNode => {
                 </ToolbarButton>
             </Dropdown.Trigger>
             <Dropdown.Content {...contentProps} onEscapeKeyDown={returnToText}>
-                {items.map((item) => (
-                    <Dropdown.Item
-                        key={item.id}
-                        textValue={item.label}
-                        onSelect={() => {
-                            returnToText();
-                            item.run();
-                        }}
-                    >
-                        <span>{item.label}</span>
-                    </Dropdown.Item>
-                ))}
+                {items.map((item) => {
+                    const reasonId = `${menuId}-${item.id}-reason`;
+                    return (
+                        <Dropdown.Item
+                            key={item.id}
+                            textValue={item.label}
+                            // Not `disabled`: that takes it out of the arrow-key order, and
+                            // the reason would never be read. Listed, reachable, inert.
+                            aria-disabled={item.reason === undefined ? undefined : true}
+                            aria-describedby={item.reason === undefined ? undefined : reasonId}
+                            onSelect={(event) => {
+                                if (item.reason !== undefined) {
+                                    event.preventDefault();
+                                    return;
+                                }
+                                returnToText();
+                                item.run();
+                            }}
+                        >
+                            {item.reason === undefined ? (
+                                <span>{item.label}</span>
+                            ) : (
+                                <span className={styles.unavailable}>
+                                    <span>{item.label}</span>
+                                    <span id={reasonId} className={styles.reason}>
+                                        {item.reason}
+                                    </span>
+                                </span>
+                            )}
+                        </Dropdown.Item>
+                    );
+                })}
             </Dropdown.Content>
         </Dropdown.Root>
     );

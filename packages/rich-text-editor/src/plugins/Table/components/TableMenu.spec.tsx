@@ -49,12 +49,16 @@ const shapeOf = (shape: Partial<Shape>): Shape => ({
     ...shape,
 });
 
-const fakeGrid = (shape: Shape | null) => ({
+const fakeGrid = (shape: Shape | null, can = { merge: true, split: true }) => ({
     shape: () => shape,
     add: vi.fn(() => true),
     removeSelected: vi.fn(() => true),
     removeGrid: vi.fn(() => true),
     toggleHeader: vi.fn(() => true),
+    mergeSlots: vi.fn(() => true),
+    splitSlot: vi.fn(() => true),
+    canMergeSlots: () => can.merge,
+    canSplitSlot: () => can.split,
 });
 
 const show = (selection: RteSelectionSnapshot, grid: ReturnType<typeof fakeGrid>) => {
@@ -106,6 +110,8 @@ describe('the table menu', () => {
             'Insert row below',
             'Delete column',
             'Delete row',
+            'Merge cells',
+            'Split cell',
             'Add header row',
             'Add header column',
             'Delete table',
@@ -134,5 +140,36 @@ describe('the table menu', () => {
 
         expect(itemNamed(items, 'Remove header row')).toBeDefined();
         expect(itemNamed(items, 'Add header column')).toBeDefined();
+    });
+
+    it('offers merging only over cells that can merge, and splitting only a merged cell, saying why', () => {
+        const items = openMenu(show(IN_TABLE, fakeGrid(shapeOf({}), { merge: false, split: false })));
+
+        const merge = itemNamed(items, 'Merge cells');
+        const split = itemNamed(items, 'Split cell');
+        expect(merge?.getAttribute('aria-disabled')).toBe('true');
+        expect(window.document.getElementById(merge?.getAttribute('aria-describedby') ?? '')?.textContent).toBe(
+            'Select two or more cells to merge',
+        );
+        expect(window.document.getElementById(split?.getAttribute('aria-describedby') ?? '')?.textContent).toBe(
+            'Only a merged cell can be split',
+        );
+    });
+
+    it('merges when it can', () => {
+        const grid = fakeGrid(shapeOf({}));
+        const items = openMenu(show(IN_TABLE, grid));
+
+        act(() => itemNamed(items, 'Merge cells')?.click());
+        expect(grid.mergeSlots).toHaveBeenCalledTimes(1);
+        expect(grid.splitSlot).not.toHaveBeenCalled();
+    });
+
+    it('splits when it can', () => {
+        const grid = fakeGrid(shapeOf({}));
+        const split = itemNamed(openMenu(show(IN_TABLE, grid)), 'Split cell');
+
+        act(() => split?.click());
+        expect(grid.splitSlot).toHaveBeenCalledTimes(1);
     });
 });
