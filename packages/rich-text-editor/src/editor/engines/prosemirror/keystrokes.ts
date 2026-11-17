@@ -1,6 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { baseKeymap, setBlockType } from 'prosemirror-commands';
+import {
+    baseKeymap,
+    chainCommands,
+    createParagraphNear,
+    liftEmptyBlock,
+    newlineInCode,
+    setBlockType,
+    splitBlock,
+} from 'prosemirror-commands';
 import { history, redo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
@@ -20,9 +28,10 @@ import {
 } from '#/core';
 
 import { autolinkOnEnter, markPatternRule } from './autolink';
-import { keepCarriedAttrs, undoStep } from './controlApi';
+import { keepCarriedAttrs, withCarriedAttrs } from './carriedAttrs';
+import { undoStep } from './controlApi';
 import { EXTRA_ATTR } from './documentConversion';
-import { listKeys } from './lists';
+import { deleteEmptyBlockBesideList, listKeys } from './lists';
 import {
     type RuleContext,
     type RuleHandler,
@@ -48,7 +57,9 @@ import {
  *    key lists would claim (`blurOnBreak` takes Enter).
  * 4. List keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
  * 5. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`); held until a composition ends.
- * 6. Baseline keymap, plus Backspace resetting an emptied first heading.
+ * 6. Enter keeping the attributes every text block carries, then the baseline
+ *    keymap, plus Backspace resetting an emptied first heading, and Backspace
+ *    or Delete removing an empty line beside a list instead of wrapping it into the list.
  *
  * Mark input rules build their own transaction instead of calling
  * `api.marks.toggle`, because the input-rule machinery owns undo grouping.
@@ -76,7 +87,14 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         // 5
         ...typingRewrites(registry, schema),
         // 6
-        keymap({ Backspace: resetEmptyFirstBlock }),
+        keymap({
+            Backspace: chainCommands(
+                resetEmptyFirstBlock,
+                deleteEmptyBlockBesideList(registry.itemTypeByList, 'backward'),
+            ),
+            Delete: deleteEmptyBlockBesideList(registry.itemTypeByList, 'forward'),
+            Enter: splitKeepingCarriedAttrs(registry),
+        }),
         keymap(baseKeymap),
     ].map(ignoringTextEntryKeys);
 };
@@ -483,6 +501,36 @@ const runEndTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRu
 };
 
 // Baseline
+
+/** The engine's split drops alignment on the paragraph after a block's end and on the empty block above a heading's start. */
+const splitKeepingCarriedAttrs =
+    (registry: PluginRegistry): Command =>
+    (state, dispatch) => {
+        // Over a range the text that stays is the block the range ends in, so that block decides.
+        const source = state.selection.$to.parent;
+        const split: Command = (splitState, splitDispatch) => {
+            if (!splitDispatch) {
+                return splitBlock(splitState);
+            }
+            return splitBlock(splitState, (transaction) => {
+                const { $from } = transaction.selection;
+                const below = $from.parent;
+                const above = transaction.doc.resolve($from.before()).nodeBefore;
+                const belowAttrs = withCarriedAttrs(registry, below, source);
+                if (belowAttrs) {
+                    transaction.setNodeMarkup($from.before(), undefined, belowAttrs);
+                }
+                if (above?.isTextblock) {
+                    const aboveAttrs = withCarriedAttrs(registry, above, source);
+                    if (aboveAttrs) {
+                        transaction.setNodeMarkup($from.before() - above.nodeSize, undefined, aboveAttrs);
+                    }
+                }
+                splitDispatch(transaction);
+            });
+        };
+        return chainCommands(newlineInCode, createParagraphNear, liftEmptyBlock, split)(state, dispatch);
+    };
 
 /**
  * Backspace in an emptied block at the very top that is not the default block
