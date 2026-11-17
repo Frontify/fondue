@@ -11,18 +11,31 @@ export type PeopleOutcome = { status: 'found'; people: readonly MentionItem[] } 
 
 type Answer = { query: string; attempt: number; outcome: PeopleOutcome };
 
+/** `asking` is a lookup for a query with no answer yet; `retrying` asks again for the query that was answered. */
+export type PeopleLookup = 'settled' | 'asking' | 'retrying';
+
+const lookupOf = (answer: Answer | null, query: string, attempt: number): PeopleLookup => {
+    if (answer === null || answer.query !== query) {
+        return 'asking';
+    }
+    if (answer.attempt !== attempt) {
+        return 'retrying';
+    }
+    return 'settled';
+};
+
 export type UsePeopleResult = {
     /**
-     * The latest outcome, kept while a newer lookup is pending; `null` before the first.
+     * The latest outcome, kept while a newer lookup runs; `null` before the first.
      */
     outcome: PeopleOutcome | null;
-    pending: boolean;
+    lookup: PeopleLookup;
     retry: () => void;
 };
 
 /**
  * The people for a query. Answers are tagged with query and attempt so a slow one never overwrites a newer one; the
- * last outcome stays up while `pending`, so a server-backed list does not flicker on every key. `retry` asks again.
+ * last outcome stays up while a lookup runs, so a server-backed list does not flicker on every key. `retry` asks again.
  */
 export const usePeople = (items: MentionItems, query: string): UsePeopleResult => {
     const [answer, setAnswer] = useState<Answer | null>(null);
@@ -51,7 +64,7 @@ export const usePeople = (items: MentionItems, query: string): UsePeopleResult =
 
     return {
         outcome: answer?.outcome ?? null,
-        pending: answer === null || answer.query !== query || answer.attempt !== attempt,
+        lookup: lookupOf(answer, query, attempt),
         retry,
     };
 };
