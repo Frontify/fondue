@@ -8,14 +8,7 @@ import {
     IconTextAlignmentRight,
 } from '@frontify/fondue-icons';
 
-import {
-    defineContent,
-    definePlugin,
-    type EditorControlApi,
-    type RteSelectionSnapshot,
-    type StyleMap,
-    type ToolbarItemProps,
-} from '#/core';
+import { defineContent, definePlugin, type StyleMap, type ToolbarItemProps } from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
@@ -54,56 +47,19 @@ export const alignContent = defineContent({
     },
 });
 
-type AlignValue = NonNullable<AlignAttribute['align']>;
-
-type Alignment = {
-    value: AlignValue;
-    icon: FondueIcon;
-    title: string;
-};
-
-const ALIGNMENTS: readonly Alignment[] = [
+const ALIGNMENTS: readonly { value: NonNullable<AlignAttribute['align']>; icon: FondueIcon; title: string }[] = [
     { value: 'left', icon: IconTextAlignmentLeft, title: 'Align left' },
     { value: 'center', icon: IconTextAlignmentCentre, title: 'Align center' },
     { value: 'right', icon: IconTextAlignmentRight, title: 'Align right' },
     { value: 'justify', icon: IconTextAlignmentJustify, title: 'Justify' },
 ];
 
-/** What the alignment buttons say to screen readers: the alignment chosen, or that it was removed. */
-const ALIGN_STRINGS = Object.freeze({
-    left: 'Aligned left',
-    center: 'Centered',
-    right: 'Aligned right',
-    justify: 'Justified',
-    cleared: 'Alignment cleared',
-});
-
-const alignOf = ({ block }: RteSelectionSnapshot): AlignAttribute['align'] =>
-    // The block carries the attribute this plugin added, which the structural node type does not know about.
-    (block as AlignAttribute | null)?.align;
-
-type ChooseAlignmentParams = {
-    api: EditorControlApi;
-    value: AlignValue;
-};
-
-const chooseAlignment = ({ api, value }: ChooseAlignmentParams): void => {
-    let next: AlignValue | null = value;
-    let announcement: string = ALIGN_STRINGS[value];
-    // Choosing the alignment already set clears it, so the block inherits the editor's direction again.
-    if (alignOf(api.selection.get()) === value) {
-        next = null;
-        announcement = ALIGN_STRINGS.cleared;
-    }
-    // Nothing to say when no selected block can be aligned: a screen reader user would hear a change that did not happen.
-    if (api.blocks.updateAttributes({ align: next })) {
-        api.announce(announcement);
-    }
-};
-
 const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
+    // The block the selection is in carries the attribute this plugin
+    // added, which the structural node type does not know about.
+    const align = (selection.block as AlignAttribute | null)?.align;
     // A block without one reads left to right, so left is what it shows.
-    const current = alignOf(selection) ?? 'left';
+    const current = align ?? 'left';
     return (
         // One choice of four, so a radio group: the checked one is the
         // block's alignment.
@@ -116,8 +72,14 @@ const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
                     role="radio"
                     aria-checked={current === value}
                     title={title}
+                    // Choosing the alignment already set clears it, so the
+                    // block inherits the editor's direction again.
                     onClick={() => {
-                        chooseAlignment({ api, value });
+                        let next: typeof value | null = value;
+                        if (align === value) {
+                            next = null;
+                        }
+                        api.blocks.updateAttributes({ align: next });
                     }}
                 >
                     <Icon size={TOOLBAR_ICON_SIZE} />

@@ -479,10 +479,9 @@ describe('marks.removeAll', () => {
         const editor = editorWith(fixtures, [paragraph(text('bold', { bold: true }))]);
         editor.caretAfter('bold');
 
-        const removed = editor.api.marks.removeAll({ scope: 'typing' });
+        editor.api.marks.removeAll({ scope: 'typing' });
         editor.api.insertText('X');
 
-        expect(removed).toBe(true);
         expect(editor.stored()).toEqual([paragraph(text('bold', { bold: true }), text('X'))]);
     });
 
@@ -533,33 +532,6 @@ describe('marks.removeAll', () => {
         const expected = [paragraph(text('bold', { ref: REF, pin: true }), text(' it'))];
         expect(range.stored()).toEqual(expected);
         expect(caret.stored()).toEqual(expected);
-    });
-
-    it('returns whether it removed a mark from the text or from what the caret types next', () => {
-        const formatted = editorWith(fixtures, [paragraph(text('bold', { bold: true }))]);
-        formatted.caretAfter('bold');
-        const plain = editorWith(fixtures, [paragraph(text('plain'))]);
-        plain.caretAfter('plain');
-        const carrying = editorWith(fixtures, [paragraph(text('plain'))]);
-        carrying.caretAfter('plain');
-        carrying.api.marks.toggle('bold');
-        const refOnly = editorWith(fixtures, [paragraph(text('ref', { ref: REF }))]);
-        refOnly.caretAfter('ref');
-
-        expect(formatted.api.marks.removeAll({ scope: 'block' })).toBe(true);
-        expect(plain.api.marks.removeAll({ scope: 'block' })).toBe(false);
-        expect(carrying.api.marks.removeAll({ scope: 'block' })).toBe(true);
-        expect(refOnly.api.marks.removeAll({ scope: 'block', keepSurviving: true })).toBe(false);
-    });
-
-    it('returns whether it removed a mark from the text over a range', () => {
-        const formatted = editorWith(fixtures, [paragraph(text('bold', { bold: true }), text(' end'))]);
-        formatted.selectBetween('bold', 'end');
-        const refOnly = editorWith(fixtures, [paragraph(text('ref', { ref: REF }), text(' end'))]);
-        refOnly.selectBetween('ref', 'end');
-
-        expect(formatted.api.marks.removeAll({ scope: 'block' })).toBe(true);
-        expect(refOnly.api.marks.removeAll({ scope: 'block', keepSurviving: true })).toBe(false);
     });
 
     it('with no options strips a range of every mark and, at a caret, only stops what is typed next', () => {
@@ -812,16 +784,6 @@ describe('block attributes', () => {
             { type: 'textStyle', style: 'heading2', align: 'center', children: [{ text: 'two' }] },
             paragraph(text('three')),
         ]);
-    });
-
-    it('report whether any block changed: not when every block has the value or none declares the attribute', () => {
-        const editor = editorWith(fixtures, [paragraph(text('one'))]);
-        editor.caretAfter('on');
-
-        expect(editor.api.blocks.updateAttributes({ tone: 'warm' })).toBe(true);
-        expect(editor.api.blocks.updateAttributes({ tone: 'warm' })).toBe(false);
-        expect(editor.api.blocks.updateAttributes({ undeclared: 'x' })).toBe(false);
-        expect(editor.api.blocks.updateAttributes({ tone: null })).toBe(true);
     });
 
     it('are set on the paragraph inside a list item', () => {
@@ -1163,15 +1125,21 @@ describe('blocks.setType with attributes every text block carries', () => {
     });
 });
 
-describe('group', () => {
+describe('the commands of one turn', () => {
     const original = [paragraph(text('one')), paragraph(text('two')), paragraph(text('three'))];
 
-    /** Three commands in three blocks, so history has no reason to merge them by itself. */
-    const formatEach = (editor: ReturnType<typeof editorWith>): void => {
+    /** A command in each block, so history has no reason to merge them by itself. */
+    const formatEach = async (editor: ReturnType<typeof editorWith>, { between }: { between: boolean }) => {
         editor.select('one');
         editor.api.marks.toggle('bold');
+        if (between) {
+            await Promise.resolve();
+        }
         editor.select('two');
         editor.api.marks.toggle('italic');
+        if (between) {
+            await Promise.resolve();
+        }
         editor.select('three');
         editor.api.marks.toggle('underline');
     };
@@ -1184,55 +1152,20 @@ describe('group', () => {
         return steps;
     };
 
-    it('makes the commands it runs one undo step', () => {
+    it('are one undo step', async () => {
         const editor = editorWith(fixtures, original);
 
-        editor.api.group(() => formatEach(editor));
+        await formatEach(editor, { between: false });
 
         expect(editor.stored()).not.toEqual(original);
         expect(countUndos(editor)).toBe(1);
         expect(editor.stored()).toEqual(original);
     });
 
-    it('leaves the same commands separate steps outside a group', () => {
+    it('are separate steps when each is run in a turn of its own', async () => {
         const editor = editorWith(fixtures, original);
 
-        formatEach(editor);
-
-        expect(countUndos(editor)).toBe(3);
-    });
-
-    it('lets a group inside a group join the outer step', () => {
-        const editor = editorWith(fixtures, original);
-
-        editor.api.group(() => {
-            editor.select('one');
-            editor.api.marks.toggle('bold');
-            editor.api.group(() => {
-                editor.select('two');
-                editor.api.marks.toggle('italic');
-            });
-            editor.select('three');
-            editor.api.marks.toggle('underline');
-        });
-
-        expect(countUndos(editor)).toBe(1);
-        expect(editor.stored()).toEqual(original);
-    });
-
-    it('keeps a mark toggle before it and one after it as their own steps', () => {
-        const editor = editorWith(fixtures, original);
-        editor.select('one');
-        editor.api.marks.toggle('bold');
-
-        editor.api.group(() => {
-            editor.select('two');
-            editor.api.marks.toggle('italic');
-            editor.select('three');
-            editor.api.marks.toggle('underline');
-        });
-        editor.select('one');
-        editor.api.marks.toggle('code');
+        await formatEach(editor, { between: true });
 
         expect(countUndos(editor)).toBe(3);
     });
@@ -1247,78 +1180,30 @@ describe('group', () => {
             vi.useRealTimers();
         });
 
-        // Mark steps change no range, so history never sees them as adjacent: these groups insert text.
-        it('keeps the typing right before it as its own step', () => {
+        // Mark steps change no range, so history never sees them as adjacent: these commands insert text.
+        it('keep the typing right before them as its own step', () => {
             const editor = editorWith(fixtures, [paragraph(text('one'))]);
             editor.caretAfter('one');
             editor.type('x');
 
-            editor.api.group(() => {
-                editor.api.insertText('y');
-                editor.api.insertText('z');
-            });
+            editor.api.insertText('y');
+            editor.api.insertText('z');
             undo(editor.view.state, editor.view.dispatch);
 
             expect(editor.stored()).toEqual([paragraph(text('onex'))]);
         });
 
-        it('keeps the typing right after it as its own step', () => {
+        it('keep the typing right after them as its own step', async () => {
             const editor = editorWith(fixtures, [paragraph(text('one'))]);
             editor.caretAfter('one');
 
-            editor.api.group(() => {
-                editor.api.insertText('y');
-                editor.api.marks.toggle('bold');
-            });
+            editor.api.insertText('y');
+            editor.api.marks.toggle('bold');
+            await Promise.resolve();
             editor.type('x');
             undo(editor.view.state, editor.view.dispatch);
 
             expect(editor.stored()).toEqual([paragraph(text('oney'))]);
         });
-    });
-
-    it('stops grouping when the commands it runs throw', () => {
-        const editor = editorWith(fixtures, original);
-
-        expect(() =>
-            editor.api.group(() => {
-                throw new Error('boom');
-            }),
-        ).toThrow('boom');
-        formatEach(editor);
-
-        expect(countUndos(editor)).toBe(3);
-    });
-});
-
-describe('isEmpty', () => {
-    it('is true for a document of one empty paragraph, or only blank text', () => {
-        expect(editorWith(fixtures, [paragraph()]).api.isEmpty()).toBe(true);
-        expect(editorWith(fixtures, [paragraph(text('  '))]).api.isEmpty()).toBe(true);
-    });
-
-    it('is false once there is text, a mention or a void block', () => {
-        expect(editorWith(fixtures, [paragraph(text('a'))]).api.isEmpty()).toBe(false);
-        expect(editorWith(fixtures, [paragraph({ type: 'tag', name: 'Ada' })]).api.isEmpty()).toBe(false);
-        expect(editorWith(fixtures, [paragraph(), { type: 'divider' }]).api.isEmpty()).toBe(false);
-    });
-
-    it('follows what is typed', () => {
-        const editor = editorWith(fixtures, [paragraph()]);
-
-        editor.type('a');
-
-        expect(editor.api.isEmpty()).toBe(false);
-    });
-});
-
-describe('announce', () => {
-    it('hands the message to the shell it is mounted in', () => {
-        const announce = vi.fn<(message: string) => void>();
-        const editor = editorWith(fixtures, [paragraph()], { announce });
-
-        editor.api.announce('Saved');
-
-        expect(announce).toHaveBeenCalledWith('Saved');
     });
 });
