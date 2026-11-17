@@ -16,7 +16,6 @@ import {
     type ToolbarItemProps,
 } from '../core';
 import {
-    alignPlugin,
     blurOnBreakPlugin,
     type BlurOnBreakPluginOptions,
     bulletListPlugin,
@@ -45,18 +44,11 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 type RecordingApiOptions = {
     inList?: boolean;
-    empty?: boolean;
-    align?: string;
-    reportsChange?: boolean;
 };
 
-const recordingApi = ({ inList = false, empty = false, align, reportsChange = true }: RecordingApiOptions = {}) => {
+const recordingApi = ({ inList = false }: RecordingApiOptions = {}) => {
     const calls: string[] = [];
     const api = {
-        isEmpty: () => empty,
-        announce: (message: string) => {
-            calls.push(`announce ${message}`);
-        },
         lists: {
             split: () => {
                 calls.push('split');
@@ -70,10 +62,6 @@ const recordingApi = ({ inList = false, empty = false, align, reportsChange = tr
             setType: (type: string, value?: Record<string, unknown>) => {
                 calls.push(`blocks.setType ${type}${value ? ` ${JSON.stringify(value)}` : ''}`);
             },
-            updateAttributes: (attributes: Record<string, unknown>) => {
-                calls.push(`blocks.updateAttributes ${JSON.stringify(attributes)}`);
-                return reportsChange;
-            },
             resetAttributes: () => {
                 calls.push('blocks.resetAttributes');
             },
@@ -81,17 +69,12 @@ const recordingApi = ({ inList = false, empty = false, align, reportsChange = tr
         marks: {
             removeAll: (options?: Record<string, unknown>) => {
                 calls.push(`marks.removeAll ${JSON.stringify(options)}`);
-                return reportsChange;
             },
-        },
-        group: (run: () => void) => {
-            calls.push('group');
-            run();
         },
         blur: () => {
             calls.push('blur');
         },
-        selection: { get: () => ({ marks: {}, block: { type: 'paragraph', align } }) },
+        selection: { get: () => ({ marks: {} }) },
     } as unknown as EditorControlApi;
     return { api, calls };
 };
@@ -213,100 +196,21 @@ describe('blurOnBreakPlugin', () => {
         expect(calls).toEqual(['split', 'onBreak', 'blur']);
     });
 
-    it('refuses an empty editor when required, and says why', () => {
-        const { api, calls } = recordingApi({ empty: true });
-
-        enterOf({ required: true, onBreak: () => calls.push('onBreak') })?.(api);
-
-        expect(calls).toEqual(['split', 'announce Type something before submitting.']);
-    });
-
-    it('commits a required editor that has something in it', () => {
-        const { api, calls } = recordingApi();
-
-        enterOf({ required: true })?.(api);
-
-        expect(calls).toEqual(['split', 'blur']);
-    });
-
-    it('describes its key for screen readers when there is something to submit', () => {
-        expect(blurOnBreakPlugin({ onBreak: () => {} }).description).toBe('Press Enter to submit.');
-    });
-
-    it('adds what is required to the description', () => {
-        expect(blurOnBreakPlugin({ onBreak: () => {}, required: true }).description).toBe(
-            'Press Enter to submit. Type something before submitting.',
-        );
-    });
-
-    it('adds nothing to the description when required is false', () => {
-        expect(blurOnBreakPlugin({ onBreak: () => {}, required: false }).description).toBe('Press Enter to submit.');
-    });
-
-    it('says nothing about submitting when there is no onBreak', () => {
-        expect(blurOnBreakPlugin().description).toBeUndefined();
-    });
-
-    it('says nothing about a required field when there is no onBreak to submit to', () => {
-        expect(blurOnBreakPlugin({ required: true }).description).toBeUndefined();
-    });
-
     it('binds Enter alone, so Shift-Enter stays with whatever else binds it', () => {
         expect(Object.keys(blurOnBreakPlugin().hotkeys ?? {})).toEqual(['Enter']);
     });
 });
 
-describe('alignPlugin', () => {
-    it.each([
-        ['Align left', 'left', 'Aligned left'],
-        ['Align center', 'center', 'Centered'],
-        ['Align right', 'right', 'Aligned right'],
-        ['Justify', 'justify', 'Justified'],
-    ])('%s sets %s on the selected blocks and says %s', (name, value, announcement) => {
-        const { api, calls } = recordingApi();
-
-        clickToolbarButton({ plugin: alignPlugin, api, name });
-
-        expect(calls).toEqual([`blocks.updateAttributes {"align":"${value}"}`, `announce ${announcement}`]);
-    });
-
-    it('clears the alignment when the block the selection starts in already has it, and says so', () => {
-        const { api, calls } = recordingApi({ align: 'center' });
-
-        clickToolbarButton({ plugin: alignPlugin, api, name: 'Align center' });
-
-        expect(calls).toEqual(['blocks.updateAttributes {"align":null}', 'announce Alignment cleared']);
-    });
-
-    it('sets the alignment when that block has another one', () => {
-        const { api, calls } = recordingApi({ align: 'left' });
-
-        clickToolbarButton({ plugin: alignPlugin, api, name: 'Align center' });
-
-        expect(calls).toEqual(['blocks.updateAttributes {"align":"center"}', 'announce Centered']);
-    });
-
-    it('says nothing when no block changed', () => {
-        const { api, calls } = recordingApi({ reportsChange: false });
-
-        clickToolbarButton({ plugin: alignPlugin, api, name: 'Align center' });
-
-        expect(calls).toEqual(['blocks.updateAttributes {"align":"center"}']);
-    });
-});
-
 describe('resetFormattingPlugin', () => {
-    it('resets the marks, the block type and the attributes with its button, as one group, and says so', () => {
+    it('resets the marks, keeping those that survive, the block type and the attributes with its button', () => {
         const { api, calls } = recordingApi();
 
         clickToolbarButton({ plugin: resetFormattingPlugin, api, name: 'Reset formatting' });
 
         expect(calls).toEqual([
-            'group',
             'marks.removeAll {"scope":"block","keepSurviving":true}',
             'blocks.setType paragraph',
             'blocks.resetAttributes',
-            'announce Formatting reset',
         ]);
     });
 });

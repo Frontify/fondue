@@ -254,9 +254,6 @@ describe('adding a link', () => {
     });
 });
 
-/** The panel's own status, not the editor's live region, which is always there. */
-const PANEL_STATUS = '[role="dialog"] output';
-
 describe('the panel of a link', () => {
     const linked = (href: string = HREF) => {
         const editor = mount(doc({ text: 'see ' }, { text: 'docs', link: { href } }));
@@ -328,7 +325,7 @@ describe('the destination search of a stored link', () => {
 
         expect(fieldLabelled('Link to').value).toBe(HREF);
         expect(search).not.toHaveBeenCalled();
-        expect(window.document.querySelector(PANEL_STATUS)?.textContent).toBe('');
+        expect(window.document.querySelector('output')?.textContent).toBe('');
     });
 
     it('closes the form on Escape rather than a list', async () => {

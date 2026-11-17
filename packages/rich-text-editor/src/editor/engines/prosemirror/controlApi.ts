@@ -18,14 +18,13 @@ import {
     type ClearMarksScope,
     type EditorControlApi,
     INLINE_PLACEHOLDER,
-    isEmpty,
     type PluginRegistry,
     type RteMarkState,
     type RteSelectionSnapshot,
 } from '#/core';
 
 import { type Dispatch } from './dispatch';
-import { EXTRA_ATTR, markValueOf, shallowBlock, toRteDocument, valueAttrsFor } from './documentConversion';
+import { EXTRA_ATTR, markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
 import { createListApi, liftOutOfLists } from './lists';
 import { warnUnknownType } from './warnings';
 
@@ -280,29 +279,20 @@ const createMarkApi = (
         const range = clearRangeOf(state, scope);
         const keeps = (type: string): boolean => keepSurviving && registry.marks.get(type)?.survivesClear === true;
         const transaction = state.tr;
-        let removed = false;
         // A caret with scope 'typing' covers no text, so only what typing would carry changes.
         if (range.from < range.to) {
             for (const markType of Object.values(schema.marks)) {
                 if (!keeps(markType.name)) {
-                    if (state.doc.rangeHasMark(range.from, range.to, markType)) {
-                        removed = true;
-                    }
                     transaction.removeMark(range.from, range.to, markType);
                 }
             }
         }
         if (empty) {
             const carried = state.storedMarks ?? $from.marks();
-            const kept = carried.filter((mark) => keeps(mark.type.name));
-            if (kept.length < carried.length) {
-                removed = true;
-            }
-            transaction.setStoredMarks(kept);
+            transaction.setStoredMarks(carried.filter((mark) => keeps(mark.type.name)));
         }
         dispatch(transaction);
         view.focus();
-        return removed;
     },
     getRun(type) {
         const { state } = getView();
@@ -355,8 +345,8 @@ const createBlockApi = (
     registry: PluginRegistry,
     dispatch: Dispatch,
 ): EditorControlApi['blocks'] => {
-    /** Every text block the selection touches, with the given attributes applied; whether any block changed. */
-    const applyToTextBlocks = (attributes: Record<string, unknown>): boolean => {
+    /** Every text block the selection touches, with the given attributes applied. */
+    const applyToTextBlocks = (attributes: Record<string, unknown>): void => {
         const view = getView();
         const { from, to } = view.state.selection;
         const transaction = view.state.tr;
@@ -372,12 +362,10 @@ const createBlockApi = (
                 }
             }
         });
-        const changed = transaction.docChanged;
-        if (changed) {
+        if (transaction.docChanged) {
             dispatch(transaction);
         }
         view.focus();
-        return changed;
     };
 
     return {
@@ -450,8 +438,8 @@ const createHistoryApi = (getView: () => EditorView): EditorControlApi['history'
 
 // --- The whole api ---
 
-/** The undo group: none running, running with no change yet, or running after its first change. */
-type GroupState = { kind: 'idle' } | { kind: 'open' } | { kind: 'joined'; first: Transaction };
+/** The commands of one synchronous turn: none changed the document yet, or the first change the rest join. */
+type TurnState = { kind: 'idle' } | { kind: 'joined'; first: Transaction };
 
 /** prosemirror-history joins a transaction carrying this meta into the undo step of the one it names. */
 const APPENDED_TRANSACTION_META = 'appendedTransaction';
@@ -465,37 +453,34 @@ export const createControlApi = (
     schema: Schema,
     registry: PluginRegistry,
     openEditors: OpenEditors,
-    announce: EditorControlApi['announce'],
 ): EditorControlApi => {
-    // Inside a group, the document changes after the first join that one's undo step.
-    let groupState: GroupState = { kind: 'idle' };
+    // Every change a turn's commands make is one undo step, so a plugin needs no call of its own to group them.
+    let turnState: TurnState = { kind: 'idle' };
+    const endTurn = (): void => {
+        turnState = { kind: 'idle' };
+        const view = getView();
+        // Keeps the next input out of the turn's step; a view torn down in the meantime has no next input.
+        if (!view.isDestroyed) {
+            view.dispatch(closeHistory(view.state.tr));
+        }
+    };
     const dispatch: Dispatch = (transaction) => {
-        switch (groupState.kind) {
+        switch (turnState.kind) {
             case 'idle': {
-                break;
-            }
-            case 'open': {
                 if (transaction.docChanged) {
-                    // Keeps the group's step apart from the edit before it.
+                    // Keeps the turn's step apart from the edit before it.
                     closeHistory(transaction);
-                    groupState = { kind: 'joined', first: transaction };
+                    turnState = { kind: 'joined', first: transaction };
+                    queueMicrotask(endTurn);
                 }
                 break;
             }
             case 'joined': {
-                transaction.setMeta(APPENDED_TRANSACTION_META, groupState.first);
+                transaction.setMeta(APPENDED_TRANSACTION_META, turnState.first);
                 break;
             }
         }
         getView().dispatch(transaction);
-    };
-
-    const endGroup = (): void => {
-        // Keeps the next input out of the group's step.
-        if (groupState.kind === 'joined') {
-            getView().dispatch(closeHistory(getView().state.tr));
-        }
-        groupState = { kind: 'idle' };
     };
 
     return {
@@ -584,20 +569,6 @@ export const createControlApi = (
                 }
             },
         },
-        isEmpty: () => isEmpty(toRteDocument(getView().state.doc)),
-        group(run) {
-            if (groupState.kind !== 'idle') {
-                run();
-                return;
-            }
-            groupState = { kind: 'open' };
-            try {
-                run();
-            } finally {
-                endGroup();
-            }
-        },
-        announce,
         focus() {
             getView().focus();
         },
