@@ -153,7 +153,7 @@ const markClearRule = (type: string, rule: MarkClearRule): PmStyleParseRule => (
 });
 
 /**
- * A mark's rules: tag and style rules put it on with its value, clear rules take it off the element's content, ignore rules drop the element.
+ * A mark's rules: tag and style rules put it on with its value, clear rules take it off the element's content.
  * @param type - the mark's name in the schema
  * @param defaultStyles - what mounted nodes show by default, stripped from the values style rules read
  */
@@ -170,9 +170,6 @@ export const markParseRules = (
         }
         if ('clears' in rule) {
             return markClearRule(type, rule);
-        }
-        if ('ignore' in rule && rule.ignore === true) {
-            return { tag: rule.tag, priority: MARK_PRIORITY, ignore: true };
         }
         if (rule.style === undefined) {
             return valueParseRule(rule, MARK_PRIORITY);

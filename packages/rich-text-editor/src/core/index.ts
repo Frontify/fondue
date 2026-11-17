@@ -41,14 +41,7 @@ export {
     type ParsedHotkey,
     parseHotkey,
 } from './hotkeys';
-export {
-    attributeEntries,
-    checkedAttributes,
-    type HtmlAttributes,
-    type HtmlSpec,
-    safeStyleEntries,
-    type StyleMap,
-} from './htmlSpec';
+export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
 export { DOCUMENT_GAP_VARIABLES, OWN_MARGIN_VARIABLES } from './documentContract';
 export { lookProperties, type TextLook } from './look';
 export {
@@ -66,7 +59,6 @@ export {
     type InlineDefinition,
     type MarkClearRule,
     type MarkDefinition,
-    type MarkIgnoreRule,
     type MarkParseRule,
     onlyTypeOf,
     type ParseRule,

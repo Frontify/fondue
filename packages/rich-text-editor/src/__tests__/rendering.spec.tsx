@@ -19,8 +19,6 @@ import {
     type RtePlugin,
     serializeToHtml,
 } from '../index';
-import { NEW_TAB_NOTE_ATTRIBUTE } from '../plugins/Link/helpers/newTab';
-import linkStyles from '../plugins/Link/link.module.scss';
 
 // The readonly view and export draw the same tree, so they are tested side by
 // side: the renderer as React in the test DOM, export as the string it returns.
@@ -273,45 +271,22 @@ describe('a list holding a block no plugin defines among its items', () => {
 });
 
 describe('a link in a reading view and in export', () => {
-    const NEW_TAB_NOTE = ' (opens in new tab)';
-    const both = (doc: RteDocument, plugins: readonly RtePlugin[] = defaultPlugins): HTMLElement[] => [
-        rendered(<RichTextRenderer value={doc} plugins={plugins} />),
-        exported(serializeToHtml(doc, { plugins })),
-    ];
+    it('opens a new tab with its target and rel, and adds no text of its own', () => {
+        const doc = paragraph([{ text: 'new', link: { href: 'https://example.com', openInNewTab: true } }]);
 
-    it('is written without its target when the policy refuses it', () => {
-        const doc = paragraph([
-            { text: 'out', link: { href: 'https://example.com' } },
-            { text: 'in', link: { href: 'https://frontify.com' } },
-        ]);
-
-        for (const container of both(doc, [linkPlugin({ allowedHosts: ['frontify.com'] })])) {
-            const [refused, allowed] = [...container.querySelectorAll('a')];
-            expect(refused?.hasAttribute('href')).toBe(false);
-            expect(allowed?.getAttribute('href')).toBe('https://frontify.com');
+        for (const container of [
+            rendered(<RichTextRenderer value={doc} />),
+            exported(serializeToHtml(doc, { plugins: defaultPlugins })),
+        ]) {
+            const anchor = container.querySelector('a');
+            expect(anchor?.textContent).toBe('new');
+            expect(anchor?.getAttribute('target')).toBe('_blank');
+            expect(anchor?.getAttribute('rel')).toBe('noopener noreferrer');
         }
     });
 
-    it('says in the reading view that it opens in a new tab, after its text and inside the anchor, only when it does', () => {
-        const doc = paragraph([
-            { text: 'new', link: { href: 'https://example.com', openInNewTab: true } },
-            { text: 'same', link: { href: 'https://example.com/b' } },
-        ]);
-
-        const container = rendered(<RichTextRenderer value={doc} />);
-        const [newTab, sameTab] = [...container.querySelectorAll('a')];
-        expect(newTab?.textContent).toBe(`new${NEW_TAB_NOTE}`);
-        const note = newTab?.querySelector('span');
-        expect(note?.textContent).toBe(NEW_TAB_NOTE);
-        expect(note?.hasAttribute(NEW_TAB_NOTE_ATTRIBUTE)).toBe(true);
-        expect(note?.classList.contains(linkStyles.visuallyHidden ?? '')).toBe(true);
-        expect(newTab?.lastElementChild?.tagName).toBe('SPAN');
-        expect(sameTab?.textContent).toBe('same');
-        expect(sameTab?.querySelector('span')).toBeNull();
-    });
-
     it('keeps a focused link in the reading view focused when its parent renders again with a new link plugin', () => {
-        const doc = paragraph([{ text: 'docs', link: { href: 'https://example.com', openInNewTab: true } }]);
+        const doc = paragraph([{ text: 'docs', link: { href: 'https://example.com' } }]);
         const container = window.document.createElement('div');
         window.document.body.append(container);
         const root = createRoot(container);
@@ -323,30 +298,5 @@ describe('a link in a reading view and in export', () => {
         expect(window.document.activeElement).toBe(container.querySelector('a'));
         act(() => root.unmount());
         container.remove();
-    });
-
-    it('exports a link that opens a new tab with its target and rel, and no text of its own', () => {
-        const doc = paragraph([{ text: 'new', link: { href: 'https://example.com', openInNewTab: true } }]);
-
-        const anchor = exported(serializeToHtml(doc, { plugins: defaultPlugins })).querySelector('a');
-
-        expect(anchor?.textContent).toBe('new');
-        expect(anchor?.getAttribute('target')).toBe('_blank');
-        expect(anchor?.getAttribute('rel')).toBe('noopener noreferrer');
-        expect(anchor?.querySelector('span')).toBeNull();
-    });
-
-    it('keeps one anchor for a link split across styled runs, with one note in the reading view', () => {
-        const link = { href: 'https://example.com', openInNewTab: true as const };
-        const doc = paragraph([
-            { text: 'a ', link },
-            { text: 'bold', link, bold: true },
-        ]);
-        const [reading, exportedHtml] = both(doc);
-
-        expect(reading?.querySelectorAll('a')).toHaveLength(1);
-        expect(reading?.textContent).toBe(`a bold${NEW_TAB_NOTE}`);
-        expect(exportedHtml?.querySelectorAll('a')).toHaveLength(1);
-        expect(exportedHtml?.textContent).toBe('a bold');
     });
 });

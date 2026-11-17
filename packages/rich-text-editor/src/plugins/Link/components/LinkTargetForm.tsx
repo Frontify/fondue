@@ -6,7 +6,6 @@ import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState 
 import { toHref } from '../../shared/helpers/href';
 import { isCompositionKey } from '../../shared/helpers/keys';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
-import { allowsHref, describeAllowed, type LinkPolicy } from '../helpers/policy';
 import { TEXT_LABEL } from '../helpers/strings';
 import { type LinkValue } from '../helpers/value';
 
@@ -26,7 +25,6 @@ const SAVE_LABEL = 'Save';
  */
 export type LinkTargetFormProps = {
     initial: LinkValue;
-    policy: LinkPolicy;
     /**
      * Turns the "Link to" field into a search over the app's pages.
      */
@@ -71,7 +69,7 @@ const resolveMode = (props: LinkTargetFormProps): FormMode => {
  * the field.
  */
 export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
-    const { initial, policy, search, onCancel, onRemove } = props;
+    const { initial, search, onCancel, onRemove } = props;
     const { textField, onSave } = resolveMode(props);
     // A stored link without a string target opens the form empty rather than uncontrolled.
     const [typed, setTyped] = useState(typeof initial.href === 'string' ? initial.href : '');
@@ -102,18 +100,11 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
 
     const save = (): void => {
         const href = toHref(typed);
-        if (href === null || !allowsHref(policy, href)) {
+        if (href === null) {
             if (typed.trim() === '') {
                 setError(MISSING_ADDRESS);
-            } else if (href === null) {
-                setError(UNREADABLE);
             } else {
-                // A policy with nothing to name cannot be what refused it.
-                let reason = describeAllowed(policy);
-                if (reason === '') {
-                    reason = UNREADABLE;
-                }
-                setError(reason);
+                setError(UNREADABLE);
             }
             urlFieldRef.current?.focus();
             return;
@@ -168,7 +159,6 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
                     status={error === null ? 'neutral' : 'error'}
                     errorId={errorId}
                     search={search}
-                    policy={policy}
                     onChange={(next) => {
                         setTyped(next);
                         setError(null);
