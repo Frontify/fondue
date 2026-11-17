@@ -104,6 +104,7 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
     const textId = useId();
     const urlId = useId();
     const styleId = useId();
+    const styleLabelId = useId();
     const newTabId = useId();
     const errorId = useId();
     const urlFieldRef = useRef<HTMLInputElement>(null);
@@ -205,8 +206,16 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
             </div>
             {styleOptions.length === 0 ? null : (
                 <div className={styles.field}>
-                    <Label htmlFor={styleId}>{STYLE_LABEL}</Label>
-                    <Select id={styleId} value={appearance ?? NO_STYLE_VALUE} onSelect={chooseStyle}>
+                    <Label id={styleLabelId} htmlFor={styleId}>
+                        {STYLE_LABEL}
+                    </Label>
+                    {/* A combobox is not a labelable element, so `htmlFor` alone does not name it. */}
+                    <Select
+                        id={styleId}
+                        aria-labelledby={styleLabelId}
+                        value={appearance ?? NO_STYLE_VALUE}
+                        onSelect={chooseStyle}
+                    >
                         <Select.Item value={NO_STYLE_VALUE} label={NO_STYLE_LABEL}>
                             {NO_STYLE_LABEL}
                         </Select.Item>

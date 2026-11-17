@@ -226,6 +226,8 @@ describe('the link target form', () => {
 
             expect(styleSelect()).not.toBeNull();
             expect(stops.slice(0, 3)).toEqual(['Link to', 'Style', 'Open in new tab']);
+            const nameId = styleSelect()?.getAttribute('aria-labelledby') ?? '';
+            expect(window.document.getElementById(nameId)?.textContent).toContain('Style');
         });
 
         it('offers No style, then the offered styles in order', () => {
