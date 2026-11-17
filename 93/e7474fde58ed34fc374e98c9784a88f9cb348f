@@ -1,0 +1,24 @@
+packages/rich-text-editor/src/editor/hooks/useToolbarFit.ts
+  s_5e1a57eef69e61::t_01853a91b7879f 78-82,86
+packages/rich-text-editor/src/editor/helpers/toolbarFit.ts
+  s_5e1a57eef69e61::t_01853a91b7879f 8-9,14,21,32-35,53-55
+packages/rich-text-editor/src/editor/helpers/toolbarFit.spec.ts
+  s_5e1a57eef69e61::t_06c2cc574da2fd 39-41
+  s_5e1a57eef69e61::t_29314d8bdd2b42 10,27-38,53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "93e7474fde58ed34fc374e98c9784a88f9cb348f",
+  "prompts": {},
+  "sessions": {
+    "s_5e1a57eef69e61": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a0fb14d7-e897-462c-896c-1d2c9e62b697",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

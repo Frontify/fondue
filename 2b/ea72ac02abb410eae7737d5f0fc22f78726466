@@ -1,0 +1,23 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_5e1a57eef69e61::t_7739a5f04412d2 158-167
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_5e1a57eef69e61::t_b9010ded0bd1be 56-57,59-60,63-68,361-362,367
+packages/rich-text-editor/src/plugins/shared/ToolbarButton/ToolbarButton.tsx
+  s_5e1a57eef69e61::t_90db4f5e4b4db3 4-11,68-71,73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2bea72ac02abb410eae7737d5f0fc22f78726466",
+  "prompts": {},
+  "sessions": {
+    "s_5e1a57eef69e61": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a0fb14d7-e897-462c-896c-1d2c9e62b697",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
