@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../../styles/look.module.scss';
 @use './underline' as link;
 
 /** A stylesheet rule, not inline, so an explicit font colour (written inline) still wins. */
@@ -11,7 +12,13 @@
     &,
     &:link,
     &:visited {
-        color: var(--color-highlight-default);
+        @include look.look(
+            'link',
+            (
+                color: var(--color-highlight-default),
+            ),
+            $except: (text-decoration, margin-top, margin-bottom)
+        );
     }
 
     @include link.underline;

@@ -24,6 +24,8 @@ export {
 export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
 export { type HotkeyEvent, type HotkeyModifier, matchesHotkey, type ParsedHotkey, parseHotkey } from './hotkeys';
 export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
+export { DOCUMENT_GAP_VARIABLES, OWN_MARGIN_VARIABLES } from './documentContract';
+export { lookProperties, type TextLook } from './look';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,
