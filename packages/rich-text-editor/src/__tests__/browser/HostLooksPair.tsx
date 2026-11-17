@@ -32,11 +32,11 @@ type HostLooksPairProps = {
 
 const pluginsWithLooks = ({ body, quote, link }: HostLooksPairProps): RtePlugin[] => [
     textStylePlugin({ presets: { body, quote, link } }),
-    bulletListPlugin,
-    checkListPlugin,
-    fontColorPlugin,
-    quotePlugin,
-    linkPlugin,
+    bulletListPlugin(),
+    checkListPlugin(),
+    fontColorPlugin(),
+    quotePlugin(),
+    linkPlugin(),
 ];
 
 /** The renderer and the editor side by side, drawing body text, a quote and links with the same looks. */
