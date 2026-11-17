@@ -39,10 +39,12 @@ import {
     type RteDocumentWith,
     type RtePlugin,
     RichTextEditor,
+    RichTextRenderer,
     softBreakPlugin,
     strikethroughPlugin,
     subscriptPlugin,
     superscriptPlugin,
+    tablePlugin,
     textStylePlugin,
     typographyPlugin,
     underlinePlugin,
@@ -841,6 +843,76 @@ export const ColumnBreak: Story = {
                         onChange={setDoc}
                         plugins={[columnBreakPlugin({ columns: 2, gap: '24px' })]}
                     />
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/** A cell as the story writes it: one paragraph of text. */
+const tableCell = (text: string, type: 'tableCell' | 'tableHeader' = 'tableCell', colspan?: number) => ({
+    type,
+    ...(colspan === undefined ? {} : { colspan }),
+    children: [{ type: 'paragraph' as const, children: [{ text }] }],
+});
+
+/**
+ * A table: type / and pick Table to insert one with a header row. Tab and
+ * Shift+Tab move between cells, Tab in the last cell adds a row, and dragging
+ * across cells selects them. A stored merged cell keeps its span. The readonly
+ * view below draws the same document.
+ */
+export const Table: Story = {
+    render: () => {
+        const plugins = [...defaultPlugins, tablePlugin()];
+        const [doc, setDoc] = useState<RteDocument>(
+            () =>
+                ({
+                    version: 1,
+                    blocks: [
+                        { type: 'paragraph', children: [{ text: 'The team, with a merged cell in the last row:' }] },
+                        {
+                            type: 'table',
+                            children: [
+                                {
+                                    type: 'tableRow',
+                                    children: [
+                                        tableCell('Name', 'tableHeader'),
+                                        tableCell('Role', 'tableHeader'),
+                                        tableCell('Team', 'tableHeader'),
+                                    ],
+                                },
+                                {
+                                    type: 'tableRow',
+                                    children: [tableCell('Ada'), tableCell('Engineer'), tableCell('Platform')],
+                                },
+                                {
+                                    type: 'tableRow',
+                                    children: [tableCell('Grace'), tableCell('Away until March', 'tableCell', 2)],
+                                },
+                            ],
+                        },
+                        { type: 'paragraph', children: [] },
+                    ],
+                }) as RteDocument,
+        );
+
+        return (
+            <div className={LAYOUT}>
+                <p className={HINT}>Type / on the empty line for Table. Tab moves between cells.</p>
+                <div className="tw-flex tw-flex-col tw-gap-4">
+                    <div className={FRAME}>
+                        <RichTextEditor
+                            value={doc}
+                            onChange={setDoc}
+                            plugins={plugins}
+                            placeholder="Type / for commands"
+                        />
+                    </div>
+                    <div className={SURFACE}>
+                        <RichTextRenderer value={doc} plugins={plugins} />
+                    </div>
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
