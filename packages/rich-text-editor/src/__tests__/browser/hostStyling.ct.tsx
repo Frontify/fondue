@@ -4,10 +4,10 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator } from '@playwright/test';
 
 import {
-    type BulletListLevelLook,
+    type BulletListLook,
     type LinkLook,
-    type ListLevelLooks,
-    type NumberedListLevelLook,
+    type ListLooks,
+    type NumberedListLook,
     type TextLook,
     type TextStyleName,
 } from '../../index';
@@ -598,22 +598,22 @@ const FONDUE_NUMBER_MARKERS: ComputedMarkerLook[] = [
     { ...NUMBER_MARKER, marker: 'lower-roman' },
 ];
 
-const HOST_BULLET_LEVELS: ListLevelLooks<BulletListLevelLook> = [
+const HOST_BULLET_LOOKS: ListLooks<BulletListLook> = [
     { marker: "'– '", color: 'rgb(200, 0, 0)', size: '20px', indent: '30px' },
     { marker: 'square', color: 'rgb(0, 120, 0)' },
     { marker: 'disc', indent: '10px' },
 ];
-const HOST_NUMBERED_LEVELS: ListLevelLooks<NumberedListLevelLook> = [
+const HOST_NUMBERED_LOOKS: ListLooks<NumberedListLook> = [
     { marker: 'upper-roman', color: 'rgb(0, 0, 200)', indent: '40px' },
 ];
 
-const UNSET_BULLET_LEVEL: BulletListLevelLook = {
+const UNSET_BULLET_LOOK: BulletListLook = {
     marker: UNSET_VARIABLE,
     color: UNSET_VARIABLE,
     size: UNSET_VARIABLE,
     indent: UNSET_VARIABLE,
 };
-const UNSET_NUMBERED_LEVEL: NumberedListLevelLook = {
+const UNSET_NUMBERED_LOOK: NumberedListLook = {
     marker: UNSET_VARIABLE,
     color: UNSET_VARIABLE,
     indent: UNSET_VARIABLE,
@@ -634,8 +634,8 @@ test.describe('host styling of list markers', () => {
         const component = await mount(
             <HostLooksPair
                 value={NESTED_LISTS_DOCUMENT}
-                bulletLevels={HOST_BULLET_LEVELS}
-                numberedLevels={HOST_NUMBERED_LEVELS}
+                bulletLooks={HOST_BULLET_LOOKS}
+                numberedLooks={HOST_NUMBERED_LOOKS}
             />,
         );
         const thirdBullet: ComputedMarkerLook = { ...BULLET_MARKER, marker: 'disc', indent: '10px' };
@@ -661,8 +661,8 @@ test.describe('host styling of list markers', () => {
         const component = await mount(
             <HostLooksPair
                 value={NESTED_LISTS_DOCUMENT}
-                bulletLevels={[UNSET_BULLET_LEVEL, UNSET_BULLET_LEVEL, UNSET_BULLET_LEVEL]}
-                numberedLevels={[UNSET_NUMBERED_LEVEL, UNSET_NUMBERED_LEVEL, UNSET_NUMBERED_LEVEL]}
+                bulletLooks={[UNSET_BULLET_LOOK, UNSET_BULLET_LOOK, UNSET_BULLET_LOOK]}
+                numberedLooks={[UNSET_NUMBERED_LOOK, UNSET_NUMBERED_LOOK, UNSET_NUMBERED_LOOK]}
             />,
         );
 

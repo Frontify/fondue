@@ -5,14 +5,14 @@ import { describe, expect, it } from 'vitest';
 import { bulletListPlugin, numberedListPlugin } from './List';
 
 describe('list looks', () => {
-    it('sets no custom property without levels', () => {
+    it('sets no custom property without looks', () => {
         expect(bulletListPlugin().content?.contentProperties).toEqual({});
         expect(numberedListPlugin().content?.contentProperties).toEqual({});
     });
 
     it('names each field of a bullet level after the list and the level, skipping a level left out', () => {
         const plugin = bulletListPlugin({
-            levels: [{ marker: "'–'", color: 'red', size: '1.2em', indent: '1em' }, undefined, { marker: 'square' }],
+            looks: [{ marker: "'–'", color: 'red', size: '1.2em', indent: '1em' }, undefined, { marker: 'square' }],
         });
 
         expect(plugin.content?.contentProperties).toEqual({
@@ -26,7 +26,7 @@ describe('list looks', () => {
 
     it('names each field of a numbered level after the list and the level', () => {
         const plugin = numberedListPlugin({
-            levels: [{}, { marker: 'upper-roman', color: 'blue', indent: '3em' }],
+            looks: [{}, { marker: 'upper-roman', color: 'blue', indent: '3em' }],
         });
 
         expect(plugin.content?.contentProperties).toEqual({
@@ -38,7 +38,7 @@ describe('list looks', () => {
 
     for (const value of ['red; display: none', '}', '']) {
         it(`throws, naming the level and the field, for ${JSON.stringify(value)}`, () => {
-            expect(() => bulletListPlugin({ levels: [undefined, { color: value }] })).toThrow(/"color".*"bulletList2"/);
+            expect(() => bulletListPlugin({ looks: [undefined, { color: value }] })).toThrow(/"color".*"bulletList2"/);
         });
     }
 });

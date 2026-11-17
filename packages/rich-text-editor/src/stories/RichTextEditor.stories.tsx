@@ -9,7 +9,7 @@ import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 // that are its own rather than a plugin's.
 import {
     boldPlugin,
-    type BulletListLevelLook,
+    type BulletListLook,
     bulletListPlugin,
     checkListPlugin,
     columnBreakPlugin,
@@ -19,7 +19,7 @@ import {
     linkPlugin,
     type MentionItem,
     mentionPlugin,
-    type NumberedListLevelLook,
+    type NumberedListLook,
     numberedListPlugin,
     quotePlugin,
     type RteDocument,
@@ -920,13 +920,13 @@ const GUIDELINE_PRESETS: TextStylePluginOptions['presets'] = {
 };
 
 /** A bullet level read from the guideline's list variables, as the brand SDK names them. */
-const guidelineBulletLevel = (level: number): BulletListLevelLook => ({
+const guidelineBulletLook = (level: number): BulletListLook => ({
     marker: `var(--f-theme-settings-list-bullet${level}-shape)`,
     color: `var(--f-theme-settings-list-bullet${level}-color)`,
     size: `var(--f-theme-settings-list-bullet${level}-size)`,
 });
 
-const guidelineNumberedLevel = (level: number): NumberedListLevelLook => ({
+const guidelineNumberedLook = (level: number): NumberedListLook => ({
     marker: `var(--f-theme-settings-list-numbered${level}-counter-type)`,
     color: `var(--f-theme-settings-list-numbered${level}-color)`,
 });
@@ -934,8 +934,8 @@ const guidelineNumberedLevel = (level: number): NumberedListLevelLook => ({
 // The third levels read variables no section defines, so they keep Fondue's look.
 const HOST_STYLING_PLUGINS = [
     textStylePlugin({ presets: GUIDELINE_PRESETS }),
-    bulletListPlugin({ levels: [guidelineBulletLevel(1), guidelineBulletLevel(2), guidelineBulletLevel(3)] }),
-    numberedListPlugin({ levels: [guidelineNumberedLevel(1), guidelineNumberedLevel(2), guidelineNumberedLevel(3)] }),
+    bulletListPlugin({ looks: [guidelineBulletLook(1), guidelineBulletLook(2), guidelineBulletLook(3)] }),
+    numberedListPlugin({ looks: [guidelineNumberedLook(1), guidelineNumberedLook(2), guidelineNumberedLook(3)] }),
     checkListPlugin,
     quotePlugin,
     linkPlugin,
@@ -1206,7 +1206,7 @@ export const Presets: StoryObj<PresetsStoryArgs> = {
 
 /**
  * The usual production setup: the values are `var(--f-theme-settings-…)`, so one editor configuration follows the section (light or dark) it sits in.
- * A host sets the look of each text style, body text, quotes and links with `textStylePlugin({ presets })`, and of list markers per level with `bulletListPlugin({ levels })` and `numberedListPlugin({ levels })`, usually from its guideline settings.
+ * A host sets the look of each text style, body text, quotes and links with `textStylePlugin({ presets })`, and of list markers per level with `bulletListPlugin({ looks })` and `numberedListPlugin({ looks })`, usually from its guideline settings.
  * Anything the host leaves out, or a variable nobody defines, keeps Fondue's look.
  * The editor and the renderer draw the same.
  */

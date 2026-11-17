@@ -131,7 +131,7 @@ const numberedList = defineBlock<NumberedListValue>({
  * How a bulleted list looks at one nesting level. Each value is any CSS value, a guideline variable
  * (`var(--f-theme-settings-list-bullet1-color)`) included. A field left out keeps Fondue's look.
  */
-export type BulletListLevelLook = {
+export type BulletListLook = {
     /**
      * A `list-style-type`, such as `square`, or a quoted string, such as `'– '`, drawn as written, so it carries
      * its own space before the item text
@@ -154,39 +154,39 @@ export type BulletListLevelLook = {
 /**
  * How a numbered list looks at one nesting level. A number keeps the size of the item text, which its room is made for.
  */
-export type NumberedListLevelLook = Omit<BulletListLevelLook, 'size'>;
+export type NumberedListLook = Omit<BulletListLook, 'size'>;
 
 /**
  * A look for each of the first three nesting levels, outermost first. A list nested deeper looks like the third level.
  */
-export type ListLevelLooks<TLook> = readonly [first?: TLook, second?: TLook, third?: TLook];
+export type ListLooks<TLook> = readonly [first?: TLook, second?: TLook, third?: TLook];
 
 /**
  * The name each field's variable ends in. `list.module.scss` reads the same names.
  */
-const NUMBERED_LEVEL_FIELDS = {
+const NUMBERED_LOOK_FIELDS = {
     marker: 'marker',
     color: 'color',
     indent: 'indent',
-} as const satisfies Record<keyof NumberedListLevelLook, string>;
+} as const satisfies Record<keyof NumberedListLook, string>;
 
-const BULLET_LEVEL_FIELDS = {
-    ...NUMBERED_LEVEL_FIELDS,
+const BULLET_LOOK_FIELDS = {
+    ...NUMBERED_LOOK_FIELDS,
     size: 'size',
-} as const satisfies Record<keyof BulletListLevelLook, string>;
+} as const satisfies Record<keyof BulletListLook, string>;
 
 type ListType = 'bulletList' | 'numberedList';
 
 /**
  * The custom properties of a list's looks, `--rte-<list type><level>-<field>`, such as `--rte-bullet-list2-color`
  */
-const levelLookProperties = <TLook extends Partial<Record<string, string>>>(
+const listLookProperties = <TLook extends Partial<Record<string, string>>>(
     type: ListType,
-    levels: ListLevelLooks<TLook>,
+    looks: ListLooks<TLook>,
     fields: Readonly<Record<keyof TLook & string, string>>,
 ): Record<string, string> => {
     const properties: Record<string, string> = {};
-    for (const [index, look] of levels.entries()) {
+    for (const [index, look] of looks.entries()) {
         if (look !== undefined) {
             Object.assign(properties, lookProperties(`${type}${index + 1}`, look, fields));
         }
@@ -194,16 +194,16 @@ const levelLookProperties = <TLook extends Partial<Record<string, string>>>(
     return properties;
 };
 
-const bulletListContentWith = (levels: ListLevelLooks<BulletListLevelLook>): RteContent =>
+const bulletListContentWith = (looks: ListLooks<BulletListLook>): RteContent =>
     defineContent({
         blocks: { bulletList, listItem },
-        contentProperties: levelLookProperties('bulletList', levels, BULLET_LEVEL_FIELDS),
+        contentProperties: listLookProperties('bulletList', looks, BULLET_LOOK_FIELDS),
     });
 
-const numberedListContentWith = (levels: ListLevelLooks<NumberedListLevelLook>): RteContent =>
+const numberedListContentWith = (looks: ListLooks<NumberedListLook>): RteContent =>
     defineContent({
         blocks: { numberedList, listItem },
-        contentProperties: levelLookProperties('numberedList', levels, NUMBERED_LEVEL_FIELDS),
+        contentProperties: listLookProperties('numberedList', looks, NUMBERED_LOOK_FIELDS),
     });
 
 /**
@@ -260,7 +260,7 @@ export type BulletListPluginOptions = {
      * Fondue's look. A value that is empty or can end its CSS declaration early throws an error naming the level.
      * @default []
      */
-    levels?: ListLevelLooks<BulletListLevelLook>;
+    looks?: ListLooks<BulletListLook>;
 };
 
 export type NumberedListPluginOptions = {
@@ -269,16 +269,16 @@ export type NumberedListPluginOptions = {
      * Fondue's look. A value that is empty or can end its CSS declaration early throws an error naming the level.
      * @default []
      */
-    levels?: ListLevelLooks<NumberedListLevelLook>;
+    looks?: ListLooks<NumberedListLook>;
 };
 
 /**
  * A bulleted list with the `Mod-Shift-8` shortcut, and `- ` or `* ` while typing
  */
-export const bulletListPlugin = ({ levels = [] }: BulletListPluginOptions = {}): RtePlugin =>
+export const bulletListPlugin = ({ looks = [] }: BulletListPluginOptions = {}): RtePlugin =>
     listPlugin({
         id: 'bullet-list',
-        content: bulletListContentWith(levels),
+        content: bulletListContentWith(looks),
         type: 'bulletList',
         icon: IconListBullet,
         label: 'Bulleted list',
@@ -290,10 +290,10 @@ export const bulletListPlugin = ({ levels = [] }: BulletListPluginOptions = {}):
 /**
  * A numbered list with the `Mod-Shift-7` shortcut, and `1. ` or `1) ` while typing
  */
-export const numberedListPlugin = ({ levels = [] }: NumberedListPluginOptions = {}): RtePlugin =>
+export const numberedListPlugin = ({ looks = [] }: NumberedListPluginOptions = {}): RtePlugin =>
     listPlugin({
         id: 'numbered-list',
-        content: numberedListContentWith(levels),
+        content: numberedListContentWith(looks),
         type: 'numberedList',
         icon: IconListNumbers,
         label: 'Numbered list',

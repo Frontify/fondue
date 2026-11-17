@@ -103,13 +103,13 @@ const LIST_STYLESHEET = fileURLToPath(new URL('../plugins/List/list.module.scss'
 const LIST_LEVEL_VARIABLE = /--rte-(?:bullet|numbered)-list\d+-[a-z]+/g;
 
 const SAMPLE_VALUE = 'sample';
-const BULLET_LEVEL = {
+const BULLET_LOOK = {
     marker: SAMPLE_VALUE,
     color: SAMPLE_VALUE,
     size: SAMPLE_VALUE,
     indent: SAMPLE_VALUE,
 };
-const NUMBERED_LEVEL = {
+const NUMBERED_LOOK = {
     marker: SAMPLE_VALUE,
     color: SAMPLE_VALUE,
     indent: SAMPLE_VALUE,
@@ -119,10 +119,10 @@ describe('the list stylesheet', () => {
     const css = compile(LIST_STYLESHEET).css;
     const written = Object.keys({
         ...bulletListPlugin({
-            levels: [BULLET_LEVEL, BULLET_LEVEL, BULLET_LEVEL],
+            looks: [BULLET_LOOK, BULLET_LOOK, BULLET_LOOK],
         }).content?.contentProperties,
         ...numberedListPlugin({
-            levels: [NUMBERED_LEVEL, NUMBERED_LEVEL, NUMBERED_LEVEL],
+            looks: [NUMBERED_LOOK, NUMBERED_LOOK, NUMBERED_LOOK],
         }).content?.contentProperties,
     });
 

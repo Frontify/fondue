@@ -137,10 +137,10 @@ export { underlineContent, underlinePlugin } from './plugins/Underline';
 export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
 export {
-    type BulletListLevelLook,
+    type BulletListLook,
     type BulletListPluginOptions,
-    type ListLevelLooks,
-    type NumberedListLevelLook,
+    type ListLooks,
+    type NumberedListLook,
     type NumberedListPluginOptions,
 } from './plugins/List';
 export {

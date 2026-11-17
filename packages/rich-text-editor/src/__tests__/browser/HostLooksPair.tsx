@@ -3,14 +3,14 @@
 // Mounted by hostStyling.ct.tsx: a component test mounts imported components, and the plugin list holds functions, which cannot travel as props.
 
 import {
-    type BulletListLevelLook,
+    type BulletListLook,
     bulletListPlugin,
     checkListPlugin,
     fontColorPlugin,
     type LinkLook,
     linkPlugin,
-    type ListLevelLooks,
-    type NumberedListLevelLook,
+    type ListLooks,
+    type NumberedListLook,
     numberedListPlugin,
     quotePlugin,
     RichTextEditor,
@@ -27,8 +27,8 @@ type HostLooksPairProps = {
     body?: TextLook;
     quote?: TextLook;
     link?: LinkLook;
-    bulletLevels?: ListLevelLooks<BulletListLevelLook>;
-    numberedLevels?: ListLevelLooks<NumberedListLevelLook>;
+    bulletLooks?: ListLooks<BulletListLook>;
+    numberedLooks?: ListLooks<NumberedListLook>;
     /**
      * The document both surfaces draw.
      * @default BODY_QUOTE_LINK_DOCUMENT
@@ -36,10 +36,10 @@ type HostLooksPairProps = {
     value?: RteDocument;
 };
 
-const pluginsWithLooks = ({ body, quote, link, bulletLevels, numberedLevels }: HostLooksPairProps): RtePlugin[] => [
+const pluginsWithLooks = ({ body, quote, link, bulletLooks, numberedLooks }: HostLooksPairProps): RtePlugin[] => [
     textStylePlugin({ presets: { body, quote, link } }),
-    bulletListPlugin({ levels: bulletLevels }),
-    numberedListPlugin({ levels: numberedLevels }),
+    bulletListPlugin({ looks: bulletLooks }),
+    numberedListPlugin({ looks: numberedLooks }),
     checkListPlugin,
     fontColorPlugin,
     quotePlugin,
