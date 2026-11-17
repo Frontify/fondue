@@ -5,7 +5,6 @@ export {
     type TableCellBlock,
     type TableHeaderBlock,
     tableContent,
-    type TablePluginOptions,
     tablePlugin,
     type TableRowBlock,
 } from './Table';

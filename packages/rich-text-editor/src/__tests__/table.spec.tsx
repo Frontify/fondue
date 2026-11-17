@@ -6,14 +6,7 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import {
-    defaultPlugins,
-    type RteDocument,
-    RichTextRenderer,
-    serializeToHtml,
-    type TableCellBlock,
-    tablePlugin,
-} from '../index';
+import { defaultPlugins, type RteDocument, RichTextRenderer, serializeToHtml, tablePlugin } from '../index';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -21,11 +14,11 @@ declare global {
 }
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
-const plugins = [...defaultPlugins, tablePlugin({ label: 'Tabelle' })];
+const plugins = [...defaultPlugins, tablePlugin()];
 
 const paragraph = (text: string) => ({ type: 'paragraph' as const, children: [{ text }] });
 
-const cell = (text: string, spans: Pick<TableCellBlock, 'colspan' | 'rowspan'> = {}) => ({
+const cell = (text: string, spans: { colspan?: number; rowspan?: number } = {}) => ({
     type: 'tableCell' as const,
     ...spans,
     children: [paragraph(text)],
@@ -67,7 +60,7 @@ describe('a table in the readonly view', () => {
         const region = rendered().querySelector('section');
 
         expect(region?.getAttribute('tabindex')).toBe('0');
-        expect(region?.getAttribute('aria-label')).toBe('Tabelle');
+        expect(region?.getAttribute('aria-label')).toBe('Table');
     });
 
     it('keeps the table, its rows and its cells native', () => {
