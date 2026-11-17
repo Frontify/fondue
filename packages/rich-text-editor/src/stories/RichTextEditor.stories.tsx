@@ -7,26 +7,22 @@ import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 // Stories import only the package public API. The plugins have their own story
 // file (`PluginExamples.stories.tsx`); this one is about the editor itself — the props
 // that are its own rather than a plugin's.
+import { definePlugin, type RteDocument, type RtePlugin, RichTextEditor, RichTextRenderer } from '../index';
 import {
     boldPlugin,
     bulletListPlugin,
     checkListPlugin,
     columnBreakPlugin,
     defaultPlugins,
-    definePlugin,
     italicPlugin,
     linkPlugin,
     type MentionItem,
     mentionPlugin,
     quotePlugin,
-    type RteDocument,
-    type RtePlugin,
-    RichTextEditor,
-    RichTextRenderer,
     textStylePlugin,
     type TextStylePluginOptions,
     type TextStylePresets,
-} from '../index';
+} from '../plugins';
 
 /** Who can be mentioned is the app's business, which is why the mention plugin requires it as an option. */
 const MENTIONABLE: readonly MentionItem[] = [

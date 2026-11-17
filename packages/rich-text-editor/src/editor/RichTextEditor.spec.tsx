@@ -13,22 +13,24 @@ import { type RteToolbarGroup } from '#/core';
 // Driven through the package's public API, the way a host does: the props are
 // the whole conversation between a host and a mounted editor.
 import {
-    alignPlugin,
-    boldPlugin,
-    checkListPlugin,
-    defaultPlugins,
     defineBlock,
     defineContent,
     definePlugin,
-    linkPlugin,
-    mentionPlugin,
     RichTextEditor,
     RichTextRenderer,
     type RteDocument,
     type RtePlugin,
     serializeToHtml,
-    textStylePlugin,
 } from '../index';
+import {
+    alignPlugin,
+    boldPlugin,
+    checkListPlugin,
+    defaultPlugins,
+    linkPlugin,
+    mentionPlugin,
+    textStylePlugin,
+} from '../plugins';
 
 import { useFocusWithin } from './hooks/useFocusWithin';
 

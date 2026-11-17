@@ -2,6 +2,7 @@
 
 // Mounted by hostStyling.ct.tsx: a component test mounts imported components, and the plugin list holds functions, which cannot travel as props.
 
+import { RichTextEditor, RichTextRenderer, type RteDocument, type RtePlugin } from '../../index';
 import {
     bulletListPlugin,
     checkListPlugin,
@@ -9,13 +10,9 @@ import {
     type LinkLook,
     linkPlugin,
     quotePlugin,
-    RichTextEditor,
-    RichTextRenderer,
-    type RteDocument,
-    type RtePlugin,
     type TextLook,
     textStylePlugin,
-} from '../../index';
+} from '../../plugins';
 
 import { BODY_QUOTE_LINK_DOCUMENT } from './hostStylingValues';
 

@@ -14,6 +14,7 @@ import {
     type EditorControlApi,
     type RtePlugin,
 } from '../core';
+import { RichTextRenderer, serializeToHtml } from '../index';
 import {
     blurOnBreakPlugin,
     bulletListPlugin,
@@ -21,10 +22,8 @@ import {
     defaultPlugins,
     mentionPlugin,
     numberedListPlugin,
-    RichTextRenderer,
-    serializeToHtml,
     textStylePlugin,
-} from '../index';
+} from '../plugins';
 import { searchIn } from '../plugins/Mention/Mention';
 
 /**

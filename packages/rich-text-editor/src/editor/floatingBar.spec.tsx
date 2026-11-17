@@ -6,7 +6,8 @@ import { act, type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { columnBreakPlugin, defaultPlugins, definePlugin, RichTextEditor, type RteDocument } from '../index';
+import { definePlugin, RichTextEditor, type RteDocument } from '../index';
+import { columnBreakPlugin, defaultPlugins } from '../plugins';
 
 declare global {
     // eslint-disable-next-line no-var
