@@ -125,7 +125,7 @@ describe('mentionPlugin', () => {
 });
 
 describe('blurOnBreakPlugin', () => {
-    const enter = blurOnBreakPlugin.hotkeys?.Enter;
+    const enter = blurOnBreakPlugin().hotkeys?.Enter;
 
     it('splits the list item when Enter is pressed inside a list, and keeps focus', () => {
         const { api, calls } = recordingApi({ inList: true });
@@ -145,7 +145,7 @@ describe('blurOnBreakPlugin', () => {
 describe('the list plugins', () => {
     it('toggle their list on the shortcuts other editors use', () => {
         const { api, calls } = recordingApi();
-        const { hotkeys } = buildPluginRegistry([bulletListPlugin, numberedListPlugin]);
+        const { hotkeys } = buildPluginRegistry([bulletListPlugin(), numberedListPlugin()]);
 
         hotkeys.get('Mod-Shift-8')?.[0]?.(api);
         hotkeys.get('Mod-Shift-7')?.[0]?.(api);
@@ -154,7 +154,7 @@ describe('the list plugins', () => {
     });
 
     it('share their item, so both can be mounted together', () => {
-        const registry = buildPluginRegistry([bulletListPlugin, numberedListPlugin]);
+        const registry = buildPluginRegistry([bulletListPlugin(), numberedListPlugin()]);
 
         expect(registry.itemTypeByList).toEqual(
             new Map([

@@ -132,7 +132,7 @@ const childrenOf = (doc: RteDocument | null, index = 0): unknown[] => {
     return block && 'children' in block ? block.children : [];
 };
 
-const checkListPlugins = [checkListPlugin];
+const checkListPlugins = [checkListPlugin()];
 
 const toDo: RteDocument = {
     version: 1,
@@ -813,7 +813,7 @@ describe('the toolbar', () => {
 });
 
 describe('the toolbar from the keyboard', () => {
-    const plugins = [boldPlugin, alignPlugin, linkPlugin];
+    const plugins = [boldPlugin(), alignPlugin(), linkPlugin()];
 
     const toolbarIn = (container: HTMLElement): HTMLElement => {
         const toolbar = container.querySelector<HTMLElement>('[role="toolbar"]');
@@ -1324,7 +1324,7 @@ describe('the toolbar from the keyboard', () => {
         });
 
         it('keeps the panel usable after a text style menu opened from it is closed with Escape', async () => {
-            const withSelect = [boldPlugin, linkPlugin, alignPlugin, textStylePlugin()];
+            const withSelect = [boldPlugin(), linkPlugin(), alignPlugin(), textStylePlugin()];
             const { container, ready } = mount(() => (
                 <RichTextEditor value={paragraph('text')} plugins={withSelect} toolbarPlacement="top" />
             ));
@@ -1498,7 +1498,7 @@ describe('content no mounted plugin knows', () => {
         } as unknown as RteDocument;
 
         const { container, ready, stored } = mount((onChange) => (
-            <RichTextEditor value={value} onChange={onChange} plugins={[boldPlugin]} />
+            <RichTextEditor value={value} onChange={onChange} plugins={[boldPlugin()]} />
         ));
         ready();
         const placeholder = container.querySelector('[data-rte-unknown]');
@@ -2474,7 +2474,7 @@ describe('onBlur', () => {
         const onBlur = vi.fn<(doc: RteDocument) => void>();
 
         const { container, ready } = mount(() => (
-            <RichTextEditor value={paragraph('text')} onBlur={onBlur} plugins={[boldPlugin]} />
+            <RichTextEditor value={paragraph('text')} onBlur={onBlur} plugins={[boldPlugin()]} />
         ));
         ready();
         const focus = (element: Element | null): void => {
@@ -2663,7 +2663,7 @@ describe('exported links', () => {
                     { type: 'paragraph', children: [{ text: 'good', link: { href: 'https://example.com' } }] },
                 ],
             },
-            { plugins: [linkPlugin] },
+            { plugins: [linkPlugin()] },
         );
 
         expect(html).not.toContain('javascript:');

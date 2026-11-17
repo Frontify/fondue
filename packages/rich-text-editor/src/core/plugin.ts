@@ -131,11 +131,12 @@ export type RtePluginDefinition = Omit<RtePlugin, 'id' | 'kind'> & { id?: string
  * Declares a plugin. The `id` defaults to the only type its content declares;
  * with none or several, it throws unless an `id` is given.
  * @example
- * const quotePlugin = definePlugin({
- *     content: quoteContent,
- *     toolbar: [{ label: 'Quote', icon: IconSpeechBubbleQuote }],
- *     inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
- * });
+ * const quotePlugin = () =>
+ *     definePlugin({
+ *         content: quoteContent,
+ *         toolbar: [{ label: 'Quote', icon: IconSpeechBubbleQuote }],
+ *         inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
+ *     });
  */
 export const definePlugin = ({ id, ...plugin }: RtePluginDefinition): RtePlugin => {
     const resolved = id ?? onlyTypeOf(plugin.content);

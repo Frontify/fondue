@@ -697,9 +697,9 @@ export const CommentBox: Story = {
                         value={doc}
                         onChange={setDoc}
                         plugins={[
-                            boldPlugin,
-                            italicPlugin,
-                            linkPlugin,
+                            boldPlugin(),
+                            italicPlugin(),
+                            linkPlugin(),
                             mentionPlugin({
                                 items: MENTIONABLE,
                                 href: profileHref,
@@ -817,7 +817,7 @@ export const TwoEditors: Story = {
                 </div>
                 <div className={LAYOUT}>
                     <div className={FRAME}>
-                        <RichTextEditor value={boldDoc} onChange={setBoldDoc} plugins={[boldPlugin]} />
+                        <RichTextEditor value={boldDoc} onChange={setBoldDoc} plugins={[boldPlugin()]} />
                     </div>
                     <pre className={JSON_PANEL}>{JSON.stringify(boldDoc, null, 2)}</pre>
                 </div>
@@ -902,10 +902,10 @@ const GUIDELINE_PRESETS: TextStylePluginOptions['presets'] = {
 
 const HOST_STYLING_PLUGINS = [
     textStylePlugin({ presets: GUIDELINE_PRESETS }),
-    bulletListPlugin,
-    checkListPlugin,
-    quotePlugin,
-    linkPlugin,
+    bulletListPlugin(),
+    checkListPlugin(),
+    quotePlugin(),
+    linkPlugin(),
 ];
 
 const HOST_STYLING_DOCUMENT: RteDocument = {
@@ -1033,7 +1033,7 @@ const presetsPluginsFor = (presets: TextStylePresets): PresetsPluginsResult => {
     try {
         return {
             status: 'ready',
-            plugins: [textStylePlugin({ presets }), bulletListPlugin, checkListPlugin, quotePlugin, linkPlugin],
+            plugins: [textStylePlugin({ presets }), bulletListPlugin(), checkListPlugin(), quotePlugin(), linkPlugin()],
         };
     } catch (error) {
         if (error instanceof Error) {
