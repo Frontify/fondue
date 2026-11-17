@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 
+import { isSafeHref } from '../../shared/helpers/href';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
-import { allowsHref, type LinkPolicy } from '../helpers/policy';
 
 /**
  * How long the author must pause before a search runs.
@@ -20,14 +20,10 @@ type Answer =
 
 /**
  * The destinations matching a query, once the author pauses typing. A newer
- * query aborts the request before it, and destinations the policy refuses are
+ * query aborts the request before it, and destinations with an unsafe target are
  * dropped so they are never offered.
  */
-export const useDestinationSearch = (
-    search: LinkSearch | undefined,
-    query: string,
-    policy: LinkPolicy,
-): DestinationSearch => {
+export const useDestinationSearch = (search: LinkSearch | undefined, query: string): DestinationSearch => {
     const wanted = query.trim();
     // Tagged with its query, so an answer is never shown for a query that has since changed.
     const [answer, setAnswer] = useState<Answer | null>(null);
@@ -66,5 +62,5 @@ export const useDestinationSearch = (
     if (answer.status === 'failed') {
         return { status: 'failed' };
     }
-    return { status: 'done', results: answer.results.filter((found) => allowsHref(policy, found.href)) };
+    return { status: 'done', results: answer.results.filter((found) => isSafeHref(found.href)) };
 };

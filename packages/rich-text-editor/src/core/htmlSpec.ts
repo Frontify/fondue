@@ -3,16 +3,32 @@
 // The static markup a node becomes (editor, readonly view, export, copy), as a
 // plain description rather than DOM or React, so every surface reads the same thing.
 
-import { warnOnce } from './warnings';
-
 /** CSS properties by their CSS name: `{ 'text-align': 'center' }`. */
 export type StyleMap = Record<string, string>;
 
-/** Any HTML attribute by its name. `true` writes a boolean attribute, and `false` or `undefined` leaves it out. */
-export type HtmlAttributes = { class?: string; style?: StyleMap } & Record<
-    string,
-    string | boolean | StyleMap | undefined
->;
+/** The attributes markup may carry. Closed on purpose: every surface maps them to its own form, and a short list can't be read differently. */
+export type HtmlAttributes = {
+    class?: string;
+    style?: StyleMap;
+    href?: string;
+    src?: string;
+    alt?: string;
+    title?: string;
+    target?: string;
+    rel?: string;
+    type?: string;
+    role?: string;
+    id?: string;
+    /** As HTML spells it; the readonly view passes it to React as `tabIndex`. */
+    tabindex?: string;
+    /** An ordered list's first number. */
+    start?: string;
+    /** Boolean attributes: present when true, absent otherwise. */
+    checked?: boolean;
+    disabled?: boolean;
+    [data: `data-${string}`]: string | undefined;
+    [aria: `aria-${string}`]: string | undefined;
+};
 
 /**
  * One element. `children: true` is where the node's content goes (the text of
@@ -54,97 +70,24 @@ export const cssText = (style: StyleMap): string =>
         .map(([property, value]) => `${property}: ${value};`)
         .join(' ');
 
-/** Lowercase only, so `OnClick` cannot pass the `on` check. */
-const ATTRIBUTE_NAME = /^[a-z][a-z0-9-]*$/;
-
-/** Event-handler attributes (`onclick`) run script, so no markup may carry one. */
-const EVENT_HANDLER_PREFIX = 'on';
-
-const STYLE_ATTRIBUTE = 'style';
-
-export type CheckedAttribute =
-    | { kind: 'text'; name: string; value: string }
-    | { kind: 'flag'; name: string }
-    | { kind: 'style'; name: string; value: StyleMap };
-
-const isStyleMap = (value: unknown): value is StyleMap =>
-    typeof value === 'object' && value !== null && !Array.isArray(value);
-
-const attributeError = (name: string, tag: string, reason: string): TypeError =>
-    new TypeError(`Attribute "${name}" on <${tag}> ${reason}.`);
-
-/** A stored value is data, not an author mistake, so a bad one is left out and the document still draws. */
-const skippedAttribute = (name: string, tag: string, value: unknown): undefined => {
-    warnOnce(
-        `attribute-value:${tag}:${name}`,
-        `Attribute "${name}" on <${tag}> was left out: its value is not a string, a number, a boolean or, for style, a map of CSS properties.`,
-        value,
-    );
-    return undefined;
-};
-
-const checkedAttribute = (name: string, storedValue: unknown, tag: string): CheckedAttribute | undefined => {
-    if (storedValue === undefined || storedValue === null || storedValue === false) {
-        return undefined;
-    }
-    if (name === STYLE_ATTRIBUTE) {
-        if (!isStyleMap(storedValue)) {
-            return skippedAttribute(name, tag, storedValue);
-        }
-        return { kind: 'style', name, value: storedValue };
-    }
-    if (typeof storedValue === 'string') {
-        return { kind: 'text', name, value: storedValue };
-    }
-    if (typeof storedValue === 'number' && Number.isFinite(storedValue)) {
-        return { kind: 'text', name, value: String(storedValue) };
-    }
-    if (storedValue === true) {
-        return { kind: 'flag', name };
-    }
-    return skippedAttribute(name, tag, storedValue);
-};
-
 /**
- * One check for every surface (DOM, HTML string, React). A bad name throws,
- * because it is an author mistake. A bad value is left out.
+ * The attributes as DOM and HTML strings spell them: style as CSS text, a true
+ * boolean as `''`, false or undefined left out. Shared by engine and HTML printer.
  */
-export const checkedAttributes = (tag: string, attrs: HtmlAttributes = {}): CheckedAttribute[] => {
-    const checked: CheckedAttribute[] = [];
-    for (const [name, value] of Object.entries(attrs)) {
-        if (!ATTRIBUTE_NAME.test(name) || name.startsWith(EVENT_HANDLER_PREFIX)) {
-            throw attributeError(name, tag, 'is not a valid attribute name');
+export const attributeEntries = (attrs: HtmlAttributes = {}): [string, string][] =>
+    Object.entries(attrs).flatMap(([name, value]): [string, string][] => {
+        if (value === undefined || value === false) {
+            return [];
         }
-        const attribute = checkedAttribute(name, value, tag);
-        if (attribute !== undefined) {
-            checked.push(attribute);
+        if (value === true) {
+            return [[name, '']];
         }
-    }
-    return checked;
-};
-
-/** The checked attributes as the DOM and HTML strings spell them, for the engine and the HTML printer. */
-export const attributeEntries = (tag: string, attrs?: HtmlAttributes): [string, string][] => {
-    const entries: [string, string][] = [];
-    for (const attribute of checkedAttributes(tag, attrs)) {
-        switch (attribute.kind) {
-            case 'text':
-                entries.push([attribute.name, attribute.value]);
-                break;
-            case 'flag':
-                entries.push([attribute.name, '']);
-                break;
-            case 'style': {
-                const text = cssText(attribute.value);
-                if (text !== '') {
-                    entries.push([attribute.name, text]);
-                }
-                break;
-            }
+        if (name === 'style') {
+            const text = cssText(value as StyleMap);
+            return text === '' ? [] : [[name, text]];
         }
-    }
-    return entries;
-};
+        return [[name, value as string]];
+    });
 
 /** Merges styles onto the outermost element, so a block-wide attribute (alignment) lands without the block knowing. */
 export const withRootStyle = (spec: HtmlSpec, style: StyleMap): HtmlSpec =>
