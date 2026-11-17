@@ -70,10 +70,10 @@ const noSiblingPlugin = (up: string) => ({
         'A plugin may not import another plugin, nor reach out of src/plugins/ by a relative path (use #/core). What several plugins are built out of belongs in src/plugins/shared/.',
 });
 
-/** The shell reaches the engine only through `useEditorHandle`; `up` is the relative path to `src/editor/`. */
+/** The shell reaches the engine only through `useEditorHandle` and `parseHtml`; `up` is the relative path to `src/editor/`. */
 const noEngineFromShell = (up: string) => ({
     group: ['#/editor/engines', '#/editor/engines/**', `${up}/engines`, `${up}/engines/**`],
-    message: 'Only useEditorHandle wires an adapter in. Everything else uses the editor port.',
+    message: 'Only useEditorHandle and parseHtml wire an adapter in. Everything else uses the editor port.',
 });
 
 const SHELL_OUTER_LAYERS = {
@@ -258,6 +258,7 @@ export default defineConfig({
         },
         {
             files: ['src/editor/*.{ts,tsx}'],
+            excludeFiles: ['src/editor/parseHtml.ts'],
             rules: {
                 'no-restricted-imports': [
                     'error',
@@ -321,6 +322,23 @@ export default defineConfig({
                             NO_ENGINE,
                             SHELL_OUTER_LAYERS,
                             noRelativeEscape('../..', SHELL_ESCAPE_MESSAGE),
+                        ],
+                    },
+                ],
+            },
+        },
+        {
+            // The shell file that reads HTML with the engine's parse rules, with no editor mounted.
+            files: ['src/editor/parseHtml.ts'],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    {
+                        patterns: [
+                            NO_SERVER_RENDER,
+                            NO_ENGINE,
+                            SHELL_OUTER_LAYERS,
+                            noRelativeEscape('..', SHELL_ESCAPE_MESSAGE),
                         ],
                     },
                 ],

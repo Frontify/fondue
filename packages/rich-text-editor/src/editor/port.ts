@@ -14,6 +14,17 @@ import { type EditorControlApi, type PluginRegistry, type RteDocumentOf } from '
 /** What an engine adapter implements: put an editable document in a container. */
 export type MountDocument = (options: MountOptions) => MountedDocument;
 
+/** What an engine adapter implements to read HTML into a document, by the rules it reads a paste with. */
+export type ParseHtmlDocument = (options: ParseHtmlDocumentOptions) => RteDocumentOf;
+
+export type ParseHtmlDocumentOptions = {
+    html: string;
+    /** The plugins whose parse rules read the HTML, already gathered. */
+    registry: PluginRegistry;
+    /** Where the HTML's elements are built; only its DOM implementation is used, never its page. */
+    document: Document;
+};
+
 export type MountOptions = {
     container: HTMLElement;
     initialDoc: RteDocumentOf;

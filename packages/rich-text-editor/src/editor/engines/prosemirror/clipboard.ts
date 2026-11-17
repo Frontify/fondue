@@ -86,15 +86,13 @@ export const clipboardSerializer = (schema: Schema): DOMSerializer => {
 export { keepOfficeListStyles } from './pasteOffice';
 
 /**
- * Cleans what Word, Outlook and Google Docs write besides content, then keeps
- * text from running together in structure no plugin reads. Table cells
- * are not blocks to the engine (`<td>a</td><td>b</td>` would paste as `ab`), so
- * each row becomes a block with cells joined by a space. A `<pre>`'s newlines
- * collapse as whitespace, so each line becomes a block.
+ * Keeps text from running together in structure no plugin reads, for paste and
+ * for stored HTML alike. Table cells are not blocks to the engine
+ * (`<td>a</td><td>b</td>` would read as `ab`), so each row becomes a block with
+ * cells joined by a space. A `<pre>`'s newlines collapse as whitespace, so each
+ * line becomes a block.
  */
-const tidyPasted = (dom: HTMLElement): void => {
-    tidyOffice(dom);
-    tidyGoogleDocs(dom);
+export const keepUnreadStructureApart = (dom: HTMLElement): void => {
     const document = dom.ownerDocument;
     const lineBlock = (text: string): HTMLElement => {
         const block = document.createElement('div');
@@ -118,6 +116,13 @@ const tidyPasted = (dom: HTMLElement): void => {
     for (const pre of dom.querySelectorAll('pre')) {
         pre.replaceWith(...(pre.textContent ?? '').split(/\r?\n/).map(lineBlock));
     }
+};
+
+/** Cleans what Word, Outlook and Google Docs write besides content, then reads the rest as any HTML. */
+const tidyPasted = (dom: HTMLElement): void => {
+    tidyOffice(dom);
+    tidyGoogleDocs(dom);
+    keepUnreadStructureApart(dom);
 };
 
 class PasteParser extends PmDOMParser {
