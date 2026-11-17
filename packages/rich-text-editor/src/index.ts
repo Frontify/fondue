@@ -153,7 +153,7 @@ export { type TypographyGroup, type TypographyPluginOptions } from './plugins/Ty
 
 // --- Plugin authoring ---
 
-export { ANY_LIST, defineBlock, defineContent, defineInline, defineMark, definePlugin } from './core';
+export { defineBlock, defineContent, defineInline, defineMark, definePlugin } from './core';
 
 /** A plugin. The types to write one with are nested: `RtePlugin.EditorControlApi`, `RtePlugin.BlockDefinition<T>`, … */
 export type RtePlugin = CorePlugin;
