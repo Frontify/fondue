@@ -114,26 +114,19 @@ describe('the table menu', () => {
         expect(grid.add).toHaveBeenCalledWith('column', 'after');
     });
 
-    it('offers deleting the only row disabled, says why, and does not run it', () => {
-        const grid = fakeGrid(shapeOf({ rows: 1 }));
-        const items = openMenu(show(IN_TABLE, grid));
+    it('leaves out deleting the only row', () => {
+        const items = openMenu(show(IN_TABLE, fakeGrid(shapeOf({ rows: 1 }))));
 
-        const row = itemNamed(items, 'Delete row');
-        expect(row?.getAttribute('aria-disabled')).toBe('true');
-        expect(itemNamed(items, 'Delete column')?.getAttribute('aria-disabled')).toBeNull();
-        expect(window.document.getElementById(row?.getAttribute('aria-describedby') ?? '')?.textContent).toBe(
-            'A table needs at least one row',
-        );
-        act(() => row?.click());
-        expect(grid.removeSelected).not.toHaveBeenCalled();
+        expect(itemNamed(items, 'Delete row')).toBeUndefined();
+        expect(itemNamed(items, 'Delete column')).toBeDefined();
     });
 
-    // Deleting them all would leave no table, so the engine refuses; the menu says so first.
-    it('offers deleting columns disabled when the selection covers every column', () => {
+    // Deleting them all would leave no table, so the engine refuses; the menu does not offer it.
+    it('leaves out deleting columns when the selection covers every column', () => {
         const items = openMenu(show(IN_TABLE, fakeGrid(shapeOf({ rows: 3, columns: 2, selectedColumns: 2 }))));
 
-        expect(itemNamed(items, 'Delete column')?.getAttribute('aria-disabled')).toBe('true');
-        expect(itemNamed(items, 'Delete row')?.getAttribute('aria-disabled')).toBeNull();
+        expect(itemNamed(items, 'Delete column')).toBeUndefined();
+        expect(itemNamed(items, 'Delete row')).toBeDefined();
     });
 
     it('names each header toggle by what choosing it does', () => {

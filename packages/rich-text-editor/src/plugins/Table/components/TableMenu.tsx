@@ -2,14 +2,13 @@
 
 import { Dropdown } from '@frontify/fondue-components';
 import { IconTable } from '@frontify/fondue-icons';
-import { type ReactNode, useId } from 'react';
+import { type ReactNode } from 'react';
 
 import { type EditorControlApi, type RteSelectionSnapshot } from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
-import styles from '../table.module.scss';
 
 /** Until the editor's locale files exist, like every shipped plugin. */
 const TEXT = {
@@ -25,11 +24,9 @@ const TEXT = {
     addHeaderColumn: 'Add header column',
     removeHeaderColumn: 'Remove header column',
     deleteTable: 'Delete table',
-    lastColumn: 'A table needs at least one column',
-    lastRow: 'A table needs at least one row',
 } as const;
 
-type MenuItem = { id: string; label: string; run: () => void; reason?: string };
+type MenuItem = { id: string; label: string; run: () => void; isAvailable?: boolean };
 
 type TableMenuProps = {
     api: EditorControlApi;
@@ -40,8 +37,8 @@ type Shape = NonNullable<ReturnType<EditorControlApi['grid']['shape']>>;
 
 /**
  * The engine removes nothing when the selection covers every row or column,
- * so those items carry the reason instead. Each header toggle is named by
- * what choosing it does.
+ * so those items are left out then. Each header toggle is named by what
+ * choosing it does.
  */
 const menuItems = (api: EditorControlApi, shape: Shape): MenuItem[] => [
     { id: 'column-left', label: TEXT.insertColumnLeft, run: () => api.grid.add('column', 'before') },
@@ -52,13 +49,13 @@ const menuItems = (api: EditorControlApi, shape: Shape): MenuItem[] => [
         id: 'delete-column',
         label: TEXT.deleteColumn,
         run: () => api.grid.removeSelected('column'),
-        reason: shape.selectedColumns === shape.columns ? TEXT.lastColumn : undefined,
+        isAvailable: shape.selectedColumns < shape.columns,
     },
     {
         id: 'delete-row',
         label: TEXT.deleteRow,
         run: () => api.grid.removeSelected('row'),
-        reason: shape.selectedRows === shape.rows ? TEXT.lastRow : undefined,
+        isAvailable: shape.selectedRows < shape.rows,
     },
     {
         id: 'header-row',
@@ -75,7 +72,6 @@ const menuItems = (api: EditorControlApi, shape: Shape): MenuItem[] => [
 
 /** Shown only while the selection is in a table. */
 export const TableMenu = ({ api, selection }: TableMenuProps): ReactNode => {
-    const menuId = useId();
     const { returnToText, contentProps } = useFocusAfterClose(api);
     // `shape()` answers for any grid; this keeps the menu to tables.
     if (!selection.blocks.some((block) => block.type === 'table')) {
@@ -85,7 +81,7 @@ export const TableMenu = ({ api, selection }: TableMenuProps): ReactNode => {
     if (shape === null) {
         return null;
     }
-    const items = menuItems(api, shape);
+    const items = menuItems(api, shape).filter((item) => item.isAvailable !== false);
 
     return (
         <Dropdown.Root>
@@ -95,38 +91,18 @@ export const TableMenu = ({ api, selection }: TableMenuProps): ReactNode => {
                 </ToolbarButton>
             </Dropdown.Trigger>
             <Dropdown.Content {...contentProps} onEscapeKeyDown={returnToText}>
-                {items.map((item) => {
-                    const reasonId = `${menuId}-${item.id}-reason`;
-                    return (
-                        <Dropdown.Item
-                            key={item.id}
-                            textValue={item.label}
-                            // Not `disabled`: that takes it out of the arrow-key order, and
-                            // the reason would never be read. Listed, reachable, inert.
-                            aria-disabled={item.reason === undefined ? undefined : true}
-                            aria-describedby={item.reason === undefined ? undefined : reasonId}
-                            onSelect={(event) => {
-                                if (item.reason !== undefined) {
-                                    event.preventDefault();
-                                    return;
-                                }
-                                returnToText();
-                                item.run();
-                            }}
-                        >
-                            {item.reason === undefined ? (
-                                <span>{item.label}</span>
-                            ) : (
-                                <span className={styles.unavailable}>
-                                    <span>{item.label}</span>
-                                    <span id={reasonId} className={styles.reason}>
-                                        {item.reason}
-                                    </span>
-                                </span>
-                            )}
-                        </Dropdown.Item>
-                    );
-                })}
+                {items.map((item) => (
+                    <Dropdown.Item
+                        key={item.id}
+                        textValue={item.label}
+                        onSelect={() => {
+                            returnToText();
+                            item.run();
+                        }}
+                    >
+                        <span>{item.label}</span>
+                    </Dropdown.Item>
+                ))}
             </Dropdown.Content>
         </Dropdown.Root>
     );
