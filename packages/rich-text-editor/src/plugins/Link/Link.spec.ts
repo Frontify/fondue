@@ -49,7 +49,7 @@ describe('the link look', () => {
         expect(linkPlugin().content).toBe(linkContent);
     });
 
-    it('keeps the shared mark, so it registers next to the default content', () => {
+    it('shares the mark, so a content list with `linkContent` and the looked link still builds', () => {
         const plugin = linkPlugin({ look: { color: 'blue' } });
 
         expect(plugin.content?.marks?.link).toBe(linkContent.marks?.link);
