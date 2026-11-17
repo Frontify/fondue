@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 @use '../../../utilities/focusStyle.module.scss';
-@use '../../../utilities/pressedStyle.module.scss';
 @use '../../../utilities/sizeToken.module.scss';
 @use '../../../utilities/transitions.module.scss';
 
@@ -504,9 +503,4 @@ $selection-mark-clearance: calc(var(--spacing-medium) + #{sizeToken.get(5)} + va
 .action {
     display: flex;
     align-items: center;
-}
-
-// The data attributes match Button's own variant selectors, so the open look wins over the weak emphasis.
-.actionButton[data-variant][data-emphasis][aria-expanded='true']:not([disabled]) {
-    @include pressedStyle.pressed;
 }

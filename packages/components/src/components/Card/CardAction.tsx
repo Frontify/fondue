@@ -55,7 +55,6 @@ export const CardActionButton = (
     return (
         <Button
             ref={ref}
-            className={styles.actionButton}
             data-test-id={dataTestId}
             aria-label={ariaLabel}
             emphasis="weak"
