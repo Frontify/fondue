@@ -7,7 +7,6 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
-import { type LinkPolicy } from '../helpers/policy';
 
 import { LinkTargetForm } from './LinkTargetForm';
 
@@ -19,7 +18,7 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 const BRAND: LinkDestination = { id: 'brand', label: 'Brand guidelines', href: 'https://frontify.com/brand' };
 const LOGOS: LinkDestination = { id: 'logos', label: 'Logos', href: 'https://frontify.com/logos' };
-const ELSEWHERE: LinkDestination = { id: 'other', label: 'Elsewhere', href: 'https://example.com/other' };
+const UNSAFE: LinkDestination = { id: 'script', label: 'Script', href: 'javascript:alert(1)' };
 
 const teardown: (() => void)[] = [];
 beforeEach(() => {
@@ -33,30 +32,19 @@ afterEach(() => {
 });
 
 type SearchFormOptions = {
-    policy?: LinkPolicy;
     mode?: { kind: 'create'; text: string } | { kind: 'edit' };
 };
 
 type KeyPressInit = KeyboardEventInit & { keyCode?: number };
 
-const mountSearchForm = (
-    search: LinkSearch | undefined,
-    { policy = {}, mode = { kind: 'edit' } }: SearchFormOptions = {},
-) => {
+const mountSearchForm = (search: LinkSearch | undefined, { mode = { kind: 'edit' } }: SearchFormOptions = {}) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
     const root = createRoot(container);
     const onSave = vi.fn();
     act(() => {
         root.render(
-            <LinkTargetForm
-                initial={{ href: '' }}
-                {...mode}
-                policy={policy}
-                search={search}
-                onSave={onSave}
-                onCancel={vi.fn()}
-            />,
+            <LinkTargetForm initial={{ href: '' }} {...mode} search={search} onSave={onSave} onCancel={vi.fn()} />,
         );
     });
     teardown.push(() => {
@@ -312,10 +300,8 @@ describe('the destination field', () => {
         expect(third.textField()?.value).toBe('typed');
     });
 
-    it('never shows a result the policy refuses', async () => {
-        const { type, pages, status } = mountSearchForm(fixed(BRAND, ELSEWHERE), {
-            policy: { allowedHosts: ['frontify.com'] },
-        });
+    it('never shows a result with an unsafe target', async () => {
+        const { type, pages, status } = mountSearchForm(fixed(BRAND, UNSAFE));
 
         await type('a');
 

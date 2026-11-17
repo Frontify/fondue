@@ -59,7 +59,6 @@ export {
     type InlineDefinition,
     type MarkClearRule,
     type MarkDefinition,
-    type MarkIgnoreRule,
     type MarkParseRule,
     onlyTypeOf,
     type ParseRule,
