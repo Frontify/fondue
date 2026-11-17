@@ -224,7 +224,7 @@ describe('a mention being searched for', () => {
         }
     });
 
-    it('starts the Searching delay again when a slow lookup that failed is retried', async () => {
+    it('keeps the popup up and says Searching at once when a failed lookup is retried', async () => {
         vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
         const frame = async (): Promise<void> => {
             await act(async () => {
@@ -252,13 +252,8 @@ describe('a mention being searched for', () => {
 
             act(() => retryOption()?.click());
             await frame();
-            expect(window.document.body.textContent).not.toContain('Searching');
-
-            act(() => {
-                vi.advanceTimersByTime(300);
-            });
-            await frame();
             expect(popup()).toContain('Searching');
+            expect(retryOption()).toBeUndefined();
         } finally {
             vi.useRealTimers();
         }
@@ -413,6 +408,26 @@ describe('a picker that takes what the app gives', () => {
         expect([a, b].map((option) => option?.querySelector('img'))).toEqual([null, null]);
         expect([a, b].map((option) => option?.querySelector('svg') !== null)).toEqual([true, true]);
         expect(c?.querySelector('img')?.getAttribute('src')).toBe('https://example.com/c.png');
+    });
+
+    it('shows a kind this version does not know as a person, without throwing', async () => {
+        // An app's list is read at runtime and can carry any kind.
+        const team = { id: 't', username: 't', name: 'T', kind: 'team' } as unknown as MentionItem;
+        const { input } = await mountDraft(() => [team, JOHN]);
+
+        const listbox = window.document.getElementById(input.getAttribute('aria-controls') ?? '');
+        const [teamOption, john] = [...(listbox?.querySelectorAll('[role="option"]') ?? [])];
+        expect(teamOption?.querySelector('svg')?.outerHTML).toBe(john?.querySelector('svg')?.outerHTML);
+    });
+
+    it('isolates each name and drops the characters that could reorder the row', async () => {
+        const override = String.fromCodePoint(0x202e);
+        const disguised: MentionItem = { id: 'd', username: `ev${override}il`, name: `Ev${override}il Doe` };
+        const { input } = await mountDraft(() => [disguised]);
+
+        const listbox = window.document.getElementById(input.getAttribute('aria-controls') ?? '');
+        const shown = [...(listbox?.querySelectorAll('[role="option"] bdi') ?? [])].map((name) => name.textContent);
+        expect(shown).toEqual(['Evil Doe', '@evil']);
     });
 
     it('leaves Enter and Tab to the input method while it composes', async () => {
