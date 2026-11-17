@@ -1,0 +1,23 @@
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.tsx
+  s_633c096294772a::t_9f6547017cfccc 50,110-112,116,119,185,205-207
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.spec.tsx
+  s_633c096294772a::t_ae40d43311d436 328,335,380,386,389,394
+.changeset/rte-font-color-last-valid-hex.md
+  s_633c096294772a::t_ae40d43311d436 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d6631bf97b3c06ec3e6258d3ee4798aafd8bdf67",
+  "prompts": {},
+  "sessions": {
+    "s_633c096294772a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8c387756-7c76-42c2-b66e-b8e1fa1cfe04",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

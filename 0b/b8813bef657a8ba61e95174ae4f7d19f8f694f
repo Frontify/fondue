@@ -1,0 +1,30 @@
+packages/rich-text-editor/src/core/plugin.ts
+  s_fed93656aebdc0::t_a5649e4d80a418 304-306,310-323
+  s_fed93656aebdc0::t_5d481026cab8af 324
+packages/rich-text-editor/src/core/index.ts
+  s_fed93656aebdc0::t_da25210417367f 38
+packages/rich-text-editor/src/core/registry.spec.ts
+  s_fed93656aebdc0::t_b67e0c86fdb484 13,703-710
+packages/rich-text-editor/src/editor/engines/prosemirror/documentConversion.ts
+  s_fed93656aebdc0::t_81e9caf3242e64 19,278-282
+packages/rich-text-editor/src/editor/engines/prosemirror/grid.spec.tsx
+  s_fed93656aebdc0::t_39da5a7e4f938a 126-141
+packages/rich-text-editor/src/editor/engines/prosemirror/grid.ts
+  s_fed93656aebdc0::t_7061d31202f93e 4,16-22,73-84
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "0bb8813bef657a8ba61e95174ae4f7d19f8f694f",
+  "prompts": {},
+  "sessions": {
+    "s_fed93656aebdc0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ec4701e1-5674-406b-acc1-9015c026cd89",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

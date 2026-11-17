@@ -1,0 +1,23 @@
+packages/components/src/components/Tree/components/TreeRoot.ct.tsx
+  s_f352e2f3591a8e::t_f13cadc4d264db 628-660
+  s_f352e2f3591a8e::t_8423321cb77029 661-662
+packages/components/src/components/Tree/components/TreeRoot.tsx
+  s_f352e2f3591a8e::t_f13cadc4d264db 155-159,161-162
+  s_f352e2f3591a8e::t_af671d87875581 160
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cff3c852a239086c0089a7c73f10890fc58dbcbb",
+  "prompts": {},
+  "sessions": {
+    "s_f352e2f3591a8e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3ce9f7f4-bf4d-434e-a017-d6c30c7ba29a",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

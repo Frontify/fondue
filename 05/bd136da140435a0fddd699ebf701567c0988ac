@@ -1,0 +1,23 @@
+packages/components/package.json
+  s_7c07a83271d046::t_e4375af09cd944 16-18
+.changeset/declare-side-effects.md
+  s_7c07a83271d046::t_5668c225679804 1-6
+packages/icons/package.json
+  s_7c07a83271d046::t_7cabf0ea15cbee 35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "05bd136da140435a0fddd699ebf701567c0988ac",
+  "prompts": {},
+  "sessions": {
+    "s_7c07a83271d046": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "58765a22-c70c-472d-8c5f-362fd9afce2a",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
