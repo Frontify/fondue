@@ -57,8 +57,7 @@ export const lookVariableName = (key: string, property: string): string =>
  * The custom properties a style's look sets, which the stylesheet reads with Fondue's look as the fallback.
  *
  * @param key - The style's name, such as `imageTitle`.
- * @param look - The values to set, by field.
- * @param fields - The CSS property each field of `look` sets, such as `LOOK_PROPERTIES` for a `TextLook`.
+ * @param fields - The name each field's variable ends in, such as `LOOK_PROPERTIES` for a text look.
  * @throws When a value is empty or could break out of its declaration, rather than dropping it silently.
  */
 export const lookProperties = <TLook extends Partial<Record<string, string>>>(
@@ -66,10 +65,10 @@ export const lookProperties = <TLook extends Partial<Record<string, string>>>(
     look: Readonly<TLook>,
     fields: Readonly<Record<keyof TLook & string, string>>,
 ): Record<string, string> => {
+    const values: Readonly<Partial<Record<string, string>>> = look;
     const properties: Record<string, string> = {};
-    for (const [field, property] of Object.entries(fields)) {
-        // `Object.entries` widens the keys to string; they are the fields of `TLook` by the type of `fields`.
-        const value = look[field as keyof TLook];
+    for (const [field, property] of Object.entries<string>(fields)) {
+        const value = values[field];
         if (value === undefined) {
             continue;
         }
