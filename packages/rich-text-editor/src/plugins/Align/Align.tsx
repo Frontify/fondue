@@ -12,7 +12,6 @@ import {
     defineContent,
     definePlugin,
     type EditorControlApi,
-    type RteHotkey,
     type RteSelectionSnapshot,
     type StyleMap,
     type ToolbarItemProps,
@@ -57,38 +56,27 @@ export const alignContent = defineContent({
 
 type AlignValue = NonNullable<AlignAttribute['align']>;
 
-/** The keys are literals because a computed key keeps this plugin in the renderer; this type ties each alignment to one. */
-type AlignShortcut = 'Mod-Shift-l' | 'Mod-Shift-e' | 'Mod-Shift-r' | 'Mod-Shift-j';
+type Alignment = {
+    value: AlignValue;
+    icon: FondueIcon;
+    title: string;
+};
 
-/** The name of each alignment's button and key, and what screen readers hear after a choice. */
+const ALIGNMENTS: readonly Alignment[] = [
+    { value: 'left', icon: IconTextAlignmentLeft, title: 'Align left' },
+    { value: 'center', icon: IconTextAlignmentCentre, title: 'Align center' },
+    { value: 'right', icon: IconTextAlignmentRight, title: 'Align right' },
+    { value: 'justify', icon: IconTextAlignmentJustify, title: 'Justify' },
+];
+
+/** What the alignment buttons say to screen readers: the alignment chosen, or that it was removed. */
 const ALIGN_STRINGS = Object.freeze({
-    leftTitle: 'Align left',
-    centerTitle: 'Align center',
-    rightTitle: 'Align right',
-    justifyTitle: 'Justify',
     left: 'Aligned left',
     center: 'Centered',
     right: 'Aligned right',
     justify: 'Justified',
     cleared: 'Alignment cleared',
 });
-
-/** Read where the button renders: a property read in this module-level list would keep the icons in the renderer. */
-type AlignTitleKey = 'leftTitle' | 'centerTitle' | 'rightTitle' | 'justifyTitle';
-
-type Alignment = {
-    value: AlignValue;
-    icon: FondueIcon;
-    titleKey: AlignTitleKey;
-    shortcut: AlignShortcut;
-};
-
-const ALIGNMENTS: readonly Alignment[] = [
-    { value: 'left', icon: IconTextAlignmentLeft, titleKey: 'leftTitle', shortcut: 'Mod-Shift-l' },
-    { value: 'center', icon: IconTextAlignmentCentre, titleKey: 'centerTitle', shortcut: 'Mod-Shift-e' },
-    { value: 'right', icon: IconTextAlignmentRight, titleKey: 'rightTitle', shortcut: 'Mod-Shift-r' },
-    { value: 'justify', icon: IconTextAlignmentJustify, titleKey: 'justifyTitle', shortcut: 'Mod-Shift-j' },
-];
 
 const alignOf = ({ block }: RteSelectionSnapshot): AlignAttribute['align'] =>
     // The block carries the attribute this plugin added, which the structural node type does not know about.
@@ -99,7 +87,6 @@ type ChooseAlignmentParams = {
     value: AlignValue;
 };
 
-/** What the toolbar button and its key share. */
 const chooseAlignment = ({ api, value }: ChooseAlignmentParams): void => {
     let next: AlignValue | null = value;
     let announcement: string = ALIGN_STRINGS[value];
@@ -121,15 +108,14 @@ const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
         // One choice of four, so a radio group: the checked one is the
         // block's alignment.
         <div role="radiogroup" aria-label={label} className={styles.group}>
-            {ALIGNMENTS.map(({ value, icon: Icon, titleKey, shortcut }) => (
+            {ALIGNMENTS.map(({ value, icon: Icon, title }) => (
                 // A <button> underneath, which the toolbar gives its tabIndex.
                 // oxlint-disable-next-line jsx-a11y/interactive-supports-focus
                 <ToolbarButton
                     key={value}
                     role="radio"
                     aria-checked={current === value}
-                    title={ALIGN_STRINGS[titleKey]}
-                    shortcut={shortcut}
+                    title={title}
                     onClick={() => {
                         chooseAlignment({ api, value });
                     }}
@@ -141,40 +127,12 @@ const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
     );
 };
 
-const hotkeys = {
-    'Mod-Shift-l': {
-        label: ALIGN_STRINGS.leftTitle,
-        run: (api) => {
-            chooseAlignment({ api, value: 'left' });
-        },
-    },
-    'Mod-Shift-e': {
-        label: ALIGN_STRINGS.centerTitle,
-        run: (api) => {
-            chooseAlignment({ api, value: 'center' });
-        },
-    },
-    'Mod-Shift-r': {
-        label: ALIGN_STRINGS.rightTitle,
-        run: (api) => {
-            chooseAlignment({ api, value: 'right' });
-        },
-    },
-    'Mod-Shift-j': {
-        label: ALIGN_STRINGS.justifyTitle,
-        run: (api) => {
-            chooseAlignment({ api, value: 'justify' });
-        },
-    },
-} satisfies Record<AlignShortcut, RteHotkey>;
-
 /**
- * Text alignment, with a four-way radio group in the toolbar and a key for each alignment
+ * Text alignment, with a four-way radio group in the toolbar
  */
 export const alignPlugin = /* @__PURE__ */ definePlugin({
     id: 'align',
     content: alignContent,
     toolbarGroup: 'align',
     toolbar: [{ label: 'Alignment', render: AlignToolbar, floating: 'inline' }],
-    hotkeys,
 });

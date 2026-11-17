@@ -153,7 +153,6 @@ export {
     type MentionContentOptions,
     type MentionItem,
     type MentionPluginOptions,
-    type MentionResolution,
     type MentionValue,
 } from './plugins/Mention';
 export { type TextLook } from './core';
