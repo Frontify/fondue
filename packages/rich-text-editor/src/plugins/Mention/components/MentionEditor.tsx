@@ -4,7 +4,7 @@ import { type EditProps } from '#/core';
 
 import { mentionDisplay } from '../helpers/display';
 import { mentionValueOf } from '../helpers/mention';
-import { type MentionHref, type MentionItems, type MentionResolve, type MentionValue } from '../types';
+import { type MentionHref, type MentionItems, type MentionValue } from '../types';
 
 import { MentionDraft } from './MentionDraft';
 import { MentionLink } from './MentionLink';
@@ -13,7 +13,6 @@ type MentionEditorProps = EditProps<MentionValue, MentionValue | null> & {
     items: MentionItems;
     trigger: string;
     href: MentionHref | undefined;
-    resolve: MentionResolve | undefined;
 };
 
 /**
@@ -29,7 +28,6 @@ export const MentionEditor = ({
     items,
     trigger,
     href,
-    resolve,
 }: MentionEditorProps) => {
     if (value === null) {
         return (
@@ -55,5 +53,5 @@ export const MentionEditor = ({
             />
         );
     }
-    return <MentionLink value={value} display={mentionDisplay(value, { resolve, href, trigger })} />;
+    return <MentionLink value={value} display={mentionDisplay(value, { href, trigger })} />;
 };
