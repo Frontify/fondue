@@ -1,0 +1,35 @@
+packages/components/src/components/Tree/styles/tree.module.scss
+  s_68254d0d83d78c::t_fcb2319e7f5fda 208-209
+packages/components/src/components/Tree/components/TreeRow.tsx
+  s_68254d0d83d78c::t_ee542f3843095d 150
+  s_68254d0d83d78c::t_5cdad8ec248ad4 157
+packages/components/src/components/Tree/utils/createRoundedDragImage.ts
+  s_68254d0d83d78c::t_502e90d8b96429 1-48
+.changeset/tree-rounded-drag-edges.md
+  s_68254d0d83d78c::t_7c8af339f58b45 1-6
+packages/components/src/components/Tree/utils/createRoundedDragImage.spec.ts
+  s_68254d0d83d78c::t_a4ce3ad6e9a63a 1-2,5-37
+  s_68254d0d83d78c::t_68e445ddb6f55d 3-4
+packages/components/src/components/Tree/components/TreeRoot.ct.tsx
+  s_68254d0d83d78c::t_71e114794ab167 569-593,595-601
+  s_68254d0d83d78c::t_b24fcec457d67a 594
+packages/components/src/components/Tree/hooks/useTreeController.ts
+  s_68254d0d83d78c::t_5055204152d039 23
+  s_68254d0d83d78c::t_c0182e6df17337 261-267
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7dcbb1b71854d0c31ea7a40b3b662db0d0fe520c",
+  "prompts": {},
+  "sessions": {
+    "s_68254d0d83d78c": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "df3dcb80-010b-40ab-bde9-b5db35224c1d",
+        "model": "grok-4.7"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

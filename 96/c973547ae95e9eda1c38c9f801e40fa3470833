@@ -1,0 +1,36 @@
+packages/rich-text-edior/src/RichTextEditor.stories.tsx
+  h_2139c5e5c94509 66,218-270
+packages/rich-text-edior/package.json
+  h_2139c5e5c94509 1-86
+packages/rich-text-edior/src/RichTextEditor/RichTextEditor.tsx
+  s_45a378383f1b66::t_0c7fcd1bfaa1ba 5,20-34,67-79,86-88,94-98,120-121,128-130,150-157,225
+packages/rich-text-edior/src/RichTextEditor/prosemirror.ts
+  s_45a378383f1b66::t_2fb6d25589cd75 16-17,45-52,711-753,911-941,946-949,965-966,969,974-977,980-981,989-994,998,1001,1003-1009,1045-1052
+packages/rich-text-edior/src/RichTextEditor/types.ts
+  s_45a378383f1b66::t_4f5443bc550e69 305-311
+packages/rich-text-edior/src/plugins/ToolbarButton.tsx
+  s_45a378383f1b66::t_8a9344e2b3190a 3,5,10,14-65
+packages/rich-text-edior/src/plugins/link.tsx
+  h_2139c5e5c94509 3-6,10-14,16-143,152-165,169-180
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "96c973547ae95e9eda1c38c9f801e40fa3470833",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_45a378383f1b66": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2d3dcab1-0802-43cb-8b7b-8591078d43e3",
+        "model": "unknown"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
