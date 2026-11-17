@@ -19,7 +19,6 @@
     border-collapse: collapse;
     // Every cell keeps a usable width, however many columns there are; the wrapper scrolls instead.
     min-width: 100%;
-    table-layout: auto;
 }
 
 .cell,
@@ -38,15 +37,14 @@
     > :last-child {
         margin-bottom: 0;
     }
+
+    // The editor marks every cell of a selection that spans cells with this class.
+    &:global(.selectedCell) {
+        background-color: var(--color-container-highlight-default);
+    }
 }
 
 .header {
     background-color: var(--color-surface-hover);
     font-weight: var(--typography-font-weight-bold);
-}
-
-// The editor marks every cell of a selection that spans cells with this class.
-.cell:global(.selectedCell),
-.header:global(.selectedCell) {
-    background-color: var(--color-container-highlight-default);
 }

@@ -18,7 +18,7 @@ export type TableRowBlock<TCell extends RteBlockNode = RteBlockNode> = {
 };
 
 /** What every cell has: how far it reaches, and the blocks it holds. */
-type CellSpans<TContent extends RteBlockNode> = {
+type CellBase<TContent extends RteBlockNode> = {
     /**
      * How many columns the cell covers, 1 to 50; a span beyond is read as 50
      * @default 1
@@ -32,26 +32,26 @@ type CellSpans<TContent extends RteBlockNode> = {
     children: TContent[];
 };
 
-export type TableCellBlock<TContent extends RteBlockNode = RteBlockNode> = CellSpans<TContent> & {
+type HeaderScope = 'col' | 'row';
+
+export type TableCellBlock<TContent extends RteBlockNode = RteBlockNode> = CellBase<TContent> & {
     type: 'tableCell';
 };
 
-export type TableHeaderBlock<TContent extends RteBlockNode = RteBlockNode> = CellSpans<TContent> & {
+export type TableHeaderBlock<TContent extends RteBlockNode = RteBlockNode> = CellBase<TContent> & {
     type: 'tableHeader';
     /**
      * What the header cell labels: its column or its row
      * @default 'col'
      */
-    scope?: 'col' | 'row';
+    scope?: HeaderScope;
 };
 
 /** Until the editor's locale files exist, like every shipped plugin. */
 const TABLE_LABEL = 'Table';
-const INSERTED_ROWS = 3;
-const INSERTED_COLUMNS = 3;
 
 type SpanValue = { colspan: number; rowspan: number };
-type HeaderValue = SpanValue & { scope: 'col' | 'row' };
+type HeaderValue = SpanValue & { scope: HeaderScope };
 
 const SPAN_DEFAULTS: SpanValue = { colspan: 1, rowspan: 1 };
 
@@ -74,12 +74,7 @@ const spansOfElement = (element: HTMLElement): SpanValue => ({
     rowspan: gridSpanOf(element.getAttribute('rowspan')),
 });
 
-const scopeOf = (element: HTMLElement): HeaderValue['scope'] => {
-    if (element.getAttribute('scope') === 'row') {
-        return 'row';
-    }
-    return 'col';
-};
+const scopeOf = (element: HTMLElement): HeaderScope => (element.getAttribute('scope') === 'row' ? 'row' : 'col');
 
 type ReadonlyTableProps = { children?: ReactNode };
 
@@ -94,64 +89,63 @@ const ReadonlyTable = ({ children }: ReadonlyTableProps): ReactNode => (
 );
 
 /** Tables whose cells hold paragraphs and lists, with merged cells kept as stored. */
-export const tableContent = () =>
-    defineContent({
-        blocks: {
-            table: defineBlock({
-                content: { parts: ['tableRow'] },
-                gridRole: 'grid',
-                toHtml: () => ({
-                    tag: 'div',
-                    attrs: { class: styles.scroll },
-                    children: [
-                        {
-                            tag: 'table',
-                            attrs: { class: styles.table },
-                            children: [{ tag: 'tbody', children: true }],
-                        },
-                    ],
-                }),
-                parse: [{ tag: 'table' }],
-                render: { component: ReadonlyTable },
+export const tableContent = defineContent({
+    blocks: {
+        table: defineBlock({
+            content: { parts: ['tableRow'] },
+            gridRole: 'grid',
+            toHtml: () => ({
+                tag: 'div',
+                attrs: { class: styles.scroll },
+                children: [
+                    {
+                        tag: 'table',
+                        attrs: { class: styles.table },
+                        children: [{ tag: 'tbody', children: true }],
+                    },
+                ],
             }),
-            tableRow: defineBlock({
-                content: { parts: ['tableCell', 'tableHeader'] },
-                gridRole: 'row',
-                toHtml: () => ({ tag: 'tr', children: true }),
-                parse: [{ tag: 'tr' }],
+            parse: [{ tag: 'table' }],
+            render: { component: ReadonlyTable },
+        }),
+        tableRow: defineBlock({
+            content: { parts: ['tableCell', 'tableHeader'] },
+            gridRole: 'row',
+            toHtml: () => ({ tag: 'tr', children: true }),
+            parse: [{ tag: 'tr' }],
+        }),
+        tableCell: defineBlock<SpanValue>({
+            content: { blocks: [PARAGRAPH, ANY_LIST] },
+            gridRole: 'slot',
+            defaults: SPAN_DEFAULTS,
+            toHtml: (value) => ({
+                tag: 'td',
+                attrs: { class: styles.cell, ...spanAttrs(value) },
+                children: true,
             }),
-            tableCell: defineBlock<SpanValue>({
-                content: { blocks: [PARAGRAPH, ANY_LIST] },
-                gridRole: 'slot',
-                defaults: SPAN_DEFAULTS,
-                toHtml: (value) => ({
-                    tag: 'td',
-                    attrs: { class: styles.cell, ...spanAttrs(value) },
-                    children: true,
-                }),
-                parse: [{ tag: 'td', value: spansOfElement }],
+            parse: [{ tag: 'td', value: spansOfElement }],
+        }),
+        tableHeader: defineBlock<HeaderValue>({
+            content: { blocks: [PARAGRAPH, ANY_LIST] },
+            gridRole: 'headerSlot',
+            defaults: { ...SPAN_DEFAULTS, scope: 'col' },
+            toHtml: (value) => ({
+                tag: 'th',
+                attrs: { class: styles.header, ...spanAttrs(value), scope: value.scope },
+                children: true,
             }),
-            tableHeader: defineBlock<HeaderValue>({
-                content: { blocks: [PARAGRAPH, ANY_LIST] },
-                gridRole: 'headerSlot',
-                defaults: { ...SPAN_DEFAULTS, scope: 'col' },
-                toHtml: (value) => ({
-                    tag: 'th',
-                    attrs: { class: styles.header, ...spanAttrs(value), scope: value.scope },
-                    children: true,
-                }),
-                parse: [{ tag: 'th', value: (element) => ({ ...spansOfElement(element), scope: scopeOf(element) }) }],
-            }),
-        },
-    });
+            parse: [{ tag: 'th', value: (element) => ({ ...spansOfElement(element), scope: scopeOf(element) }) }],
+        }),
+    },
+});
 
-const emptyCell = (type: (TableCellBlock | TableHeaderBlock)['type']): TableCellBlock | TableHeaderBlock => ({
+const emptyCell = (type: 'tableCell' | 'tableHeader'): TableCellBlock | TableHeaderBlock => ({
     type,
     children: [{ type: PARAGRAPH, children: [{ text: '' }] }],
 });
 
 /** The first row is a header row. */
-const emptyTable = (rows: number, columns: number): TableRowBlock[] =>
+const emptyRows = (rows: number, columns: number): TableRowBlock[] =>
     Array.from({ length: rows }, (_, row) => {
         const type = row === 0 ? 'tableHeader' : 'tableCell';
         return { type: 'tableRow' as const, children: Array.from({ length: columns }, () => emptyCell(type)) };
@@ -161,7 +155,7 @@ const emptyTable = (rows: number, columns: number): TableRowBlock[] =>
 export const tablePlugin = () =>
     definePlugin({
         id: 'table',
-        content: tableContent(),
+        content: tableContent,
         commands: [
             {
                 id: 'table',
@@ -169,7 +163,7 @@ export const tablePlugin = () =>
                 icon: IconTable,
                 keywords: ['grid', 'rows', 'columns', 'spreadsheet'],
                 group: 'insert',
-                run: (api) => api.insert('table', { children: emptyTable(INSERTED_ROWS, INSERTED_COLUMNS) }),
+                run: (api) => api.insert('table', { children: emptyRows(3, 3) }),
             },
         ],
     });

@@ -8,7 +8,7 @@ import { type EditorControlApi } from '#/core';
 
 import { tableContent, tablePlugin } from './Table';
 
-const { blocks = {} } = tableContent();
+const { blocks = {} } = tableContent;
 
 /** The value a block's first parse rule reads off this markup. */
 const parsedValue = (type: 'tableCell' | 'tableHeader', html: string): unknown => {
