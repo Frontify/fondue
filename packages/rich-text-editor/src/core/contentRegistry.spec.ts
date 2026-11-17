@@ -44,6 +44,8 @@ describe('buildContentRegistry', () => {
 
     it('names the first type of a hand-built plugin with no id', () => {
         // @ts-expect-error a hand-written plugin can leave out the `id`
-        expect(() => buildContentRegistry([{ kind: 'plugin' }])).toThrow('Plugin has no id: no type declared');
+        expect(() => buildContentRegistry([{ kind: 'plugin', content: defineContent({ marks: { bold } }) }])).toThrow(
+            'Plugin has no id: bold',
+        );
     });
 });
