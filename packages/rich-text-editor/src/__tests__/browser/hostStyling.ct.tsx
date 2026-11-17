@@ -3,7 +3,14 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator } from '@playwright/test';
 
-import { type LinkLook, type TextLook, type TextStyleName } from '../../index';
+import {
+    type BulletListLevelLook,
+    type LinkLook,
+    type ListLevelLooks,
+    type NumberedListLevelLook,
+    type TextLook,
+    type TextStyleName,
+} from '../../index';
 
 import { HostLooksPair } from './HostLooksPair';
 import { HostNoHeadingsPair } from './HostNoHeadingsPair';
@@ -11,11 +18,14 @@ import { HostResetPair } from './HostResetPair';
 import { HostStylingPair } from './HostStylingPair';
 import { HostStylingSections } from './HostStylingSections';
 import {
+    BULLET_ITEMS,
     H1_COLOR_VARIABLE,
     HOST_RESET_CSS,
     HOST_SCOPED_CSS,
     LAST_QUOTE_TEXT,
     MIDDLE_QUOTE_TEXT,
+    NESTED_LISTS_DOCUMENT,
+    NUMBERED_ITEMS,
     QUOTES_DOCUMENT,
     SECTION_A_H1_COLOR,
     SECTION_B_H1_COLOR,
@@ -531,6 +541,146 @@ test.describe('the document next to a host page stylesheet', () => {
             const body = blockIn(component.getByTestId(surface), 'body');
             await expect(body).toHaveCSS('margin-top', HOST_COMPUTED_LOOK['margin-top']);
             await expect(body).toHaveCSS('margin-bottom', HOST_COMPUTED_LOOK['margin-bottom']);
+        }
+    });
+});
+
+/** A list level as drawn: the list's marker type and indent, and its item's marker colour and size. */
+type ComputedMarkerLook = { marker: string; color: string; size: string; indent: string };
+
+/** The look of the list level holding the item with `text`. */
+const markerLookOf = (surface: Locator, text: string): Promise<ComputedMarkerLook> =>
+    // The text's paragraph sits in its item, which sits in its list.
+    surface
+        .getByText(text, { exact: true })
+        .locator('xpath=..')
+        .evaluate((item) => {
+            const list = item.parentElement;
+            if (list === null) {
+                throw new Error('A list item outside a list');
+            }
+            const marker = getComputedStyle(item, '::marker');
+            const listStyle = getComputedStyle(list);
+            return {
+                marker: listStyle.listStyleType,
+                color: marker.color,
+                size: marker.fontSize,
+                indent: listStyle.paddingLeft,
+            };
+        });
+
+const markerLooksIn = async (surface: Locator, texts: readonly string[]): Promise<ComputedMarkerLook[]> => {
+    const looks: ComputedMarkerLook[] = [];
+    for (const text of texts) {
+        looks.push(await markerLookOf(surface, text));
+    }
+    return looks;
+};
+
+// Fondue's markers as drawn before lists could take a look, with the default theme in Chromium and WebKit.
+const BULLET_MARKER: ComputedMarkerLook = {
+    marker: 'disc',
+    color: PLAIN.color,
+    size: '14px',
+    indent: '21px',
+};
+const NUMBER_MARKER: ComputedMarkerLook = { ...BULLET_MARKER, marker: 'decimal', indent: '28px' };
+
+const FONDUE_BULLET_MARKERS: ComputedMarkerLook[] = [
+    BULLET_MARKER,
+    { ...BULLET_MARKER, marker: 'circle' },
+    { ...BULLET_MARKER, marker: 'square' },
+    { ...BULLET_MARKER, marker: 'square' },
+];
+const FONDUE_NUMBER_MARKERS: ComputedMarkerLook[] = [
+    NUMBER_MARKER,
+    { ...NUMBER_MARKER, marker: 'lower-alpha' },
+    { ...NUMBER_MARKER, marker: 'lower-roman' },
+];
+
+const HOST_BULLET_LEVELS: ListLevelLooks<BulletListLevelLook> = [
+    { marker: "'– '", color: 'rgb(200, 0, 0)', size: '20px', indent: '30px' },
+    { marker: 'square', color: 'rgb(0, 120, 0)' },
+    { marker: 'disc', indent: '10px' },
+];
+const HOST_NUMBERED_LEVELS: ListLevelLooks<NumberedListLevelLook> = [
+    { marker: 'upper-roman', color: 'rgb(0, 0, 200)', indent: '40px' },
+];
+
+const UNSET_BULLET_LEVEL: BulletListLevelLook = {
+    marker: UNSET_VARIABLE,
+    color: UNSET_VARIABLE,
+    size: UNSET_VARIABLE,
+    indent: UNSET_VARIABLE,
+};
+const UNSET_NUMBERED_LEVEL: NumberedListLevelLook = {
+    marker: UNSET_VARIABLE,
+    color: UNSET_VARIABLE,
+    indent: UNSET_VARIABLE,
+};
+
+test.describe('host styling of list markers', () => {
+    test('keeps Fondue markers when the host sets none, in the renderer and the editor', async ({ mount }) => {
+        const component = await mount(<HostLooksPair value={NESTED_LISTS_DOCUMENT} />);
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            expect(await markerLooksIn(section, BULLET_ITEMS)).toEqual(FONDUE_BULLET_MARKERS);
+            expect(await markerLooksIn(section, NUMBERED_ITEMS)).toEqual(FONDUE_NUMBER_MARKERS);
+        }
+    });
+
+    test('applies each level its look, and a deeper list the third level', async ({ mount }) => {
+        const component = await mount(
+            <HostLooksPair
+                value={NESTED_LISTS_DOCUMENT}
+                bulletLevels={HOST_BULLET_LEVELS}
+                numberedLevels={HOST_NUMBERED_LEVELS}
+            />,
+        );
+        const thirdBullet: ComputedMarkerLook = { ...BULLET_MARKER, marker: 'disc', indent: '10px' };
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            expect(await markerLooksIn(section, BULLET_ITEMS)).toEqual([
+                // Browsers write a string in double quotes.
+                { marker: '"– "', color: 'rgb(200, 0, 0)', size: '20px', indent: '30px' },
+                { ...BULLET_MARKER, marker: 'square', color: 'rgb(0, 120, 0)' },
+                thirdBullet,
+                thirdBullet,
+            ]);
+            expect(await markerLooksIn(section, NUMBERED_ITEMS)).toEqual([
+                { ...NUMBER_MARKER, marker: 'upper-roman', color: 'rgb(0, 0, 200)', indent: '40px' },
+                FONDUE_NUMBER_MARKERS[1],
+                FONDUE_NUMBER_MARKERS[2],
+            ]);
+        }
+    });
+
+    test('keeps Fondue markers for values that resolve to an unset guideline variable', async ({ mount }) => {
+        const component = await mount(
+            <HostLooksPair
+                value={NESTED_LISTS_DOCUMENT}
+                bulletLevels={[UNSET_BULLET_LEVEL, UNSET_BULLET_LEVEL, UNSET_BULLET_LEVEL]}
+                numberedLevels={[UNSET_NUMBERED_LEVEL, UNSET_NUMBERED_LEVEL, UNSET_NUMBERED_LEVEL]}
+            />,
+        );
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            expect(await markerLooksIn(section, BULLET_ITEMS)).toEqual(FONDUE_BULLET_MARKERS);
+            expect(await markerLooksIn(section, NUMBERED_ITEMS)).toEqual(FONDUE_NUMBER_MARKERS);
+        }
+    });
+
+    test('draws markers in the body colour and size where the list sets none', async ({ mount }) => {
+        const component = await mount(<HostLooksPair value={NESTED_LISTS_DOCUMENT} body={HOST_LOOK} />);
+        const body = { color: HOST_COMPUTED_LOOK.color, size: HOST_COMPUTED_LOOK['font-size'] };
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            expect(await markerLookOf(section, BULLET_ITEMS[0])).toMatchObject(body);
+            expect(await markerLookOf(section, NUMBERED_ITEMS[0])).toMatchObject(body);
         }
     });
 });

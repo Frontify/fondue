@@ -7,9 +7,11 @@ import {
     defineBlock,
     defineContent,
     definePlugin,
+    lookProperties,
     PARAGRAPH,
     type RteBlockNode,
     type RteContent,
+    type RtePlugin,
     type StyleMap,
 } from '#/core';
 
@@ -43,7 +45,11 @@ type NumberedListValue = { start: number | null };
 const listItem = defineBlock({
     // The paragraph comes first: it is what a new item is filled with.
     content: { blocks: [PARAGRAPH, ANY_LIST] },
-    toHtml: () => ({ tag: 'li', attrs: { class: styles.item }, children: true }),
+    toHtml: () => ({
+        tag: 'li',
+        attrs: { class: styles.item },
+        children: true,
+    }),
     parse: [{ tag: 'li' }],
 });
 
@@ -52,7 +58,11 @@ const listItem = defineBlock({
  */
 const bulletList = defineBlock({
     content: { items: 'listItem' },
-    toHtml: () => ({ tag: 'ul', attrs: { class: styles.bulletList }, children: true }),
+    toHtml: () => ({
+        tag: 'ul',
+        attrs: { class: styles.bulletList },
+        children: true,
+    }),
     parse: [{ tag: 'ul' }],
 });
 
@@ -107,9 +117,15 @@ const numberedList = defineBlock<NumberedListValue>({
         }
         // A list that starts past the stylesheet's room widens for its first number only.
         if (first !== undefined && first.length > MARKER_DIGITS) {
-            style = { [EXTRA_DIGITS_PROPERTY]: String(first.length - MARKER_DIGITS) };
+            style = {
+                [EXTRA_DIGITS_PROPERTY]: String(first.length - MARKER_DIGITS),
+            };
         }
-        return { tag: 'ol', attrs: { class: styles.numberedList, start: first, style }, children: true };
+        return {
+            tag: 'ol',
+            attrs: { class: styles.numberedList, start: first, style },
+            children: true,
+        };
     },
     parse: [
         {
@@ -128,17 +144,88 @@ const numberedList = defineBlock<NumberedListValue>({
 /**
  * A bulleted list, written as `<ul>`. Shares its item with `numberedListContent`.
  */
-export const bulletListContent = defineContent({ blocks: { bulletList, listItem } });
+export const bulletListContent = defineContent({
+    blocks: { bulletList, listItem },
+});
 
 /**
  * A numbered list, written as `<ol>`, starting at any number. Shares its item with `bulletListContent`.
  */
-export const numberedListContent = defineContent({ blocks: { numberedList, listItem } });
+export const numberedListContent = defineContent({
+    blocks: { numberedList, listItem },
+});
+
+/**
+ * How a bulleted list looks at one nesting level. Each value is any CSS value, a guideline variable
+ * (`var(--f-theme-settings-list-bullet1-color)`) included. A field left out keeps Fondue's look.
+ */
+export type BulletListLevelLook = {
+    /**
+     * A `list-style-type`, such as `square`, or a quoted string, such as `'– '`, drawn as written, so it carries
+     * its own space before the item text
+     */
+    marker?: string;
+    /**
+     * The marker's colour, which is the item text's colour without one
+     */
+    color?: string;
+    /**
+     * The marker's font size, which scales the bullet
+     */
+    size?: string;
+    /**
+     * The room before the item text, where the marker hangs
+     */
+    indent?: string;
+};
+
+/**
+ * How a numbered list looks at one nesting level. A number keeps the size of the item text, which its room is made for.
+ */
+export type NumberedListLevelLook = Omit<BulletListLevelLook, 'size'>;
+
+/**
+ * A look for each of the first three nesting levels, outermost first. A list nested deeper looks like the third level.
+ */
+export type ListLevelLooks<TLook> = readonly [first?: TLook, second?: TLook, third?: TLook];
+
+/**
+ * The name each field's variable ends in. `list.module.scss` reads the same names.
+ */
+const NUMBERED_LEVEL_FIELDS = {
+    marker: 'marker',
+    color: 'color',
+    indent: 'indent',
+} as const satisfies Record<keyof NumberedListLevelLook, string>;
+
+const BULLET_LEVEL_FIELDS = {
+    ...NUMBERED_LEVEL_FIELDS,
+    size: 'size',
+} as const satisfies Record<keyof BulletListLevelLook, string>;
+
+type ListType = 'bulletList' | 'numberedList';
+
+/**
+ * The custom properties of a list's looks, `--rte-<list type><level>-<field>`, such as `--rte-bullet-list2-color`
+ */
+const levelLookProperties = <TLook extends Partial<Record<string, string>>>(
+    type: ListType,
+    levels: ListLevelLooks<TLook>,
+    fields: Readonly<Record<keyof TLook & string, string>>,
+): Record<string, string> => {
+    const properties: Record<string, string> = {};
+    for (const [index, look] of levels.entries()) {
+        if (look !== undefined) {
+            Object.assign(properties, lookProperties(`${type}${index + 1}`, look, fields));
+        }
+    }
+    return properties;
+};
 
 type ListPluginParams = {
     id: string;
     content: RteContent;
-    type: 'bulletList' | 'numberedList';
+    type: ListType;
     icon: FondueIcon;
     label: string;
     /**
@@ -166,33 +253,63 @@ const listPlugin = ({ id, content, type, icon, label, keywords, markdown, shortc
         // item); toggling wraps or unwraps.
         toolbarGroup: 'lists',
         toolbar: [{ toggles: type, label, icon, shortcut, menu: { keywords } }],
-        inputRules: markdown.map((match) => ({ kind: 'list' as const, match, list: type })),
+        inputRules: markdown.map((match) => ({
+            kind: 'list' as const,
+            match,
+            list: type,
+        })),
     });
+
+export type BulletListPluginOptions = {
+    /**
+     * How the list looks at its first three nesting levels, outermost first. A level or a field left out keeps
+     * Fondue's look. A value that is empty or can end its CSS declaration early throws an error naming the level.
+     * @default []
+     */
+    levels?: ListLevelLooks<BulletListLevelLook>;
+};
+
+export type NumberedListPluginOptions = {
+    /**
+     * How the list looks at its first three nesting levels, outermost first. A level or a field left out keeps
+     * Fondue's look. A value that is empty or can end its CSS declaration early throws an error naming the level.
+     * @default []
+     */
+    levels?: ListLevelLooks<NumberedListLevelLook>;
+};
 
 /**
  * A bulleted list with the `Mod-Shift-8` shortcut, and `- ` or `* ` while typing
  */
-export const bulletListPlugin = /* @__PURE__ */ listPlugin({
-    id: 'bullet-list',
-    content: bulletListContent,
-    type: 'bulletList',
-    icon: IconListBullet,
-    label: 'Bulleted list',
-    keywords: ['ul', 'unordered', 'bullets'],
-    markdown: ['- ', '* '],
-    shortcut: 'Mod-Shift-8',
-});
+export const bulletListPlugin = ({ levels = [] }: BulletListPluginOptions = {}): RtePlugin =>
+    listPlugin({
+        id: 'bullet-list',
+        content: defineContent({
+            blocks: { bulletList, listItem },
+            contentProperties: levelLookProperties('bulletList', levels, BULLET_LEVEL_FIELDS),
+        }),
+        type: 'bulletList',
+        icon: IconListBullet,
+        label: 'Bulleted list',
+        keywords: ['ul', 'unordered', 'bullets'],
+        markdown: ['- ', '* '],
+        shortcut: 'Mod-Shift-8',
+    });
 
 /**
  * A numbered list with the `Mod-Shift-7` shortcut, and `1. ` or `1) ` while typing
  */
-export const numberedListPlugin = /* @__PURE__ */ listPlugin({
-    id: 'numbered-list',
-    content: numberedListContent,
-    type: 'numberedList',
-    icon: IconListNumbers,
-    label: 'Numbered list',
-    keywords: ['ol', 'ordered', 'numbers'],
-    markdown: ['1. ', '1) '],
-    shortcut: 'Mod-Shift-7',
-});
+export const numberedListPlugin = ({ levels = [] }: NumberedListPluginOptions = {}): RtePlugin =>
+    listPlugin({
+        id: 'numbered-list',
+        content: defineContent({
+            blocks: { numberedList, listItem },
+            contentProperties: levelLookProperties('numberedList', levels, NUMBERED_LEVEL_FIELDS),
+        }),
+        type: 'numberedList',
+        icon: IconListNumbers,
+        label: 'Numbered list',
+        keywords: ['ol', 'ordered', 'numbers'],
+        markdown: ['1. ', '1) '],
+        shortcut: 'Mod-Shift-7',
+    });

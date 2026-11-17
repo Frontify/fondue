@@ -493,7 +493,7 @@ export const BulletList: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[bulletListPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[bulletListPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -528,7 +528,7 @@ export const NumberedList: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[numberedListPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[numberedListPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -676,8 +676,8 @@ export const MarkdownShortcuts: Story = {
                             underlinePlugin,
                             strikethroughPlugin,
                             codePlugin,
-                            bulletListPlugin,
-                            numberedListPlugin,
+                            bulletListPlugin(),
+                            numberedListPlugin(),
                             checkListPlugin,
                         ]}
                     />
@@ -779,7 +779,13 @@ export const ResetFormatting: Story = {
                     <RichTextEditor
                         value={doc}
                         onChange={setDoc}
-                        plugins={[textStylePlugin(), boldPlugin, alignPlugin, bulletListPlugin, resetFormattingPlugin]}
+                        plugins={[
+                            textStylePlugin(),
+                            boldPlugin,
+                            alignPlugin,
+                            bulletListPlugin(),
+                            resetFormattingPlugin,
+                        ]}
                     />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>

@@ -109,3 +109,92 @@ export const HOST_RESET_CSS = 'p, blockquote { margin: 0; }';
 
 /** A host rule scoped to a class, as a prose stylesheet writes it. */
 export const HOST_SCOPED_CSS = `.${HOST_PAGE_CLASS} p { margin-bottom: 50px; }`;
+
+/** A bulleted list four levels deep, one past the three a host gives a look, and a numbered list three deep. */
+export const NESTED_LISTS_DOCUMENT: RteDocument = {
+    version: 1,
+    blocks: [
+        {
+            type: 'bulletList',
+            children: [
+                {
+                    type: 'listItem',
+                    children: [
+                        { type: 'paragraph', children: [{ text: 'Bullet 1' }] },
+                        {
+                            type: 'bulletList',
+                            children: [
+                                {
+                                    type: 'listItem',
+                                    children: [
+                                        { type: 'paragraph', children: [{ text: 'Bullet 2' }] },
+                                        {
+                                            type: 'bulletList',
+                                            children: [
+                                                {
+                                                    type: 'listItem',
+                                                    children: [
+                                                        { type: 'paragraph', children: [{ text: 'Bullet 3' }] },
+                                                        {
+                                                            type: 'bulletList',
+                                                            children: [
+                                                                {
+                                                                    type: 'listItem',
+                                                                    children: [
+                                                                        {
+                                                                            type: 'paragraph',
+                                                                            children: [{ text: 'Bullet 4' }],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            type: 'numberedList',
+            children: [
+                {
+                    type: 'listItem',
+                    children: [
+                        { type: 'paragraph', children: [{ text: 'Number 1' }] },
+                        {
+                            type: 'numberedList',
+                            children: [
+                                {
+                                    type: 'listItem',
+                                    children: [
+                                        { type: 'paragraph', children: [{ text: 'Number 2' }] },
+                                        {
+                                            type: 'numberedList',
+                                            children: [
+                                                {
+                                                    type: 'listItem',
+                                                    children: [{ type: 'paragraph', children: [{ text: 'Number 3' }] }],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+};
+
+/** The item text at each depth of `NESTED_LISTS_DOCUMENT`, outermost first. */
+export const BULLET_ITEMS = ['Bullet 1', 'Bullet 2', 'Bullet 3', 'Bullet 4'] as const;
+export const NUMBERED_ITEMS = ['Number 1', 'Number 2', 'Number 3'] as const;

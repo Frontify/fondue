@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
 
 import { OWN_MARGIN_VARIABLES } from '../core/documentContract';
 import { LOOK_PROPERTIES, lookVariableName } from '../core/look';
+import { bulletListPlugin, numberedListPlugin } from '../plugins/List/List';
 import { ALL_TEXT_STYLES, findPreset } from '../plugins/TextStyle/helpers/presets';
 
 // The look is spelled twice: in core (what a host sets) and in the stylesheets (what they read).
@@ -42,7 +43,9 @@ const declarationsCoreNames = (key: string, properties: readonly string[]): Look
 const CORE_PROPERTIES = Object.values(LOOK_PROPERTIES);
 
 const compileMixinCall = (call: string): string =>
-    compileString(`@use 'look.module.scss';\n.sample { ${call} }`, { loadPaths: [STYLES_DIRECTORY] }).css;
+    compileString(`@use 'look.module.scss';\n.sample { ${call} }`, {
+        loadPaths: [STYLES_DIRECTORY],
+    }).css;
 
 /** The body of the rule for `.<className>`. */
 const ruleBodyOf = (css: string, className: string): string => {
@@ -94,4 +97,40 @@ describe('the text style stylesheet', () => {
             expect(lookDeclarationsIn(ruleBodyOf(css, name))).toEqual(declarationsCoreNames(name, CORE_PROPERTIES));
         });
     }
+});
+
+const LIST_STYLESHEET = fileURLToPath(new URL('../plugins/List/list.module.scss', import.meta.url));
+
+/** A list level's variable, such as `--rte-bullet-list2-color`. */
+const LIST_LEVEL_VARIABLE = /--rte-(?:bullet|numbered)-list\d+-[a-z]+/g;
+
+const SAMPLE_VALUE = 'sample';
+const BULLET_LEVEL = {
+    marker: SAMPLE_VALUE,
+    color: SAMPLE_VALUE,
+    size: SAMPLE_VALUE,
+    indent: SAMPLE_VALUE,
+};
+const NUMBERED_LEVEL = {
+    marker: SAMPLE_VALUE,
+    color: SAMPLE_VALUE,
+    indent: SAMPLE_VALUE,
+};
+
+describe('the list stylesheet', () => {
+    const css = compile(LIST_STYLESHEET).css;
+    const written = Object.keys({
+        ...bulletListPlugin({
+            levels: [BULLET_LEVEL, BULLET_LEVEL, BULLET_LEVEL],
+        }).content?.contentProperties,
+        ...numberedListPlugin({
+            levels: [NUMBERED_LEVEL, NUMBERED_LEVEL, NUMBERED_LEVEL],
+        }).content?.contentProperties,
+    });
+
+    it('reads every variable the list plugins write for a level, and no other', () => {
+        const read = new Set(css.match(LIST_LEVEL_VARIABLE));
+
+        expect(read).toEqual(new Set(written));
+    });
 });

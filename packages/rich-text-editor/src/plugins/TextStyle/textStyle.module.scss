@@ -121,6 +121,7 @@ $heading-margin-top: var(--rte-heading-gap, var(--spacing-medium));
 }
 
 // `:where` keeps the rest at class rank, below a checked item's colour and strike.
-.content :where(p:not([data-text-style])) {
+// A list item takes it too, so its marker matches the item text where the list sets no marker look.
+.content :where(p:not([data-text-style]), li) {
     @include look.look('body', $except: (margin-top, margin-bottom));
 }

@@ -21,7 +21,7 @@ type HostNoHeadingsPairProps = {
     body: TextLook;
 };
 
-const OTHER_PLUGINS: RtePlugin[] = [bulletListPlugin, checkListPlugin, fontColorPlugin, quotePlugin, linkPlugin];
+const OTHER_PLUGINS: RtePlugin[] = [bulletListPlugin(), checkListPlugin, fontColorPlugin, quotePlugin, linkPlugin];
 
 /** The renderer and the editor of a surface without headings, which still carries the body look */
 export const HostNoHeadingsPair = ({ body }: HostNoHeadingsPairProps) => {

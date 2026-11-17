@@ -136,6 +136,13 @@ export { underlineContent, underlinePlugin } from './plugins/Underline';
 export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
 export {
+    type BulletListLevelLook,
+    type BulletListPluginOptions,
+    type ListLevelLooks,
+    type NumberedListLevelLook,
+    type NumberedListPluginOptions,
+} from './plugins/List';
+export {
     type MentionContentOptions,
     type MentionItem,
     type MentionPluginOptions,
