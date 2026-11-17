@@ -2,9 +2,15 @@
 
 import { describe, expect, it, vi } from 'vitest';
 
-import { type EditorControlApi, type PasteHandler, type RteInputRule, type RteSelectionSnapshot } from '#/core';
+import {
+    buildContentRegistry,
+    type EditorControlApi,
+    type PasteHandler,
+    type RteInputRule,
+    type RteSelectionSnapshot,
+} from '#/core';
 
-import { linkPlugin } from './Link';
+import { linkContent, linkPlugin } from './Link';
 
 const link = linkPlugin().content?.marks?.link;
 
@@ -26,6 +32,32 @@ describe('the link mark', () => {
 
         expect(html?.attrs).toMatchObject({ target: '_blank', rel: 'noopener noreferrer' });
         expect(html?.children).toBe(true);
+    });
+});
+
+describe('the link look', () => {
+    it('sets a custom property for each field of the look', () => {
+        const plugin = linkPlugin({ look: { fontWeight: '600', color: 'var(--f-link)' } });
+
+        expect(plugin.content?.contentProperties).toEqual({
+            '--rte-link-font-weight': '600',
+            '--rte-link-color': 'var(--f-link)',
+        });
+    });
+
+    it('shares the default content when there is no look', () => {
+        expect(linkPlugin().content).toBe(linkContent);
+    });
+
+    it('keeps the shared mark, so it registers next to the default content', () => {
+        const plugin = linkPlugin({ look: { color: 'blue' } });
+
+        expect(plugin.content?.marks?.link).toBe(linkContent.marks?.link);
+        expect(() => buildContentRegistry([linkContent, plugin])).not.toThrow();
+    });
+
+    it('refuses a value that could break out of its declaration', () => {
+        expect(() => linkPlugin({ look: { color: 'red; display: none' } })).toThrow(/"color".*"link"/);
     });
 });
 

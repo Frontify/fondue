@@ -1,6 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type DefaultStyle, defineContent, defineMark, definePlugin, type RteHotkey } from '#/core';
+import {
+    type DefaultStyle,
+    defineContent,
+    defineMark,
+    definePlugin,
+    lookProperties,
+    type RteContent,
+    type RteHotkey,
+    type TextLook,
+} from '#/core';
 
 import { withoutDecorationLine } from '../shared/helpers/declaredStyle';
 import { isLinkablePaste, isSafeHref, LINKABLE_ADDRESS, toHref } from '../shared/helpers/href';
@@ -22,12 +31,25 @@ export type LinkMark = {
     link?: LinkValue;
 };
 
+/**
+ * How links look. A link keeps its underline, and vertical margins do nothing on inline text, so neither is a field.
+ */
+export type LinkLook = Omit<TextLook, 'textDecoration' | 'marginTop' | 'marginBottom'>;
+
 export type LinkPluginOptions = {
     /**
      * Offers the app's own pages as link targets while the author types. Editing only: the content never needs it.
      */
     search?: LinkSearch;
+    /**
+     * How links look in the editor, the readonly view and the HTML export. A field left out keeps Fondue's look.
+     * A value that is empty or can end its CSS declaration early throws an error that names the field.
+     */
+    look?: LinkLook;
 };
+
+/** The name `link.module.scss` reads the look's custom properties by. */
+const LINK_LOOK_NAME = 'link';
 
 const withoutUnderline = (value: string): string => withoutDecorationLine(value, 'underline');
 
@@ -104,6 +126,10 @@ export const linkContent = defineContent({
     },
 });
 
+/** The link mark with the host's look, sharing the mark so it registers next to `linkContent`. */
+const linkContentWith = (look: LinkLook): RteContent =>
+    defineContent({ marks: linkContent.marks, contentProperties: lookProperties(LINK_LOOK_NAME, look) });
+
 // The key is a literal because a computed key keeps this plugin in the renderer; HOTKEY's type ties it to this key.
 const hotkeys = {
     'Mod-k': {
@@ -128,14 +154,19 @@ const HOTKEY: keyof typeof hotkeys = 'Mod-k';
  * Links, made with a toolbar button or `Mod-k` and edited in a flyout while the caret is inside.
  * A web, mail or phone address followed by a space becomes a link, and pasting one links the
  * selected text, or goes in linked at a caret outside a link. `search` offers the app's own
- * pages as targets.
+ * pages as targets, and `look` sets how links look.
  *
  * @example
- * const links = linkPlugin({ search });
+ * const links = linkPlugin({ search, look: { color: 'var(--f-theme-settings-link-color)' } });
  */
-export const linkPlugin = ({ search }: LinkPluginOptions = {}) =>
-    /* @__PURE__ */ definePlugin({
-        content: linkContent,
+export const linkPlugin = ({ search, look }: LinkPluginOptions = {}) => {
+    let content = linkContent;
+    if (look !== undefined) {
+        content = linkContentWith(look);
+    }
+
+    return definePlugin({
+        content,
         toolbarGroup: 'link',
         toolbar: [
             {
@@ -194,3 +225,4 @@ export const linkPlugin = ({ search }: LinkPluginOptions = {}) =>
             return true;
         },
     });
+};

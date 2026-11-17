@@ -2,7 +2,7 @@
 
 import { describe, expect, it, vi } from 'vitest';
 
-import { defaultPlugins, type RteDocument, serializeToHtml } from '../index';
+import { defaultPlugins, linkPlugin, type RteDocument, serializeToHtml } from '../index';
 
 // The document as HTML: each node's `toHtml`, matching the readonly view (`htmlParity.spec.tsx`).
 
@@ -77,6 +77,17 @@ describe('a document serialized to HTML', () => {
         expect(html).not.toContain('<strong>');
         expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown block type "textStyle"'));
         warn.mockRestore();
+    });
+
+    it("carries the link plugin's look on the element it wraps the document in", () => {
+        const linkOnly: RteDocument = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a link', link: { href: 'https://example.com' } }] }],
+        };
+
+        const html = serializeToHtml(linkOnly, { plugins: [linkPlugin({ look: { color: 'rgb(190, 40, 90)' } })] });
+
+        expect(html).toMatch(/^<div[^>]*style="[^"]*--rte-link-color: ?rgb\(190, 40, 90\)/);
     });
 });
 
