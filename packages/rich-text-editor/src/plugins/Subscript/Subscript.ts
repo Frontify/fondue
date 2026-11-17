@@ -5,6 +5,7 @@ import { IconSubscript } from '@frontify/fondue-icons';
 import { defineContent, defineMark, definePlugin } from '#/core';
 
 import { isVerticalAlign, markWhen } from '../shared/helpers/declaredStyle';
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
 
 /**
  * The flag this plugin sets on text nodes
@@ -38,6 +39,6 @@ export const subscriptContent = defineContent({
  */
 export const subscriptPlugin = /* @__PURE__ */ definePlugin({
     content: subscriptContent,
-    toolbarGroup: 'marks',
+    toolbarGroup: TOOLBAR_GROUPS.marks,
     toolbar: [{ label: 'Subscript', icon: IconSubscript, shortcut: 'Mod-,' }],
 });

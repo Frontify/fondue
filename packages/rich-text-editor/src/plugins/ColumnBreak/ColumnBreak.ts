@@ -4,6 +4,8 @@ import { IconTextColumnBreak } from '@frontify/fondue-icons';
 
 import { defineBlock, defineContent, definePlugin } from '#/core';
 
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
+
 import styles from './columnBreak.module.scss';
 
 /**
@@ -61,7 +63,7 @@ export const columnBreakPlugin = (options: ColumnBreakPluginOptions = {}) =>
     definePlugin({
         id: 'column-break',
         content: columnBreakContent(options),
-        toolbarGroup: 'insert',
+        toolbarGroup: TOOLBAR_GROUPS.insert,
         toolbar: [
             { label: 'Column break', icon: IconTextColumnBreak, menu: { keywords: ['columns', 'break', 'split'] } },
         ],

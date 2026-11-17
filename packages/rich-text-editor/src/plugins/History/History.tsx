@@ -6,6 +6,8 @@ import { definePlugin, REDO_HOTKEY, type ToolbarItemProps, UNDO_HOTKEY } from '#
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
+
 const UndoButton = ({ api, selection, label }: ToolbarItemProps) => (
     <ToolbarButton
         title={label}
@@ -34,7 +36,7 @@ const RedoButton = ({ api, selection, label }: ToolbarItemProps) => (
  */
 export const historyPlugin = /* @__PURE__ */ definePlugin({
     id: 'history',
-    toolbarGroup: 'history',
+    toolbarGroup: TOOLBAR_GROUPS.history,
     toolbar: [
         { label: 'Undo', render: UndoButton, floating: 'hidden' },
         { label: 'Redo', render: RedoButton, floating: 'hidden' },

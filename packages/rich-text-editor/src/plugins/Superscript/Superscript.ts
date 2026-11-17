@@ -5,6 +5,7 @@ import { IconSuperscript } from '@frontify/fondue-icons';
 import { defineContent, defineMark, definePlugin } from '#/core';
 
 import { isVerticalAlign, markWhen } from '../shared/helpers/declaredStyle';
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
 
 /**
  * The flag this plugin sets on text nodes
@@ -38,6 +39,6 @@ export const superscriptContent = defineContent({
  */
 export const superscriptPlugin = /* @__PURE__ */ definePlugin({
     content: superscriptContent,
-    toolbarGroup: 'marks',
+    toolbarGroup: TOOLBAR_GROUPS.marks,
     toolbar: [{ label: 'Superscript', icon: IconSuperscript, shortcut: 'Mod-.' }],
 });

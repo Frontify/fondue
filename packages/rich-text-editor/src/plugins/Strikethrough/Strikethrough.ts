@@ -5,6 +5,7 @@ import { IconTextFormatStrikethrough } from '@frontify/fondue-icons';
 import { defineContent, defineMark, definePlugin } from '#/core';
 
 import { decorationLineRules } from '../shared/helpers/declaredStyle';
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
 
 /**
  * The flag this plugin sets on text nodes
@@ -34,7 +35,7 @@ export const strikethroughContent = defineContent({
  */
 export const strikethroughPlugin = /* @__PURE__ */ definePlugin({
     content: strikethroughContent,
-    toolbarGroup: 'marks',
+    toolbarGroup: TOOLBAR_GROUPS.marks,
     toolbar: [{ label: 'Strikethrough', icon: IconTextFormatStrikethrough, shortcut: 'Mod-Shift-x' }],
     inputRules: [{ delimiter: '~~' }],
 });

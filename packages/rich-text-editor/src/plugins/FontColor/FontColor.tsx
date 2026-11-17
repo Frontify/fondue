@@ -3,6 +3,7 @@
 import { defineContent, defineMark, definePlugin } from '#/core';
 
 import { declaredStyle } from '../shared/helpers/declaredStyle';
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
 
 import { ColorFlyout } from './components/ColorFlyout';
 import { type FontColorValue, toExportedColor, toStoredColor } from './helpers/colors';
@@ -63,6 +64,6 @@ export const fontColorContent = defineContent({
 export const fontColorPlugin = /* @__PURE__ */ definePlugin({
     id: 'font-color',
     content: fontColorContent,
-    toolbarGroup: 'color',
+    toolbarGroup: TOOLBAR_GROUPS.color,
     toolbar: [{ label: 'Text colour', render: ColorFlyout }],
 });

@@ -6,6 +6,8 @@ import { definePlugin, type EditorControlApi, PARAGRAPH, type RteHotkey, type To
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
+
 /** The name of `Mod-\`, and what the reset button and its key say to screen readers. `Mod-\` says nothing when it removed no mark. */
 const RESET_FORMATTING_STRINGS = Object.freeze({
     clearMarksTitle: 'Clear inline formatting, keep links',
@@ -60,7 +62,7 @@ const hotkeys = {
  */
 export const resetFormattingPlugin = /* @__PURE__ */ definePlugin({
     id: 'reset-formatting',
-    toolbarGroup: 'marks',
+    toolbarGroup: TOOLBAR_GROUPS.marks,
     toolbar: [{ label: 'Reset formatting', render: ResetFormattingButton, floating: 'inline' }],
     hotkeys,
 });

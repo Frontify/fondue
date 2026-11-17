@@ -54,8 +54,8 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     onChange?: (value: RteDocumentOf<TBlock>) => void;
     /**
      * The plugins to mount (e.g. `defaultPlugins`, extended or reduced as
-     * needed). The toolbar draws them by `toolbarGroup` in the fixed group
-     * order, list order within a group, ungrouped plugins last. Defaults to
+     * needed). The toolbar draws them by `toolbarGroup`, lowest `order` first,
+     * list order within a group, ungrouped plugins last. Defaults to
      * `defaultPlugins` at the package root.
      *
      * Every plugin needs a unique `id`: ids key the toolbar and identify the

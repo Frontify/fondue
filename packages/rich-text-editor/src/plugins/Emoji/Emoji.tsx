@@ -2,6 +2,8 @@
 
 import { defineContent, defineInline, definePlugin, type RtePlugin } from '#/core';
 
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
+
 import { EmojiDraft, TRIGGER } from './components/EmojiDraft';
 import { EmojiToolbarButton } from './components/EmojiToolbarButton';
 import { defaultEmojis } from './helpers/emojis';
@@ -33,7 +35,7 @@ export const emojiPlugin = (options: EmojiPluginOptions = {}): RtePlugin => {
                 }),
             },
         }),
-        toolbarGroup: 'insert',
+        toolbarGroup: TOOLBAR_GROUPS.insert,
         toolbar: [{ label: 'Emoji', render: (props) => <EmojiToolbarButton {...props} emojis={emojis} /> }],
         edit: {
             emojiDraft: ({ isFocused, remove, api }) => (

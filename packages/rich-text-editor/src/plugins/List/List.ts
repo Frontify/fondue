@@ -13,6 +13,8 @@ import {
     type StyleMap,
 } from '#/core';
 
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
+
 import styles from './list.module.scss';
 
 /**
@@ -164,7 +166,7 @@ const listPlugin = ({ id, content, type, icon, label, keywords, markdown, shortc
         content,
         // Active anywhere inside the list (the caret sits in a paragraph inside an
         // item); toggling wraps or unwraps.
-        toolbarGroup: 'lists',
+        toolbarGroup: TOOLBAR_GROUPS.lists,
         toolbar: [{ toggles: type, label, icon, shortcut, menu: { keywords } }],
         inputRules: markdown.map((match) => ({ kind: 'list' as const, match, list: type })),
     });
