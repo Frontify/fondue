@@ -1,0 +1,25 @@
+packages/rich-text-editor/src/plugins/FontColor/helpers/colors.spec.ts
+  s_26e734472ae971::t_8c62c66941dea2 43-51,81-84,145,148-156
+  s_26e734472ae971::t_b007220e8a6f07 157
+packages/rich-text-editor/src/plugins/FontColor/helpers/colors.ts
+  s_26e734472ae971::t_c4a823b237bd3e 75-76
+  s_26e734472ae971::t_8c62c66941dea2 20-22,53,59-74,77-87,124,137,142,163,242,245
+  s_26e734472ae971::t_27c7bbd161d8d9 54-58
+  s_26e734472ae971::t_4c4b23d8d6d89c 23-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "79bf28755308a31c20dd71c46c607a2b11ccae12",
+  "prompts": {},
+  "sessions": {
+    "s_26e734472ae971": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e290a8b1-bf74-4678-92c9-eca5854b6849",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

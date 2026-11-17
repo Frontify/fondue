@@ -1,0 +1,20 @@
+README.md
+  s_825f0b4d507d50::t_4cb9ff91115d83 1,3,5-7,9,11,13,19-23,25,27-32,34,36,38,51-69,71
+  s_825f0b4d507d50::t_27fd991f9a8432 40-49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "57742065bba1826110a6c49323e24a26aa4725e1",
+  "prompts": {},
+  "sessions": {
+    "s_825f0b4d507d50": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "eaceb6aa-64f5-46e2-9fa6-8ce16f41301b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

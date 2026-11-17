@@ -1,0 +1,43 @@
+.changeset/rte-plugin-content-split.md
+  s_3da29b36b0ad36::t_dd2f5704b967b9 1-4
+packages/rich-text-editor/README.md
+  s_3da29b36b0ad36::t_b50e94dec72e44 11,14-40,53
+packages/rich-text-editor/src/__tests__/formatRegression.spec.tsx
+  s_3da29b36b0ad36::t_3d111cfaada36f 33-34,117
+packages/rich-text-editor/src/__tests__/htmlParity.spec.tsx
+  s_3da29b36b0ad36::t_6f0336b97f5167 14,123,125-134,136,138
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_3da29b36b0ad36::t_41f8fa1829b3c9 9,55,122,142,144-145,151,206,208-218,220-221,223
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_3da29b36b0ad36::t_cd12c32c25268e 13,61,63-72,74
+packages/rich-text-editor/src/__tests__/serializeToHtml.node.spec.tsx
+  s_3da29b36b0ad36::t_cde2cb5b2be488 8,14,16-22,24-25,27-34,36
+packages/rich-text-editor/src/index.ts
+  s_3da29b36b0ad36::t_fa83f1c327c27b 17-19,23-24,32,58,64,69,76,86,91,96-97,99-102,104-109,111-115,117,128,143-147,162-166
+packages/rich-text-editor/src/plugins/defaultContent.spec.ts
+  s_3da29b36b0ad36::t_2ed1b068dec68e 1-47
+packages/rich-text-editor/src/plugins/defaultContent.ts
+  s_3da29b36b0ad36::t_494fd774993b0c 1-45
+packages/rich-text-editor/src/plugins/index.ts
+  s_3da29b36b0ad36::t_0831e56c7c43d6 30-33,43-57,61
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_3da29b36b0ad36::t_d7fd87ee0a3400 26,178,204,228,252,280,304,328,352,380,412,441,485,520,554,660-668,695,738,761,903-920,922-939,966,980-997,999-1016,1038,1047,1068,1099-1115,1117-1135
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_3da29b36b0ad36::t_29167bc89ecdc1 617-619,737
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "de3a967f313c0c382b2edd857fce38c9fb9a1215",
+  "prompts": {},
+  "sessions": {
+    "s_3da29b36b0ad36": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52275dbb-cfd4-472c-b295-02ca60ef0ab1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
