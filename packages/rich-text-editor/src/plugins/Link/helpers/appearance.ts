@@ -28,6 +28,7 @@ export const linkClassName = (appearance: unknown): string | undefined => {
     if (isLinkAppearance(appearance)) {
         return [styles.link, APPEARANCES[appearance].className].join(' ');
     }
+
     return styles.link;
 };
 
@@ -91,16 +92,22 @@ export const buttonLookProperties = (
     looks: Readonly<Partial<Record<LinkAppearance, ButtonLook>>>,
 ): Record<string, string> => {
     const properties: Record<string, string> = {};
+
     for (const appearance of ALL_LINK_APPEARANCES) {
         const look = looks[appearance];
+
         if (look === undefined) {
             continue;
         }
+
         const { hover, ...own } = look;
+
         Object.assign(properties, lookProperties(`button-${appearance}`, own, BUTTON_LOOK_FIELDS));
+
         if (hover !== undefined) {
             Object.assign(properties, lookProperties(`button-${appearance}-hover`, hover, BUTTON_HOVER_LOOK_FIELDS));
         }
     }
+
     return properties;
 };

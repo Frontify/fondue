@@ -556,9 +556,11 @@ test.describe('host styling of button links', () => {
         for (const surface of SURFACES) {
             const section = component.getByTestId(surface);
             const button = section.getByRole('link', { name: BUTTON_LINK_TEXT, exact: true });
+
             for (const [property, value] of Object.entries(FONDUE_BUTTON_COMPUTED)) {
                 await expect(button).toHaveCSS(property, value);
             }
+
             await expect(section.getByRole('link', { name: PLAIN_LINK_TEXT, exact: true })).toHaveCSS(
                 'text-decoration-line',
                 'underline',
@@ -575,6 +577,7 @@ test.describe('host styling of button links', () => {
 
         for (const surface of SURFACES) {
             const button = component.getByTestId(surface).getByRole('link', { name: BUTTON_LINK_TEXT, exact: true });
+
             for (const [property, value] of Object.entries(HOST_BUTTON_COMPUTED)) {
                 await expect(button).toHaveCSS(property, value);
             }

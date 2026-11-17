@@ -88,17 +88,20 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
     }
     const [text, setText] = useState(initialText);
     const [openInNewTab, setOpenInNewTab] = useState(initial.openInNewTab === true);
+
     // A stored value this form cannot name is not kept, as the renderer shows it plain.
     let storedAppearance: LinkAppearance | null = null;
     if (isLinkAppearance(initial.appearance)) {
         storedAppearance = initial.appearance;
     }
+
     const [appearance, setAppearance] = useState(storedAppearance);
     // A stored style the editor no longer offers stays selectable, so editing never drops it silently.
     const styleOptions = [...appearances];
     if (storedAppearance !== null && !appearances.includes(storedAppearance)) {
         styleOptions.push(storedAppearance);
     }
+
     // Set by a failed save, cleared when the field changes.
     const [error, setError] = useState<string | null>(null);
     const textId = useId();
@@ -135,9 +138,11 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
         if (openInNewTab) {
             value = { href, openInNewTab: true };
         }
+
         if (appearance !== null) {
             value = { ...value, appearance };
         }
+
         onSave(value, text);
     };
 

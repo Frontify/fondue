@@ -88,6 +88,7 @@ describe('the link mark with an appearance', () => {
             const html = link?.toHtml({ href: 'https://example.com', appearance } as never);
 
             expect(html?.attrs).not.toHaveProperty('data-appearance');
+
             for (const known of ALL_LINK_APPEARANCES) {
                 expect(html?.attrs?.class).not.toContain(APPEARANCES[known].className);
             }
@@ -112,13 +113,17 @@ describe('the link mark with an appearance', () => {
 
 const parseAnchor = (attributes: Record<string, string>, options?: LinkPluginOptions): unknown => {
     const anchor = window.document.createElement('a');
+
     for (const [name, value] of Object.entries(attributes)) {
         anchor.setAttribute(name, value);
     }
+
     const rule = linkPlugin(options).content?.marks?.link?.parse[0];
+
     if (rule === undefined || rule.tag === undefined || rule.value === undefined) {
         throw new Error('the link mark declares no rule that reads an anchor');
     }
+
     return rule.value(anchor);
 };
 

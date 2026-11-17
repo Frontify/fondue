@@ -91,6 +91,7 @@ const storedLink = (value: unknown): Partial<LinkValue> | null => {
         // The declared type is trusted only this far: every field is checked before use.
         return value as Partial<LinkValue> | null;
     }
+
     return null;
 };
 
@@ -117,26 +118,34 @@ type LinkLookAttrs = {
 /** What a stored link looks like, whatever this editor offers: a document from another editor shows as authored. */
 const lookAttrs = (value: unknown): LinkLookAttrs => {
     const appearance = storedLink(value)?.appearance;
+
     if (isLinkAppearance(appearance)) {
         return { class: linkClassName(appearance), [APPEARANCE_ATTRIBUTE]: appearance };
     }
+
     return { class: linkClassName(undefined) };
 };
 
 /** A link read from pasted HTML, with a button look only when this editor offers it. */
 const linkFromElement = (element: Element, appearances: readonly LinkAppearance[]): LinkValue | null => {
     const href = element.getAttribute('href') ?? '';
+
     if (!isSafeHref(href)) {
         return null;
     }
+
     const link: LinkValue = { href };
+
     if (element.getAttribute('target') === NEW_TAB_TARGET) {
         link.openInNewTab = true;
     }
+
     const appearance = element.getAttribute(APPEARANCE_ATTRIBUTE);
+
     if (isLinkAppearance(appearance) && appearances.includes(appearance)) {
         link.appearance = appearance;
     }
+
     return link;
 };
 
@@ -222,6 +231,7 @@ export const linkPlugin = ({ search, look, appearances = NO_APPEARANCES, buttonL
     if (appearances.length > 0) {
         marks = linkMarksFor(appearances);
     }
+
     let content = linkContent;
     if (marks !== LINK_MARKS || look !== undefined || buttonLooks !== undefined) {
         content = linkContentWith({ marks, look, buttonLooks });

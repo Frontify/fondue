@@ -65,17 +65,22 @@ const mountForm = (mode: FormMode = { kind: 'edit' }, { initial = { href: '' }, 
             );
         });
     };
+
     const styleSelect = (): HTMLElement | null => container.querySelector<HTMLElement>('[role="combobox"]');
     const chooseStyle = (label: string): void => {
         act(() => styleSelect()?.click());
+
         const option = [...window.document.querySelectorAll<HTMLElement>('[role="option"]')].find(
             (candidate) => candidate.textContent === label,
         );
+
         if (!option) {
             throw new Error(`the Style select offers no ${label}`);
         }
+
         act(() => option.click());
     };
+
     return {
         container,
         field,
@@ -226,6 +231,7 @@ describe('the link target form', () => {
 
             expect(styleSelect()).not.toBeNull();
             expect(stops.slice(0, 3)).toEqual(['Link to', 'Style', 'Open in new tab']);
+
             const nameId = styleSelect()?.getAttribute('aria-labelledby') ?? '';
             expect(window.document.getElementById(nameId)?.textContent).toContain('Style');
         });
@@ -240,6 +246,7 @@ describe('the link target form', () => {
 
         it('saves the chosen style with the link', () => {
             const { type, save, chooseStyle, onSave } = mountForm({ kind: 'edit' }, { appearances: BUTTON_STYLES });
+
             type('example.com');
 
             chooseStyle('Secondary button');
@@ -278,7 +285,9 @@ describe('the link target form', () => {
             );
 
             act(() => styleSelect()?.click());
+
             expect(styleOptions()).toEqual(['No style', 'Primary button', 'Tertiary button']);
+
             act(() => window.document.body.click());
             save();
 

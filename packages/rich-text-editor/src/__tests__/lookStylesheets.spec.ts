@@ -16,6 +16,7 @@ import { ALL_TEXT_STYLES, findPreset } from '../plugins/TextStyle/helpers/preset
 
 const STYLES_DIRECTORY = fileURLToPath(new URL('../styles/', import.meta.url));
 const TEXT_STYLE_STYLESHEET = fileURLToPath(new URL('../plugins/TextStyle/textStyle.module.scss', import.meta.url));
+
 /** The characters of a selector that a regular expression reads as more than themselves. */
 const SELECTOR_PUNCTUATION = /[.:]/g;
 
@@ -116,9 +117,11 @@ describe('the link stylesheet', () => {
     const ruleBodyForSelector = (selector: string): string => {
         const escaped = selector.replaceAll(SELECTOR_PUNCTUATION, String.raw`\$&`);
         const body = new RegExp(`${escaped}\\s*\\{([^}]*)\\}`).exec(css)?.[1];
+
         if (body === undefined) {
             throw new Error(`No rule for ${selector} in the compiled stylesheet`);
         }
+
         return body;
     };
 
