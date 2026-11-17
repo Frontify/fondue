@@ -15,6 +15,7 @@ import {
     alignPlugin,
     blurOnBreakPlugin,
     boldPlugin,
+    type ButtonLook,
     bulletListPlugin,
     checkListPlugin,
     codePlugin,
@@ -28,6 +29,7 @@ import {
     emojiPlugin,
     fontColorPlugin,
     italicPlugin,
+    type LinkAppearance,
     type LinkDestination,
     linkPlugin,
     type MentionItem,
@@ -486,6 +488,91 @@ export const LinkWithSearch: Story = {
                 </p>
                 <div className={FRAME}>
                     <RichTextEditor value={doc} onChange={setDoc} plugins={[linkPlugin({ search: searchPages })]} />
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/** How a brand's theme could look each button; the values a host would take from its guideline variables. */
+const BUTTON_LOOKS: Record<LinkAppearance, ButtonLook> = {
+    primary: {
+        fontWeight: '600',
+        color: '#ffffff',
+        backgroundColor: '#5b3df5',
+        borderColor: '#5b3df5',
+        borderRadius: '999px',
+        paddingTop: '8px',
+        paddingRight: '20px',
+        paddingBottom: '8px',
+        paddingLeft: '20px',
+        hover: { backgroundColor: '#3f27c4', borderColor: '#3f27c4' },
+    },
+    secondary: {
+        fontWeight: '600',
+        color: '#5b3df5',
+        backgroundColor: '#ece9ff',
+        borderColor: '#ece9ff',
+        borderRadius: '999px',
+        paddingTop: '8px',
+        paddingRight: '20px',
+        paddingBottom: '8px',
+        paddingLeft: '20px',
+        hover: { backgroundColor: '#d9d3ff', borderColor: '#d9d3ff' },
+    },
+    tertiary: {
+        fontWeight: '600',
+        color: '#5b3df5',
+        borderColor: '#5b3df5',
+        borderWidth: '2px',
+        borderRadius: '4px',
+        textTransform: 'uppercase',
+        letterSpacing: '0.08em',
+        hover: { color: '#3f27c4', borderColor: '#3f27c4' },
+    },
+};
+
+const BUTTON_APPEARANCES: readonly LinkAppearance[] = ['primary', 'secondary', 'tertiary'];
+
+/**
+ * A link can look like a button. `appearances` adds a Style select to the link
+ * form, and `looks` says how each one looks, here with literal values where a
+ * host would pass its guideline variables. A plain link stays a plain link.
+ */
+export const ButtonLinks: Story = {
+    name: 'Button links',
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'Primary', link: { href: 'https://example.com', appearance: 'primary' } },
+                        { text: ' ' },
+                        { text: 'Secondary', link: { href: 'https://example.com', appearance: 'secondary' } },
+                        { text: ' ' },
+                        { text: 'Tertiary', link: { href: 'https://example.com', appearance: 'tertiary' } },
+                        { text: ' ' },
+                        { text: 'A plain link', link: { href: 'https://example.com' } },
+                    ],
+                },
+            ],
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <p className={HINT}>
+                    Click a button and choose Edit: the form has a Style select, with No style to make it a plain link
+                    again.
+                </p>
+                <div className={FRAME}>
+                    <RichTextEditor
+                        value={doc}
+                        onChange={setDoc}
+                        plugins={[linkPlugin({ appearances: BUTTON_APPEARANCES, looks: BUTTON_LOOKS })]}
+                    />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>

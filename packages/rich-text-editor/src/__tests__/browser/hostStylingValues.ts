@@ -87,6 +87,21 @@ export const BODY_QUOTE_LINK_DOCUMENT: RteDocument = {
     ],
 };
 
+export const BUTTON_LINK_TEXT = 'Buy now';
+export const PLAIN_LINK_TEXT = 'Read more';
+
+/** A link that looks like a button and a plain link beside it. */
+export const BUTTON_LINKS_DOCUMENT: RteDocument = {
+    version: 1,
+    blocks: [
+        {
+            type: 'paragraph',
+            children: [{ text: BUTTON_LINK_TEXT, link: { href: 'https://example.com', appearance: 'primary' } }],
+        },
+        { type: 'paragraph', children: [{ text: PLAIN_LINK_TEXT, link: { href: 'https://example.com' } }] },
+    ],
+};
+
 export const MIDDLE_QUOTE_TEXT = 'Middle quote';
 export const LAST_QUOTE_TEXT = 'Last quote';
 

@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+// @vitest-environment happy-dom
+
 import { describe, expect, it, vi } from 'vitest';
 
 import {
@@ -10,7 +12,8 @@ import {
     type RteSelectionSnapshot,
 } from '#/core';
 
-import { linkContent, linkPlugin } from './Link';
+import { ALL_LINK_APPEARANCES, APPEARANCES } from './helpers/appearance';
+import { linkContent, linkPlugin, type LinkPluginOptions } from './Link';
 
 const link = linkPlugin().content?.marks?.link;
 
@@ -58,6 +61,126 @@ describe('the link look', () => {
 
     it('refuses a value that could break out of its declaration', () => {
         expect(() => linkPlugin({ look: { color: 'red; display: none' } })).toThrow(/"color".*"link"/);
+    });
+});
+
+describe('the link mark with an appearance', () => {
+    for (const appearance of ALL_LINK_APPEARANCES) {
+        it(`writes a ${appearance} button as a link with its class and appearance`, () => {
+            const html = link?.toHtml({ href: 'https://example.com', appearance });
+
+            expect(html?.tag).toBe('a');
+            expect(html?.attrs?.href).toBe('https://example.com');
+            expect(html?.attrs?.class).toContain(APPEARANCES[appearance].className);
+            expect(html?.attrs?.['data-appearance']).toBe(appearance);
+        });
+    }
+
+    it('writes a plain link for an appearance it does not know', () => {
+        for (const appearance of ['quaternary', 1, null, 'toString']) {
+            const html = link?.toHtml({ href: 'https://example.com', appearance } as never);
+
+            expect(html?.attrs).not.toHaveProperty('data-appearance');
+            for (const known of ALL_LINK_APPEARANCES) {
+                expect(html?.attrs?.class).not.toContain(APPEARANCES[known].className);
+            }
+        }
+    });
+
+    it('writes a link without an appearance exactly as before', () => {
+        const html = link?.toHtml({ href: 'https://example.com' });
+
+        expect(html?.attrs).not.toHaveProperty('data-appearance');
+        expect(Object.keys(html?.attrs ?? {}).sort()).toEqual(['class', 'href']);
+    });
+
+    it('writes the appearance whatever the editor offers', () => {
+        const offering = linkPlugin({ appearances: ['secondary'] }).content?.marks?.link;
+
+        expect(link?.toHtml({ href: '/a', appearance: 'primary' }).attrs).toEqual(
+            offering?.toHtml({ href: '/a', appearance: 'primary' }).attrs,
+        );
+    });
+});
+
+const parseAnchor = (attributes: Record<string, string>, options?: LinkPluginOptions): unknown => {
+    const anchor = window.document.createElement('a');
+    for (const [name, value] of Object.entries(attributes)) {
+        anchor.setAttribute(name, value);
+    }
+    const rule = linkPlugin(options).content?.marks?.link?.parse[0];
+    if (rule === undefined || rule.tag === undefined || rule.value === undefined) {
+        throw new Error('the link mark declares no rule that reads an anchor');
+    }
+    return rule.value(anchor);
+};
+
+describe('reading a pasted link', () => {
+    it('keeps an appearance this editor offers', () => {
+        const value = parseAnchor(
+            { href: 'https://example.com', 'data-appearance': 'secondary' },
+            { appearances: ['primary', 'secondary'] },
+        );
+
+        expect(value).toEqual({ href: 'https://example.com', appearance: 'secondary' });
+    });
+
+    it('drops an appearance this editor does not offer', () => {
+        const attributes = { href: 'https://example.com', 'data-appearance': 'tertiary' };
+
+        expect(parseAnchor(attributes, { appearances: ['primary'] })).toEqual({ href: 'https://example.com' });
+        expect(parseAnchor(attributes)).toEqual({ href: 'https://example.com' });
+    });
+
+    it('drops an appearance that is not one', () => {
+        const value = parseAnchor(
+            { href: 'https://example.com', 'data-appearance': 'huge' },
+            { appearances: ['primary'] },
+        );
+
+        expect(value).toEqual({ href: 'https://example.com' });
+    });
+
+    it('reads a plain link and a new tab link as before', () => {
+        expect(parseAnchor({ href: 'https://example.com' })).toEqual({ href: 'https://example.com' });
+        expect(parseAnchor({ href: 'https://example.com', target: '_blank' })).toEqual({
+            href: 'https://example.com',
+            openInNewTab: true,
+        });
+    });
+});
+
+describe('the link plugin button looks', () => {
+    it('sets a custom property for each field of a look, and of its hover look', () => {
+        const plugin = linkPlugin({
+            appearances: ['primary'],
+            looks: {
+                primary: {
+                    color: 'var(--f-theme-settings-button-primary-color)',
+                    paddingTop: '4px',
+                    hover: { backgroundColor: 'navy' },
+                },
+            },
+        });
+
+        expect(plugin.content?.contentProperties).toEqual({
+            '--rte-button-primary-color': 'var(--f-theme-settings-button-primary-color)',
+            '--rte-button-primary-padding-top': '4px',
+            '--rte-button-primary-hover-background-color': 'navy',
+        });
+    });
+
+    it('shares the default content when there are no appearances and no looks', () => {
+        expect(linkPlugin().content).toBe(linkPlugin({ appearances: [] }).content);
+    });
+
+    it('refuses a value that could break out of its declaration, naming the appearance and the field', () => {
+        expect(() => linkPlugin({ looks: { secondary: { borderColor: 'red; display: none' } } })).toThrow(
+            /"borderColor".*"button-secondary"/,
+        );
+        expect(() => linkPlugin({ looks: { tertiary: { hover: { color: '' } } } })).toThrow(
+            /"color".*"button-tertiary-hover"/,
+        );
     });
 });
 

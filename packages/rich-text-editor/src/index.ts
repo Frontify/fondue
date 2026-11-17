@@ -148,7 +148,15 @@ export { underlineContent, underlinePlugin } from './plugins/Underline';
 export { type BlurOnBreakPluginOptions } from './plugins/BlurOnBreak';
 export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
-export { type LinkDestination, type LinkLook, type LinkPluginOptions, type LinkSearch } from './plugins/Link';
+export {
+    type ButtonHoverLook,
+    type ButtonLook,
+    type LinkAppearance,
+    type LinkDestination,
+    type LinkLook,
+    type LinkPluginOptions,
+    type LinkSearch,
+} from './plugins/Link';
 export {
     type MentionContentOptions,
     type MentionItem,

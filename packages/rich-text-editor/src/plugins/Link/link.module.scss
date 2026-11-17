@@ -34,6 +34,89 @@
     }
 }
 
+$button-border-width: 1px;
+
+// A button link: the host's `--rte-button-<$kind>-<property>`, falling back to Fondue's Button. It is written after
+// `.link` with the same selectors, so where both set a property the button wins.
+@mixin button($kind, $background, $background-hover, $color, $color-hover) {
+    &,
+    &:link,
+    &:visited {
+        display: inline-block;
+        box-sizing: border-box;
+        max-width: 100%;
+        vertical-align: middle;
+        // Set here so a button keeps its edge, which forced colours draws, whatever the host's border looks like.
+        border-style: solid;
+        cursor: pointer;
+        font-family: var(--rte-button-#{$kind}-font-family, inherit);
+        font-size: var(--rte-button-#{$kind}-font-size, inherit);
+        font-weight: var(--rte-button-#{$kind}-font-weight, var(--typography-font-weight-medium));
+        font-style: var(--rte-button-#{$kind}-font-style, inherit);
+        line-height: var(--rte-button-#{$kind}-line-height, inherit);
+        letter-spacing: var(--rte-button-#{$kind}-letter-spacing, inherit);
+        text-transform: var(--rte-button-#{$kind}-text-transform, inherit);
+        text-decoration: var(--rte-button-#{$kind}-text-decoration, none);
+        color: var(--rte-button-#{$kind}-color, #{$color});
+        padding-top: var(--rte-button-#{$kind}-padding-top, var(--spacing-x-small));
+        padding-right: var(--rte-button-#{$kind}-padding-right, var(--spacing-small));
+        padding-bottom: var(--rte-button-#{$kind}-padding-bottom, var(--spacing-x-small));
+        padding-left: var(--rte-button-#{$kind}-padding-left, var(--spacing-small));
+        background-color: var(--rte-button-#{$kind}-background-color, #{$background});
+        border-color: var(--rte-button-#{$kind}-border-color, transparent);
+        border-width: var(--rte-button-#{$kind}-border-width, #{$button-border-width});
+        border-radius: var(--rte-button-#{$kind}-border-radius, var(--border-radius-medium));
+    }
+
+    // Under the pointer a field the host left out keeps what the button has at rest, not Fondue's hover.
+    &:hover {
+        color: var(--rte-button-#{$kind}-hover-color, var(--rte-button-#{$kind}-color, #{$color-hover}));
+        background-color: var(
+            --rte-button-#{$kind}-hover-background-color,
+            var(--rte-button-#{$kind}-background-color, #{$background-hover})
+        );
+        border-color: var(
+            --rte-button-#{$kind}-hover-border-color,
+            var(--rte-button-#{$kind}-border-color, transparent)
+        );
+    }
+
+    // The coloured-run underline of `.link` does not draw on a button.
+    [style*='color'] {
+        text-decoration: none;
+    }
+}
+
+.buttonPrimary {
+    @include button(
+        'primary',
+        var(--color-primary-default),
+        var(--color-primary-hover),
+        var(--color-primary-on-primary),
+        var(--color-primary-on-primary)
+    );
+}
+
+.buttonSecondary {
+    @include button(
+        'secondary',
+        var(--color-container-secondary-default),
+        var(--color-container-secondary-hover),
+        var(--color-primary-default),
+        var(--color-primary-hover)
+    );
+}
+
+.buttonTertiary {
+    @include button(
+        'tertiary',
+        transparent,
+        var(--color-container-secondary-hover),
+        var(--color-primary-default),
+        var(--color-primary-hover)
+    );
+}
+
 /** The flyout over a link in the editor: its target, then what can be done to it. */
 .panel {
     display: flex;

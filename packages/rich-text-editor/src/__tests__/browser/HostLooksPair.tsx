@@ -3,10 +3,12 @@
 // Mounted by hostStyling.ct.tsx: a component test mounts imported components, and the plugin list holds functions, which cannot travel as props.
 
 import {
+    type ButtonLook,
     bulletListPlugin,
     checkListPlugin,
     fontColorPlugin,
     type LinkLook,
+    type LinkAppearance,
     linkPlugin,
     quotePlugin,
     RichTextEditor,
@@ -23,6 +25,7 @@ type HostLooksPairProps = {
     body?: TextLook;
     quote?: TextLook;
     link?: LinkLook;
+    buttons?: Partial<Record<LinkAppearance, ButtonLook>>;
     /**
      * The document both surfaces draw.
      * @default BODY_QUOTE_LINK_DOCUMENT
@@ -30,13 +33,15 @@ type HostLooksPairProps = {
     value?: RteDocument;
 };
 
-const pluginsWithLooks = ({ body, quote, link }: HostLooksPairProps): RtePlugin[] => [
+const BUTTON_APPEARANCES: readonly LinkAppearance[] = ['primary', 'secondary', 'tertiary'];
+
+const pluginsWithLooks = ({ body, quote, link, buttons }: HostLooksPairProps): RtePlugin[] => [
     textStylePlugin({ presets: { body, quote } }),
     bulletListPlugin,
     checkListPlugin,
     fontColorPlugin,
     quotePlugin,
-    linkPlugin({ look: link }),
+    linkPlugin({ look: link, appearances: BUTTON_APPEARANCES, looks: buttons }),
 ];
 
 /** The renderer and the editor side by side, drawing body text, a quote and links with the same looks. */
