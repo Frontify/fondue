@@ -16,6 +16,7 @@ import {
     quotePlugin,
     RichTextEditor,
     RichTextRenderer,
+    type RichTextRendererProps,
     type RteDocument,
     type RtePlugin,
     type TextLook,
@@ -46,7 +47,10 @@ const pluginsWithLooks = ({ body, quote, link }: HostLooksPairProps): RtePlugin[
 ];
 
 // The renderer gets content only, as a page that only shows documents would, so the looks must travel with the content.
-const contentWithLooks = ({ body, quote, link }: HostLooksPairProps): RtePlugin.Content[] => [
+/** What the renderer accepts: plugins, or only their content. */
+type RendererPlugins = NonNullable<RichTextRendererProps['plugins']>;
+
+const contentWithLooks = ({ body, quote, link }: HostLooksPairProps): RendererPlugins => [
     textStyleContent({ presets: { body, quote, link } }),
     bulletListContent,
     checkListContent,
