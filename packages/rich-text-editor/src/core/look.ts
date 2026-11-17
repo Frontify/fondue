@@ -65,10 +65,10 @@ export const lookProperties = <TLook extends Partial<Record<string, string>>>(
     look: Readonly<TLook>,
     fields: Readonly<Record<keyof TLook & string, string>>,
 ): Record<string, string> => {
+    const values: Readonly<Partial<Record<string, string>>> = look;
     const properties: Record<string, string> = {};
     for (const [field, property] of Object.entries<string>(fields)) {
-        // `Object.entries` widens the keys to string; they are the fields of `TLook` by the type of `fields`.
-        const value = look[field as keyof TLook & string];
+        const value = values[field];
         if (value === undefined) {
             continue;
         }
