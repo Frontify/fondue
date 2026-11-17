@@ -209,10 +209,8 @@ const MoreButton = forwardRef<HTMLButtonElement, MoreButtonProps>(function MoreB
             {...rest}
             ref={ref}
             type="button"
-            size="small"
             aspect="square"
             emphasis="weak"
-            className={styles.more}
             aria-label={label}
         >
             <IconDotsHorizontal size={20} />

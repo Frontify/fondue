@@ -71,12 +71,10 @@ export const TurnInto = ({
             <Dropdown.Trigger>
                 <Button
                     type="button"
-                    size="small"
                     emphasis="weak"
                     aria-label={labels.turnIntoCurrent(label)}
                     title={labels.turnInto}
                     {...keepsSelection}
-                    className={styles.turnInto}
                 >
                     <span>{label}</span>
                     <IconCaretDown size={16} />

@@ -29,7 +29,7 @@ type ToolbarButtonProps = {
      */
     shortcut?: string;
     // Other props reach the button so it works as a `Flyout.Trigger`, whose injected handlers and `aria-expanded` must hit the DOM.
-} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'title' | 'children'>;
+} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'title' | 'children' | 'className'>;
 
 /**
  * The platform names of Apple systems, where `Mod` is the Command key
@@ -60,12 +60,12 @@ export const readableShortcut = (shortcut: string, apple = isApple()): string =>
 };
 
 /**
- * The toolbar button the built-in plugins share: Fondue's small square
- * low-emphasis `Button` with a pressed state for toggles and a tooltip naming
+ * The toolbar button the built-in plugins share: Fondue's square low-emphasis
+ * `Button`, pressed for toggles as the Button draws it, with a tooltip naming
  * it. Not editor API. Takes a ref so a flyout can anchor to it.
  */
 export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(function ToolbarButton(
-    { children, active, disabled, onClick, title, shortcut, className, ...rest },
+    { children, active, disabled, onClick, title, shortcut, ...rest },
     ref,
 ): ReactNode {
     // Fondue's Button spreads undeclared props onto the <button>, so these still reach the DOM.
@@ -102,11 +102,9 @@ export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(f
                     {...domProps}
                     ref={ref}
                     type="button"
-                    size="small"
                     aspect="square"
-                    // Both states are the ghost button; "on" is drawn by our stylesheet.
+                    // Both states are the ghost button; the pressed look is Fondue Button's own.
                     emphasis="weak"
-                    className={[styles.button, className].filter(Boolean).join(' ')}
                     disabled={disabled}
                     aria-label={title}
                     onPress={onClick}
