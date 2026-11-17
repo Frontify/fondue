@@ -16,6 +16,7 @@ import {
     type StoredMarkValue,
 } from '#/core';
 
+import { withSpansInRange } from './grid';
 import { warnUndeclaredKey, warnUnknownContent } from './warnings';
 
 /**
@@ -274,7 +275,11 @@ export const blockToEngine = (block: RteBlockNode, schema: Schema): PmNode => {
         ...declaredAttrs(stored, nodeType.spec.attrs),
         [EXTRA_ATTR]: extrasOf(stored, reserved, `block "${block.type}"`),
     };
-    return createFilled(nodeType, attrs, block.children ? childrenToEngine(nodeType, block.children, schema) : []);
+    return createFilled(
+        nodeType,
+        withSpansInRange(nodeType, attrs),
+        block.children ? childrenToEngine(nodeType, block.children, schema) : [],
+    );
 };
 
 /**

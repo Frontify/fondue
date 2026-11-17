@@ -123,6 +123,22 @@ describe('a block laid out as a grid', () => {
     });
 });
 
+describe('a stored span out of range', () => {
+    // The grid stays rectangular, so other rows grow to match a wide slot: the cap bounds how far.
+    it('is read as 1 to 50, so one slot can grow the other rows that far and no further', () => {
+        const editor = editorWith(plugins, [
+            grid(band(slot('a', { colspan: 400 }), slot('b', { rowspan: 0 })), band(slot('c'), slot('d'))),
+        ]);
+        editor.select('a');
+        editor.type('A');
+
+        const outer = editor.view.state.doc.child(0);
+        expect(outer.child(0).child(0).attrs).toMatchObject({ colspan: 50, rowspan: 1 });
+        expect(outer.child(0).child(1).attrs).toMatchObject({ colspan: 1, rowspan: 1 });
+        expect(outer.child(1).childCount).toBe(51);
+    });
+});
+
 describe('the selection snapshot over a grid', () => {
     it('reports a caret in a slot as text', () => {
         const editor = editorWith(plugins, [grid(band(slot('a1'), slot('b1')))]);

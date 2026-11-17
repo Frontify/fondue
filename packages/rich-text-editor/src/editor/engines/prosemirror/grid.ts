@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { keymap } from 'prosemirror-keymap';
-import { type Node as PmNode, type NodeSpec as PmNodeSpec } from 'prosemirror-model';
+import { type Node as PmNode, type NodeSpec as PmNodeSpec, type NodeType as PmNodeType } from 'prosemirror-model';
 import { type Command, type Plugin as PmPlugin, type Selection as PmSelection } from 'prosemirror-state';
 // Renamed on the way in: the rest of the editor speaks of grids and slots.
 import {
@@ -13,7 +13,13 @@ import {
     TableMap as GridMap,
 } from 'prosemirror-tables';
 
-import { type BlockDefinition, type GridRole, type PluginRegistry, type RteSelectionSnapshot } from '#/core';
+import {
+    type BlockDefinition,
+    type GridRole,
+    gridSpanOf,
+    type PluginRegistry,
+    type RteSelectionSnapshot,
+} from '#/core';
 
 /**
  * Blocks laid out in rows and columns (`gridRole`), edited as one: a selection
@@ -63,6 +69,18 @@ export const gridNodeSpec = (definition: BlockDefinition): Partial<PmNodeSpec> =
 /** A slot's spans, under the attributes the block declares itself. */
 export const gridSlotAttrs = (definition: BlockDefinition): NonNullable<PmNodeSpec['attrs']> =>
     isSlot(definition.gridRole) ? { ...SLOT_ATTRS } : {};
+
+/**
+ * A slot's attributes with its spans in range, as a stored document comes in:
+ * a span beyond what a grid allows would grow every other row to match.
+ */
+export const withSpansInRange = (nodeType: PmNodeType, attrs: Record<string, unknown>): Record<string, unknown> => {
+    const role: unknown = nodeType.spec.tableRole;
+    if (role !== ENGINE_ROLE.slot && role !== ENGINE_ROLE.headerSlot) {
+        return attrs;
+    }
+    return { ...attrs, colspan: gridSpanOf(attrs.colspan), rowspan: gridSpanOf(attrs.rowspan) };
+};
 
 /** Whether any mounted block is a grid. */
 export const hasGrids = (registry: PluginRegistry): boolean =>

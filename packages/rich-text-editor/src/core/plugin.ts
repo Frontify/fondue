@@ -301,10 +301,26 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
  * - `'headerSlot'` → a slot that labels its row or column
  *
  * A slot may cover several columns or rows. To keep that, it declares
- * `colspan` and `rowspan` (whole numbers, default 1) and `colwidth`
- * (default null) in its `defaults`; left out, they exist only while editing.
+ * `colspan` and `rowspan` (whole numbers from 1 to `MAX_GRID_SPAN`, default 1)
+ * and `colwidth` (default null) in its `defaults`; left out, they exist only
+ * while editing. A span outside that range is read as `gridSpanOf` reads it.
  */
 export type GridRole = 'grid' | 'row' | 'slot' | 'headerSlot';
+
+/** The most columns or rows one slot may cover. */
+const MAX_GRID_SPAN = 50;
+
+/**
+ * A slot's span as the editor reads it, stored or from markup: a whole number
+ * from 1 to `MAX_GRID_SPAN`, and 1 when missing or unreadable.
+ */
+export const gridSpanOf = (value: unknown): number => {
+    const span = typeof value === 'number' ? value : Number.parseInt(typeof value === 'string' ? value : '', 10);
+    if (!Number.isFinite(span) || span < 1) {
+        return 1;
+    }
+    return Math.min(Math.floor(span), MAX_GRID_SPAN);
+};
 
 /**
  * What a block holds:

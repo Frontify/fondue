@@ -10,6 +10,7 @@ import {
     defineMark,
     definePlugin,
     type GridRole,
+    gridSpanOf,
     type RteInputRule,
     type RtePlugin,
 } from './plugin';
@@ -697,5 +698,13 @@ describe('a block laid out as a grid', () => {
         expect(() => gridOf({ slot: container('text', 'slot') })).toThrow(
             'Plugin "grid" makes "slot" a slot, which holds `{ blocks }`.',
         );
+    });
+});
+
+describe('a slot span', () => {
+    it('is a whole number from 1 to 50, read from a number or from markup', () => {
+        expect([3, '3', 2.7, 400, '400', 0, -2, 'wide', null, undefined, Number.NaN].map(gridSpanOf)).toEqual([
+            3, 3, 2, 50, 50, 1, 1, 1, 1, 1, 1,
+        ]);
     });
 });
