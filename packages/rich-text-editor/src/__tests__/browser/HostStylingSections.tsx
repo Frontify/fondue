@@ -4,20 +4,20 @@
 
 import { RichTextRenderer, textStylePlugin, type TextStylePluginOptions } from '../../index';
 
-import { ALL_PRESETS_DOCUMENT, SECTION_A, SECTION_B } from './hostStylingValues';
+import { ALL_LOOKS_DOCUMENT, SECTION_A, SECTION_B } from './hostStylingValues';
 
 type HostStylingSectionsProps = {
-    presets?: TextStylePluginOptions['presets'];
+    looks?: TextStylePluginOptions['looks'];
 };
 
 /** Two sections that define the same variable differently, each with its own renderer. */
-export const HostStylingSections = ({ presets }: HostStylingSectionsProps) => (
+export const HostStylingSections = ({ looks }: HostStylingSectionsProps) => (
     <>
         <div data-testid="section-a" style={SECTION_A}>
-            <RichTextRenderer value={ALL_PRESETS_DOCUMENT} plugins={[textStylePlugin({ presets })]} />
+            <RichTextRenderer value={ALL_LOOKS_DOCUMENT} plugins={[textStylePlugin({ looks })]} />
         </div>
         <div data-testid="section-b" style={SECTION_B}>
-            <RichTextRenderer value={ALL_PRESETS_DOCUMENT} plugins={[textStylePlugin({ presets })]} />
+            <RichTextRenderer value={ALL_LOOKS_DOCUMENT} plugins={[textStylePlugin({ looks })]} />
         </div>
     </>
 );

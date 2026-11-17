@@ -25,7 +25,7 @@ const OTHER_PLUGINS: RtePlugin[] = [bulletListPlugin, checkListPlugin, fontColor
 
 /** The renderer and the editor of a surface without headings, which still carries the body look */
 export const HostNoHeadingsPair = ({ body }: HostNoHeadingsPairProps) => {
-    const plugins = [textStylePlugin({ styles: [], presets: { body } }), ...OTHER_PLUGINS];
+    const plugins = [textStylePlugin({ styles: [], looks: { body } }), ...OTHER_PLUGINS];
 
     return (
         <>

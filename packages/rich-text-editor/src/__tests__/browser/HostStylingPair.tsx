@@ -10,25 +10,25 @@ import {
     type TextStylePluginOptions,
 } from '../../index';
 
-import { ALL_PRESETS_DOCUMENT } from './hostStylingValues';
+import { ALL_LOOKS_DOCUMENT } from './hostStylingValues';
 
 type HostStylingPairProps = {
-    presets?: TextStylePluginOptions['presets'];
+    looks?: TextStylePluginOptions['looks'];
     /**
      * The document both surfaces draw.
-     * @default ALL_PRESETS_DOCUMENT
+     * @default ALL_LOOKS_DOCUMENT
      */
     value?: RteDocument;
 };
 
-/** The renderer and the editor side by side, drawing the same document with the same presets. */
-export const HostStylingPair = ({ presets, value = ALL_PRESETS_DOCUMENT }: HostStylingPairProps) => (
+/** The renderer and the editor side by side, drawing the same document with the same looks. */
+export const HostStylingPair = ({ looks, value = ALL_LOOKS_DOCUMENT }: HostStylingPairProps) => (
     <>
         <div data-testid="renderer">
-            <RichTextRenderer value={value} plugins={[textStylePlugin({ presets })]} />
+            <RichTextRenderer value={value} plugins={[textStylePlugin({ looks })]} />
         </div>
         <div data-testid="editor">
-            <RichTextEditor value={value} plugins={[textStylePlugin({ presets })]} />
+            <RichTextEditor value={value} plugins={[textStylePlugin({ looks })]} />
         </div>
     </>
 );

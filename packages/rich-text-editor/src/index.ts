@@ -147,7 +147,7 @@ export {
     type LinkLook,
     type TextStyleName,
     type TextStylePluginOptions,
-    type TextStylePresets,
+    type TextStyleLooks,
 } from './plugins/TextStyle';
 export { type TypographyGroup, type TypographyPluginOptions } from './plugins/Typography';
 

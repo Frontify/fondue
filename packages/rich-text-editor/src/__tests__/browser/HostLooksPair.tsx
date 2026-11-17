@@ -31,7 +31,7 @@ type HostLooksPairProps = {
 };
 
 const pluginsWithLooks = ({ body, quote, link }: HostLooksPairProps): RtePlugin[] => [
-    textStylePlugin({ presets: { body, quote, link } }),
+    textStylePlugin({ looks: { body, quote, link } }),
     bulletListPlugin,
     checkListPlugin,
     fontColorPlugin,

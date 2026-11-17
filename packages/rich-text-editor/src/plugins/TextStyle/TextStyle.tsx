@@ -44,7 +44,7 @@ export type { TextStyleBlock, TextStyleName } from './helpers/presets';
 export type LinkLook = Omit<TextLook, 'textDecoration' | 'marginTop' | 'marginBottom'>;
 
 /** The look of each kind of text, by name: the 9 text styles, body text, block quotes and links. */
-export type TextStylePresets = Partial<Record<TextStyleName | 'body' | 'quote', TextLook>> & { link?: LinkLook };
+export type TextStyleLooks = Partial<Record<TextStyleName | 'body' | 'quote', TextLook>> & { link?: LinkLook };
 
 export type TextStylePluginOptions = {
     /**
@@ -56,10 +56,10 @@ export type TextStylePluginOptions = {
     /**
      * How each kind of text looks, by name: a text style, `body` for plain paragraphs, `quote` and `link`.
      * A kind left out, and a field left out of one, keeps Fondue's look.
-     * A value that is empty or can end its CSS declaration early throws an error that names the preset and the
+     * A value that is empty or can end its CSS declaration early throws an error that names the look and the
      * field, so a mistake in the host's configuration never passes silently.
      */
-    presets?: TextStylePresets;
+    looks?: TextStyleLooks;
 };
 
 // Headings are bold by default, so a bold the pasted heading declares on itself is not the author's. Bold on text inside it is.
@@ -94,9 +94,9 @@ const textStyleBlockFor = (options: readonly TextStyleOption[]): BlockDefinition
 // Shared so every content offering all styles declares the very same block, which the registry requires.
 const ALL_STYLES_BLOCK = textStyleBlockFor(ALL_TEXT_STYLES);
 
-const textStyleContentFor = (options: readonly TextStyleOption[], presets: TextStylePresets = {}): RteContent => {
+const textStyleContentFor = (options: readonly TextStyleOption[], looks: TextStyleLooks = {}): RteContent => {
     const contentProperties: Record<string, string> = {};
-    for (const [name, look] of Object.entries(presets)) {
+    for (const [name, look] of Object.entries(looks)) {
         if (look !== undefined) {
             Object.assign(contentProperties, lookProperties(name, look));
         }
@@ -139,7 +139,7 @@ const HEADING_KEYWORDS: Partial<Record<number, readonly string[]>> = {
  */
 export const textStylePlugin = ({
     styles: options = ALL_TEXT_STYLES,
-    presets,
+    looks,
 }: TextStylePluginOptions = {}): RtePlugin => {
     const offered = presetsFor(options);
 
@@ -182,8 +182,8 @@ export const textStylePlugin = ({
 
     // The shared object, so the default plugin and `defaultContent` declare the very same block definition.
     let content = textStyleContent;
-    if (options !== ALL_TEXT_STYLES || presets !== undefined) {
-        content = textStyleContentFor(options, presets);
+    if (options !== ALL_TEXT_STYLES || looks !== undefined) {
+        content = textStyleContentFor(options, looks);
     }
 
     return definePlugin({
