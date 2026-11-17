@@ -33,15 +33,13 @@ type HostLooksPairProps = {
     value?: RteDocument;
 };
 
-const BUTTON_APPEARANCES: readonly LinkAppearance[] = ['primary', 'secondary', 'tertiary'];
-
 const pluginsWithLooks = ({ body, quote, link, buttons }: HostLooksPairProps): RtePlugin[] => [
     textStylePlugin({ presets: { body, quote } }),
     bulletListPlugin,
     checkListPlugin,
     fontColorPlugin,
     quotePlugin,
-    linkPlugin({ look: link, appearances: BUTTON_APPEARANCES, looks: buttons }),
+    linkPlugin({ look: link, looks: buttons }),
 ];
 
 /** The renderer and the editor side by side, drawing body text, a quote and links with the same looks. */
