@@ -860,7 +860,7 @@ export const ResetFormatting: Story = {
 /**
  * Enter commits instead of adding a paragraph, what a single-line editor wants.
  * `onBreak` hears the commit (here it files the text below and clears the
- * field) and `required` refuses an empty Enter, saying so to screen readers.
+ * field), and checks for empty text itself.
  */
 export const BlurOnBreak: Story = {
     render: () => {
@@ -873,12 +873,12 @@ export const BlurOnBreak: Story = {
             boldPlugin,
             italicPlugin,
             blurOnBreakPlugin({
-                required: true,
                 onBreak: () => {
-                    setSubmitted((previous) => [
-                        ...previous,
-                        { id: previous.length, text: toPlainText(docRef.current) },
-                    ]);
+                    const text = toPlainText(docRef.current);
+                    if (text.trim() === '') {
+                        return;
+                    }
+                    setSubmitted((previous) => [...previous, { id: previous.length, text }]);
                     setDoc({ version: 1, blocks: [{ type: 'paragraph', children: [] }] });
                 },
             }),
@@ -888,7 +888,7 @@ export const BlurOnBreak: Story = {
             <div className={LAYOUT}>
                 <p className={HINT}>
                     Press Enter to submit: the text moves to the list below and the field clears. Enter on an empty
-                    field submits nothing and says so to screen readers.
+                    field submits nothing.
                 </p>
                 <div className={FRAME}>
                     <RichTextEditor

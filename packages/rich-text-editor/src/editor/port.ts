@@ -32,7 +32,6 @@ export type MountOptions = {
     /** The editor state moved: any transaction, including a caret move. */
     onStateChange: () => void;
     viewPortals: ViewPortals;
-    announce: (message: string) => void;
 };
 
 export type MountedDocument = {

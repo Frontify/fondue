@@ -97,10 +97,8 @@ export type EditorControlApi = {
         remove(type: string): void;
         /**
          * Strip every mark from the selection, except those that declare `survivesClear` when `keepSurviving` is set.
-         *
-         * @returns whether any mark was removed, from the document or from the marks the caret would type with
          */
-        removeAll(options?: ClearMarksOptions): boolean;
+        removeAll(options?: ClearMarksOptions): void;
         /**
          * The whole run of a mark around the selection (its value and text), or
          * null. Unlike the snapshot's `marks` it is about the run, not the
@@ -116,12 +114,8 @@ export type EditorControlApi = {
          * the selection spans.
          */
         setType(type: string, value?: Record<string, unknown>): void;
-        /**
-         * Set attributes on every block the selection touches — how alignment is applied.
-         *
-         * @returns whether any block changed, which is false when none of them declares the attributes or all have the values already
-         */
-        updateAttributes(attributes: Record<string, unknown>): boolean;
+        /** Set attributes on every block the selection touches — how alignment is applied. */
+        updateAttributes(attributes: Record<string, unknown>): void;
         /** Reset every `blockAttributes` attribute (alignment) to its default across the selection. */
         resetAttributes(): void;
     };
@@ -174,21 +168,6 @@ export type EditorControlApi = {
         /** Make the last undone change again. */
         redo(): void;
     };
-
-    /**
-     * Whether the document holds no text, only empty blocks (the exported `isEmpty`)
-     */
-    isEmpty(): boolean;
-
-    /**
-     * Run `run` so every command it performs is one undo step. Groups nested in `run` join it.
-     */
-    group(run: () => void): void;
-
-    /**
-     * Say `message` to screen readers through the editor's polite live region. Saying the same message twice is heard twice.
-     */
-    announce(message: string): void;
 
     /** Return focus to the editor, e.g. after closing plugin UI. */
     focus(): void;

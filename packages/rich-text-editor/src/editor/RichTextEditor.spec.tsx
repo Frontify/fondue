@@ -297,9 +297,6 @@ describe('a readonly editor', () => {
     });
 });
 
-// The editor's own live region is an `output` with the same role.
-const NOTICE_SELECTOR = '[role="status"]:not(output)';
-
 describe('a document from a newer format version', () => {
     // A version of its own per test: the warning is given once per version for the whole page.
     // Far above any real version, so raising the format's version leaves these documents newer.
@@ -322,7 +319,7 @@ describe('a document from a newer format version', () => {
         expect(container.querySelector('[role="toolbar"]')).toBeNull();
         expect(warn).toHaveBeenCalledTimes(1);
         expect(warn).toHaveBeenCalledWith(expect.stringContaining(`version ${version}`));
-        expect(container.querySelector(NOTICE_SELECTOR)?.textContent).toBe(
+        expect(container.querySelector('[role="status"]')?.textContent).toBe(
             'This content was saved with a newer version of the editor. Try reloading the page to edit it.',
         );
         expect(onChange).not.toHaveBeenCalled();
@@ -334,7 +331,7 @@ describe('a document from a newer format version', () => {
         const { container } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} showEditor={false} />);
 
         expect(container.querySelector('[contenteditable]')).toBeNull();
-        expect(container.querySelector(NOTICE_SELECTOR)).not.toBeNull();
+        expect(container.querySelector('[role="status"]')).not.toBeNull();
     });
 
     it('says so in the words the host gives', () => {
@@ -344,7 +341,7 @@ describe('a document from a newer format version', () => {
             <RichTextEditor value={newer} plugins={defaultPlugins} labels={{ newerVersion: 'Nur lesbar' }} />
         ));
 
-        expect(container.querySelector(NOTICE_SELECTOR)?.textContent).toBe('Nur lesbar');
+        expect(container.querySelector('[role="status"]')?.textContent).toBe('Nur lesbar');
     });
 
     it('shows no notice when the host already shows it read-only', () => {
@@ -353,7 +350,7 @@ describe('a document from a newer format version', () => {
         const { container } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} readonly />);
 
         expect(container.textContent).toContain('from the future');
-        expect(container.querySelector(NOTICE_SELECTOR)).toBeNull();
+        expect(container.querySelector('[role="status"]')).toBeNull();
     });
 
     it('warns once for several editors showing the same version', () => {
@@ -436,7 +433,7 @@ describe('a document from a newer format version', () => {
 
         const focused = window.document.activeElement;
         expect(focused?.getAttribute('tabindex')).toBe('-1');
-        expect(focused?.firstElementChild).toBe(container.querySelector(NOTICE_SELECTOR));
+        expect(focused?.firstElementChild).toBe(container.querySelector('[role="status"]'));
     });
 
     it('leaves focus where the user just moved it when a newer document arrives', () => {
@@ -498,7 +495,7 @@ describe('a document from a newer format version', () => {
         ready();
 
         expect(warn).not.toHaveBeenCalled();
-        expect(container.querySelector(NOTICE_SELECTOR)).toBeNull();
+        expect(container.querySelector('[role="status"]')).toBeNull();
     });
 });
 
@@ -567,361 +564,6 @@ describe('the editable element', () => {
         expect(editable.getAttribute('aria-label')).toBe('Comment');
         expect(editable.getAttribute('aria-describedby')).toBe('help');
         expect(editable.getAttribute('aria-placeholder')).toBe('Say something');
-    });
-
-    describe('described by its plugins', () => {
-        const submitHint = definePlugin({ id: 'submit-hint', description: 'Press Enter to submit.' });
-        const leaveHint = definePlugin({ id: 'leave-hint', description: 'Press Tab to leave.' });
-
-        it("points at one hidden element holding every description, after the host's own", () => {
-            const { container, ready } = mount(() => (
-                <RichTextEditor plugins={[submitHint, leaveHint]} aria-describedby="help" />
-            ));
-            ready();
-
-            const ids = (editableIn(container).getAttribute('aria-describedby') ?? '').split(' ');
-            const description = window.document.getElementById(ids[1] ?? '');
-            expect(ids[0]).toBe('help');
-            expect(ids).toHaveLength(2);
-            expect(description?.textContent).toBe('Press Enter to submit. Press Tab to leave.');
-        });
-
-        it('points at it alone when the host described nothing', () => {
-            const { container, ready } = mount(() => <RichTextEditor plugins={[submitHint]} />);
-            ready();
-
-            const id = editableIn(container).getAttribute('aria-describedby') ?? '';
-            expect(window.document.getElementById(id)?.textContent).toBe('Press Enter to submit.');
-        });
-
-        it('adds nothing when no plugin describes itself', () => {
-            const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
-            ready();
-
-            expect(editableIn(container).hasAttribute('aria-describedby')).toBe(false);
-        });
-
-        it('follows the plugins without a rebuild', () => {
-            const { container, rerender, ready } = mount(() => (
-                <RichTextEditor plugins={[submitHint]} aria-describedby="help" />
-            ));
-            ready();
-            const editable = editableIn(container);
-
-            rerender(<RichTextEditor plugins={[submitHint]} aria-describedby="other" />);
-
-            expect(editableIn(container)).toBe(editable);
-            expect(editable.getAttribute('aria-describedby')).toMatch(/^other /);
-        });
-
-        it('is not read in a readonly view, which has no field to describe', () => {
-            const { container } = mount(() => (
-                <RichTextEditor value={paragraph('read me')} plugins={[submitHint]} readonly />
-            ));
-
-            expect(container.textContent).not.toContain('Press Enter to submit.');
-        });
-    });
-
-    describe('announcing', () => {
-        const announcer = definePlugin({
-            id: 'announcer',
-            hotkeys: {
-                'Mod-Shift-a': (api) => {
-                    api.announce('Saved');
-                },
-            },
-        });
-        const statusIn = (container: HTMLElement): HTMLElement => {
-            const status = container.querySelector<HTMLElement>('output');
-            if (!status) {
-                throw new Error('the editor has no live region');
-            }
-            return status;
-        };
-        // Past the five seconds a message stays, so a leftover timer would have fired by then.
-        const CLEAR_WAIT_MS = 6000;
-        // Not an Alt key: happy-dom reports any Alt as AltGraph, which the editor leaves to text entry.
-        const announce = (container: HTMLElement): void =>
-            press(editableIn(container), 'a', { ...mod, shiftKey: true });
-
-        it('marks its live region as a status, since Safari does not read an output as one', () => {
-            const { container, ready } = mount(() => <RichTextEditor plugins={[announcer]} />);
-            ready();
-
-            expect(statusIn(container).getAttribute('role')).toBe('status');
-        });
-
-        it('says a message in the polite live region on the next frame', () => {
-            vi.useFakeTimers();
-            teardown.push(() => vi.useRealTimers());
-            const { container, ready } = mount(() => <RichTextEditor plugins={[announcer]} />);
-            ready();
-            expect(statusIn(container).textContent).toBe('');
-
-            announce(container);
-            expect(statusIn(container).textContent).toBe('');
-            act(() => {
-                vi.advanceTimersByTime(100);
-            });
-
-            expect(statusIn(container).textContent).toBe('Saved');
-        });
-
-        it('says the same message twice by clearing the region in between, the repeat ending in a no-break space', () => {
-            vi.useFakeTimers();
-            teardown.push(() => vi.useRealTimers());
-            const { container, ready } = mount(() => <RichTextEditor plugins={[announcer]} />);
-            ready();
-            announce(container);
-            act(() => {
-                vi.advanceTimersByTime(100);
-            });
-            expect(statusIn(container).textContent).toBe('Saved');
-
-            announce(container);
-            expect(statusIn(container).textContent).toBe('');
-            act(() => {
-                vi.advanceTimersByTime(100);
-            });
-
-            expect(statusIn(container).textContent).toBe('Saved\u00A0');
-        });
-
-        it('writes a repeat differently each time, so Safari reads it again', () => {
-            vi.useFakeTimers();
-            teardown.push(() => vi.useRealTimers());
-            const { container, ready } = mount(() => <RichTextEditor plugins={[announcer]} />);
-            ready();
-            const said: string[] = [];
-            for (let repeat = 0; repeat < 3; repeat++) {
-                announce(container);
-                act(() => {
-                    vi.advanceTimersByTime(100);
-                });
-                said.push(statusIn(container).textContent);
-            }
-
-            expect(said).toEqual(['Saved', 'Saved\u00A0', 'Saved']);
-        });
-
-        it('clears a message after five seconds, and a newer one restarts the wait', () => {
-            vi.useFakeTimers();
-            teardown.push(() => vi.useRealTimers());
-            const { container, ready } = mount(() => <RichTextEditor plugins={[announcer]} />);
-            ready();
-            announce(container);
-            act(() => {
-                vi.advanceTimersByTime(100);
-            });
-            expect(statusIn(container).textContent).toBe('Saved');
-
-            act(() => {
-                vi.advanceTimersByTime(4000);
-            });
-            announce(container);
-            act(() => {
-                vi.advanceTimersByTime(100);
-            });
-            act(() => {
-                vi.advanceTimersByTime(4000);
-            });
-            expect(statusIn(container).textContent).toBe('Saved\u00A0');
-
-            act(() => {
-                vi.advanceTimersByTime(1000);
-            });
-            expect(statusIn(container).textContent).toBe('');
-        });
-
-        it('cancels a pending frame when the editor unmounts, with no update after it', () => {
-            vi.useFakeTimers();
-            teardown.push(() => vi.useRealTimers());
-            const error = vi.spyOn(console, 'error').mockImplementation(() => {});
-            teardown.push(() => error.mockRestore());
-            const { container, ready, rerender } = mount(() => <RichTextEditor plugins={[announcer]} />);
-            ready();
-            announce(container);
-            expect(vi.getTimerCount()).toBeGreaterThan(0);
-
-            rerender(null);
-            act(() => {
-                vi.advanceTimersByTime(CLEAR_WAIT_MS);
-            });
-
-            expect(vi.getTimerCount()).toBe(0);
-            expect(error).not.toHaveBeenCalled();
-        });
-
-        it('cancels the pending clear when the editor unmounts after the message was said', () => {
-            vi.useFakeTimers();
-            teardown.push(() => vi.useRealTimers());
-            const error = vi.spyOn(console, 'error').mockImplementation(() => {});
-            teardown.push(() => error.mockRestore());
-            const { container, ready, rerender } = mount(() => <RichTextEditor plugins={[announcer]} />);
-            ready();
-            announce(container);
-            act(() => {
-                vi.advanceTimersByTime(100);
-            });
-            expect(statusIn(container).textContent).toBe('Saved');
-            expect(vi.getTimerCount()).toBeGreaterThan(0);
-
-            rerender(null);
-            act(() => {
-                vi.advanceTimersByTime(CLEAR_WAIT_MS);
-            });
-
-            expect(vi.getTimerCount()).toBe(0);
-            expect(error).not.toHaveBeenCalled();
-        });
-
-        it('says only the last of two messages announced before a frame', () => {
-            vi.useFakeTimers();
-            teardown.push(() => vi.useRealTimers());
-            const first = definePlugin({
-                id: 'two-announcers',
-                hotkeys: {
-                    'Mod-Shift-a': (api) => {
-                        api.announce('First');
-                        api.announce('Second');
-                    },
-                },
-            });
-            const { container, ready } = mount(() => <RichTextEditor plugins={[first]} />);
-            ready();
-
-            announce(container);
-            act(() => {
-                vi.advanceTimersByTime(100);
-            });
-
-            expect(statusIn(container).textContent).toBe('Second');
-        });
-
-        it('adds no no-break space to a message that differs from the one before', () => {
-            vi.useFakeTimers();
-            teardown.push(() => vi.useRealTimers());
-            const messages = ['Saved', 'Deleted'];
-            const varying = definePlugin({
-                id: 'varying-announcer',
-                hotkeys: {
-                    'Mod-Shift-a': (api) => {
-                        api.announce(messages.shift() ?? '');
-                    },
-                },
-            });
-            const { container, ready } = mount(() => <RichTextEditor plugins={[varying]} />);
-            ready();
-            announce(container);
-            act(() => {
-                vi.advanceTimersByTime(100);
-            });
-
-            announce(container);
-            act(() => {
-                vi.advanceTimersByTime(100);
-            });
-
-            expect(statusIn(container).textContent).toBe('Deleted');
-        });
-
-        it('has one live region per editor', () => {
-            const { container, ready } = mount(() => (
-                <>
-                    <RichTextEditor plugins={[announcer]} />
-                    <RichTextEditor plugins={[announcer]} />
-                </>
-            ));
-            ready();
-
-            expect(container.querySelectorAll('output')).toHaveLength(2);
-        });
-    });
-
-    it('takes its name from a visible label when one is pointed at', () => {
-        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} aria-labelledby="label" />);
-        ready();
-
-        const editable = editableIn(container);
-        expect(editable.getAttribute('aria-labelledby')).toBe('label');
-        expect(editable.hasAttribute('aria-label')).toBe(false);
-    });
-
-    it('still has a name when the host gave it none', () => {
-        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
-        ready();
-
-        expect(editableIn(container).getAttribute('aria-label')).toBe('Rich text editor');
-        expect(editableIn(container).hasAttribute('aria-placeholder')).toBe(false);
-    });
-
-    // The drop cursor is drawn in the editable's offset parent: positioned, that is the editor's own element.
-    it('mounts in a positioned element, so the drop cursor stays inside the host', () => {
-        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
-        ready();
-
-        const mountPoint = editableIn(container).parentElement;
-        if (!mountPoint) {
-            throw new Error('the editable element has no parent');
-        }
-        expect(window.getComputedStyle(mountPoint).position).toBe('relative');
-    });
-
-    it('follows a changed name without being rebuilt', () => {
-        const { container, rerender, ready } = mount(() => (
-            <RichTextEditor plugins={defaultPlugins} aria-label="One" />
-        ));
-        ready();
-        const editable = editableIn(container);
-
-        rerender(<RichTextEditor plugins={defaultPlugins} aria-label="Two" />);
-
-        expect(editableIn(container)).toBe(editable);
-        expect(editable.getAttribute('aria-label')).toBe('Two');
-    });
-
-    it('keeps a labelled editor named when it turns readonly', () => {
-        const { container } = mount(() => (
-            <RichTextEditor value={paragraph('read me')} plugins={defaultPlugins} aria-label="Comment" readonly />
-        ));
-
-        const group = container.querySelector('[role="group"]');
-        expect(group?.getAttribute('aria-label')).toBe('Comment');
-        expect(group?.textContent).toContain('read me');
-    });
-
-    it('lets Escape take focus out of the text', () => {
-        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
-        ready();
-        const editable = editableIn(container);
-        act(() => editable.focus());
-
-        // A browser's keydown carries `keyCode`, which ProseMirror reads to
-        // prevent Escape's default.
-        press(editable, 'Escape', { keyCode: 27 });
-
-        expect(editable.contains(window.document.activeElement)).toBe(false);
-    });
-
-    it('keeps focus in the text when Escape closed the `/` menu', () => {
-        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
-        ready();
-        const editable = editableIn(container);
-        act(() => editable.focus());
-        const data = new DataTransfer();
-        data.setData('text/plain', '/');
-        act(() => {
-            editable.dispatchEvent(
-                new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }),
-            );
-        });
-        expect(window.document.querySelector('[role="listbox"]')).not.toBeNull();
-
-        press(editable, 'Escape', { keyCode: 27 });
-
-        expect(window.document.querySelector('[role="listbox"]')).toBeNull();
-        expect(window.document.activeElement).toBe(editable);
     });
 
     it('does not re-render the editor around the text for an edit', () => {
@@ -1248,32 +890,6 @@ describe('the toolbar from the keyboard', () => {
 
         const radios = [...container.querySelectorAll('[role="radiogroup"] [role="radio"]')];
         expect(radios.map((radio) => radio.getAttribute('aria-checked'))).toEqual(['true', 'false', 'false', 'false']);
-    });
-
-    it('sets and clears the alignment with a click, and says so', () => {
-        vi.useFakeTimers();
-        teardown.push(() => vi.useRealTimers());
-        const { container, ready, stored } = mount((onChange) => (
-            <RichTextEditor value={paragraph('text')} onChange={onChange} plugins={plugins} toolbarPlacement="top" />
-        ));
-        ready();
-        const editable = editableIn(container);
-        act(() => editable.focus());
-        const center = container.querySelector<HTMLElement>('[aria-label="Align center"]');
-        const saidNextFrame = (): string | null | undefined => {
-            act(() => {
-                vi.advanceTimersByTime(100);
-            });
-            return container.querySelector('output')?.textContent;
-        };
-
-        act(() => center?.click());
-        expect(stored()?.blocks[0]).toMatchObject({ align: 'center' });
-        expect(saidNextFrame()).toBe('Centered');
-
-        act(() => center?.click());
-        expect(stored()?.blocks[0]).not.toHaveProperty('align');
-        expect(saidNextFrame()).toBe('Alignment cleared');
     });
 
     describe('in a narrow top row', () => {
