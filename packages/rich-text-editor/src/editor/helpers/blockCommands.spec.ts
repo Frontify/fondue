@@ -2,9 +2,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
+import { PARAGRAPH, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
 
-import { activeCommand, matchCommands, TEXT_COMMAND } from './blockCommands';
+import { currentCommand, matchCommands, TEXT_COMMAND } from './blockCommands';
 
 const command = (label: string, keywords: string[] = [], group: RteBlockCommand['group'] = 'turnInto') => ({
     id: label,
@@ -46,55 +46,34 @@ describe('matching commands to what follows the slash', () => {
     });
 });
 
-describe('the active command', () => {
-    it('is the first that says the selection is it', () => {
-        const heading = { ...command('Heading 1'), isActive: () => true };
+describe('the current command', () => {
+    const activeFor = (id: string, active: RteBlockCommand['active']): RteBlockCommand => ({
+        ...command(id),
+        active,
+    });
+    const outer = activeFor('outer', { type: 'holder' });
+    const styled = activeFor('styled', { type: 'styled', attributes: { variant: 'one' } });
+    const all = [TEXT_COMMAND, outer, styled];
+    const selectionIn = (...types: string[]): RteSelectionSnapshot => {
+        const blocks = types.map((type) => ({ type }));
+        return { block: blocks[0] ?? null, blocks } as RteSelectionSnapshot;
+    };
 
-        expect(
-            activeCommand([TEXT_COMMAND, heading], {
-                isCollapsed: true,
-                text: '',
-                block: { type: 'x' },
-                blocks: [{ type: 'x' }],
-                marks: {},
-                history: { canUndo: false, canRedo: false },
-            }),
-        ).toBe(heading);
+    it('is the built-in Text for a paragraph at the top level', () => {
+        expect(currentCommand(all, selectionIn(PARAGRAPH))).toBe(TEXT_COMMAND);
     });
 
-    it('is the innermost list when lists nest', () => {
-        const listCommand = (type: string) => ({
-            ...command(type),
-            isActive: (selection: RteSelectionSnapshot) => selection.blocks.some((block) => block.type === type),
-        });
-        const bullet = listCommand('bulletList');
-        const numbered = listCommand('numberedList');
-        const blocks = ['paragraph', 'listItem', 'numberedList', 'listItem', 'bulletList'].map((type) => ({ type }));
-
-        const selection = {
-            isCollapsed: true,
-            text: '',
-            block: blocks[0] ?? null,
-            blocks,
-            marks: {},
-            history: { canUndo: false, canRedo: false },
-        };
-
-        expect(activeCommand([TEXT_COMMAND, bullet, numbered], selection)).toBe(numbered);
+    it('is the plugin command, not Text, for a paragraph inside a block that has one', () => {
+        expect(currentCommand(all, selectionIn(PARAGRAPH, 'slot', 'holder'))).toBe(outer);
     });
 
-    it('is the built-in Text only on a paragraph that is not in a list', () => {
-        const selection = (types: string[]) => ({
-            isCollapsed: true,
-            text: '',
-            block: { type: types[0] ?? '' },
-            blocks: types.map((type) => ({ type })),
-            marks: {},
-            history: { canUndo: false, canRedo: false },
-        });
+    it('is the plugin command that matches the block, not Text, when the block has its attributes', () => {
+        const selection = { block: { type: 'styled', variant: 'one' }, blocks: [{ type: 'styled', variant: 'one' }] };
 
-        expect(TEXT_COMMAND.isActive?.(selection(['paragraph']))).toBe(true);
-        expect(TEXT_COMMAND.isActive?.(selection(['paragraph', 'listItem', 'bulletList']))).toBe(false);
-        expect(TEXT_COMMAND.isActive?.(selection(['textStyle']))).toBe(false);
+        expect(currentCommand(all, selection as unknown as RteSelectionSnapshot)).toBe(styled);
+    });
+
+    it('is nothing when the selection is in no block a command names', () => {
+        expect(currentCommand(all, selectionIn('image'))).toBeUndefined();
     });
 });

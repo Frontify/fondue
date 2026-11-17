@@ -13,6 +13,7 @@ import {
     onlyTypeOf,
     type PasteHandler,
     type RteBlockCommand,
+    type RteCommandTarget,
     type RteContent,
     type RteDelimiterRule,
     type RteEditView,
@@ -21,6 +22,7 @@ import {
     type RtePlugin,
     type RteToolbarEntry,
     type RteToolbarGroup,
+    type SelectedNode,
     type ToolbarItemProps,
 } from './plugin';
 import { PARAGRAPH } from './vocabulary';
@@ -255,6 +257,69 @@ export const toggleOwn = ({ own, api, selection, value }: ToggleOwnParams): void
     }
 };
 
+const attributesOf = (block: Record<string, unknown>): Record<string, unknown> =>
+    Object.fromEntries(Object.entries(block).filter(([name]) => name !== 'type' && name !== 'children'));
+
+export const selectedNodeOf = (
+    own: OwnType,
+    api: EditorControlApi,
+    selection: RteSelectionSnapshot,
+): SelectedNode | null => {
+    switch (own.kind) {
+        case 'mark': {
+            const run = api.marks.getRun(own.type);
+            if (run === null) {
+                return null;
+            }
+            return { type: own.type, value: run.value, text: run.text };
+        }
+        // The selection sits beside an inline, never in one.
+        case 'inline':
+        case 'none':
+            return null;
+        case 'list':
+        case 'container':
+        case 'textBlock':
+        case 'voidBlock': {
+            // Innermost first, so a list nested in a list finds the inner one.
+            const block = selection.blocks.find((candidate) => candidate.type === own.type);
+            if (block === undefined) {
+                return null;
+            }
+            return { type: own.type, value: attributesOf(block), text: selection.text };
+        }
+    }
+};
+
+type SelectionBlock = RteSelectionSnapshot['blocks'][number];
+
+const isCommandTarget = (target: RteCommandTarget, block: SelectionBlock): boolean => {
+    if (target.type !== block.type) {
+        return false;
+    }
+    return Object.entries(target.attributes ?? {}).every(([name, value]) => block[name] === value);
+};
+
+/**
+ * The command whose `active` block the selection is in, if any. Blocks are
+ * read innermost first, so a numbered list inside a bulleted item names the
+ * numbered one.
+ */
+export const activeCommand = (
+    commands: readonly RteBlockCommand[],
+    selection: RteSelectionSnapshot,
+): RteBlockCommand | undefined => {
+    for (const block of selection.blocks) {
+        const command = commands.find(
+            (candidate) => candidate.active !== undefined && isCommandTarget(candidate.active, block),
+        );
+        if (command !== undefined) {
+            return command;
+        }
+    }
+    return undefined;
+};
+
 const assertKnownModifiers = (keys: string): void => {
     parseHotkey(keys);
 };
@@ -315,7 +380,7 @@ const menuCommandOf = (
                 ...command,
                 id: own.type,
                 group: 'turnInto',
-                isActive: (selection) => selection.block?.type === own.type,
+                active: { type: own.type },
                 run: (api) => api.blocks.setType(own.type),
             };
         case 'list':
@@ -323,7 +388,7 @@ const menuCommandOf = (
                 ...command,
                 id: own.type,
                 group: 'turnInto',
-                isActive: (selection) => selection.blocks.some((block) => block.type === own.type),
+                active: { type: own.type },
                 run: (api) => api.lists.toggle(own.type),
             };
         case 'voidBlock':

@@ -4,6 +4,8 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { attributeEntries } from '#/core';
+
 import { BIDI_ISOLATE_TAG } from './components/MentionLink';
 import { mentionValueOf } from './helpers/mention';
 import { mentionContent, mentionPlugin } from './Mention';
@@ -77,12 +79,12 @@ describe('the mention inline', () => {
             href: (mention) => `/u/${mention.id}`,
             resolve: () => ({ status: 'current', username: 'jane', name: 'Jane Smith' }),
         });
-        const attrs = content.inlines?.mention?.toHtml(JANE).attrs;
+        const attrs = Object.fromEntries(attributeEntries('a', content.inlines?.mention?.toHtml(JANE).attrs));
 
         expect(attrs).toMatchObject({ title: 'Jane Smith', 'data-mention-name': 'Jane Doe' });
         expect(
             parse(
-                `<a href="/u/jane" title="${attrs?.title}" data-mention-id="jane" data-mention-username="jane" data-mention-name="${attrs?.['data-mention-name']}">@jane</a>`,
+                `<a href="/u/jane" title="${attrs.title}" data-mention-id="jane" data-mention-username="jane" data-mention-name="${attrs['data-mention-name']}">@jane</a>`,
             ),
         ).toEqual(JANE);
     });

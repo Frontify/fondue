@@ -28,17 +28,8 @@ const isBlank = (node: AnyNode): boolean => {
  */
 export const isEmpty = (doc: RteDocumentOf | null | undefined): boolean => !doc || doc.blocks.every(isBlank);
 
-/**
- * The text an inline element's markup holds — a mention's `@jane`. A `<br>`
- * is a line break and an image its `alt`, as plain text spells them.
- */
+/** The fixed text an inline element's markup holds — a mention's `@jane`. */
 const specText = (spec: HtmlSpec): string => {
-    if (spec.tag === 'br') {
-        return '\n';
-    }
-    if (spec.tag === 'img') {
-        return spec.attrs?.alt ?? '';
-    }
     if (typeof spec.children === 'string') {
         return spec.children;
     }
@@ -56,7 +47,13 @@ const inlineText = (inlines: readonly RteInlineNode[], registry: ContentRegistry
             }
             const definition = registry.inlines.get(inline.type);
             const { type: _type, text: _text, ...value } = inline;
-            return definition ? specText(definition.toHtml(value)) : '';
+            if (definition === undefined) {
+                return '';
+            }
+            if (definition.toText !== undefined) {
+                return definition.toText(value);
+            }
+            return specText(definition.toHtml(value));
         })
         .join('');
 
@@ -95,9 +92,9 @@ export type ToPlainTextOptions = {
 /**
  * The document's text without formatting: each text block one line, list
  * items included, joined by `\n` — an empty paragraph stays an empty line.
- * Marks drop away. An inline element is the text of its plugin's `toHtml`
- * (a mention's `@jane`, a line break's `\n`), so no plugin declares a plain
- * form of its own.
+ * Marks drop away. An inline element is its plugin's `toText` when it
+ * declares one (a line break's `\n`), else the fixed text of its `toHtml` (a
+ * mention's `@jane`).
  */
 export const toPlainText = (doc: RteDocumentOf, { plugins = [] }: ToPlainTextOptions = {}): string =>
     blockLines(doc.blocks, buildContentRegistry(plugins)).join('\n');

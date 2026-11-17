@@ -343,7 +343,7 @@ const outerElement = (
     node: PmNode,
 ): { tag: string; attrs: Record<string, string> } => {
     const spec = blockHtml(registry, definition, node.attrs);
-    return { tag: spec.tag, attrs: Object.fromEntries(attributeEntries(spec.attrs)) };
+    return { tag: spec.tag, attrs: Object.fromEntries(attributeEntries(spec.tag, spec.attrs)) };
 };
 
 const classTokens = (value: string | undefined): string[] => (value ?? '').split(/\s+/).filter(Boolean);

@@ -103,6 +103,9 @@ The label is not optional. The [Keyboard reference](?path=/docs/rich-text-editor
 Every definition says how it is written and how it is read back.
 
 - `toHtml` takes the node's value and returns an `HtmlSpec`: a `tag`, optional `attrs` and `children`. `children: true` is where the node's content goes. A string is fixed content.
+- `attrs` may hold any HTML attribute by its name (`data-x`, `popover`). `class` is a string and `style` a map of CSS properties. `true` writes a boolean attribute, and `false`, `null` or `undefined` leaves it out. A number is written as a string. A name that is not lowercase letters, digits and hyphens, or that starts with `on`, throws. A value that is not a string, a number, a boolean or a style map is left out, with a warning in development.
+- An inline's plain text, as `toPlainText` reads it, is the fixed text its `toHtml` writes. An inline whose text is not in its markup, such as a line break, declares `toText`.
+- A command in `commands`, or an entry with `menu`, is the current one in "Turn into" when the selection is in the block it declares as `active: { type, attributes }`. Every attribute listed must match. The built-in Text command is the current one only when no plugin command is.
 - `parse` is a list of rules that read pasted HTML back into the node. A rule has a `tag`, a CSS selector such as `a[href]`. Its optional `value` function reads the value from the element, or returns `null` when the element is not this node after all.
 
 A mark that is only a tag can skip both with `defineMark({ tag: 'u' })`. A mark also takes parse rules for inline styles, as Google Docs writes them. A `style` rule matches an element that declares that CSS property, and its `value` function gets the declared value.

@@ -26,7 +26,6 @@ import {
     ALL_TEXT_STYLES,
     findPreset,
     FIRST_PRESET,
-    isTextStyle,
     labelOf,
     markdownRuleFor,
     parseRuleFor,
@@ -174,7 +173,7 @@ export const textStylePlugin = ({
             icon,
             keywords: level === undefined ? [] : (HEADING_KEYWORDS[level] ?? []),
             group: 'turnInto',
-            isActive: (selection) => isTextStyle(selection.block) && selection.block.style === preset.name,
+            active: { type: 'textStyle', attributes: { style: preset.name } },
             run: (api) => api.blocks.setType('textStyle', { style: preset.name }),
         };
     });

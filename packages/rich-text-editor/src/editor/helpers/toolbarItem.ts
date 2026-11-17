@@ -5,9 +5,8 @@
 import {
     type EditorControlApi,
     isOwnActive,
-    type OwnType,
     type RteSelectionSnapshot,
-    type SelectedNode,
+    selectedNodeOf,
     toggleOwn,
     type ToolbarEntry,
     type ToolbarItemProps,
@@ -46,25 +45,4 @@ export const toolbarItemProps = (
             }
         },
     };
-};
-
-const attributesOf = (block: Record<string, unknown>): Record<string, unknown> =>
-    Object.fromEntries(Object.entries(block).filter(([name]) => name !== 'type' && name !== 'children'));
-
-const selectedNodeOf = (own: OwnType, api: EditorControlApi, selection: RteSelectionSnapshot): SelectedNode | null => {
-    switch (own.kind) {
-        case 'mark': {
-            const run = api.marks.getRun(own.type);
-            return run === null ? null : { type: own.type, value: run.value, text: run.text };
-        }
-        // The selection sits beside an inline, never in one.
-        case 'inline':
-        case 'none':
-            return null;
-        default: {
-            // Innermost first, so a list nested in a list finds the inner one.
-            const block = selection.blocks.find((candidate) => candidate.type === own.type);
-            return block ? { type: own.type, value: attributesOf(block), text: selection.text } : null;
-        }
-    }
 };

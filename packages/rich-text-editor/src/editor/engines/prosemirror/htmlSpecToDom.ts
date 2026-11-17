@@ -10,7 +10,7 @@ import { attributeEntries, type HtmlSpec } from '#/core';
  * `attributeEntries` spells them — the same as the HTML export.
  */
 export const htmlSpecToDom = (spec: HtmlSpec): DOMOutputSpec => {
-    const entries = attributeEntries(spec.attrs);
+    const entries = attributeEntries(spec.tag, spec.attrs);
     // The attributes slot is optional; left out when there are none.
     const head: unknown[] = entries.length > 0 ? [spec.tag, Object.fromEntries(entries)] : [spec.tag];
     const { children } = spec;
