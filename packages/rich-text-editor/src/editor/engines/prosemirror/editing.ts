@@ -4,7 +4,6 @@ import { dropCursor } from 'prosemirror-dropcursor';
 import { EditorState, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { isClaimedBy } from '#/core';
 import { type MountedDocument, type MountDocument, type MountOptions } from '#/editor/port';
 
 import {
@@ -116,11 +115,7 @@ const mount = ({
         nodeViews: createNodeViews(registry, api, liveViews, openEditors),
         markViews: createMarkViews(registry, api, liveViews, openEditors),
         clipboardSerializer: clipboardSerializer(schema),
-        clipboardParser: clipboardParser({
-            schema,
-            transforms: registry.pasteTransforms,
-            isClaimed: isClaimedBy(registry),
-        }),
+        clipboardParser: clipboardParser(schema),
         transformPastedHTML: keepOfficeListStyles,
         transformPasted: pastedWithoutExtras,
         handlePaste: (pasteView, event, slice) =>

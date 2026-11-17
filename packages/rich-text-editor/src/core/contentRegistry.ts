@@ -36,7 +36,7 @@ const firstTypeOf = (content: RteContent): string => typesOf(content)[0] ?? 'con
 
 /** Throws when two plugins declare one type; the same definition twice is fine (two list plugins share their item). */
 export const register = <TDefinition>(
-    kind: 'block type' | 'mark type' | 'inline type' | 'block attribute' | 'edit view' | 'paste transform',
+    kind: 'block type' | 'mark type' | 'inline type' | 'block attribute' | 'edit view',
     target: Map<string, TDefinition>,
     owners: Map<string, string>,
     owner: string,

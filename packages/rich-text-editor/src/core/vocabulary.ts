@@ -50,18 +50,6 @@ export const WORD_START_CONTEXT = String.raw`\s([{<'"“‘`;
  */
 export const ANY_LIST = '@anyList';
 
-/**
- * Word's list data as written, kept on each list paragraph for a paste transform; the editor removes it after the transforms run.
- * - `list`: the id of the source app's list (Word's `l0 lfo1`).
- * - `level`: the nesting level, as the digits Word wrote.
- * - `marker`: the text of the marker the paragraph began with, such as `1.` or `·`.
- */
-export const OFFICE_LIST_ATTRIBUTES = {
-    list: 'data-rte-office-list',
-    level: 'data-rte-office-level',
-    marker: 'data-rte-office-marker',
-} as const;
-
 /** The document the editor starts from when it is given none: one empty paragraph. */
 export const emptyDocument = (): RteDocumentOf => ({
     version: DOCUMENT_VERSION,
