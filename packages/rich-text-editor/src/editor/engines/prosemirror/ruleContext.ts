@@ -31,7 +31,7 @@ export const ruleContext = (registry: PluginRegistry, schema: Schema): RuleConte
     return { schema, registry, excludedMarks };
 };
 
-/** Text carrying a mark that opts out (inline code) is typed as is: the rule steps aside. */
+/** Text carrying a mark that opts out (for example, inline code) is typed as is: the rule steps aside. */
 export const isInExcludedMark = (state: EditorState, excluded: readonly PmMarkType[], position: number): boolean => {
     const marks = state.storedMarks ?? state.doc.resolve(position).marks();
     return excluded.some((markType) => markType.isInSet(marks));
@@ -57,7 +57,7 @@ const unlessInExcludedMark =
     };
 
 /**
- * A text rule leaves text alone when any of it carries a mark that opts out of rules (inline code).
+ * A text rule leaves text alone when any of it carries a mark that opts out of rules (for example, inline code).
  */
 export const unlessRangeHasExcludedMark =
     (excluded: readonly PmMarkType[], handler: RuleHandler): RuleHandler =>

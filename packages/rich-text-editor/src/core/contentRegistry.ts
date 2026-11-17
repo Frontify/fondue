@@ -21,7 +21,7 @@ export type ContentRegistry = {
     inlines: Map<string, InlineDefinition>;
     /** Outermost first (lower `nesting` wraps higher, ties keep plugin order), so engine and renderer nest alike. */
     marks: Map<string, MarkDefinition>;
-    /** Carried by every text block (alignment). */
+    /** Carried by every text block (for example, alignment). */
     blockAttributes: Map<string, BlockAttributeDefinition>;
     /** Inferred from `content: { items }`. */
     itemTypeByList: Map<string, string>;
@@ -190,7 +190,10 @@ export const blockAttributeStyle = (registry: ContentRegistry, stored: Record<st
     return style;
 };
 
-/** Applies the block attributes to a text block's outermost element, so editor, readonly view and export agree. */
+/**
+ * Applies the block attributes (for example, alignment) to a text block's outermost element, so editor,
+ * readonly view and export agree.
+ */
 export const blockHtml = (
     registry: ContentRegistry,
     definition: BlockDefinition,

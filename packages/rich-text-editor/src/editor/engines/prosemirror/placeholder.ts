@@ -4,7 +4,7 @@ import { type Node as PmNode } from 'prosemirror-model';
 import { Plugin as PmPlugin } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
-/** A single empty text block. Not "no text anywhere": the placeholder must not talk over an empty paragraph plus a void block (a column break). */
+/** A single empty text block. Not "no text anywhere": the placeholder must not talk over an empty paragraph plus a void block (for example, a column break). */
 const isEmptyDoc = (doc: PmNode): boolean =>
     doc.childCount === 1 && doc.firstChild !== null && doc.firstChild.isTextblock && doc.firstChild.content.size === 0;
 
