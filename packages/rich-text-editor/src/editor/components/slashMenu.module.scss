@@ -37,6 +37,22 @@
     background: var(--color-surface-hover);
 }
 
+/** A command that cannot run on the selection: listed, dimmed, its reason under its name. */
+.optionUnavailable {
+    color: var(--color-disabled-default);
+    cursor: not-allowed;
+}
+
+.text {
+    display: flex;
+    flex-direction: column;
+}
+
+.reason {
+    color: var(--color-secondary-default);
+    font-size: var(--typography-font-size-x-small);
+}
+
 @media (forced-colors: active) {
     .optionActive {
         background: Highlight;

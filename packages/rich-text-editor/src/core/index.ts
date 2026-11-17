@@ -43,6 +43,7 @@ export {
     type ParseRule,
     type PasteHandler,
     type RteBlockCommand,
+    type RteCommandAvailability,
     type RteContent,
     type RteContentDefinition,
     type RteDelimiterRule,
