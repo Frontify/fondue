@@ -4,9 +4,9 @@ import { DOMParser as PmDOMParser } from 'prosemirror-model';
 
 import { type ParseHtmlDocument } from '#/editor/port';
 
-import { keepUnreadStructureApart } from './clipboard';
 import { toRteDocument } from './documentConversion';
 import { buildSchema } from './schema';
+import { keepUnreadStructureApart } from './unreadStructure';
 
 /**
  * Elements a `<br>` may end without ending a block: prosemirror-view's own

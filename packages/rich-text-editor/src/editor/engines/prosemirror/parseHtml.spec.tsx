@@ -34,6 +34,18 @@ describe('parsing HTML into a document', () => {
         expect(parsedBlocks(FOREIGN_HTML, defaultPlugins)).toEqual(editor.stored());
     });
 
+    it.each(['<p>a<br></p>', '<p>a<br><br></p>', '<p><strong>a<br></strong></p>', '<div>a<br></div>', '<p><br></p>'])(
+        'drops or keeps the break that ends %s as a paste does',
+        (html) => {
+            const editor = editorWith(defaultPlugins, [paragraph(text('x'))]);
+            editor.select('x');
+
+            editor.pasteHTML(html);
+
+            expect(parsedBlocks(html, defaultPlugins)).toEqual(editor.stored());
+        },
+    );
+
     it('reads an element no plugin reads as its text', () => {
         expect(parsedBlocks('<p>Hello <blink>there</blink></p><x-card><h1>Title</h1></x-card>', [])).toEqual([
             paragraph(text('Hello there')),

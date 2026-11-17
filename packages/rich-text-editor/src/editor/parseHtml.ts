@@ -6,7 +6,7 @@ import { parseHtmlDocument } from '#/editor/engines/prosemirror';
 export type ParseHtmlOptions = {
     /**
      * The plugins, or only their content, whose parse rules read the HTML. What none of them reads stays as its text.
-     * @default []
+     * @default defaultContent
      */
     plugins?: readonly (RtePlugin | RteContent)[];
     /**
