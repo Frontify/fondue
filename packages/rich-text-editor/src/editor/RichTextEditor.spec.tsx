@@ -1037,6 +1037,64 @@ describe('the toolbar', () => {
         expect(group?.parentElement?.lastElementChild).toBe(group);
     });
 
+    describe('a press inside a toolbar slot', () => {
+        const isMousedownAllowed = (target: Element): boolean =>
+            target.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+
+        const withControls = definePlugin({
+            id: 'slot-controls',
+            toolbar: [
+                {
+                    label: 'Plain',
+                    render: () => (
+                        <>
+                            <button type="button" data-testid="plain-button">
+                                plain
+                            </button>
+                            <input type="text" aria-label="Field" data-testid="slot-field" />
+                            <span contentEditable={false} data-testid="slot-island">
+                                island
+                            </span>
+                        </>
+                    ),
+                },
+            ],
+        });
+
+        it('keeps the text selection when it lands on a plain button a plugin drew', () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor plugins={[withControls, ...defaultPlugins]} toolbarPlacement="top" />
+            ));
+            ready();
+
+            const button = container.querySelector('[data-testid="plain-button"]');
+            expect(button).toBeTruthy();
+            expect(isMousedownAllowed(button as Element)).toBe(false);
+        });
+
+        it('lets a text field in the slot take focus', () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor plugins={[withControls, ...defaultPlugins]} toolbarPlacement="top" />
+            ));
+            ready();
+
+            const field = container.querySelector('[data-testid="slot-field"]');
+            expect(field).toBeTruthy();
+            expect(isMousedownAllowed(field as Element)).toBe(true);
+        });
+
+        it('keeps the text selection when it lands on a span that is not editable', () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor plugins={[withControls, ...defaultPlugins]} toolbarPlacement="top" />
+            ));
+            ready();
+
+            const island = container.querySelector('[data-testid="slot-island"]');
+            expect(island?.getAttribute('contenteditable')).toBe('false');
+            expect(isMousedownAllowed(island as Element)).toBe(false);
+        });
+    });
+
     it('keeps Undo and Redo current as edits are made and taken back', () => {
         const { container, ready, stored } = mount((onChange) => (
             <RichTextEditor plugins={defaultPlugins} toolbarPlacement="top" onChange={onChange} />
