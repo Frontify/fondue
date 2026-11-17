@@ -577,10 +577,10 @@ describe('the descriptions of a registry', () => {
         const registry = buildPluginRegistry([
             definePlugin({ id: 'first', description: 'Press Enter to submit.' }),
             definePlugin({ id: 'silent' }),
-            definePlugin({ id: 'second', description: 'Press Mod-\\ to reset.' }),
+            definePlugin({ id: 'second', description: 'Press Tab to leave.' }),
         ]);
 
-        expect(registry.descriptions).toEqual(['Press Enter to submit.', 'Press Mod-\\ to reset.']);
+        expect(registry.descriptions).toEqual(['Press Enter to submit.', 'Press Tab to leave.']);
     });
 
     it('are empty when no plugin describes itself', () => {

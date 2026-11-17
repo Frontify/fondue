@@ -7,7 +7,7 @@ import { BIDI_ISOLATE_TAG, MentionLink } from './components/MentionLink';
 import { linkTarget, mentionAttributes, mentionDisplay, storedKind } from './helpers/display';
 import { mentionValueOf } from './helpers/mention';
 import styles from './mention.module.scss';
-import { type MentionHref, type MentionItem, type MentionItems, type MentionResolve, type MentionValue } from './types';
+import { type MentionHref, type MentionItem, type MentionItems, type MentionValue } from './types';
 
 export type MentionContentOptions = {
     /**
@@ -15,12 +15,6 @@ export type MentionContentOptions = {
      * Without it, or where it returns `undefined`, the mention is plain text.
      */
     href?: MentionHref;
-    /**
-     * What the app knows now about a stored mention: a renamed person shows their current names, a deleted or
-     * forbidden one its stored username marked unavailable, with no link. The document never changes. Read when a
-     * mention is drawn, so a changed `resolve` applies once the editor remounts. A throw reaches the editor's `onError`.
-     */
-    resolve?: MentionResolve;
     /**
      * The single character that starts a mention
      * @default '@'
@@ -41,7 +35,7 @@ const assertMentionTrigger = (trigger: string, factory: string): void => {
 /**
  * A mention, shown as the username linked to the person or group, with the full name on hover
  */
-export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentOptions = {}) => {
+export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = {}) => {
     assertMentionTrigger(trigger, 'mentionContent');
     return defineContent({
         inlines: {
@@ -49,7 +43,7 @@ export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentO
                 // Portable markup for the clipboard: a plain link (or text, with
                 // nowhere to link to), no tooltip.
                 toHtml: (mention) => {
-                    const shown = mentionDisplay(mention, { resolve, href, trigger });
+                    const shown = mentionDisplay(mention, { href, trigger });
                     const target = linkTarget(shown);
                     return {
                         tag: target === undefined ? 'span' : 'a',
@@ -59,7 +53,6 @@ export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentO
                             ...mentionAttributes(mention),
                             class: styles.mention ?? '',
                         },
-                        // Without the note an unavailable mention shows when read.
                         children: [{ tag: BIDI_ISOLATE_TAG, children: shown.label }],
                     };
                 },
@@ -74,20 +67,18 @@ export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentO
                         value: (element) => {
                             const id = element.dataset.mentionId ?? '';
                             const username = element.dataset.mentionUsername ?? '';
-                            // Copies from before `data-mention-name` carry the name in the title.
-                            const name = element.dataset.mentionName ?? element.title;
                             const kind = storedKind(element.dataset.mentionKind);
                             if (id === '' || username === '') {
                                 return null;
                             }
-                            return mentionValueOf({ id, username, name, kind });
+                            return mentionValueOf({ id, username, name: element.title, kind });
                         },
                     },
                 ],
 
                 render: {
                     component: ({ value }) => (
-                        <MentionLink value={value} display={mentionDisplay(value, { resolve, href, trigger })} />
+                        <MentionLink value={value} display={mentionDisplay(value, { href, trigger })} />
                     ),
                 },
             }),
@@ -119,7 +110,7 @@ export const searchIn =
  * Mentions a person or group: typing the trigger (`@` by default) opens a list to choose from
  */
 export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
-    const { href, resolve, trigger = '@' } = options;
+    const { href, trigger = '@' } = options;
     assertMentionTrigger(trigger, 'mentionPlugin');
     let items: MentionItems;
     if (typeof options.items === 'function') {
@@ -129,11 +120,9 @@ export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
     }
 
     return definePlugin({
-        content: mentionContent({ href, resolve, trigger }),
+        content: mentionContent({ href, trigger }),
         edit: {
-            mention: (props) => (
-                <MentionEditor {...props} items={items} trigger={trigger} href={href} resolve={resolve} />
-            ),
+            mention: (props) => <MentionEditor {...props} items={items} trigger={trigger} href={href} />,
         },
         hotkeys: {
             // Inserts an empty mention that the `edit` view takes over.
