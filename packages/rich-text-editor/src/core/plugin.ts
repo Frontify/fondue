@@ -297,23 +297,17 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
  * Where a block sits in a grid:
  * - `'grid'`       → the grid itself; its content is `{ parts }` of `'row'` blocks
  * - `'row'`        → one row; its content is `{ parts }` of slot blocks
- * - `'slot'`       → one place in a row, holding blocks
+ * - `'slot'`       → one place in a row, holding `{ blocks }`
  * - `'headerSlot'` → a slot that labels its row or column
  *
- * A slot may cover several columns or rows. To keep that, it declares
- * `colspan` and `rowspan` (whole numbers from 1 to `MAX_GRID_SPAN`, default 1)
- * and `colwidth` (default null) in its `defaults`; left out, they exist only
- * while editing. A span outside that range is read as `gridSpanOf` reads it.
+ * A slot that keeps its spans declares `colspan` and `rowspan` in its
+ * `defaults`; left out, they exist only while editing.
  */
 export type GridRole = 'grid' | 'row' | 'slot' | 'headerSlot';
 
-/** The most columns or rows one slot may cover. */
 const MAX_GRID_SPAN = 50;
 
-/**
- * A slot's span as the editor reads it, stored or from markup: a whole number
- * from 1 to `MAX_GRID_SPAN`, and 1 when missing or unreadable.
- */
+/** A slot's span, stored or from markup: a whole number from 1 to 50, 1 when unreadable. */
 export const gridSpanOf = (value: unknown): number => {
     const span = typeof value === 'number' ? value : Number.parseInt(typeof value === 'string' ? value : '', 10);
     if (!Number.isFinite(span) || span < 1) {

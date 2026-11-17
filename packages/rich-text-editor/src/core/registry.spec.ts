@@ -660,43 +660,45 @@ describe('a block laid out as a grid', () => {
     const gridOf = (blocks: Record<string, ReturnType<typeof container>>) =>
         buildPluginRegistry([definePlugin({ id: 'grid', content: defineContent({ blocks }) })]);
 
+    const shape = {
+        outer: container({ parts: ['band'] }, 'grid'),
+        band: container({ parts: ['slot', 'head'] }, 'row'),
+        slot: container({ blocks: ['paragraph'] }, 'slot'),
+        head: container({ blocks: ['paragraph'] }, 'headerSlot'),
+    };
+
     it('accepts rows of slots and header slots holding blocks', () => {
-        expect(() =>
-            gridOf({
-                outer: container({ parts: ['band'] }, 'grid'),
-                band: container({ parts: ['slot', 'head'] }, 'row'),
-                slot: container({ blocks: ['paragraph'] }, 'slot'),
-                head: container({ blocks: ['paragraph'] }, 'headerSlot'),
-            }),
-        ).not.toThrow();
+        expect(() => gridOf(shape)).not.toThrow();
     });
 
-    it('rejects a grid that is not made of rows', () => {
-        expect(() =>
-            gridOf({
-                outer: container({ blocks: ['paragraph'] }, 'grid'),
-            }),
-        ).toThrow('Plugin "grid" makes "outer" a grid, whose content is `{ parts }` of row blocks.');
-        expect(() =>
-            gridOf({
-                outer: container({ parts: ['slot'] }, 'grid'),
-                slot: container({ blocks: ['paragraph'] }, 'slot'),
-            }),
-        ).toThrow('Plugin "grid" makes "outer" a grid, but its part "slot" is no row.');
+    it('rejects a grid or a row whose content is not parts, and a slot that holds no blocks', () => {
+        expect(() => gridOf({ ...shape, outer: container({ blocks: ['band'] }, 'grid') })).toThrow(
+            'Plugin "grid" makes "outer" a grid, whose content must be `{ parts }`.',
+        );
+        expect(() => gridOf({ ...shape, slot: container('text', 'slot') })).toThrow(
+            'Plugin "grid" makes "slot" a slot, whose content must be `{ blocks }`.',
+        );
     });
 
-    it('rejects a row whose parts are not slots', () => {
+    it('rejects a part of a grid that is not a row, and a part of a row that is not a slot', () => {
         expect(() =>
             gridOf({
-                band: container({ parts: ['plain'] }, 'row'),
-                plain: container({ blocks: ['paragraph'] }),
+                ...shape,
+                outer: container({ parts: ['band', 'plain'] }, 'grid'),
+                plain: container({ blocks: [] }),
             }),
-        ).toThrow('Plugin "grid" makes "band" a row, but its part "plain" is no slot or headerSlot.');
+        ).toThrow('Plugin "grid" makes "outer" a grid, but its part "plain" is not a row.');
+        expect(() => gridOf({ ...shape, band: container({ parts: ['slot', 'outer'] }, 'row') })).toThrow(
+            'Plugin "grid" makes "band" a row, but its part "outer" is not a slot.',
+        );
     });
 
-    it('rejects a slot that does not hold blocks', () => {
-        expect(() => gridOf({ slot: container('text', 'slot') })).toThrow(
-            'Plugin "grid" makes "slot" a slot, which holds `{ blocks }`.',
+    it('rejects a row or a slot placed anywhere but its grid or row', () => {
+        expect(() => gridOf({ ...shape, plain: container({ blocks: ['slot'] }) })).toThrow(
+            'Plugin "grid" puts "slot", a slot, in "plain", which is not a row.',
+        );
+        expect(() => gridOf({ ...shape, loose: container({ parts: ['slot'] }, 'row') })).toThrow(
+            'Plugin "grid" makes "loose" a row, but no grid holds it.',
         );
     });
 });

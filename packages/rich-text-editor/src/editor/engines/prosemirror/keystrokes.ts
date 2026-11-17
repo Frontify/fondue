@@ -56,12 +56,8 @@ import {
  *    Backspace right after takes the link back.
  * 3. Feature hotkeys (Mod-b, ...). Before the list keys so a feature can take a
  *    key lists would claim (`blurOnBreak` takes Enter).
- * 4. Grid keys (Tab, Shift-Tab between slots), then grid editing (selecting
- *    across slots, arrows at a slot's edge, Backspace and Delete over selected
- *    slots); only present when a grid exists. Before the list keys: Tab and
- *    Shift-Tab in a list inside a slot move between slots, and the list keys
- *    leave Shift-Tab in the first slot to the browser.
- *    Then list keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
+ * 4. Grid keys, then list keys; each only when a grid or a list exists. Grid
+ *    keys come first, so Tab in a list inside a slot moves to the next slot.
  * 5. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`); held until a composition ends.
  * 6. Enter keeping the attributes every text block carries, then the baseline
  *    keymap, plus Backspace resetting an emptied first heading, and Backspace
@@ -74,13 +70,12 @@ import {
 export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api: EditorControlApi): PmPlugin[] => {
     const hasLists = registry.itemTypeByList.size > 0;
     const hasGrid = hasGrids(registry);
-    // In a grid, Shift-Tab in the first slot goes to the browser, even from a list.
-    const lists = Object.fromEntries(
-        Object.entries(listKeys(api, registry.itemTypeByList)).map(([key, command]) => [
-            key,
-            hasGrid && key === 'Shift-Tab' ? outsideGrids(command) : command,
-        ]),
-    );
+    const lists = listKeys(api, registry.itemTypeByList);
+    const outdent = lists['Shift-Tab'];
+    // Shift-Tab in a grid's first slot goes to the browser, even from a list.
+    if (hasGrid && outdent !== undefined) {
+        lists['Shift-Tab'] = outsideGrids(outdent);
+    }
 
     return [
         // 1

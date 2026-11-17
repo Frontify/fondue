@@ -568,43 +568,79 @@ const addContent = (draft: Draft, content: RteContent | undefined, owner: string
     }
 };
 
-/** The roles a grid's and a row's parts must have. A slot holds blocks instead. */
-const PART_ROLES: Partial<Record<GridRole, readonly GridRole[]>> = {
-    grid: ['row'],
-    row: ['slot', 'headerSlot'],
+/** What a grid's and a row's parts are called in errors. */
+const PART_NAME: Partial<Record<GridRole, string>> = {
+    grid: 'row',
+    row: 'slot',
+};
+
+/** The role a row or a slot must sit in, as one of its `{ parts }`. */
+const PARENT_ROLE: Partial<Record<GridRole, GridRole>> = {
+    row: 'grid',
+    slot: 'row',
+    headerSlot: 'row',
+};
+
+const childTypesOf = (content: BlockDefinition['content']): readonly string[] => {
+    if (typeof content !== 'object') {
+        return [];
+    }
+    if ('parts' in content) {
+        return content.parts;
+    }
+    if ('blocks' in content) {
+        return content.blocks;
+    }
+    return [content.items];
+};
+
+/** Grid and row hold `{ parts }`; a slot holds `{ blocks }`. */
+const assertGridContent = (type: string, role: GridRole, content: BlockDefinition['content'], owner: string): void => {
+    const expected = role === 'grid' || role === 'row' ? 'parts' : 'blocks';
+    if (typeof content !== 'object' || !(expected in content)) {
+        throw new Error(`Plugin "${owner}" makes "${type}" a ${role}, whose content must be \`{ ${expected} }\`.`);
+    }
 };
 
 /**
- * A grid is `{ parts }` of rows, a row is `{ parts }` of slots, and a slot
- * holds `{ blocks }`. Any other shape breaks grid editing at the first
+ * A grid is `{ parts }` of rows, a row `{ parts }` of slots, and rows and slots
+ * live nowhere else. Any other shape breaks grid editing at the first
  * keystroke, so it is rejected here, where the plugin can be named.
  */
 const assertGridShapes = (draft: Draft): void => {
+    const placed = new Set<string>();
     for (const [type, definition] of draft.blocks) {
-        const role = definition.gridRole;
-        if (role === undefined) {
-            continue;
-        }
         const owner = draft.blockOwners.get(type) ?? type;
-        const { content } = definition;
-        const partRoles = PART_ROLES[role];
-        if (partRoles === undefined) {
-            if (typeof content !== 'object' || !('blocks' in content)) {
-                throw new Error(`Plugin "${owner}" makes "${type}" a ${role}, which holds \`{ blocks }\`.`);
-            }
-            continue;
+        if (definition.gridRole !== undefined) {
+            assertGridContent(type, definition.gridRole, definition.content, owner);
         }
-        const roles = partRoles.join(' or ');
-        if (typeof content !== 'object' || !('parts' in content)) {
+        const partName = definition.gridRole === undefined ? undefined : PART_NAME[definition.gridRole];
+        for (const child of childTypesOf(definition.content)) {
+            const childRole = draft.blocks.get(child)?.gridRole;
+            const parentRole = childRole === undefined ? undefined : PARENT_ROLE[childRole];
+            if (partName !== undefined && parentRole !== definition.gridRole) {
+                throw new Error(
+                    `Plugin "${owner}" makes "${type}" a ${definition.gridRole}, but its part "${child}" is not a ${partName}.`,
+                );
+            }
+            if (parentRole === undefined) {
+                continue;
+            }
+            if (definition.gridRole !== parentRole) {
+                throw new Error(
+                    `Plugin "${owner}" puts "${child}", a ${childRole}, in "${type}", which is not a ${parentRole}.`,
+                );
+            }
+            placed.add(child);
+        }
+    }
+    for (const [type, definition] of draft.blocks) {
+        const parentRole = definition.gridRole === undefined ? undefined : PARENT_ROLE[definition.gridRole];
+        if (parentRole !== undefined && !placed.has(type)) {
+            const owner = draft.blockOwners.get(type) ?? type;
             throw new Error(
-                `Plugin "${owner}" makes "${type}" a ${role}, whose content is \`{ parts }\` of ${roles} blocks.`,
+                `Plugin "${owner}" makes "${type}" a ${definition.gridRole}, but no ${parentRole} holds it.`,
             );
-        }
-        for (const part of content.parts) {
-            const partRole = draft.blocks.get(part)?.gridRole;
-            if (partRole === undefined || !partRoles.includes(partRole)) {
-                throw new Error(`Plugin "${owner}" makes "${type}" a ${role}, but its part "${part}" is no ${roles}.`);
-            }
         }
     }
 };

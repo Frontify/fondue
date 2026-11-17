@@ -39,10 +39,10 @@ const gridPlugin: RtePlugin = definePlugin({
                 toHtml: () => ({ tag: 'div', attrs: { class: 'band' }, children: true }),
                 parse: [{ tag: 'div.band' }],
             }),
-            slot: defineBlock<{ colspan: number; rowspan: number; colwidth: number[] | null }>({
+            slot: defineBlock<{ colspan: number; rowspan: number }>({
                 content: { blocks: [PARAGRAPH, ANY_LIST] },
                 gridRole: 'slot',
-                defaults: { colspan: 1, rowspan: 1, colwidth: null },
+                defaults: { colspan: 1, rowspan: 1 },
                 toHtml: () => ({ tag: 'div', attrs: { class: 'slot' }, children: true }),
                 parse: [{ tag: 'div.slot' }],
             }),
@@ -58,14 +58,13 @@ const gridPlugin: RtePlugin = definePlugin({
 
 const plugins: RtePlugin[] = [...shipped('history', 'bullet-list'), gridPlugin];
 
-const slot = (label: string, spans: { colspan?: number; rowspan?: number } = {}): RteBlockNode =>
-    ({
-        type: 'slot',
-        colspan: 1,
-        rowspan: 1,
-        ...spans,
-        children: [paragraph(text(label))],
-    }) as RteBlockNode;
+const slot = (label: string, spans: { colspan?: number; rowspan?: number } = {}) => ({
+    type: 'slot',
+    colspan: 1,
+    rowspan: 1,
+    ...spans,
+    children: [paragraph(text(label))],
+});
 
 const band = (...slots: RteBlockNode[]): RteBlockNode => ({ type: 'band', children: slots });
 
@@ -107,10 +106,9 @@ describe('a block laid out as a grid', () => {
     it('gives a slot spans while editing even when it stores none', () => {
         const schema = buildSchema(buildPluginRegistry(plugins));
 
-        expect(schema.nodes.headSlot?.create().attrs).toMatchObject({ colspan: 1, rowspan: 1, colwidth: null });
+        expect(schema.nodes.headSlot?.create().attrs).toMatchObject({ colspan: 1, rowspan: 1 });
     });
 
-    // A width left null is not stored, as any attribute at null is not.
     it('stores the spans a slot declares, and round-trips them', () => {
         const blocks = [grid(band(slot('a', { colspan: 2 }), slot('b')), band(slot('c'), slot('d'), slot('e')))];
         const editor = editorWith(plugins, blocks);
@@ -175,21 +173,20 @@ describe('the selection snapshot over a grid', () => {
 });
 
 /** A slot holding a list of two items, the second reading `a1`. */
-const listSlot = (): RteBlockNode =>
-    ({
-        type: 'slot',
-        colspan: 1,
-        rowspan: 1,
-        children: [
-            {
-                type: 'bulletList',
-                children: [
-                    { type: 'listItem', children: [paragraph(text('item'))] },
-                    { type: 'listItem', children: [paragraph(text('a1'))] },
-                ],
-            },
-        ],
-    }) as RteBlockNode;
+const listSlot = () => ({
+    type: 'slot',
+    colspan: 1,
+    rowspan: 1,
+    children: [
+        {
+            type: 'bulletList',
+            children: [
+                { type: 'listItem', children: [paragraph(text('item'))] },
+                { type: 'listItem', children: [paragraph(text('a1'))] },
+            ],
+        },
+    ],
+});
 
 describe('Tab and Shift-Tab in a grid', () => {
     it('move to the next and the previous slot', () => {
@@ -258,7 +255,7 @@ describe('Tab and Shift-Tab in a grid', () => {
                         ],
                     },
                 ],
-            } as RteBlockNode,
+            },
         ]);
         editor.caretAfter('nested');
 
@@ -281,7 +278,7 @@ describe('a selection of slots', () => {
         view.dispatch(view.state.tr.setSelection(slotSelection(doc, slotAt(doc, 'a1'), slotAt(doc, 'a2'))));
 
         expect(press(view, 'Backspace')).toBe(true);
-        const emptied = { ...slot(''), children: [paragraph()] } as RteBlockNode;
+        const emptied = { ...slot(''), children: [paragraph()] };
         expect(editor.stored()).toEqual([grid(band(emptied, slot('b1')), band(emptied, slot('b2')))]);
     });
 });

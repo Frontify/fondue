@@ -18,7 +18,6 @@ import {
     type EditorControlApi,
     INLINE_PLACEHOLDER,
     type PluginRegistry,
-    type RteBlockNode,
     type RteMarkState,
     type RteSelectionSnapshot,
 } from '#/core';
@@ -471,9 +470,10 @@ export type OpenEditors = { type: string | null; repaint: () => void };
 const insertWhole = (view: EditorView, node: PmNode): void => {
     const { selection } = view.state;
     const { $from } = selection;
-    const transaction = view.state.tr;
     const top = $from.depth >= 1 ? $from.node(1) : null;
-    let position = view.state.doc.content.size;
+    const transaction = view.state.tr;
+
+    let position: number;
     if (selection instanceof NodeSelection && $from.depth === 0) {
         position = selection.from;
         transaction.replaceWith(position, selection.to, node);
@@ -481,9 +481,10 @@ const insertWhole = (view: EditorView, node: PmNode): void => {
         position = $from.before(1);
         transaction.replaceWith(position, $from.after(1), node);
     } else {
-        position = top === null ? position : $from.after(1);
+        position = top === null ? transaction.doc.content.size : $from.after(1);
         transaction.insert(position, node);
     }
+
     transaction.setSelection(Selection.near(transaction.doc.resolve(position + 1)));
     view.dispatch(transaction.scrollIntoView());
     view.focus();
@@ -509,8 +510,9 @@ export const createControlApi = (
             return;
         }
         const view = getView();
-        if (!nodeType.isInline && value !== undefined && 'children' in value) {
-            insertWhole(view, blockToEngine({ ...value, type } as RteBlockNode, schema));
+        const children: unknown = value?.children;
+        if (!nodeType.isInline && Array.isArray(children)) {
+            insertWhole(view, blockToEngine({ ...value, type, children }, schema));
             return;
         }
         const transaction = view.state.tr;
