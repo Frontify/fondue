@@ -1,0 +1,779 @@
+.changeset/config.json
+  s_f4bd8cfbf36733::t_485502c6cd8e7b 11
+.github/workflows/continuous-deployment.yaml
+  s_f4bd8cfbf36733::t_c62d12fb23dd50 7-9
+.github/workflows/react-19-compat.yaml
+  s_f4bd8cfbf36733::t_0df096d10991ad 16
+.github/workflows/rich-text-editor-pull-requests.yaml
+  s_f4bd8cfbf36733::t_89ff3d9b42c9e4 1-82
+README.md
+  s_f4bd8cfbf36733::t_86d0f79b527f6f 32
+package.json
+  s_f4bd8cfbf36733::t_aa4a022a2543fd 17,20-21,32,36-41
+packages/charts/CHANGELOG.md
+  s_f4bd8cfbf36733::t_8d30c4f71c3f2e 3-15
+packages/charts/oxlint.config.ts
+  s_f4bd8cfbf36733::t_718be798f2029d 21
+packages/charts/package.json
+  s_f4bd8cfbf36733::t_b77e208e5e5239 4,33,87-88,90-91,99,102
+packages/charts/src/components/ChartHeading/ChartHeading.stories.tsx
+  s_f4bd8cfbf36733::t_886c97415618b7 10
+packages/charts/src/components/LineChart/LineChart.stories.tsx
+  s_f4bd8cfbf36733::t_d620d0a6ab09bb 142,148
+packages/charts/tsconfig.json
+  s_f4bd8cfbf36733::t_37574b029541ad 24
+packages/charts/tsconfig.node.json
+  s_f4bd8cfbf36733::t_f7c77d30dcd838 14
+packages/components/CHANGELOG.md
+  s_f4bd8cfbf36733::t_a568f8815bbee3 3-46
+packages/components/package.json
+  s_f4bd8cfbf36733::t_c018cd38a81875 3,37,102-103,108-109,122,125
+packages/components/src/components/Card/Card.stories.tsx
+  s_f4bd8cfbf36733::t_bd9c57f9210843 30,52,139-193,446-498
+packages/components/src/components/Card/Card.ts
+  s_f4bd8cfbf36733::t_94470985de0728 14,17,46,61,82
+packages/components/src/components/Card/CardBanner.tsx
+  s_f4bd8cfbf36733::t_8df57117df0ffe 4,6-8,151-220
+packages/components/src/components/Card/CardContext.ts
+  s_f4bd8cfbf36733::t_0a6d656ea0eae7 7-9
+packages/components/src/components/Card/CardRoot.tsx
+  s_f4bd8cfbf36733::t_bfdde9f1c6f361 14,141-147,171-174,176-182,221,232
+packages/components/src/components/Card/__tests__/Card.ct.tsx
+  s_f4bd8cfbf36733::t_4080afc5e07758 97-103,154,189-288
+packages/components/src/components/Card/__tests__/Card.spec.tsx
+  s_f4bd8cfbf36733::t_eabba02cbf338a 392,452-562
+packages/components/src/components/Card/styles/card.module.scss
+  s_f4bd8cfbf36733::t_61f72139b96fff 305-350
+packages/components/src/components/ColorPicker/ColorPicker.stories.tsx
+  s_f4bd8cfbf36733::t_4701383e8ede0f 15
+packages/components/src/components/Dialog/Dialog.tsx
+  s_f4bd8cfbf36733::t_090ef3930cdd54 344
+packages/components/src/components/Dialog/__tests__/Dialog.ct.tsx
+  s_f4bd8cfbf36733::t_f373060f62a3a0 316-334
+packages/components/src/components/RouterProvider/RouterProvider.stories.tsx
+  s_f4bd8cfbf36733::t_e00969e1f94bb0 14
+packages/components/src/components/SegmentedControl/styles/segmentedControl.module.scss
+  s_f4bd8cfbf36733::t_e2d8a38321582e 54
+packages/components/src/components/Table/utils.ts
+  s_f4bd8cfbf36733::t_0946f0a47bf2bb 42-43,52
+packages/components/src/components/TextInput/styles/text.module.scss
+  s_f4bd8cfbf36733::t_204388a2d2ac9a 49-63,136-137
+packages/components/src/components/Textarea/styles/textarea.module.scss
+  s_f4bd8cfbf36733::t_052f4045fc340f 38,43,45-54,122-126,178,180-181
+packages/components/src/components/ThemeProvider/ThemeProvider.stories.tsx
+  s_f4bd8cfbf36733::t_d579f2e79043c5 17
+packages/components/src/components/Tree/Tree.stories.tsx
+  s_f4bd8cfbf36733::t_c7aa10c1dab75f 234-330,726-731,751
+packages/components/src/components/Tree/components/TreeRoot.ct.tsx
+  s_f4bd8cfbf36733::t_95c883752fe4ea 7,1146-1171,1175,1190-1216,1353,1366-1383,1388-1424
+packages/components/src/components/Tree/components/TreeRow.tsx
+  s_f4bd8cfbf36733::t_e91b358a6ba52c 77-78,80-85,152-166,212-216,231-237,243
+packages/components/src/components/Tree/components/TreeRowChevron.tsx
+  s_f4bd8cfbf36733::t_048325b93d593a 4,11,18-21
+packages/components/src/components/Tree/types.ts
+  s_f4bd8cfbf36733::t_909afb18fe95dd 99-101,105-111,148
+packages/components/src/components/Tree/utils/computeCheckedStates.spec.ts
+  s_f4bd8cfbf36733::t_f0972b48541c82 101,133,145-147
+packages/components/src/components/Tree/utils/parseChildren.ts
+  s_f4bd8cfbf36733::t_6e6306bd10d47e 46,60,78,87,105,112,125,140
+packages/components/src/vite-env.d.ts
+  s_f4bd8cfbf36733::t_d98c273fe84daf 6-10
+packages/components/tsconfig.json
+  s_f4bd8cfbf36733::t_87737bbac9d40d 16,24
+packages/fondue/CHANGELOG.md
+  s_f4bd8cfbf36733::t_73058542aa6b06 3-45
+packages/fondue/package.json
+  s_f4bd8cfbf36733::t_e3cbde1962405c 4,110,212,225
+packages/icons/CHANGELOG.md
+  s_f4bd8cfbf36733::t_193083ffa56582 3-25
+packages/icons/icons/anchor-point-bottom-center/anchor-point-bottom-center-12.svg
+  s_f4bd8cfbf36733::t_2a86fb32a68b1b 1
+packages/icons/icons/anchor-point-bottom-center/anchor-point-bottom-center-16.svg
+  s_f4bd8cfbf36733::t_0938c832010f01 1
+packages/icons/icons/anchor-point-bottom-center/anchor-point-bottom-center-20.svg
+  s_f4bd8cfbf36733::t_7b8d9454e24fbf 1
+packages/icons/icons/anchor-point-bottom-center/anchor-point-bottom-center-24.svg
+  s_f4bd8cfbf36733::t_558becf58baaee 1
+packages/icons/icons/anchor-point-bottom-center/anchor-point-bottom-center-32.svg
+  s_f4bd8cfbf36733::t_02f2b54e1b58ad 1
+packages/icons/icons/anchor-point-bottom-left/anchor-point-bottom-left-12.svg
+  s_f4bd8cfbf36733::t_8675e193f45cde 1
+packages/icons/icons/anchor-point-bottom-left/anchor-point-bottom-left-16.svg
+  s_f4bd8cfbf36733::t_cdec391f972979 1
+packages/icons/icons/anchor-point-bottom-left/anchor-point-bottom-left-20.svg
+  s_f4bd8cfbf36733::t_b596c6a796466e 1
+packages/icons/icons/anchor-point-bottom-left/anchor-point-bottom-left-24.svg
+  s_f4bd8cfbf36733::t_f0b828793d16d9 1
+packages/icons/icons/anchor-point-bottom-left/anchor-point-bottom-left-32.svg
+  s_f4bd8cfbf36733::t_8f1bdf2a22464f 1
+packages/icons/icons/anchor-point-bottom-right/anchor-point-bottom-right-12.svg
+  s_f4bd8cfbf36733::t_4b58284ffa4586 1
+packages/icons/icons/anchor-point-bottom-right/anchor-point-bottom-right-16.svg
+  s_f4bd8cfbf36733::t_7bf8d37e1117e2 1
+packages/icons/icons/anchor-point-bottom-right/anchor-point-bottom-right-20.svg
+  s_f4bd8cfbf36733::t_a409ce8a59637d 1
+packages/icons/icons/anchor-point-bottom-right/anchor-point-bottom-right-24.svg
+  s_f4bd8cfbf36733::t_3880196cd600aa 1
+packages/icons/icons/anchor-point-bottom-right/anchor-point-bottom-right-32.svg
+  s_f4bd8cfbf36733::t_f492facfa99d20 1
+packages/icons/icons/anchor-point-center-horizontal/anchor-point-center-horizontal-12.svg
+  s_f4bd8cfbf36733::t_70f14a893a73cd 1
+packages/icons/icons/anchor-point-center-horizontal/anchor-point-center-horizontal-16.svg
+  s_f4bd8cfbf36733::t_f27dc486fe58ea 1
+packages/icons/icons/anchor-point-center-horizontal/anchor-point-center-horizontal-20.svg
+  s_f4bd8cfbf36733::t_bdbd374dcf6678 1
+packages/icons/icons/anchor-point-center-horizontal/anchor-point-center-horizontal-24.svg
+  s_f4bd8cfbf36733::t_bf3ce3e071a2f1 1
+packages/icons/icons/anchor-point-center-horizontal/anchor-point-center-horizontal-32.svg
+  s_f4bd8cfbf36733::t_a101508ea7e3a3 1
+packages/icons/icons/anchor-point-center-left/anchor-point-center-left-12.svg
+  s_f4bd8cfbf36733::t_6e7a8552b93dea 1
+packages/icons/icons/anchor-point-center-left/anchor-point-center-left-16.svg
+  s_f4bd8cfbf36733::t_06eab2cb7b426a 1
+packages/icons/icons/anchor-point-center-left/anchor-point-center-left-20.svg
+  s_f4bd8cfbf36733::t_9f7be4dd000b8c 1
+packages/icons/icons/anchor-point-center-left/anchor-point-center-left-24.svg
+  s_f4bd8cfbf36733::t_9e3181728f8f33 1
+packages/icons/icons/anchor-point-center-left/anchor-point-center-left-32.svg
+  s_f4bd8cfbf36733::t_493e3ab868c843 1
+packages/icons/icons/anchor-point-center-right/anchor-point-center-right-12.svg
+  s_f4bd8cfbf36733::t_a4b311ceee69b4 1
+packages/icons/icons/anchor-point-center-right/anchor-point-center-right-16.svg
+  s_f4bd8cfbf36733::t_11dcf517ad729c 1
+packages/icons/icons/anchor-point-center-right/anchor-point-center-right-20.svg
+  s_f4bd8cfbf36733::t_eb7f06dbe54842 1
+packages/icons/icons/anchor-point-center-right/anchor-point-center-right-24.svg
+  s_f4bd8cfbf36733::t_ce5fdbb5c1a9c4 1
+packages/icons/icons/anchor-point-center-right/anchor-point-center-right-32.svg
+  s_f4bd8cfbf36733::t_0399aaa86c59a3 1
+packages/icons/icons/anchor-point-center-vertical/anchor-point-center-vertical-12.svg
+  s_f4bd8cfbf36733::t_90db58f800e887 1
+packages/icons/icons/anchor-point-center-vertical/anchor-point-center-vertical-16.svg
+  s_f4bd8cfbf36733::t_ea9ec705d87e8c 1
+packages/icons/icons/anchor-point-center-vertical/anchor-point-center-vertical-20.svg
+  s_f4bd8cfbf36733::t_61e4a524be7521 1
+packages/icons/icons/anchor-point-center-vertical/anchor-point-center-vertical-24.svg
+  s_f4bd8cfbf36733::t_e77af4323f56c3 1
+packages/icons/icons/anchor-point-center-vertical/anchor-point-center-vertical-32.svg
+  s_f4bd8cfbf36733::t_fa06571ea87053 1
+packages/icons/icons/anchor-point-center/anchor-point-center-12.svg
+  s_f4bd8cfbf36733::t_8b9a301e4888a6 1
+packages/icons/icons/anchor-point-center/anchor-point-center-16.svg
+  s_f4bd8cfbf36733::t_9339e35cf069bb 1
+packages/icons/icons/anchor-point-center/anchor-point-center-20.svg
+  s_f4bd8cfbf36733::t_03e6521ff83004 1
+packages/icons/icons/anchor-point-center/anchor-point-center-24.svg
+  s_f4bd8cfbf36733::t_8b61bd4833f9a1 1
+packages/icons/icons/anchor-point-center/anchor-point-center-32.svg
+  s_f4bd8cfbf36733::t_7a2dfadf44d43b 1
+packages/icons/icons/anchor-point-top-center/anchor-point-top-center-12.svg
+  s_f4bd8cfbf36733::t_e70e2977bac34c 1
+packages/icons/icons/anchor-point-top-center/anchor-point-top-center-16.svg
+  s_f4bd8cfbf36733::t_03c6b3b7eba60e 1
+packages/icons/icons/anchor-point-top-center/anchor-point-top-center-20.svg
+  s_f4bd8cfbf36733::t_dedd1ddbbcb9c2 1
+packages/icons/icons/anchor-point-top-center/anchor-point-top-center-24.svg
+  s_f4bd8cfbf36733::t_8756773b7f19d5 1
+packages/icons/icons/anchor-point-top-center/anchor-point-top-center-32.svg
+  s_f4bd8cfbf36733::t_1b649ba9f95bda 1
+packages/icons/icons/anchor-point-top-left/anchor-point-top-left-12.svg
+  s_f4bd8cfbf36733::t_90d86d75b29c0b 1
+packages/icons/icons/anchor-point-top-left/anchor-point-top-left-16.svg
+  s_f4bd8cfbf36733::t_bc21ebc9c1441d 1
+packages/icons/icons/anchor-point-top-left/anchor-point-top-left-20.svg
+  s_f4bd8cfbf36733::t_5cb2807a375834 1
+packages/icons/icons/anchor-point-top-left/anchor-point-top-left-24.svg
+  s_f4bd8cfbf36733::t_277905b0ed5d7d 1
+packages/icons/icons/anchor-point-top-left/anchor-point-top-left-32.svg
+  s_f4bd8cfbf36733::t_fbb4ffb6236c38 1
+packages/icons/icons/anchor-point-top-right/anchor-point-top-right-12.svg
+  s_f4bd8cfbf36733::t_c904a5abe26073 1
+packages/icons/icons/anchor-point-top-right/anchor-point-top-right-16.svg
+  s_f4bd8cfbf36733::t_d3d56f0d70a8d8 1
+packages/icons/icons/anchor-point-top-right/anchor-point-top-right-20.svg
+  s_f4bd8cfbf36733::t_7e3e32c584caaa 1
+packages/icons/icons/anchor-point-top-right/anchor-point-top-right-24.svg
+  s_f4bd8cfbf36733::t_63615b7f2d106a 1
+packages/icons/icons/anchor-point-top-right/anchor-point-top-right-32.svg
+  s_f4bd8cfbf36733::t_531eb0e2da33be 1
+packages/icons/icons/aspect-ratio/aspect-ratio-12.svg
+  s_f4bd8cfbf36733::t_d3a8e2a16761bd 1
+packages/icons/icons/aspect-ratio/aspect-ratio-16.svg
+  s_f4bd8cfbf36733::t_d884c24301295c 1
+packages/icons/icons/aspect-ratio/aspect-ratio-20.svg
+  s_f4bd8cfbf36733::t_a851bf9028b0c3 1
+packages/icons/icons/aspect-ratio/aspect-ratio-24.svg
+  s_f4bd8cfbf36733::t_1df05fe4c577db 1
+packages/icons/icons/aspect-ratio/aspect-ratio-32.svg
+  s_f4bd8cfbf36733::t_dfe6e20f52f370 1
+packages/icons/icons/bow-tie/bow-tie-12.svg
+  s_f4bd8cfbf36733::t_1e2e549af77b2c 1
+packages/icons/icons/bow-tie/bow-tie-16.svg
+  s_f4bd8cfbf36733::t_701f393490ee2a 1
+packages/icons/icons/bow-tie/bow-tie-20.svg
+  s_f4bd8cfbf36733::t_d0372cab3be783 1
+packages/icons/icons/bow-tie/bow-tie-24.svg
+  s_f4bd8cfbf36733::t_c98a88e35198b1 1
+packages/icons/icons/bow-tie/bow-tie-32.svg
+  s_f4bd8cfbf36733::t_1d370a33d48e19 1
+packages/icons/icons/device-monitor-arrow-right/device-monitor-arrow-right-12.svg
+  s_f4bd8cfbf36733::t_c192912b7d13ef 1
+packages/icons/icons/device-monitor-arrow-right/device-monitor-arrow-right-16.svg
+  s_f4bd8cfbf36733::t_9afe67bbe58834 1
+packages/icons/icons/device-monitor-arrow-right/device-monitor-arrow-right-20.svg
+  s_f4bd8cfbf36733::t_311497de61f25d 1
+packages/icons/icons/device-monitor-arrow-right/device-monitor-arrow-right-24.svg
+  s_f4bd8cfbf36733::t_31cd85160be520 1
+packages/icons/icons/device-monitor-arrow-right/device-monitor-arrow-right-32.svg
+  s_f4bd8cfbf36733::t_49bb31d062e395 1
+packages/icons/icons/facial-recognition/facial-recognition-12.svg
+  s_f4bd8cfbf36733::t_06fe5fd396ad7b 1
+packages/icons/icons/facial-recognition/facial-recognition-16.svg
+  s_f4bd8cfbf36733::t_9fa6966e24b4d7 1
+packages/icons/icons/facial-recognition/facial-recognition-20.svg
+  s_f4bd8cfbf36733::t_d3a01340936323 1
+packages/icons/icons/facial-recognition/facial-recognition-24.svg
+  s_f4bd8cfbf36733::t_135f5263f47297 1
+packages/icons/icons/facial-recognition/facial-recognition-32.svg
+  s_f4bd8cfbf36733::t_d8e60d535377ce 1
+packages/icons/icons/funnel/funnel-32.svg
+  s_f4bd8cfbf36733::t_a9e9bc53523490 1
+packages/icons/icons/magnifier-object/magnifier-object-12.svg
+  s_f4bd8cfbf36733::t_bade5434e43fbc 1
+packages/icons/icons/magnifier-object/magnifier-object-16.svg
+  s_f4bd8cfbf36733::t_30e866e3aae58a 1
+packages/icons/icons/magnifier-object/magnifier-object-20.svg
+  s_f4bd8cfbf36733::t_51783357559a29 1
+packages/icons/icons/magnifier-object/magnifier-object-24.svg
+  s_f4bd8cfbf36733::t_452fc71ea9d06d 1
+packages/icons/icons/magnifier-object/magnifier-object-32.svg
+  s_f4bd8cfbf36733::t_7b4da5cead1ccd 1
+packages/icons/icons/play-arrow-right/play-arrow-right-12.svg
+  s_f4bd8cfbf36733::t_e7ddc7db77885d 1
+packages/icons/icons/play-arrow-right/play-arrow-right-16.svg
+  s_f4bd8cfbf36733::t_ea5f5dc64f77bb 1
+packages/icons/icons/play-arrow-right/play-arrow-right-20.svg
+  s_f4bd8cfbf36733::t_08d2761034ee47 1
+packages/icons/icons/play-arrow-right/play-arrow-right-24.svg
+  s_f4bd8cfbf36733::t_2a1d323e08a584 1
+packages/icons/icons/play-arrow-right/play-arrow-right-32.svg
+  s_f4bd8cfbf36733::t_b81231fba943c4 1
+packages/icons/icons/snapshot.json
+  s_f4bd8cfbf36733::t_f8808546b04285 1
+packages/icons/oxlint.config.ts
+  s_f4bd8cfbf36733::t_2dc60638d22b31 16
+packages/icons/package.json
+  s_f4bd8cfbf36733::t_96218c9b732127 4,39,73,80
+packages/icons/scripts/templates/exportReactTemplate.ts
+  s_f4bd8cfbf36733::t_2dc67fd692fe8d 31-32
+packages/icons/src/Icon.stories.tsx
+  s_f4bd8cfbf36733::t_4bfa5eba899126 13,21,41,46,64
+packages/icons/tsconfig.node.json
+  s_f4bd8cfbf36733::t_0ccb8891e86190 14
+packages/rich-text-editor/.gitignore
+  s_f4bd8cfbf36733::t_2f27ff520e3362 1-2
+packages/rich-text-editor/.storybook/global.d.ts
+  s_f4bd8cfbf36733::t_a58e9a9b93da08 1-6
+packages/rich-text-editor/.storybook/main.ts
+  s_f4bd8cfbf36733::t_72d86bdca04899 4-5,9,26-45
+packages/rich-text-editor/.storybook/preview.tsx
+  s_f4bd8cfbf36733::t_e25ccef24acc98 3-4,6-8,10,14-19
+packages/rich-text-editor/PARITY_GAPS.md
+  s_f4bd8cfbf36733::t_976ffcd9181d31 1-30
+packages/rich-text-editor/README.md
+  s_f4bd8cfbf36733::t_3cffda6c6ef207 1-44
+packages/rich-text-editor/lint-fixtures/importRings.spec.ts
+  s_f4bd8cfbf36733::t_92921aa41a483a 1-69
+packages/rich-text-editor/lint-fixtures/rings.oxlint.config.ts
+  s_f4bd8cfbf36733::t_b93b927c777321 3,5
+packages/rich-text-editor/lint-fixtures/src/core/fixture.ts
+  s_f4bd8cfbf36733::t_086eb0f7914acd 1-19
+packages/rich-text-editor/lint-fixtures/src/editor/RichTextEditor.spec.tsx
+  s_f4bd8cfbf36733::t_ec892ef656fbad 1-11
+packages/rich-text-editor/lint-fixtures/src/editor/RichTextEditor.tsx
+  s_f4bd8cfbf36733::t_a4f56585af000e 1-20
+packages/rich-text-editor/lint-fixtures/src/editor/engines/prosemirror/editing.ts
+  s_f4bd8cfbf36733::t_a71ee902edca95 1-24
+packages/rich-text-editor/lint-fixtures/src/editor/engines/prosemirror/lists.spec.tsx
+  s_f4bd8cfbf36733::t_5ffac9ef9589b1 1-12
+packages/rich-text-editor/lint-fixtures/src/editor/engines/prosemirror/testEditor.ts
+  s_f4bd8cfbf36733::t_79d36ce9c6fedf 3-6,8,10
+packages/rich-text-editor/lint-fixtures/src/editor/hooks/useEditorHandle.ts
+  s_f4bd8cfbf36733::t_a8584cb425905c 1-12
+packages/rich-text-editor/lint-fixtures/src/editor/hooks/useSelectionRect.ts
+  s_f4bd8cfbf36733::t_6208bb046134a6 1-14
+packages/rich-text-editor/lint-fixtures/src/plugins/Bold/Bold.tsx
+  s_f4bd8cfbf36733::t_da2f16519a82d5 1-14
+packages/rich-text-editor/lint-fixtures/src/plugins/Link/components/fixture.tsx
+  s_f4bd8cfbf36733::t_8df1b4682c6eec 3-13
+packages/rich-text-editor/lint-fixtures/src/plugins/index.ts
+  s_f4bd8cfbf36733::t_c24e0ce4b521d5 1-13
+packages/rich-text-editor/lint-fixtures/src/renderer/fixture.ts
+  s_f4bd8cfbf36733::t_0b34f9d2f50f7c 1-17
+packages/rich-text-editor/lint-fixtures/src/stories/Fixture.stories.tsx
+  s_f4bd8cfbf36733::t_6ef1b129ae9482 1-19
+packages/rich-text-editor/oxfmt.config.ts
+  s_f4bd8cfbf36733::t_da31a6898ed56d 1-24
+packages/rich-text-editor/oxlint.config.ts
+  s_f4bd8cfbf36733::t_ddfd4450c7af38 3-5,8-18,20-23,26-29,32-42,44-48,50-52,55-72,74-76,79,81-102,104,106-132,134-187,189-215,218-232,235-241,244-250,253-267,270-351,354
+packages/rich-text-editor/package.json
+  s_f4bd8cfbf36733::t_07597f83ab2802 1-97
+packages/rich-text-editor/src/__tests__/documentText.spec.ts
+  s_f4bd8cfbf36733::t_130de4163f0441 3,5,7,9-21,23-28,30-31,33-41,43-44,48-52
+packages/rich-text-editor/src/__tests__/htmlParity.spec.tsx
+  s_f4bd8cfbf36733::t_52f2ae9d781162 1-162
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_f4bd8cfbf36733::t_a893d907d7ef17 1-236
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_f4bd8cfbf36733::t_184ccd239fe697 1-230
+packages/rich-text-editor/src/__tests__/serializeToHtml.node.spec.tsx
+  s_f4bd8cfbf36733::t_b9cc90d266474b 1-53
+packages/rich-text-editor/src/__tests__/serializeToHtml.spec.tsx
+  s_f4bd8cfbf36733::t_085f05ef116994 1-61
+packages/rich-text-editor/src/__tests__/serverRendering.node.spec.tsx
+  s_f4bd8cfbf36733::t_77f3f4a4127c5a 1-31
+packages/rich-text-editor/src/__tests__/serverRendering.spec.tsx
+  s_f4bd8cfbf36733::t_3954c8fc5e5520 1-31
+packages/rich-text-editor/src/__tests__/typeDerivation.spec.ts
+  s_f4bd8cfbf36733::t_a87fb5da76e84d 3-19,21-23,25-27,29-48,50-54,56-57,59-61,63-65,67-69,71-73,75-89,92-94,96-98,100-101,103-107,110-114,116-119,122-125,127-129,131-177
+packages/rich-text-editor/src/core/commands.ts
+  s_f4bd8cfbf36733::t_955d31fd9edc7d 1-116
+packages/rich-text-editor/src/core/document.ts
+  s_f4bd8cfbf36733::t_5b98ca4f7176ec 1-69
+packages/rich-text-editor/src/core/documentText.spec.ts
+  s_f4bd8cfbf36733::t_296a35c7ac1460 1-125
+packages/rich-text-editor/src/core/documentText.ts
+  s_f4bd8cfbf36733::t_f75cd34d801d18 1-103
+packages/rich-text-editor/src/core/htmlSpec.ts
+  s_f4bd8cfbf36733::t_1acd6f4c2d79c0 1-92
+packages/rich-text-editor/src/core/index.ts
+  s_f4bd8cfbf36733::t_d69a30cf56bf50 1-47
+packages/rich-text-editor/src/core/plugin.ts
+  s_f4bd8cfbf36733::t_1d931dd1532a65 1-312
+packages/rich-text-editor/src/core/registry.spec.ts
+  s_f4bd8cfbf36733::t_853e7deab38240 1-221
+packages/rich-text-editor/src/core/registry.ts
+  s_f4bd8cfbf36733::t_df0ed2d7d36c5b 1-276
+packages/rich-text-editor/src/core/vocabulary.ts
+  s_f4bd8cfbf36733::t_711856498ff750 1-32
+packages/rich-text-editor/src/documentFormat.ts
+  s_f4bd8cfbf36733::t_4c10920f1effc6 1-144
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_f4bd8cfbf36733::t_b91075962b4fd4 1-973
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_f4bd8cfbf36733::t_055b41d2bb0f99 1-354
+packages/rich-text-editor/src/editor/components/FloatingToolbar.tsx
+  s_f4bd8cfbf36733::t_f51185af49b0e2 1-57
+packages/rich-text-editor/src/editor/components/SlashMenu.tsx
+  s_f4bd8cfbf36733::t_b2505eb6b186cd 1-342
+packages/rich-text-editor/src/editor/components/Toolbar.tsx
+  s_f4bd8cfbf36733::t_5d0603067a0f6b 1-219
+packages/rich-text-editor/src/editor/components/TurnInto.tsx
+  s_f4bd8cfbf36733::t_f344ba5ce0e00e 1-116
+packages/rich-text-editor/src/editor/components/slashMenu.module.scss
+  s_f4bd8cfbf36733::t_c1c664731dfc9f 1-73
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.spec.tsx
+  s_f4bd8cfbf36733::t_43f2809ec8700f 1-100
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.spec.tsx
+  s_f4bd8cfbf36733::t_172454701b3e17 1-94
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.ts
+  s_f4bd8cfbf36733::t_e5a31eb4e54dfd 1-153
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_f4bd8cfbf36733::t_6b40e78472e83a 1-632
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_f4bd8cfbf36733::t_968890e4d7ad5c 3,5-12,14,16-18,20-31,33,35-58,61-88,91-98,102-114,118-121,123-147,149-165,168-203,206,208-226,228-257,260-305,309-390
+packages/rich-text-editor/src/editor/engines/prosemirror/documentConversion.spec.tsx
+  s_f4bd8cfbf36733::t_970eb06bdd19ab 1-263
+packages/rich-text-editor/src/editor/engines/prosemirror/documentConversion.ts
+  s_f4bd8cfbf36733::t_a5185ff6a99bba 1-321
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.spec.tsx
+  s_f4bd8cfbf36733::t_9fbf5b7ac3ce25 1-254
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.ts
+  s_f4bd8cfbf36733::t_5b6b5219b4d965 3-4,6,8-16,19-21,23-126,128-137,139-169,171-175,177-178,180-181,183-184
+packages/rich-text-editor/src/editor/engines/prosemirror/engine.scss
+  s_f4bd8cfbf36733::t_ae258c208699e0 1-84
+packages/rich-text-editor/src/editor/engines/prosemirror/htmlSpecToDom.ts
+  s_f4bd8cfbf36733::t_ef77521a2eb1f2 1-25
+packages/rich-text-editor/src/editor/engines/prosemirror/index.ts
+  s_f4bd8cfbf36733::t_e9dc69c1f0eaab 3
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_f4bd8cfbf36733::t_6e3af65cad4ebf 1-409
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_f4bd8cfbf36733::t_8999857db71121 1-319
+packages/rich-text-editor/src/editor/engines/prosemirror/lists.spec.tsx
+  s_f4bd8cfbf36733::t_21c78987b201dc 1-223
+packages/rich-text-editor/src/editor/engines/prosemirror/lists.ts
+  s_f4bd8cfbf36733::t_eb8e6f3a52c160 1-195
+packages/rich-text-editor/src/editor/engines/prosemirror/nodeViews.spec.tsx
+  s_f4bd8cfbf36733::t_56d90cdf43f233 1-517
+packages/rich-text-editor/src/editor/engines/prosemirror/nodeViews.tsx
+  s_f4bd8cfbf36733::t_08c9212441563d 1-752
+packages/rich-text-editor/src/editor/engines/prosemirror/paste.spec.tsx
+  s_f4bd8cfbf36733::t_b093cfb5635772 1-131
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteRules.ts
+  s_f4bd8cfbf36733::t_cac48a1b4accd0 1-60
+packages/rich-text-editor/src/editor/engines/prosemirror/placeholder.ts
+  s_f4bd8cfbf36733::t_988ce89f3a14d4 1-35
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.spec.tsx
+  s_f4bd8cfbf36733::t_9d270219a0a0a6 3-20,23-29,31-39,41-83,85-104,106-119,121-142,145,147-150
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.ts
+  s_f4bd8cfbf36733::t_99db0d948efe7b 1-182
+packages/rich-text-editor/src/editor/engines/prosemirror/selectionRect.ts
+  s_f4bd8cfbf36733::t_5350568a0610b0 1-47
+packages/rich-text-editor/src/editor/engines/prosemirror/testEditor.ts
+  s_f4bd8cfbf36733::t_3f281ec85c8a2f 1-151
+packages/rich-text-editor/src/editor/engines/prosemirror/textRules.spec.tsx
+  s_f4bd8cfbf36733::t_a210fa64917afe 1-117
+packages/rich-text-editor/src/editor/engines/prosemirror/warnings.ts
+  s_f4bd8cfbf36733::t_041517a62b50c7 3-8,11-20
+packages/rich-text-editor/src/editor/floatingBar.spec.tsx
+  s_f4bd8cfbf36733::t_d586f8ff38aecb 1-376
+packages/rich-text-editor/src/editor/helpers/blockCommands.spec.ts
+  s_f4bd8cfbf36733::t_9f3b329ac4b098 3,5,7,9-15,17-47,49-90
+packages/rich-text-editor/src/editor/helpers/blockCommands.ts
+  s_f4bd8cfbf36733::t_27691ae1e597be 1-67
+packages/rich-text-editor/src/editor/helpers/toolbarItem.spec.ts
+  s_f4bd8cfbf36733::t_724bd9fcd1e058 1-353
+packages/rich-text-editor/src/editor/helpers/toolbarItem.ts
+  s_f4bd8cfbf36733::t_5431dff31c9dac 1-79
+packages/rich-text-editor/src/editor/hooks/useEditorHandle.ts
+  s_f4bd8cfbf36733::t_c7697d92591ebb 1-235
+packages/rich-text-editor/src/editor/hooks/useFocusWithin.ts
+  s_f4bd8cfbf36733::t_9d2e91669cfdee 3,6-12,14-29,31-32,34-36
+packages/rich-text-editor/src/editor/hooks/useMouseDrag.spec.tsx
+  s_f4bd8cfbf36733::t_1c0e4ee165ac2a 3,5-7,9,11-15,17-21,24-68
+packages/rich-text-editor/src/editor/hooks/useMouseDrag.ts
+  s_f4bd8cfbf36733::t_cc0bd92c9721d2 1-40
+packages/rich-text-editor/src/editor/hooks/useSelectionAnchor.ts
+  s_f4bd8cfbf36733::t_8adca99d3ed8da 3,5,7-33,35,37-41
+packages/rich-text-editor/src/editor/index.ts
+  s_f4bd8cfbf36733::t_4c4ab1154b5733 1-5
+packages/rich-text-editor/src/editor/labels.ts
+  s_f4bd8cfbf36733::t_4a90d5905611e2 1-42
+packages/rich-text-editor/src/editor/port.ts
+  s_f4bd8cfbf36733::t_2838498750a85c 3-8,10-32,34-43,46-56,58-71
+packages/rich-text-editor/src/editor/richTextEditor.module.scss
+  s_f4bd8cfbf36733::t_831f32e9631150 1-79
+packages/rich-text-editor/src/index.ts
+  s_f4bd8cfbf36733::t_df4754a807c4b8 1-152
+packages/rich-text-editor/src/plugins/Align/Align.spec.ts
+  s_f4bd8cfbf36733::t_67953a5f32bc47 1-19
+packages/rich-text-editor/src/plugins/Align/Align.tsx
+  s_f4bd8cfbf36733::t_a0eb5c9f0c69a7 3-9,11-15,18-20,22-46,49-73,75-78
+packages/rich-text-editor/src/plugins/Align/align.module.scss
+  s_f4bd8cfbf36733::t_91309740c34f53 1-7
+packages/rich-text-editor/src/plugins/Align/index.ts
+  s_f4bd8cfbf36733::t_eab438a51ab17e 3
+packages/rich-text-editor/src/plugins/BlurOnBreak/BlurOnBreak.tsx
+  s_f4bd8cfbf36733::t_efa39c5e1d2360 1-22
+packages/rich-text-editor/src/plugins/BlurOnBreak/index.ts
+  s_f4bd8cfbf36733::t_0accca8b7497f5 1-3
+packages/rich-text-editor/src/plugins/Bold/Bold.tsx
+  s_f4bd8cfbf36733::t_78152018fed588 1-41
+packages/rich-text-editor/src/plugins/Bold/index.ts
+  s_f4bd8cfbf36733::t_accc0e925af71d 1-3
+packages/rich-text-editor/src/plugins/CheckList/CheckList.spec.ts
+  s_f4bd8cfbf36733::t_062f739655919d 1-23
+packages/rich-text-editor/src/plugins/CheckList/CheckList.tsx
+  s_f4bd8cfbf36733::t_9913599479640e 3-4,6,8-10,13-17,19-22,25-28,30-46,48-58,60-63,67-78,80-90,92-95,99-152,154,156-162,165
+packages/rich-text-editor/src/plugins/CheckList/checkList.module.scss
+  s_f4bd8cfbf36733::t_5b9278bd8e454b 1-60
+packages/rich-text-editor/src/plugins/CheckList/index.ts
+  s_f4bd8cfbf36733::t_50943e757ffedc 1-3
+packages/rich-text-editor/src/plugins/Code/Code.tsx
+  s_f4bd8cfbf36733::t_16cc6cad4536c6 1-37
+packages/rich-text-editor/src/plugins/Code/code.module.scss
+  s_f4bd8cfbf36733::t_7d08e625f1e7ce 1-11
+packages/rich-text-editor/src/plugins/Code/index.ts
+  s_f4bd8cfbf36733::t_98ee63aa5f56b3 1-3
+packages/rich-text-editor/src/plugins/ColumnBreak/ColumnBreak.tsx
+  s_f4bd8cfbf36733::t_5189ee53b3ba4f 3,5,7,9,11-14,16-21,23-38,40-65,67
+packages/rich-text-editor/src/plugins/ColumnBreak/columnBreak.module.scss
+  s_f4bd8cfbf36733::t_ff72e2d1259f05 1-19
+packages/rich-text-editor/src/plugins/ColumnBreak/index.ts
+  s_f4bd8cfbf36733::t_75f1eb2d293204 1-3
+packages/rich-text-editor/src/plugins/Emoji/Emoji.spec.ts
+  s_f4bd8cfbf36733::t_390ad9f9b4a24c 1-112
+packages/rich-text-editor/src/plugins/Emoji/Emoji.tsx
+  s_f4bd8cfbf36733::t_6bef876c9ea8d4 3,5-16,19-26,28-60,62-66,68
+packages/rich-text-editor/src/plugins/Emoji/components/EmojiDraft.spec.tsx
+  s_f4bd8cfbf36733::t_350daab0aab11c 1-157
+packages/rich-text-editor/src/plugins/Emoji/components/EmojiDraft.tsx
+  s_f4bd8cfbf36733::t_3b73079c94c2cc 1-209
+packages/rich-text-editor/src/plugins/Emoji/components/EmojiPicker.spec.tsx
+  s_f4bd8cfbf36733::t_9394ba7baaac9d 1-100
+packages/rich-text-editor/src/plugins/Emoji/components/EmojiPicker.tsx
+  s_f4bd8cfbf36733::t_644ab2ade72882 1-89
+packages/rich-text-editor/src/plugins/Emoji/components/EmojiToolbarButton.tsx
+  s_f4bd8cfbf36733::t_c5de263e56b3fd 1-69
+packages/rich-text-editor/src/plugins/Emoji/emoji.module.scss
+  s_f4bd8cfbf36733::t_16f633e478e033 1-151
+packages/rich-text-editor/src/plugins/Emoji/helpers/emojis.ts
+  s_f4bd8cfbf36733::t_c3e22649d2f22b 1-470
+packages/rich-text-editor/src/plugins/Emoji/helpers/search.ts
+  s_f4bd8cfbf36733::t_edec08f9e8b661 1-70
+packages/rich-text-editor/src/plugins/Emoji/index.ts
+  s_f4bd8cfbf36733::t_158d0b80f40cf0 1-5
+packages/rich-text-editor/src/plugins/Emoji/types.ts
+  s_f4bd8cfbf36733::t_d7d5c5d499fade 1-15
+packages/rich-text-editor/src/plugins/FontColor/FontColor.spec.ts
+  s_f4bd8cfbf36733::t_1d01aa24bc52e4 1-32
+packages/rich-text-editor/src/plugins/FontColor/FontColor.tsx
+  s_f4bd8cfbf36733::t_e6061821c2df48 3,5-12,15-20,22-28,30-48,50-53,57,59-60
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.tsx
+  s_f4bd8cfbf36733::t_fde96f9f55e8d4 3-30,33-35,37-61,63-72,74-79,82,84-87,90-98,102-146,148-185
+packages/rich-text-editor/src/plugins/FontColor/components/colorFlyout.module.scss
+  s_f4bd8cfbf36733::t_5af69db5a4880d 1-48
+packages/rich-text-editor/src/plugins/FontColor/helpers/colors.spec.ts
+  s_f4bd8cfbf36733::t_1effb9be6ef21d 3,5,7-22,24,26-39,41,43-45,47-48
+packages/rich-text-editor/src/plugins/FontColor/helpers/colors.ts
+  s_f4bd8cfbf36733::t_f6648d55eb489a 1-73
+packages/rich-text-editor/src/plugins/FontColor/index.ts
+  s_f4bd8cfbf36733::t_6e936ed62f9f20 1-3
+packages/rich-text-editor/src/plugins/Italic/Italic.tsx
+  s_f4bd8cfbf36733::t_c69f263f046f2b 1-43
+packages/rich-text-editor/src/plugins/Italic/index.ts
+  s_f4bd8cfbf36733::t_f0395cf577a284 1-3
+packages/rich-text-editor/src/plugins/Link/Link.spec.ts
+  s_f4bd8cfbf36733::t_efbbad57ff6a2d 1-21
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_f4bd8cfbf36733::t_ddc564ec1cc0fb 1-117
+packages/rich-text-editor/src/plugins/Link/_underline.scss
+  s_f4bd8cfbf36733::t_9df8adbdd9d772 1-9
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_f4bd8cfbf36733::t_31074acd4e0df8 3-4,6,8-12,15-20,22-55,57-59,61-62,64-66,69-72,74-75,77-92,96,99-104,106-183
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.tsx
+  s_f4bd8cfbf36733::t_5b63c49f49baa1 3-4,6-9,12-14,16-36,39,42-50,53-54,56-60,64-108
+packages/rich-text-editor/src/plugins/Link/components/LinkToolbarButton.tsx
+  s_f4bd8cfbf36733::t_64f6bad58f15fd 1-89
+packages/rich-text-editor/src/plugins/Link/components/linkForm.module.scss
+  s_f4bd8cfbf36733::t_969f6bc570f43d 1-38
+packages/rich-text-editor/src/plugins/Link/helpers/newLinkForms.ts
+  s_f4bd8cfbf36733::t_2af5d2c41eac1d 3-22
+packages/rich-text-editor/src/plugins/Link/helpers/value.ts
+  s_f4bd8cfbf36733::t_05c6dd85f72b78 3-4
+packages/rich-text-editor/src/plugins/Link/index.ts
+  s_f4bd8cfbf36733::t_549c1843da5cb6 1-3
+packages/rich-text-editor/src/plugins/Link/link.module.scss
+  s_f4bd8cfbf36733::t_93b9221504a321 1-65
+packages/rich-text-editor/src/plugins/List/List.tsx
+  s_f4bd8cfbf36733::t_ab1aa2977be94b 1-129
+packages/rich-text-editor/src/plugins/List/index.ts
+  s_f4bd8cfbf36733::t_59da0bdd1ce409 1-9
+packages/rich-text-editor/src/plugins/List/list.module.scss
+  s_f4bd8cfbf36733::t_4366edb4ddc1f8 1-46
+packages/rich-text-editor/src/plugins/Mention/Mention.spec.ts
+  s_f4bd8cfbf36733::t_4665b17cd34714 1-83
+packages/rich-text-editor/src/plugins/Mention/Mention.tsx
+  s_f4bd8cfbf36733::t_2afdba5469595c 3,5,7-10,12-27,30-34,36-43,45-90,92-100,104-140
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.spec.tsx
+  s_f4bd8cfbf36733::t_ad5d0597984a4e 1-143
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.tsx
+  s_f4bd8cfbf36733::t_29b277ac0ac7a9 1-267
+packages/rich-text-editor/src/plugins/Mention/components/MentionLink.tsx
+  s_f4bd8cfbf36733::t_ef5d31161f3c12 3-5,7-8,10-14,17-46,48-55,57-59
+packages/rich-text-editor/src/plugins/Mention/index.ts
+  s_f4bd8cfbf36733::t_e8f4cb1b019fa7 1-4
+packages/rich-text-editor/src/plugins/Mention/mention.module.scss
+  s_f4bd8cfbf36733::t_d9cd21505355a3 1-143
+packages/rich-text-editor/src/plugins/Mention/types.ts
+  s_f4bd8cfbf36733::t_0b80410a1868ae 1-27
+packages/rich-text-editor/src/plugins/Quote/Quote.tsx
+  s_f4bd8cfbf36733::t_fc98510a4a8a76 1-45
+packages/rich-text-editor/src/plugins/Quote/index.ts
+  s_f4bd8cfbf36733::t_264b45957c47e9 1-3
+packages/rich-text-editor/src/plugins/Quote/quote.module.scss
+  s_f4bd8cfbf36733::t_eed9701ccbba22 1-8
+packages/rich-text-editor/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_f4bd8cfbf36733::t_de3757271ae982 1-34
+packages/rich-text-editor/src/plugins/ResetFormatting/index.ts
+  s_f4bd8cfbf36733::t_e4d6f639ec35de 1-3
+packages/rich-text-editor/src/plugins/SoftBreak/SoftBreak.tsx
+  s_f4bd8cfbf36733::t_4e6d04c8a8f93a 1-23
+packages/rich-text-editor/src/plugins/SoftBreak/index.ts
+  s_f4bd8cfbf36733::t_86c32c4b3262ae 1-3
+packages/rich-text-editor/src/plugins/Strikethrough/Strikethrough.tsx
+  s_f4bd8cfbf36733::t_f94591da623493 1-40
+packages/rich-text-editor/src/plugins/Strikethrough/index.ts
+  s_f4bd8cfbf36733::t_deedd810d92077 1-3
+packages/rich-text-editor/src/plugins/Subscript/Subscript.tsx
+  s_f4bd8cfbf36733::t_c289e07b1932fa 1-33
+packages/rich-text-editor/src/plugins/Subscript/index.ts
+  s_f4bd8cfbf36733::t_88c938447297a1 1-3
+packages/rich-text-editor/src/plugins/Superscript/Superscript.tsx
+  s_f4bd8cfbf36733::t_7c3d101fc9c59b 1-33
+packages/rich-text-editor/src/plugins/Superscript/index.ts
+  s_f4bd8cfbf36733::t_68ed467c1712bf 1-3
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_f4bd8cfbf36733::t_5d2f12f27e7f27 1-108
+packages/rich-text-editor/src/plugins/TextStyle/components/HeadingLevelIcon.tsx
+  s_f4bd8cfbf36733::t_8384845acd9862 1-12
+packages/rich-text-editor/src/plugins/TextStyle/components/TextStyleSelect.tsx
+  s_f4bd8cfbf36733::t_0f3d23d48b2cc2 1-54
+packages/rich-text-editor/src/plugins/TextStyle/components/headingLevelIcon.module.scss
+  s_f4bd8cfbf36733::t_4bed746b81dcd4 1-13
+packages/rich-text-editor/src/plugins/TextStyle/components/textStyleSelect.module.scss
+  s_f4bd8cfbf36733::t_2840b084ce5edd 1-17
+packages/rich-text-editor/src/plugins/TextStyle/helpers/presets.ts
+  s_f4bd8cfbf36733::t_3d37b885b0e8c8 1-95
+packages/rich-text-editor/src/plugins/TextStyle/index.ts
+  s_f4bd8cfbf36733::t_d597812c4fcc1f 1-3
+packages/rich-text-editor/src/plugins/TextStyle/textStyle.module.scss
+  s_f4bd8cfbf36733::t_2af850b20ca882 3-81
+packages/rich-text-editor/src/plugins/Typography/Typography.spec.ts
+  s_f4bd8cfbf36733::t_c52697e8781a22 1-26
+packages/rich-text-editor/src/plugins/Typography/Typography.ts
+  s_f4bd8cfbf36733::t_48b2d14242b05a 1-81
+packages/rich-text-editor/src/plugins/Typography/index.ts
+  s_f4bd8cfbf36733::t_f3981333ddf59f 1-3
+packages/rich-text-editor/src/plugins/Underline/Underline.tsx
+  s_f4bd8cfbf36733::t_00b41c620f49aa 1-37
+packages/rich-text-editor/src/plugins/Underline/index.ts
+  s_f4bd8cfbf36733::t_1919b4e830e532 1-3
+packages/rich-text-editor/src/plugins/index.ts
+  s_f4bd8cfbf36733::t_ffef483dbd5c81 1-64
+packages/rich-text-editor/src/plugins/shared/ToolbarButton/ToolbarButton.spec.ts
+  s_f4bd8cfbf36733::t_7b8e46025739aa 1-18
+packages/rich-text-editor/src/plugins/shared/ToolbarButton/ToolbarButton.tsx
+  s_f4bd8cfbf36733::t_d73b529ab52770 1-77
+packages/rich-text-editor/src/plugins/shared/ToolbarButton/toolbarButton.module.scss
+  s_f4bd8cfbf36733::t_661c857b04a6c5 1-31
+packages/rich-text-editor/src/plugins/shared/helpers/declaredStyle.ts
+  s_f4bd8cfbf36733::t_c39eacdb2754bb 1-35
+packages/rich-text-editor/src/plugins/shared/helpers/href.spec.ts
+  s_f4bd8cfbf36733::t_4ad0edd1106c4f 3-54,56-73,75-79,81-86
+packages/rich-text-editor/src/plugins/shared/helpers/href.ts
+  s_f4bd8cfbf36733::t_4cbf356bf77308 1-82
+packages/rich-text-editor/src/plugins/shared/hooks/useAnchoredPosition.ts
+  s_f4bd8cfbf36733::t_4b5a9d2ef26662 3,6-9,11-16,18-44
+packages/rich-text-editor/src/plugins/shared/hooks/useFocusAfterClose.ts
+  s_f4bd8cfbf36733::t_59de86abccce23 1-39
+packages/rich-text-editor/src/renderer/RichTextRenderer.tsx
+  s_f4bd8cfbf36733::t_870e2c16cd5d9a 1-57
+packages/rich-text-editor/src/renderer/document.module.scss
+  s_f4bd8cfbf36733::t_8f1416ff07e6a4 1-59
+packages/rich-text-editor/src/renderer/documentTree.ts
+  s_f4bd8cfbf36733::t_49574bb657218c 1-280
+packages/rich-text-editor/src/renderer/index.ts
+  s_f4bd8cfbf36733::t_2c1ec86cfdd489 1-4
+packages/rich-text-editor/src/renderer/serializeToHtml.ts
+  s_f4bd8cfbf36733::t_85a427016618f3 1-40
+packages/rich-text-editor/src/renderer/toHtmlString.ts
+  s_f4bd8cfbf36733::t_66351c9e245aa9 3-4,6,8,10-25,27-28,30,32-52,55-62,65
+packages/rich-text-editor/src/renderer/toReact.ts
+  s_f4bd8cfbf36733::t_015e2d9208fc81 1-77
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_f4bd8cfbf36733::t_940d439a600611 1-1152
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_f4bd8cfbf36733::t_8baf436afb48d8 1-720
+packages/rich-text-editor/src/vite-env.d.ts
+  s_f4bd8cfbf36733::t_f2673b477b25a9 1-3
+packages/rich-text-editor/tailwind.config.ts
+  s_f4bd8cfbf36733::t_731ca286888fb9 3,6-13,16-18
+packages/rich-text-editor/tsconfig.json
+  s_f4bd8cfbf36733::t_dea713b8a4f54a 1-25
+packages/rich-text-editor/tsconfig.node.json
+  s_f4bd8cfbf36733::t_2ce9db3036fd9d 2-25
+packages/rich-text-editor/vite.config.ts
+  s_f4bd8cfbf36733::t_114f74b4a5f3fa 3,5-10,12,14-17,19-27,29-32,34-35,37-63,65-90,93-105,107-111,113-122,125
+packages/rte/CHANGELOG.md
+  s_f4bd8cfbf36733::t_ad31a0b57fe550 3-24
+packages/rte/package.json
+  s_f4bd8cfbf36733::t_7ec00b2c008783 4,62-63,154-157,185,196,201
+packages/sdk/CHANGELOG.md
+  s_f4bd8cfbf36733::t_67ae283d35a406 3-38
+packages/sdk/README.md
+  s_f4bd8cfbf36733::t_4fa1d1ad3fa046 95
+packages/sdk/guides/development/Upgrading.md
+  s_f4bd8cfbf36733::t_dc4542d4c0eb86 36
+packages/sdk/guides/usage/Styling.md
+  s_f4bd8cfbf36733::t_3f16545eb856f4 5,38
+packages/sdk/package.json
+  s_f4bd8cfbf36733::t_74ce47e42b40f2 4,40,61,64
+packages/tokens/CHANGELOG.md
+  s_f4bd8cfbf36733::t_57299fc5c951db 3-12
+packages/tokens/dist/tailwind/tailwind.config.js
+  s_f4bd8cfbf36733::t_4f4459241232df 4
+packages/tokens/oxlint.config.ts
+  s_f4bd8cfbf36733::t_fd3f2a6ee333a3 16
+packages/tokens/package.json
+  s_f4bd8cfbf36733::t_72bc4d241c82fb 4,42,49,69
+packages/tokens/src/styleDictionary/tailwind/buildTheme.ts
+  s_f4bd8cfbf36733::t_898024183816b9 78-84,92,96-102,109
+packages/tokens/stories/Colors.stories.tsx
+  s_f4bd8cfbf36733::t_89b57b4fe3f94a 1-33
+packages/tokens/stories/SemanticTokens.stories.tsx
+  s_f4bd8cfbf36733::t_521758fb256d1a 9,13-14
+packages/tokens/stories/UtilitiesCustom.stories.tsx
+  s_f4bd8cfbf36733::t_3a1088e58e1217 3,6,8-12,15-17,19-32,34-41
+packages/tokens/stories/UtilitiesTypography.stories.tsx
+  s_f4bd8cfbf36733::t_06d83664a5dc2a 10,14-15
+packages/tokens/stories/meta.ts
+  s_f4bd8cfbf36733::t_8d6532ebc39073 3,6-7,9-13,15-16,18-20,25,28
+packages/tokens/tsconfig.json
+  s_f4bd8cfbf36733::t_e474d211f1e2b1 20
+pnpm-lock.yaml
+  s_f4bd8cfbf36733::t_d75ebd44dc6cdb 24-25,86,89,92,101,128,130-131,133-134,139-140,142-143,166-167,170,173,175-176,267,276,315,317-318,320-321,335-336,338-339,377-378,381,384,386-387,547,553,583,603-604,642-643,646,649,652,668,674,695,709-710,730-731,734,740-858,1093,1096,1102,1104-1105,1107-1108,1110-1111,1113-1114,1165,1197-1198,1230-1231,1245-1246,1249,1252,1255,1291-1292,1295,1298,1300-1301,1313,1319,1337,1339-1340,1368-1370,1374-1376,1386,1389-1398,1400-1401,1403-1404,1406-1407,1409-1410,1423-1437,1439-1443,1448-1452,1504-1505,1557-1560,1586-1590,1759-1760,1777-1778,1993-1994,2084-2087,2092-2095,3351-3352,3357-3358,3363-3364,3369-3370,3375-3376,3381-3382,3387-3388,3393-3394,3400-3401,3407-3408,3414-3415,3421-3422,3428-3429,3435-3436,3442-3443,3449-3450,3455-3456,3461-3462,3467-3468,4715-4716,4718,4720-4721,4724,4729-4730,4734,4741-4742,4744,4755-4756,4762,4769-4770,4774,4781-4782,4788,5849-5850,5852-5853,5861-5862,5865-5866,5869-5870,5872,5883-5884,5889-5890,5892-5893,5895,5900-5901,6088-6089,6165-6169,6218-6222,6283-6285,6296-6297,6481-6482,6499-6502,6766-6767,6770-6771,6774-6775,6869-6871,7238-7239,7317-7318,7494-7495,7650-7653,7782-7783,8031-8035,8462-8465,8509-8512,8538-8540,8557-8558,8562,8566-8567,8842-8843,8846-8847,8902-8928,9160-9161,9164-9165,9171-9172,9182-9185,9226-9230,9260-9262,9342-9343,9412-9413,9416-9417,9446-9447,9449-9450,9638-9639,9649-9652,9657-9658,9665-9666,9893-9898,10034-10035,10074-10075,10082-10083,10085-10087,10122-10124,10162-10164,10289-10290,10391,10396,10400,10411,10420,10427,10432,10452,10462,10468,10473-10475,10485-10486,10500-10503,10508,10533,10663,10678,10699,10722,10730,10746,10754,10802,10854,10871,10899,10985,11032,11039,11046,11084,11087,11120,11132,11149,11181-11192,11205-11210,11831,11840,11922,11933,12011,12014,12117,12135,12137,12175,12177,12271,12275,12279,12283,12289,12306,12390,12392,12404,12641,12644,12647,12650,12653,12656,12659,12662,12665,12668,12671,12674,12677,12680,12683,12686,12689,12692,12695,12842,12856,12859,13830,13842,13880,13884,13886,13890,13893,13901,13904,13909,13911,13913,13915,13917,13919,13927,13931,13936,13938,13940-13941,13947-13948,13950,13959,13961,13963-13964,13970-13971,13973,13982,13985,13990,14398,14408,14464,14469,14486,15192,15200,15204,15206-15208,15212,15216,15219-15226,15236,15238,15240,15242,15245,15247,15249,15255,15257,15263,15265,15267,15272-15273,15281,15283,15285,15301,15305,15372,15379,15466,15478-15479,15497,15521,15551-15552,15611-15618,15672-15673,15686,15848,15852,15865-15870,15919,15924,16144,16146,16148,16256-16257,16469,16665,16674,16801,16921,17001,17174,17182,17313-17316,17414,17562,17567,17669,17671-17675,17677,18304,18433-18434,18474-18475,18512-18513,18587,18589,18591-18609,18807,18842,18847,18855,18860,18871,18907-18955,19041-19042,19049,19207,19209,19212,19217,19219-19220,19222,19234-19238,19281-19287,19340-19341,19370,19415,19507,19509,19541,19543,19732-19733,19787,19793-19794,19800,19804,19856,20045-20050,20127,20153,20166,20181,20187,20189,20195,20200,20206,20211,20227,20243,20246-20247,20250-20251,20253-20255,20257-20258,20261-20263,20280-20281,20285,20326,20440
+pnpm-workspace.yaml
+  s_f4bd8cfbf36733::t_46509b0b85f127 22-23
+storybook-docs/.storybook/components/StoryWithTheme.tsx
+  s_f4bd8cfbf36733::t_1fe5410f391ece 3-4,59
+storybook-docs/.storybook/global.d.ts
+  s_f4bd8cfbf36733::t_98af92b5e6f9cb 4
+storybook-docs/.storybook/main.ts
+  s_f4bd8cfbf36733::t_d3c67ddd49f25b 3,7-9,15-18,28-36,52,85-110,113-117
+storybook-docs/.storybook/preview-head.html
+  s_f4bd8cfbf36733::t_70d23d4b8d48e9 18-21
+storybook-docs/.storybook/preview.tsx
+  s_f4bd8cfbf36733::t_5157d4c75c032a 4-6,11-17,20,89-108,126
+storybook-docs/.storybook/tailwind.config.ts
+  s_f4bd8cfbf36733::t_73edd513c0a5dd 5-10,12-25
+storybook-docs/.storybook/tailwind.css
+  s_f4bd8cfbf36733::t_18b4c7dd54122d 1-6
+storybook-docs/oxfmt.config.ts
+  s_f4bd8cfbf36733::t_796a782ee3cece 1-36
+storybook-docs/oxlint.config.ts
+  s_f4bd8cfbf36733::t_fb7345b2473f58 3-5,7-10,12-25,27-41,43-44
+storybook-docs/package.json
+  s_f4bd8cfbf36733::t_62d731a3b0317a 10-13,17,19,26-32,37-43,45-46
+storybook-docs/scripts/generateGuideStories.mjs
+  s_f4bd8cfbf36733::t_902bf098efb072 28-41,44-47,51-56,58-59
+storybook-docs/stories/Documentation/Development/Contributing.mdx
+  s_f4bd8cfbf36733::t_67fd2f6366a712 8
+storybook-docs/stories/Documentation/Development/Upgrading.mdx
+  s_f4bd8cfbf36733::t_4b55d693ae9249 8
+"storybook-docs/stories/Documentation/Getting started.mdx"
+  s_f4bd8cfbf36733::t_1f8fc8bbc8c75e 8
+storybook-docs/stories/Documentation/SDK/Concepts.mdx
+  s_f4bd8cfbf36733::t_42268f2acadc67 8
+storybook-docs/stories/Documentation/SDK/Examples.mdx
+  s_f4bd8cfbf36733::t_387c96d711b957 8
+storybook-docs/stories/Documentation/SDK/Reference.mdx
+  s_f4bd8cfbf36733::t_04a5b3f7a9f598 8
+storybook-docs/stories/Documentation/SDK/Usage.mdx
+  s_f4bd8cfbf36733::t_a48cbaebff9516 8
+storybook-docs/stories/Documentation/Usage/Components.mdx
+  s_f4bd8cfbf36733::t_f140231210ada1 8
+storybook-docs/stories/Documentation/Usage/Styling.mdx
+  s_f4bd8cfbf36733::t_323d53b5da13dc 8
+storybook-docs/tsconfig.json
+  s_f4bd8cfbf36733::t_35054d78b922aa 4-7,23
+storybook-docs/tsconfig.node.json
+  s_f4bd8cfbf36733::t_bd8ebe50eb8fb6 6,10,12-13,15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c42f385dce06dd34e18315973a53057cab1e7f42",
+  "prompts": {},
+  "sessions": {
+    "s_f4bd8cfbf36733": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "957f9406-1dc3-4ef8-8f4e-f3f47b88741e",
+        "model": "grok-4.7"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

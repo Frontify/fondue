@@ -1,0 +1,21 @@
+packages/rich-text-editor/src/renderer/serializeToHtml.ts
+  s_3da29b36b0ad36::t_ed2260b88f485e 12
+packages/rich-text-editor/src/core/documentText.ts
+  s_3da29b36b0ad36::t_0ed86aa3b522b6 90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4a39fcd2564125d109487d32f95dec17f6c0c3f3",
+  "prompts": {},
+  "sessions": {
+    "s_3da29b36b0ad36": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52275dbb-cfd4-472c-b295-02ca60ef0ab1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
