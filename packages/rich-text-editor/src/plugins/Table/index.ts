@@ -3,6 +3,7 @@
 export {
     type TableBlock,
     type TableCellBlock,
+    type TableHeaderBlock,
     tableContent,
     type TablePluginOptions,
     tablePlugin,

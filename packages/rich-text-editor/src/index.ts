@@ -139,7 +139,13 @@ export {
     type TextStylePluginOptions,
     type TextStylePresets,
 } from './plugins/TextStyle';
-export { type TableBlock, type TableCellBlock, type TablePluginOptions, type TableRowBlock } from './plugins/Table';
+export {
+    type TableBlock,
+    type TableCellBlock,
+    type TableHeaderBlock,
+    type TablePluginOptions,
+    type TableRowBlock,
+} from './plugins/Table';
 export { type TypographyGroup, type TypographyPluginOptions } from './plugins/Typography';
 
 // --- Plugin authoring ---

@@ -3,7 +3,7 @@
 import { IconTable } from '@frontify/fondue-icons';
 import { type ReactNode } from 'react';
 
-import { ANY_LIST, defineBlock, defineContent, definePlugin, PARAGRAPH, type RteBlockNode } from '#/core';
+import { ANY_LIST, defineBlock, defineContent, definePlugin, gridSpanOf, PARAGRAPH, type RteBlockNode } from '#/core';
 
 import styles from './table.module.scss';
 
@@ -20,29 +20,32 @@ export type TableRowBlock<TCell extends RteBlockNode = RteBlockNode> = {
     children: TCell[];
 };
 
-export type TableCellBlock<TContent extends RteBlockNode = RteBlockNode> = {
-    type: 'tableCell' | 'tableHeader';
+/** What every cell has: how far it reaches, and the blocks it holds. */
+type CellSpans<TContent extends RteBlockNode> = {
     /**
-     * How many columns the cell covers, 1 to 50
+     * How many columns the cell covers, 1 to 50; a span beyond is read as 50
      * @default 1
      */
     colspan?: number;
     /**
-     * How many rows the cell covers, 1 to 50
+     * How many rows the cell covers, 1 to 50; a span beyond is read as 50
      * @default 1
      */
     rowspan?: number;
+    children: TContent[];
+};
+
+export type TableCellBlock<TContent extends RteBlockNode = RteBlockNode> = CellSpans<TContent> & {
+    type: 'tableCell';
+};
+
+export type TableHeaderBlock<TContent extends RteBlockNode = RteBlockNode> = CellSpans<TContent> & {
+    type: 'tableHeader';
     /**
-     * One width per column the cell covers, or null when the table sizes it
-     * @default null
-     */
-    colwidth?: number[] | null;
-    /**
-     * What a header cell labels: its column or its row. Header cells only.
+     * What the header cell labels: its column or its row
      * @default 'col'
      */
-    scope?: 'col' | 'row' | null;
-    children: TContent[];
+    scope?: 'col' | 'row';
 };
 
 export type TablePluginOptions = {
@@ -54,33 +57,24 @@ export type TablePluginOptions = {
     label?: string;
 };
 
-/** The most columns or rows one cell may cover; a stored or pasted span beyond it is read as this many. */
-const MAX_SPAN = 50;
+type SpanValue = { colspan: number; rowspan: number };
+type HeaderValue = SpanValue & { scope: 'col' | 'row' };
 
-/** A span attribute read from HTML: a whole number from 1 to `MAX_SPAN`, 1 when missing or unreadable. */
-const spanOf = (value: string | null): number => {
-    const span = Number.parseInt(value ?? '', 10);
-    if (!Number.isFinite(span) || span < 1) {
-        return 1;
-    }
-    return Math.min(span, MAX_SPAN);
+const SPAN_DEFAULTS: SpanValue = { colspan: 1, rowspan: 1 };
+
+/** Spans as markup, read into range the way the editor reads them; a span of 1 is the default and is left out. */
+const spanAttrs = (value: SpanValue): { colspan?: string; rowspan?: string } => {
+    const colspan = gridSpanOf(value.colspan);
+    const rowspan = gridSpanOf(value.rowspan);
+    return {
+        ...(colspan > 1 ? { colspan: String(colspan) } : {}),
+        ...(rowspan > 1 ? { rowspan: String(rowspan) } : {}),
+    };
 };
 
-type SpanValue = { colspan: number; rowspan: number; colwidth: number[] | null };
-type HeaderValue = SpanValue & { scope: 'col' | 'row' | null };
-
-const SPAN_DEFAULTS: SpanValue = { colspan: 1, rowspan: 1, colwidth: null };
-
-/** A span of 1 is the default and is left out of the markup. */
-const spanAttrs = ({ colspan, rowspan }: SpanValue): { colspan?: string; rowspan?: string } => ({
-    ...(colspan > 1 ? { colspan: String(colspan) } : {}),
-    ...(rowspan > 1 ? { rowspan: String(rowspan) } : {}),
-});
-
 const spansOfElement = (element: HTMLElement): SpanValue => ({
-    colspan: spanOf(element.getAttribute('colspan')),
-    rowspan: spanOf(element.getAttribute('rowspan')),
-    colwidth: null,
+    colspan: gridSpanOf(element.getAttribute('colspan')),
+    rowspan: gridSpanOf(element.getAttribute('rowspan')),
 });
 
 const scopeOf = (element: HTMLElement): HeaderValue['scope'] =>
@@ -95,11 +89,11 @@ const readonlyTable =
         (
             // A region that scrolls must be reachable by keyboard, or its overflow is out of reach (TBL-26).
             // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-            <div role="region" tabIndex={0} aria-label={label} className={styles.scroll}>
+            <section tabIndex={0} aria-label={label} className={styles.scroll}>
                 <table className={styles.table}>
                     <tbody>{children}</tbody>
                 </table>
-            </div>
+            </section>
         );
 
 /**
@@ -151,7 +145,7 @@ export const tableContent = ({ label = 'Table' }: TablePluginOptions = {}) =>
                     attrs: {
                         class: styles.header,
                         ...spanAttrs(value),
-                        ...(value.scope ? { scope: value.scope } : {}),
+                        scope: value.scope,
                     },
                     children: true,
                 }),
@@ -160,9 +154,8 @@ export const tableContent = ({ label = 'Table' }: TablePluginOptions = {}) =>
         },
     });
 
-const emptyCell = (type: TableCellBlock['type']): TableCellBlock => ({
+const emptyCell = (type: (TableCellBlock | TableHeaderBlock)['type']): TableCellBlock | TableHeaderBlock => ({
     type,
-    ...(type === 'tableHeader' ? { scope: 'col' as const } : {}),
     children: [{ type: PARAGRAPH, children: [{ text: '' }] }],
 });
 

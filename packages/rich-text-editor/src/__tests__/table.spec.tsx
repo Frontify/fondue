@@ -6,7 +6,14 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { defaultPlugins, type RteDocument, RichTextRenderer, serializeToHtml, tablePlugin } from '../index';
+import {
+    defaultPlugins,
+    type RteDocument,
+    RichTextRenderer,
+    serializeToHtml,
+    type TableCellBlock,
+    tablePlugin,
+} from '../index';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -16,17 +23,17 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 const plugins = [...defaultPlugins, tablePlugin({ label: 'Tabelle' })];
 
-const cell = (text: string, attributes: Record<string, unknown> = {}) => ({
-    type: 'tableCell',
-    ...attributes,
-    children: [{ type: 'paragraph', children: [{ text }] }],
+const paragraph = (text: string) => ({ type: 'paragraph' as const, children: [{ text }] });
+
+const cell = (text: string, spans: Pick<TableCellBlock, 'colspan' | 'rowspan'> = {}) => ({
+    type: 'tableCell' as const,
+    ...spans,
+    children: [paragraph(text)],
 });
 
-const header = (text: string) => ({
-    type: 'tableHeader',
-    children: [{ type: 'paragraph', children: [{ text }] }],
-});
+const header = (text: string) => ({ type: 'tableHeader' as const, children: [paragraph(text)] });
 
+// Typed without a cast, so the document format is proven to take a table.
 const doc: RteDocument = {
     version: 1,
     blocks: [
@@ -38,7 +45,7 @@ const doc: RteDocument = {
             ],
         },
     ],
-} as RteDocument;
+};
 
 const unmounts: (() => void)[] = [];
 afterEach(() => {
@@ -57,14 +64,14 @@ const rendered = (): HTMLElement => {
 
 describe('a table in the readonly view', () => {
     it('scrolls in a region the keyboard reaches and a screen reader names', () => {
-        const region = rendered().querySelector('[role="region"]');
+        const region = rendered().querySelector('section');
 
         expect(region?.getAttribute('tabindex')).toBe('0');
         expect(region?.getAttribute('aria-label')).toBe('Tabelle');
     });
 
     it('keeps the table, its rows and its cells native', () => {
-        const table = rendered().querySelector('[role="region"] > table');
+        const table = rendered().querySelector('section > table');
 
         expect(table?.querySelector(':scope > tbody > tr > th')?.getAttribute('scope')).toBe('col');
         expect(table?.querySelector(':scope > tbody > tr > td')?.getAttribute('colspan')).toBe('2');

@@ -21,11 +21,7 @@ const parsedValue = (type: 'tableCell' | 'tableHeader', html: string): unknown =
 
 describe('a table cell read from HTML', () => {
     it('keeps its spans', () => {
-        expect(parsedValue('tableCell', '<td colspan="3" rowspan="2">x</td>')).toEqual({
-            colspan: 3,
-            rowspan: 2,
-            colwidth: null,
-        });
+        expect(parsedValue('tableCell', '<td colspan="3" rowspan="2">x</td>')).toEqual({ colspan: 3, rowspan: 2 });
     });
 
     it('clamps a span outside 1 to 50, and reads an unreadable one as 1', () => {
@@ -47,14 +43,22 @@ describe('a table cell read from HTML', () => {
 
 describe('a table cell written as HTML', () => {
     it('leaves spans of 1 out of the markup', () => {
-        const attrs = blocks.tableCell?.toHtml({ colspan: 1, rowspan: 1, colwidth: null }).attrs;
+        const attrs = blocks.tableCell?.toHtml({ colspan: 1, rowspan: 1 }).attrs;
 
         expect(attrs).not.toHaveProperty('colspan');
         expect(attrs).not.toHaveProperty('rowspan');
     });
 
+    // A stored document can hold anything, and the readonly view and export write it as they read it.
+    it('writes a stored span out of range as the editor reads it', () => {
+        const attrs = blocks.tableCell?.toHtml({ colspan: 400, rowspan: -1 }).attrs;
+
+        expect(attrs).toMatchObject({ colspan: '50' });
+        expect(attrs).not.toHaveProperty('rowspan');
+    });
+
     it('writes a header cell with its scope', () => {
-        const spec = blocks.tableHeader?.toHtml({ colspan: 2, rowspan: 1, colwidth: null, scope: 'row' });
+        const spec = blocks.tableHeader?.toHtml({ colspan: 2, rowspan: 1, scope: 'row' });
 
         expect(spec?.tag).toBe('th');
         expect(spec?.attrs).toMatchObject({ colspan: '2', scope: 'row' });

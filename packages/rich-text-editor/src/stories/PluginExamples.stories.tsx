@@ -850,10 +850,15 @@ export const ColumnBreak: Story = {
     },
 };
 
-/** A cell as the story writes it: one paragraph of text. */
-const tableCell = (text: string, type: 'tableCell' | 'tableHeader' = 'tableCell', colspan?: number) => ({
-    type,
+/** Cells as the story writes them: one paragraph of text. */
+const tableCell = (text: string, colspan?: number) => ({
+    type: 'tableCell' as const,
     ...(colspan === undefined ? {} : { colspan }),
+    children: [{ type: 'paragraph' as const, children: [{ text }] }],
+});
+
+const tableHeader = (text: string) => ({
+    type: 'tableHeader' as const,
     children: [{ type: 'paragraph' as const, children: [{ text }] }],
 });
 
@@ -866,37 +871,30 @@ const tableCell = (text: string, type: 'tableCell' | 'tableHeader' = 'tableCell'
 export const Table: Story = {
     render: () => {
         const plugins = [...defaultPlugins, tablePlugin()];
-        const [doc, setDoc] = useState<RteDocument>(
-            () =>
-                ({
-                    version: 1,
-                    blocks: [
-                        { type: 'paragraph', children: [{ text: 'The team, with a merged cell in the last row:' }] },
+        const [doc, setDoc] = useState<RteDocument>(() => ({
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'The team, with a merged cell in the last row:' }] },
+                {
+                    type: 'table',
+                    children: [
                         {
-                            type: 'table',
-                            children: [
-                                {
-                                    type: 'tableRow',
-                                    children: [
-                                        tableCell('Name', 'tableHeader'),
-                                        tableCell('Role', 'tableHeader'),
-                                        tableCell('Team', 'tableHeader'),
-                                    ],
-                                },
-                                {
-                                    type: 'tableRow',
-                                    children: [tableCell('Ada'), tableCell('Engineer'), tableCell('Platform')],
-                                },
-                                {
-                                    type: 'tableRow',
-                                    children: [tableCell('Grace'), tableCell('Away until March', 'tableCell', 2)],
-                                },
-                            ],
+                            type: 'tableRow',
+                            children: [tableHeader('Name'), tableHeader('Role'), tableHeader('Team')],
                         },
-                        { type: 'paragraph', children: [] },
+                        {
+                            type: 'tableRow',
+                            children: [tableCell('Ada'), tableCell('Engineer'), tableCell('Platform')],
+                        },
+                        {
+                            type: 'tableRow',
+                            children: [tableCell('Grace'), tableCell('Away until March', 2)],
+                        },
                     ],
-                }) as RteDocument,
-        );
+                },
+                { type: 'paragraph', children: [] },
+            ],
+        }));
 
         return (
             <div className={LAYOUT}>
