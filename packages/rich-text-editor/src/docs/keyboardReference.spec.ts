@@ -27,7 +27,10 @@ describe('keyboardReference', () => {
     });
 
     it('names the key a plugin hotkey binds', () => {
-        expect(groupOfPlugin(groups, 'soft-break')?.rows).toContainEqual({ keys: ['Shift-Enter'], label: 'Line break' });
+        expect(groupOfPlugin(groups, 'soft-break')?.rows).toContainEqual({
+            keys: ['Shift-Enter'],
+            label: 'Line break',
+        });
     });
 
     it('lists a key both the toolbar and the plugin hotkeys bind once', () => {
