@@ -238,6 +238,20 @@ describe('adding a link', () => {
             children: [{ text: 'h' }, { text: 'ipp', link: { href: HREF } }, { text: 'o' }],
         });
     });
+
+    it('keeps the formatting of the selected text when the text was changed', () => {
+        const { editable, stored } = mount(doc({ text: 'h' }, { text: 'ell', bold: true }, { text: 'o' }));
+        select(editable, 'ell');
+        press(editable, 'k', MOD);
+
+        type(fieldLabelled('Text'), 'ipp');
+        type(fieldLabelled('Link to'), 'example.com');
+        press(fieldLabelled('Link to'), 'Enter');
+
+        expect(stored()?.blocks[0]).toMatchObject({
+            children: [{ text: 'h' }, { text: 'ipp', link: { href: HREF }, bold: true }, { text: 'o' }],
+        });
+    });
 });
 
 /** The panel's own status, not the editor's live region, which is always there. */

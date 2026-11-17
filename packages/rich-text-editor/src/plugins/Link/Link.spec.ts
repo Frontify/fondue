@@ -43,7 +43,7 @@ const markPatternRule = (): MarkPatternRule => {
 
 /** Anchored the way the engine anchors the pattern. */
 const readsAsToken = (rule: MarkPatternRule, value: string): boolean =>
-    new RegExp(`^(?:${rule.pattern.source})$`).test(value);
+    new RegExp(`^(?:${rule.pattern.source})$`, rule.pattern.flags).test(value);
 
 describe('the link typing rule', () => {
     it('reads a web, mail or phone address as a token', () => {

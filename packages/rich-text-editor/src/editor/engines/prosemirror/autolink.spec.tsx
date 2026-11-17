@@ -45,6 +45,14 @@ describe('typing a web address', () => {
         expect(stored).toEqual([paragraph(link('https://example.com'), text(' '))]);
     });
 
+    it('links an address whose scheme is capitalised, as a phone writes it at the start of a sentence', () => {
+        const stored = typedIntoEmptyParagraph('Https://example.com MAILTO:ana@example.com ');
+
+        expect(stored).toEqual([
+            paragraph(link('Https://example.com'), text(' '), link('MAILTO:ana@example.com'), text(' ')),
+        ]);
+    });
+
     it('leaves the full stop at the end out of the link', () => {
         const stored = typedIntoEmptyParagraph('go to https://example.com. ');
 
