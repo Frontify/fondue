@@ -12,6 +12,18 @@ export type RteMarkState = { coverage: 'all'; value: Record<string, unknown> } |
 
 /** What is selected, as one value that plugin UI renders itself from. Read it in a toolbar render function, which runs on every state change. */
 export type RteSelectionSnapshot = {
+    /**
+     * What the selection is made of:
+     * - `'text'` → a caret or a range of text, the usual case
+     * - `'node'` → one whole block or inline element, such as a selected column break
+     * - `'grid'` → a rectangle of a block laid out in rows and columns; `grid` says which part
+     */
+    kind: 'text' | 'node' | 'grid';
+    /**
+     * The rows and columns a `'grid'` selection covers, `null` for any other
+     * kind. Both count from 0 and include both ends.
+     */
+    grid: { rows: { from: number; to: number }; columns: { from: number; to: number } } | null;
     /** A caret rather than a range, so it covers nothing and `text` is empty. */
     isCollapsed: boolean;
     /** The plain text the selection covers — what plugin UI prefills a text field with. */
