@@ -5,7 +5,6 @@ import { type KeyboardEvent, type ReactNode, type RefObject, useId, useRef, useS
 
 import { isCompositionKey } from '../../shared/helpers/keys';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
-import { type LinkPolicy } from '../helpers/policy';
 import { NO_RESULTS, RESULTS_LABEL, resultCount, SEARCH_FAILED, SEARCHING } from '../helpers/strings';
 import { type DestinationSearch, useDestinationSearch } from '../hooks/useDestinationSearch';
 import linkStyles from '../link.module.scss';
@@ -99,7 +98,6 @@ type DestinationFieldProps = {
      * Without it the field is a plain address input.
      */
     search?: LinkSearch;
-    policy: LinkPolicy;
     onChange: (value: string) => void;
     onPick: (destination: LinkDestination) => void;
     onEnter: (event: KeyboardEvent<HTMLInputElement>) => void;
@@ -115,14 +113,13 @@ export const DestinationField = ({
     status,
     errorId,
     search,
-    policy,
     onChange,
     onPick,
     onEnter,
 }: DestinationFieldProps): ReactNode => {
     // Only what the author types is searched: a stored or picked address is not a query.
     const [query, setQuery] = useState('');
-    const destinationSearch = useDestinationSearch(search, query, policy);
+    const destinationSearch = useDestinationSearch(search, query);
     const found = foundDestinations(destinationSearch);
     const listRef = useRef<HTMLUListElement>(null);
 

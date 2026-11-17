@@ -6,8 +6,6 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { type LinkPolicy } from '../helpers/policy';
-
 import { LinkTargetForm } from './LinkTargetForm';
 
 declare global {
@@ -27,15 +25,13 @@ type FormMode = { kind: 'create'; text: string } | { kind: 'edit' };
 
 type EnterPressInit = KeyboardEventInit & { keyCode?: number };
 
-const mountForm = (policy: LinkPolicy, mode: FormMode = { kind: 'edit' }) => {
+const mountForm = (mode: FormMode = { kind: 'edit' }) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
     const root = createRoot(container);
     const onSave = vi.fn();
     act(() => {
-        root.render(
-            <LinkTargetForm initial={{ href: '' }} {...mode} policy={policy} onSave={onSave} onCancel={vi.fn()} />,
-        );
+        root.render(<LinkTargetForm initial={{ href: '' }} {...mode} onSave={onSave} onCancel={vi.fn()} />);
     });
     teardown.push(() => {
         act(() => root.unmount());
@@ -68,29 +64,20 @@ const labelOf = (container: HTMLElement, control: HTMLElement): string | undefin
     container.querySelector(`label[for="${control.id}"] span:not([aria-hidden])`)?.textContent ?? undefined;
 
 describe('the link target form', () => {
-    it('names what the policy allows when a typed link is refused, and keeps focus on the field', () => {
-        const { field, type, save, alert, onSave } = mountForm({ allowedHosts: ['frontify.com', '*.frontify.com'] });
-        type('example.com');
+    it('refuses an unsafe link, says what it takes, and keeps focus on the field', () => {
+        const { field, type, save, alert, onSave } = mountForm();
+        type('javascript:alert(1)');
         act(() => field.blur());
 
         save();
 
-        expect(alert()).toBe('Enter a link to frontify.com (or a subdomain).');
+        expect(alert()).toBe('Enter a web address (example.com), an email address, or a phone number (tel:…).');
         expect(window.document.activeElement).toBe(field);
         expect(onSave).not.toHaveBeenCalled();
     });
 
-    it('names the schemes when the policy limits them', () => {
-        const { type, save, alert } = mountForm({ allowedSchemes: ['https'] });
-        type('ana@example.com');
-
-        save();
-
-        expect(alert()).toBe('Links may use https.');
-    });
-
-    it('saves a link the policy allows', () => {
-        const { type, save, alert, onSave } = mountForm({ allowedHosts: ['*.frontify.com'] });
+    it('saves a typed address as a web link', () => {
+        const { type, save, alert, onSave } = mountForm();
         type('app.frontify.com');
 
         save();
@@ -100,7 +87,7 @@ describe('the link target form', () => {
     });
 
     it('keeps the generic messages for empty and unreadable input', () => {
-        const { type, save, alert } = mountForm({ allowedHosts: ['frontify.com'] });
+        const { type, save, alert } = mountForm();
 
         save();
         expect(alert()).toBe('Enter where the link goes.');
@@ -111,7 +98,7 @@ describe('the link target form', () => {
     });
 
     it('saves with the address typed and no text when it has no Text field', () => {
-        const { container, type, save, onSave } = mountForm({});
+        const { container, type, save, onSave } = mountForm();
         type('example.com');
 
         save();
@@ -130,7 +117,7 @@ describe('the link target form', () => {
         };
 
         it('labels it Text, prefilled, and saves the text with the address', () => {
-            const { container, type, save, onSave } = mountForm({}, { kind: 'create', text: 'the docs' });
+            const { container, type, save, onSave } = mountForm({ kind: 'create', text: 'the docs' });
             type('example.com');
 
             save();
@@ -142,7 +129,7 @@ describe('the link target form', () => {
         });
 
         it('reads Text, Link to, Open in new tab, then the buttons', () => {
-            const { container } = mountForm({}, { kind: 'create', text: 'the docs' });
+            const { container } = mountForm({ kind: 'create', text: 'the docs' });
 
             const stops = [...container.querySelectorAll<HTMLElement>('input, button')].map(
                 (control) => labelOf(container, control) ?? control.textContent,
@@ -162,7 +149,7 @@ describe('the link target form', () => {
             };
 
             it('does not save when it confirms an input-method composition', () => {
-                const { container, type, onSave } = mountForm({}, { kind: 'create', text: 'the docs' });
+                const { container, type, onSave } = mountForm({ kind: 'create', text: 'the docs' });
                 type('example.com');
 
                 pressEnterInText(container, { isComposing: true });
@@ -171,7 +158,7 @@ describe('the link target form', () => {
             });
 
             it('does not save when the browser reports it as key code 229', () => {
-                const { container, type, onSave } = mountForm({}, { kind: 'create', text: 'the docs' });
+                const { container, type, onSave } = mountForm({ kind: 'create', text: 'the docs' });
                 type('example.com');
 
                 pressEnterInText(container, { keyCode: 229 });
@@ -181,17 +168,17 @@ describe('the link target form', () => {
         });
 
         it('focuses Text when it is empty, and the address when there is text to keep', () => {
-            const empty = mountForm({}, { kind: 'create', text: '' });
+            const empty = mountForm({ kind: 'create', text: '' });
             expect(window.document.activeElement).toBe(textField(empty.container));
 
-            const filled = mountForm({}, { kind: 'create', text: 'the docs' });
+            const filled = mountForm({ kind: 'create', text: 'the docs' });
             expect(window.document.activeElement).toBe(filled.field);
         });
     });
 
     describe('Enter', () => {
         it('saves', () => {
-            const { type, press, onSave } = mountForm({});
+            const { type, press, onSave } = mountForm();
             type('example.com');
 
             press({});
@@ -200,7 +187,7 @@ describe('the link target form', () => {
         });
 
         it('does not save when it confirms an input-method composition', () => {
-            const { type, press, alert, onSave } = mountForm({});
+            const { type, press, alert, onSave } = mountForm();
             type('example.com');
 
             press({ isComposing: true });
@@ -210,7 +197,7 @@ describe('the link target form', () => {
         });
 
         it('does not save when the browser reports it as key code 229', () => {
-            const { type, press, onSave } = mountForm({});
+            const { type, press, onSave } = mountForm();
             type('example.com');
 
             press({ keyCode: 229 });

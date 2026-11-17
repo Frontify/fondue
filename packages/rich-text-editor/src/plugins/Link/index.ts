@@ -2,4 +2,3 @@
 
 export { linkContent, type LinkMark, linkPlugin, type LinkPluginOptions } from './Link';
 export { type LinkDestination, type LinkSearch } from './helpers/destination';
-export { type LinkPolicy, type LinkScheme } from './helpers/policy';
