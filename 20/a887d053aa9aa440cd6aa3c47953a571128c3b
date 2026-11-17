@@ -1,0 +1,49 @@
+packages/rich-text-editor/src/core/index.ts
+  s_7cb3c06237ec80::t_de86785be0338c 55
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteRules.ts
+  s_7cb3c06237ec80::t_37bd60aae6d3ec 73-77,82-83,105-109,111,155
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.ts
+  s_7cb3c06237ec80::t_dc9d148c72b32e 131
+packages/rich-text-editor/src/index.ts
+  s_7cb3c06237ec80::t_c7c6bd74c9b6e3 12,29,172,191
+packages/rich-text-editor/src/plugins/Bold/Bold.ts
+  s_7cb3c06237ec80::t_3ce13e0a705c66 7,32
+packages/rich-text-editor/src/plugins/FontColor/FontColor.spec.ts
+  s_7cb3c06237ec80::t_f5997028ba3823 7-8,17
+packages/rich-text-editor/src/plugins/Italic/Italic.ts
+  s_7cb3c06237ec80::t_53fa7d1cb91d94 7-8,30-31
+packages/rich-text-editor/src/plugins/Strikethrough/Strikethrough.ts
+  s_13685dc26ad49d::t_729b475979841d 7,27
+packages/rich-text-editor/src/plugins/Subscript/Subscript.ts
+  s_7cb3c06237ec80::t_b8990c8a6965e5 7-8,30
+packages/rich-text-editor/src/plugins/Superscript/Superscript.ts
+  s_7cb3c06237ec80::t_835c8a0ca79043 7-8,30
+packages/rich-text-editor/src/plugins/Underline/Underline.ts
+  s_13685dc26ad49d::t_5cb53ee464c98f 7,27
+packages/rich-text-editor/src/plugins/shared/helpers/declaredStyle.ts
+  s_7cb3c06237ec80::t_14889ca52bfcd8 3-4,52-71,78-100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "20a887d053aa9aa440cd6aa3c47953a571128c3b",
+  "prompts": {},
+  "sessions": {
+    "s_13685dc26ad49d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "67d3fcde-1d94-4ada-8cc0-c6e14efacf05",
+        "model": "unknown"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_7cb3c06237ec80": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9e20dfb6-e7cb-4f6b-acc0-285cb775c2c8",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
