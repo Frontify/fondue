@@ -133,6 +133,7 @@ export {
 export { type TextLook } from './core';
 export {
     type LinkLook,
+    type TextStyleContentOptions,
     type TextStyleName,
     type TextStylePluginOptions,
     type TextStylePresets,

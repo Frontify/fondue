@@ -9,20 +9,25 @@ import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 // that are its own rather than a plugin's.
 import {
     boldPlugin,
+    bulletListContent,
     bulletListPlugin,
+    checkListContent,
     checkListPlugin,
     columnBreakPlugin,
     defaultPlugins,
     definePlugin,
     italicPlugin,
+    linkContent,
     linkPlugin,
     type MentionItem,
     mentionPlugin,
+    quoteContent,
     quotePlugin,
     type RteDocument,
     type RtePlugin,
     RichTextEditor,
     RichTextRenderer,
+    textStyleContent,
     textStylePlugin,
     type TextStylePluginOptions,
     type TextStylePresets,
@@ -912,6 +917,15 @@ const HOST_STYLING_PLUGINS = [
     linkPlugin(),
 ];
 
+// The renderer takes content only, with the same presets, so a page that only shows documents ships no editing code.
+const HOST_STYLING_CONTENT = [
+    textStyleContent({ presets: GUIDELINE_PRESETS }),
+    bulletListContent,
+    checkListContent,
+    quoteContent,
+    linkContent,
+];
+
 const HOST_STYLING_DOCUMENT: RteDocument = {
     version: 1,
     blocks: [
@@ -968,7 +982,7 @@ const HostStylingSection = ({ title, guideline }: HostStylingSectionProps) => {
                     <RichTextEditor value={doc} onChange={setDoc} plugins={HOST_STYLING_PLUGINS} />
                 </div>
                 <div className={FRAME}>
-                    <RichTextRenderer value={doc} plugins={HOST_STYLING_PLUGINS} />
+                    <RichTextRenderer value={doc} plugins={HOST_STYLING_CONTENT} />
                 </div>
             </div>
         </div>
@@ -1118,7 +1132,8 @@ export const Presets: StoryObj<PresetsStoryArgs> = {
 
 /**
  * The usual production setup: the values are `var(--f-theme-settings-…)`, so one editor configuration follows the section (light or dark) it sits in.
- * A host sets the look of each text style, body text, quotes and links with `textStylePlugin({ presets })`, usually from its guideline settings.
+ * A host sets the look of each text style, body text, quotes and links with `textStylePlugin({ presets })`, usually from its guideline settings,
+ * and hands the renderer `textStyleContent({ presets })` with the same values.
  * Anything the host leaves out, or a variable nobody defines, keeps Fondue's look.
  * The editor and the renderer draw the same.
  */
