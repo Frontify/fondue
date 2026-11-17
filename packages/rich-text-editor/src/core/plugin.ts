@@ -86,10 +86,6 @@ export type RtePlugin = {
     id: string;
     content?: RteContent;
     /**
-     * One sentence for screen readers, read with the editor: a hint about what its keys do
-     */
-    description?: string;
-    /**
      * Toolbar controls this feature offers, in the order given
      */
     toolbar?: readonly RteToolbarEntry[];

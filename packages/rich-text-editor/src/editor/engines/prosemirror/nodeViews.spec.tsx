@@ -189,7 +189,6 @@ const mountInto = (container: HTMLElement, initialDoc: RteDocumentOf) => {
         onDocApplied: () => {},
         onStateChange: () => {},
         viewPortals: portals,
-        announce: () => {},
     });
     mounted.push(live);
     return { live, portals, view };

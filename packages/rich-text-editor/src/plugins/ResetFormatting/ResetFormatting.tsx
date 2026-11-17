@@ -6,11 +6,6 @@ import { definePlugin, type EditorControlApi, PARAGRAPH, type ToolbarItemProps }
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
-/** What the reset button says to screen readers. */
-const RESET_FORMATTING_STRINGS = Object.freeze({
-    reset: 'Formatting reset',
-});
-
 /**
  * Puts the selection back to plain text, as one undo step: marks gone, except
  * those that survive a clear (links), block type back to paragraph, alignment
@@ -18,27 +13,18 @@ const RESET_FORMATTING_STRINGS = Object.freeze({
  * API.
  */
 const reset = (api: EditorControlApi): void => {
-    api.group(() => {
-        api.marks.removeAll({ scope: 'block', keepSurviving: true });
-        api.blocks.setType(PARAGRAPH);
-        // Whatever attributes plugins add to every block — alignment today — go
-        // back to their defaults, without this plugin having to name another's.
-        api.blocks.resetAttributes();
-    });
+    api.marks.removeAll({ scope: 'block', keepSurviving: true });
+    api.blocks.setType(PARAGRAPH);
+    // Whatever attributes plugins add to every block — alignment today — go
+    // back to their defaults, without this plugin having to name another's.
+    api.blocks.resetAttributes();
 };
 
-const ResetFormattingButton = ({ api, label }: ToolbarItemProps) => {
-    const onClick = (): void => {
-        reset(api);
-        // The API gives no signal for whether the whole reset changed anything, so this always announces.
-        api.announce(RESET_FORMATTING_STRINGS.reset);
-    };
-    return (
-        <ToolbarButton title={label} onClick={onClick}>
-            <IconEraser size={TOOLBAR_ICON_SIZE} />
-        </ToolbarButton>
-    );
-};
+const ResetFormattingButton = ({ api, label }: ToolbarItemProps) => (
+    <ToolbarButton title={label} onClick={() => reset(api)}>
+        <IconEraser size={TOOLBAR_ICON_SIZE} />
+    </ToolbarButton>
+);
 
 /**
  * A toolbar button that puts the selection back to plain text, keeping the marks that survive a clear
