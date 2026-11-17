@@ -1,0 +1,145 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// @vitest-environment happy-dom
+
+import { act } from 'react';
+import { createRoot } from 'react-dom/client';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+import { type EditorControlApi, type RteSelectionSnapshot } from '#/core';
+
+import { TableMenu } from './TableMenu';
+
+declare global {
+    // eslint-disable-next-line no-var
+    var IS_REACT_ACT_ENVIRONMENT: boolean;
+}
+globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+
+const teardown: (() => void)[] = [];
+afterEach(() => {
+    for (const clean of teardown.splice(0)) {
+        clean();
+    }
+});
+
+const selectionIn = (types: string[]): RteSelectionSnapshot => ({
+    kind: 'text',
+    grid: null,
+    isCollapsed: true,
+    text: '',
+    block: { type: types[0] ?? 'paragraph' },
+    blocks: types.map((type) => ({ type })),
+    marks: {},
+    history: { canUndo: false, canRedo: false },
+});
+
+const IN_TABLE = selectionIn(['paragraph', 'tableCell', 'tableRow', 'table']);
+
+type Shape = NonNullable<ReturnType<EditorControlApi['grid']['shape']>>;
+
+/** A grid with the caret in one slot, no headers, unless told otherwise. */
+const shapeOf = (shape: Partial<Shape>): Shape => ({
+    rows: 2,
+    columns: 2,
+    selectedRows: 1,
+    selectedColumns: 1,
+    headerRow: false,
+    headerColumn: false,
+    ...shape,
+});
+
+const fakeGrid = (shape: Shape | null) => ({
+    shape: () => shape,
+    add: vi.fn(() => true),
+    removeSelected: vi.fn(() => true),
+    removeGrid: vi.fn(() => true),
+    toggleHeader: vi.fn(() => true),
+});
+
+const show = (selection: RteSelectionSnapshot, grid: ReturnType<typeof fakeGrid>) => {
+    const container = window.document.createElement('div');
+    window.document.body.append(container);
+    const root = createRoot(container);
+    const api = { grid, focus: () => {} } as unknown as EditorControlApi;
+    act(() => {
+        root.render(<TableMenu api={api} selection={selection} />);
+    });
+    teardown.push(() => {
+        act(() => root.unmount());
+        container.remove();
+    });
+    return container;
+};
+
+/** Open the menu from its button, the way a keyboard user does. */
+const openMenu = (container: HTMLElement): HTMLElement[] => {
+    const trigger = container.querySelector<HTMLElement>('button');
+    if (!trigger) {
+        throw new Error('no table menu button');
+    }
+    act(() => trigger.focus());
+    act(() => {
+        trigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true }));
+    });
+    return [...window.document.querySelectorAll<HTMLElement>('[role="menuitem"]')];
+};
+
+const itemNamed = (items: HTMLElement[], label: string): HTMLElement | undefined =>
+    items.find((item) => item.textContent?.startsWith(label));
+
+describe('the table menu', () => {
+    it('is not shown outside a table', () => {
+        const container = show(selectionIn(['paragraph']), fakeGrid(null));
+
+        expect(container.querySelector('button')).toBeNull();
+    });
+
+    it('is shown in a table and runs what is chosen', () => {
+        const grid = fakeGrid(shapeOf({}));
+        const items = openMenu(show(IN_TABLE, grid));
+
+        expect(items.map((item) => item.textContent)).toEqual([
+            'Insert column left',
+            'Insert column right',
+            'Insert row above',
+            'Insert row below',
+            'Delete column',
+            'Delete row',
+            'Add header row',
+            'Add header column',
+            'Delete table',
+        ]);
+        act(() => itemNamed(items, 'Insert column right')?.click());
+        expect(grid.add).toHaveBeenCalledWith('column', 'after');
+    });
+
+    it('offers deleting the only row disabled, says why, and does not run it', () => {
+        const grid = fakeGrid(shapeOf({ rows: 1 }));
+        const items = openMenu(show(IN_TABLE, grid));
+
+        const row = itemNamed(items, 'Delete row');
+        expect(row?.getAttribute('aria-disabled')).toBe('true');
+        expect(itemNamed(items, 'Delete column')?.getAttribute('aria-disabled')).toBeNull();
+        expect(window.document.getElementById(row?.getAttribute('aria-describedby') ?? '')?.textContent).toBe(
+            'A table needs at least one row',
+        );
+        act(() => row?.click());
+        expect(grid.removeSelected).not.toHaveBeenCalled();
+    });
+
+    // Deleting them all would leave no table, so the engine refuses; the menu says so first.
+    it('offers deleting columns disabled when the selection covers every column', () => {
+        const items = openMenu(show(IN_TABLE, fakeGrid(shapeOf({ rows: 3, columns: 2, selectedColumns: 2 }))));
+
+        expect(itemNamed(items, 'Delete column')?.getAttribute('aria-disabled')).toBe('true');
+        expect(itemNamed(items, 'Delete row')?.getAttribute('aria-disabled')).toBeNull();
+    });
+
+    it('names each header toggle by what choosing it does', () => {
+        const items = openMenu(show(IN_TABLE, fakeGrid(shapeOf({ headerRow: true }))));
+
+        expect(itemNamed(items, 'Remove header row')).toBeDefined();
+        expect(itemNamed(items, 'Add header column')).toBeDefined();
+    });
+});

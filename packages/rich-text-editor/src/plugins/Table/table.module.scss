@@ -48,3 +48,16 @@
     background-color: var(--color-surface-hover);
     font-weight: var(--typography-font-weight-bold);
 }
+
+/** A table menu entry that cannot run: dimmed, with its reason under it. */
+.unavailable {
+    display: flex;
+    flex-direction: column;
+    color: var(--color-disabled-default);
+    cursor: not-allowed;
+}
+
+.reason {
+    color: var(--color-secondary-default);
+    font-size: var(--typography-font-size-x-small);
+}

@@ -5,6 +5,7 @@ import { type ReactNode } from 'react';
 
 import { ANY_LIST, defineBlock, defineContent, definePlugin, gridSpanOf, PARAGRAPH, type RteBlockNode } from '#/core';
 
+import { TableMenu } from './components/TableMenu';
 import styles from './table.module.scss';
 
 export type TableBlock<TRow extends RteBlockNode = RteBlockNode> = {
@@ -151,11 +152,23 @@ const emptyRows = (rows: number, columns: number): TableRowBlock[] =>
         return { type: 'tableRow' as const, children: Array.from({ length: columns }, () => emptyCell(type)) };
     });
 
-/** Tables, with a `/` entry that inserts one with a header row. Tab in the last cell adds a row. */
+/**
+ * Tables, with a `/` entry that inserts one with a header row, and a menu,
+ * shown while the selection is in a table, for its rows, columns and headers.
+ * Tab in the last cell adds a row.
+ */
 export const tablePlugin = () =>
     definePlugin({
         id: 'table',
         content: tableContent,
+        toolbarGroup: 'insert',
+        toolbar: [
+            {
+                label: TABLE_LABEL,
+                floating: 'inline',
+                render: ({ api, selection }) => <TableMenu api={api} selection={selection} />,
+            },
+        ],
         commands: [
             {
                 id: 'table',
