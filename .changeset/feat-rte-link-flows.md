@@ -2,4 +2,4 @@
 "@frontify/fondue-rich-text-editor": minor
 ---
 
-feat(RichTextEditor): add page search, a link policy and link editing flows. `linkPlugin` and `linkContent` are now functions, so write `linkPlugin()` and `linkContent()`.
+feat(RichTextEditor): add page search and link editing flows. `linkPlugin` is now a function, so write `linkPlugin()`.

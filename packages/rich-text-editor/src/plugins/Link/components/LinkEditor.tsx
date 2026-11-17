@@ -3,12 +3,12 @@
 import { Button, Flyout } from '@frontify/fondue-components';
 import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 'react';
 
-import { type EditProps, matchesHotkey } from '#/core';
+import { type EditProps } from '#/core';
 
+import { isSafeHref } from '../../shared/helpers/href';
 import { type LinkSearch } from '../helpers/destination';
-import { NEW_TAB_REL, NEW_TAB_TARGET, NEW_TAB_WINDOW_FEATURES } from '../helpers/newTab';
-import { allowsHref, type LinkPolicy } from '../helpers/policy';
-import { COPY_FAILED, COPY_LINK_LABEL, LINK_COPIED, NEW_TAB_NOTE } from '../helpers/strings';
+import { NEW_TAB_REL, NEW_TAB_TARGET } from '../helpers/newTab';
+import { NEW_TAB_NOTE } from '../helpers/strings';
 import { type LinkValue } from '../helpers/value';
 import styles from '../link.module.scss';
 
@@ -16,63 +16,13 @@ import { LinkTargetForm } from './LinkTargetForm';
 
 const PANEL_CONTROLS = 'a[href], button:not([disabled])';
 
-type CopyState = 'idle' | 'copied' | 'failed';
-
-const describeCopy = (state: CopyState): string => {
-    switch (state) {
-        case 'idle':
-            return '';
-        case 'copied':
-            return LINK_COPIED;
-        case 'failed':
-            return COPY_FAILED;
-    }
-};
-
-const writeToClipboard = (text: string): Promise<void> => navigator.clipboard.writeText(text);
-
-/**
- * The click that opens the link in a new tab: Command on Apple platforms, Control elsewhere.
- */
-const OPEN_LINK_CLICK = 'Mod';
-
-type CopyLinkProps = {
-    href: string;
-    writeText: (text: string) => Promise<void>;
-};
-
-/**
- * Copies the target and says whether it worked, in a live region that is always in the panel.
- */
-const CopyLink = ({ href, writeText }: CopyLinkProps): ReactNode => {
-    const [copyState, setCopyState] = useState<CopyState>('idle');
-    const copy = (): void => {
-        // Reset first, so the same outcome twice is announced twice.
-        setCopyState('idle');
-        // Inside a promise: a browser without the clipboard API throws before any promise exists.
-        Promise.resolve()
-            .then(() => writeText(href))
-            .then(() => setCopyState('copied'))
-            .catch(() => setCopyState('failed'));
-    };
-    return (
-        <>
-            <Button size="small" emphasis="weak" onPress={copy}>
-                {COPY_LINK_LABEL}
-            </Button>
-            <output className={styles.visuallyHidden}>{describeCopy(copyState)}</output>
-        </>
-    );
-};
-
 type LinkEditorProps = EditProps<LinkValue> & {
-    policy: LinkPolicy;
     search?: LinkSearch;
 };
 
 /**
  * A link while editing: the anchor around the editable text, with a flyout.
- * With the caret inside it shows the target, Copy link, Edit and Remove; when `isOpen`
+ * With the caret inside it shows the target, Edit and Remove; when `isOpen`
  * (Edit, the toolbar button, Mod-k) it shows the form instead.
  *
  * Open state belongs to the editor so the toolbar can open this flyout. Focus
@@ -87,7 +37,6 @@ export const LinkEditor = ({
     setOpen,
     remove,
     api,
-    policy,
     search,
 }: LinkEditorProps): ReactNode => {
     // A flyout closed by hand stays closed until the caret leaves the link and returns.
@@ -158,7 +107,7 @@ export const LinkEditor = ({
     };
 
     let href: string | undefined;
-    if (allowsHref(policy, value.href)) {
+    if (isSafeHref(value.href)) {
         href = value.href;
     }
 
@@ -180,13 +129,8 @@ export const LinkEditor = ({
                     // ARIA 1.3 global attribute that the lint rule's table does not know yet.
                     // oxlint-disable-next-line jsx-a11y/role-supports-aria-props
                     aria-description={value.openInNewTab === true ? 'Opens in a new tab' : undefined}
-                    // A click places the caret; it must neither follow the link nor toggle the flyout. Mod+click opens it.
-                    onClick={(event) => {
-                        event.preventDefault();
-                        if (matchesHotkey(OPEN_LINK_CLICK, event) && href !== undefined) {
-                            window.open(href, NEW_TAB_TARGET, NEW_TAB_WINDOW_FEATURES);
-                        }
-                    }}
+                    // A click places the caret; it must neither follow the link nor toggle the flyout.
+                    onClick={(event) => event.preventDefault()}
                 >
                     {children}
                 </a>
@@ -208,7 +152,6 @@ export const LinkEditor = ({
                         <LinkTargetForm
                             initial={value}
                             kind="edit"
-                            policy={policy}
                             search={search}
                             onSave={(next) => {
                                 // Close first: the link is rebuilt with its new value and would reopen.
@@ -237,7 +180,6 @@ export const LinkEditor = ({
                                 {value.href}
                                 <span className={styles.visuallyHidden}>{NEW_TAB_NOTE}</span>
                             </a>
-                            {href === undefined ? null : <CopyLink href={href} writeText={writeToClipboard} />}
                             <Button size="small" emphasis="weak" onPress={() => setOpen(true)}>
                                 Edit
                             </Button>

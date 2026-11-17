@@ -452,13 +452,12 @@ export const Link: Story = {
     },
 };
 
-/** The app's own pages, as a search service would return them; the last one is outside the policy. */
+/** The app's own pages, as a search service would return them. */
 const INTERNAL_PAGES: readonly LinkDestination[] = [
     { id: 'brand', label: 'Brand guidelines', href: 'https://brand.frontify.com/guidelines' },
     { id: 'logos', label: 'Logo library', href: 'https://brand.frontify.com/logos' },
     { id: 'colors', label: 'Colour palette', href: 'https://brand.frontify.com/colors' },
     { id: 'press', label: 'Press kit', href: 'https://frontify.com/press' },
-    { id: 'partner', label: 'Partner logos (other site)', href: 'https://example.com/partner-logos' },
 ];
 
 /** How long the fake lookup takes, so the story shows the field while it searches. */
@@ -479,7 +478,7 @@ const searchPages = (query: string, signal: AbortSignal): Promise<readonly LinkD
 
 /**
  * Given a `search`, the "Link to" field offers the app's own pages as the
- * author types. The policy still applies: results outside it are never listed.
+ * author types.
  */
 export const LinkWithSearch: Story = {
     render: () => {
@@ -492,16 +491,11 @@ export const LinkWithSearch: Story = {
             <div className={LAYOUT}>
                 <p className={HINT}>
                     Open the link form and type <code>logo</code> in Link to: the list shows one page after a short
-                    wait, and the one on example.com is held back by the policy (frontify.com and its subdomains only).
-                    Press Down or Tab to reach the pages, then Enter or a click to pick one, or keep typing an address.
-                    A pick fills an empty Text field with the page name.
+                    wait. Press Down or Tab to reach the pages, then Enter or a click to pick one, or keep typing an
+                    address. A pick fills an empty Text field with the page name.
                 </p>
                 <div className={FRAME}>
-                    <RichTextEditor
-                        value={doc}
-                        onChange={setDoc}
-                        plugins={[linkPlugin({ allowedHosts: ['*.frontify.com'], search: searchPages })]}
-                    />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[linkPlugin({ search: searchPages })]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
