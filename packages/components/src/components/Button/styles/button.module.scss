@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 @use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/pressedStyle.module.scss';
 @use '../../../utilities/transitions.module.scss';
 @use '../../../utilities/sizeToken.module.scss';
 
@@ -350,6 +351,12 @@
         'highlight-on-highlight',
         'highlight-on-highlight'
     );
+
+    // Pressed state: a toggle that is on (`aria-pressed`) or a button acting as the checked radio (`aria-checked`).
+    // It overrides every variant and emphasis, so the data attributes keep it above their specificity.
+    &[data-variant][data-emphasis]:is([aria-pressed='true'], [aria-pressed='mixed'], [aria-checked='true']):not([disabled]) {
+        @include pressedStyle.pressed;
+    }
 
     // Size variants
     &[data-size='small'] {

@@ -79,3 +79,81 @@ test('should render lang on the button element', async ({ mount }) => {
     );
     await expect(wrapper.getByTestId('button-root')).toHaveAttribute('lang', 'fr-CH');
 });
+
+const PRESSED_BACKGROUND = 'rgb(234, 234, 228)';
+const PRESSED_HOVER_BACKGROUND = 'rgb(215, 215, 208)';
+const TRANSPARENT = 'rgba(0, 0, 0, 0)';
+
+test.describe('pressed state', () => {
+    test('shows the pressed background for aria-pressed="true"', async ({ mount }) => {
+        const component = await mount(
+            <Button emphasis="weak" aria-pressed>
+                {BUTTON_TEXT}
+            </Button>,
+        );
+
+        await expect(component).toHaveCSS('background-color', PRESSED_BACKGROUND);
+    });
+
+    test('shows the pressed background for aria-pressed="mixed"', async ({ mount }) => {
+        const component = await mount(
+            <Button emphasis="weak" aria-pressed="mixed">
+                {BUTTON_TEXT}
+            </Button>,
+        );
+
+        await expect(component).toHaveCSS('background-color', PRESSED_BACKGROUND);
+    });
+
+    test('shows the pressed background for aria-checked="true"', async ({ mount }) => {
+        const component = await mount(
+            <Button emphasis="weak" role="radio" aria-checked>
+                {BUTTON_TEXT}
+            </Button>,
+        );
+
+        await expect(component).toHaveCSS('background-color', PRESSED_BACKGROUND);
+    });
+
+    test('keeps the resting background for aria-pressed="false"', async ({ mount }) => {
+        const component = await mount(
+            <Button emphasis="weak" aria-pressed={false}>
+                {BUTTON_TEXT}
+            </Button>,
+        );
+
+        await expect(component).toHaveCSS('background-color', TRANSPARENT);
+    });
+
+    test('overrides strong emphasis', async ({ mount }) => {
+        const component = await mount(
+            <Button emphasis="strong" aria-pressed>
+                {BUTTON_TEXT}
+            </Button>,
+        );
+
+        await expect(component).toHaveCSS('background-color', PRESSED_BACKGROUND);
+    });
+
+    test('darkens on hover', async ({ mount }) => {
+        const component = await mount(
+            <Button emphasis="weak" aria-pressed>
+                {BUTTON_TEXT}
+            </Button>,
+        );
+
+        await component.hover();
+
+        await expect(component).toHaveCSS('background-color', PRESSED_HOVER_BACKGROUND);
+    });
+
+    test('keeps the disabled look when disabled', async ({ mount }) => {
+        const component = await mount(
+            <Button emphasis="default" aria-pressed disabled>
+                {BUTTON_TEXT}
+            </Button>,
+        );
+
+        await expect(component).not.toHaveCSS('background-color', PRESSED_BACKGROUND);
+    });
+});

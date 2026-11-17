@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { forwardRef, type ForwardedRef, type MouseEvent, type ReactNode } from 'react';
+import { forwardRef, type AriaAttributes, type ForwardedRef, type MouseEvent, type ReactNode } from 'react';
 
 import { type CommonGlobalProps } from '#/helpers/aria';
 
@@ -17,6 +17,8 @@ type ButtonType = 'button' | 'submit' | 'reset';
 type ButtonEmphasis = 'default' | 'weak' | 'strong';
 
 type ButtonAspect = 'default' | 'square';
+
+type ButtonRole = 'radio';
 
 export type ButtonProps = CommonGlobalProps & {
     /**
@@ -60,6 +62,15 @@ export type ButtonProps = CommonGlobalProps & {
     form?: string;
     'aria-label'?: string;
     'aria-describedby'?: string;
+    /**
+     * Shows the pressed state when `true` or `"mixed"`, for a toggle button such as Bold.
+     */
+    'aria-pressed'?: AriaAttributes['aria-pressed'];
+    /**
+     * Shows the pressed state when `true`, for a button with `role="radio"` in a group such as text alignment.
+     */
+    'aria-checked'?: AriaAttributes['aria-checked'];
+    role?: ButtonRole;
     'data-test-id'?: string;
     className?: string;
     tabIndex?: number;
