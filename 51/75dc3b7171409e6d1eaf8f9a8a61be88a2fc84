@@ -1,0 +1,19 @@
+.github/workflows/react-19-compat.yaml
+  s_dd82ea8cd614d1::t_3cd22e9297084b 66-68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "5175dc3b7171409e6d1eaf8f9a8a61be88a2fc84",
+  "prompts": {},
+  "sessions": {
+    "s_dd82ea8cd614d1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4220b360-f380-49a9-ba15-92522e15b2eb",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
