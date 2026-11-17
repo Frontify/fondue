@@ -43,9 +43,7 @@ const declarationsCoreNames = (key: string, properties: readonly string[]): Look
 const CORE_PROPERTIES = Object.values(LOOK_PROPERTIES);
 
 const compileMixinCall = (call: string): string =>
-    compileString(`@use 'look.module.scss';\n.sample { ${call} }`, {
-        loadPaths: [STYLES_DIRECTORY],
-    }).css;
+    compileString(`@use 'look.module.scss';\n.sample { ${call} }`, { loadPaths: [STYLES_DIRECTORY] }).css;
 
 /** The body of the rule for `.<className>`. */
 const ruleBodyOf = (css: string, className: string): string => {
@@ -126,6 +124,12 @@ describe('the list stylesheet', () => {
         ...numberedListPlugin({
             levels: [NUMBERED_LEVEL, NUMBERED_LEVEL, NUMBERED_LEVEL],
         }).content?.contentProperties,
+    });
+
+    it('falls back to the body look for the marker colour and size', () => {
+        for (const property of [LOOK_PROPERTIES.color, LOOK_PROPERTIES.fontSize]) {
+            expect(css).toContain(`var(${lookVariableName('body', property)},`);
+        }
     });
 
     it('reads every variable the list plugins write for a level, and no other', () => {

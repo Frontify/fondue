@@ -673,6 +673,20 @@ test.describe('host styling of list markers', () => {
         }
     });
 
+    test('sizes a marker like its item text under a relative body size, at every depth', async ({ mount }) => {
+        const component = await mount(<HostLooksPair value={NESTED_LISTS_DOCUMENT} body={{ fontSize: '1.2em' }} />);
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            for (const text of [...BULLET_ITEMS, ...NUMBERED_ITEMS]) {
+                const item = section.getByText(text, { exact: true });
+                const itemSize = await item.evaluate((paragraph) => getComputedStyle(paragraph).fontSize);
+                const marker = await markerLookOf(section, text);
+                expect(marker.size).toBe(itemSize);
+            }
+        }
+    });
+
     test('draws markers in the body colour and size where the list sets none', async ({ mount }) => {
         const component = await mount(<HostLooksPair value={NESTED_LISTS_DOCUMENT} body={HOST_LOOK} />);
         const body = { color: HOST_COMPUTED_LOOK.color, size: HOST_COMPUTED_LOOK['font-size'] };

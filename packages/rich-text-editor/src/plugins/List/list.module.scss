@@ -16,13 +16,18 @@
 // first level, which is what the tag-based selectors did too. A list nested
 // deeper than the last level matches the last level's selector, so it looks the same.
 //
-// The marker takes the item's colour and size where the host sets none, and
-// the item takes the body text's look.
+// Where a level sets no colour or size, the marker takes the body text's, which
+// the text style plugin's `body` look writes as `--rte-body-<property>` (see
+// `lookVariableName` in core/look.ts). It reads the variables rather than
+// inheriting from the item, so a relative size such as `1.2em` applies once.
+$body-color: var(--rte-body-color, currentcolor);
+$body-font-size: var(--rte-body-font-size, 1em);
+
 @mixin level($list, $level, $marker) {
     list-style-type: level-look($list, $level, marker, $marker);
 
     > .item::marker {
-        color: level-look($list, $level, color, currentcolor);
+        color: level-look($list, $level, color, $body-color);
         @content;
     }
 }
@@ -33,7 +38,7 @@ $bullet-indent: 1.5em;
     padding-left: level-look('bullet-list', $level, indent, $bullet-indent);
 
     @include level('bullet-list', $level, $marker) {
-        font-size: level-look('bullet-list', $level, size, 1em);
+        font-size: level-look('bullet-list', $level, size, $body-font-size);
     }
 }
 
@@ -65,7 +70,9 @@ $numbered-indent: 2em;
         #{level-look('numbered-list', $level, indent, $numbered-indent)} + var(--rte-list-extra-digits) * 1ch
     );
 
-    @include level('numbered-list', $level, $marker);
+    @include level('numbered-list', $level, $marker) {
+        font-size: $body-font-size;
+    }
 }
 
 .numberedList {

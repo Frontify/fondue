@@ -45,11 +45,7 @@ type NumberedListValue = { start: number | null };
 const listItem = defineBlock({
     // The paragraph comes first: it is what a new item is filled with.
     content: { blocks: [PARAGRAPH, ANY_LIST] },
-    toHtml: () => ({
-        tag: 'li',
-        attrs: { class: styles.item },
-        children: true,
-    }),
+    toHtml: () => ({ tag: 'li', attrs: { class: styles.item }, children: true }),
     parse: [{ tag: 'li' }],
 });
 
@@ -58,11 +54,7 @@ const listItem = defineBlock({
  */
 const bulletList = defineBlock({
     content: { items: 'listItem' },
-    toHtml: () => ({
-        tag: 'ul',
-        attrs: { class: styles.bulletList },
-        children: true,
-    }),
+    toHtml: () => ({ tag: 'ul', attrs: { class: styles.bulletList }, children: true }),
     parse: [{ tag: 'ul' }],
 });
 
@@ -117,15 +109,9 @@ const numberedList = defineBlock<NumberedListValue>({
         }
         // A list that starts past the stylesheet's room widens for its first number only.
         if (first !== undefined && first.length > MARKER_DIGITS) {
-            style = {
-                [EXTRA_DIGITS_PROPERTY]: String(first.length - MARKER_DIGITS),
-            };
+            style = { [EXTRA_DIGITS_PROPERTY]: String(first.length - MARKER_DIGITS) };
         }
-        return {
-            tag: 'ol',
-            attrs: { class: styles.numberedList, start: first, style },
-            children: true,
-        };
+        return { tag: 'ol', attrs: { class: styles.numberedList, start: first, style }, children: true };
     },
     parse: [
         {
@@ -139,20 +125,6 @@ const numberedList = defineBlock<NumberedListValue>({
             },
         },
     ],
-});
-
-/**
- * A bulleted list, written as `<ul>`. Shares its item with `numberedListContent`.
- */
-export const bulletListContent = defineContent({
-    blocks: { bulletList, listItem },
-});
-
-/**
- * A numbered list, written as `<ol>`, starting at any number. Shares its item with `bulletListContent`.
- */
-export const numberedListContent = defineContent({
-    blocks: { numberedList, listItem },
 });
 
 /**
@@ -222,6 +194,28 @@ const levelLookProperties = <TLook extends Partial<Record<string, string>>>(
     return properties;
 };
 
+const bulletListContentWith = (levels: ListLevelLooks<BulletListLevelLook>): RteContent =>
+    defineContent({
+        blocks: { bulletList, listItem },
+        contentProperties: levelLookProperties('bulletList', levels, BULLET_LEVEL_FIELDS),
+    });
+
+const numberedListContentWith = (levels: ListLevelLooks<NumberedListLevelLook>): RteContent =>
+    defineContent({
+        blocks: { numberedList, listItem },
+        contentProperties: levelLookProperties('numberedList', levels, NUMBERED_LEVEL_FIELDS),
+    });
+
+/**
+ * A bulleted list, written as `<ul>`, in Fondue's look. Shares its item with `numberedListContent`.
+ */
+export const bulletListContent = bulletListContentWith([]);
+
+/**
+ * A numbered list, written as `<ol>`, starting at any number, in Fondue's look. Shares its item with `bulletListContent`.
+ */
+export const numberedListContent = numberedListContentWith([]);
+
 type ListPluginParams = {
     id: string;
     content: RteContent;
@@ -284,10 +278,7 @@ export type NumberedListPluginOptions = {
 export const bulletListPlugin = ({ levels = [] }: BulletListPluginOptions = {}): RtePlugin =>
     listPlugin({
         id: 'bullet-list',
-        content: defineContent({
-            blocks: { bulletList, listItem },
-            contentProperties: levelLookProperties('bulletList', levels, BULLET_LEVEL_FIELDS),
-        }),
+        content: bulletListContentWith(levels),
         type: 'bulletList',
         icon: IconListBullet,
         label: 'Bulleted list',
@@ -302,10 +293,7 @@ export const bulletListPlugin = ({ levels = [] }: BulletListPluginOptions = {}):
 export const numberedListPlugin = ({ levels = [] }: NumberedListPluginOptions = {}): RtePlugin =>
     listPlugin({
         id: 'numbered-list',
-        content: defineContent({
-            blocks: { numberedList, listItem },
-            contentProperties: levelLookProperties('numberedList', levels, NUMBERED_LEVEL_FIELDS),
-        }),
+        content: numberedListContentWith(levels),
         type: 'numberedList',
         icon: IconListNumbers,
         label: 'Numbered list',
