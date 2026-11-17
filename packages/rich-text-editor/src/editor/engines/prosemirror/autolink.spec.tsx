@@ -312,10 +312,13 @@ describe('pressing Enter after a web address', () => {
         const peek = definePlugin({
             id: 'peek-on-enter',
             hotkeys: {
-                Enter: () => {
-                    const state = editor?.view.state;
-                    state?.apply(state.tr.insertText('x'));
-                    return false;
+                Enter: {
+                    label: 'Peek',
+                    run: () => {
+                        const state = editor?.view.state;
+                        state?.apply(state.tr.insertText('x'));
+                        return false;
+                    },
                 },
             },
         });
@@ -384,7 +387,10 @@ describe('pressing Enter after a web address', () => {
     });
 
     it('is taken back by Backspace after a key that changed nothing, while the editor has focus', async () => {
-        const keepEnter = definePlugin({ id: 'keep-enter', hotkeys: { Enter: () => true } });
+        const keepEnter = definePlugin({
+            id: 'keep-enter',
+            hotkeys: { Enter: { label: 'Keep Enter', run: () => true } },
+        });
         const editor = editorWith([...defaultPlugins, keepEnter], [paragraph(text('https://example.com'))]);
         editor.caretAfter('https://example.com');
         vi.spyOn(editor.view, 'hasFocus').mockReturnValue(true);
@@ -415,9 +421,12 @@ describe('pressing Enter after a web address', () => {
         const blurOnEnter = definePlugin({
             id: 'blur-on-enter',
             hotkeys: {
-                Enter: (api) => {
-                    api.blur();
-                    return true;
+                Enter: {
+                    label: 'Blur',
+                    run: (api) => {
+                        api.blur();
+                        return true;
+                    },
                 },
             },
         });

@@ -627,8 +627,11 @@ describe('the editable element', () => {
         const announcer = definePlugin({
             id: 'announcer',
             hotkeys: {
-                'Mod-Shift-a': (api) => {
-                    api.announce('Saved');
+                'Mod-Shift-a': {
+                    label: 'Save',
+                    run: (api) => {
+                        api.announce('Saved');
+                    },
                 },
             },
         });
@@ -782,9 +785,12 @@ describe('the editable element', () => {
             const first = definePlugin({
                 id: 'two-announcers',
                 hotkeys: {
-                    'Mod-Shift-a': (api) => {
-                        api.announce('First');
-                        api.announce('Second');
+                    'Mod-Shift-a': {
+                        label: 'Announce twice',
+                        run: (api) => {
+                            api.announce('First');
+                            api.announce('Second');
+                        },
                     },
                 },
             });
@@ -806,8 +812,11 @@ describe('the editable element', () => {
             const varying = definePlugin({
                 id: 'varying-announcer',
                 hotkeys: {
-                    'Mod-Shift-a': (api) => {
-                        api.announce(messages.shift() ?? '');
+                    'Mod-Shift-a': {
+                        label: 'Announce next',
+                        run: (api) => {
+                            api.announce(messages.shift() ?? '');
+                        },
                     },
                 },
             });

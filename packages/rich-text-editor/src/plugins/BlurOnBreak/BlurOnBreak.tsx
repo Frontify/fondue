@@ -2,8 +2,9 @@
 
 import { definePlugin, type EditorControlApi } from '#/core';
 
-/** What the plugin says to screen readers: the hint read with the editor, and why an empty required editor refuses Enter. */
+/** The name of Enter in the keyboard reference, and what the plugin says to screen readers: the hint read with the editor, and why an empty required editor refuses Enter. */
 const BLUR_ON_BREAK_STRINGS = Object.freeze({
+    submitTitle: 'Submit, outside a list',
     description: 'Press Enter to submit.',
     required: 'Type something before submitting.',
 });
@@ -67,10 +68,13 @@ export const blurOnBreakPlugin = ({ onBreak, required = false }: BlurOnBreakPlug
         id: 'blur-on-break',
         description,
         hotkeys: {
-            // Enter is always this plugin's: it splits an item, refuses, or submits.
-            Enter: (api) => {
-                breakLine({ api, onBreak, required });
-                return true;
+            Enter: {
+                label: BLUR_ON_BREAK_STRINGS.submitTitle,
+                // Enter is always this plugin's: it splits an item, refuses, or submits.
+                run: (api) => {
+                    breakLine({ api, onBreak, required });
+                    return true;
+                },
             },
         },
     });

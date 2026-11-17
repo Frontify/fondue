@@ -503,7 +503,7 @@ describe('typographyPlugin', () => {
             const tag = { type: 'tag', name: 'Noah' };
             const mention = definePlugin({
                 id: 'mention',
-                hotkeys: { '@': (api) => api.insertText('[mention]') },
+                hotkeys: { '@': { label: 'Mention', run: (api) => api.insertText('[mention]') } },
             });
             const quoting = editorWith(
                 [tagPlugin, typographyPlugin({ groups: ['quotes'] })],
