@@ -46,13 +46,8 @@ export type LinkLook = Omit<TextLook, 'textDecoration' | 'marginTop' | 'marginBo
 /** The look of each kind of text, by name: the 9 text styles, body text, block quotes and links. */
 export type TextStylePresets = Partial<Record<TextStyleName | 'body' | 'quote', TextLook>> & { link?: LinkLook };
 
-export type TextStylePluginOptions = {
-    /**
-     * The styles the dropdown offers, in order, and what pasted HTML may become.
-     * Include `'paragraph'` for the option that clears a style.
-     * @default ALL_TEXT_STYLES
-     */
-    styles?: readonly TextStyleOption[];
+/** How the text-style content looks; what a renderer needs to draw a document the way the editor does. */
+export type TextStyleContentOptions = {
     /**
      * How each kind of text looks, by name: a text style, `body` for plain paragraphs, `quote` and `link`.
      * A kind left out, and a field left out of one, keeps Fondue's look.
@@ -60,6 +55,15 @@ export type TextStylePluginOptions = {
      * field, so a mistake in the host's configuration never passes silently.
      */
     presets?: TextStylePresets;
+};
+
+export type TextStylePluginOptions = TextStyleContentOptions & {
+    /**
+     * The styles the dropdown offers, in order, and what pasted HTML may become.
+     * Include `'paragraph'` for the option that clears a style.
+     * @default ALL_TEXT_STYLES
+     */
+    styles?: readonly TextStyleOption[];
 };
 
 // Headings are bold by default, so a bold the pasted heading declares on itself is not the author's. Bold on text inside it is.
@@ -115,8 +119,22 @@ const textStyleContentFor = (options: readonly TextStyleOption[], presets: TextS
     });
 };
 
-/** The text block carrying a style, accepting every style */
-export const textStyleContent = textStyleContentFor(ALL_TEXT_STYLES);
+// Shared so the default plugin, `defaultContent` and every call without presets hand out the very same content.
+const DEFAULT_TEXT_STYLE_CONTENT = textStyleContentFor(ALL_TEXT_STYLES);
+
+/**
+ * The text block carrying a style, and the look of each kind of text. Renders every style, whatever the editor
+ * offers. Pass the same `presets` as `textStylePlugin`, so a renderer given only content draws the host's looks.
+ *
+ * @example
+ * <RichTextRenderer plugins={[textStyleContent({ presets }), boldContent]} value={doc} />
+ */
+export const textStyleContent = ({ presets }: TextStyleContentOptions = {}): RteContent => {
+    if (presets === undefined) {
+        return DEFAULT_TEXT_STYLE_CONTENT;
+    }
+    return textStyleContentFor(ALL_TEXT_STYLES, presets);
+};
 
 const HEADING_LEVEL: Partial<Record<string, number>> = { h1: 1, h2: 2, h3: 3, h4: 4 };
 
@@ -183,9 +201,9 @@ export const textStylePlugin = ({
         });
     }
 
-    // The shared object, so the default plugin and `defaultContent` declare the very same block definition.
-    let content = textStyleContent;
-    if (options !== ALL_TEXT_STYLES || presets !== undefined) {
+    // Offering every style is exactly `textStyleContent`, so the default plugin and `defaultContent` share one object.
+    let content = textStyleContent({ presets });
+    if (options !== ALL_TEXT_STYLES) {
         content = textStyleContentFor(options, presets);
     }
 

@@ -60,9 +60,10 @@ export const fontColorContent = defineContent({
 /**
  * Text colour, picked from a flyout in the toolbar
  */
-export const fontColorPlugin = /* @__PURE__ */ definePlugin({
-    id: 'font-color',
-    content: fontColorContent,
-    toolbarGroup: 'color',
-    toolbar: [{ label: 'RichTextEditor_textColor', render: ColorFlyout }],
-});
+export const fontColorPlugin = () =>
+    definePlugin({
+        id: 'font-color',
+        content: fontColorContent,
+        toolbarGroup: 'color',
+        toolbar: [{ label: 'RichTextEditor_textColor', render: ColorFlyout }],
+    });

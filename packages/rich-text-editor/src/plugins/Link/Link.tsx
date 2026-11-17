@@ -103,33 +103,34 @@ const HOTKEY: keyof typeof hotkeys = 'Mod-k';
  * Links, made with a toolbar button or `Mod-k` and edited in a flyout while the caret is inside.
  * A web address followed by a space becomes a link, and pasting one over selected text links that text.
  */
-export const linkPlugin = /* @__PURE__ */ definePlugin({
-    content: linkContent,
-    toolbarGroup: 'link',
-    toolbar: [{ label: 'RichTextEditor_link', shortcut: HOTKEY, render: LinkToolbarButton }],
-    edit: { link: LinkEditor },
-    hotkeys,
-    // A web address typed and followed by a space becomes a link. The pattern
-    // names only web schemes, so what it matches is always a safe href.
-    inputRules: [{ kind: 'markPattern', pattern: WEB_ADDRESS, mark: 'link', value: (href) => ({ href }) }],
-    // A web or mail address pasted over selected text links that text, as
-    // in most editors; anything else pastes as usual.
-    onPaste: ({ text }, api) => {
-        const typed = text.trim();
-        const { isCollapsed, marks } = api.selection.get();
-        let href: string | null = null;
-        if (isLinkablePaste(typed)) {
-            href = toHref(typed);
-        }
-        if (isCollapsed || href === null || !isSafeHref(href)) {
-            return false;
-        }
-        // A toggle over text that is all linked already would take the link
-        // off, so it goes first and the new target is set after.
-        if ('link' in marks) {
-            api.marks.toggle('link');
-        }
-        api.marks.toggle('link', { href });
-        return true;
-    },
-});
+export const linkPlugin = () =>
+    definePlugin({
+        content: linkContent,
+        toolbarGroup: 'link',
+        toolbar: [{ label: 'RichTextEditor_link', shortcut: HOTKEY, render: LinkToolbarButton }],
+        edit: { link: LinkEditor },
+        hotkeys,
+        // A web address typed and followed by a space becomes a link. The pattern
+        // names only web schemes, so what it matches is always a safe href.
+        inputRules: [{ kind: 'markPattern', pattern: WEB_ADDRESS, mark: 'link', value: (href) => ({ href }) }],
+        // A web or mail address pasted over selected text links that text, as
+        // in most editors; anything else pastes as usual.
+        onPaste: ({ text }, api) => {
+            const typed = text.trim();
+            const { isCollapsed, marks } = api.selection.get();
+            let href: string | null = null;
+            if (isLinkablePaste(typed)) {
+                href = toHref(typed);
+            }
+            if (isCollapsed || href === null || !isSafeHref(href)) {
+                return false;
+            }
+            // A toggle over text that is all linked already would take the link
+            // off, so it goes first and the new target is set after.
+            if ('link' in marks) {
+                api.marks.toggle('link');
+            }
+            api.marks.toggle('link', { href });
+            return true;
+        },
+    });

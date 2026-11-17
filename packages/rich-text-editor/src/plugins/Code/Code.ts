@@ -35,9 +35,10 @@ export const codeContent = defineContent({
 /**
  * Inline code with the `Mod-e` shortcut, and `` `text` `` while typing
  */
-export const codePlugin = /* @__PURE__ */ definePlugin({
-    content: codeContent,
-    toolbarGroup: 'marks',
-    toolbar: [{ label: 'RichTextEditor_code', icon: IconCode, shortcut: 'Mod-e' }],
-    inputRules: [{ delimiter: '`' }],
-});
+export const codePlugin = () =>
+    definePlugin({
+        content: codeContent,
+        toolbarGroup: 'marks',
+        toolbar: [{ label: 'RichTextEditor_code', icon: IconCode, shortcut: 'Mod-e' }],
+        inputRules: [{ delimiter: '`' }],
+    });

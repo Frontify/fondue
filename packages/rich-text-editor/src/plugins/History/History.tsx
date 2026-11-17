@@ -32,11 +32,12 @@ const RedoButton = ({ api, selection, label }: ToolbarItemProps) => (
  * Undo and redo buttons, each off while there is nothing to take back or make
  * again. No hotkeys of its own: the editor binds Mod-z and Mod-Shift-z.
  */
-export const historyPlugin = /* @__PURE__ */ definePlugin({
-    id: 'history',
-    toolbarGroup: 'history',
-    toolbar: [
-        { label: 'RichTextEditor_undo', render: UndoButton, floating: 'hidden' },
-        { label: 'RichTextEditor_redo', render: RedoButton, floating: 'hidden' },
-    ],
-});
+export const historyPlugin = () =>
+    definePlugin({
+        id: 'history',
+        toolbarGroup: 'history',
+        toolbar: [
+            { label: 'RichTextEditor_undo', render: UndoButton, floating: 'hidden' },
+            { label: 'RichTextEditor_redo', render: RedoButton, floating: 'hidden' },
+        ],
+    });

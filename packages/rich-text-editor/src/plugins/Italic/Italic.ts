@@ -37,10 +37,11 @@ export const italicContent = defineContent({
 /**
  * Italic text with the `Mod-i` shortcut, and `*text*` or `_text_` while typing
  */
-export const italicPlugin = /* @__PURE__ */ definePlugin({
-    content: italicContent,
-    toolbarGroup: 'marks',
-    toolbar: [{ label: 'RichTextEditor_italic', icon: IconTextFormatItalic, shortcut: 'Mod-i' }],
-    // `_text_` is emphasis in markdown, as `*text*` is.
-    inputRules: [{ delimiter: '*' }, { delimiter: '_' }],
-});
+export const italicPlugin = () =>
+    definePlugin({
+        content: italicContent,
+        toolbarGroup: 'marks',
+        toolbar: [{ label: 'RichTextEditor_italic', icon: IconTextFormatItalic, shortcut: 'Mod-i' }],
+        // `_text_` is emphasis in markdown, as `*text*` is.
+        inputRules: [{ delimiter: '*' }, { delimiter: '_' }],
+    });

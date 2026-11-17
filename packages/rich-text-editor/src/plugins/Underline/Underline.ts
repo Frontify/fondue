@@ -32,8 +32,9 @@ export const underlineContent = defineContent({
 /**
  * Underlined text with the `Mod-u` shortcut
  */
-export const underlinePlugin = /* @__PURE__ */ definePlugin({
-    content: underlineContent,
-    toolbarGroup: 'marks',
-    toolbar: [{ label: 'RichTextEditor_underline', icon: IconTextFormatUnderline, shortcut: 'Mod-u' }],
-});
+export const underlinePlugin = () =>
+    definePlugin({
+        content: underlineContent,
+        toolbarGroup: 'marks',
+        toolbar: [{ label: 'RichTextEditor_underline', icon: IconTextFormatUnderline, shortcut: 'Mod-u' }],
+    });

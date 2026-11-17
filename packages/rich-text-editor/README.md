@@ -20,6 +20,13 @@ The renderer needs no editing code, so it reads only each feature's content, not
 With no `plugins` it uses `defaultContent`. Pass your own content, or your plugins, when the
 document holds more than the defaults.
 
+A host that sets its own text looks passes the same `presets` to both sides:
+
+```tsx
+<RichTextEditor plugins={[textStylePlugin({ presets }), boldPlugin]} value={doc} onChange={setDoc} />
+<RichTextRenderer plugins={[textStyleContent({ presets }), boldContent]} value={doc} />
+```
+
 ## Language
 
 The editor and its shipped plugins speak the 11 languages of `@frontify/fondue-components`.
@@ -38,27 +45,27 @@ import { deCH } from '@frontify/fondue-rich-text-editor/locales/de-CH';
 A feature has two parts. Its content (`defineContent`) says what exists: blocks, marks and
 inlines, and how each one is written as HTML and read back. Its plugin (`definePlugin`) adds
 the editing on top: toolbar buttons, editing views, keys and typing rules. Export both from one
-file and mark the `definePlugin` call `/* @__PURE__ */`. A page that only shows documents then
-keeps the content and its bundler drops the plugin with its editing code. The content needs no
-mark: whoever imports the file uses it. A computed key or any other
-side effect in a `definePlugin` argument stops the bundler from dropping it. The package's own
-plugins are checked by a spec that fails when editing UI lands in the renderer bundle.
+file, the plugin as a function that returns `definePlugin(...)`. A page that only shows documents
+then keeps the content and its bundler drops the plugin with its editing code, since nothing calls
+it. Every plugin is called, `boldPlugin()`, and takes its options there when it has any, like
+`mentionPlugin({ items })`. The package's own plugins are checked by a spec that fails when
+editing UI lands in the renderer bundle.
 
 ```tsx
 export const highlightContent = defineContent({
     marks: { highlight: defineMark({ tag: 'mark' }) },
 });
 
-export const highlightPlugin = /* @__PURE__ */ definePlugin({
-    content: highlightContent,
-    toolbar: [{ label: 'Highlight', icon: IconHighlight, shortcut: 'Mod-h' }],
-});
+export const highlightPlugin = () =>
+    definePlugin({
+        content: highlightContent,
+        toolbar: [{ label: 'Highlight', icon: IconHighlight, shortcut: 'Mod-h' }],
+    });
 
-<RichTextEditor plugins={[...defaultPlugins, highlightPlugin]} />
+<RichTextEditor plugins={[...defaultPlugins, highlightPlugin()]} />
 <RichTextRenderer plugins={[...defaultContent, highlightContent]} value={doc} />
 ```
 
-A plugin with options is a function that returns `definePlugin(...)`, like `mentionPlugin({ items })`.
 Your plugin's `label` and any other text it shows is your own, already in the host's language.
 
 `@frontify/fondue-components`, `@frontify/fondue-icons` and `@frontify/fondue-tokens` are peer dependencies:

@@ -172,27 +172,29 @@ const listPlugin = ({ id, content, type, icon, label, keywords, markdown, shortc
 /**
  * A bulleted list with the `Mod-Shift-8` shortcut, and `- ` or `* ` while typing
  */
-export const bulletListPlugin = /* @__PURE__ */ listPlugin({
-    id: 'bullet-list',
-    content: bulletListContent,
-    type: 'bulletList',
-    icon: IconListBullet,
-    label: 'RichTextEditor_bulletedList',
-    keywords: ['ul', 'unordered', 'bullets'],
-    markdown: ['- ', '* '],
-    shortcut: 'Mod-Shift-8',
-});
+export const bulletListPlugin = () =>
+    listPlugin({
+        id: 'bullet-list',
+        content: bulletListContent,
+        type: 'bulletList',
+        icon: IconListBullet,
+        label: 'RichTextEditor_bulletedList',
+        keywords: ['ul', 'unordered', 'bullets'],
+        markdown: ['- ', '* '],
+        shortcut: 'Mod-Shift-8',
+    });
 
 /**
  * A numbered list with the `Mod-Shift-7` shortcut, and `1. ` or `1) ` while typing
  */
-export const numberedListPlugin = /* @__PURE__ */ listPlugin({
-    id: 'numbered-list',
-    content: numberedListContent,
-    type: 'numberedList',
-    icon: IconListNumbers,
-    label: 'RichTextEditor_numberedList',
-    keywords: ['ol', 'ordered', 'numbers'],
-    markdown: ['1. ', '1) '],
-    shortcut: 'Mod-Shift-7',
-});
+export const numberedListPlugin = () =>
+    listPlugin({
+        id: 'numbered-list',
+        content: numberedListContent,
+        type: 'numberedList',
+        icon: IconListNumbers,
+        label: 'RichTextEditor_numberedList',
+        keywords: ['ol', 'ordered', 'numbers'],
+        markdown: ['1. ', '1) '],
+        shortcut: 'Mod-Shift-7',
+    });

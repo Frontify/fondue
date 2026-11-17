@@ -32,9 +32,12 @@ export const strikethroughContent = defineContent({
 /**
  * Struck-through text with the `Mod-Shift-x` shortcut, and `~~text~~` while typing
  */
-export const strikethroughPlugin = /* @__PURE__ */ definePlugin({
-    content: strikethroughContent,
-    toolbarGroup: 'marks',
-    toolbar: [{ label: 'RichTextEditor_strikethrough', icon: IconTextFormatStrikethrough, shortcut: 'Mod-Shift-x' }],
-    inputRules: [{ delimiter: '~~' }],
-});
+export const strikethroughPlugin = () =>
+    definePlugin({
+        content: strikethroughContent,
+        toolbarGroup: 'marks',
+        toolbar: [
+            { label: 'RichTextEditor_strikethrough', icon: IconTextFormatStrikethrough, shortcut: 'Mod-Shift-x' },
+        ],
+        inputRules: [{ delimiter: '~~' }],
+    });

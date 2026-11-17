@@ -176,26 +176,27 @@ const EditCheckItem = ({ value, setValue, children }: EditCheckItemProps): React
 /**
  * A to-do list with a toolbar button and `/` entry, and `[] ` while typing starts one
  */
-export const checkListPlugin = /* @__PURE__ */ definePlugin({
-    id: 'check-list',
-    content: checkListContent,
-    toolbarGroup: 'lists',
-    toolbar: [
-        {
-            toggles: 'checkList',
-            label: 'RichTextEditor_todoList',
-            icon: IconListCheck,
-            menu: { keywords: ['todo', 'task', 'checkbox', 'checklist'] },
-        },
-    ],
-    // Only what is inside: the item keeps the `<li>` from `toHtml`.
-    edit: { checkItem: EditCheckItem },
-    // `[] ` and `[ ] ` both start one, the two ways a to-do is written in markdown; `[x] ` starts it done, `[~] ` in progress.
-    inputRules: [
-        { kind: 'list', match: '[] ', list: 'checkList' },
-        { kind: 'list', match: '[ ] ', list: 'checkList' },
-        { kind: 'list', match: '[x] ', list: 'checkList', itemAttributes: { checked: true } },
-        { kind: 'list', match: '[X] ', list: 'checkList', itemAttributes: { checked: true } },
-        { kind: 'list', match: '[~] ', list: 'checkList', itemAttributes: { checked: IN_PROGRESS } },
-    ],
-});
+export const checkListPlugin = () =>
+    definePlugin({
+        id: 'check-list',
+        content: checkListContent,
+        toolbarGroup: 'lists',
+        toolbar: [
+            {
+                toggles: 'checkList',
+                label: 'RichTextEditor_todoList',
+                icon: IconListCheck,
+                menu: { keywords: ['todo', 'task', 'checkbox', 'checklist'] },
+            },
+        ],
+        // Only what is inside: the item keeps the `<li>` from `toHtml`.
+        edit: { checkItem: EditCheckItem },
+        // `[] ` and `[ ] ` both start one, the two ways a to-do is written in markdown; `[x] ` starts it done, `[~] ` in progress.
+        inputRules: [
+            { kind: 'list', match: '[] ', list: 'checkList' },
+            { kind: 'list', match: '[ ] ', list: 'checkList' },
+            { kind: 'list', match: '[x] ', list: 'checkList', itemAttributes: { checked: true } },
+            { kind: 'list', match: '[X] ', list: 'checkList', itemAttributes: { checked: true } },
+            { kind: 'list', match: '[~] ', list: 'checkList', itemAttributes: { checked: IN_PROGRESS } },
+        ],
+    });
