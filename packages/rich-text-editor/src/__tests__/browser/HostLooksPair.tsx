@@ -36,7 +36,7 @@ const pluginsWithLooks = ({ body, quote, link }: HostLooksPairProps): RtePlugin[
     checkListPlugin,
     fontColorPlugin,
     quotePlugin,
-    linkPlugin,
+    linkPlugin(),
 ];
 
 /** The renderer and the editor side by side, drawing body text, a quote and links with the same looks. */

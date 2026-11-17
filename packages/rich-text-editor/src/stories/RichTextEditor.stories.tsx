@@ -909,7 +909,7 @@ const HOST_STYLING_PLUGINS = [
     bulletListPlugin,
     checkListPlugin,
     quotePlugin,
-    linkPlugin,
+    linkPlugin(),
 ];
 
 const HOST_STYLING_DOCUMENT: RteDocument = {
@@ -1037,7 +1037,7 @@ const presetsPluginsFor = (presets: TextStylePresets): PresetsPluginsResult => {
     try {
         return {
             status: 'ready',
-            plugins: [textStylePlugin({ presets }), bulletListPlugin, checkListPlugin, quotePlugin, linkPlugin],
+            plugins: [textStylePlugin({ presets }), bulletListPlugin, checkListPlugin, quotePlugin, linkPlugin()],
         };
     } catch (error) {
         if (error instanceof Error) {
