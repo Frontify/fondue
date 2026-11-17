@@ -9,10 +9,10 @@ import dts from 'vite-plugin-dts';
 const localesDir = resolve(__dirname, 'src/locales');
 const SOURCE_EXTENSION = '.ts';
 /** The files beside the locales that are no locale of their own. */
-const NOT_A_LOCALE = ['index.ts', 'types.ts'];
+const NOT_A_LOCALE: ReadonlySet<string> = new Set(['index.ts', 'types.ts']);
 const localeEntries = Object.fromEntries(
     readdirSync(localesDir)
-        .filter((file) => file.endsWith(SOURCE_EXTENSION) && !NOT_A_LOCALE.includes(file))
+        .filter((file) => file.endsWith(SOURCE_EXTENSION) && !NOT_A_LOCALE.has(file))
         .map((file) => [basename(file, SOURCE_EXTENSION), resolve(localesDir, file)]),
 );
 

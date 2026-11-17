@@ -174,11 +174,7 @@ export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProp
                     <span id={titleId}>{label}</span>
                 </Flyout.Header>
                 <Flyout.Body>
-                    <div
-                        className={styles.presets}
-                        role="group"
-                        aria-label={translate('RichTextEditor_suggestedColors')}
-                    >
+                    <fieldset className={styles.presets} aria-label={translate('RichTextEditor_suggestedColors')}>
                         {PRESETS.map(({ name, color }) => (
                             <button
                                 key={color}
@@ -190,7 +186,7 @@ export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProp
                                 onClick={() => apply(decodeStoredColor(color))}
                             />
                         ))}
-                    </div>
+                    </fieldset>
                     {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions */}
                     <div
                         ref={pickerRef}
