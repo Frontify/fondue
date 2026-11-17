@@ -12,8 +12,33 @@ import { keepUnreadStructureApart } from './unreadStructure';
  * Elements a `<br>` may end without ending a block: prosemirror-view's own
  * `inlineParents`, which it does not export and applies to every paste.
  */
-const INLINE_PARENTS =
-    /^(a|abbr|acronym|b|cite|code|del|em|i|ins|kbd|label|output|q|ruby|s|samp|span|strong|sub|sup|time|u|tt|var)$/i;
+const INLINE_PARENTS = new Set([
+    'a',
+    'abbr',
+    'acronym',
+    'b',
+    'cite',
+    'code',
+    'del',
+    'em',
+    'i',
+    'ins',
+    'kbd',
+    'label',
+    'output',
+    'q',
+    'ruby',
+    's',
+    'samp',
+    'span',
+    'strong',
+    'sub',
+    'sup',
+    'time',
+    'u',
+    'tt',
+    'var',
+]);
 
 /**
  * The last `<br>` of a block draws nothing in HTML, so the export writes an
@@ -23,7 +48,7 @@ const INLINE_PARENTS =
 const dropBlockEndBreaks = (root: HTMLElement): void => {
     for (const lineBreak of root.querySelectorAll('br')) {
         const parent = lineBreak.parentNode;
-        if (lineBreak.nextSibling === null && parent !== null && !INLINE_PARENTS.test(parent.nodeName)) {
+        if (lineBreak.nextSibling === null && parent !== null && !INLINE_PARENTS.has(parent.nodeName.toLowerCase())) {
             lineBreak.remove();
         }
     }

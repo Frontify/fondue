@@ -36,6 +36,6 @@ export const keepUnreadStructureApart = (dom: HTMLElement): void => {
         table.replaceWith(...rows);
     }
     for (const pre of dom.querySelectorAll('pre')) {
-        pre.replaceWith(...(pre.textContent ?? '').split(LINE_BREAK).map(lineBlock));
+        pre.replaceWith(...pre.textContent.split(LINE_BREAK).map(lineBlock));
     }
 };

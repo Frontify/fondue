@@ -16,6 +16,9 @@ export type ParseHtmlOptions = {
     document?: Document;
 };
 
+/** The plugins are given: the package root fills in their default. */
+type ParseHtmlParams = ParseHtmlOptions & { plugins: readonly (RtePlugin | RteContent)[] };
+
 const NO_DOCUMENT = 'parseHtml needs a `document` option where there is no browser, for example one from happy-dom.';
 
 const pageDocument = (): Document => {
@@ -26,7 +29,7 @@ const pageDocument = (): Document => {
 };
 
 /** HTML as a document, read by the rules the editor reads a paste with. */
-export const parseHtml = (html: string, { plugins = [], document }: ParseHtmlOptions = {}): RteDocumentOf => {
+export const parseHtml = (html: string, { plugins, document }: ParseHtmlParams): RteDocumentOf => {
     const registry = buildPluginRegistry(plugins);
     return parseHtmlDocument({ html, registry, document: document ?? pageDocument() });
 };

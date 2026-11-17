@@ -76,6 +76,12 @@ const noEngineFromShell = (up: string) => ({
     message: 'Only useEditorHandle and parseHtml wire an adapter in. Everything else uses the editor port.',
 });
 
+/** A shell file that wires the engine in reaches it through its barrel only; `up` as for `noEngineFromShell`. */
+const engineBarrelOnly = (up: string) => ({
+    group: [...noEngineFromShell(up).group, '!#/editor/engines/prosemirror'],
+    message: 'Wire the engine in through #/editor/engines/prosemirror, never a file inside it.',
+});
+
 const SHELL_OUTER_LAYERS = {
     group: ['#/plugins', '#/plugins/**', '#/index', '#/documentFormat'],
     message: 'The editor shell may import core, the renderer, the port, and the shared UI (#/ui).',
@@ -337,6 +343,7 @@ export default defineConfig({
                         patterns: [
                             NO_SERVER_RENDER,
                             NO_ENGINE,
+                            engineBarrelOnly('.'),
                             SHELL_OUTER_LAYERS,
                             noRelativeEscape('..', SHELL_ESCAPE_MESSAGE),
                         ],

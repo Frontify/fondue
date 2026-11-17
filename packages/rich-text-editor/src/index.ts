@@ -102,6 +102,8 @@ export const serializeToHtml = <TBlock extends RteBlockNode = RteBlock>(
  * `defaultContent` when given no `plugins`, and the page's `document` when
  * given none; without a browser, pass one from a DOM library. The blocks are
  * whatever the plugins read, so the document's block type is the open one.
+ * Plugin `onPaste` handlers do not run: they act on a live editor's selection,
+ * and there is none here.
  *
  * @example
  * const value = parseHtml(storedHtml, { plugins: [...defaultContent, mentionContent()] });
