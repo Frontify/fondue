@@ -5,9 +5,11 @@ import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState 
 import { createPortal } from 'react-dom';
 
 import { isCompositionKey } from '../../shared/helpers/keys';
+import { storedKind } from '../helpers/display';
 import { isSafeImageSrc } from '../helpers/image';
 import { MENTION_STRINGS } from '../helpers/strings';
-import { type PeopleOutcome, usePeople } from '../hooks/usePeople';
+import { withoutControlCharacters } from '../helpers/text';
+import { type PeopleLookup, type PeopleOutcome, usePeople } from '../hooks/usePeople';
 import styles from '../mention.module.scss';
 import { type MentionItem, type MentionItems } from '../types';
 
@@ -23,7 +25,9 @@ const avatarPicture = (person: MentionItem): ReactNode => {
     if (isSafeImageSrc(person.image)) {
         return <img src={person.image} alt="" />;
     }
-    switch (person.kind) {
+    // The app's list is read at runtime, so a kind this version does not know shows as a person.
+    const kind = storedKind(person.kind);
+    switch (kind) {
         case undefined:
         case 'user':
             return <IconPerson size={AVATAR_ICON_SIZE} />;
@@ -33,7 +37,7 @@ const avatarPicture = (person: MentionItem): ReactNode => {
             return <IconTarget size={AVATAR_ICON_SIZE} />;
         default:
             // Adding a kind fails to compile here until it is handled.
-            throw new Error(`Unhandled mention kind: ${JSON.stringify(person.kind satisfies never)}`);
+            throw new Error(`Unhandled mention kind: ${JSON.stringify(kind satisfies never)}`);
     }
 };
 
@@ -52,7 +56,7 @@ const Avatar = ({ person }: AvatarProps): ReactNode => (
 /** `waiting` is a lookup inside the searching delay, or a newer one after an empty or failed answer: nothing is shown or announced yet. */
 type PeoplePhase = 'waiting' | 'searching' | 'failed' | 'empty' | 'list';
 
-type PhaseOfParams = { outcome: PeopleOutcome | null; pending: boolean; slow: boolean };
+type PhaseOfParams = { outcome: PeopleOutcome | null; lookup: PeopleLookup; slow: boolean };
 
 const peopleOf = (outcome: PeopleOutcome | null): readonly MentionItem[] => {
     if (outcome === null) {
@@ -69,7 +73,7 @@ const peopleOf = (outcome: PeopleOutcome | null): readonly MentionItem[] => {
     }
 };
 
-const phaseOf = ({ outcome, pending, slow }: PhaseOfParams): PeoplePhase => {
+const phaseOf = ({ outcome, lookup, slow }: PhaseOfParams): PeoplePhase => {
     if (peopleOf(outcome).length > 0) {
         return 'list';
     }
@@ -82,16 +86,23 @@ const phaseOf = ({ outcome, pending, slow }: PhaseOfParams): PeoplePhase => {
     switch (outcome.status) {
         case 'found':
             // An earlier empty answer is not this query's: a space must not end the mention before it arrives.
-            if (pending) {
+            if (lookup !== 'settled') {
                 return 'waiting';
             }
             return 'empty';
         case 'failed':
-            // Cleared while asking again, so a second failure is announced again.
-            if (pending) {
-                return 'waiting';
+            switch (lookup) {
+                case 'settled':
+                    return 'failed';
+                case 'asking':
+                    return 'waiting';
+                // Asked for, so it shows at once; cleared, so a second failure is announced again.
+                case 'retrying':
+                    return 'searching';
+                default:
+                    // Adding a lookup state fails to compile here until it is handled.
+                    throw new Error(`Unhandled people lookup: ${JSON.stringify(lookup satisfies never)}`);
             }
-            return 'failed';
         default:
             // Adding an outcome fails to compile here until it is handled.
             throw new Error(`Unhandled people outcome: ${JSON.stringify(outcome satisfies never)}`);
@@ -250,10 +261,12 @@ const MentionPopupBody = ({
                             }
                         >
                             <Avatar person={person} />
-                            <span>{person.name}</span>
+                            <bdi>{withoutControlCharacters(person.name)}</bdi>
                             <span className={styles.hint}>
-                                {trigger}
-                                {person.username}
+                                <bdi>
+                                    {trigger}
+                                    {withoutControlCharacters(person.username)}
+                                </bdi>
                             </span>
                         </li>
                     ))}
@@ -342,10 +355,10 @@ export const MentionDraft = ({
         leave();
     };
     const [query, setQuery] = useState('');
-    const { outcome, pending, retry } = usePeople(items, query);
-    const slow = useSlowLookup(pending, query);
+    const { outcome, lookup, retry } = usePeople(items, query);
+    const slow = useSlowLookup(lookup !== 'settled', query);
     const people = peopleOf(outcome);
-    const phase = phaseOf({ outcome, pending, slow });
+    const phase = phaseOf({ outcome, lookup, slow });
     const open = isOpen(phase, query);
     const position = useListPosition(draftRef, open);
     const listboxShown = open && position !== null && (phase === 'list' || phase === 'failed');
