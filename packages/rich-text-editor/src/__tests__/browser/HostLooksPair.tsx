@@ -39,7 +39,7 @@ const pluginsWithLooks = ({ body, quote, link, buttons }: HostLooksPairProps): R
     checkListPlugin,
     fontColorPlugin,
     quotePlugin,
-    linkPlugin({ look: link, looks: buttons }),
+    linkPlugin({ look: link, buttonLooks: buttons }),
 ];
 
 /** The renderer and the editor side by side, drawing body text, a quote and links with the same looks. */

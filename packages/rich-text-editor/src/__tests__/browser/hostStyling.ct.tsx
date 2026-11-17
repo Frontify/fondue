@@ -508,7 +508,7 @@ test.describe('host styling of body text, quotes and links', () => {
     });
 });
 
-// A stored button link takes its look from `linkPlugin({ looks })`; rendering needs no offered appearances.
+// A stored button link takes its look from `linkPlugin({ buttonLooks })`; rendering needs no offered appearances.
 
 const HOST_BUTTON_LOOK: ButtonLook = {
     fontWeight: '700',

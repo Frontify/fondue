@@ -66,7 +66,7 @@ export type LinkPluginOptions = {
      * wrapper overrides keep working. A field left out keeps Fondue's look. A value that is empty or can end its CSS
      * declaration early throws an error that names the appearance and the field.
      */
-    looks?: Partial<Record<LinkAppearance, ButtonLook>>;
+    buttonLooks?: Partial<Record<LinkAppearance, ButtonLook>>;
 };
 
 /** The name `link.module.scss` reads the look's custom properties by. */
@@ -172,17 +172,17 @@ const LINK_MARKS = linkMarksFor(NO_APPEARANCES);
  */
 export const linkContent = defineContent({ marks: LINK_MARKS });
 
-type LinkContentWithOptions = Pick<LinkPluginOptions, 'look' | 'looks'> & {
+type LinkContentWithOptions = Pick<LinkPluginOptions, 'look' | 'buttonLooks'> & {
     marks: Record<string, MarkDefinition>;
 };
 
 /** The link content with the host's looks, on the marks the plugin chose for the appearances it offers. */
-const linkContentWith = ({ marks, look = {}, looks = {} }: LinkContentWithOptions): RteContent =>
+const linkContentWith = ({ marks, look = {}, buttonLooks = {} }: LinkContentWithOptions): RteContent =>
     defineContent({
         marks,
         contentProperties: {
             ...lookProperties(LINK_LOOK_NAME, look, LOOK_PROPERTIES),
-            ...buttonLookProperties(looks),
+            ...buttonLookProperties(buttonLooks),
         },
     });
 
@@ -210,21 +210,21 @@ const HOTKEY: keyof typeof hotkeys = 'Mod-k';
  * Links, made with a toolbar button or `Mod-k` and edited in a flyout while the caret is inside.
  * A web, mail or phone address followed by a space becomes a link, and pasting one links the
  * selected text, or goes in linked at a caret outside a link. `search` offers the app's own
- * pages as targets, and `look` sets how links look. `appearances` offers button looks for a link, and `looks`
- * sets how each of them looks.
+ * pages as targets, and `look` sets how links look. `appearances` offers button looks for a link, and
+ * `buttonLooks` sets how each of them looks.
  *
  * @example
  * const links = linkPlugin({ search, look: { color: 'var(--f-theme-settings-link-color)' }, appearances: ['primary'] });
  */
-export const linkPlugin = ({ search, look, appearances = NO_APPEARANCES, looks }: LinkPluginOptions = {}) => {
+export const linkPlugin = ({ search, look, appearances = NO_APPEARANCES, buttonLooks }: LinkPluginOptions = {}) => {
     // Offered appearances change what paste keeps, so they need a mark of their own; looks alone share the default one.
     let marks = LINK_MARKS;
     if (appearances.length > 0) {
         marks = linkMarksFor(appearances);
     }
     let content = linkContent;
-    if (marks !== LINK_MARKS || look !== undefined || looks !== undefined) {
-        content = linkContentWith({ marks, look, looks });
+    if (marks !== LINK_MARKS || look !== undefined || buttonLooks !== undefined) {
+        content = linkContentWith({ marks, look, buttonLooks });
     }
 
     return definePlugin({

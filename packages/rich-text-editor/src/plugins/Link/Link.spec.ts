@@ -161,7 +161,7 @@ describe('the link plugin button looks', () => {
     it('sets a custom property for each field of a look, and of its hover look', () => {
         const plugin = linkPlugin({
             appearances: ['primary'],
-            looks: {
+            buttonLooks: {
                 primary: {
                     color: 'var(--f-theme-settings-button-primary-color)',
                     paddingTop: '4px',
@@ -177,15 +177,15 @@ describe('the link plugin button looks', () => {
         });
     });
 
-    it('shares the default content when there are no appearances and no looks', () => {
+    it('shares the default content when there are no appearances and no button looks', () => {
         expect(linkPlugin().content).toBe(linkPlugin({ appearances: [] }).content);
     });
 
     it('refuses a value that could break out of its declaration, naming the appearance and the field', () => {
-        expect(() => linkPlugin({ looks: { secondary: { borderColor: 'red; display: none' } } })).toThrow(
+        expect(() => linkPlugin({ buttonLooks: { secondary: { borderColor: 'red; display: none' } } })).toThrow(
             /"borderColor".*"button-secondary"/,
         );
-        expect(() => linkPlugin({ looks: { tertiary: { hover: { color: '' } } } })).toThrow(
+        expect(() => linkPlugin({ buttonLooks: { tertiary: { hover: { color: '' } } } })).toThrow(
             /"color".*"button-tertiary-hover"/,
         );
     });
