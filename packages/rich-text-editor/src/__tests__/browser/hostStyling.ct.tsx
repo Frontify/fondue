@@ -586,16 +586,19 @@ const BULLET_MARKER: ComputedMarkerLook = {
 };
 const NUMBER_MARKER: ComputedMarkerLook = { ...BULLET_MARKER, marker: 'decimal', indent: '28px' };
 
+// The three levels repeat from the fourth on.
 const FONDUE_BULLET_MARKERS: ComputedMarkerLook[] = [
     BULLET_MARKER,
     { ...BULLET_MARKER, marker: 'circle' },
     { ...BULLET_MARKER, marker: 'square' },
-    { ...BULLET_MARKER, marker: 'square' },
+    BULLET_MARKER,
+    { ...BULLET_MARKER, marker: 'circle' },
 ];
 const FONDUE_NUMBER_MARKERS: ComputedMarkerLook[] = [
     NUMBER_MARKER,
     { ...NUMBER_MARKER, marker: 'lower-alpha' },
     { ...NUMBER_MARKER, marker: 'lower-roman' },
+    NUMBER_MARKER,
 ];
 
 const HOST_BULLET_LOOKS: ListLooks<BulletListLook> = [
@@ -630,7 +633,7 @@ test.describe('host styling of list markers', () => {
         }
     });
 
-    test('applies each level its look, and a deeper list the third level', async ({ mount }) => {
+    test('applies each level its look, repeating the three from the fourth level on', async ({ mount }) => {
         const component = await mount(
             <HostLooksPair
                 value={NESTED_LISTS_DOCUMENT}
@@ -638,21 +641,35 @@ test.describe('host styling of list markers', () => {
                 numberedLooks={HOST_NUMBERED_LOOKS}
             />,
         );
-        const thirdBullet: ComputedMarkerLook = { ...BULLET_MARKER, marker: 'disc', indent: '10px' };
+        // Browsers write a string in double quotes.
+        const firstBullet: ComputedMarkerLook = {
+            marker: '"– "',
+            color: 'rgb(200, 0, 0)',
+            size: '20px',
+            indent: '30px',
+        };
+        const secondBullet: ComputedMarkerLook = { ...BULLET_MARKER, marker: 'square', color: 'rgb(0, 120, 0)' };
+        const firstNumber: ComputedMarkerLook = {
+            ...NUMBER_MARKER,
+            marker: 'upper-roman',
+            color: 'rgb(0, 0, 200)',
+            indent: '40px',
+        };
 
         for (const surface of SURFACES) {
             const section = component.getByTestId(surface);
             expect(await markerLooksIn(section, BULLET_ITEMS)).toEqual([
-                // Browsers write a string in double quotes.
-                { marker: '"– "', color: 'rgb(200, 0, 0)', size: '20px', indent: '30px' },
-                { ...BULLET_MARKER, marker: 'square', color: 'rgb(0, 120, 0)' },
-                thirdBullet,
-                thirdBullet,
+                firstBullet,
+                secondBullet,
+                { ...BULLET_MARKER, marker: 'disc', indent: '10px' },
+                firstBullet,
+                secondBullet,
             ]);
             expect(await markerLooksIn(section, NUMBERED_ITEMS)).toEqual([
-                { ...NUMBER_MARKER, marker: 'upper-roman', color: 'rgb(0, 0, 200)', indent: '40px' },
+                firstNumber,
                 FONDUE_NUMBER_MARKERS[1],
                 FONDUE_NUMBER_MARKERS[2],
+                firstNumber,
             ]);
         }
     });

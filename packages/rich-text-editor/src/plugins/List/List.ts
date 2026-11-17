@@ -157,7 +157,7 @@ export type BulletListLook = {
 export type NumberedListLook = Omit<BulletListLook, 'size'>;
 
 /**
- * A look for each of the first three nesting levels, outermost first. A list nested deeper looks like the third level.
+ * A look for each of the first three nesting levels, outermost first. The three repeat deeper down: the fourth level looks like the first.
  */
 export type ListLooks<TLook> = readonly [first?: TLook, second?: TLook, third?: TLook];
 
