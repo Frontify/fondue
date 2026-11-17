@@ -7,8 +7,8 @@ import { describe, expect, it } from 'vitest';
 
 import { OWN_MARGIN_VARIABLES } from '../core/documentContract';
 import { LOOK_PROPERTIES, lookVariableName } from '../core/look';
-import { ALL_LINK_APPEARANCES, BUTTON_HOVER_LOOK_FIELDS, BUTTON_LOOK_FIELDS } from '../plugins/Link/helpers/appearance';
-import { type LinkAppearance } from '../plugins/Link/helpers/value';
+import { BUTTON_HOVER_LOOK_FIELDS, BUTTON_LOOK_FIELDS } from '../plugins/Link/helpers/appearance';
+import { ALL_LINK_APPEARANCES, type LinkAppearance } from '../plugins/Link/helpers/value';
 import { ALL_TEXT_STYLES, findPreset } from '../plugins/TextStyle/helpers/presets';
 
 // The look is spelled twice: in core (what a host sets) and in the stylesheets (what they read).

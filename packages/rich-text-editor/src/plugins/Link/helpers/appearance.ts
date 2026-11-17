@@ -4,7 +4,7 @@ import { lookProperties, type TextLook } from '#/core';
 
 import styles from '../link.module.scss';
 
-import { type LinkAppearance } from './value';
+import { ALL_LINK_APPEARANCES, type LinkAppearance } from './value';
 
 /** What an appearance shows in the link form and the class that draws it. Every rule per appearance reads this table. */
 export const APPEARANCES = {
@@ -18,9 +18,6 @@ export const NO_APPEARANCES: readonly LinkAppearance[] = [];
 
 /** The attribute that carries the appearance in exported and pasted HTML. */
 export const APPEARANCE_ATTRIBUTE = 'data-appearance';
-
-/** Every appearance, in the order the link form lists them. */
-export const ALL_LINK_APPEARANCES: readonly LinkAppearance[] = ['primary', 'secondary', 'tertiary'];
 
 /** Whether a stored value names an appearance, which a document from another editor may not. */
 export const isLinkAppearance = (value: unknown): value is LinkAppearance =>

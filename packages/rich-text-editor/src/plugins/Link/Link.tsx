@@ -163,31 +163,28 @@ const linkMarksFor = (appearances: readonly LinkAppearance[]): Record<string, Ma
     }),
 });
 
+/** The link mark of an editor that offers no button looks, shared so its content registers next to `linkContent`. */
+const LINK_MARKS = linkMarksFor(NO_APPEARANCES);
+
 /**
  * Links as a mark on text, written as `<a href>`.
  * Only web, mail, phone and relative targets count, so a `javascript:` URL is never clickable.
  */
-export const linkContent = defineContent({ marks: linkMarksFor(NO_APPEARANCES) });
+export const linkContent = defineContent({ marks: LINK_MARKS });
 
-/** The link mark with the host's look, sharing the mark so it registers next to `linkContent`. */
 type LinkContentWithOptions = Pick<LinkPluginOptions, 'look' | 'looks'> & {
-    appearances: readonly LinkAppearance[];
+    marks: Record<string, MarkDefinition>;
 };
 
-/** The link content for an editor that sets looks or offers button looks; the default stays `linkContent`. */
-const linkContentWith = ({ appearances, look = {}, looks = {} }: LinkContentWithOptions): RteContent => {
-    let marks = linkContent.marks;
-    if (appearances.length > 0) {
-        marks = linkMarksFor(appearances);
-    }
-    return defineContent({
+/** The link content with the host's looks, on the marks the plugin chose for the appearances it offers. */
+const linkContentWith = ({ marks, look = {}, looks = {} }: LinkContentWithOptions): RteContent =>
+    defineContent({
         marks,
         contentProperties: {
             ...lookProperties(LINK_LOOK_NAME, look, LOOK_PROPERTIES),
             ...buttonLookProperties(looks),
         },
     });
-};
 
 // The key is a literal because a computed key keeps this plugin in the renderer; HOTKEY's type ties it to this key.
 const hotkeys = {
@@ -220,9 +217,14 @@ const HOTKEY: keyof typeof hotkeys = 'Mod-k';
  * const links = linkPlugin({ search, look: { color: 'var(--f-theme-settings-link-color)' }, appearances: ['primary'] });
  */
 export const linkPlugin = ({ search, look, appearances = NO_APPEARANCES, looks }: LinkPluginOptions = {}) => {
+    // Offered appearances change what paste keeps, so they need a mark of their own; looks alone share the default one.
+    let marks = LINK_MARKS;
+    if (appearances.length > 0) {
+        marks = linkMarksFor(appearances);
+    }
     let content = linkContent;
-    if (look !== undefined || appearances.length > 0 || looks !== undefined) {
-        content = linkContentWith({ appearances, look, looks });
+    if (marks !== LINK_MARKS || look !== undefined || looks !== undefined) {
+        content = linkContentWith({ marks, look, looks });
     }
 
     return definePlugin({

@@ -12,7 +12,8 @@ import {
     type RteSelectionSnapshot,
 } from '#/core';
 
-import { ALL_LINK_APPEARANCES, APPEARANCES } from './helpers/appearance';
+import { APPEARANCES } from './helpers/appearance';
+import { ALL_LINK_APPEARANCES } from './helpers/value';
 import { linkContent, linkPlugin, type LinkPluginOptions } from './Link';
 
 const link = linkPlugin().content?.marks?.link;
@@ -65,6 +66,12 @@ describe('the link look', () => {
 });
 
 describe('the link mark with an appearance', () => {
+    it('has a class for every appearance in the stylesheet', () => {
+        for (const appearance of ALL_LINK_APPEARANCES) {
+            expect(APPEARANCES[appearance].className).toBeTruthy();
+        }
+    });
+
     for (const appearance of ALL_LINK_APPEARANCES) {
         it(`writes a ${appearance} button as a link with its class and appearance`, () => {
             const html = link?.toHtml({ href: 'https://example.com', appearance });
