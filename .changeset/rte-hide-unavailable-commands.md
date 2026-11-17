@@ -2,4 +2,4 @@
 "@frontify/fondue-rich-text-editor": minor
 ---
 
-fix(RichTextEditor): leave a block command that cannot run out of the menus; `availability` becomes `isAvailable: (selection) => boolean`, and `RtePlugin.CommandAvailability` is gone
+fix(RichTextEditor): the "Turn into" and `/` menus list only the block commands that can run on the selection, never one disabled
