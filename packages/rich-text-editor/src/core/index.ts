@@ -62,13 +62,10 @@ export {
     type MarkIgnoreRule,
     type MarkParseRule,
     onlyTypeOf,
-    type ParsePrecedence,
     type ParseRule,
     type Paste,
     type PasteHandler,
     type PasteSource,
-    type PasteTransform,
-    type PasteTransformContext,
     type RteBlockCommand,
     type RteContent,
     type RteContentDefinition,
@@ -86,11 +83,9 @@ export {
     type StyleParseRule,
     type ToolbarItemProps,
 } from './plugin';
-export { readTagRule, type TagRule, type TagRuleReading } from './tagRule';
 export {
     buildPluginRegistry,
     controlOf,
-    isClaimedBy,
     isOwnActive,
     type OwnControl,
     type OwnType,
@@ -107,7 +102,6 @@ export {
     emptyDocument,
     INLINE_PLACEHOLDER,
     newerVersionOf,
-    OFFICE_LIST_ATTRIBUTES,
     PARAGRAPH,
     WORD_START_CONTEXT,
 } from './vocabulary';
