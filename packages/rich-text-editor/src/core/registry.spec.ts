@@ -12,7 +12,7 @@ import {
     type RteInputRule,
     type RtePlugin,
 } from './plugin';
-import { buildPluginRegistry } from './registry';
+import { buildPluginRegistry, ownTypeOf } from './registry';
 
 /**
  * The registry is the one place plugins are read: it gathers their
@@ -615,5 +615,38 @@ describe('bare content in a registry', () => {
                 definePlugin({ id: 'strong', content: defineContent({ marks: { bold: mark() } }) }),
             ]),
         ).toThrow('Duplicate mark type "bold": declared by plugin "bold" and plugin "strong".');
+    });
+});
+
+describe('a block made of parts', () => {
+    const content = defineContent({
+        blocks: {
+            outer: defineBlock({
+                content: { parts: ['inner'] },
+                toHtml: () => ({ tag: 'div', children: true }),
+                parse: [],
+            }),
+            inner: defineBlock({
+                content: { blocks: ['paragraph'] },
+                toHtml: () => ({ tag: 'div', children: true }),
+                parse: [],
+            }),
+        },
+    });
+
+    it('is a container, like a block holding other blocks', () => {
+        expect(ownTypeOf(content, 'outer')).toEqual({ kind: 'container', type: 'outer' });
+    });
+
+    it('is not a list', () => {
+        expect(buildPluginRegistry([definePlugin({ id: 'outer', content })]).itemTypeByList.has('outer')).toBe(false);
+    });
+
+    it('cannot be toggled from the toolbar, having nothing a selection turns into', () => {
+        expect(() =>
+            buildPluginRegistry([
+                definePlugin({ id: 'outer', content, toolbar: [{ label: 'Outer', toggles: 'outer', icon }] }),
+            ]),
+        ).toThrow(/nothing to toggle/);
     });
 });
