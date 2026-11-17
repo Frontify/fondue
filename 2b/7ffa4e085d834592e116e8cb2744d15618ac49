@@ -1,0 +1,21 @@
+packages/components/src/components/Table/utils.ts
+  s_d4a09ad7f54a8c::t_c396031d38647b 42-43,52
+.changeset/table-ssr-safe-utils.md
+  s_d4a09ad7f54a8c::t_89ff13c4c1907d 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "2b7ffa4e085d834592e116e8cb2744d15618ac49",
+  "prompts": {},
+  "sessions": {
+    "s_d4a09ad7f54a8c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7dc7c1eb-98c6-42f1-99ff-47c20f8c4db6",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
