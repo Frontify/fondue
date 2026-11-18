@@ -41,7 +41,7 @@ export type CardActionButtonProps = {
      */
     onClick?: MouseEventHandler<HTMLButtonElement>;
     children?: ReactNode;
-} & Omit<ComponentProps<'button'>, 'children' | 'ref' | 'onClick' | 'aria-label' | 'role'>;
+} & Omit<ComponentProps<'button'>, 'children' | 'ref' | 'onClick' | 'aria-label'>;
 
 export const CardActionButton = (
     {

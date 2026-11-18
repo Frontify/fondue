@@ -2,7 +2,7 @@
 
 import { forwardRef, type AriaAttributes, type ForwardedRef, type MouseEvent, type ReactNode } from 'react';
 
-import { type CommonGlobalProps } from '#/helpers/aria';
+import { type CommonAriaProps, type CommonGlobalProps } from '#/helpers/aria';
 
 import styles from './styles/button.module.scss';
 
@@ -18,9 +18,9 @@ type ButtonEmphasis = 'default' | 'weak' | 'strong';
 
 type ButtonAspect = 'default' | 'square';
 
-type ButtonRole = 'radio';
+type ButtonAriaProps = CommonAriaProps & Pick<AriaAttributes, 'aria-pressed' | 'aria-checked'>;
 
-export type ButtonProps = CommonGlobalProps & {
+export type ButtonProps = CommonGlobalProps & ButtonAriaProps & {
     /**
      * @default "button"
      */
@@ -60,12 +60,6 @@ export type ButtonProps = CommonGlobalProps & {
     children?: ReactNode;
     onPress?: (event?: MouseEvent<HTMLButtonElement>) => void;
     form?: string;
-    'aria-label'?: string;
-    'aria-describedby'?: string;
-    'aria-pressed'?: AriaAttributes['aria-pressed'];
-    'aria-checked'?: AriaAttributes['aria-checked'];
-    'aria-expanded'?: AriaAttributes['aria-expanded'];
-    role?: ButtonRole;
     'data-test-id'?: string;
     className?: string;
     tabIndex?: number;
