@@ -3,6 +3,7 @@
 import { TextInput } from '@frontify/fondue-components';
 import { type ReactNode, type Ref, useMemo, useState } from 'react';
 
+import { isImeKey } from '../../shared/helpers/imeKey';
 import styles from '../emoji.module.scss';
 import { byCategory, searchEmojis } from '../helpers/search';
 import { type EmojiItem } from '../types';
@@ -49,6 +50,9 @@ export const EmojiPicker = ({
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 onKeyDown={(event) => {
+                    if (isImeKey(event)) {
+                        return;
+                    }
                     const first = matches[0];
                     if (event.key === 'Enter' && first) {
                         event.preventDefault();

@@ -79,6 +79,34 @@ describe('the emoji picker', () => {
         expect(onPick).toHaveBeenCalledWith(EMOJIS[1]);
     });
 
+    it('does not pick on Enter while composing', () => {
+        const { search, type, onPick } = mountPicker();
+
+        type('dog');
+
+        act(() => {
+            search.dispatchEvent(
+                new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true, isComposing: true }),
+            );
+        });
+        expect(onPick).not.toHaveBeenCalled();
+    });
+
+    it('does not pick on Enter with IME keyCode', () => {
+        const { search, type, onPick } = mountPicker();
+
+        type('dog');
+
+        act(() => {
+            const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+            if (event.keyCode === 0) {
+                Object.defineProperty(event, 'keyCode', { value: 229 });
+            }
+            search.dispatchEvent(event);
+        });
+        expect(onPick).not.toHaveBeenCalled();
+    });
+
     it('says when nothing matches', () => {
         const { container, type, buttons } = mountPicker();
 
