@@ -3,6 +3,7 @@
 export {
     textStyleContent,
     type TextStyleBlock,
+    type TextStyleContentOptions,
     type TextStyleName,
     textStylePlugin,
     type TextStylePluginOptions,

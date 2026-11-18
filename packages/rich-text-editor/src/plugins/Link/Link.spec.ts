@@ -50,14 +50,14 @@ describe('the link look', () => {
     });
 
     it('shares the default content when there is no look', () => {
-        expect(linkPlugin().content).toBe(linkContent);
+        expect(linkPlugin().content).toBe(linkContent());
     });
 
-    it('shares the mark, so a content list with `linkContent` and the looked link still builds', () => {
+    it('shares the mark, so a content list with `linkContent()` and the looked link still builds', () => {
         const plugin = linkPlugin({ look: { color: 'blue' } });
 
-        expect(plugin.content?.marks?.link).toBe(linkContent.marks?.link);
-        expect(() => buildContentRegistry([linkContent, plugin])).not.toThrow();
+        expect(plugin.content?.marks?.link).toBe(linkContent().marks?.link);
+        expect(() => buildContentRegistry([linkContent(), plugin])).not.toThrow();
     });
 
     it('refuses a value that could break out of its declaration', () => {
@@ -178,7 +178,7 @@ describe('the link plugin button looks', () => {
     });
 
     it('shares the default content when there are no button looks', () => {
-        expect(linkPlugin().content).toBe(linkContent);
+        expect(linkPlugin().content).toBe(linkContent());
     });
 
     it('sets no button custom properties for empty button looks, and keeps a pasted appearance in the mark', () => {
@@ -200,6 +200,28 @@ describe('the link plugin button looks', () => {
         expect(() => linkPlugin({ buttonLooks: { tertiary: { hover: { color: '' } } } })).toThrow(
             /"color".*"button-tertiary-hover"/,
         );
+    });
+});
+
+describe('the link content', () => {
+    it('hands out one shared content when given no look', () => {
+        expect(linkContent()).toBe(linkContent({}));
+    });
+
+    it('carries the same look as the plugin given the same look', () => {
+        const look = { color: 'blue' };
+
+        expect(linkContent({ look })).toEqual(linkPlugin({ look }).content);
+    });
+
+    it('refuses a value that could break out of its declaration', () => {
+        expect(() => linkContent({ look: { color: 'red; display: none' } })).toThrow(/"color".*"link"/);
+    });
+
+    it('carries the same button looks as the plugin given the same button looks', () => {
+        const buttonLooks = { primary: { color: 'white' } };
+
+        expect(linkContent({ buttonLooks })).toEqual(linkPlugin({ buttonLooks }).content);
     });
 });
 

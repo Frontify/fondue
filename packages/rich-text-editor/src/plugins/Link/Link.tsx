@@ -45,11 +45,8 @@ export type LinkMark = {
  */
 export type LinkLook = Omit<TextLook, 'textDecoration' | 'marginTop' | 'marginBottom'>;
 
-export type LinkPluginOptions = {
-    /**
-     * Offers the app's own pages as link targets while the author types. Editing only: the content never needs it.
-     */
-    search?: LinkSearch;
+/** How the link content looks; what a renderer needs to draw links the way the editor does. */
+export type LinkContentOptions = {
     /**
      * How links look in the editor, the readonly view and the HTML export. A field left out keeps Fondue's look.
      * A value that is empty or can end its CSS declaration early throws an error that names the field.
@@ -62,6 +59,13 @@ export type LinkPluginOptions = {
      * its CSS declaration early throws an error that names the appearance and the field.
      */
     buttonLooks?: Partial<Record<LinkAppearance, ButtonLook>>;
+};
+
+export type LinkPluginOptions = LinkContentOptions & {
+    /**
+     * Offers the app's own pages as link targets while the author types. Editing only: the content never needs it.
+     */
+    search?: LinkSearch;
 };
 
 /** The name `link.module.scss` reads the look's custom properties by. */
@@ -145,8 +149,8 @@ const linkFromElement = (element: Element, appearances: readonly LinkAppearance[
 };
 
 /** The link mark, which keeps a pasted button look only when this editor offers it. */
-const linkMarksFor = (appearances: readonly LinkAppearance[]): Record<string, MarkDefinition> => ({
-    link: defineMark<LinkValue>({
+const linkMarkFor = (appearances: readonly LinkAppearance[]): MarkDefinition =>
+    defineMark<LinkValue>({
         // Outside every other mark, so a partly styled link renders as one anchor, not cut up by a colour or an emphasis inside.
         nesting: -2,
         // Typing at the end of a link does not extend it.
@@ -164,31 +168,50 @@ const linkMarksFor = (appearances: readonly LinkAppearance[]): Record<string, Ma
         defaultStyles: LINK_DEFAULT_STYLES,
 
         parse: [{ tag: 'a[href]', value: (element) => linkFromElement(element, appearances) }],
-    }),
-});
+    });
 
-/** The link mark of an editor that offers no button looks, shared so its content registers next to `linkContent`. */
-const LINK_MARKS = linkMarksFor(NO_APPEARANCES);
+// Shared so every link content with the same offer declares the very same mark, which the registry requires.
+const LINK_MARK = linkMarkFor(NO_APPEARANCES);
+const BUTTON_LINK_MARK = linkMarkFor(ALL_LINK_APPEARANCES);
 
-/**
- * Links as a mark on text, written as `<a href>`.
- * Only web, mail, phone and relative targets count, so a `javascript:` URL is never clickable.
- */
-export const linkContent = defineContent({ marks: LINK_MARKS });
+// Shared so the default plugin, `defaultContent` and every call without a look hand out the very same content.
+const DEFAULT_LINK_CONTENT = defineContent({ marks: { link: LINK_MARK } });
 
-type LinkContentWithOptions = Pick<LinkPluginOptions, 'look' | 'buttonLooks'> & {
-    marks: Record<string, MarkDefinition>;
+/** The button styles an editor offers: all three once the host turns buttons on with `buttonLooks`, else none. */
+const offeredAppearances = (buttonLooks: LinkContentOptions['buttonLooks']): readonly LinkAppearance[] => {
+    if (buttonLooks === undefined) {
+        return NO_APPEARANCES;
+    }
+
+    return ALL_LINK_APPEARANCES;
 };
 
-/** The link content with the host's looks, on the marks the plugin chose for the appearances it offers. */
-const linkContentWith = ({ marks, look = {}, buttonLooks = {} }: LinkContentWithOptions): RteContent =>
-    defineContent({
-        marks,
+/**
+ * Links as a mark on text, written as `<a href>`, and how they look.
+ * Only web, mail, phone and relative targets count, so a `javascript:` URL is never clickable.
+ * Pass the same `look` and `buttonLooks` as `linkPlugin`, so a renderer given only content draws the host's looks.
+ *
+ * @example
+ * <RichTextRenderer plugins={[linkContent({ look, buttonLooks }), boldContent]} value={doc} />
+ */
+export const linkContent = ({ look, buttonLooks }: LinkContentOptions = {}): RteContent => {
+    if (look === undefined && buttonLooks === undefined) {
+        return DEFAULT_LINK_CONTENT;
+    }
+
+    let mark = LINK_MARK;
+    if (offeredAppearances(buttonLooks).length > 0) {
+        mark = BUTTON_LINK_MARK;
+    }
+
+    return defineContent({
+        marks: { link: mark },
         contentProperties: {
-            ...lookProperties(LINK_LOOK_NAME, look, LOOK_PROPERTIES),
-            ...buttonLookProperties(buttonLooks),
+            ...lookProperties(LINK_LOOK_NAME, look ?? {}, LOOK_PROPERTIES),
+            ...buttonLookProperties(buttonLooks ?? {}),
         },
     });
+};
 
 // The key is a literal because a computed key keeps this plugin in the renderer; HOTKEY's type ties it to this key.
 const hotkeys = {
@@ -225,24 +248,10 @@ const HOTKEY: keyof typeof hotkeys = 'Mod-k';
  * });
  */
 export const linkPlugin = ({ search, look, buttonLooks }: LinkPluginOptions = {}) => {
-    let appearances: readonly LinkAppearance[] = NO_APPEARANCES;
-    if (buttonLooks !== undefined) {
-        appearances = ALL_LINK_APPEARANCES;
-    }
-
-    // Offered appearances change what paste keeps, so they need a mark of their own; looks alone share the default one.
-    let marks = LINK_MARKS;
-    if (appearances.length > 0) {
-        marks = linkMarksFor(appearances);
-    }
-
-    let content = linkContent;
-    if (marks !== LINK_MARKS || look !== undefined || buttonLooks !== undefined) {
-        content = linkContentWith({ marks, look, buttonLooks });
-    }
+    const appearances = offeredAppearances(buttonLooks);
 
     return definePlugin({
-        content,
+        content: linkContent({ look, buttonLooks }),
         toolbarGroup: 'link',
         toolbar: [
             {

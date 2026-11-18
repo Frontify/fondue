@@ -4,37 +4,19 @@ import { createElement, type ReactNode } from 'react';
 
 import {
     type BlockDefinition,
-    type DefaultStyle,
     type EditorControlApi,
     type EditProps,
     type HtmlSpec,
     type InlineDefinition,
     isEmpty,
-    type MarkClearRule,
     type MarkDefinition,
-    type MarkParseRule,
-    type ParseRule,
-    type InsertTextOptions,
-    type InsertTextUndo,
-    type Paste,
     type PasteHandler,
-    type PasteSource,
-    type ClearMarksOptions as ClearOptions,
-    type ClearMarksScope as ClearScope,
     type RteBlockCommand,
     type RteBlockNode,
-    type RteContent,
-    type RteEditView,
     type RteHotkey,
-    type RteIcon,
     type RteInlineNode,
     type RtePlugin as CorePlugin,
-    type RteMarkState,
     type RteSelectionSnapshot,
-    type RteToolbarEntry,
-    type RteToolbarGroup,
-    type RtePluginDefinition,
-    type StyleParseRule,
     type ToolbarItemProps,
     toPlainText as plainText,
     type ToPlainTextOptions,
@@ -139,6 +121,7 @@ export { softBreakContent, softBreakPlugin } from './plugins/SoftBreak';
 export { strikethroughContent, strikethroughPlugin } from './plugins/Strikethrough';
 export { subscriptContent, subscriptPlugin } from './plugins/Subscript';
 export { superscriptContent, superscriptPlugin } from './plugins/Superscript';
+export { tableContent, tablePlugin } from './plugins/Table';
 export { textStyleContent, textStylePlugin } from './plugins/TextStyle';
 export { typographyPlugin } from './plugins/Typography';
 export { underlineContent, underlinePlugin } from './plugins/Underline';
@@ -152,6 +135,7 @@ export {
     type ButtonHoverLook,
     type ButtonLook,
     type LinkAppearance,
+    type LinkContentOptions,
     type LinkDestination,
     type LinkLook,
     type LinkPluginOptions,
@@ -164,67 +148,44 @@ export {
     type MentionValue,
 } from './plugins/Mention';
 export { type TextLook } from './core';
-export { type TextStyleName, type TextStylePluginOptions, type TextStylePresets } from './plugins/TextStyle';
+export {
+    type TextStyleContentOptions,
+    type TextStyleName,
+    type TextStylePluginOptions,
+    type TextStylePresets,
+} from './plugins/TextStyle';
 export { type TypographyGroup, type TypographyPluginOptions } from './plugins/Typography';
 
 // --- Plugin authoring ---
 
-export { ANY_LIST, defineBlock, defineContent, defineInline, defineMark, definePlugin } from './core';
+export { defineBlock, defineContent, defineInline, defineMark, definePlugin } from './core';
 
 /** A plugin. The types to write one with are nested: `RtePlugin.EditorControlApi`, `RtePlugin.BlockDefinition<T>`, … */
 export type RtePlugin = CorePlugin;
 
-// Aliases so a namespace member doesn't refer to itself (`type ParseRule<T> = ParseRule<T>`).
+// Aliases so a namespace member doesn't refer to itself (`type HtmlSpec = HtmlSpec`).
 type ControlApi = EditorControlApi;
 type ToolbarProps = ToolbarItemProps;
 type OnPaste = PasteHandler;
-type Pasted = Paste;
-type InsertOptions = InsertTextOptions;
-type InsertUndo = InsertTextUndo;
-type PastedFrom = PasteSource;
 type BlockDef<TValue> = BlockDefinition<TValue>;
 type MarkDef<TValue> = MarkDefinition<TValue>;
 type InlineDef<TValue> = InlineDefinition<TValue>;
 type EditComponentProps<TValue, TCurrent> = EditProps<TValue, TCurrent>;
-type Parse<TValue> = ParseRule<TValue>;
-type MarkParse<TValue> = MarkParseRule<TValue>;
-type StyleParse<TValue> = StyleParseRule<TValue>;
-type MarkClear = MarkClearRule;
-type DefaultStyleType = DefaultStyle;
 type Html = HtmlSpec;
 
 // oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
 export declare namespace RtePlugin {
     export type EditorControlApi = ControlApi;
     export type SelectionSnapshot = RteSelectionSnapshot;
-    export type MarkState = RteMarkState;
-    export type BlockCommand = RteBlockCommand;
-    export type ClearMarksOptions = ClearOptions;
-    export type ClearMarksScope = ClearScope;
     export type ToolbarItemProps = ToolbarProps;
-    export type ToolbarGroup = RteToolbarGroup;
-    export type PasteHandler = OnPaste;
+    export type EditProps<TValue, TCurrent = TValue> = EditComponentProps<TValue, TCurrent>;
+    export type BlockNode = RteBlockNode;
+    export type InlineNode = RteInlineNode;
     export type Hotkey = RteHotkey;
-    // A namespace member cannot take the name of the type it renames, so each of these needs an alias outside.
-    export type Paste = Pasted; // NOSONAR
-    export type InsertTextOptions = InsertOptions; // NOSONAR
-    export type InsertTextUndo = InsertUndo; // NOSONAR
-    export type PasteSource = PastedFrom; // NOSONAR
     export type BlockDefinition<TValue = Record<string, unknown>> = BlockDef<TValue>;
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
-    export type EditProps<TValue, TCurrent = TValue> = EditComponentProps<TValue, TCurrent>;
-    export type ParseRule<TValue> = Parse<TValue>;
-    export type MarkParseRule<TValue> = MarkParse<TValue>;
-    export type StyleParseRule<TValue> = StyleParse<TValue>;
-    export type MarkClearRule = MarkClear; // NOSONAR
-    export type DefaultStyle = DefaultStyleType; // NOSONAR
+    export type BlockCommand = RteBlockCommand;
+    export type PasteHandler = OnPaste;
     export type HtmlSpec = Html;
-    export type Content = RteContent;
-    export type ToolbarEntry = RteToolbarEntry;
-    export type EditView = RteEditView;
-    export type Icon = RteIcon;
-    export type Definition = RtePluginDefinition;
-    export type BlockNode = RteBlockNode;
-    export type InlineNode = RteInlineNode;
 }

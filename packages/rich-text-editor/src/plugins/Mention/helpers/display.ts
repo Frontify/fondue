@@ -9,12 +9,10 @@ import { withoutControlCharacters } from './text';
 /**
  * What a mention shows. Every view draws this and nothing else, so they cannot
  * disagree. `label` is the trigger and the username, or a name for the kind when
- * there is no username; `title` is shown on hover. A mention links only when the
+ * there is no username; `title` is shown on hover. `href` is set only when the
  * app gives a safe target.
  */
-export type MentionDisplay =
-    | { status: 'linked'; label: string; title: string; href: string }
-    | { status: 'text'; label: string; title: string };
+export type MentionDisplay = { label: string; title: string; href?: string };
 
 type MentionDisplayOptions = {
     href?: MentionHref;
@@ -34,7 +32,7 @@ const storedString = (field: unknown): string => {
 /** An unknown kind or a non-string reads as none. */
 export const storedKind = (value: unknown): MentionKind | undefined => MENTION_KINDS.find((known) => known === value);
 
-/** The `data-mention-*` attributes that paste back as a mention. */
+/** The `data-mention-*` attributes that name the mentioned person in exported markup. */
 export const mentionAttributes = (mention: MentionValue) => ({
     'data-mention-id': storedString(mention.id),
     'data-mention-username': storedString(mention.username),
@@ -53,9 +51,6 @@ const unknownLabel = (kind: MentionKind | undefined): string => {
             return MENTION_STRINGS.unknownGroup;
         case 'all':
             return MENTION_STRINGS.unknownMention;
-        default:
-            // Adding a kind fails to compile here until it is handled.
-            throw new Error(`Unhandled mention kind: ${JSON.stringify(kind satisfies never)}`);
     }
 };
 
@@ -71,21 +66,5 @@ export const mentionDisplay = (mention: MentionValue, { href, trigger }: Mention
     const kind = storedKind(mention.kind);
     const label = labelOf(storedText(mention.username), trigger, kind);
     const title = storedText(mention.name);
-    const target = safeMentionHref(href, mention);
-    if (target === undefined) {
-        return { status: 'text', label, title };
-    }
-    return { status: 'linked', label, title, href: target };
-};
-
-export const linkTarget = (display: MentionDisplay): string | undefined => {
-    switch (display.status) {
-        case 'linked':
-            return display.href;
-        case 'text':
-            return undefined;
-        default:
-            // Adding a display status fails to compile here until it is handled.
-            throw new Error(`Unhandled mention display: ${JSON.stringify(display satisfies never)}`);
-    }
+    return { label, title, href: safeMentionHref(href, mention) };
 };

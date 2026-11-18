@@ -4,7 +4,6 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { BIDI_ISOLATE_TAG } from './components/MentionLink';
 import { mentionValueOf } from './helpers/mention';
 import { mentionContent, mentionPlugin } from './Mention';
 
@@ -14,12 +13,6 @@ const ALL = { id: 'all', username: 'all', name: 'Everyone', kind: 'all' } as con
 
 const mentionFor = (href?: string) =>
     mentionPlugin({ items: [JANE], href: href === undefined ? undefined : () => href }).content?.inlines?.mention;
-
-const parse = (html: string): unknown => {
-    const element = document.createElement('div');
-    element.innerHTML = html;
-    return mentionFor('/u')?.parse[0]?.value?.(element.firstElementChild as HTMLElement);
-};
 
 describe('the mention inline', () => {
     it('links to the target the app gives', () => {
@@ -34,7 +27,7 @@ describe('the mention inline', () => {
         const spec = mentionFor()?.toHtml(ALL);
         expect(spec?.tag).toBe('span');
         expect(spec?.attrs?.href).toBeUndefined();
-        expect(spec?.children).toEqual([{ tag: BIDI_ISOLATE_TAG, children: '@all' }]);
+        expect(spec?.children).toEqual([{ tag: 'bdi', children: '@all' }]);
         const noProfile = mentionPlugin({ items: [], href: (m) => (m.kind === 'all' ? undefined : `/u/${m.id}`) });
         expect(noProfile.content?.inlines?.mention?.toHtml(ALL).tag).toBe('span');
         expect(noProfile.content?.inlines?.mention?.toHtml(JANE).tag).toBe('a');
@@ -55,40 +48,7 @@ describe('the mention inline', () => {
     });
 
     it('isolates the label so a right-to-left name cannot reorder the text around it', () => {
-        expect(mentionFor('/u')?.toHtml(JANE).children).toEqual([{ tag: BIDI_ISOLATE_TAG, children: '@jane' }]);
-    });
-
-    it('reads a pasted mention back', () => {
-        expect(
-            parse('<a href="/u" title="Jane Doe" data-mention-id="jane" data-mention-username="jane">@jane</a>'),
-        ).toEqual(JANE);
-    });
-
-    it('reads a pasted mention with no link, and its kind', () => {
-        expect(
-            parse(
-                '<span title="Everyone" data-mention-id="all" data-mention-username="all" data-mention-kind="all">@all</span>',
-            ),
-        ).toEqual(ALL);
-        expect(
-            parse(
-                '<a href="/u" title="Design team" data-mention-id="design" data-mention-username="design" data-mention-kind="group">@design</a>',
-            ),
-        ).toEqual(DESIGN);
-    });
-
-    it('reads a kind it does not know as a person', () => {
-        expect(
-            parse(
-                '<a href="/u" title="Jane Doe" data-mention-id="jane" data-mention-username="jane" data-mention-kind="robot">@jane</a>',
-            ),
-        ).toEqual(JANE);
-    });
-
-    it('does not read a link without an id or a username as a mention', () => {
-        expect(parse('<a href="/u" data-mention-id="" data-mention-username="jane">@jane</a>')).toBeNull();
-        expect(parse('<a href="/u" data-mention-id="jane" data-mention-username="">@</a>')).toBeNull();
-        expect(parse('<a href="/u" data-mention-id="jane">@</a>')).toBeNull();
+        expect(mentionFor('/u')?.toHtml(JANE).children).toEqual([{ tag: 'bdi', children: '@jane' }]);
     });
 });
 
@@ -100,7 +60,7 @@ describe('a stored mention that is missing a field', () => {
         const mention = mentionFor();
 
         expect(() => mention?.toHtml(wrongType)).not.toThrow();
-        expect(mention?.toHtml(wrongType).children).toEqual([{ tag: BIDI_ISOLATE_TAG, children: 'Unknown person' }]);
+        expect(mention?.toHtml(wrongType).children).toEqual([{ tag: 'bdi', children: 'Unknown person' }]);
         expect(mention?.toHtml(wrongType).attrs?.['data-mention-kind']).toBeUndefined();
     });
 });

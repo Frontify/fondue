@@ -8,12 +8,6 @@ import { type MentionDisplay, mentionAttributes } from '../helpers/display';
 import styles from '../mention.module.scss';
 import { type MentionValue } from '../types';
 
-/** The tag that isolates the shown name, so a right-to-left name cannot reorder the text around it. */
-export const BIDI_ISOLATE_TAG = 'bdi';
-
-// JSX needs a capitalised name to use the shared tag as an element.
-const BidiIsolate = BIDI_ISOLATE_TAG;
-
 /** In the editor a click places the caret; the link is followed only when reading. */
 const placeCaretInEditor = (event: MouseEvent<HTMLAnchorElement>): void => {
     if (event.currentTarget.closest('[contenteditable="true"]') !== null) {
@@ -28,7 +22,7 @@ type MentionLinkProps = {
 
 /**
  * A finished mention: the shown username linking to the person, name on hover. Carries the same attributes as
- * `toHtml`, so copied text pastes back as a mention.
+ * `toHtml`.
  */
 export const MentionLink = ({ value, display }: MentionLinkProps): ReactNode => {
     const attributes = {
@@ -39,24 +33,17 @@ export const MentionLink = ({ value, display }: MentionLinkProps): ReactNode => 
     const name = (
         <>
             {value.kind === 'group' ? <IconPeople size={12} aria-hidden className={styles.kindIcon} /> : null}
-            <BidiIsolate>{display.label}</BidiIsolate>
+            {/* Isolated so a right-to-left name cannot reorder the text around it. */}
+            <bdi>{display.label}</bdi>
         </>
     );
-    let element: ReactNode;
-    switch (display.status) {
-        case 'linked':
-            element = (
-                <a href={display.href} {...attributes} onClick={placeCaretInEditor}>
-                    {name}
-                </a>
-            );
-            break;
-        case 'text':
-            element = <span {...attributes}>{name}</span>;
-            break;
-        default:
-            // Adding a display status fails to compile here until it is handled.
-            throw new Error(`Unhandled mention display: ${JSON.stringify(display satisfies never)}`);
+    let element = <span {...attributes}>{name}</span>;
+    if (display.href !== undefined) {
+        element = (
+            <a href={display.href} {...attributes} onClick={placeCaretInEditor}>
+                {name}
+            </a>
+        );
     }
     return (
         <Tooltip.Root>

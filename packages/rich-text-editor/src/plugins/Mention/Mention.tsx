@@ -3,9 +3,8 @@
 import { defineContent, defineInline, definePlugin, type RtePlugin } from '#/core';
 
 import { MentionEditor } from './components/MentionEditor';
-import { BIDI_ISOLATE_TAG, MentionLink } from './components/MentionLink';
-import { linkTarget, mentionAttributes, mentionDisplay, storedKind } from './helpers/display';
-import { mentionValueOf } from './helpers/mention';
+import { MentionLink } from './components/MentionLink';
+import { mentionAttributes, mentionDisplay } from './helpers/display';
 import styles from './mention.module.scss';
 import { type MentionHref, type MentionItem, type MentionItems, type MentionValue } from './types';
 
@@ -44,37 +43,21 @@ export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = 
                 // nowhere to link to), no tooltip.
                 toHtml: (mention) => {
                     const shown = mentionDisplay(mention, { href, trigger });
-                    const target = linkTarget(shown);
                     return {
-                        tag: target === undefined ? 'span' : 'a',
+                        tag: shown.href === undefined ? 'span' : 'a',
                         attrs: {
-                            href: target,
+                            href: shown.href,
                             title: shown.title,
                             ...mentionAttributes(mention),
                             class: styles.mention ?? '',
                         },
-                        children: [{ tag: BIDI_ISOLATE_TAG, children: shown.label }],
+                        children: [{ tag: 'bdi', children: shown.label }],
                     };
                 },
 
-                // Reads back what `toHtml` wrote, so a copied mention pastes as a
-                // mention. Without an id and a username it names nobody, and
-                // stays the link or text it is. A kind this version does not know
-                // reads as a person.
-                parse: [
-                    {
-                        tag: 'a[data-mention-id], span[data-mention-id]',
-                        value: (element) => {
-                            const id = element.dataset.mentionId ?? '';
-                            const username = element.dataset.mentionUsername ?? '';
-                            const kind = storedKind(element.dataset.mentionKind);
-                            if (id === '' || username === '') {
-                                return null;
-                            }
-                            return mentionValueOf({ id, username, name: element.title, kind });
-                        },
-                    },
-                ],
+                // Pasted HTML never creates a mention: its id is not trusted, so the
+                // markup reads as the link or text it is, and only the picker inserts one.
+                parse: [],
 
                 render: {
                     component: ({ value }) => (
