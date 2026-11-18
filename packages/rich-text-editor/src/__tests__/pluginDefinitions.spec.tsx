@@ -126,7 +126,7 @@ describe('mentionPlugin', () => {
 });
 
 describe('blurOnBreakPlugin', () => {
-    const enter = blurOnBreakPlugin.hotkeys?.Enter;
+    const enter = blurOnBreakPlugin().hotkeys?.Enter;
 
     it('splits the list item when Enter is pressed inside a list, and keeps focus', () => {
         const { api, calls } = recordingApi({ inList: true });

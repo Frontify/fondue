@@ -194,27 +194,43 @@ const listLookProperties = <TLook extends Partial<Record<string, string>>>(
     return properties;
 };
 
-const bulletListContentWith = (looks: ListLooks<BulletListLook>): RteContent =>
+export type BulletListPluginOptions = {
+    /**
+     * How the list looks at its first three nesting levels, outermost first. A level or a field left out keeps
+     * Fondue's look. A value that is empty or can end its CSS declaration early throws an error naming the level.
+     * @default []
+     */
+    looks?: ListLooks<BulletListLook>;
+};
+
+export type NumberedListPluginOptions = {
+    /**
+     * How the list looks at its first three nesting levels, outermost first. A level or a field left out keeps
+     * Fondue's look. A value that is empty or can end its CSS declaration early throws an error naming the level.
+     * @default []
+     */
+    looks?: ListLooks<NumberedListLook>;
+};
+
+/**
+ * A bulleted list, written as `<ul>`, in the host's looks. Shares its item with `numberedListContent`. Pass the same
+ * `looks` as `bulletListPlugin`, so a renderer given only content draws them.
+ */
+export const bulletListContent = ({ looks = [] }: BulletListPluginOptions = {}): RteContent =>
     defineContent({
         blocks: { bulletList, listItem },
         contentProperties: listLookProperties('bulletList', looks, BULLET_LOOK_FIELDS),
     });
 
-const numberedListContentWith = (looks: ListLooks<NumberedListLook>): RteContent =>
+/**
+ * A numbered list, written as `<ol>`, starting at any number, in the host's looks. Shares its item with
+ * `bulletListContent`. Pass the same `looks` as `numberedListPlugin`, so a renderer given only content draws them.
+ */
+export const numberedListContent = ({ looks = [] }: NumberedListPluginOptions = {}): RteContent =>
     defineContent({
         blocks: { numberedList, listItem },
         contentProperties: listLookProperties('numberedList', looks, NUMBERED_LOOK_FIELDS),
     });
-
-/**
- * A bulleted list, written as `<ul>`, in Fondue's look. Shares its item with `numberedListContent`.
- */
-export const bulletListContent = bulletListContentWith([]);
-
-/**
- * A numbered list, written as `<ol>`, starting at any number, in Fondue's look. Shares its item with `bulletListContent`.
- */
-export const numberedListContent = numberedListContentWith([]);
 
 type ListPluginParams = {
     id: string;
@@ -247,38 +263,16 @@ const listPlugin = ({ id, content, type, icon, label, keywords, markdown, shortc
         // item); toggling wraps or unwraps.
         toolbarGroup: 'lists',
         toolbar: [{ toggles: type, label, icon, shortcut, menu: { keywords } }],
-        inputRules: markdown.map((match) => ({
-            kind: 'list' as const,
-            match,
-            list: type,
-        })),
+        inputRules: markdown.map((match) => ({ kind: 'list' as const, match, list: type })),
     });
-
-export type BulletListPluginOptions = {
-    /**
-     * How the list looks at its first three nesting levels, outermost first. A level or a field left out keeps
-     * Fondue's look. A value that is empty or can end its CSS declaration early throws an error naming the level.
-     * @default []
-     */
-    looks?: ListLooks<BulletListLook>;
-};
-
-export type NumberedListPluginOptions = {
-    /**
-     * How the list looks at its first three nesting levels, outermost first. A level or a field left out keeps
-     * Fondue's look. A value that is empty or can end its CSS declaration early throws an error naming the level.
-     * @default []
-     */
-    looks?: ListLooks<NumberedListLook>;
-};
 
 /**
  * A bulleted list with the `Mod-Shift-8` shortcut, and `- ` or `* ` while typing
  */
-export const bulletListPlugin = ({ looks = [] }: BulletListPluginOptions = {}): RtePlugin =>
+export const bulletListPlugin = (options: BulletListPluginOptions = {}): RtePlugin =>
     listPlugin({
         id: 'bullet-list',
-        content: bulletListContentWith(looks),
+        content: bulletListContent(options),
         type: 'bulletList',
         icon: IconListBullet,
         label: 'Bulleted list',
@@ -290,10 +284,10 @@ export const bulletListPlugin = ({ looks = [] }: BulletListPluginOptions = {}): 
 /**
  * A numbered list with the `Mod-Shift-7` shortcut, and `1. ` or `1) ` while typing
  */
-export const numberedListPlugin = ({ looks = [] }: NumberedListPluginOptions = {}): RtePlugin =>
+export const numberedListPlugin = (options: NumberedListPluginOptions = {}): RtePlugin =>
     listPlugin({
         id: 'numbered-list',
-        content: numberedListContentWith(looks),
+        content: numberedListContent(options),
         type: 'numberedList',
         icon: IconListNumbers,
         label: 'Numbered list',

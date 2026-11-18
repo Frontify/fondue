@@ -9,23 +9,29 @@ import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 // that are its own rather than a plugin's.
 import {
     boldPlugin,
+    bulletListContent,
     type BulletListLook,
     bulletListPlugin,
+    checkListContent,
     checkListPlugin,
     columnBreakPlugin,
     defaultPlugins,
     definePlugin,
     italicPlugin,
+    linkContent,
     linkPlugin,
     type MentionItem,
     mentionPlugin,
+    numberedListContent,
     type NumberedListLook,
     numberedListPlugin,
+    quoteContent,
     quotePlugin,
     type RteDocument,
     type RtePlugin,
     RichTextEditor,
     RichTextRenderer,
+    textStyleContent,
     textStylePlugin,
     type TextStylePluginOptions,
     type TextStylePresets,
@@ -59,8 +65,8 @@ const HINT = 'tw-col-span-full tw-m-0 tw-body-small tw-text-secondary';
  */
 const SURFACE = 'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-surface tw-p-medium';
 
-/** The field box around an editor: the surface, plus a ring while focus is inside it. */
-const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-ring-focus`;
+/** The field box around an editor: the surface, with a stronger border on hover and while the caret is inside, as Fondue's Textarea does. */
+const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-line-strong`;
 
 const buttonClasses = (active: boolean): string =>
     [
@@ -704,9 +710,9 @@ export const CommentBox: Story = {
                         value={doc}
                         onChange={setDoc}
                         plugins={[
-                            boldPlugin,
-                            italicPlugin,
-                            linkPlugin,
+                            boldPlugin(),
+                            italicPlugin(),
+                            linkPlugin(),
                             mentionPlugin({
                                 items: MENTIONABLE,
                                 href: profileHref,
@@ -824,7 +830,7 @@ export const TwoEditors: Story = {
                 </div>
                 <div className={LAYOUT}>
                     <div className={FRAME}>
-                        <RichTextEditor value={boldDoc} onChange={setBoldDoc} plugins={[boldPlugin]} />
+                        <RichTextEditor value={boldDoc} onChange={setBoldDoc} plugins={[boldPlugin()]} />
                     </div>
                     <pre className={JSON_PANEL}>{JSON.stringify(boldDoc, null, 2)}</pre>
                 </div>
@@ -932,13 +938,30 @@ const guidelineNumberedLook = (level: number): NumberedListLook => ({
 });
 
 // The third levels read variables no section defines, so they keep Fondue's look.
+const GUIDELINE_BULLET_LOOKS = [guidelineBulletLook(1), guidelineBulletLook(2), guidelineBulletLook(3)] as const;
+const GUIDELINE_NUMBERED_LOOKS = [
+    guidelineNumberedLook(1),
+    guidelineNumberedLook(2),
+    guidelineNumberedLook(3),
+] as const;
+
 const HOST_STYLING_PLUGINS = [
     textStylePlugin({ presets: GUIDELINE_PRESETS }),
-    bulletListPlugin({ looks: [guidelineBulletLook(1), guidelineBulletLook(2), guidelineBulletLook(3)] }),
-    numberedListPlugin({ looks: [guidelineNumberedLook(1), guidelineNumberedLook(2), guidelineNumberedLook(3)] }),
-    checkListPlugin,
-    quotePlugin,
-    linkPlugin,
+    bulletListPlugin({ looks: GUIDELINE_BULLET_LOOKS }),
+    numberedListPlugin({ looks: GUIDELINE_NUMBERED_LOOKS }),
+    checkListPlugin(),
+    quotePlugin(),
+    linkPlugin(),
+];
+
+// The renderer takes content only, with the same presets, so a page that only shows documents ships no editing code.
+const HOST_STYLING_CONTENT = [
+    textStyleContent({ presets: GUIDELINE_PRESETS }),
+    bulletListContent({ looks: GUIDELINE_BULLET_LOOKS }),
+    numberedListContent({ looks: GUIDELINE_NUMBERED_LOOKS }),
+    checkListContent,
+    quoteContent,
+    linkContent,
 ];
 
 const HOST_STYLING_DOCUMENT: RteDocument = {
@@ -1049,7 +1072,7 @@ const HostStylingSection = ({ title, guideline }: HostStylingSectionProps) => {
                     <RichTextEditor value={doc} onChange={setDoc} plugins={HOST_STYLING_PLUGINS} />
                 </div>
                 <div className={FRAME}>
-                    <RichTextRenderer value={doc} plugins={HOST_STYLING_PLUGINS} />
+                    <RichTextRenderer value={doc} plugins={HOST_STYLING_CONTENT} />
                 </div>
             </div>
         </div>
@@ -1122,9 +1145,9 @@ const presetsPluginsFor = (presets: TextStylePresets): PresetsPluginsResult => {
                 textStylePlugin({ presets }),
                 bulletListPlugin(),
                 numberedListPlugin(),
-                checkListPlugin,
-                quotePlugin,
-                linkPlugin,
+                checkListPlugin(),
+                quotePlugin(),
+                linkPlugin(),
             ],
         };
     } catch (error) {
@@ -1206,7 +1229,8 @@ export const Presets: StoryObj<PresetsStoryArgs> = {
 
 /**
  * The usual production setup: the values are `var(--f-theme-settings-…)`, so one editor configuration follows the section (light or dark) it sits in.
- * A host sets the look of each text style, body text, quotes and links with `textStylePlugin({ presets })`, and of list markers per level with `bulletListPlugin({ looks })` and `numberedListPlugin({ looks })`, usually from its guideline settings.
+ * A host sets the look of each text style, body text, quotes and links with `textStylePlugin({ presets })`, and of list markers per level with `bulletListPlugin({ looks })` and `numberedListPlugin({ looks })`, usually from its guideline settings,
+ * and hands the renderer `textStyleContent({ presets })`, `bulletListContent({ looks })` and `numberedListContent({ looks })` with the same values.
  * Anything the host leaves out, or a variable nobody defines, keeps Fondue's look.
  * The editor and the renderer draw the same.
  */
