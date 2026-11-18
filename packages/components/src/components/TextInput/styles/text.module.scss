@@ -76,11 +76,6 @@
         border-color: var(--color-error-default);
     }
 
-    &[data-status='success']:hover:not(:has(input:disabled)):not(:has(input[readonly])),
-    &[data-status='error']:hover:not(:has(input:disabled)):not(:has(input[readonly])) {
-        border-color: var(--color-line-strong);
-    }
-
     // Remove padding and border-radius from input and placeholder when there's a left slot
     &:has(.slot:not([data-name='right'])) {
         .input {

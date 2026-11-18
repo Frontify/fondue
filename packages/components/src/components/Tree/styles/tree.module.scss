@@ -107,6 +107,7 @@
         .handle {
             color: var(--color-disabled-default);
             cursor: default;
+            visibility: hidden;
         }
     }
 }

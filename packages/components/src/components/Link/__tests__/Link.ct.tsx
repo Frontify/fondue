@@ -6,6 +6,33 @@ import sinon from 'sinon';
 import { RouterProvider } from '../../RouterProvider/RouterProvider';
 import { Link } from '../Link';
 
+test('defaults to medium weight and an always underline', async ({ mount }) => {
+    const wrapper = await mount(
+        <RouterProvider navigate={sinon.stub()} useHref={sinon.stub()}>
+            <Link href="/foo" data-test-id="link-root">
+                Test Link
+            </Link>
+        </RouterProvider>,
+    );
+    const link = wrapper.getByTestId('link-root');
+
+    await expect(link).toHaveClass(/weight-medium/);
+    await expect(link).toHaveCSS('text-decoration-line', 'underline');
+});
+
+test('standalone link underlines on hover only', async ({ mount }) => {
+    const wrapper = await mount(
+        <RouterProvider navigate={sinon.stub()} useHref={sinon.stub()}>
+            <Link href="/foo" variant="standalone" data-test-id="link-root">
+                Test Link
+            </Link>
+        </RouterProvider>,
+    );
+
+    await expect(wrapper.getByTestId('link-root')).toHaveClass(/underline-hover/);
+    await expect(wrapper.getByTestId('link-root')).toHaveCSS('text-decoration-line', 'none');
+});
+
 test('renders link with correct text', async ({ mount }) => {
     const navigateStub = sinon.stub();
     const useHrefStub = sinon.stub();

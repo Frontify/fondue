@@ -9,6 +9,11 @@ test('should render without error', async ({ mount }) => {
     await expect(component).toBeVisible();
 });
 
+test('defaults padding to small', async ({ mount }) => {
+    const wrapper = await mount(<Divider data-test-id="divider-root" />);
+    await expect(wrapper.getByTestId('divider-root')).toHaveAttribute('data-padding', 'small');
+});
+
 test('should render with data-test-id', async ({ mount }) => {
     const wrapper = await mount(<Divider data-test-id="test-id" />);
     const component = wrapper.getByTestId('test-id');

@@ -16,6 +16,12 @@ const isBadgeStatusType = (value: RgbaColor | string): value is BadgeStatusType 
     typeof value === 'string' && badgeStatusMap.includes(value);
 
 export const BadgeStatus = ({ status, disabled = false }: BadgeStatusProps) => {
+    if (disabled && isBadgeStatusType(status)) {
+        return (
+            <div data-test-id="badge-status" className={styles.root} data-disabled="true" data-status={status} />
+        );
+    }
+
     if (disabled) {
         return <div data-test-id="badge-status" className={styles.root} data-disabled="true" />;
     }
