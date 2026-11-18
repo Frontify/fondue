@@ -51,7 +51,7 @@ const mount = (value: RteDocument, options: LinkPluginOptions = {}, toolbarPlace
         root.render(
             <RichTextEditor
                 value={value}
-                plugins={[boldPlugin, linkPlugin(options)]}
+                plugins={[boldPlugin(), linkPlugin(options)]}
                 toolbarPlacement={toolbarPlacement}
                 onChange={onChange}
             />,

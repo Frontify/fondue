@@ -28,7 +28,7 @@ type MentionLinkProps = {
 
 /**
  * A finished mention: the shown username linking to the person, name on hover. Carries the same attributes as
- * `toHtml`, so copied text pastes back as a mention.
+ * `toHtml`.
  */
 export const MentionLink = ({ value, display }: MentionLinkProps): ReactNode => {
     const attributes = {

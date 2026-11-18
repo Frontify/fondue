@@ -33,6 +33,12 @@ const reactProps = (attrs: HtmlAttributes = {}): Record<string, unknown> => {
             case 'tabindex':
                 props.tabIndex = value;
                 break;
+            case 'colspan':
+                props.colSpan = value;
+                break;
+            case 'rowspan':
+                props.rowSpan = value;
+                break;
             case 'style':
                 props.style = toReactStyle(value as StyleMap);
                 break;
