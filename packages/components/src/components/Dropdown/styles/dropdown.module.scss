@@ -194,5 +194,30 @@
     .slot[data-name='right'] ~ & {
         margin-inline-start: 0;
     }
+}
 
+.item[data-highlighted] .shortcut,
+.item:hover:not([data-disabled]) .shortcut,
+.subTrigger[data-highlighted] .shortcut,
+.subTrigger:hover:not([data-disabled]) .shortcut {
+    color: var(--color-primary-default);
+}
+
+.item[data-emphasis='danger'] .shortcut,
+.subTrigger[data-emphasis='danger'] .shortcut {
+    color: var(--color-error-default);
+}
+
+.item[data-emphasis='danger'][data-highlighted] .shortcut,
+.item[data-emphasis='danger']:hover:not([data-disabled]) .shortcut,
+.item[data-emphasis='danger']:active .shortcut,
+.subTrigger[data-emphasis='danger'][data-highlighted] .shortcut,
+.subTrigger[data-emphasis='danger']:hover:not([data-disabled]) .shortcut,
+.subTrigger[data-emphasis='danger']:active .shortcut {
+    color: var(--color-primary-on-primary);
+}
+
+.item[data-disabled] .shortcut,
+.subTrigger[data-disabled] .shortcut {
+    color: var(--color-disabled-default);
 }

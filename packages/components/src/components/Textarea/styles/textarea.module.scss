@@ -67,6 +67,11 @@
         border-color: var(--color-error-default);
     }
 
+    &[data-status='success']:hover:not(:has(textarea:disabled)):not(:has(textarea[readonly])),
+    &[data-status='error']:hover:not(:has(textarea:disabled)):not(:has(textarea[readonly])) {
+        border-color: var(--color-line-strong);
+    }
+
     &[data-disabled='true'] {
         cursor: not-allowed;
     }
@@ -81,6 +86,11 @@
     height: 12px;
     cursor: ns-resize;
     touch-action: none;
+
+    &[data-disabled='true'] {
+        cursor: default;
+        pointer-events: none;
+    }
     background-color: var(--color-line-mid);
     mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Cline x1='9' y1='1' x2='1' y2='9' stroke='black' stroke-width='1'/%3E%3Cline x1='9' y1='5' x2='5' y2='9' stroke='black' stroke-width='1'/%3E%3C/svg%3E");
     mask-repeat: no-repeat;

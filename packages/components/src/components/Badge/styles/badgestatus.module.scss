@@ -20,6 +20,10 @@
     @include variant(highlight, --color-highlight-default);
     @include variant(warning, --color-warning-default);
     @include variant(negative, --color-error-default);
+
+    &[data-disabled='true'] {
+        background-color: var(--color-disabled-default);
+    }
 }
 
 /**

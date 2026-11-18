@@ -156,7 +156,7 @@ export const TextareaRoot = (
 
     const handleResizeStart: PointerEventHandler<HTMLDivElement> = (event) => {
         const textarea = ref.current;
-        if (!textarea) {
+        if (disabled || !textarea) {
             return;
         }
         event.preventDefault();
@@ -279,9 +279,10 @@ export const TextareaRoot = (
                     )}
                 </div>
             )}
-            {resizable && !disabled && (
+            {resizable && (
                 <div
                     className={styles.resizeHandle}
+                    data-disabled={disabled || undefined}
                     data-test-id={`${dataTestId}-resize-handle`}
                     onPointerDown={handleResizeStart}
                     onPointerMove={handleResizeMove}

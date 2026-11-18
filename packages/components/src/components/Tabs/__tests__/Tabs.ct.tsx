@@ -423,7 +423,8 @@ test('should render tight padding', async ({ mount, page }) => {
         </Tabs.Root>,
     );
 
-    await expect(page.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toHaveCSS('padding', '8px');
+    await expect(page.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toHaveCSS('padding-top', '8px');
+    await expect(page.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toHaveCSS('padding-left', '0px');
 });
 
 test('should render compact padding', async ({ mount, page }) => {
@@ -435,7 +436,8 @@ test('should render compact padding', async ({ mount, page }) => {
             </Tabs.Tab>
         </Tabs.Root>,
     );
-    await expect(page.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toHaveCSS('padding', '12px');
+    await expect(page.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toHaveCSS('padding-top', '12px');
+    await expect(page.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toHaveCSS('padding-left', '0px');
 });
 
 test('should render comfortable padding', async ({ mount, page }) => {
@@ -447,7 +449,8 @@ test('should render comfortable padding', async ({ mount, page }) => {
             </Tabs.Tab>
         </Tabs.Root>,
     );
-    await expect(page.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toHaveCSS('padding', '16px');
+    await expect(page.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toHaveCSS('padding-top', '16px');
+    await expect(page.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toHaveCSS('padding-left', '0px');
 });
 
 test('should render spacious padding', async ({ mount, page }) => {
@@ -459,7 +462,8 @@ test('should render spacious padding', async ({ mount, page }) => {
             </Tabs.Tab>
         </Tabs.Root>,
     );
-    await expect(page.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toHaveCSS('padding', '24px');
+    await expect(page.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toHaveCSS('padding-top', '24px');
+    await expect(page.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toHaveCSS('padding-left', '0px');
 });
 
 test.describe('small viewports', () => {

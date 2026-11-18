@@ -19,12 +19,10 @@
         width: fit-content;
     }
 
-    &:hover {
-        border-color: var(--color-line-strong);
-    }
-
+    &:hover,
     &[data-editing='true'] {
         border-color: var(--color-line-strong);
+        background-color: var(--color-surface-default);
     }
 
     &[data-show-focus-ring='true'] {

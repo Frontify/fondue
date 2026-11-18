@@ -124,9 +124,9 @@ test('no resize handle when not resizable', async ({ mount }) => {
     await expect(wrapper.getByTestId(`${TEXTAREA_TEST_ID}-resize-handle`)).toHaveCount(0);
 });
 
-test('no resize handle when disabled', async ({ mount }) => {
+test('shows the resize handle when disabled', async ({ mount }) => {
     const wrapper = await mount(<Textarea data-test-id={TEXTAREA_TEST_ID} resizable disabled />);
-    await expect(wrapper.getByTestId(`${TEXTAREA_TEST_ID}-resize-handle`)).toHaveCount(0);
+    await expect(wrapper.getByTestId(`${TEXTAREA_TEST_ID}-resize-handle`)).toBeVisible();
 });
 
 test('dragging the resize handle changes the textarea height', async ({ mount, page }) => {

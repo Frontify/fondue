@@ -78,6 +78,12 @@
 .color-primary {
     color: var(--color-primary-default);
 }
+.color-primary:hover {
+    color: var(--color-primary-hover);
+}
+.color-primary:active {
+    color: var(--color-primary-active);
+}
 .color-secondary {
     color: var(--color-secondary-default);
 }
@@ -92,6 +98,12 @@
 }
 .color-highlight {
     color: var(--color-highlight-default);
+}
+.color-highlight:hover {
+    color: var(--color-highlight-hover);
+}
+.color-highlight:active {
+    color: var(--color-highlight-active);
 }
 
 .color-on-container-secondary {

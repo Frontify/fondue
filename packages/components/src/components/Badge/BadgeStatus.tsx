@@ -8,12 +8,18 @@ type BadgeStatusType = 'default' | 'positive' | 'highlight' | 'warning' | 'negat
 
 const badgeStatusMap = ['default', 'positive', 'highlight', 'warning', 'negative'];
 
-export type BadgeStatusProps = { status: BadgeStatusType } | { status: RgbaColor | string };
+export type BadgeStatusProps = ({ status: BadgeStatusType } | { status: RgbaColor | string }) & {
+    disabled?: boolean;
+};
 
 const isBadgeStatusType = (value: RgbaColor | string): value is BadgeStatusType =>
     typeof value === 'string' && badgeStatusMap.includes(value);
 
-export const BadgeStatus = ({ status }: BadgeStatusProps) => {
+export const BadgeStatus = ({ status, disabled = false }: BadgeStatusProps) => {
+    if (disabled) {
+        return <div data-test-id="badge-status" className={styles.root} data-disabled="true" />;
+    }
+
     const colorProps = isBadgeStatusType(status)
         ? { 'data-status': status }
         : { style: { backgroundColor: typeof status === 'string' ? status : colorToCss(status) || 'transparent' } };
