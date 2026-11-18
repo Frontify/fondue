@@ -1,0 +1,35 @@
+packages/rich-text-editor/src/__tests__/browser/hostStylingValues.ts
+  s_6513c7c173ff96::t_f5992fec38adf8 1-9
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_6513c7c173ff96::t_d767c0db367da7 177-178
+  s_6513c7c173ff96::t_5f43bef99fc076 9
+  s_6513c7c173ff96::t_031cea5d7432fb 173-175
+packages/rich-text-editor/src/core/index.ts
+  s_6513c7c173ff96::t_9340af13f8c89a 18
+  s_6513c7c173ff96::t_031cea5d7432fb 17
+packages/rich-text-editor/src/__tests__/browser/HostStylingFixtures.tsx
+  s_6513c7c173ff96::t_a37ba02c8d09df 61
+  s_6513c7c173ff96::t_d33d5fa1e9e1e9 49
+  s_6513c7c173ff96::t_742abf7418fc2e 39-40,42,46
+  s_6513c7c173ff96::t_07b24f4e46701c 13-14
+  s_6513c7c173ff96::t_cd4fe46e78b3c5 47
+packages/rich-text-editor/src/core/look.ts
+  s_6513c7c173ff96::t_818cedb1773ad9 38-40
+  s_6513c7c173ff96::t_b938f5b8670e97 64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e0c35eb9f87ce00a96087a9346644dbc634af1a6",
+  "prompts": {},
+  "sessions": {
+    "s_6513c7c173ff96": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aece77c5-31e1-41b8-8f8c-d0099f17ec8b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
