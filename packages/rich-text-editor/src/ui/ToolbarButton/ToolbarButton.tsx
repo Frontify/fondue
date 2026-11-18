@@ -61,8 +61,8 @@ export const readableShortcut = (shortcut: string, apple = isApple()): string =>
 
 /**
  * The toolbar button the built-in plugins share: Fondue's square low-emphasis
- * `Button`, pressed for toggles as the Button draws it, with a tooltip naming
- * it. Not editor API. Takes a ref so a flyout can anchor to it.
+ * `Button` with `aria-pressed` for toggles and a tooltip naming it. Not editor
+ * API. Takes a ref so a flyout can anchor to it.
  */
 export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(function ToolbarButton(
     { children, active, disabled, onClick, title, shortcut, ...rest },
@@ -103,7 +103,7 @@ export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(f
                     ref={ref}
                     type="button"
                     aspect="square"
-                    // Both states are the ghost button; the pressed look is Fondue Button's own.
+                    // Both states are the ghost button; the editor draws no pressed look of its own.
                     emphasis="weak"
                     disabled={disabled}
                     aria-label={title}
