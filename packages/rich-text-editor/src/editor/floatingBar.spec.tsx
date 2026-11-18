@@ -106,14 +106,14 @@ const unavailablePlugin = (run: () => void) =>
                 id: 'big-block',
                 label: 'Big block',
                 group: 'turnInto',
-                availability: () => ({ enabled: false, reason: 'Too big here' }),
+                isAvailable: () => false,
                 run,
             },
             {
                 id: 'big-insert',
                 label: 'Big insert',
                 group: 'insert',
-                availability: () => ({ enabled: false, reason: 'Too big here' }),
+                isAvailable: () => false,
                 run,
             },
         ],
@@ -257,11 +257,10 @@ describe('the floating bar', () => {
         expect(stored()?.blocks[0]).toMatchObject({ type: 'bulletList' });
     });
 
-    it('lists a command that cannot run as disabled, with its reason, and does not run it', () => {
-        const run = vi.fn();
+    it('leaves out a command that cannot run', () => {
         const editor = mount((onChange) => (
             <RichTextEditor
-                plugins={[...defaultPlugins, unavailablePlugin(run)]}
+                plugins={[...defaultPlugins, unavailablePlugin(vi.fn())]}
                 toolbarPlacement="floating"
                 onChange={onChange}
             />
@@ -276,18 +275,11 @@ describe('the floating bar', () => {
         act(() => trigger.focus());
         press(trigger, 'ArrowDown');
 
-        const item = [...window.document.querySelectorAll<HTMLElement>('[role="menuitem"]')].find(
-            (candidate) => candidate.getAttribute('aria-label') === 'Big block',
+        const items = [...window.document.querySelectorAll<HTMLElement>('[role="menuitem"]')].map((item) =>
+            item.getAttribute('aria-label'),
         );
-        expect(item?.getAttribute('aria-disabled')).toBe('true');
-        const reason = window.document.getElementById(item?.getAttribute('aria-describedby') ?? '');
-        expect(reason?.textContent).toBe('Too big here');
-
-        act(() => item?.click());
-
-        expect(run).not.toHaveBeenCalled();
-        // Nothing was chosen, so the menu stays open.
-        expect(window.document.querySelector('[role="menu"]')).not.toBeNull();
+        expect(items).toContain('Heading 1');
+        expect(items).not.toContain('Big block');
     });
 });
 
@@ -435,29 +427,19 @@ describe('the / menu', () => {
         expect(listbox()).toBeNull();
     });
 
-    it('lists a command that cannot run as disabled, with its reason, and Enter or a click leaves it be', () => {
-        const run = vi.fn();
-        const { editable, stored } = mount((onChange) => (
-            <RichTextEditor plugins={[...plugins, unavailablePlugin(run)]} onChange={onChange} />
+    it('leaves out a command that cannot run, so typing its name finds nothing', () => {
+        const { editable } = mount((onChange) => (
+            <RichTextEditor plugins={[...plugins, unavailablePlugin(vi.fn())]} onChange={onChange} />
         ));
         act(() => editable.focus());
         type(editable, '/');
-        type(editable, 'big insert');
 
-        const option = window.document.querySelector<HTMLElement>('[role="option"]');
-        expect(option?.getAttribute('aria-selected')).toBe('true');
-        expect(option?.getAttribute('aria-disabled')).toBe('true');
-        expect(window.document.getElementById(option?.getAttribute('aria-describedby') ?? '')?.textContent).toBe(
-            'Too big here',
-        );
+        expect(options()).not.toContain('Big block');
+        expect(options()).not.toContain('Big insert');
 
-        // Taken, so the block is not split under the menu, but nothing runs.
-        const event = press(editable, 'Enter');
-        expect(event.defaultPrevented).toBe(true);
-        act(() => option?.click());
+        type(editable, 'big');
 
-        expect(run).not.toHaveBeenCalled();
-        expect(listbox()).not.toBeNull();
-        expect(stored()?.blocks).toEqual([{ type: 'paragraph', children: [{ text: '/big insert' }] }]);
+        expect(listbox()).toBeNull();
+        expect(window.document.body.textContent).toContain('No results');
     });
 });

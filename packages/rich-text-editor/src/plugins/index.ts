@@ -29,6 +29,7 @@ export { softBreakContent, softBreakPlugin } from './SoftBreak';
 export { strikethroughContent, strikethroughPlugin } from './Strikethrough';
 export { subscriptContent, subscriptPlugin } from './Subscript';
 export { superscriptContent, superscriptPlugin } from './Superscript';
+export { tableContent, tablePlugin } from './Table';
 export { textStyleContent, textStylePlugin } from './TextStyle';
 export { typographyPlugin } from './Typography';
 export { underlineContent, underlinePlugin } from './Underline';
@@ -39,5 +40,11 @@ export { type ColumnBreakPluginOptions } from './ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './Emoji';
 export { type MentionContentOptions, type MentionItem, type MentionPluginOptions, type MentionValue } from './Mention';
 export { type TextLook } from '#/core';
-export { type LinkLook, type TextStyleName, type TextStylePluginOptions, type TextStylePresets } from './TextStyle';
+export {
+    type LinkLook,
+    type TextStyleContentOptions,
+    type TextStyleName,
+    type TextStylePluginOptions,
+    type TextStylePresets,
+} from './TextStyle';
 export { type TypographyGroup, type TypographyPluginOptions } from './Typography';

@@ -9,7 +9,14 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 // Driven through the package's public API only: the stored document format is
 // what a host's database holds, so a change to it must fail here first.
 import { RichTextEditor, type RteBlock, type RteDocument, type RtePlugin } from '../index';
-import { blurOnBreakPlugin, columnBreakPlugin, defaultPlugins, mentionPlugin, typographyPlugin } from '../plugins';
+import {
+    blurOnBreakPlugin,
+    columnBreakPlugin,
+    defaultPlugins,
+    mentionPlugin,
+    tablePlugin,
+    typographyPlugin,
+} from '../plugins';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -22,6 +29,7 @@ const plugins: readonly RtePlugin[] = [
     mentionPlugin({ items: [] }),
     columnBreakPlugin(),
     blurOnBreakPlugin(),
+    tablePlugin(),
     typographyPlugin({ groups: ['quotes', 'ellipsis', 'dashes', 'symbols', 'numeric'] }),
 ];
 

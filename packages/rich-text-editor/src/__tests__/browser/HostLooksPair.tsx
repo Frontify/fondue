@@ -4,13 +4,19 @@
 
 import { RichTextEditor, RichTextRenderer, type RteDocument, type RtePlugin } from '../../index';
 import {
+    bulletListContent,
     bulletListPlugin,
+    checkListContent,
     checkListPlugin,
+    fontColorContent,
     fontColorPlugin,
+    linkContent,
     type LinkLook,
     linkPlugin,
+    quoteContent,
     quotePlugin,
     type TextLook,
+    textStyleContent,
     textStylePlugin,
 } from '../../plugins';
 
@@ -36,14 +42,25 @@ const pluginsWithLooks = ({ body, quote, link }: HostLooksPairProps): RtePlugin[
     linkPlugin(),
 ];
 
+// The renderer gets content only, as a page that only shows documents would, so the looks must travel with the content.
+const contentWithLooks = ({ body, quote, link }: HostLooksPairProps) => [
+    textStyleContent({ presets: { body, quote, link } }),
+    bulletListContent,
+    checkListContent,
+    fontColorContent,
+    quoteContent,
+    linkContent,
+];
+
 /** The renderer and the editor side by side, drawing body text, a quote and links with the same looks. */
 export const HostLooksPair = ({ value = BODY_QUOTE_LINK_DOCUMENT, ...looks }: HostLooksPairProps) => {
     const plugins = pluginsWithLooks(looks);
+    const content = contentWithLooks(looks);
 
     return (
         <>
             <div data-testid="renderer">
-                <RichTextRenderer value={value} plugins={plugins} />
+                <RichTextRenderer value={value} plugins={content} />
             </div>
             <div data-testid="editor">
                 <RichTextEditor value={value} plugins={plugins} />

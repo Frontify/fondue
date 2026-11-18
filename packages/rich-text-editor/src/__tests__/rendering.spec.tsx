@@ -10,13 +10,13 @@ import {
     defineContent,
     defineMark,
     definePlugin,
+    RichTextRenderer,
     type RteDocument,
     type RteDocumentWith,
-    RichTextRenderer,
     type RtePlugin,
     serializeToHtml,
 } from '../index';
-import { columnBreakPlugin, defaultPlugins } from '../plugins';
+import { columnBreakPlugin, defaultContent, defaultPlugins, textStyleContent } from '../plugins';
 
 // The readonly view and export draw the same tree, so they are tested side by
 // side: the renderer as React in the test DOM, export as the string it returns.
@@ -181,6 +181,29 @@ describe('the element a document sits in', () => {
 
     it('is left out of export with wrap: false', () => {
         expect(serializeToHtml(doc, { plugins, wrap: false })).toBe('<p>Hello</p>');
+    });
+});
+
+describe('host looks given only as content', () => {
+    const doc = paragraph([{ text: 'Hello' }]);
+    const presets = { body: { fontSize: '17px' }, heading1: { color: 'red' } };
+
+    it('reach the readonly view and export without the text style plugin', () => {
+        const plugins = [textStyleContent({ presets })];
+        const view = rendered(<RichTextRenderer value={doc} plugins={plugins} />).firstElementChild;
+        const exportRoot = exported(serializeToHtml(doc, { plugins })).firstElementChild;
+
+        for (const root of [view, exportRoot]) {
+            expect((root as HTMLElement | null)?.style.getPropertyValue('--rte-body-font-size')).toBe('17px');
+            expect((root as HTMLElement | null)?.style.getPropertyValue('--rte-heading1-color')).toBe('red');
+        }
+    });
+
+    it('reach the readonly view when added after the default content', () => {
+        const plugins = [...defaultContent, textStyleContent({ presets })];
+        const view = rendered(<RichTextRenderer value={doc} plugins={plugins} />).firstElementChild;
+
+        expect((view as HTMLElement | null)?.style.getPropertyValue('--rte-body-font-size')).toBe('17px');
     });
 });
 

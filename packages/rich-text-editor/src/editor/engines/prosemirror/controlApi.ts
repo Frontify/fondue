@@ -24,7 +24,7 @@ import {
 
 import { keepCarriedAttrs } from './carriedAttrs';
 import { blockToEngine, markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
-import { gridOfSelection, textOfSelectedSlots } from './grid';
+import { createGridApi, gridOfSelection, textOfSelectedSlots } from './grid';
 import { createListApi, liftOutOfLists } from './lists';
 import { warnUnknownType } from './warnings';
 
@@ -501,6 +501,7 @@ export const createControlApi = (
     marks: createMarkApi(getView, schema),
     blocks: createBlockApi(getView, schema, registry),
     lists: createListApi(getView, schema, registry),
+    grid: createGridApi(getView),
     history: createHistoryApi(getView),
 
     insert(type, value) {
