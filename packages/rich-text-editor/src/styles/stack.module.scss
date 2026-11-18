@@ -7,16 +7,18 @@
 // Each selector of a list is doubled on its own: `&#{&}` would join `.cell, .header` into `.cell .header`.
 @mixin stack($gap, $blocks: '> *') {
     @each $complex in & {
-        @at-root #{selector.append($complex, list.nth($complex, -1))} #{$blocks} {
+        $holder: selector.append($complex, list.nth($complex, -1));
+
+        @at-root #{$holder} #{$blocks} {
             // On each block rather than inherited, so a last block does not trim the blocks inside it.
             --rte-block-gap: #{$gap};
 
             margin-block-start: var(--rte-own-margin-top, 0);
             margin-block-end: var(--rte-own-margin-bottom, var(--rte-block-gap));
+        }
 
-            &:last-child {
-                --rte-block-gap: 0;
-            }
+        @at-root #{$holder} #{$blocks}:last-child {
+            --rte-block-gap: 0;
         }
     }
 }
