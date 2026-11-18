@@ -3,8 +3,8 @@
 import { defineContent, defineInline, definePlugin, type RtePlugin } from '#/core';
 
 import { MentionEditor } from './components/MentionEditor';
-import { BIDI_ISOLATE_TAG, MentionLink } from './components/MentionLink';
-import { linkTarget, mentionAttributes, mentionDisplay } from './helpers/display';
+import { MentionLink } from './components/MentionLink';
+import { mentionAttributes, mentionDisplay } from './helpers/display';
 import styles from './mention.module.scss';
 import { type MentionHref, type MentionItem, type MentionItems, type MentionValue } from './types';
 
@@ -43,16 +43,15 @@ export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = 
                 // nowhere to link to), no tooltip.
                 toHtml: (mention) => {
                     const shown = mentionDisplay(mention, { href, trigger });
-                    const target = linkTarget(shown);
                     return {
-                        tag: target === undefined ? 'span' : 'a',
+                        tag: shown.href === undefined ? 'span' : 'a',
                         attrs: {
-                            href: target,
+                            href: shown.href,
                             title: shown.title,
                             ...mentionAttributes(mention),
                             class: styles.mention ?? '',
                         },
-                        children: [{ tag: BIDI_ISOLATE_TAG, children: shown.label }],
+                        children: [{ tag: 'bdi', children: shown.label }],
                     };
                 },
 

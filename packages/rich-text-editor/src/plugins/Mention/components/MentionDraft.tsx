@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconPeople, IconPerson, IconTarget } from '@frontify/fondue-icons';
-import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
+import { type KeyboardEvent, type ReactElement, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { isCompositionKey } from '../../shared/helpers/keys';
@@ -21,7 +21,7 @@ const AVATAR_ICON_SIZE = 12;
 /** The gap between the query and the list under it. */
 const LIST_OFFSET = 4;
 
-const avatarPicture = (person: MentionItem): ReactNode => {
+const avatarPicture = (person: MentionItem): ReactElement => {
     if (isSafeImageSrc(person.image)) {
         return <img src={person.image} alt="" />;
     }
@@ -35,9 +35,6 @@ const avatarPicture = (person: MentionItem): ReactNode => {
             return <IconPeople size={AVATAR_ICON_SIZE} />;
         case 'all':
             return <IconTarget size={AVATAR_ICON_SIZE} />;
-        default:
-            // Adding a kind fails to compile here until it is handled.
-            throw new Error(`Unhandled mention kind: ${JSON.stringify(kind satisfies never)}`);
     }
 };
 
@@ -67,9 +64,6 @@ const peopleOf = (outcome: PeopleOutcome | null): readonly MentionItem[] => {
             return outcome.people;
         case 'failed':
             return [];
-        default:
-            // Adding an outcome fails to compile here until it is handled.
-            throw new Error(`Unhandled people outcome: ${JSON.stringify(outcome satisfies never)}`);
     }
 };
 
@@ -99,13 +93,7 @@ const phaseOf = ({ outcome, lookup, slow }: PhaseOfParams): PeoplePhase => {
                 // Asked for, so it shows at once; cleared, so a second failure is announced again.
                 case 'retrying':
                     return 'searching';
-                default:
-                    // Adding a lookup state fails to compile here until it is handled.
-                    throw new Error(`Unhandled people lookup: ${JSON.stringify(lookup satisfies never)}`);
             }
-        default:
-            // Adding an outcome fails to compile here until it is handled.
-            throw new Error(`Unhandled people outcome: ${JSON.stringify(outcome satisfies never)}`);
     }
 };
 
@@ -119,9 +107,6 @@ const isOpen = (phase: PeoplePhase, query: string): boolean => {
             return true;
         case 'empty':
             return query !== '';
-        default:
-            // Adding a phase fails to compile here until it is handled.
-            throw new Error(`Unhandled people phase: ${JSON.stringify(phase satisfies never)}`);
     }
 };
 
@@ -137,9 +122,6 @@ const statusOf = (phase: PeoplePhase, people: readonly MentionItem[]): string =>
             return MENTION_STRINGS.noMatches;
         case 'list':
             return MENTION_STRINGS.peopleCount(people.length);
-        default:
-            // Adding a phase fails to compile here until it is handled.
-            throw new Error(`Unhandled people phase: ${JSON.stringify(phase satisfies never)}`);
     }
 };
 
@@ -212,7 +194,7 @@ const MentionPopupBody = ({
     onRetry,
     onPick,
     onHighlight,
-}: MentionPopupBodyProps): ReactNode => {
+}: MentionPopupBodyProps): ReactElement | null => {
     switch (phase) {
         case 'waiting':
             return null;
@@ -272,9 +254,6 @@ const MentionPopupBody = ({
                     ))}
                 </ul>
             );
-        default:
-            // Adding a phase fails to compile here until it is handled.
-            throw new Error(`Unhandled people phase: ${JSON.stringify(phase satisfies never)}`);
     }
 };
 
@@ -377,6 +356,14 @@ export const MentionDraft = ({
         }
     }, [focused]);
 
+    /** Moves the highlight by `step`, wrapping around the list. */
+    const move = (step: number): void => {
+        if (people.length === 0) {
+            return;
+        }
+        highlight((activeIndex + step + people.length) % people.length);
+    };
+
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
         // While an input method composes, no key is a command, not even Space or Escape.
         if (isCompositionKey(event)) {
@@ -384,15 +371,10 @@ export const MentionDraft = ({
         }
         switch (event.key) {
             case 'ArrowDown':
+                move(1);
+                break;
             case 'ArrowUp':
-                if (people.length === 0) {
-                    break;
-                }
-                highlight(
-                    event.key === 'ArrowDown'
-                        ? (activeIndex + 1) % people.length
-                        : (activeIndex - 1 + people.length) % people.length,
-                );
+                move(-1);
                 break;
             case 'Enter':
             case 'Tab':
