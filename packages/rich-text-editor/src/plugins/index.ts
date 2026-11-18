@@ -6,6 +6,8 @@
 // nothing else. UI only one plugin needs stays with that plugin (Mention's
 // picker, Link's flyout).
 
+// The `@frontify/fondue-rich-text-editor/plugins` package entry: every export here is public API.
+
 // --- Plugins ---
 
 export { defaultPlugins } from './defaultPlugins';
