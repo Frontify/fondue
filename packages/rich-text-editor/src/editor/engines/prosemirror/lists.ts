@@ -1,12 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Node as PmNode, type NodeType as PmNodeType, type Schema } from 'prosemirror-model';
+import { autoJoin } from 'prosemirror-commands';
+import {
+    type Attrs,
+    type Node as PmNode,
+    type NodeType as PmNodeType,
+    type ResolvedPos,
+    type Schema,
+} from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem as pmSplitListItem, wrapInList } from 'prosemirror-schema-list';
-import { type Command, type EditorState, type Transaction } from 'prosemirror-state';
+import { type Command, type EditorState, Selection, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry } from '#/core';
 
+import { withCarriedAttrs } from './carriedAttrs';
 import { mapChildren } from './documentConversion';
 import { warnUnknownType } from './warnings';
 
@@ -17,6 +25,8 @@ import { warnUnknownType } from './warnings';
  */
 
 // Where the caret is
+
+type NodeAt = { node: PmNode; pos: number };
 
 /** The innermost ancestor that is a list of items, with the position it sits at. */
 const findList = (state: EditorState, itemTypeByList: Map<string, string>): { node: PmNode; pos: number } | null => {
@@ -37,14 +47,97 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
 };
 
+// Splitting
+
+type MarkupChange = { pos: number; attrs: Attrs };
+
+const findItem = ($pos: ResolvedPos, itemType: PmNodeType): NodeAt | null => {
+    for (let depth = $pos.depth; depth > 0; depth--) {
+        const node = $pos.node(depth);
+        if (node.type === itemType) {
+            return { node, pos: $pos.before(depth) };
+        }
+    }
+    return null;
+};
+
+/** After a split at the item's very start the new empty item is the one above; otherwise it is the caret's item. */
+const newItemPos = (doc: PmNode, item: NodeAt, splitAtItemStart: boolean): number => {
+    const block = item.node.firstChild;
+    const previous = doc.resolve(item.pos).nodeBefore;
+    if (splitAtItemStart && block !== null && block.content.size > 0 && previous !== null) {
+        return item.pos - previous.nodeSize;
+    }
+    return item.pos;
+};
+
+const resetToDefaults = (doc: PmNode, pos: number): MarkupChange | null => {
+    const item = doc.nodeAt(pos);
+    if (!item) {
+        return null;
+    }
+    const defaults = item.type.create().attrs;
+    if (item.hasMarkup(item.type, defaults, item.marks)) {
+        return null;
+    }
+    return { pos, attrs: defaults };
+};
+
+const carryIntoFirstBlock = (registry: PluginRegistry, item: NodeAt, source: PmNode): MarkupChange | null => {
+    const block = item.node.firstChild;
+    if (!block?.isTextblock) {
+        return null;
+    }
+    const attrs = withCarriedAttrs(registry, block, source);
+    if (!attrs) {
+        return null;
+    }
+    return { pos: item.pos + 1, attrs };
+};
+
+/** Like `splitListItem`, but the new item gets default attributes (an unchecked to-do) and its first block keeps alignment. */
+const splitListItem =
+    (registry: PluginRegistry, itemType: PmNodeType): Command =>
+    (state, dispatch) => {
+        const split = pmSplitListItem(itemType);
+        if (!dispatch) {
+            return split(state);
+        }
+        const source = state.selection.$from.parent;
+        const { $from: caret } = state.selection;
+        // The first child only: at a later child's start the item above still holds earlier content.
+        const splitAtItemStart = caret.depth >= 2 && caret.parentOffset === 0 && caret.index(-1) === 0;
+        return split(state, (transaction) => {
+            const item = findItem(transaction.selection.$from, itemType);
+            if (item) {
+                const newPos = newItemPos(transaction.doc, item, splitAtItemStart);
+                const changes = [resetToDefaults(transaction.doc, newPos)];
+                if (newPos === item.pos) {
+                    changes.push(carryIntoFirstBlock(registry, item, source));
+                }
+                for (const change of changes) {
+                    if (change) {
+                        transaction.setNodeMarkup(change.pos, undefined, change.attrs);
+                    }
+                }
+            }
+            dispatch(transaction);
+        });
+    };
+
+/** Joins only same-markup lists, because a join keeps just the first list's attributes. */
+const joiningLists = (command: Command, itemTypeByList: Map<string, string>): Command =>
+    autoJoin(command, (before, after) => itemTypeByList.has(before.type.name) && before.sameMarkup(after));
+
 // The list half of the control API
 
 /** Implements `EditorControlApi['lists']` against the live view. */
 export const createListApi = (
     getView: () => EditorView,
     schema: Schema,
-    { itemTypeByList }: PluginRegistry,
+    registry: PluginRegistry,
 ): EditorControlApi['lists'] => {
+    const { itemTypeByList } = registry;
     /** Run one of the engine's list commands against the item type in scope. */
     const runListCommand = (command: (itemType: PmNodeType) => Command): boolean => {
         const view = getView();
@@ -68,25 +161,35 @@ export const createListApi = (
             const current = findList(view.state, itemTypeByList);
 
             if (!current) {
-                wrapInList(listType)(view.state, view.dispatch);
+                joiningLists(wrapInList(listType), itemTypeByList)(view.state, view.dispatch);
             } else if (current.node.type === listType) {
                 runListCommand(liftListItem);
             } else {
-                // One step: a check list holding bullet items (or the reverse)
-                // is invalid content, so converting in two steps would throw.
-                const converted = listType.create(
-                    current.node.attrs,
-                    mapChildren(current.node, (item) =>
-                        item.type === itemType ? item : itemType.create(item.attrs, item.content),
-                    ),
-                );
-                view.dispatch(view.state.tr.replaceWith(current.pos, current.pos + current.node.nodeSize, converted));
+                joiningLists((state, dispatch) => {
+                    // One step: a check list holding bullet items (or the reverse)
+                    // is invalid content, so converting in two steps would throw.
+                    const converted = listType.create(
+                        current.node.attrs,
+                        mapChildren(current.node, (item) =>
+                            item.type === itemType ? item : itemType.create(item.attrs, item.content),
+                        ),
+                    );
+                    const transaction = state.tr.replaceWith(
+                        current.pos,
+                        current.pos + current.node.nodeSize,
+                        converted,
+                    );
+                    // Mapping would move the selection out of the replaced list, and positions are unchanged.
+                    transaction.setSelection(Selection.fromJSON(transaction.doc, state.selection.toJSON()));
+                    dispatch?.(transaction);
+                    return true;
+                }, itemTypeByList)(view.state, view.dispatch);
             }
             view.focus();
         },
         indent: () => runListCommand(sinkListItem),
         outdent: () => runListCommand(liftListItem),
-        split: () => runListCommand(pmSplitListItem),
+        split: () => runListCommand((itemType) => splitListItem(registry, itemType)),
         unwrapAll() {
             const view = getView();
             const { from, to } = view.state.selection;
@@ -175,6 +278,66 @@ const inEmptyBlock = (state: EditorState): boolean => {
     const { $from, empty } = state.selection;
     return empty && $from.parent.isTextblock && $from.parent.content.size === 0;
 };
+
+const outermostListEndedByCaret = (state: EditorState, itemTypeByList: Map<string, string>): number | null => {
+    const { $from } = state.selection;
+    let found: number | null = null;
+    for (let depth = $from.depth - 1; depth >= 0; depth--) {
+        const closesWithCaretBlock = $from.after(depth + 1) === $from.end(depth);
+        if (!closesWithCaretBlock) {
+            break;
+        }
+        if (itemTypeByList.has($from.node(depth).type.name)) {
+            found = depth;
+        }
+    }
+    return found;
+};
+
+type DeleteDirection = 'backward' | 'forward';
+
+/** Removes the empty line beside a list, which ProseMirror's own join would first wrap into the list as an empty item. */
+export const deleteEmptyBlockBesideList = (itemTypeByList: Map<string, string>, direction: DeleteDirection): Command =>
+    joiningLists((state, dispatch) => {
+        const { $from, empty } = state.selection;
+        if (!empty) {
+            return false;
+        }
+        if (direction === 'backward') {
+            const before = state.doc.resolve($from.before()).nodeBefore;
+            if (!$from.parent.isTextblock || $from.parent.content.size > 0 || !before) {
+                return false;
+            }
+            if (!itemTypeByList.has(before.type.name)) {
+                return false;
+            }
+            if (dispatch) {
+                const transaction = state.tr.delete($from.before(), $from.after());
+                const endOfPreviousBlock = Selection.near(
+                    transaction.doc.resolve(transaction.mapping.map($from.before())),
+                    -1,
+                );
+                dispatch(transaction.setSelection(endOfPreviousBlock).scrollIntoView());
+            }
+            return true;
+        }
+        if ($from.parentOffset !== $from.parent.content.size) {
+            return false;
+        }
+        const listDepth = outermostListEndedByCaret(state, itemTypeByList);
+        if (listDepth === null) {
+            return false;
+        }
+        const listEnd = $from.after(listDepth);
+        const after = state.doc.resolve(listEnd).nodeAfter;
+        if (!after?.isTextblock || after.content.size > 0) {
+            return false;
+        }
+        if (dispatch) {
+            dispatch(state.tr.delete(listEnd, listEnd + after.nodeSize).scrollIntoView());
+        }
+        return true;
+    }, itemTypeByList);
 
 /**
  * Enter, Tab, Shift-Tab and Backspace inside a list. They belong to being in a
