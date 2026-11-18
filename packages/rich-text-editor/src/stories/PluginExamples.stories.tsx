@@ -533,12 +533,10 @@ const BUTTON_LOOKS: Record<LinkAppearance, ButtonLook> = {
     },
 };
 
-const BUTTON_APPEARANCES: readonly LinkAppearance[] = ['primary', 'secondary', 'tertiary'];
-
 /**
- * A link can look like a button. `appearances` adds a Style select to the link
- * form, and `buttonLooks` says how each one looks, here with literal values where a
- * host would pass its guideline variables. A plain link stays a plain link.
+ * A link can look like a button. Passing `buttonLooks` adds a Style select to the link
+ * form and says how each style looks, here with literal values where a host would
+ * pass its guideline variables. A plain link stays a plain link.
  */
 export const ButtonLinks: Story = {
     name: 'Button links',
@@ -571,7 +569,7 @@ export const ButtonLinks: Story = {
                     <RichTextEditor
                         value={doc}
                         onChange={setDoc}
-                        plugins={[linkPlugin({ appearances: BUTTON_APPEARANCES, buttonLooks: BUTTON_LOOKS })]}
+                        plugins={[linkPlugin({ buttonLooks: BUTTON_LOOKS })]}
                     />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>

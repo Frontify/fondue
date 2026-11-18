@@ -30,7 +30,7 @@ import {
 import { type LinkSearch } from './helpers/destination';
 import { openNewLinkForm } from './helpers/newLinkForms';
 import { NEW_TAB_REL, NEW_TAB_TARGET } from './helpers/newTab';
-import { type LinkAppearance, type LinkValue } from './helpers/value';
+import { ALL_LINK_APPEARANCES, type LinkAppearance, type LinkValue } from './helpers/value';
 
 /** The value this plugin sets on text nodes. */
 export type LinkMark = {
@@ -56,15 +56,10 @@ export type LinkPluginOptions = {
      */
     look?: LinkLook;
     /**
-     * The button looks the link form's Style select offers, in order. Left out, the form has no Style select and
-     * pasted button links paste as plain links.
-     * @default []
-     */
-    appearances?: readonly LinkAppearance[];
-    /**
-     * How each appearance looks. Values are CSS strings, so `var(--f-theme-settings-button-primary-color)` works and
-     * wrapper overrides keep working. A field left out keeps Fondue's look. A value that is empty or can end its CSS
-     * declaration early throws an error that names the appearance and the field.
+     * Turns button links on: the link form's Style select offers the primary, secondary and tertiary styles. Each key
+     * sets how that style looks. Values are CSS strings, so `var(--f-theme-settings-button-primary-color)` works and
+     * wrapper overrides keep working. A style or field left out keeps Fondue's look. A value that is empty or can end
+     * its CSS declaration early throws an error that names the appearance and the field.
      */
     buttonLooks?: Partial<Record<LinkAppearance, ButtonLook>>;
 };
@@ -219,13 +214,22 @@ const HOTKEY: keyof typeof hotkeys = 'Mod-k';
  * Links, made with a toolbar button or `Mod-k` and edited in a flyout while the caret is inside.
  * A web, mail or phone address followed by a space becomes a link, and pasting one links the
  * selected text, or goes in linked at a caret outside a link. `search` offers the app's own
- * pages as targets, and `look` sets how links look. `appearances` offers button looks for a link, and
- * `buttonLooks` sets how each of them looks.
+ * pages as targets, and `look` sets how links look. Passing `buttonLooks` turns on button links
+ * (primary, secondary and tertiary) and sets how each of them looks.
  *
  * @example
- * const links = linkPlugin({ search, look: { color: 'var(--f-theme-settings-link-color)' }, appearances: ['primary'] });
+ * const links = linkPlugin({
+ *     search,
+ *     look: { color: 'var(--f-theme-settings-link-color)' },
+ *     buttonLooks: { primary: { backgroundColor: 'var(--f-theme-settings-button-primary-background-color)' } },
+ * });
  */
-export const linkPlugin = ({ search, look, appearances = NO_APPEARANCES, buttonLooks }: LinkPluginOptions = {}) => {
+export const linkPlugin = ({ search, look, buttonLooks }: LinkPluginOptions = {}) => {
+    let appearances: readonly LinkAppearance[] = NO_APPEARANCES;
+    if (buttonLooks !== undefined) {
+        appearances = ALL_LINK_APPEARANCES;
+    }
+
     // Offered appearances change what paste keeps, so they need a mark of their own; looks alone share the default one.
     let marks = LINK_MARKS;
     if (appearances.length > 0) {

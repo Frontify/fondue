@@ -103,7 +103,7 @@ describe('the link mark with an appearance', () => {
     });
 
     it('writes the appearance whatever the editor offers', () => {
-        const offering = linkPlugin({ appearances: ['secondary'] }).content?.marks?.link;
+        const offering = linkPlugin({ buttonLooks: {} }).content?.marks?.link;
 
         expect(link?.toHtml({ href: '/a', appearance: 'primary' }).attrs).toEqual(
             offering?.toHtml({ href: '/a', appearance: 'primary' }).attrs,
@@ -129,26 +129,22 @@ const parseAnchor = (attributes: Record<string, string>, options?: LinkPluginOpt
 
 describe('reading a pasted link', () => {
     it('keeps an appearance this editor offers', () => {
-        const value = parseAnchor(
-            { href: 'https://example.com', 'data-appearance': 'secondary' },
-            { appearances: ['primary', 'secondary'] },
-        );
+        const value = parseAnchor({ href: 'https://example.com', 'data-appearance': 'secondary' }, { buttonLooks: {} });
 
         expect(value).toEqual({ href: 'https://example.com', appearance: 'secondary' });
     });
 
-    it('drops an appearance this editor does not offer', () => {
-        const attributes = { href: 'https://example.com', 'data-appearance': 'tertiary' };
+    it('drops any appearance when the editor has no button looks, and keeps all three when it has some', () => {
+        for (const appearance of ALL_LINK_APPEARANCES) {
+            const attributes = { href: 'https://example.com', 'data-appearance': appearance };
 
-        expect(parseAnchor(attributes, { appearances: ['primary'] })).toEqual({ href: 'https://example.com' });
-        expect(parseAnchor(attributes)).toEqual({ href: 'https://example.com' });
+            expect(parseAnchor(attributes)).toEqual({ href: 'https://example.com' });
+            expect(parseAnchor(attributes, { buttonLooks: {} })).toEqual({ href: 'https://example.com', appearance });
+        }
     });
 
     it('drops an appearance that is not one', () => {
-        const value = parseAnchor(
-            { href: 'https://example.com', 'data-appearance': 'huge' },
-            { appearances: ['primary'] },
-        );
+        const value = parseAnchor({ href: 'https://example.com', 'data-appearance': 'huge' }, { buttonLooks: {} });
 
         expect(value).toEqual({ href: 'https://example.com' });
     });
@@ -165,7 +161,6 @@ describe('reading a pasted link', () => {
 describe('the link plugin button looks', () => {
     it('sets a custom property for each field of a look, and of its hover look', () => {
         const plugin = linkPlugin({
-            appearances: ['primary'],
             buttonLooks: {
                 primary: {
                     color: 'var(--f-theme-settings-button-primary-color)',
@@ -182,8 +177,20 @@ describe('the link plugin button looks', () => {
         });
     });
 
-    it('shares the default content when there are no appearances and no button looks', () => {
-        expect(linkPlugin().content).toBe(linkPlugin({ appearances: [] }).content);
+    it('shares the default content when there are no button looks', () => {
+        expect(linkPlugin().content).toBe(linkContent);
+    });
+
+    it('sets no button custom properties for empty button looks, and keeps a pasted appearance in the mark', () => {
+        const plugin = linkPlugin({ buttonLooks: {} });
+
+        expect(plugin.content?.contentProperties).toEqual({});
+        expect(parseAnchor({ href: 'https://example.com', 'data-appearance': 'primary' }, { buttonLooks: {} })).toEqual(
+            {
+                href: 'https://example.com',
+                appearance: 'primary',
+            },
+        );
     });
 
     it('refuses a value that could break out of its declaration, naming the appearance and the field', () => {
