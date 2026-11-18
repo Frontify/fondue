@@ -7,6 +7,9 @@
 // editor is its content; a host that wants a field draws the box around it.
 // One exception: the sticky top toolbar paints the surface colour, so text scrolled under it stays hidden.
 
+// 4px shorter than the regular Button, as the design draws it.
+$separator-size: 2rem;
+
 /**
  * Wraps the toolbar, the content and the floating bar so the editor has one
  * element to watch focus and keys on. `display: contents` keeps it out of layout.
@@ -66,6 +69,13 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-xx-small);
+}
+
+/** The divider between two groups of the row. */
+.separator {
+    display: flex;
+    flex: none;
+    block-size: $separator-size;
 }
 
 /** One plugin's controls. Never shrunk, so the top row measures each at its own size. */
