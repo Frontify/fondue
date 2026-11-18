@@ -73,7 +73,7 @@ export const LinearGauge = ({
             return [{ ...getEntry(activeSection, activeIndex), description: activeSection.description }];
         }
 
-        const entries = sections.map(getEntry);
+        const entries = sections.map((section, index) => getEntry(section, index));
 
         if (totalLabel) {
             return [{ color: '', title: totalLabel, value: totalValue }, ...entries];
