@@ -21,6 +21,7 @@ import {
     UNKNOWN_MARKS,
     VALUE_ATTR,
 } from './documentConversion';
+import { gridNodeSpec, gridSlotAttrs } from './grid';
 import { htmlSpecToDom } from './htmlSpecToDom';
 import {
     blockParseRules,
@@ -121,8 +122,10 @@ const blockNodeSpec = (
         ...(isVoid || isList || hasParts || type === PARAGRAPH ? {} : { defining: true }),
         // invariant (4)
         ...(isHeld ? {} : { group: 'block' }),
+        ...gridNodeSpec(definition),
         attrs: {
             [EXTRA_ATTR]: { default: null },
+            ...gridSlotAttrs(definition),
             ...Object.fromEntries(
                 Object.entries(definition.defaults ?? {}).map(([name, value]) => [name, { default: value ?? null }]),
             ),

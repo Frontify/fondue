@@ -115,6 +115,12 @@ const engineRing = (allowPluginBarrel: boolean) => ({
 
 const ENGINE = 'src/editor/engines/prosemirror';
 
+/** The grid library speaks of tables and cells, so one engine file reaches it and renames it there. */
+const NO_GRID_LIBRARY = {
+    group: ['prosemirror-tables'],
+    message: 'Only grid.ts imports prosemirror-tables. Use what grid.ts exports instead.',
+};
+
 export default defineConfig({
     extends: [reactConfig],
     options: {
@@ -353,6 +359,16 @@ export default defineConfig({
         },
         {
             files: [`${ENGINE}/**/*.{ts,tsx}`],
+            excludeFiles: [`${ENGINE}/grid.ts`],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    { patterns: [NO_SERVER_RENDER, engineRing(false), NO_GRID_LIBRARY] },
+                ],
+            },
+        },
+        {
+            files: [`${ENGINE}/grid.ts`],
             rules: {
                 'no-restricted-imports': ['error', { patterns: [NO_SERVER_RENDER, engineRing(false)] }],
             },

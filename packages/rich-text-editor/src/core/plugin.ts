@@ -131,11 +131,12 @@ export type RtePluginDefinition = Omit<RtePlugin, 'id' | 'kind'> & { id?: string
  * Declares a plugin. The `id` defaults to the only type its content declares;
  * with none or several, it throws unless an `id` is given.
  * @example
- * const quotePlugin = definePlugin({
- *     content: quoteContent,
- *     toolbar: [{ label: 'Quote', icon: IconSpeechBubbleQuote }],
- *     inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
- * });
+ * const quotePlugin = () =>
+ *     definePlugin({
+ *         content: quoteContent,
+ *         toolbar: [{ label: 'Quote', icon: IconSpeechBubbleQuote }],
+ *         inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
+ *     });
  */
 export const definePlugin = ({ id, ...plugin }: RtePluginDefinition): RtePlugin => {
     const resolved = id ?? onlyTypeOf(plugin.content);
@@ -278,6 +279,12 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
     /** The block's markup. `children: true` is where its content goes. */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<Partial<TValue>>[];
+    /**
+     * The block's place in a grid: a block laid out in rows and columns that
+     * the editor edits as one, with a selection that spans slots, and keys
+     * that move from slot to slot. See `GridRole`.
+     */
+    gridRole?: GridRole;
     render?: {
         /**
          * Readonly view in place of `toHtml`. `style` carries what every text
@@ -285,6 +292,39 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
          */
         component?: ComponentType<{ value: TValue; children?: ReactNode; style?: CSSProperties }>;
     };
+};
+
+/**
+ * Where a block sits in a grid:
+ * - `'grid'`       → the grid itself; its content is `{ parts }` of `'row'` blocks
+ * - `'row'`        → one row; its content is `{ parts }` of slot blocks
+ * - `'slot'`       → one place in a row, holding `{ blocks }`
+ * - `'headerSlot'` → a slot that labels its row or column
+ *
+ * A slot that keeps its spans declares `colspan` and `rowspan` in its
+ * `defaults`; left out, they exist only while editing.
+ */
+export type GridRole = 'grid' | 'row' | 'slot' | 'headerSlot';
+
+const MAX_GRID_SPAN = 50;
+
+/** A slot's span, stored or from markup: a whole number from 1 to 50, 1 when unreadable. */
+const numberOf = (value: unknown): number => {
+    if (typeof value === 'number') {
+        return value;
+    }
+    if (typeof value === 'string') {
+        return Number.parseInt(value, 10);
+    }
+    return Number.NaN;
+};
+
+export const gridSpanOf = (value: unknown): number => {
+    const span = numberOf(value);
+    if (!Number.isFinite(span) || span < 1) {
+        return 1;
+    }
+    return Math.min(Math.floor(span), MAX_GRID_SPAN);
 };
 
 /**
@@ -560,14 +600,6 @@ export type SelectedNode = {
 
 // --- Menus, keyboard, paste, typing ---
 
-/**
- * Whether a command can run on the selection now. A command that cannot stays
- * listed, disabled, with `reason` saying why (`'This block is at its size
- * limit'`), so a limit is never a silent failure. Pass `reason` already in
- * the host's language.
- */
-export type RteCommandAvailability = { enabled: true } | { enabled: false; reason: string };
-
 /** A labelled entry a plugin offers to the "Turn into" menu and the `/` menu. */
 export type RteBlockCommand = {
     /** Unique across plugins, e.g. `'heading-1'`. */
@@ -581,12 +613,8 @@ export type RteBlockCommand = {
     group: 'turnInto' | 'insert';
     /** Whether the selection is already this — the Turn-into button shows the active label. */
     isActive?: (selection: RteSelectionSnapshot) => boolean;
-    /**
-     * Whether the command can run on the selection; omitted, it always can. A
-     * disabled command is still listed, with its reason, and choosing it does
-     * nothing.
-     */
-    availability?: (selection: RteSelectionSnapshot) => RteCommandAvailability;
+    /** Whether the command can run on the selection; omitted, it always can. The menus leave out one that cannot. */
+    isAvailable?: (selection: RteSelectionSnapshot) => boolean;
     run: (api: EditorControlApi) => void;
 };
 
