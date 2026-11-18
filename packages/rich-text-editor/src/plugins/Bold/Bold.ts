@@ -39,10 +39,11 @@ export const boldContent = defineContent({
 /**
  * Bold text with the `Mod-b` shortcut, and `**text**` or `__text__` while typing
  */
-export const boldPlugin = /* @__PURE__ */ definePlugin({
-    content: boldContent,
-    toolbarGroup: 'marks',
-    toolbar: [{ label: 'Bold', icon: IconTextFormatBold, shortcut: 'Mod-b' }],
-    // Bounded by words, so `foo__bar__` and `self.__dict__` stay as typed.
-    inputRules: [{ delimiter: '**' }, { delimiter: '__', wordBounded: true }],
-});
+export const boldPlugin = () =>
+    definePlugin({
+        content: boldContent,
+        toolbarGroup: 'marks',
+        toolbar: [{ label: 'Bold', icon: IconTextFormatBold, shortcut: 'Mod-b' }],
+        // Bounded by words, so `foo__bar__` and `self.__dict__` stay as typed.
+        inputRules: [{ delimiter: '**' }, { delimiter: '__', wordBounded: true }],
+    });

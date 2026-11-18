@@ -18,13 +18,14 @@ import { superscriptContent } from './Superscript/Superscript';
 import { textStyleContent } from './TextStyle/TextStyle';
 import { underlineContent } from './Underline/Underline';
 
-// Each plugin file's `definePlugin` call needs `/* @__PURE__ */`, or the renderer keeps the plugin; rendererBundle.spec.ts fails when that drags editing UI in.
+// Each plugin is a function, so the renderer drops it with its editing UI; a top-level `definePlugin` call needs `/* @__PURE__ */` instead, and rendererBundle.spec.ts fails when one drags editing UI in.
 
 /**
- * The content of every `defaultPlugins` entry, in the same order, which the renderer reads when given no `plugins`
+ * The content of every `defaultPlugins` entry, in the same order, which the renderer reads when given no `plugins`.
+ * Text takes Fondue's look; for the host's looks, add `textStyleContent({ presets })` and `linkContent({ look })` after these.
  */
 export const defaultContent: readonly RteContent[] = Object.freeze([
-    textStyleContent,
+    textStyleContent(),
     boldContent,
     italicContent,
     underlineContent,
@@ -33,7 +34,7 @@ export const defaultContent: readonly RteContent[] = Object.freeze([
     subscriptContent,
     superscriptContent,
     fontColorContent,
-    linkContent,
+    linkContent(),
     alignContent,
     bulletListContent,
     numberedListContent,

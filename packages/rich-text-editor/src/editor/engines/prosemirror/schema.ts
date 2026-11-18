@@ -21,6 +21,7 @@ import {
     UNKNOWN_MARKS,
     VALUE_ATTR,
 } from './documentConversion';
+import { gridNodeSpec, gridSlotAttrs } from './grid';
 import { htmlSpecToDom } from './htmlSpecToDom';
 import {
     blockParseRules,
@@ -44,10 +45,11 @@ import {
  *     Enter creates.
  * (2) Marks are declared in NESTING order, not mount order, since the
  *     first-declared mark wraps the rest.
- * (3) Every content block except paragraph and lists is `defining`, which makes
- *     pasted content keep the block it was copied out of.
- * (4) A list item stays OUT of the `block` group; it is only ever reached
- *     through its list. That is also why the selection snapshot's `block` is the
+ * (3) Every content block except paragraph, lists and blocks made of parts is
+ *     `defining`, which makes pasted content keep the block it was copied out of.
+ * (4) A list item, and any part (a type named in some block's `{ parts }`),
+ *     stays OUT of the `block` group; it is only ever reached through the block
+ *     that holds it. That is also why the selection snapshot's `block` is the
  *     paragraph inside an item rather than the item itself.
  */
 
@@ -71,6 +73,17 @@ const contentExpression = (
         }
         return `${content.items}+`;
     }
+    if ('parts' in content) {
+        // Thrown, as with `items`: a part has no other place to stand, so one left out would be lost on the way out.
+        const missing = content.parts.find((name) => !known.has(name));
+        if (missing !== undefined) {
+            throw new Error(`Block "${type}" declares parts of type "${missing}", which is not registered.`);
+        }
+        if (content.parts.length === 0) {
+            throw new Error(`Block "${type}" declares parts but names no type.`);
+        }
+        return `(${[...new Set(content.parts)].join(' | ')})+`;
+    }
     const expanded = content.blocks.flatMap((name) => (name === ANY_LIST ? [...lists] : [name]));
     const contains = [...new Set(expanded)].filter((name) => known.has(name));
     if (contains.length === 0) {
@@ -82,7 +95,8 @@ const contentExpression = (
 
 type BlockNodeSpecParams = {
     registry: PluginRegistry;
-    isListItem: boolean;
+    /** A list item or a part: reached only through the block that holds it. */
+    isHeld: boolean;
     known: Set<string>;
     lists: Set<string>;
 };
@@ -90,10 +104,11 @@ type BlockNodeSpecParams = {
 const blockNodeSpec = (
     type: string,
     definition: BlockDefinition,
-    { registry, isListItem, known, lists }: BlockNodeSpecParams,
+    { registry, isHeld, known, lists }: BlockNodeSpecParams,
 ): PmNodeSpec => {
     const isVoid = definition.content === undefined;
     const isList = typeof definition.content === 'object' && 'items' in definition.content;
+    const hasParts = typeof definition.content === 'object' && 'parts' in definition.content;
     // Attributes every text block carries are engine attributes of each one.
     const carried = definition.content === 'text' ? [...registry.blockAttributes] : [];
 
@@ -104,11 +119,13 @@ const blockNodeSpec = (
         // text that would only draw a ring around it.
         selectable: isVoid || registry.edits.has(type),
         // invariant (3)
-        ...(isVoid || isList || type === PARAGRAPH ? {} : { defining: true }),
+        ...(isVoid || isList || hasParts || type === PARAGRAPH ? {} : { defining: true }),
         // invariant (4)
-        ...(isListItem ? {} : { group: 'block' }),
+        ...(isHeld ? {} : { group: 'block' }),
+        ...gridNodeSpec(definition),
         attrs: {
             [EXTRA_ATTR]: { default: null },
+            ...gridSlotAttrs(definition),
             ...Object.fromEntries(
                 Object.entries(definition.defaults ?? {}).map(([name, value]) => [name, { default: value ?? null }]),
             ),
@@ -188,7 +205,14 @@ const unknownMarksSpec: PmMarkSpec = {
 
 export const buildSchema = (registry: PluginRegistry): Schema => {
     const { itemTypeByList } = registry;
-    const itemTypes = new Set(itemTypeByList.values());
+    const heldTypes = new Set(itemTypeByList.values());
+    for (const block of registry.blocks.values()) {
+        if (typeof block.content === 'object' && 'parts' in block.content) {
+            for (const part of block.content.parts) {
+                heldTypes.add(part);
+            }
+        }
+    }
     const lists = new Set(itemTypeByList.keys());
     const known = new Set(registry.blocks.keys());
 
@@ -196,7 +220,7 @@ export const buildSchema = (registry: PluginRegistry): Schema => {
 
     // invariant (1): the registry puts the paragraph first.
     for (const [type, block] of registry.blocks) {
-        nodes[type] = blockNodeSpec(type, block, { registry, isListItem: itemTypes.has(type), known, lists });
+        nodes[type] = blockNodeSpec(type, block, { registry, isHeld: heldTypes.has(type), known, lists });
     }
     for (const [type, inline] of registry.inlines) {
         nodes[type] = inlineNodeSpec(inline, registry.edits.has(type));

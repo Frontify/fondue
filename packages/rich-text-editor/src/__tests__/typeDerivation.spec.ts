@@ -13,6 +13,7 @@ import {
     type RteDocument,
     type RteDocumentWith,
     type RtePlugin,
+    textStyleContent,
     textStylePlugin,
 } from '../index';
 
@@ -173,6 +174,9 @@ const linkMarginBottom = linkPlugin({ look: { marginBottom: '4px' } });
 // @ts-expect-error links take their look from the link plugin
 const textStyleLink = textStylePlugin({ presets: { link: { color: 'red' } } });
 
+// @ts-expect-error links take their look from the link content
+const textStyleContentLink = textStyleContent({ presets: { link: { color: 'red' } } });
+
 export const __typeAssertions = [
     doc,
     badBlock,
@@ -199,4 +203,5 @@ export const __typeAssertions = [
     linkMarginTop,
     linkMarginBottom,
     textStyleLink,
+    textStyleContentLink,
 ];

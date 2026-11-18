@@ -40,10 +40,12 @@ import {
     type RteDocumentWith,
     type RtePlugin,
     RichTextEditor,
+    RichTextRenderer,
     softBreakPlugin,
     strikethroughPlugin,
     subscriptPlugin,
     superscriptPlugin,
+    tablePlugin,
     textStylePlugin,
     toPlainText,
     typographyPlugin,
@@ -102,8 +104,8 @@ const LIST = 'tw-m-0 tw-body-small';
  */
 const SURFACE = 'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-surface tw-p-medium';
 
-/** The field box around an editor: the surface, plus a ring while focus is inside it. */
-const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-ring-focus`;
+/** The field box around an editor: the surface, with a stronger border on hover and while the caret is inside, as Fondue's Textarea does. */
+const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-line-strong`;
 
 const toolbarButtonClasses = (active: boolean | 'mixed'): string =>
     [
@@ -200,7 +202,7 @@ export const Quote: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[quotePlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[quotePlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -226,7 +228,7 @@ export const Bold: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -250,7 +252,7 @@ export const Italic: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[italicPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[italicPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -274,7 +276,7 @@ export const Underline: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[underlinePlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[underlinePlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -302,7 +304,7 @@ export const Strikethrough: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[strikethroughPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[strikethroughPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -326,7 +328,7 @@ export const Code: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[codePlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[codePlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -350,7 +352,7 @@ export const Subscript: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[subscriptPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[subscriptPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -374,7 +376,7 @@ export const Superscript: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[superscriptPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[superscriptPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -402,7 +404,7 @@ export const FontColor: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[fontColorPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[fontColorPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -514,7 +516,7 @@ export const Align: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[alignPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[alignPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -558,7 +560,7 @@ export const BulletList: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[bulletListPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[bulletListPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -593,7 +595,7 @@ export const NumberedList: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[numberedListPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[numberedListPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -627,7 +629,7 @@ export const CheckList: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[checkListPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[checkListPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -736,15 +738,15 @@ export const MarkdownShortcuts: Story = {
                         onChange={setDoc}
                         plugins={[
                             textStylePlugin(),
-                            quotePlugin,
-                            boldPlugin,
-                            italicPlugin,
-                            underlinePlugin,
-                            strikethroughPlugin,
-                            codePlugin,
-                            bulletListPlugin,
-                            numberedListPlugin,
-                            checkListPlugin,
+                            quotePlugin(),
+                            boldPlugin(),
+                            italicPlugin(),
+                            underlinePlugin(),
+                            strikethroughPlugin(),
+                            codePlugin(),
+                            bulletListPlugin(),
+                            numberedListPlugin(),
+                            checkListPlugin(),
                         ]}
                     />
                 </div>
@@ -774,7 +776,7 @@ export const Typography: Story = {
                         value={doc}
                         onChange={setDoc}
                         plugins={[
-                            codePlugin,
+                            codePlugin(),
                             typographyPlugin({ groups: ['quotes', 'ellipsis', 'dashes', 'symbols', 'numeric'] }),
                         ]}
                     />
@@ -802,7 +804,7 @@ export const SoftBreak: Story = {
             <div className={LAYOUT}>
                 <p className={HINT}>Shift-Enter adds a line to this block; Enter starts a new one — watch the JSON.</p>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[softBreakPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[softBreakPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -848,7 +850,13 @@ export const ResetFormatting: Story = {
                     <RichTextEditor
                         value={doc}
                         onChange={setDoc}
-                        plugins={[textStylePlugin(), boldPlugin, alignPlugin, bulletListPlugin, resetFormattingPlugin]}
+                        plugins={[
+                            textStylePlugin(),
+                            boldPlugin(),
+                            alignPlugin(),
+                            bulletListPlugin(),
+                            resetFormattingPlugin(),
+                        ]}
                     />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
@@ -870,8 +878,8 @@ export const BlurOnBreak: Story = {
         const docRef = useRef(doc);
         docRef.current = doc;
         const [plugins] = useState<RtePlugin[]>(() => [
-            boldPlugin,
-            italicPlugin,
+            boldPlugin(),
+            italicPlugin(),
             blurOnBreakPlugin({
                 onBreak: () => {
                     const text = toPlainText(docRef.current);
@@ -933,6 +941,78 @@ export const ColumnBreak: Story = {
                         onChange={setDoc}
                         plugins={[columnBreakPlugin({ columns: 2, gap: '24px' })]}
                     />
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/** Cells as the story writes them: one paragraph of text. */
+const tableCell = (text: string, colspan?: number) => ({
+    type: 'tableCell' as const,
+    ...(colspan === undefined ? {} : { colspan }),
+    children: [{ type: 'paragraph' as const, children: [{ text }] }],
+});
+
+const tableHeader = (text: string) => ({
+    type: 'tableHeader' as const,
+    children: [{ type: 'paragraph' as const, children: [{ text }] }],
+});
+
+/**
+ * A table: type / and pick Table to insert one with a header row. Tab and
+ * Shift+Tab move between cells, Tab in the last cell adds a row, and dragging
+ * across cells selects them. A stored merged cell keeps its span. The readonly
+ * view below draws the same document.
+ */
+export const Table: Story = {
+    render: () => {
+        const plugins = [...defaultPlugins, tablePlugin()];
+        const [doc, setDoc] = useState<RteDocument>(() => ({
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'The team, with a merged cell in the last row:' }] },
+                {
+                    type: 'table',
+                    children: [
+                        {
+                            type: 'tableRow',
+                            children: [tableHeader('Name'), tableHeader('Role'), tableHeader('Team')],
+                        },
+                        {
+                            type: 'tableRow',
+                            children: [tableCell('Ada'), tableCell('Engineer'), tableCell('Platform')],
+                        },
+                        {
+                            type: 'tableRow',
+                            children: [tableCell('Grace'), tableCell('Away until March', 2)],
+                        },
+                    ],
+                },
+                { type: 'paragraph', children: [] },
+            ],
+        }));
+
+        return (
+            <div className={LAYOUT}>
+                <p className={HINT}>
+                    Type / on the empty line for Table. Tab moves between cells. With the caret in a table, the Table
+                    button in the toolbar adds and deletes rows and columns and toggles the headers. Drag across cells
+                    and choose Merge cells to merge them; Split cell takes a merged cell apart.
+                </p>
+                <div className="tw-flex tw-flex-col tw-gap-4">
+                    <div className={FRAME}>
+                        <RichTextEditor
+                            value={doc}
+                            onChange={setDoc}
+                            plugins={plugins}
+                            placeholder="Type / for commands"
+                        />
+                    </div>
+                    <div className={SURFACE}>
+                        <RichTextRenderer value={doc} plugins={plugins} />
+                    </div>
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -1103,7 +1183,7 @@ export const ConsumerMark: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin, acmeHighlightPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin(), acmeHighlightPlugin]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -1174,7 +1254,7 @@ export const ConsumerBlock: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin, acmeCalloutPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin(), acmeCalloutPlugin]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>

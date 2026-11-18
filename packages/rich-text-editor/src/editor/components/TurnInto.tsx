@@ -7,7 +7,7 @@ import { type ComponentProps, type MouseEvent, type ReactNode, useRef } from 're
 import { type EditorControlApi, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
 import { MENU_ICON_SIZE } from '#/ui/toolbarIconSize';
 
-import { activeCommand } from '../helpers/blockCommands';
+import { activeCommand, availableCommands } from '../helpers/blockCommands';
 import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
 
@@ -47,7 +47,8 @@ const useReturnToText = (
 
 /**
  * The "Turn into" menu: a button naming what the block is now, listing what it
- * can become. Every command that converts a block, the built-in Text first.
+ * can become. Every command that converts a block and can run on the
+ * selection, the built-in Text first.
  */
 export const TurnInto = ({
     api,
@@ -82,7 +83,7 @@ export const TurnInto = ({
                 </Button>
             </Dropdown.Trigger>
             <Dropdown.Content {...contentProps} onEscapeKeyDown={returnToText}>
-                {commands.map((command) => {
+                {availableCommands(commands, selection).map((command) => {
                     const isActive = command === active;
                     const { icon: Icon } = command;
                     return (

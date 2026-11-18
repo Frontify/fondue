@@ -36,16 +36,20 @@ export type LinkMark = {
  */
 export type LinkLook = Omit<TextLook, 'textDecoration' | 'marginTop' | 'marginBottom'>;
 
-export type LinkPluginOptions = {
-    /**
-     * Offers the app's own pages as link targets while the author types. Editing only: the content never needs it.
-     */
-    search?: LinkSearch;
+/** How the link content looks; what a renderer needs to draw links the way the editor does. */
+export type LinkContentOptions = {
     /**
      * How links look in the editor, the readonly view and the HTML export. A field left out keeps Fondue's look.
      * A value that is empty or can end its CSS declaration early throws an error that names the field.
      */
     look?: LinkLook;
+};
+
+export type LinkPluginOptions = LinkContentOptions & {
+    /**
+     * Offers the app's own pages as link targets while the author types. Editing only: the content never needs it.
+     */
+    search?: LinkSearch;
 };
 
 /** The name `link.module.scss` reads the look's custom properties by. */
@@ -84,51 +88,58 @@ const anchorAttrs = (value: unknown): LinkAnchorAttrs => {
     return { href };
 };
 
-/**
- * Links as a mark on text, written as `<a href>`.
- * Only web, mail, phone and relative targets count, so a `javascript:` URL is never clickable.
- */
-export const linkContent = defineContent({
-    marks: {
-        link: defineMark<LinkValue>({
-            // Outside every other mark, so a partly styled link renders as one anchor, not cut up by a colour or an emphasis inside.
-            nesting: -2,
-            // Typing at the end of a link does not extend it.
-            inclusive: false,
-            // Clearing formatting is about how text looks; where a link goes is not.
-            survivesClear: true,
+// Shared so every link content declares the very same mark, which the registry requires.
+const LINK_MARK = defineMark<LinkValue>({
+    // Outside every other mark, so a partly styled link renders as one anchor, not cut up by a colour or an emphasis inside.
+    nesting: -2,
+    // Typing at the end of a link does not extend it.
+    inclusive: false,
+    // Clearing formatting is about how text looks; where a link goes is not.
+    survivesClear: true,
 
-            toHtml: (value) => ({
-                tag: 'a',
-                attrs: { ...anchorAttrs(value), class: styles.link },
-                children: true,
-            }),
+    toHtml: (value) => ({
+        tag: 'a',
+        attrs: { ...anchorAttrs(value), class: styles.link },
+        children: true,
+    }),
 
-            // A pasted span inside a link, such as Google Docs writes, repeats the underline the link already shows.
-            defaultStyles: LINK_DEFAULT_STYLES,
+    // A pasted span inside a link, such as Google Docs writes, repeats the underline the link already shows.
+    defaultStyles: LINK_DEFAULT_STYLES,
 
-            parse: [
-                {
-                    tag: 'a[href]',
-                    value: (element) => {
-                        const href = element.getAttribute('href') ?? '';
-                        if (!isSafeHref(href)) {
-                            return null;
-                        }
-                        if (element.getAttribute('target') === NEW_TAB_TARGET) {
-                            return { href, openInNewTab: true as const };
-                        }
-                        return { href };
-                    },
-                },
-            ],
-        }),
-    },
+    parse: [
+        {
+            tag: 'a[href]',
+            value: (element) => {
+                const href = element.getAttribute('href') ?? '';
+                if (!isSafeHref(href)) {
+                    return null;
+                }
+                if (element.getAttribute('target') === NEW_TAB_TARGET) {
+                    return { href, openInNewTab: true as const };
+                }
+                return { href };
+            },
+        },
+    ],
 });
 
-/** The link mark with the host's look, sharing the mark so it registers next to `linkContent`. */
-const linkContentWith = (look: LinkLook): RteContent =>
-    defineContent({ marks: linkContent.marks, contentProperties: lookProperties(LINK_LOOK_NAME, look) });
+// Shared so the default plugin, `defaultContent` and every call without a look hand out the very same content.
+const DEFAULT_LINK_CONTENT = defineContent({ marks: { link: LINK_MARK } });
+
+/**
+ * Links as a mark on text, written as `<a href>`, and how they look.
+ * Only web, mail, phone and relative targets count, so a `javascript:` URL is never clickable.
+ * Pass the same `look` as `linkPlugin`, so a renderer given only content draws the host's link look.
+ *
+ * @example
+ * <RichTextRenderer plugins={[linkContent({ look }), boldContent]} value={doc} />
+ */
+export const linkContent = ({ look }: LinkContentOptions = {}): RteContent => {
+    if (look === undefined) {
+        return DEFAULT_LINK_CONTENT;
+    }
+    return defineContent({ marks: { link: LINK_MARK }, contentProperties: lookProperties(LINK_LOOK_NAME, look) });
+};
 
 // The key is a literal because a computed key keeps this plugin in the renderer; HOTKEY's type ties it to this key.
 const hotkeys = {
@@ -159,14 +170,9 @@ const HOTKEY: keyof typeof hotkeys = 'Mod-k';
  * @example
  * const links = linkPlugin({ search, look: { color: 'var(--f-theme-settings-link-color)' } });
  */
-export const linkPlugin = ({ search, look }: LinkPluginOptions = {}) => {
-    let content = linkContent;
-    if (look !== undefined) {
-        content = linkContentWith(look);
-    }
-
-    return definePlugin({
-        content,
+export const linkPlugin = ({ search, look }: LinkPluginOptions = {}) =>
+    definePlugin({
+        content: linkContent({ look }),
         toolbarGroup: 'link',
         toolbar: [
             {
@@ -225,4 +231,3 @@ export const linkPlugin = ({ search, look }: LinkPluginOptions = {}) => {
             return true;
         },
     });
-};

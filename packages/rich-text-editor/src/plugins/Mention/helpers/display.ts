@@ -34,7 +34,7 @@ const storedString = (field: unknown): string => {
 /** An unknown kind or a non-string reads as none. */
 export const storedKind = (value: unknown): MentionKind | undefined => MENTION_KINDS.find((known) => known === value);
 
-/** The `data-mention-*` attributes that paste back as a mention. */
+/** The `data-mention-*` attributes that name the mentioned person in exported markup. */
 export const mentionAttributes = (mention: MentionValue) => ({
     'data-mention-id': storedString(mention.id),
     'data-mention-username': storedString(mention.username),

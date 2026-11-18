@@ -288,7 +288,7 @@ test.describe('host styling of text styles', () => {
     });
 });
 
-// Body text and block quotes take a look through `textStylePlugin({ presets })`, links through `linkPlugin({ look })`.
+// Body text and block quotes take a look through `textStylePlugin({ presets })`, links through `linkPlugin({ look })`; the renderer gets the same through `textStyleContent` and `linkContent`.
 
 type LookedBlock = 'body' | 'bullet' | 'check' | 'quote' | 'link' | 'custom1' | 'heading1';
 
