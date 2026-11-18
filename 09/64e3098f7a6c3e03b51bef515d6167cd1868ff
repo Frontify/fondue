@@ -1,0 +1,25 @@
+packages/rich-text-editor/src/__tests__/paste/vendorPaste.spec.tsx
+  s_55b55d5f469e4a::t_bf2c028f1fa733 390-393,395-421
+  s_55b55d5f469e4a::t_9f5e1384847298 394
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteOffice.ts
+  s_55b55d5f469e4a::t_74186840e6cb5f 84-88
+  s_55b55d5f469e4a::t_f00ca043f42133 50
+  s_55b55d5f469e4a::t_b2cb14a576f2b6 9-12
+  s_55b55d5f469e4a::t_a04e4a62f24e82 30-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0964e3098f7a6c3e03b51bef515d6167cd1868ff",
+  "prompts": {},
+  "sessions": {
+    "s_55b55d5f469e4a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "18ad4362-b1b7-4cf5-afae-52d1768f6f49",
+        "model": "unknown"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

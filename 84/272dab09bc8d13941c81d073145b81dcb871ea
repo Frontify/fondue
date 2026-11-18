@@ -1,0 +1,76 @@
+packages/components/package.json
+  s_dd82ea8cd614d1::t_5b56bd0dee46ac 105
+packages/icons/src/createFondueIcon.ts
+  h_2139c5e5c94509 12-13
+  s_dd82ea8cd614d1::t_7c13de8908c3a9 3
+  s_dd82ea8cd614d1::t_a5a3f8cb4b6faf 10-11,14-71
+packages/components/src/components/DatePicker/SingleDatePicker.tsx
+  h_2139c5e5c94509 17
+  s_dd82ea8cd614d1::t_7c13de8908c3a9 3
+packages/components/src/components/Tabs/types.ts
+  s_dd82ea8cd614d1::t_8b9cfeb1edc68f 3
+  s_dd82ea8cd614d1::t_4d88f4ac9a58ae 6
+packages/components/src/hooks/useTextTruncation.ts
+  s_dd82ea8cd614d1::t_e7bbed6b4eba02 22
+packages/components/src/hooks/useSyncRefs.ts
+  s_dd82ea8cd614d1::t_f99470c44efa5d 27
+packages/components/src/components/DatePicker/DatePickerCalendar.tsx
+  h_2139c5e5c94509 63,123,150,177,220
+  s_dd82ea8cd614d1::t_7c13de8908c3a9 5
+packages/components/src/components/TextInput/TextInput.tsx
+  s_dd82ea8cd614d1::t_bb8f289bed4d48 208
+packages/components/src/components/Text/Text.tsx
+  h_2139c5e5c94509 7-8,124
+packages/components/src/components/Tabs/hooks/useTabTriggers.ts
+  s_dd82ea8cd614d1::t_0967af0e3f7219 78-81
+  s_dd82ea8cd614d1::t_c275cf9d983767 21-24
+packages/components/src/utilities/domUtilities.ts
+  s_dd82ea8cd614d1::t_1c3dab9089ee17 67-70
+packages/components/src/components/Textarea/Textarea.tsx
+  s_dd82ea8cd614d1::t_a99a18590933c8 350
+packages/components/src/components/DatePicker/RangeDatePicker.tsx
+  s_dd82ea8cd614d1::t_7c13de8908c3a9 3
+  h_2139c5e5c94509 18
+packages/components/src/components/Dialog/Dialog.tsx
+  s_dd82ea8cd614d1::t_a9b13e5d1fb302 8
+  s_dd82ea8cd614d1::t_7b270c6152f428 450
+  s_dd82ea8cd614d1::t_81e233b7908fe4 420
+packages/components/src/components/Heading/Heading.tsx
+  h_2139c5e5c94509 80
+  s_dd82ea8cd614d1::t_7c13de8908c3a9 3
+packages/components/src/components/Tag/Tag.tsx
+  s_dd82ea8cd614d1::t_6e992929fff3d4 165
+  s_dd82ea8cd614d1::t_363d6c038a0aa4 87
+packages/components/src/components/Tabs/Tabs.tsx
+  s_dd82ea8cd614d1::t_0e52e6838a33f4 211
+pnpm-lock.yaml
+  s_dd82ea8cd614d1::t_8321a4568d2740 340-342,1327-1329
+packages/components/tsconfig.react19.json
+  s_dd82ea8cd614d1::t_0653057da3037a 1-10
+.github/workflows/react-19-compat.yaml
+  s_dd82ea8cd614d1::t_25a27ea85cf430 1-53,57-59,63-65
+  s_dd82ea8cd614d1::t_09328fb7b38246 54-56,60-61
+  s_dd82ea8cd614d1::t_5ced15f3efccd0 62
+  s_dd82ea8cd614d1::t_3cd22e9297084b 66-68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "84272dab09bc8d13941c81d073145b81dcb871ea",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_dd82ea8cd614d1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4220b360-f380-49a9-ba15-92522e15b2eb",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
