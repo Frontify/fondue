@@ -842,6 +842,7 @@ describe('the toolbar from the keyboard', () => {
         const groups = toolbar.querySelectorAll('[data-toolbar-group]');
         const separators = toolbar.querySelectorAll('[role="separator"]');
         expect(separators).toHaveLength(groups.length - 1);
+        expect(separators[0]?.getAttribute('aria-orientation')).toBe('vertical');
         expect(groups[0]?.nextElementSibling?.contains(separators[0] ?? null)).toBe(true);
         expect(toolbar.firstElementChild).toBe(groups[0]);
         expect(toolbar.lastElementChild).toBe(groups[groups.length - 1]);
