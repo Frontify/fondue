@@ -15,7 +15,7 @@ type Answer = { query: string; attempt: number; outcome: PeopleOutcome };
 export type PeopleLookup = 'settled' | 'asking' | 'retrying';
 
 const lookupOf = (answer: Answer | null, query: string, attempt: number): PeopleLookup => {
-    if (answer === null || answer.query !== query) {
+    if (answer?.query !== query) {
         return 'asking';
     }
     if (answer.attempt !== attempt) {
@@ -52,7 +52,11 @@ export const usePeople = (items: MentionItems, query: string): UsePeopleResult =
         Promise.resolve()
             .then(() => items(query))
             .then((people) => settle({ status: 'found', people: people.slice(0, SUGGESTION_LIMIT) }))
-            .catch(() => settle({ status: 'failed' }));
+            .catch((error: unknown) => {
+                settle({ status: 'failed' });
+                // The picker offers Retry; the app's own error handlers still learn why its search failed.
+                reportError(error);
+            });
         return () => {
             current = false;
         };
