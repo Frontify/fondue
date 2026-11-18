@@ -116,6 +116,7 @@ export { softBreakContent, softBreakPlugin } from './plugins/SoftBreak';
 export { strikethroughContent, strikethroughPlugin } from './plugins/Strikethrough';
 export { subscriptContent, subscriptPlugin } from './plugins/Subscript';
 export { superscriptContent, superscriptPlugin } from './plugins/Superscript';
+export { tableContent, tablePlugin } from './plugins/Table';
 export { textStyleContent, textStylePlugin } from './plugins/TextStyle';
 export { typographyPlugin } from './plugins/Typography';
 export { underlineContent, underlinePlugin } from './plugins/Underline';
