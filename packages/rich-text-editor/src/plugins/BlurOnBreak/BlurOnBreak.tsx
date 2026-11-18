@@ -9,15 +9,16 @@ import { definePlugin } from '#/core';
  * up focus. Plugin hotkeys run before the editor's own keys, so this handler
  * splits the item itself rather than leaving Enter to the list.
  */
-export const blurOnBreakPlugin = /* @__PURE__ */ definePlugin({
-    id: 'blur-on-break',
-    hotkeys: {
-        Enter: (api) => {
-            // Plugin hotkeys run before the editor's own keys, so the list split has to happen here.
-            if (!api.lists.split()) {
-                api.blur();
-            }
-            return true;
+export const blurOnBreakPlugin = () =>
+    definePlugin({
+        id: 'blur-on-break',
+        hotkeys: {
+            Enter: (api) => {
+                // Plugin hotkeys run before the editor's own keys, so the list split has to happen here.
+                if (!api.lists.split()) {
+                    api.blur();
+                }
+                return true;
+            },
         },
-    },
-});
+    });

@@ -25,7 +25,7 @@ describe('the text style plugin looks', () => {
     });
 
     it('shares the default content when there are no looks', () => {
-        expect(textStylePlugin().content).toBe(textStyleContent);
+        expect(textStylePlugin().content).toBe(textStyleContent());
     });
 
     it('sets a custom property for the body, quote and link looks', () => {
@@ -68,7 +68,25 @@ describe('the text style plugin looks', () => {
     it('keeps the shared block when only looks differ, so it registers next to the default content', () => {
         const plugin = textStylePlugin({ looks: { heading1: { color: 'red' } } });
 
-        expect(plugin.content?.blocks?.textStyle).toBe(textStyleContent.blocks?.textStyle);
-        expect(() => buildPluginRegistry([textStyleContent, plugin])).not.toThrow();
+        expect(plugin.content?.blocks?.textStyle).toBe(textStyleContent().blocks?.textStyle);
+        expect(() => buildPluginRegistry([textStyleContent(), plugin])).not.toThrow();
+    });
+});
+
+describe('the text style content', () => {
+    it('hands out one shared content when given no looks', () => {
+        expect(textStyleContent()).toBe(textStyleContent({}));
+    });
+
+    it('carries the same looks as the plugin given the same looks', () => {
+        const looks = { body: { fontSize: '16px' }, link: { color: 'blue' } };
+
+        expect(textStyleContent({ looks })).toEqual(textStylePlugin({ looks }).content);
+    });
+
+    it('refuses a value that could break out of its declaration', () => {
+        expect(() => textStyleContent({ looks: { quote: { color: 'red; display: none' } } })).toThrow(
+            /"color".*"quote"/,
+        );
     });
 });

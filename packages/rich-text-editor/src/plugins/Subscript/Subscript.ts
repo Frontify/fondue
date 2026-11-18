@@ -36,8 +36,9 @@ export const subscriptContent = defineContent({
 /**
  * Subscript text with the `Mod-,` shortcut
  */
-export const subscriptPlugin = /* @__PURE__ */ definePlugin({
-    content: subscriptContent,
-    toolbarGroup: 'marks',
-    toolbar: [{ label: 'Subscript', icon: IconSubscript, shortcut: 'Mod-,' }],
-});
+export const subscriptPlugin = () =>
+    definePlugin({
+        content: subscriptContent,
+        toolbarGroup: 'marks',
+        toolbar: [{ label: 'Subscript', icon: IconSubscript, shortcut: 'Mod-,' }],
+    });

@@ -131,11 +131,12 @@ export type RtePluginDefinition = Omit<RtePlugin, 'id' | 'kind'> & { id?: string
  * Declares a plugin. The `id` defaults to the only type its content declares;
  * with none or several, it throws unless an `id` is given.
  * @example
- * const quotePlugin = definePlugin({
- *     content: quoteContent,
- *     toolbar: [{ label: 'Quote', icon: IconSpeechBubbleQuote }],
- *     inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
- * });
+ * const quotePlugin = () =>
+ *     definePlugin({
+ *         content: quoteContent,
+ *         toolbar: [{ label: 'Quote', icon: IconSpeechBubbleQuote }],
+ *         inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
+ *     });
  */
 export const definePlugin = ({ id, ...plugin }: RtePluginDefinition): RtePlugin => {
     const resolved = id ?? onlyTypeOf(plugin.content);
@@ -599,14 +600,6 @@ export type SelectedNode = {
 
 // --- Menus, keyboard, paste, typing ---
 
-/**
- * Whether a command can run on the selection now. A command that cannot stays
- * listed, disabled, with `reason` saying why (`'This block is at its size
- * limit'`), so a limit is never a silent failure. Pass `reason` already in
- * the host's language.
- */
-export type RteCommandAvailability = { enabled: true } | { enabled: false; reason: string };
-
 /** A labelled entry a plugin offers to the "Turn into" menu and the `/` menu. */
 export type RteBlockCommand = {
     /** Unique across plugins, e.g. `'heading-1'`. */
@@ -620,12 +613,8 @@ export type RteBlockCommand = {
     group: 'turnInto' | 'insert';
     /** Whether the selection is already this — the Turn-into button shows the active label. */
     isActive?: (selection: RteSelectionSnapshot) => boolean;
-    /**
-     * Whether the command can run on the selection; omitted, it always can. A
-     * disabled command is still listed, with its reason, and choosing it does
-     * nothing.
-     */
-    availability?: (selection: RteSelectionSnapshot) => RteCommandAvailability;
+    /** Whether the command can run on the selection; omitted, it always can. The menus leave out one that cannot. */
+    isAvailable?: (selection: RteSelectionSnapshot) => boolean;
     run: (api: EditorControlApi) => void;
 };
 

@@ -17,6 +17,16 @@
     display: contents;
 }
 
+/**
+ * The top toolbar, the notice and the content. Its own stacking context keeps
+ * the toolbar's z-index inside the editor: it lifts the toolbar over the text
+ * scrolling under it, but not over the page's menus and flyouts, which leave
+ * `z-index` unset and rely on coming later in the page.
+ */
+.body {
+    isolation: isolate;
+}
+
 /** Why the content cannot be edited, kept off its first line like the toolbar. */
 .notice {
     margin-bottom: var(--spacing-x-small);
@@ -185,19 +195,6 @@
         color: var(--color-secondary-default);
         pointer-events: none;
     }
-}
-
-/** A command that cannot run on the selection: dimmed, with its reason under it. */
-.commandUnavailable {
-    display: flex;
-    flex-direction: column;
-    color: var(--color-disabled-default);
-    cursor: not-allowed;
-}
-
-.commandReason {
-    color: var(--color-secondary-default);
-    font-size: var(--typography-font-size-x-small);
 }
 
 /**

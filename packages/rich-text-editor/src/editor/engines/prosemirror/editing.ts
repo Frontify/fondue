@@ -22,6 +22,7 @@ import { createMarkViews, createNodeViews, LiveViews } from './nodeViews';
 import { placeholderPlugin } from './placeholder';
 import { buildSchema } from './schema';
 import { createSelectionRectReader } from './selectionRect';
+import { HOST_DOC } from './transactionMeta';
 import './engine.scss';
 
 /**
@@ -38,9 +39,6 @@ export const mountDocument: MountDocument = (options) => mount(options).mounted;
  */
 export const mountEditorForTests = (options: MountOptions): { mounted: MountedDocument; view: EditorView } =>
     mount(options);
-
-/** Transaction meta marking a change that came from the host, not the user. */
-const HOST_DOC = 'rte-host-doc';
 
 /**
  * Set on the editable element, so engine.scss can scope the engine's own

@@ -2,12 +2,12 @@
 
 import { Button, Dropdown } from '@frontify/fondue-components';
 import { IconCaretDown, IconCheckMark } from '@frontify/fondue-icons';
-import { type ComponentProps, type MouseEvent, type ReactNode, useId, useRef } from 'react';
+import { type ComponentProps, type MouseEvent, type ReactNode, useRef } from 'react';
 
 import { type EditorControlApi, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
 import { MENU_ICON_SIZE } from '#/ui/toolbarIconSize';
 
-import { activeCommand, availabilityOf } from '../helpers/blockCommands';
+import { activeCommand, availableCommands } from '../helpers/blockCommands';
 import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
 
@@ -47,7 +47,8 @@ const useReturnToText = (
 
 /**
  * The "Turn into" menu: a button naming what the block is now, listing what it
- * can become. Every command that converts a block, the built-in Text first.
+ * can become. Every command that converts a block and can run on the
+ * selection, the built-in Text first.
  */
 export const TurnInto = ({
     api,
@@ -64,7 +65,6 @@ export const TurnInto = ({
     const active = activeCommand(commands, selection);
     const { returnToText, contentProps } = useReturnToText(api);
     const label = active?.label ?? labels.text;
-    const menuId = useId();
 
     return (
         <Dropdown.Root>
@@ -83,26 +83,15 @@ export const TurnInto = ({
                 </Button>
             </Dropdown.Trigger>
             <Dropdown.Content {...contentProps} onEscapeKeyDown={returnToText}>
-                {commands.map((command) => {
+                {availableCommands(commands, selection).map((command) => {
                     const isActive = command === active;
-                    const availability = availabilityOf(command, selection);
-                    const reasonId = `${menuId}-${command.id}-reason`;
                     const { icon: Icon } = command;
                     return (
                         <Dropdown.Item
                             key={command.id}
                             textValue={command.label}
                             aria-label={isActive ? labels.currentCommand(command.label) : command.label}
-                            // Not `disabled`: that takes it out of the arrow-key order, and
-                            // the reason would never be read. Listed, reachable, inert.
-                            aria-disabled={availability.enabled ? undefined : true}
-                            aria-describedby={availability.enabled ? undefined : reasonId}
-                            onSelect={(event) => {
-                                if (!availability.enabled) {
-                                    // Keeps the menu open: nothing was chosen.
-                                    event.preventDefault();
-                                    return;
-                                }
+                            onSelect={() => {
                                 returnToText();
                                 // Idempotent: picking what the block already is changes nothing
                                 // (a list entry would otherwise toggle the list off).
@@ -117,16 +106,7 @@ export const TurnInto = ({
                                 </Dropdown.Slot>
                             )}
                             {/* An element of its own: the menu keys only the ones it is handed, and wraps bare text without. */}
-                            {availability.enabled ? (
-                                <span>{command.label}</span>
-                            ) : (
-                                <span className={styles.commandUnavailable}>
-                                    <span>{command.label}</span>
-                                    <span id={reasonId} className={styles.commandReason}>
-                                        {availability.reason}
-                                    </span>
-                                </span>
-                            )}
+                            <span>{command.label}</span>
                             {isActive ? (
                                 <Dropdown.Slot name="right">
                                     <IconCheckMark size={16} />
