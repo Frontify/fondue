@@ -10,7 +10,7 @@ import {
     checkListPlugin,
     fontColorContent,
     fontColorPlugin,
-    type LinkLook,
+    type TextLinkLook,
     type LinkAppearance,
     linkContent,
     linkPlugin,
@@ -30,7 +30,7 @@ import { BODY_QUOTE_LINK_DOCUMENT } from './hostStylingValues';
 type HostLooksPairProps = {
     body?: TextLook;
     quote?: TextLook;
-    link?: LinkLook;
+    link?: TextLinkLook;
     buttons?: Partial<Record<LinkAppearance, ButtonLook>>;
     /**
      * The document both surfaces draw.
@@ -45,7 +45,7 @@ const pluginsWithLooks = ({ body, quote, link, buttons }: HostLooksPairProps): R
     checkListPlugin(),
     fontColorPlugin(),
     quotePlugin(),
-    linkPlugin({ look: link, buttonLooks: buttons }),
+    linkPlugin({ look: { text: link, button: buttons } }),
 ];
 
 // The renderer gets content only, as a page that only shows documents would, so the looks must travel with the content.
@@ -55,7 +55,7 @@ const contentWithLooks = ({ body, quote, link, buttons }: HostLooksPairProps) =>
     checkListContent,
     fontColorContent,
     quoteContent,
-    linkContent({ look: link, buttonLooks: buttons }),
+    linkContent({ look: { text: link, button: buttons } }),
 ];
 
 /** The renderer and the editor side by side, drawing body text, a quote and links with the same looks. */

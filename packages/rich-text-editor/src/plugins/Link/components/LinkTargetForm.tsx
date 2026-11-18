@@ -5,7 +5,7 @@ import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState 
 
 import { toHref } from '../../shared/helpers/href';
 import { isCompositionKey } from '../../shared/helpers/keys';
-import { APPEARANCES, isLinkAppearance, NO_APPEARANCES } from '../helpers/appearance';
+import { APPEARANCES, isButtonLink, isLinkAppearance, NO_APPEARANCES } from '../helpers/appearance';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
 import { TEXT_LABEL } from '../helpers/strings';
 import { type LinkAppearance, type LinkValue } from '../helpers/value';
@@ -91,7 +91,7 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
 
     // A stored value this form cannot name is not kept, as the renderer shows it plain.
     let storedAppearance: LinkAppearance | null = null;
-    if (isLinkAppearance(initial.appearance)) {
+    if (isButtonLink(initial)) {
         storedAppearance = initial.appearance;
     }
 

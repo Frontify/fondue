@@ -85,7 +85,9 @@ describe('a document serialized to HTML', () => {
             blocks: [{ type: 'paragraph', children: [{ text: 'a link', link: { href: 'https://example.com' } }] }],
         };
 
-        const html = serializeToHtml(linkOnly, { plugins: [linkPlugin({ look: { color: 'rgb(190, 40, 90)' } })] });
+        const html = serializeToHtml(linkOnly, {
+            plugins: [linkPlugin({ look: { text: { color: 'rgb(190, 40, 90)' } } })],
+        });
 
         expect(html).toMatch(/^<div[^>]*style="[^"]*--rte-link-color: ?rgb\(190, 40, 90\)/);
     });

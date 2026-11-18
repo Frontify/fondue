@@ -17,7 +17,6 @@ import {
     defaultPlugins,
     definePlugin,
     italicPlugin,
-    type LinkLook,
     linkContent,
     linkPlugin,
     type MentionItem,
@@ -28,6 +27,7 @@ import {
     type RtePlugin,
     RichTextEditor,
     RichTextRenderer,
+    type TextLinkLook,
     textStyleContent,
     textStylePlugin,
     type TextStylePluginOptions,
@@ -906,7 +906,7 @@ const GUIDELINE_PRESETS: TextStylePluginOptions['presets'] = {
     },
 };
 
-const GUIDELINE_LINK_LOOK: LinkLook = {
+const GUIDELINE_LINK_LOOK: TextLinkLook = {
     fontWeight: 'var(--f-theme-settings-link-font-weight)',
     color: 'var(--f-theme-settings-link-color)',
 };
@@ -916,7 +916,7 @@ const HOST_STYLING_PLUGINS = [
     bulletListPlugin(),
     checkListPlugin(),
     quotePlugin(),
-    linkPlugin({ look: GUIDELINE_LINK_LOOK }),
+    linkPlugin({ look: { text: GUIDELINE_LINK_LOOK } }),
 ];
 
 // The renderer takes content only, with the same presets, so a page that only shows documents ships no editing code.
@@ -925,7 +925,7 @@ const HOST_STYLING_CONTENT = [
     bulletListContent,
     checkListContent,
     quoteContent,
-    linkContent({ look: GUIDELINE_LINK_LOOK }),
+    linkContent({ look: { text: GUIDELINE_LINK_LOOK } }),
 ];
 
 const HOST_STYLING_DOCUMENT: RteDocument = {
@@ -1003,7 +1003,7 @@ const PRESETS_DEFAULT: TextStylePresets = {
     quote: { fontStyle: 'italic', color: 'rgb(90, 50, 110)' },
 };
 
-const LINK_LOOK_DEFAULT: LinkLook = { fontWeight: '600', color: 'rgb(190, 40, 90)' };
+const LINK_LOOK_DEFAULT: TextLinkLook = { fontWeight: '600', color: 'rgb(190, 40, 90)' };
 
 const PRESETS_TEXT_STYLE_KEYS = [
     'heading1',
@@ -1035,7 +1035,7 @@ const PRESETS_LEGEND_LINES = [
     `Keys, one per text style: ${PRESETS_TEXT_STYLE_KEYS.join(', ')}.`,
     'Keys for the rest: body (plain paragraphs and list items), quote.',
     `Fields: ${PRESETS_FIELDS.join(', ')}.`,
-    'linkPlugin({ look }) takes the same fields but textDecoration, marginTop and marginBottom.',
+    'linkPlugin({ look: { text } }) takes the same fields but textDecoration, marginTop and marginBottom.',
     "A key or field left out keeps Fondue's look.",
     'A value that could end its CSS declaration early throws.',
 ];
@@ -1046,13 +1046,13 @@ const PRESETS_ERROR = 'tw-m-0 tw-rounded tw-bg-surface-dim tw-p-3 tw-body-small 
 
 type PresetsStoryArgs = {
     presets: TextStylePresets;
-    linkLook: LinkLook;
+    linkLook: TextLinkLook;
 };
 
 const presetsConfigurationCode = ({ presets, linkLook }: PresetsStoryArgs): string =>
     [
         `textStylePlugin({ presets: ${JSON.stringify(presets, null, PRESETS_CODE_INDENT)} })`,
-        `linkPlugin({ look: ${JSON.stringify(linkLook, null, PRESETS_CODE_INDENT)} })`,
+        `linkPlugin({ look: { text: ${JSON.stringify(linkLook, null, PRESETS_CODE_INDENT)} } })`,
     ].join('\n');
 
 type PresetsPluginsResult = { status: 'ready'; plugins: RtePlugin[] } | { status: 'invalid'; message: string };
@@ -1067,7 +1067,7 @@ const presetsPluginsFor = ({ presets, linkLook }: PresetsStoryArgs): PresetsPlug
                 bulletListPlugin(),
                 checkListPlugin(),
                 quotePlugin(),
-                linkPlugin({ look: linkLook }),
+                linkPlugin({ look: { text: linkLook } }),
             ],
         };
     } catch (error) {
@@ -1133,7 +1133,7 @@ const PresetsPlayground = ({ looks }: PresetsPlaygroundProps) => {
 };
 
 /**
- * The configuration of `textStylePlugin({ presets })` and `linkPlugin({ look })` as plain values, printed above the
+ * The configuration of `textStylePlugin({ presets })` and `linkPlugin({ look: { text } })` as plain values, printed above the
  * editor and the renderer. Edit `presets` or `linkLook` in Controls and both surfaces redraw.
  */
 export const Presets: StoryObj<PresetsStoryArgs> = {
@@ -1146,8 +1146,8 @@ export const Presets: StoryObj<PresetsStoryArgs> = {
 
 /**
  * The usual production setup: the values are `var(--f-theme-settings-…)`, so one editor configuration follows the section (light or dark) it sits in.
- * A host sets the look of each text style, body text and quotes with `textStylePlugin({ presets })`, and of links with `linkPlugin({ look })`, usually from its guideline settings,
- * and hands the renderer `textStyleContent({ presets })` and `linkContent({ look })` with the same values.
+ * A host sets the look of each text style, body text and quotes with `textStylePlugin({ presets })`, and of links with `linkPlugin({ look: { text } })`, usually from its guideline settings,
+ * and hands the renderer `textStyleContent({ presets })` and `linkContent({ look: { text } })` with the same values.
  * Anything the host leaves out, or a variable nobody defines, keeps Fondue's look.
  * The editor and the renderer draw the same.
  */

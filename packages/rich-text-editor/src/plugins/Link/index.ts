@@ -3,11 +3,12 @@
 export {
     linkContent,
     type LinkContentOptions,
-    type LinkLook,
+    type LinkLooks,
     type LinkMark,
     linkPlugin,
     type LinkPluginOptions,
+    type TextLinkLook,
 } from './Link';
 export { type ButtonHoverLook, type ButtonLook } from './helpers/appearance';
 export { type LinkDestination, type LinkSearch } from './helpers/destination';
-export { type LinkAppearance } from './helpers/value';
+export { type ButtonLink, type LinkAppearance, type LinkKind, type TextLink } from './helpers/value';

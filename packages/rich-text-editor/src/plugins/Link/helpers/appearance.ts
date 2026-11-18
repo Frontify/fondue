@@ -4,7 +4,7 @@ import { lookProperties, type TextLook } from '#/core';
 
 import styles from '../link.module.scss';
 
-import { ALL_LINK_APPEARANCES, type LinkAppearance } from './value';
+import { ALL_LINK_APPEARANCES, type ButtonLink, type LinkAppearance, type LinkValue } from './value';
 
 /** What an appearance shows in the link form and the class that draws it. Every rule per appearance reads this table. */
 export const APPEARANCES = {
@@ -22,6 +22,16 @@ export const APPEARANCE_ATTRIBUTE = 'data-appearance';
 /** Whether a stored value names an appearance, which a document from another editor may not. */
 export const isLinkAppearance = (value: unknown): value is LinkAppearance =>
     typeof value === 'string' && Object.keys(APPEARANCES).includes(value);
+
+/** Whether a link is a button that names an appearance this package knows. */
+export const isButtonLink = (value: LinkValue): value is ButtonLink => {
+    // A stored document may hold a non-object here, which `in` would throw on.
+    if (typeof value !== 'object') {
+        return false;
+    }
+
+    return 'appearance' in value && isLinkAppearance(value.appearance);
+};
 
 /** The anchor's class: the link's own, and the appearance's when the value names one. */
 export const linkClassName = (appearance: unknown): string | undefined => {

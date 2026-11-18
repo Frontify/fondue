@@ -163,13 +163,13 @@ const plainBlock = defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [] });
 
 // A link keeps its underline, and vertical margins do nothing on inline text
 // @ts-expect-error a link look has no text decoration
-const linkDecoration = linkPlugin({ look: { textDecoration: 'none' } });
+const linkDecoration = linkPlugin({ look: { text: { textDecoration: 'none' } } });
 
 // @ts-expect-error a link look has no top margin
-const linkMarginTop = linkPlugin({ look: { marginTop: '4px' } });
+const linkMarginTop = linkPlugin({ look: { text: { marginTop: '4px' } } });
 
 // @ts-expect-error a link look has no bottom margin
-const linkMarginBottom = linkPlugin({ look: { marginBottom: '4px' } });
+const linkMarginBottom = linkPlugin({ look: { text: { marginBottom: '4px' } } });
 
 // @ts-expect-error links take their look from the link plugin
 const textStyleLink = textStylePlugin({ presets: { link: { color: 'red' } } });

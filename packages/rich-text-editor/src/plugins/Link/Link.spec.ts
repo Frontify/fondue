@@ -13,8 +13,10 @@ import {
 } from '#/core';
 
 import { APPEARANCES } from './helpers/appearance';
-import { ALL_LINK_APPEARANCES } from './helpers/value';
-import { linkContent, linkPlugin, type LinkPluginOptions } from './Link';
+import { ALL_LINK_APPEARANCES, type LinkKind } from './helpers/value';
+import { type LinkContentOptions, linkContent, linkPlugin, type LinkPluginOptions } from './Link';
+
+const BUTTON_KINDS: readonly LinkKind[] = ['text', 'button'];
 
 const link = linkPlugin().content?.marks?.link;
 
@@ -41,7 +43,7 @@ describe('the link mark', () => {
 
 describe('the link look', () => {
     it('sets a custom property for each field of the look', () => {
-        const plugin = linkPlugin({ look: { fontWeight: '600', color: 'var(--f-link)' } });
+        const plugin = linkPlugin({ look: { text: { fontWeight: '600', color: 'var(--f-link)' } } });
 
         expect(plugin.content?.contentProperties).toEqual({
             '--rte-link-font-weight': '600',
@@ -54,14 +56,14 @@ describe('the link look', () => {
     });
 
     it('shares the mark, so a content list with `linkContent()` and the looked link still builds', () => {
-        const plugin = linkPlugin({ look: { color: 'blue' } });
+        const plugin = linkPlugin({ look: { text: { color: 'blue' } } });
 
         expect(plugin.content?.marks?.link).toBe(linkContent().marks?.link);
         expect(() => buildContentRegistry([linkContent(), plugin])).not.toThrow();
     });
 
     it('refuses a value that could break out of its declaration', () => {
-        expect(() => linkPlugin({ look: { color: 'red; display: none' } })).toThrow(/"color".*"link"/);
+        expect(() => linkPlugin({ look: { text: { color: 'red; display: none' } } })).toThrow(/"color".*"link"/);
     });
 });
 
@@ -103,7 +105,7 @@ describe('the link mark with an appearance', () => {
     });
 
     it('writes the appearance whatever the editor offers', () => {
-        const offering = linkPlugin({ buttonLooks: {} }).content?.marks?.link;
+        const offering = linkPlugin({ kinds: BUTTON_KINDS }).content?.marks?.link;
 
         expect(link?.toHtml({ href: '/a', appearance: 'primary' }).attrs).toEqual(
             offering?.toHtml({ href: '/a', appearance: 'primary' }).attrs,
@@ -129,22 +131,38 @@ const parseAnchor = (attributes: Record<string, string>, options?: LinkPluginOpt
 
 describe('reading a pasted link', () => {
     it('keeps an appearance this editor offers', () => {
-        const value = parseAnchor({ href: 'https://example.com', 'data-appearance': 'secondary' }, { buttonLooks: {} });
+        const value = parseAnchor(
+            { href: 'https://example.com', 'data-appearance': 'secondary' },
+            { kinds: BUTTON_KINDS },
+        );
 
         expect(value).toEqual({ href: 'https://example.com', appearance: 'secondary' });
     });
 
-    it('drops any appearance when the editor has no button looks, and keeps all three when it has some', () => {
+    it('drops any appearance when the editor does not offer buttons, and keeps all three when it does', () => {
         for (const appearance of ALL_LINK_APPEARANCES) {
             const attributes = { href: 'https://example.com', 'data-appearance': appearance };
 
             expect(parseAnchor(attributes)).toEqual({ href: 'https://example.com' });
-            expect(parseAnchor(attributes, { buttonLooks: {} })).toEqual({ href: 'https://example.com', appearance });
+            expect(parseAnchor(attributes, { kinds: BUTTON_KINDS })).toEqual({
+                href: 'https://example.com',
+                appearance,
+            });
         }
     });
 
+    it('drops the appearance although button looks are set, because a look never offers buttons', () => {
+        const attributes = { href: 'https://example.com', 'data-appearance': 'primary' };
+
+        expect(parseAnchor(attributes, { kinds: ['text'], look: { button: { primary: { color: 'white' } } } })).toEqual(
+            {
+                href: 'https://example.com',
+            },
+        );
+    });
+
     it('drops an appearance that is not one', () => {
-        const value = parseAnchor({ href: 'https://example.com', 'data-appearance': 'huge' }, { buttonLooks: {} });
+        const value = parseAnchor({ href: 'https://example.com', 'data-appearance': 'huge' }, { kinds: BUTTON_KINDS });
 
         expect(value).toEqual({ href: 'https://example.com' });
     });
@@ -161,11 +179,13 @@ describe('reading a pasted link', () => {
 describe('the link plugin button looks', () => {
     it('sets a custom property for each field of a look, and of its hover look', () => {
         const plugin = linkPlugin({
-            buttonLooks: {
-                primary: {
-                    color: 'var(--f-theme-settings-button-primary-color)',
-                    paddingTop: '4px',
-                    hover: { backgroundColor: 'navy' },
+            look: {
+                button: {
+                    primary: {
+                        color: 'var(--f-theme-settings-button-primary-color)',
+                        paddingTop: '4px',
+                        hover: { backgroundColor: 'navy' },
+                    },
                 },
             },
         });
@@ -177,29 +197,54 @@ describe('the link plugin button looks', () => {
         });
     });
 
-    it('shares the default content when there are no button looks', () => {
-        expect(linkPlugin().content).toBe(linkContent());
+    it('compiles the button looks only from `look.button`, and none from `look.text`', () => {
+        const plugin = linkPlugin({ look: { text: { color: 'blue' } } });
+
+        expect(plugin.content?.contentProperties).toEqual({ '--rte-link-color': 'blue' });
     });
 
-    it('sets no button custom properties for empty button looks, and keeps a pasted appearance in the mark', () => {
-        const plugin = linkPlugin({ buttonLooks: {} });
+    it('shares the default content when kinds is only text and there is no look', () => {
+        expect(linkPlugin().content).toBe(linkContent());
+        expect(linkPlugin({ kinds: ['text'] }).content).toBe(linkContent());
+    });
+
+    it('sets no button custom properties for offered buttons without a look', () => {
+        const plugin = linkPlugin({ kinds: BUTTON_KINDS });
 
         expect(plugin.content?.contentProperties).toEqual({});
-        expect(parseAnchor({ href: 'https://example.com', 'data-appearance': 'primary' }, { buttonLooks: {} })).toEqual(
-            {
-                href: 'https://example.com',
-                appearance: 'primary',
-            },
-        );
+    });
+
+    it('styles a stored button from `look.button` without offering buttons', () => {
+        const plugin = linkPlugin({ look: { button: { primary: { color: 'white' } } } });
+
+        expect(plugin.content?.contentProperties).toEqual({ '--rte-button-primary-color': 'white' });
+        expect(plugin.content?.marks?.link?.toHtml({ href: '/a', appearance: 'primary' }).attrs).toMatchObject({
+            'data-appearance': 'primary',
+        });
     });
 
     it('refuses a value that could break out of its declaration, naming the appearance and the field', () => {
-        expect(() => linkPlugin({ buttonLooks: { secondary: { borderColor: 'red; display: none' } } })).toThrow(
+        expect(() => linkPlugin({ look: { button: { secondary: { borderColor: 'red; display: none' } } } })).toThrow(
             /"borderColor".*"button-secondary"/,
         );
-        expect(() => linkPlugin({ buttonLooks: { tertiary: { hover: { color: '' } } } })).toThrow(
+        expect(() => linkPlugin({ look: { button: { tertiary: { hover: { color: '' } } } } })).toThrow(
             /"color".*"button-tertiary-hover"/,
         );
+    });
+});
+
+describe('the link kinds', () => {
+    it('refuses kinds that leave out text, naming the option', () => {
+        expect(() => linkPlugin({ kinds: ['button'] })).toThrow(/kinds must include 'text'/);
+        expect(() => linkContent({ kinds: ['button'] })).toThrow(/kinds must include 'text'/);
+        expect(() => linkPlugin({ kinds: [] })).toThrow(/kinds must include 'text'/);
+    });
+
+    it('shares the mark between content that offers buttons, so the registry accepts them together', () => {
+        const plugin = linkPlugin({ kinds: BUTTON_KINDS, look: { text: { color: 'blue' } } });
+
+        expect(plugin.content?.marks?.link).toBe(linkContent({ kinds: BUTTON_KINDS }).marks?.link);
+        expect(() => buildContentRegistry([linkContent({ kinds: BUTTON_KINDS }), plugin])).not.toThrow();
     });
 });
 
@@ -209,19 +254,22 @@ describe('the link content', () => {
     });
 
     it('carries the same look as the plugin given the same look', () => {
-        const look = { color: 'blue' };
+        const look = { text: { color: 'blue' } };
 
         expect(linkContent({ look })).toEqual(linkPlugin({ look }).content);
     });
 
     it('refuses a value that could break out of its declaration', () => {
-        expect(() => linkContent({ look: { color: 'red; display: none' } })).toThrow(/"color".*"link"/);
+        expect(() => linkContent({ look: { text: { color: 'red; display: none' } } })).toThrow(/"color".*"link"/);
     });
 
-    it('carries the same button looks as the plugin given the same button looks', () => {
-        const buttonLooks = { primary: { color: 'white' } };
+    it('carries the same content as the plugin given the same kinds and looks', () => {
+        const options: LinkContentOptions = {
+            kinds: BUTTON_KINDS,
+            look: { text: { color: 'blue' }, button: { primary: { color: 'white' } } },
+        };
 
-        expect(linkContent({ buttonLooks })).toEqual(linkPlugin({ buttonLooks }).content);
+        expect(linkContent(options)).toEqual(linkPlugin(options).content);
     });
 });
 

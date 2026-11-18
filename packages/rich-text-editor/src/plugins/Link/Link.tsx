@@ -30,7 +30,14 @@ import {
 import { type LinkSearch } from './helpers/destination';
 import { openNewLinkForm } from './helpers/newLinkForms';
 import { NEW_TAB_REL, NEW_TAB_TARGET } from './helpers/newTab';
-import { ALL_LINK_APPEARANCES, type LinkAppearance, type LinkValue } from './helpers/value';
+import {
+    ALL_LINK_APPEARANCES,
+    type ButtonLink,
+    type LinkAppearance,
+    type LinkKind,
+    type LinkValue,
+    type TextLink,
+} from './helpers/value';
 
 /** The value this plugin sets on text nodes. */
 export type LinkMark = {
@@ -41,24 +48,34 @@ export type LinkMark = {
 };
 
 /**
- * How links look. A link keeps its underline, and vertical margins do nothing on inline text, so neither is a field.
+ * How text links look. A link keeps its underline, and vertical margins do nothing on inline text, so neither is a field.
  */
-export type LinkLook = Omit<TextLook, 'textDecoration' | 'marginTop' | 'marginBottom'>;
+export type TextLinkLook = Omit<TextLook, 'textDecoration' | 'marginTop' | 'marginBottom'>;
+
+/** How each kind of link looks. */
+export type LinkLooks = {
+    /** How text links look. */
+    text?: TextLinkLook;
+    /** How each button style looks. */
+    button?: Partial<Record<LinkAppearance, ButtonLook>>;
+};
 
 /** How the link content looks; what a renderer needs to draw links the way the editor does. */
 export type LinkContentOptions = {
     /**
-     * How links look in the editor, the readonly view and the HTML export. A field left out keeps Fondue's look.
-     * A value that is empty or can end its CSS declaration early throws an error that names the field.
+     * The kinds of link authors can make. Every editor makes text links; add `'button'` to offer the primary,
+     * secondary and tertiary button styles. A link already stored as a button always draws as one.
+     *
+     * @default ['text']
      */
-    look?: LinkLook;
+    kinds?: readonly LinkKind[];
     /**
-     * Turns button links on: the link form's Style select offers the primary, secondary and tertiary styles. Each key
-     * sets how that style looks. Values are CSS strings, so `var(--f-theme-settings-button-primary-color)` works and
-     * wrapper overrides keep working. A style or field left out keeps Fondue's look. A value that is empty or can end
-     * its CSS declaration early throws an error that names the appearance and the field.
+     * How each kind of link looks in the editor, the readonly view and the HTML export. Values are CSS strings, so
+     * `var(--f-theme-settings-button-primary-color)` works and wrapper overrides keep working. A kind, button style or
+     * field left out keeps Fondue's look. A value that is empty or can end its CSS declaration early throws an error
+     * that names the field. A look never offers a kind: `look.button` alone only styles buttons already stored.
      */
-    buttonLooks?: Partial<Record<LinkAppearance, ButtonLook>>;
+    look?: LinkLooks;
 };
 
 export type LinkPluginOptions = LinkContentOptions & {
@@ -85,10 +102,10 @@ type LinkAnchorAttrs = {
 };
 
 /** A stored document may hold anything here (`{}`, `true`), so its shape is not taken on trust. */
-const storedLink = (value: unknown): Partial<LinkValue> | null => {
+const storedLink = (value: unknown): Partial<ButtonLink> | null => {
     if (typeof value === 'object') {
         // The declared type is trusted only this far: every field is checked before use.
-        return value as Partial<LinkValue> | null;
+        return value as Partial<ButtonLink> | null;
     }
 
     return null;
@@ -133,19 +150,19 @@ const linkFromElement = (element: Element, appearances: readonly LinkAppearance[
         return null;
     }
 
-    const link: LinkValue = { href };
+    let textLink: TextLink = { href };
 
     if (element.getAttribute('target') === NEW_TAB_TARGET) {
-        link.openInNewTab = true;
+        textLink = { href, openInNewTab: true };
     }
 
     const appearance = element.getAttribute(APPEARANCE_ATTRIBUTE);
 
     if (isLinkAppearance(appearance) && appearances.includes(appearance)) {
-        link.appearance = appearance;
+        return { ...textLink, appearance };
     }
 
-    return link;
+    return textLink;
 };
 
 /** The link mark, which keeps a pasted button look only when this editor offers it. */
@@ -177,38 +194,60 @@ const BUTTON_LINK_MARK = linkMarkFor(ALL_LINK_APPEARANCES);
 // Shared so the default plugin, `defaultContent` and every call without a look hand out the very same content.
 const DEFAULT_LINK_CONTENT = defineContent({ marks: { link: LINK_MARK } });
 
-/** The button styles an editor offers: all three once the host turns buttons on with `buttonLooks`, else none. */
-const offeredAppearances = (buttonLooks: LinkContentOptions['buttonLooks']): readonly LinkAppearance[] => {
-    if (buttonLooks === undefined) {
-        return NO_APPEARANCES;
-    }
+const DEFAULT_LINK_KINDS: readonly LinkKind[] = ['text'];
 
-    return ALL_LINK_APPEARANCES;
+/** The button styles one kind of link offers. */
+const appearancesOfKind = (kind: LinkKind): readonly LinkAppearance[] => {
+    switch (kind) {
+        case 'text':
+            return NO_APPEARANCES;
+        case 'button':
+            return ALL_LINK_APPEARANCES;
+    }
+};
+
+/** The button styles an editor offers, whatever its kinds repeat. */
+const offeredAppearances = (kinds: readonly LinkKind[]): readonly LinkAppearance[] => [
+    ...new Set(kinds.flatMap(appearancesOfKind)),
+];
+
+/**
+ * @throws When the kinds leave out `'text'`, which every link editor makes.
+ */
+const requireTextKind = (kinds: readonly LinkKind[]): void => {
+    if (!kinds.includes('text')) {
+        throw new Error("kinds must include 'text': every link editor makes text links");
+    }
 };
 
 /**
  * Links as a mark on text, written as `<a href>`, and how they look.
  * Only web, mail, phone and relative targets count, so a `javascript:` URL is never clickable.
- * Pass the same `look` and `buttonLooks` as `linkPlugin`, so a renderer given only content draws the host's looks.
+ * Pass the same `kinds` and `look` as `linkPlugin`, so a renderer given only content draws the host's looks and
+ * keeps a pasted button's style only where the editor offers buttons.
  *
  * @example
- * <RichTextRenderer plugins={[linkContent({ look, buttonLooks }), boldContent]} value={doc} />
+ * <RichTextRenderer plugins={[linkContent({ kinds: ['text', 'button'], look }), boldContent]} value={doc} />
  */
-export const linkContent = ({ look, buttonLooks }: LinkContentOptions = {}): RteContent => {
-    if (look === undefined && buttonLooks === undefined) {
+export const linkContent = ({ kinds = DEFAULT_LINK_KINDS, look }: LinkContentOptions = {}): RteContent => {
+    requireTextKind(kinds);
+
+    const appearances = offeredAppearances(kinds);
+
+    if (appearances.length === 0 && look === undefined) {
         return DEFAULT_LINK_CONTENT;
     }
 
     let mark = LINK_MARK;
-    if (offeredAppearances(buttonLooks).length > 0) {
+    if (appearances.length > 0) {
         mark = BUTTON_LINK_MARK;
     }
 
     return defineContent({
         marks: { link: mark },
         contentProperties: {
-            ...lookProperties(LINK_LOOK_NAME, look ?? {}, LOOK_PROPERTIES),
-            ...buttonLookProperties(buttonLooks ?? {}),
+            ...lookProperties(LINK_LOOK_NAME, look?.text ?? {}, LOOK_PROPERTIES),
+            ...buttonLookProperties(look?.button ?? {}),
         },
     });
 };
@@ -237,21 +276,24 @@ const HOTKEY: keyof typeof hotkeys = 'Mod-k';
  * Links, made with a toolbar button or `Mod-k` and edited in a flyout while the caret is inside.
  * A web, mail or phone address followed by a space becomes a link, and pasting one links the
  * selected text, or goes in linked at a caret outside a link. `search` offers the app's own
- * pages as targets, and `look` sets how links look. Passing `buttonLooks` turns on button links
- * (primary, secondary and tertiary) and sets how each of them looks.
+ * pages as targets. `kinds` offers button links (primary, secondary and tertiary) next to text links, and
+ * `look` sets how each kind of link looks.
  *
  * @example
  * const links = linkPlugin({
  *     search,
- *     look: { color: 'var(--f-theme-settings-link-color)' },
- *     buttonLooks: { primary: { backgroundColor: 'var(--f-theme-settings-button-primary-background-color)' } },
+ *     kinds: ['text', 'button'],
+ *     look: {
+ *         text: { color: 'var(--f-theme-settings-link-color)' },
+ *         button: { primary: { backgroundColor: 'var(--f-theme-settings-button-primary-background-color)' } },
+ *     },
  * });
  */
-export const linkPlugin = ({ search, look, buttonLooks }: LinkPluginOptions = {}) => {
-    const appearances = offeredAppearances(buttonLooks);
+export const linkPlugin = ({ search, kinds = DEFAULT_LINK_KINDS, look }: LinkPluginOptions = {}) => {
+    const appearances = offeredAppearances(kinds);
 
     return definePlugin({
-        content: linkContent({ look, buttonLooks }),
+        content: linkContent({ kinds, look }),
         toolbarGroup: 'link',
         toolbar: [
             {

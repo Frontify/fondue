@@ -22,7 +22,7 @@ import { underlineContent } from './Underline/Underline';
 
 /**
  * The content of every `defaultPlugins` entry, in the same order, which the renderer reads when given no `plugins`.
- * Text takes Fondue's look; for the host's looks, add `textStyleContent({ presets })` and `linkContent({ look })` after these.
+ * Text takes Fondue's look; for the host's looks, add `textStyleContent({ presets })` and `linkContent({ look: { text } })` after these.
  */
 export const defaultContent: readonly RteContent[] = Object.freeze([
     textStyleContent(),

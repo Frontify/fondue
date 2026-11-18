@@ -133,13 +133,17 @@ export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
 export {
     type ButtonHoverLook,
+    type ButtonLink,
     type ButtonLook,
     type LinkAppearance,
     type LinkContentOptions,
     type LinkDestination,
-    type LinkLook,
+    type LinkKind,
+    type LinkLooks,
     type LinkPluginOptions,
     type LinkSearch,
+    type TextLink,
+    type TextLinkLook,
 } from './plugins/Link';
 export {
     type MentionContentOptions,

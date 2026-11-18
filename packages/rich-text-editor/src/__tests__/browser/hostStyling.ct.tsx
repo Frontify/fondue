@@ -3,7 +3,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator } from '@playwright/test';
 
-import { type ButtonLook, type LinkLook, type TextLook, type TextStyleName } from '../../index';
+import { type ButtonLook, type TextLinkLook, type TextLook, type TextStyleName } from '../../index';
 
 import { HostLooksPair } from './HostLooksPair';
 import { HostNoHeadingsPair } from './HostNoHeadingsPair';
@@ -291,7 +291,7 @@ test.describe('host styling of text styles', () => {
     });
 });
 
-// Body text and block quotes take a look through `textStylePlugin({ presets })`, links through `linkPlugin({ look })`; the renderer gets the same through `textStyleContent` and `linkContent`.
+// Body text and block quotes take a look through `textStylePlugin({ presets })`, links through `linkPlugin({ look: { text } })`; the renderer gets the same through `textStyleContent` and `linkContent`.
 
 type LookedBlock = 'body' | 'bullet' | 'check' | 'quote' | 'link' | 'custom1' | 'heading1';
 
@@ -366,7 +366,7 @@ const COLOURED_RUN = 'span[style*=color]';
 const COLOURED_RUN_COLOR = 'rgb(255, 0, 0)';
 
 /** A link's look has no decoration or vertical margins, so the host look leaves those as Fondue draws them. */
-const HOST_LINK_LOOK: LinkLook = {
+const HOST_LINK_LOOK: TextLinkLook = {
     fontFamily: HOST_LOOK.fontFamily,
     fontSize: HOST_LOOK.fontSize,
     fontWeight: HOST_LOOK.fontWeight,
@@ -387,7 +387,7 @@ const HOST_LINK_COMPUTED_LOOK: ComputedLook = {
 /** Margins for a quote, which the document must not trim when the quote is last. */
 const QUOTE_MARGINS = { marginTop: '24px', marginBottom: '12px' } satisfies TextLook;
 
-const UNSET_LINK_LOOK: LinkLook = {
+const UNSET_LINK_LOOK: TextLinkLook = {
     fontFamily: UNSET_VARIABLE,
     fontSize: UNSET_VARIABLE,
     fontWeight: UNSET_VARIABLE,
@@ -508,7 +508,7 @@ test.describe('host styling of body text, quotes and links', () => {
     });
 });
 
-// A stored button link takes its look from `linkPlugin({ buttonLooks })`; rendering needs no offered appearances.
+// A stored button link takes its look from `linkPlugin({ look: { button } })`; rendering needs no offered appearances.
 
 const HOST_BUTTON_LOOK: ButtonLook = {
     fontWeight: '700',

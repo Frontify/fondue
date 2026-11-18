@@ -2,4 +2,4 @@
 "@frontify/fondue-rich-text-editor": minor
 ---
 
-feat(RichTextEditor): links can look like buttons (primary, secondary, tertiary). Turn them on and set their looks with `linkPlugin({ buttonLooks })`.
+feat(RichTextEditor): links come in two kinds, text and button (primary, secondary, tertiary). Offer buttons with `linkPlugin({ kinds: ['text', 'button'] })` and set each kind's look with `look: { text, button }`.
