@@ -14,6 +14,7 @@ import { type ReactNode, useRef, useState } from 'react';
 import {
     alignPlugin,
     blurOnBreakPlugin,
+    boldContent,
     boldPlugin,
     bulletListPlugin,
     checkListPlugin,
@@ -1137,26 +1138,30 @@ const acmeHighlightContent = defineContent({
     },
 });
 
-const acmeHighlightPlugin = /* @__PURE__ */ definePlugin({
-    content: acmeHighlightContent,
-    toolbar: [
-        {
-            label: 'Highlight',
-            shortcut: 'Mod-Shift-u',
-            render: ({ isActive, toggle, label }) => (
-                <button
-                    type="button"
-                    aria-pressed={isActive}
-                    onMouseDown={(event) => event.preventDefault()}
-                    onClick={() => toggle()}
-                    className={toolbarButtonClasses(isActive)}
-                >
-                    {label}
-                </button>
-            ),
-        },
-    ],
-});
+const acmeHighlightPlugin = () =>
+    definePlugin({
+        content: acmeHighlightContent,
+        toolbar: [
+            {
+                label: 'Highlight',
+                shortcut: 'Mod-Shift-u',
+                render: ({ isActive, toggle, label }) => (
+                    <button
+                        type="button"
+                        aria-pressed={isActive}
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => toggle()}
+                        className={toolbarButtonClasses(isActive)}
+                    >
+                        {label}
+                    </button>
+                ),
+            },
+        ],
+    });
+
+const acmeEditorPlugins = [boldPlugin(), acmeHighlightPlugin()];
+const acmeRendererContent = [boldContent, acmeHighlightContent];
 
 /**
  * The type juggling a consumer plugin costs: one type argument naming the extra
@@ -1182,8 +1187,13 @@ export const ConsumerMark: Story = {
 
         return (
             <div className={LAYOUT}>
-                <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin(), acmeHighlightPlugin]} />
+                <div className="tw-flex tw-flex-col tw-gap-4">
+                    <div className={FRAME}>
+                        <RichTextEditor value={doc} onChange={setDoc} plugins={acmeEditorPlugins} />
+                    </div>
+                    <div className={SURFACE}>
+                        <RichTextRenderer value={doc} plugins={acmeRendererContent} />
+                    </div>
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -1213,26 +1223,27 @@ const acmeCalloutContent = defineContent({
     },
 });
 
-const acmeCalloutPlugin = /* @__PURE__ */ definePlugin({
-    content: acmeCalloutContent,
-    toolbar: [
-        {
-            label: 'Callout',
-            render: ({ isActive, toggle, label }) => (
-                <button
-                    type="button"
-                    aria-label={label}
-                    aria-pressed={isActive}
-                    onMouseDown={(event) => event.preventDefault()}
-                    onClick={() => toggle()}
-                    className={toolbarButtonClasses(isActive)}
-                >
-                    💡
-                </button>
-            ),
-        },
-    ],
-});
+const acmeCalloutPlugin = () =>
+    definePlugin({
+        content: acmeCalloutContent,
+        toolbar: [
+            {
+                label: 'Callout',
+                render: ({ isActive, toggle, label }) => (
+                    <button
+                        type="button"
+                        aria-label={label}
+                        aria-pressed={isActive}
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => toggle()}
+                        className={toolbarButtonClasses(isActive)}
+                    >
+                        💡
+                    </button>
+                ),
+            },
+        ],
+    });
 
 /** An extra block type joins the official union in the same type argument. */
 export const ConsumerBlock: Story = {
@@ -1254,7 +1265,7 @@ export const ConsumerBlock: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin(), acmeCalloutPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin(), acmeCalloutPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -1343,12 +1354,13 @@ const AcmeEmbedEdit = ({ value, setValue, remove, api }: RtePlugin.EditProps<Emb
     return <span data-embed={value.provider} className={embedClasses}>{`▤ ${value.provider}`}</span>;
 };
 
-const acmeEmbedPlugin = /* @__PURE__ */ definePlugin({
-    content: acmeEmbedContent,
-    // The editor's `/` menu owns the `/` key, so the embed is one of its entries.
-    commands: [{ id: 'acme-embed', label: 'Embed', group: 'insert', run: (api) => api.insert('acme-embed') }],
-    edit: { 'acme-embed': AcmeEmbedEdit },
-});
+const acmeEmbedPlugin = () =>
+    definePlugin({
+        content: acmeEmbedContent,
+        // The editor's `/` menu owns the `/` key, so the embed is one of its entries.
+        commands: [{ id: 'acme-embed', label: 'Embed', group: 'insert', run: (api) => api.insert('acme-embed') }],
+        edit: { 'acme-embed': AcmeEmbedEdit },
+    });
 
 /** A consumer inline element widens the same parameter as a consumer mark. */
 export const ConsumerInline: Story = {
@@ -1374,7 +1386,7 @@ export const ConsumerInline: Story = {
                     picker.
                 </p>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[...defaultPlugins, acmeEmbedPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[...defaultPlugins, acmeEmbedPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>

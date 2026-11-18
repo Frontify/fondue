@@ -485,6 +485,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
     for (const entry of entries) {
         switch (entry.kind) {
             case 'content':
+                // A bare content has no editing parts; buildContentRegistry has already read its types.
                 break;
             case 'plugin':
                 ids.push(entry.id);

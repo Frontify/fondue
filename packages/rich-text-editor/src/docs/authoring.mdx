@@ -8,6 +8,7 @@ import {
     acmeEmbedContentExcerpt,
     acmeHighlightContentExcerpt,
     acmeHighlightPluginExcerpt,
+    acmeUsageExcerpt,
     underlinePluginExcerpt,
 } from './authoringExcerpts';
 
@@ -23,7 +24,7 @@ Every example on this page is real code. Each excerpt is read from the file name
 
 A feature has two parts. The content (`defineContent`) says what a document can hold and how each node is written as HTML and read back. The plugin (`definePlugin`) adds the editing on top: toolbar buttons, keys and typing rules.
 
-Keep them apart because the renderer reads only the content. A page that shows documents keeps the content and drops the plugin with its editing code. Mark the `definePlugin` call `/* @__PURE__ */` so the bundler can drop it.
+Keep them apart because the renderer reads only the content. A page that shows documents imports the content and never the plugin, so the bundler leaves the editing code out. Write the plugin as a function that returns `definePlugin({...})`, the way the package's own plugins are written.
 
 Source: `src/stories/PluginExamples.stories.tsx`
 
@@ -39,12 +40,11 @@ The button asks the editor instead of working things out itself: `isActive` says
 
 `toolbarButtonClasses` is the story's own styling. Use your own classes in its place.
 
-Pass the plugin to the editor and the content to the renderer.
+Pass the plugins to the editor and the content to the renderer. The story below shows both, the editor above the renderer.
 
-```tsx
-<RichTextEditor plugins={[...defaultPlugins, acmeHighlightPlugin]} value={doc} onChange={setDoc} />
-<RichTextRenderer plugins={[...defaultContent, acmeHighlightContent]} value={doc} />
-```
+Source: `src/stories/PluginExamples.stories.tsx`
+
+<Source code={acmeUsageExcerpt} language="tsx" />
 
 <Canvas of={PluginExamples.ConsumerMark} />
 
@@ -64,7 +64,7 @@ Source: `src/stories/PluginExamples.stories.tsx`
 
 <Source code={acmeEmbedContentExcerpt} language="tsx" />
 
-This story also gives the plugin an `edit` view, a component that draws the inline while it has no value. See `acmeEmbedPlugin` in the same file.
+This story also gives the plugin an `edit` view, a component that draws the inline in the editor and shows a picker while it has no value. See `acmeEmbedPlugin` in the same file.
 
 <Canvas of={PluginExamples.ConsumerInline} />
 
