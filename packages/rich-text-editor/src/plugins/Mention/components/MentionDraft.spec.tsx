@@ -4,7 +4,7 @@
 
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type MentionItem, type MentionItems } from '../types';
 
@@ -24,10 +24,17 @@ const PEOPLE: MentionItem[] = [JANE, JOHN, DESIGN];
 const search = (query: string): MentionItem[] => PEOPLE.filter((person) => person.username.includes(query));
 
 const teardown: (() => void)[] = [];
+// happy-dom has no `reportError`, which browsers give every page.
+const reportError = vi.fn();
+beforeEach(() => {
+    vi.stubGlobal('reportError', reportError);
+});
 afterEach(() => {
     for (const clean of teardown.splice(0)) {
         clean();
     }
+    reportError.mockClear();
+    vi.unstubAllGlobals();
 });
 
 /** Lets the people lookup (a promise, even for a list) settle. */
@@ -271,8 +278,9 @@ describe('a mention being searched for', () => {
     });
 
     it('says the search failed, and asks again from the Retry button, keeping focus in the query', async () => {
+        const offline = new Error('offline');
         const lookup = vi.fn<MentionItems>((query) =>
-            query === 'fail' ? Promise.reject(new Error('offline')) : Promise.resolve(PEOPLE),
+            query === 'fail' ? Promise.reject(offline) : Promise.resolve(PEOPLE),
         );
         const { input, type, status, container } = await mountDraft(lookup);
         await type('fail');
@@ -281,6 +289,7 @@ describe('a mention being searched for', () => {
         });
 
         expect(status()).toBe('Could not load people.');
+        expect(reportError).toHaveBeenCalledWith(offline);
         expect(popup()).toContain('Could not load people.');
         expect(popup()).not.toContain('No matches');
         const retry = retryOption();
