@@ -51,6 +51,12 @@ export const activeCommand = (
     return active.reduce((best, command) => (depthOf(command) < depthOf(best) ? command : best));
 };
 
+/** The commands that can run on the selection: the menus list only these. */
+export const availableCommands = (
+    commands: readonly RteBlockCommand[],
+    selection: RteSelectionSnapshot,
+): RteBlockCommand[] => commands.filter((command) => command.isAvailable?.(selection) ?? true);
+
 const wordsOf = (text: string): string[] => text.toLowerCase().split(/\s+/).filter(Boolean);
 
 /**

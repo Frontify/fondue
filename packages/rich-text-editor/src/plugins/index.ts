@@ -35,27 +35,27 @@ import { underlinePlugin } from './Underline';
  * `blurOnBreakPlugin` and `typographyPlugin`.
  */
 export const defaultPlugins: readonly RtePlugin[] = Object.freeze([
-    historyPlugin,
+    historyPlugin(),
     textStylePlugin(),
-    boldPlugin,
-    italicPlugin,
-    underlinePlugin,
-    strikethroughPlugin,
-    codePlugin,
-    subscriptPlugin,
-    superscriptPlugin,
-    fontColorPlugin,
-    /* @__PURE__ */ linkPlugin(),
-    alignPlugin,
-    bulletListPlugin,
-    numberedListPlugin,
-    checkListPlugin,
-    quotePlugin,
-    resetFormattingPlugin,
+    boldPlugin(),
+    italicPlugin(),
+    underlinePlugin(),
+    strikethroughPlugin(),
+    codePlugin(),
+    subscriptPlugin(),
+    superscriptPlugin(),
+    fontColorPlugin(),
+    linkPlugin(),
+    alignPlugin(),
+    bulletListPlugin(),
+    numberedListPlugin(),
+    checkListPlugin(),
+    quotePlugin(),
+    resetFormattingPlugin(),
     // Default in the old editor too; it adds no node, only text.
     emojiPlugin(),
     // No toolbar of its own: a keybinding.
-    softBreakPlugin,
+    softBreakPlugin(),
 ]);
 
 export { emojiPlugin } from './Emoji';

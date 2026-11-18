@@ -141,7 +141,7 @@ const childrenOf = (doc: RteDocument | null, index = 0): unknown[] => {
     return block && 'children' in block ? block.children : [];
 };
 
-const checkListPlugins = [checkListPlugin];
+const checkListPlugins = [checkListPlugin()];
 
 const toDo: RteDocument = {
     version: 1,
@@ -747,7 +747,7 @@ describe('the toolbar from the keyboard', () => {
         id: 'needs-text',
         toolbar: [{ label: 'Needs text', render: NeedsText }],
     });
-    const plugins = [boldPlugin, alignPlugin, linkPlugin(), needsTextPlugin];
+    const plugins = [boldPlugin(), alignPlugin(), linkPlugin(), needsTextPlugin];
 
     const toolbarIn = (container: HTMLElement): HTMLElement => {
         const toolbar = container.querySelector<HTMLElement>('[role="toolbar"]');
@@ -1259,7 +1259,7 @@ describe('the toolbar from the keyboard', () => {
         });
 
         it('keeps the panel usable after a text style menu opened from it is closed with Escape', async () => {
-            const withSelect = [boldPlugin, linkPlugin(), alignPlugin, textStylePlugin()];
+            const withSelect = [boldPlugin(), linkPlugin(), alignPlugin(), textStylePlugin()];
             const { container, ready } = mount(() => (
                 <RichTextEditor value={paragraph('text')} plugins={withSelect} toolbarPlacement="top" />
             ));
@@ -1433,7 +1433,7 @@ describe('content no mounted plugin knows', () => {
         } as unknown as RteDocument;
 
         const { container, ready, stored } = mount((onChange) => (
-            <RichTextEditor value={value} onChange={onChange} plugins={[boldPlugin]} />
+            <RichTextEditor value={value} onChange={onChange} plugins={[boldPlugin()]} />
         ));
         ready();
         const placeholder = container.querySelector('[data-rte-unknown]');
@@ -2447,7 +2447,7 @@ describe('onBlur', () => {
         const onBlur = vi.fn<(doc: RteDocument) => void>();
 
         const { container, ready } = mount(() => (
-            <RichTextEditor value={paragraph('text')} onBlur={onBlur} plugins={[boldPlugin]} />
+            <RichTextEditor value={paragraph('text')} onBlur={onBlur} plugins={[boldPlugin()]} />
         ));
         ready();
         const focus = (element: Element | null): void => {
@@ -2470,9 +2470,8 @@ describe('onBlur', () => {
 
 describe('pasting', () => {
     describe('into a mounted editor', () => {
-        it('turns a copied mention back into a mention, even where links are mounted', () => {
-            // A mention is written as `<a href data-mention-id>`, which the link's
-            // `a[href]` rule matches as well; one with no profile as a `<span>`.
+        it('pastes a copied mention as its text, a linked one as a link', () => {
+            // A mention is written as `<a href data-mention-id>`; one with no profile as a `<span>`.
             const plugins = [
                 ...defaultPlugins,
                 mentionPlugin({
@@ -2506,21 +2505,12 @@ describe('pasting', () => {
 
             const block = stored()?.blocks[0];
             const children = block && 'children' in block ? block.children : [];
-            expect(children).toContainEqual({ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' });
-            expect(children).toContainEqual({
-                type: 'mention',
-                id: 'design',
-                username: 'design',
-                name: 'Design',
-                kind: 'group',
-            });
-            expect(children).toContainEqual({
-                type: 'mention',
-                id: 'all',
-                username: 'all',
-                name: 'Everyone',
-                kind: 'all',
-            });
+            expect(children).toEqual([
+                { text: 'Ask ' },
+                { text: '@jane', link: { href: '/people/jane' } },
+                { text: '@design', link: { href: '/people/design' } },
+                { text: '@all' },
+            ]);
         });
 
         it('keeps the marks and blocks the pasted HTML carried', () => {

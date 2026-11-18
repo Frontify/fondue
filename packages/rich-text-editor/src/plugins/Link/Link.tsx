@@ -134,7 +134,7 @@ const HOTKEY: keyof typeof hotkeys = 'Mod-k';
  * const links = linkPlugin({ search });
  */
 export const linkPlugin = ({ search }: LinkPluginOptions = {}) =>
-    /* @__PURE__ */ definePlugin({
+    definePlugin({
         content: linkContent,
         toolbarGroup: 'link',
         toolbar: [

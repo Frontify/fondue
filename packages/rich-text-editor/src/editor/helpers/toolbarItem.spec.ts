@@ -29,6 +29,8 @@ import { toolbarItemProps } from './toolbarItem';
 type Block = RteSelectionSnapshot['block'] & object;
 
 const snapshot = (overrides: Partial<RteSelectionSnapshot> = {}): RteSelectionSnapshot => ({
+    kind: 'text',
+    grid: null,
     isCollapsed: true,
     text: '',
     block: { type: PARAGRAPH },
@@ -105,6 +107,17 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
             outdent: () => false,
             split: () => false,
             unwrapAll: () => false,
+        },
+        grid: {
+            shape: () => null,
+            add: () => false,
+            removeSelected: () => false,
+            removeGrid: () => false,
+            toggleHeader: () => false,
+            mergeSlots: () => false,
+            splitSlot: () => false,
+            canMergeSlots: () => false,
+            canSplitSlot: () => false,
         },
         insert: (type, value) => {
             inserted.push({ type, value });

@@ -9,7 +9,7 @@ import { type ReactNode, type RefObject, useEffect, useId, useRef, useState } fr
 import { PARAGRAPH, type RteBlockCommand } from '#/core';
 import { MENU_ICON_SIZE } from '#/ui/toolbarIconSize';
 
-import { matchCommands } from '../helpers/blockCommands';
+import { availableCommands, matchCommands } from '../helpers/blockCommands';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
 import { useSelectionAnchor } from '../hooks/useSelectionAnchor';
 import { type RichTextEditorLabels } from '../labels';
@@ -48,6 +48,7 @@ const describeCount = (count: number, labels: RichTextEditorLabels): string =>
  * - Backspacing over the `/` — or anything moving the caret out of the text it
  *   is in — closes it too, and so does a space typed where nothing matches.
  * - Running a command first removes the `/query`, then runs it on what is left.
+ * - A command that cannot run on the selection is left out.
  *
  * Focus never leaves the text: the menu is a listbox the editable element
  * points at with `aria-activedescendant`. The keys it takes are caught before
@@ -78,7 +79,7 @@ export const SlashMenu = ({
         setSession(next);
     };
 
-    const listed = inListOrder(commands);
+    const listed = inListOrder(availableCommands(commands, api.selection.get()));
     const matches = session === null ? [] : inListOrder(matchCommands(listed, session.query));
     const matchesRef = useRef(matches);
     matchesRef.current = matches;
@@ -322,6 +323,7 @@ type SlashOptionProps = {
 
 const SlashOption = ({ id, command, isActive, onHover, onRun }: SlashOptionProps): ReactNode => {
     const { icon: Icon } = command;
+    const classNames = [styles.option, isActive ? styles.optionActive : ''];
     return (
         // The keyboard drives the list from the text; the mouse picks here.
         // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
@@ -332,7 +334,7 @@ const SlashOption = ({ id, command, isActive, onHover, onRun }: SlashOptionProps
             aria-selected={isActive}
             onClick={onRun}
             onMouseMove={isActive ? undefined : onHover}
-            className={isActive ? `${styles.option} ${styles.optionActive}` : styles.option}
+            className={classNames.filter(Boolean).join(' ')}
         >
             <span aria-hidden className={styles.icon}>
                 {Icon === undefined ? null : <Icon size={MENU_ICON_SIZE} />}

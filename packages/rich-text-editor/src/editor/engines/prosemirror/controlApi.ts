@@ -1,16 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { chainCommands, setBlockType as pmSetBlockType, toggleMark as pmToggleMark } from 'prosemirror-commands';
+import { chainCommands, setBlockType as pmSetBlockType } from 'prosemirror-commands';
 import { closeHistory, redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
 import { undoInputRule } from 'prosemirror-inputrules';
+import { type Mark as PmMark, type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
 import {
-    type Mark as PmMark,
-    type MarkType as PmMarkType,
-    type Node as PmNode,
-    type NodeType as PmNodeType,
-    type Schema,
-} from 'prosemirror-model';
-import { type Command, type EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
+    type Command,
+    type EditorState,
+    NodeSelection,
+    Selection,
+    TextSelection,
+    type Transaction,
+} from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import {
@@ -23,8 +24,10 @@ import {
     type RteSelectionSnapshot,
 } from '#/core';
 
+import { keepCarriedAttrs } from './carriedAttrs';
 import { type Dispatch } from './dispatch';
-import { EXTRA_ATTR, markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
+import { blockToEngine, markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
+import { createGridApi, gridOfSelection, textOfSelectedSlots } from './grid';
 import { createListApi, liftOutOfLists } from './lists';
 import { warnUnknownType } from './warnings';
 
@@ -38,10 +41,28 @@ import { warnUnknownType } from './warnings';
  * this api. No method is called until the view exists.
  *
  * Layout: `createControlApi` (the whole api) is at the bottom, assembled from
- * the selection snapshot, then marks, then blocks. Lists live in `./lists.ts`.
+ * the selection snapshot, then marks, then blocks. Lists live in `./lists.ts`,
+ * grids in `./grid.ts`.
  */
 
 // --- Selection snapshot: what all feature UI renders from ---
+
+type TextRun = { from: number; to: number; marks: readonly PmMark[] };
+
+/** Marks live on text only, so inline elements are skipped. */
+const textRunsBetween = (doc: PmNode, from: number, to: number): TextRun[] => {
+    const runs: TextRun[] = [];
+    doc.nodesBetween(from, to, (node, position) => {
+        if (node.isText) {
+            runs.push({
+                from: Math.max(position, from),
+                to: Math.min(position + node.nodeSize, to),
+                marks: node.marks,
+            });
+        }
+    });
+    return runs;
+};
 
 const BLANK_TEXT = /^\s*$/;
 
@@ -63,16 +84,9 @@ const marksAt = (state: EditorState): RteSelectionSnapshot['marks'] => {
         );
     }
 
-    // Only text contributes: the document stores no marks on inline elements.
-    const textRuns: { marks: readonly PmMark[]; blank: boolean }[] = [];
-    state.doc.nodesBetween(from, to, (node, pos) => {
-        if (node.isText) {
-            const text = node.textBetween(Math.max(from - pos, 0), Math.min(to - pos, node.nodeSize));
-            textRuns.push({ marks: node.marks, blank: BLANK_TEXT.test(text) });
-        }
-    });
-    // A toggle passes over whitespace-only runs, so the state it acts on does too; all-blank ranges keep them.
-    let counted = textRuns.filter((run) => !run.blank);
+    const textRuns = textRunsBetween(state.doc, from, to);
+    // Whitespace does not decide a mark, unless the whole range is whitespace.
+    let counted = textRuns.filter((run) => !BLANK_TEXT.test(state.doc.textBetween(run.from, run.to)));
     if (counted.length === 0) {
         counted = textRuns;
     }
@@ -122,12 +136,33 @@ const blocksAt = (state: EditorState): Pick<RteSelectionSnapshot, 'block' | 'blo
     return { block, blocks };
 };
 
+const kindOf = (state: EditorState, grid: RteSelectionSnapshot['grid']): RteSelectionSnapshot['kind'] => {
+    if (grid !== null) {
+        return 'grid';
+    }
+    return state.selection instanceof NodeSelection ? 'node' : 'text';
+};
+
+const selectedTextOf = (state: EditorState, grid: RteSelectionSnapshot['grid']): string => {
+    const { selection } = state;
+    if (selection.empty) {
+        return '';
+    }
+    // Selected slots are read one by one, so slots outside the selection stay out.
+    if (grid !== null) {
+        return textOfSelectedSlots(state.doc, selection);
+    }
+    // Void nodes (a mention, a line break) contribute nothing: only readable text.
+    return state.doc.textBetween(selection.from, selection.to, ' ');
+};
+
 const snapshotOf = (state: EditorState): RteSelectionSnapshot => {
-    const { from, to, empty } = state.selection;
+    const grid = gridOfSelection(state.selection);
     return {
-        isCollapsed: empty,
-        // Void nodes (a mention, a line break) contribute nothing: only readable text.
-        text: empty ? '' : state.doc.textBetween(from, to, ' '),
+        kind: kindOf(state, grid),
+        grid,
+        isCollapsed: state.selection.empty,
+        text: selectedTextOf(state, grid),
         ...blocksAt(state),
         marks: marksAt(state),
         history: { canUndo: undoDepth(state) > 0, canRedo: redoDepth(state) > 0 },
@@ -200,6 +235,54 @@ const findMarkRange = (state: EditorState, markType: PmMarkType): { from: number
     return range;
 };
 
+type MarkToggle = 'caretOff' | 'caretOn' | 'rangeOff' | 'rangeOn';
+
+const markToggleFor = (state: EditorState, type: string): MarkToggle => {
+    // Same rule as the toolbar: a mark on only part of the selection counts as off.
+    const isOn = marksAt(state)[type]?.coverage === 'all';
+    if (state.selection.empty) {
+        if (isOn) {
+            return 'caretOff';
+        }
+        return 'caretOn';
+    }
+    if (isOn) {
+        return 'rangeOff';
+    }
+    return 'rangeOn';
+};
+
+const markToggleTransaction = (
+    state: EditorState,
+    markType: PmMarkType,
+    value: Record<string, unknown> | undefined,
+): Transaction => {
+    const { selection, tr } = state;
+    switch (markToggleFor(state, markType.name)) {
+        case 'caretOff': {
+            return tr.removeStoredMark(markType);
+        }
+        case 'caretOn': {
+            return tr.addStoredMark(markType.create(valueAttrsFor(value)));
+        }
+        case 'rangeOff': {
+            for (const range of selection.ranges) {
+                tr.removeMark(range.$from.pos, range.$to.pos, markType);
+            }
+            return tr;
+        }
+        case 'rangeOn': {
+            const mark = markType.create(valueAttrsFor(value));
+            for (const range of selection.ranges) {
+                for (const run of textRunsBetween(state.doc, range.$from.pos, range.$to.pos)) {
+                    tr.addMark(run.from, run.to, mark);
+                }
+            }
+            return tr;
+        }
+    }
+};
+
 /** The selection, or with scope `'block'` at a caret, its whole text block. */
 const clearRangeOf = (state: EditorState, scope: ClearMarksScope): { from: number; to: number } => {
     const { from, to, empty, $from } = state.selection;
@@ -230,8 +313,7 @@ const createMarkApi = (
             return;
         }
         const view = getView();
-        // On unless ALL of the selection carries it, matching the snapshot.
-        pmToggleMark(markType, valueAttrsFor(value), { removeWhenPresent: false })(view.state, dispatch);
+        dispatch(markToggleTransaction(view.state, markType, value));
         view.focus();
     },
     set(type, value) {
@@ -313,27 +395,6 @@ const createMarkApi = (
 });
 
 // --- Blocks ---
-
-/**
- * Attributes for a block turned into another type: the ones every text block
- * carries (alignment) stay as they were, under the new type's own. Per block,
- * as the engine's `setBlockType` takes them, since blocks differ.
- */
-export const keepCarriedAttrs =
-    (
-        { blockAttributes }: PluginRegistry,
-        nodeType: PmNodeType,
-        attributes: Record<string, unknown> | undefined,
-    ): ((node: PmNode) => Record<string, unknown>) =>
-    (node) => ({
-        ...Object.fromEntries(
-            // The extras ride along: they are the block's stored keys no plugin declares.
-            [...blockAttributes.keys(), EXTRA_ATTR]
-                .filter((name) => name in node.attrs && name in (nodeType.spec.attrs ?? {}))
-                .map((name) => [name, node.attrs[name]]),
-        ),
-        ...attributes,
-    });
 
 /**
  * Block types and the attributes on them. Which block the selection is in is
@@ -447,6 +508,34 @@ const APPENDED_TRANSACTION_META = 'appendedTransaction';
 /** Which type's editing UI is open, and how to redraw the views that show it. */
 export type OpenEditors = { type: string | null; repaint: () => void };
 
+/**
+ * A block with its content, as `insert` takes one: in place of a selected
+ * top-level block or an empty one, or after the top-level block the caret is
+ * in, with the caret at its first place for text.
+ */
+const insertWhole = (view: EditorView, node: PmNode, dispatch: Dispatch): void => {
+    const { selection } = view.state;
+    const { $from } = selection;
+    const top = $from.depth >= 1 ? $from.node(1) : null;
+    const transaction = view.state.tr;
+
+    let position: number;
+    if (selection instanceof NodeSelection && $from.depth === 0) {
+        position = selection.from;
+        transaction.replaceWith(position, selection.to, node);
+    } else if (top !== null && top.isTextblock && top.content.size === 0) {
+        position = $from.before(1);
+        transaction.replaceWith(position, $from.after(1), node);
+    } else {
+        position = top === null ? transaction.doc.content.size : $from.after(1);
+        transaction.insert(position, node);
+    }
+
+    transaction.setSelection(Selection.near(transaction.doc.resolve(position + 1)));
+    dispatch(transaction.scrollIntoView());
+    view.focus();
+};
+
 /** The flat members act on the editor as a whole rather than on one kind of thing in it. */
 export const createControlApi = (
     getView: () => EditorView,
@@ -488,6 +577,7 @@ export const createControlApi = (
         marks: createMarkApi(getView, schema, registry, dispatch),
         blocks: createBlockApi(getView, schema, registry, dispatch),
         lists: createListApi(getView, schema, registry, dispatch),
+        grid: createGridApi(getView),
         history: createHistoryApi(getView),
 
         insert(type, value) {
@@ -497,6 +587,11 @@ export const createControlApi = (
                 return;
             }
             const view = getView();
+            const children: unknown = value?.children;
+            if (!nodeType.isInline && Array.isArray(children)) {
+                insertWhole(view, blockToEngine({ ...value, type, children }, schema), dispatch);
+                return;
+            }
             const transaction = view.state.tr;
             const { selection } = view.state;
             // A block goes in AFTER selected text rather than over it; a selected node is replaced.

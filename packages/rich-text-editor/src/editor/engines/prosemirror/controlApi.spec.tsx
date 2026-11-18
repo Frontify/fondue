@@ -58,6 +58,15 @@ const pinPlugin: RtePlugin = definePlugin({
     }),
 });
 
+const emphasisPlugin: RtePlugin = definePlugin({
+    id: 'emphasis',
+    content: defineContent({
+        marks: {
+            emphasis: defineMark({ toHtml: () => ({ tag: 'em', children: true }), parse: [] }),
+        },
+    }),
+});
+
 const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin, tokenPlugin()];
 
 /** The engine's own fixtures, never a shipped plugin. */
@@ -139,6 +148,27 @@ describe('the selection snapshot', () => {
         expect(block).toEqual({ type: '__rteUnknownBlock' });
         expect(blocks).toEqual([{ type: '__rteUnknownBlock' }]);
         expect(JSON.stringify([block, blocks])).not.toContain('tok');
+    });
+
+    it('reports a caret or a range of text as a text selection', () => {
+        const editor = editorWith(plugins, [paragraph(text('hello'))]);
+        editor.select('ell');
+
+        const { kind, grid } = editor.api.selection.get();
+
+        expect(kind).toBe('text');
+        expect(grid).toBeNull();
+    });
+
+    it('reports a selected void block as a node selection', () => {
+        const editor = editorWith(plugins, [paragraph(text('a')), { type: 'divider' }, paragraph(text('b'))]);
+        const { view } = editor;
+        view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, 3)));
+
+        const { kind, grid } = editor.api.selection.get();
+
+        expect(kind).toBe('node');
+        expect(grid).toBeNull();
     });
 
     it('reports the marks typing at a caret would carry', () => {
@@ -301,6 +331,29 @@ describe('marks.toggle', () => {
         expect(editor.stored()).toEqual([
             paragraph(text('a', { bold: true }), { type: 'tag', name: 'Ada' }, text('b', { bold: true })),
         ]);
+    });
+
+    it('takes the mark off a range whose text carries it around a line break', () => {
+        const editor = editorWith(
+            [...plugins, emphasisPlugin],
+            [paragraph(text('a', { emphasis: true }), { type: 'break' }, text('b', { emphasis: true }))],
+        );
+        editor.selectBetween('a', 'b');
+        expect(editor.api.selection.get().marks).toHaveProperty('emphasis');
+
+        editor.api.marks.toggle('emphasis');
+
+        expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('b'))]);
+        expect(editor.api.selection.get().marks).not.toHaveProperty('emphasis');
+    });
+
+    it('puts the mark on a range of blank text', () => {
+        const editor = editorWith([...plugins, emphasisPlugin], [paragraph(text('  '))]);
+        editor.select('  ');
+
+        editor.api.marks.toggle('emphasis');
+
+        expect(editor.stored()).toEqual([paragraph(text('  ', { emphasis: true }))]);
     });
 
     it('puts the mark on all of a range only part of which carries it', () => {
