@@ -63,7 +63,12 @@ export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = 
 
                 render: {
                     component: ({ value }) => (
-                        <MentionLink value={value} href={safeMentionHref(href, value)} trigger={trigger} />
+                        <MentionLink
+                            value={value}
+                            href={safeMentionHref(href, value)}
+                            trigger={trigger}
+                            placesCaret={false}
+                        />
                     ),
                 },
             }),

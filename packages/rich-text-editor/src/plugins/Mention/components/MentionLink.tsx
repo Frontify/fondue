@@ -7,11 +7,12 @@ import { type MouseEvent, type ReactNode } from 'react';
 import styles from '../mention.module.scss';
 import { type MentionValue } from '../types';
 
-/** In the editor a click places the caret; the link is followed only when reading. */
-const placeCaretInEditor = (event: MouseEvent<HTMLAnchorElement>): void => {
-    if (event.currentTarget.closest('[contenteditable="true"]') !== null) {
-        event.preventDefault();
-    }
+type MentionLinkProps = {
+    value: MentionValue;
+    /** Absent when the app gives no target, or one that is not a safe link. */
+    href: string | undefined;
+    trigger: string;
+    placesCaret: boolean;
 };
 
 /**
@@ -20,16 +21,13 @@ const placeCaretInEditor = (event: MouseEvent<HTMLAnchorElement>): void => {
  * mention. A group is marked with its icon, as the old editor did; with nowhere
  * to link to (`@all`), the mention is text.
  */
-export const MentionLink = ({
-    value,
-    href,
-    trigger,
-}: {
-    value: MentionValue;
-    /** Absent when the app gives no target, or one that is not a safe link. */
-    href: string | undefined;
-    trigger: string;
-}): ReactNode => {
+export const MentionLink = ({ value, href, trigger, placesCaret }: MentionLinkProps): ReactNode => {
+    const followLinkOnlyWhenReading = (event: MouseEvent<HTMLAnchorElement>): void => {
+        if (placesCaret) {
+            event.preventDefault();
+        }
+    };
+
     const attributes = {
         title: value.name,
         'data-mention-id': value.id,
@@ -50,7 +48,7 @@ export const MentionLink = ({
                 {href === undefined ? (
                     <span {...attributes}>{content}</span>
                 ) : (
-                    <a href={href} {...attributes} onClick={placeCaretInEditor}>
+                    <a href={href} {...attributes} onClick={followLinkOnlyWhenReading}>
                         {content}
                     </a>
                 )}

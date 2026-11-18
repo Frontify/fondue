@@ -4,7 +4,7 @@ import { Button, ColorPicker, Flyout } from '@frontify/fondue-components';
 import { IconDroplet } from '@frontify/fondue-icons';
 import { type ComponentProps, type ReactNode, useId, useRef, useState } from 'react';
 
-import { type EditorControlApi, type RteSelectionSnapshot, type ToolbarItemProps } from '#/core';
+import { type EditorControlApi, type SelectedNode, type ToolbarItemProps } from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
@@ -12,9 +12,7 @@ import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
 import {
     decodeStoredColor,
     encodeStoredColor,
-    type FontColorValue,
     OPAQUE_ALPHA,
-    parseTypedHex,
     type Rgba,
     toColorName,
     toStoredColor,
@@ -29,9 +27,6 @@ type PickerColor = NonNullable<ComponentProps<typeof ColorPicker.Root>['currentC
 const encodePickerColor = (color: PickerColor): string =>
     encodeStoredColor({ ...color, alpha: color.alpha ?? OPAQUE_ALPHA });
 
-/** The hex field inside the picker. */
-const HEX_FIELD_SELECTOR = 'input[type="text"]';
-
 /** One-click colours. Fondue has no text palette, so these are our own, each at least 4.5:1 on white. */
 const PRESETS: readonly { name: string; color: string }[] = [
     { name: 'Grey', color: '#5f6368' },
@@ -45,13 +40,9 @@ const PRESETS: readonly { name: string; color: string }[] = [
 /** What the picker starts at on text with no one colour: white, as Fondue's picker does without one. */
 const NO_COLOR_DRAFT: PickerColor = { red: 255, green: 255, blue: 255, alpha: 1 };
 
-const readHexField = (container: HTMLElement | null, alpha: number | undefined): PickerColor | undefined => {
-    const text = container?.querySelector<HTMLInputElement>(HEX_FIELD_SELECTOR)?.value;
-    return parseTypedHex(text, alpha);
-};
-
 type ColorFlyoutProps = {
-    selection: RteSelectionSnapshot;
+    /** The colour run at the selection, or null when it has none. */
+    selectedNode: SelectedNode | null;
     api: EditorControlApi;
     /**
      * The control's name, for its button and the flyout's header
@@ -66,26 +57,24 @@ type ColorFlyoutProps = {
  * picker in a flyout. The colour reaches the document on save, not while
  * dragging, so the undo history gets one step per choice.
  */
-export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProps): ReactNode => {
+export const ColorFlyout = ({ selectedNode, api, label, isActive }: ColorFlyoutProps): ReactNode => {
     const [open, setOpen] = useState(false);
     const [draft, setDraft] = useState<PickerColor>(NO_COLOR_DRAFT);
     const titleId = useId();
-    const pickerRef = useRef<HTMLDivElement | null>(null);
     // Whether a colour was dragged or typed since opening. The value alone cannot
     // say: white typed over uncoloured text equals the white the picker starts at.
     const choseRef = useRef(false);
+    const switchingFormatRef = useRef(false);
 
     const { returnToText, contentProps } = useFocusAfterClose(api);
 
-    const fontColor = selection.marks.fontColor;
-    let value: Partial<FontColorValue> | undefined;
+    let storedColor: string | undefined;
     // A half-coloured selection has no one colour to show.
-    if (fontColor?.coverage === 'all') {
-        value = fontColor.value;
+    if (isActive === true) {
+        storedColor = toStoredColor(selectedNode?.value.color);
     }
     // A stored value that is no colour shows none, and is still removable.
     const hasColor = isActive !== false;
-    const storedColor = toStoredColor(value?.color);
     let currentColor: Rgba | undefined;
     let title = label;
     if (storedColor !== undefined) {
@@ -116,9 +105,11 @@ export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProp
         apply(draft);
     };
 
-    // The picker also reports the colour it shows on a format switch: not a choice.
+    // The picker reports the colour it already shows right after a format switch: not a choice.
     const choose = (color: PickerColor): void => {
-        if (encodePickerColor(color) !== encodePickerColor(draft)) {
+        if (switchingFormatRef.current) {
+            switchingFormatRef.current = false;
+        } else {
             choseRef.current = true;
         }
         setDraft(color);
@@ -154,17 +145,7 @@ export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProp
                     </span>
                 </ToolbarButton>
             </Flyout.Trigger>
-            <Flyout.Content
-                {...contentProps}
-                width="300px"
-                onEscapeKeyDown={returnToText}
-                aria-labelledby={titleId}
-                // The hex field is the one input a keyboard can pick a colour with.
-                onOpenAutoFocus={(event) => {
-                    event.preventDefault();
-                    pickerRef.current?.querySelector<HTMLInputElement>(HEX_FIELD_SELECTOR)?.focus();
-                }}
-            >
+            <Flyout.Content {...contentProps} width="300px" onEscapeKeyDown={returnToText} aria-labelledby={titleId}>
                 <Flyout.Header>
                     <span id={titleId}>{label}</span>
                 </Flyout.Header>
@@ -182,32 +163,25 @@ export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProp
                             />
                         ))}
                     </div>
+                    {/* Enter in a field saves, as in a form. The listener only catches what bubbles from the picker. */}
                     {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions */}
                     <div
-                        ref={pickerRef}
                         className={styles.picker}
                         onKeyDown={(event) => {
-                            const target = event.target;
-                            if (event.key !== 'Enter' || !(target instanceof HTMLElement)) {
-                                return;
-                            }
-                            if (target.matches(HEX_FIELD_SELECTOR)) {
+                            if (event.key === 'Enter' && event.target instanceof HTMLInputElement) {
                                 event.preventDefault();
                                 save();
                             }
                         }}
-                        onInput={(event) => {
-                            const target = event.target;
-                            if (!(target instanceof HTMLInputElement) || !target.matches(HEX_FIELD_SELECTOR)) {
-                                return;
-                            }
-                            // A valid hex is a choice even when it equals the draft, which `choose` ignores.
-                            if (readHexField(pickerRef.current, draft.alpha) !== undefined) {
-                                choseRef.current = true;
-                            }
-                        }}
                     >
-                        <ColorPicker.Root defaultFormat="HEX" currentColor={draft} onColorChange={choose}>
+                        <ColorPicker.Root
+                            defaultFormat="HEX"
+                            currentColor={draft}
+                            onColorChange={choose}
+                            onFormatChange={() => {
+                                switchingFormatRef.current = true;
+                            }}
+                        >
                             <ColorPicker.Values />
                             <ColorPicker.Gradient />
                         </ColorPicker.Root>
