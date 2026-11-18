@@ -46,9 +46,10 @@ const gridPlugin: RtePlugin = definePlugin({
                 toHtml: () => ({ tag: 'div', attrs: { class: 'slot' }, children: true }),
                 parse: [{ tag: 'div.slot' }],
             }),
-            headSlot: defineBlock({
+            headSlot: defineBlock<{ scope: string | null }>({
                 content: { blocks: [PARAGRAPH] },
                 gridRole: 'headerSlot',
+                defaults: { scope: 'col' },
                 toHtml: () => ({ tag: 'div', attrs: { class: 'head-slot' }, children: true }),
                 parse: [{ tag: 'div.head-slot' }],
             }),
@@ -339,5 +340,230 @@ describe('inserting a grid whole', () => {
         expect(doc.child(0).textContent).toBe('a1b1');
         expect(doc.child(1).textContent).toBe('xy');
         expect(caretSlot(editor.view)).toBe('x');
+    });
+});
+
+/** Each row of the first grid as `type:text` per slot, `*` marking a header slot and its scope. */
+const layoutOf = (view: EditorView): string[][] => {
+    const rows: string[][] = [];
+    for (const row of view.state.doc.child(0).children) {
+        rows.push(
+            row.children.map((slot) =>
+                slot.type.name === 'headSlot' ? `*${slot.attrs.scope}:${slot.textContent}` : slot.textContent,
+            ),
+        );
+    }
+    return rows;
+};
+
+describe('changing the rows and columns of a grid', () => {
+    const twoByTwo = () => [grid(band(slot('a1'), slot('b1')), band(slot('a2'), slot('b2')))];
+
+    it('reports the shape of the grid the selection is in, and null outside one', () => {
+        const editor = editorWith(plugins, [paragraph(text('before')), grid(band(slot('a1'), slot('b1'), slot('c1')))]);
+
+        editor.caretAfter('befo');
+        expect(editor.api.grid.shape()).toBeNull();
+        editor.caretAfter('b1');
+        expect(editor.api.grid.shape()).toEqual({
+            rows: 1,
+            columns: 3,
+            selectedRows: 1,
+            selectedColumns: 1,
+            headerRow: false,
+            headerColumn: false,
+        });
+    });
+
+    it('counts the rows and columns the selection covers, a spanning slot whole', () => {
+        const editor = editorWith(plugins, [
+            grid(band(slot('tall', { rowspan: 2 }), slot('b1'), slot('c1')), band(slot('b2'), slot('c2'))),
+        ]);
+        const { view } = editor;
+        const { doc } = view.state;
+
+        editor.caretAfter('tall');
+        expect(editor.api.grid.shape()).toMatchObject({ selectedRows: 2, selectedColumns: 1 });
+        view.dispatch(view.state.tr.setSelection(slotSelection(doc, slotAt(doc, 'b1'), slotAt(doc, 'c1'))));
+        expect(editor.api.grid.shape()).toMatchObject({ selectedRows: 1, selectedColumns: 2 });
+    });
+
+    it('reports whether the first row and the first column are header slots', () => {
+        const editor = editorWith(plugins, twoByTwo());
+        editor.caretAfter('b2');
+
+        editor.api.grid.toggleHeader('row');
+        expect(editor.api.grid.shape()).toMatchObject({ headerRow: true, headerColumn: false });
+        editor.api.grid.toggleHeader('column');
+        expect(editor.api.grid.shape()).toMatchObject({ headerRow: true, headerColumn: true });
+    });
+
+    it('adds a column on either side, keeping the text, as one undo step', () => {
+        const editor = editorWith(plugins, twoByTwo());
+        editor.caretAfter('a1');
+
+        expect(editor.api.grid.add('column', 'after')).toBe(true);
+        expect(layoutOf(editor.view)).toEqual([
+            ['a1', '', 'b1'],
+            ['a2', '', 'b2'],
+        ]);
+        expect(editor.api.grid.add('column', 'before')).toBe(true);
+        expect(layoutOf(editor.view)[0]).toEqual(['', 'a1', '', 'b1']);
+
+        editor.api.history.undo();
+        expect(layoutOf(editor.view)[0]).toEqual(['a1', '', 'b1']);
+    });
+
+    it('adds a row above or below', () => {
+        const editor = editorWith(plugins, twoByTwo());
+        editor.caretAfter('a2');
+
+        expect(editor.api.grid.add('row', 'before')).toBe(true);
+        expect(editor.api.grid.add('row', 'after')).toBe(true);
+        expect(layoutOf(editor.view)).toEqual([
+            ['a1', 'b1'],
+            ['', ''],
+            ['a2', 'b2'],
+            ['', ''],
+        ]);
+    });
+
+    it('removes the selected columns, but never the last one', () => {
+        const editor = editorWith(plugins, twoByTwo());
+        editor.caretAfter('b1');
+
+        expect(editor.api.grid.removeSelected('column')).toBe(true);
+        expect(layoutOf(editor.view)).toEqual([['a1'], ['a2']]);
+        expect(editor.api.grid.removeSelected('column')).toBe(false);
+        expect(layoutOf(editor.view)).toEqual([['a1'], ['a2']]);
+    });
+
+    it('removes the selected rows, but never the last one', () => {
+        const editor = editorWith(plugins, twoByTwo());
+        const { view } = editor;
+        const { doc } = view.state;
+        view.dispatch(view.state.tr.setSelection(slotSelection(doc, slotAt(doc, 'a1'), slotAt(doc, 'b1'))));
+
+        expect(editor.api.grid.removeSelected('row')).toBe(true);
+        expect(layoutOf(editor.view)).toEqual([['a2', 'b2']]);
+        expect(editor.api.grid.removeSelected('row')).toBe(false);
+    });
+
+    it('removes the whole grid', () => {
+        const editor = editorWith(plugins, [paragraph(text('before')), ...twoByTwo()]);
+        editor.caretAfter('b2');
+
+        expect(editor.api.grid.removeGrid()).toBe(true);
+        expect(editor.view.state.doc.childCount).toBe(1);
+        expect(editor.view.state.doc.child(0).textContent).toBe('before');
+    });
+
+    it('turns the first row into header slots labelling columns, and back', () => {
+        const editor = editorWith(plugins, twoByTwo());
+        editor.caretAfter('b2');
+
+        expect(editor.api.grid.toggleHeader('row')).toBe(true);
+        expect(layoutOf(editor.view)).toEqual([
+            ['*col:a1', '*col:b1'],
+            ['a2', 'b2'],
+        ]);
+        expect(editor.api.grid.toggleHeader('row')).toBe(true);
+        expect(layoutOf(editor.view)).toEqual([
+            ['a1', 'b1'],
+            ['a2', 'b2'],
+        ]);
+    });
+
+    it('turns the first column into header slots labelling rows, as one undo step', () => {
+        const editor = editorWith(plugins, twoByTwo());
+        editor.caretAfter('b2');
+
+        editor.api.grid.toggleHeader('row');
+        expect(editor.api.grid.toggleHeader('column')).toBe(true);
+        expect(layoutOf(editor.view)).toEqual([
+            ['*col:a1', '*col:b1'],
+            ['*row:a2', 'b2'],
+        ]);
+
+        editor.api.history.undo();
+        expect(layoutOf(editor.view)).toEqual([
+            ['*col:a1', '*col:b1'],
+            ['a2', 'b2'],
+        ]);
+    });
+
+    it('gives header slots added with a row or a column the scope of where they land', () => {
+        const editor = editorWith(plugins, twoByTwo());
+        editor.caretAfter('b2');
+        editor.api.grid.toggleHeader('column');
+
+        editor.api.grid.add('row', 'after');
+        editor.caretAfter('a1');
+        editor.api.grid.add('column', 'before');
+
+        // A column left of the header column is a plain one; the added row's header slot labels its row.
+        expect(layoutOf(editor.view)).toEqual([
+            ['', '*row:a1', 'b1'],
+            ['', '*row:a2', 'b2'],
+            ['', '*row:', ''],
+        ]);
+    });
+
+    it('gives a header slot added by Tab in the last slot the scope of its row', () => {
+        const editor = editorWith(plugins, twoByTwo());
+        editor.caretAfter('b2');
+        editor.api.grid.toggleHeader('column');
+        editor.caretAfter('b2');
+
+        expect(press(editor.view, 'Tab')).toBe(true);
+        expect(layoutOf(editor.view)[2]).toEqual(['*row:', '']);
+    });
+
+    it('keeps a spanning slot whole when a column is added through it, and grows its span', () => {
+        const editor = editorWith(plugins, [grid(band(slot('wide', { colspan: 2 })), band(slot('a2'), slot('b2')))]);
+        editor.caretAfter('a2');
+
+        expect(editor.api.grid.add('column', 'after')).toBe(true);
+
+        const outer = editor.view.state.doc.child(0);
+        expect(outer.child(0).childCount).toBe(1);
+        expect(outer.child(0).child(0).attrs.colspan).toBe(3);
+        expect(layoutOf(editor.view)[1]).toEqual(['a2', '', 'b2']);
+    });
+
+    it('turns a slot spanning rows into a header slot whole', () => {
+        const editor = editorWith(plugins, [
+            grid(band(slot('tall', { rowspan: 2 }), slot('b1')), band(slot('b2')), band(slot('a3'), slot('b3'))),
+        ]);
+        editor.caretAfter('b3');
+
+        expect(editor.api.grid.toggleHeader('column')).toBe(true);
+        expect(layoutOf(editor.view)).toEqual([['*row:tall', 'b1'], ['b2'], ['*row:a3', 'b3']]);
+        expect(editor.view.state.doc.child(0).child(0).child(0).attrs.rowspan).toBe(2);
+    });
+
+    // The editor never changes a document the host set without telling it.
+    it('leaves the header scopes of a document the host sets as they came', () => {
+        const editor = editorWith(plugins, [paragraph(text('before'))]);
+        const stored = { type: 'headSlot', scope: 'col', children: [paragraph(text('h'))] };
+
+        editor.editor.setDoc({ version: 1, blocks: [grid(band(stored, slot('b')))] });
+
+        expect(layoutOf(editor.view)).toEqual([['*col:h', 'b']]);
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('does nothing outside a grid', () => {
+        const editor = editorWith(plugins, [paragraph(text('text'))]);
+        editor.caretAfter('te');
+        const before = editor.view.state.doc;
+
+        expect(editor.api.grid.add('column', 'after')).toBe(false);
+        expect(editor.api.grid.add('row', 'after')).toBe(false);
+        expect(editor.api.grid.removeSelected('column')).toBe(false);
+        expect(editor.api.grid.removeSelected('row')).toBe(false);
+        expect(editor.api.grid.removeGrid()).toBe(false);
+        expect(editor.api.grid.toggleHeader('row')).toBe(false);
+        expect(editor.view.state.doc).toBe(before);
     });
 });

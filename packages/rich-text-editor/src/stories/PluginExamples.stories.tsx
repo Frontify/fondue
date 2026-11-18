@@ -898,7 +898,10 @@ export const Table: Story = {
 
         return (
             <div className={LAYOUT}>
-                <p className={HINT}>Type / on the empty line for Table. Tab moves between cells.</p>
+                <p className={HINT}>
+                    Type / on the empty line for Table. Tab moves between cells. With the caret in a table, the Table
+                    button in the toolbar adds and deletes rows and columns and toggles the headers.
+                </p>
                 <div className="tw-flex tw-flex-col tw-gap-4">
                     <div className={FRAME}>
                         <RichTextEditor

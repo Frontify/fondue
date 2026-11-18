@@ -114,6 +114,44 @@ export type EditorControlApi = {
     };
 
     /**
+     * The grid (`gridRole: 'grid'`) the selection is in: the slot the caret is
+     * in, or the selected slots. Each change is one undo step and keeps the
+     * text of every slot that stays; each returns false when it did nothing,
+     * outside a grid included.
+     */
+    grid: {
+        /**
+         * The grid around the selection, or null outside one: its size, how
+         * many rows and columns the selection covers (a slot's spans
+         * included), and whether its first row and first column are all
+         * header slots.
+         */
+        shape(): {
+            rows: number;
+            columns: number;
+            selectedRows: number;
+            selectedColumns: number;
+            headerRow: boolean;
+            headerColumn: boolean;
+        } | null;
+        /** Add a row above or below, or a column left or right of, the selection. */
+        add(axis: 'row' | 'column', side: 'before' | 'after'): boolean;
+        /**
+         * Remove the rows or columns the selection covers. Does nothing when
+         * it covers every row or every column: a grid keeps at least one.
+         */
+        removeSelected(axis: 'row' | 'column'): boolean;
+        /** Remove the whole grid. */
+        removeGrid(): boolean;
+        /**
+         * Turn the first row or column into header slots, or back. After any
+         * change a user makes to a grid, a header slot that declares a `scope`
+         * default gets `'col'` when its whole row is header slots, else `'row'`.
+         */
+        toggleHeader(axis: 'row' | 'column'): boolean;
+    };
+
+    /**
      * Insert a node at the selection — how void blocks (a column break) and
      * inline elements (mentions) get added, with `value` as what it stores.
      * The caret ends up after what was inserted.
