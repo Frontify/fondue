@@ -197,19 +197,6 @@
     }
 }
 
-/** A command that cannot run on the selection: dimmed, with its reason under it. */
-.commandUnavailable {
-    display: flex;
-    flex-direction: column;
-    color: var(--color-disabled-default);
-    cursor: not-allowed;
-}
-
-.commandReason {
-    color: var(--color-secondary-default);
-    font-size: var(--typography-font-size-x-small);
-}
-
 /**
  * The "Turn into" button of the floating bar: the block's name beside a caret,
  * The attributes outweigh the Button's gap.

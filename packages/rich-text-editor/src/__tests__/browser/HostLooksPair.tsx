@@ -46,7 +46,7 @@ const pluginsWithLooks = ({ body, quote, link }: HostLooksPairProps): RtePlugin[
 ];
 
 // The renderer gets content only, as a page that only shows documents would, so the looks must travel with the content.
-const contentWithLooks = ({ body, quote, link }: HostLooksPairProps): RtePlugin.Content[] => [
+const contentWithLooks = ({ body, quote, link }: HostLooksPairProps) => [
     textStyleContent({ presets: { body, quote, link } }),
     bulletListContent,
     checkListContent,

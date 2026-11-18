@@ -1,12 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    PARAGRAPH,
-    type PluginRegistry,
-    type RteBlockCommand,
-    type RteCommandAvailability,
-    type RteSelectionSnapshot,
-} from '#/core';
+import { PARAGRAPH, type PluginRegistry, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
 
 /**
  * The paragraph is the editor's own block rather than a plugin's, so its
@@ -57,11 +51,11 @@ export const activeCommand = (
     return active.reduce((best, command) => (depthOf(command) < depthOf(best) ? command : best));
 };
 
-const ENABLED: RteCommandAvailability = { enabled: true };
-
-/** Whether the command can run on the selection: what it says, or enabled when it says nothing. */
-export const availabilityOf = (command: RteBlockCommand, selection: RteSelectionSnapshot): RteCommandAvailability =>
-    command.availability?.(selection) ?? ENABLED;
+/** The commands that can run on the selection: the menus list only these. */
+export const availableCommands = (
+    commands: readonly RteBlockCommand[],
+    selection: RteSelectionSnapshot,
+): RteBlockCommand[] => commands.filter((command) => command.isAvailable?.(selection) ?? true);
 
 const wordsOf = (text: string): string[] => text.toLowerCase().split(/\s+/).filter(Boolean);
 

@@ -39,10 +39,12 @@ import {
     type RteDocumentWith,
     type RtePlugin,
     RichTextEditor,
+    RichTextRenderer,
     softBreakPlugin,
     strikethroughPlugin,
     subscriptPlugin,
     superscriptPlugin,
+    tablePlugin,
     textStylePlugin,
     typographyPlugin,
     underlinePlugin,
@@ -88,8 +90,8 @@ const HINT = 'tw-col-span-full tw-m-0 tw-body-small tw-text-secondary';
  */
 const SURFACE = 'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-surface tw-p-medium';
 
-/** The field box around an editor: the surface, plus a ring while focus is inside it. */
-const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-ring-focus`;
+/** The field box around an editor: the surface, with a stronger border on hover and while the caret is inside, as Fondue's Textarea does. */
+const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-line-strong`;
 
 const toolbarButtonClasses = (active: boolean): string =>
     [
@@ -841,6 +843,78 @@ export const ColumnBreak: Story = {
                         onChange={setDoc}
                         plugins={[columnBreakPlugin({ columns: 2, gap: '24px' })]}
                     />
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/** Cells as the story writes them: one paragraph of text. */
+const tableCell = (text: string, colspan?: number) => ({
+    type: 'tableCell' as const,
+    ...(colspan === undefined ? {} : { colspan }),
+    children: [{ type: 'paragraph' as const, children: [{ text }] }],
+});
+
+const tableHeader = (text: string) => ({
+    type: 'tableHeader' as const,
+    children: [{ type: 'paragraph' as const, children: [{ text }] }],
+});
+
+/**
+ * A table: type / and pick Table to insert one with a header row. Tab and
+ * Shift+Tab move between cells, Tab in the last cell adds a row, and dragging
+ * across cells selects them. A stored merged cell keeps its span. The readonly
+ * view below draws the same document.
+ */
+export const Table: Story = {
+    render: () => {
+        const plugins = [...defaultPlugins, tablePlugin()];
+        const [doc, setDoc] = useState<RteDocument>(() => ({
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'The team, with a merged cell in the last row:' }] },
+                {
+                    type: 'table',
+                    children: [
+                        {
+                            type: 'tableRow',
+                            children: [tableHeader('Name'), tableHeader('Role'), tableHeader('Team')],
+                        },
+                        {
+                            type: 'tableRow',
+                            children: [tableCell('Ada'), tableCell('Engineer'), tableCell('Platform')],
+                        },
+                        {
+                            type: 'tableRow',
+                            children: [tableCell('Grace'), tableCell('Away until March', 2)],
+                        },
+                    ],
+                },
+                { type: 'paragraph', children: [] },
+            ],
+        }));
+
+        return (
+            <div className={LAYOUT}>
+                <p className={HINT}>
+                    Type / on the empty line for Table. Tab moves between cells. With the caret in a table, the Table
+                    button in the toolbar adds and deletes rows and columns and toggles the headers. Drag across cells
+                    and choose Merge cells to merge them; Split cell takes a merged cell apart.
+                </p>
+                <div className="tw-flex tw-flex-col tw-gap-4">
+                    <div className={FRAME}>
+                        <RichTextEditor
+                            value={doc}
+                            onChange={setDoc}
+                            plugins={plugins}
+                            placeholder="Type / for commands"
+                        />
+                    </div>
+                    <div className={SURFACE}>
+                        <RichTextRenderer value={doc} plugins={plugins} />
+                    </div>
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>

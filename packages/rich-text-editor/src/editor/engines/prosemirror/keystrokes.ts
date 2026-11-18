@@ -92,7 +92,7 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         keymap(featureHotkeys(registry.hotkeys, api)),
         characterHotkeys(registry.hotkeys, api),
         // 4
-        ...(hasGrid ? [gridKeys(), gridEditing()] : []),
+        ...(hasGrid ? [gridKeys(), ...gridEditing()] : []),
         ...(hasLists ? [keymap(lists)] : []),
         // 5
         ...typingRewrites(registry, schema),
