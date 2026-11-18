@@ -1,0 +1,19 @@
+.changeset/color-picker-hex-typed-value.md
+  s_db1d4607d5e58e::t_cbfde83b513be1 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a0772557e9aab30777b73a87a4ca10f526e2f369",
+  "prompts": {},
+  "sessions": {
+    "s_db1d4607d5e58e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1084a074-7586-420c-8797-a9dbcd3c7659",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
