@@ -27,6 +27,7 @@ export const LineChart = ({
     highlightNegativeValues = false,
     markLine,
     valueFormatter,
+    dateGranularity,
 }: LineChartProps) => {
     const backfilledSeries = createBackfilledSeries(series);
     const theme = createTheme(getAreaFillColors(series.length, backfilledSeries.length));
@@ -65,6 +66,7 @@ export const LineChart = ({
                     valueFormatter={valueFormatter}
                     locale={locale}
                     series={series}
+                    dateGranularity={dateGranularity}
                 />
                 <Series
                     series={series}
@@ -81,6 +83,7 @@ export const LineChart = ({
                     missingValueLabel={missingValueLabel}
                     valueFormatter={valueFormatter}
                     locale={locale}
+                    dateGranularity={dateGranularity}
                 />
             </XYChart>
             {!hideLegend && legendPosition === 'bottom' && (

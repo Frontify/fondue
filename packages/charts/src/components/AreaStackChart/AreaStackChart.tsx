@@ -34,6 +34,7 @@ export const AreaStackChart = ({
     valueFormatter,
     childSumLabel,
     domain = COUNT_DOMAIN,
+    dateGranularity,
 }: AreaStackChartProps) => {
     const backfilledSeries = createBackfilledSeries(series);
     const theme = createTheme(getAreaFillColors(series.length, backfilledSeries.length));
@@ -70,6 +71,7 @@ export const AreaStackChart = ({
                     valueFormatter={valueFormatter}
                     locale={locale}
                     series={series}
+                    dateGranularity={dateGranularity}
                 />
                 {markLine && <MarkLine {...markLine} />}
                 <Tooltip
@@ -81,6 +83,7 @@ export const AreaStackChart = ({
                     valueFormatter={valueFormatter}
                     locale={locale}
                     stackingGlyphs
+                    dateGranularity={dateGranularity}
                 />
             </XYChart>
             {!hideLegend && legendPosition === 'bottom' && (
