@@ -567,3 +567,82 @@ describe('changing the rows and columns of a grid', () => {
         expect(editor.view.state.doc).toBe(before);
     });
 });
+
+describe('merging and splitting slots', () => {
+    const twoByThree = () => [grid(band(slot('a1'), slot('b1'), slot('c1')), band(slot('a2'), slot('b2'), slot('c2')))];
+
+    /** Each slot of the first grid as `blocks colspan×rowspan`, its blocks' text joined by `/`. */
+    const spansOf = (view: EditorView): string[][] =>
+        view.state.doc
+            .child(0)
+            .children.map((row) =>
+                row.children.map(
+                    (one) =>
+                        `${one.children.map((block) => block.textContent).join('/')} ${one.attrs.colspan}×${one.attrs.rowspan}`,
+                ),
+            );
+
+    it("merges a rectangle of slots into one that keeps each slot's blocks, as one undo step", () => {
+        const editor = editorWith(plugins, twoByThree());
+        const { view } = editor;
+        const { doc } = view.state;
+        view.dispatch(view.state.tr.setSelection(slotSelection(doc, slotAt(doc, 'a1'), slotAt(doc, 'b2'))));
+
+        expect(editor.api.grid.canMergeSlots()).toBe(true);
+        expect(editor.api.grid.mergeSlots()).toBe(true);
+
+        expect(spansOf(view)).toEqual([['a1/b1/a2/b2 2×2', 'c1 1×1'], ['c2 1×1']]);
+
+        editor.api.history.undo();
+        expect(spansOf(view)).toEqual([
+            ['a1 1×1', 'b1 1×1', 'c1 1×1'],
+            ['a2 1×1', 'b2 1×1', 'c2 1×1'],
+        ]);
+    });
+
+    it('drops empty slots from the merged one', () => {
+        const editor = editorWith(plugins, [grid(band(slot('a1'), slot(''), slot('c1')))]);
+        const { view } = editor;
+        const { doc } = view.state;
+        view.dispatch(view.state.tr.setSelection(slotSelection(doc, slotAt(doc, 'a1'), slotAt(doc, 'c1'))));
+
+        editor.api.grid.mergeSlots();
+
+        expect(spansOf(view)).toEqual([['a1/c1 3×1']]);
+    });
+
+    it('splits a merged slot back into single slots, the content staying in the first', () => {
+        const editor = editorWith(plugins, [
+            grid(band(slot('wide', { colspan: 2 }), slot('c1')), band(slot('a2'), slot('b2'), slot('c2'))),
+        ]);
+        editor.caretAfter('wi');
+
+        expect(editor.api.grid.canSplitSlot()).toBe(true);
+        expect(editor.api.grid.splitSlot()).toBe(true);
+
+        expect(spansOf(editor.view)[0]).toEqual(['wide 1×1', ' 1×1', 'c1 1×1']);
+        expect(editor.api.grid.canSplitSlot()).toBe(false);
+    });
+
+    it('cannot merge one slot, nor split one that covers a single row and column', () => {
+        const editor = editorWith(plugins, twoByThree());
+        editor.caretAfter('a1');
+
+        expect(editor.api.grid.canMergeSlots()).toBe(false);
+        expect(editor.api.grid.mergeSlots()).toBe(false);
+        expect(editor.api.grid.canSplitSlot()).toBe(false);
+        expect(editor.api.grid.splitSlot()).toBe(false);
+    });
+
+    it('does nothing outside a grid', () => {
+        const editor = editorWith(plugins, [paragraph(text('text'))]);
+        editor.caretAfter('te');
+        const before = editor.view.state.doc;
+
+        expect(editor.api.grid.canMergeSlots()).toBe(false);
+        expect(editor.api.grid.canSplitSlot()).toBe(false);
+        expect(editor.api.grid.mergeSlots()).toBe(false);
+        expect(editor.api.grid.splitSlot()).toBe(false);
+        expect(editor.view.state.doc).toBe(before);
+    });
+});

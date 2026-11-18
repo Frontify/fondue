@@ -114,6 +114,10 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
             removeSelected: () => false,
             removeGrid: () => false,
             toggleHeader: () => false,
+            mergeSlots: () => false,
+            splitSlot: () => false,
+            canMergeSlots: () => false,
+            canSplitSlot: () => false,
         },
         insert: (type, value) => {
             inserted.push({ type, value });

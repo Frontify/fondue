@@ -149,6 +149,14 @@ export type EditorControlApi = {
          * default gets `'col'` when its whole row is header slots, else `'row'`.
          */
         toggleHeader(axis: 'row' | 'column'): boolean;
+        /** Merge the selected slots, a rectangle of two or more, into one. Each slot's blocks are kept, in order; empty slots are dropped. */
+        mergeSlots(): boolean;
+        /** Split the slot the selection is in, when it covers several rows or columns, back into single slots. */
+        splitSlot(): boolean;
+        /** Whether `mergeSlots` would do something now — what a menu enables it on. */
+        canMergeSlots(): boolean;
+        /** Whether `splitSlot` would do something now — what a menu enables it on. */
+        canSplitSlot(): boolean;
     };
 
     /**

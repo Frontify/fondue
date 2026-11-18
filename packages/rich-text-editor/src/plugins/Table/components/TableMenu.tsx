@@ -24,6 +24,8 @@ const TEXT = {
     addHeaderColumn: 'Add header column',
     removeHeaderColumn: 'Remove header column',
     deleteTable: 'Delete table',
+    mergeCells: 'Merge cells',
+    splitCell: 'Split cell',
 } as const;
 
 type MenuItem = { id: string; label: string; run: () => void; isAvailable?: boolean };
@@ -37,8 +39,8 @@ type Shape = NonNullable<ReturnType<EditorControlApi['grid']['shape']>>;
 
 /**
  * The engine removes nothing when the selection covers every row or column,
- * so those items are left out then. Each header toggle is named by what
- * choosing it does.
+ * and merges or splits nothing it cannot, so those items are left out then.
+ * Each header toggle is named by what choosing it does.
  */
 const menuItems = (api: EditorControlApi, shape: Shape): MenuItem[] => [
     { id: 'column-left', label: TEXT.insertColumnLeft, run: () => api.grid.add('column', 'before') },
@@ -56,6 +58,18 @@ const menuItems = (api: EditorControlApi, shape: Shape): MenuItem[] => [
         label: TEXT.deleteRow,
         run: () => api.grid.removeSelected('row'),
         isAvailable: shape.selectedRows < shape.rows,
+    },
+    {
+        id: 'merge-cells',
+        label: TEXT.mergeCells,
+        run: () => api.grid.mergeSlots(),
+        isAvailable: api.grid.canMergeSlots(),
+    },
+    {
+        id: 'split-cell',
+        label: TEXT.splitCell,
+        run: () => api.grid.splitSlot(),
+        isAvailable: api.grid.canSplitSlot(),
     },
     {
         id: 'header-row',
