@@ -1,16 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use 'sass:list';
+@use 'sass:selector';
+
 // The doubled class outranks a host's `.prose p { margin }`, and longhands let an invalid value void one side only.
+// Each selector of a list is doubled on its own: `&#{&}` would join `.cell, .header` into `.cell .header`.
 @mixin stack($gap, $blocks: '> *') {
-    &#{&} #{$blocks} {
-        // On each block rather than inherited, so a last block does not trim the blocks inside it.
-        --rte-block-gap: #{$gap};
+    @each $complex in & {
+        @at-root #{selector.append($complex, list.nth($complex, -1))} #{$blocks} {
+            // On each block rather than inherited, so a last block does not trim the blocks inside it.
+            --rte-block-gap: #{$gap};
 
-        margin-block-start: var(--rte-own-margin-top, 0);
-        margin-block-end: var(--rte-own-margin-bottom, var(--rte-block-gap));
+            margin-block-start: var(--rte-own-margin-top, 0);
+            margin-block-end: var(--rte-own-margin-bottom, var(--rte-block-gap));
 
-        &:last-child {
-            --rte-block-gap: 0;
+            &:last-child {
+                --rte-block-gap: 0;
+            }
         }
     }
 }
