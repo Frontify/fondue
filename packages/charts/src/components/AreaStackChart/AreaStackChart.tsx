@@ -13,7 +13,7 @@ import { useMargin } from '@components/common/hooks';
 import { createTheme } from '@theme/createTheme';
 
 import styles from './AreaStackChart.module.scss';
-import { AreaStack } from './components/AreaStack';
+import { AreaStack, SinglePointGlyphs } from './components/AreaStack';
 import { GridRows } from './components/GridRows';
 import { type AreaStackChartProps } from './types';
 
@@ -37,6 +37,7 @@ export const AreaStackChart = ({
     dateGranularity,
 }: AreaStackChartProps) => {
     const backfilledSeries = createBackfilledSeries(series);
+    const hasSingleDate = series[0]?.dataPoints.length === 1;
     const theme = createTheme(getAreaFillColors(series.length, backfilledSeries.length));
 
     const yDomain = getNonZeroLinearStackingScaleDomain(series, markLine?.value ?? 0);
@@ -66,6 +67,7 @@ export const AreaStackChart = ({
             >
                 <GridRows tickValues={transformedLinearScaleTicks} />
                 <AreaStack series={series} />
+                {hasSingleDate ? <SinglePointGlyphs series={series} /> : null}
                 <Axes
                     linearScaleTicks={transformedLinearScaleTicks}
                     valueFormatter={valueFormatter}
