@@ -183,9 +183,7 @@
         pointer-events: none;
     }
 
-    & {
-        @include focusStyle.focus-outline;
-    }
+    @include focusStyle.focus-outline;
 }
 
 .pillIndicator {
