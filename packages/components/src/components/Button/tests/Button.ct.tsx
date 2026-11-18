@@ -80,14 +80,13 @@ test('should render lang on the button element', async ({ mount }) => {
     await expect(wrapper.getByTestId('button-root')).toHaveAttribute('lang', 'fr-CH');
 });
 
-const PRESSED_LAYER = /\/ 0\.09\)/;
-const MIXED_LAYER = /\/ 0\.045\)/;
-const NO_LAYER = 'none';
-const STRONG_BACKGROUND = 'rgb(17, 17, 16)';
-const WEAK_HOVER_BACKGROUND = 'rgb(215, 215, 208)';
+const WEAK_PRESSED_BACKGROUND = 'rgb(234, 234, 228)';
+const DEFAULT_PRESSED_BACKGROUND = 'rgb(191, 191, 184)';
+const STRONG_PRESSED_BACKGROUND = 'rgb(70, 70, 67)';
+const TRANSPARENT = 'rgba(0, 0, 0, 0)';
 
 test.describe('pressed state', () => {
-    test('adds the pressed layer for aria-pressed="true"', async ({ mount }) => {
+    test('shows the weak pressed colour for aria-pressed="true"', async ({ mount }) => {
         const wrapper = await mount(
             <Button emphasis="weak" aria-pressed>
                 {BUTTON_TEXT}
@@ -95,10 +94,10 @@ test.describe('pressed state', () => {
         );
         const component = wrapper.locator('button');
 
-        await expect(component).toHaveCSS('background-image', PRESSED_LAYER);
+        await expect(component).toHaveCSS('background-color', WEAK_PRESSED_BACKGROUND);
     });
 
-    test('adds the lighter mixed layer for aria-pressed="mixed"', async ({ mount }) => {
+    test('shows the pressed colour for aria-pressed="mixed"', async ({ mount }) => {
         const wrapper = await mount(
             <Button emphasis="weak" aria-pressed="mixed">
                 {BUTTON_TEXT}
@@ -106,10 +105,10 @@ test.describe('pressed state', () => {
         );
         const component = wrapper.locator('button');
 
-        await expect(component).toHaveCSS('background-image', MIXED_LAYER);
+        await expect(component).toHaveCSS('background-color', WEAK_PRESSED_BACKGROUND);
     });
 
-    test('adds the pressed layer for aria-checked="true"', async ({ mount }) => {
+    test('shows the pressed colour for aria-checked="true"', async ({ mount }) => {
         const wrapper = await mount(
             <Button emphasis="weak" role="radio" aria-checked>
                 {BUTTON_TEXT}
@@ -117,10 +116,10 @@ test.describe('pressed state', () => {
         );
         const component = wrapper.locator('button');
 
-        await expect(component).toHaveCSS('background-image', PRESSED_LAYER);
+        await expect(component).toHaveCSS('background-color', WEAK_PRESSED_BACKGROUND);
     });
 
-    test('adds no layer for aria-pressed="false"', async ({ mount }) => {
+    test('keeps the resting colour for aria-pressed="false"', async ({ mount }) => {
         const wrapper = await mount(
             <Button emphasis="weak" aria-pressed={false}>
                 {BUTTON_TEXT}
@@ -128,10 +127,21 @@ test.describe('pressed state', () => {
         );
         const component = wrapper.locator('button');
 
-        await expect(component).toHaveCSS('background-image', NO_LAYER);
+        await expect(component).toHaveCSS('background-color', TRANSPARENT);
     });
 
-    test('keeps the emphasis background under the layer', async ({ mount }) => {
+    test('uses the default emphasis pressed colour', async ({ mount }) => {
+        const wrapper = await mount(
+            <Button emphasis="default" aria-pressed>
+                {BUTTON_TEXT}
+            </Button>,
+        );
+        const component = wrapper.locator('button');
+
+        await expect(component).toHaveCSS('background-color', DEFAULT_PRESSED_BACKGROUND);
+    });
+
+    test('uses the strong emphasis pressed colour', async ({ mount }) => {
         const wrapper = await mount(
             <Button emphasis="strong" aria-pressed>
                 {BUTTON_TEXT}
@@ -139,11 +149,10 @@ test.describe('pressed state', () => {
         );
         const component = wrapper.locator('button');
 
-        await expect(component).toHaveCSS('background-color', STRONG_BACKGROUND);
-        await expect(component).toHaveCSS('background-image', PRESSED_LAYER);
+        await expect(component).toHaveCSS('background-color', STRONG_PRESSED_BACKGROUND);
     });
 
-    test('keeps the layer over the hover background', async ({ mount }) => {
+    test('stays pressed on hover', async ({ mount }) => {
         const wrapper = await mount(
             <Button emphasis="weak" aria-pressed>
                 {BUTTON_TEXT}
@@ -153,11 +162,10 @@ test.describe('pressed state', () => {
 
         await component.hover();
 
-        await expect(component).toHaveCSS('background-color', WEAK_HOVER_BACKGROUND);
-        await expect(component).toHaveCSS('background-image', PRESSED_LAYER);
+        await expect(component).toHaveCSS('background-color', WEAK_PRESSED_BACKGROUND);
     });
 
-    test('adds no layer when disabled', async ({ mount }) => {
+    test('keeps the disabled look when disabled', async ({ mount }) => {
         const wrapper = await mount(
             <Button emphasis="default" aria-pressed disabled>
                 {BUTTON_TEXT}
@@ -165,6 +173,6 @@ test.describe('pressed state', () => {
         );
         const component = wrapper.locator('button');
 
-        await expect(component).toHaveCSS('background-image', NO_LAYER);
+        await expect(component).not.toHaveCSS('background-color', DEFAULT_PRESSED_BACKGROUND);
     });
 });

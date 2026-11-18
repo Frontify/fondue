@@ -4,15 +4,8 @@
 @use '../../../utilities/transitions.module.scss';
 @use '../../../utilities/sizeToken.module.scss';
 
-// Share of the text colour in the pressed layer: #EAEAE4 is this share of the text colour over white
-$pressed-layer-amount: 9%;
-$mixed-layer-amount: 4.5%;
-
-@function pressed-layer($amount) {
-    $layer: color-mix(in srgb, currentColor $amount, transparent);
-
-    @return linear-gradient($layer, $layer);
-}
+// A pressed toggle or checked radio keeps the colours of a button held down
+$pressed-states: "[aria-pressed='true'], [aria-pressed='mixed'], [aria-checked='true']";
 
 // Icon colors for a variant, applied from within the variant's own selector
 @mixin icon-colors($text-color, $text-hover, $text-active, $icon-color, $icon-hover, $icon-active) {
@@ -37,11 +30,13 @@ $mixed-layer-amount: 4.5%;
     }
 
     @if $icon-active {
-        &:active svg {
+        &:active svg,
+        &:is(#{$pressed-states}) svg {
             color: var(--color-#{$icon-active});
         }
     } @else if $text-active {
-        &:active svg {
+        &:active svg,
+        &:is(#{$pressed-states}) svg {
             color: var(--color-#{$text-active});
         }
     }
@@ -77,7 +72,8 @@ $mixed-layer-amount: 4.5%;
             background-color: var(--color-#{$bg-hover});
         }
 
-        &:active {
+        &:active,
+        &:is(#{$pressed-states}) {
             background-color: var(--color-#{$bg-active});
         }
 
@@ -90,7 +86,8 @@ $mixed-layer-amount: 4.5%;
         }
 
         @if $text-active {
-            &:active {
+            &:active,
+            &:is(#{$pressed-states}) {
                 color: var(--color-#{$text-active});
             }
         }
@@ -119,7 +116,8 @@ $mixed-layer-amount: 4.5%;
             background-color: var(--color-#{$bg-hover});
         }
 
-        &:active {
+        &:active,
+        &:is(#{$pressed-states}) {
             background-color: var(--color-#{$bg-active});
         }
 
@@ -132,7 +130,8 @@ $mixed-layer-amount: 4.5%;
         }
 
         @if $text-active {
-            &:active {
+            &:active,
+            &:is(#{$pressed-states}) {
                 color: var(--color-#{$text-active});
             }
         }
@@ -181,8 +180,8 @@ $mixed-layer-amount: 4.5%;
     // Default variant - weak emphasis
     @include variant-weak(
         'default',
-        'container-secondary-hover',
-        'container-secondary-active',
+        'surface-hover',
+        'surface-active',
         'primary-default',
         'primary-hover',
         'primary-pressed'
@@ -325,7 +324,8 @@ $mixed-layer-amount: 4.5%;
             background-color: var(--color-container-highlight-hover);
         }
 
-        &:active {
+        &:active,
+        &:is(#{$pressed-states}) {
             background-color: var(--color-container-highlight-active);
         }
 
@@ -335,7 +335,8 @@ $mixed-layer-amount: 4.5%;
             color: var(--color-container-highlight-on-highlight-container);
         }
 
-        &:active {
+        &:active,
+        &:is(#{$pressed-states}) {
             color: var(--color-container-highlight-on-highlight-container);
         }
 
@@ -361,17 +362,8 @@ $mixed-layer-amount: 4.5%;
         'highlight-on-highlight'
     );
 
-    // Pressed state: a layer of the button's own text colour over its background, so every variant and emphasis keeps its tone
-    &:is([aria-pressed='true'], [aria-checked='true']):not([disabled]) {
-        background-image: pressed-layer($pressed-layer-amount);
-    }
-
-    &[aria-pressed='mixed']:not([disabled]) {
-        background-image: pressed-layer($mixed-layer-amount);
-    }
-
     // The data attributes lift this above the variant colours, which forced-colours mode would otherwise reset
-    &[data-variant][data-emphasis]:is([aria-pressed='true'], [aria-pressed='mixed'], [aria-checked='true']):not([disabled]) {
+    &[data-variant][data-emphasis]:is(#{$pressed-states}):not([disabled]) {
         @media (forced-colors: active) {
             &,
             &:hover,
