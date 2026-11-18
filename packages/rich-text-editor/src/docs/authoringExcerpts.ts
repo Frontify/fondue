@@ -6,6 +6,7 @@ import pluginExamplesSource from '../stories/PluginExamples.stories.tsx?raw';
 import { excerptOf } from './excerptOf';
 
 const DECLARATION_END = '});';
+const FACTORY_END = '    });';
 
 export const acmeHighlightContentExcerpt = excerptOf(
     pluginExamplesSource,
@@ -15,8 +16,14 @@ export const acmeHighlightContentExcerpt = excerptOf(
 
 export const acmeHighlightPluginExcerpt = excerptOf(
     pluginExamplesSource,
-    'const acmeHighlightPlugin = /* @__PURE__ */ definePlugin({',
-    DECLARATION_END,
+    'const acmeHighlightPlugin = () =>',
+    FACTORY_END,
+);
+
+export const acmeUsageExcerpt = excerptOf(
+    pluginExamplesSource,
+    'const acmeEditorPlugins = [boldPlugin(), acmeHighlightPlugin()];',
+    'const acmeRendererContent = [boldContent, acmeHighlightContent];',
 );
 
 export const acmeCalloutContentExcerpt = excerptOf(
@@ -31,8 +38,4 @@ export const acmeEmbedContentExcerpt = excerptOf(
     DECLARATION_END,
 );
 
-export const underlinePluginExcerpt = excerptOf(
-    underlineSource,
-    'export const underlinePlugin = /* @__PURE__ */ definePlugin({',
-    DECLARATION_END,
-);
+export const underlinePluginExcerpt = excerptOf(underlineSource, 'export const underlinePlugin = () =>', FACTORY_END);
