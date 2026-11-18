@@ -4,6 +4,16 @@
 @use '../../../utilities/transitions.module.scss';
 @use '../../../utilities/sizeToken.module.scss';
 
+// Share of the text colour in the pressed layer: #EAEAE4 is this share of the text colour over white
+$pressed-layer-amount: 9%;
+$mixed-layer-amount: 4.5%;
+
+@function pressed-layer($amount) {
+    $layer: color-mix(in srgb, currentColor $amount, transparent);
+
+    @return linear-gradient($layer, $layer);
+}
+
 // Icon colors for a variant, applied from within the variant's own selector
 @mixin icon-colors($text-color, $text-hover, $text-active, $icon-color, $icon-hover, $icon-active) {
     & svg {
@@ -351,23 +361,17 @@
         'highlight-on-highlight'
     );
 
-    // Pressed state overrides every variant and emphasis, so the data attributes keep it above their specificity
+    // Pressed state: a layer of the button's own text colour over its background, so every variant and emphasis keeps its tone
+    &:is([aria-pressed='true'], [aria-checked='true']):not([disabled]) {
+        background-image: pressed-layer($pressed-layer-amount);
+    }
+
+    &[aria-pressed='mixed']:not([disabled]) {
+        background-image: pressed-layer($mixed-layer-amount);
+    }
+
+    // The data attributes lift this above the variant colours, which forced-colours mode would otherwise reset
     &[data-variant][data-emphasis]:is([aria-pressed='true'], [aria-pressed='mixed'], [aria-checked='true']):not([disabled]) {
-        background-color: var(--color-surface-active);
-        color: var(--color-primary-default);
-
-        &:hover {
-            background-color: var(--color-container-secondary-hover);
-            color: var(--color-primary-hover);
-        }
-
-        &:active {
-            background-color: var(--color-container-secondary-active);
-            color: var(--color-primary-pressed);
-        }
-
-        @include icon-colors('primary-default', 'primary-hover', 'primary-pressed', null, null, null);
-
         @media (forced-colors: active) {
             &,
             &:hover,

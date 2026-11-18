@@ -89,6 +89,8 @@ export const WithIconAndLabel: Story = {
 
 const EMPHASES = ['weak', 'default', 'strong'] as const;
 
+const VARIANTS = ['default', 'positive', 'negative', 'danger', 'loud'] as const;
+
 const ALIGNMENTS = [
     { value: 'left', label: 'Align left', Icon: IconTextAlignmentLeft },
     { value: 'center', label: 'Align center', Icon: IconTextAlignmentCentre },
@@ -98,28 +100,53 @@ const ALIGNMENTS = [
 type Alignment = (typeof ALIGNMENTS)[number]['value'];
 
 /**
- * The pressed state comes from `aria-pressed`: off (`false`), on (`true`) and partly applied (`"mixed"`), per emphasis.
+ * The pressed state comes from `aria-pressed`: off (`false`), partly applied (`"mixed"`) and on (`true`), one row per emphasis.
  */
 export const PressedState: Story = {
     render: (args) => (
         <Flex direction="column" gap={4}>
             {EMPHASES.map((emphasis) => (
                 <Flex key={emphasis} gap={2}>
-                    <Button {...args} emphasis={emphasis} aspect="square" aria-label="Bold" aria-pressed={false}>
+                    <Button {...args} emphasis={emphasis} aria-pressed={false}>
                         <IconTextFormatBold size={16} />
+                        Off
                     </Button>
-                    <Button {...args} emphasis={emphasis} aspect="square" aria-label="Bold" aria-pressed>
+                    <Button {...args} emphasis={emphasis} aria-pressed="mixed">
                         <IconTextFormatBold size={16} />
-                    </Button>
-                    <Button {...args} emphasis={emphasis} aspect="square" aria-label="Bold" aria-pressed="mixed">
-                        <IconTextFormatBold size={16} />
+                        Mixed
                     </Button>
                     <Button {...args} emphasis={emphasis} aria-pressed>
-                        {emphasis} pressed
+                        <IconTextFormatBold size={16} />
+                        Pressed
                     </Button>
                     <Button {...args} emphasis={emphasis} aria-pressed disabled>
-                        {emphasis} pressed, disabled
+                        <IconTextFormatBold size={16} />
+                        Pressed, disabled
                     </Button>
+                </Flex>
+            ))}
+        </Flex>
+    ),
+};
+
+/**
+ * Every variant keeps its own tone when pressed, one row per variant.
+ */
+export const PressedStatePerVariant: Story = {
+    render: (args) => (
+        <Flex direction="column" gap={4}>
+            {VARIANTS.map((variant) => (
+                <Flex key={variant} gap={2}>
+                    {EMPHASES.map((emphasis) => (
+                        <Flex key={emphasis} gap={2}>
+                            <Button {...args} variant={variant} emphasis={emphasis} aria-pressed={false}>
+                                {variant} {emphasis}
+                            </Button>
+                            <Button {...args} variant={variant} emphasis={emphasis} aria-pressed>
+                                Pressed
+                            </Button>
+                        </Flex>
+                    ))}
                 </Flex>
             ))}
         </Flex>
