@@ -57,7 +57,7 @@ export const CardActionButton = (
             ref={ref}
             data-test-id={dataTestId}
             aria-label={ariaLabel}
-            emphasis="weak"
+            emphasis="default"
             size="small"
             aspect="square"
             {...rest}
