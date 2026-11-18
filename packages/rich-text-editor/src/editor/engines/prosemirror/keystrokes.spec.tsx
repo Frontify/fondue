@@ -2,16 +2,20 @@
 
 // @vitest-environment happy-dom
 
+import { undo } from 'prosemirror-history';
 import { TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
+    ANY_LIST,
+    defineBlock,
     defineContent,
     defineInline,
     defineMark,
     definePlugin,
     type EditorControlApi,
+    PARAGRAPH,
     type RteBlockNode,
     type RtePlugin,
 } from '#/core';
@@ -841,5 +845,419 @@ describe('trimming punctuation off a typed address', () => {
         expect(trimTrailingPunctuation(`https://a.com/x${run}a`, TOKEN_TRIM)).toBe(`https://a.com/x${run}a`);
         expect(trimTrailingPunctuation(`https://a.com/x${run}`, TOKEN_TRIM)).toBe('https://a.com/x');
         expect(performance.now() - started).toBeLessThan(1000);
+    });
+});
+
+/** `dotList` and `stepList` share the item `row`; `taskList` items carry `done`, default false. */
+const listsPlugin: RtePlugin = definePlugin({
+    id: 'test-lists',
+    content: defineContent({
+        blocks: {
+            dotList: defineBlock({
+                content: { items: 'row' },
+                toHtml: () => ({ tag: 'ul', children: true }),
+                parse: [{ tag: 'ul' }],
+            }),
+            stepList: defineBlock({
+                content: { items: 'row' },
+                toHtml: () => ({ tag: 'ol', children: true }),
+                parse: [{ tag: 'ol' }],
+            }),
+            row: defineBlock({
+                content: { blocks: [PARAGRAPH, ANY_LIST] },
+                toHtml: () => ({ tag: 'li', children: true }),
+                parse: [{ tag: 'li' }],
+            }),
+            taskList: defineBlock({
+                content: { items: 'task' },
+                toHtml: () => ({ tag: 'ul', attrs: { 'data-tasks': '' }, children: true }),
+                parse: [{ tag: 'ul[data-tasks]' }],
+            }),
+            task: defineBlock<{ done: boolean }>({
+                content: { blocks: [PARAGRAPH, ANY_LIST] },
+                defaults: { done: false },
+                toHtml: ({ done }) => ({ tag: 'li', attrs: { 'data-done': String(done) }, children: true }),
+                parse: [{ tag: 'li[data-done]' }],
+            }),
+        },
+    }),
+});
+
+const toneAttributePlugin: RtePlugin = definePlugin({
+    id: 'test-tone',
+    content: defineContent({
+        blockAttributes: {
+            tone: { style: (value) => ({ color: value }) },
+        },
+    }),
+});
+
+const titlePlugin: RtePlugin = definePlugin({
+    id: 'test-title',
+    content: defineContent({
+        blocks: {
+            title: defineBlock({
+                content: 'text',
+                toHtml: () => ({ tag: 'h2', children: true }),
+                parse: [{ tag: 'h2' }],
+            }),
+        },
+    }),
+    inputRules: [{ kind: 'block', match: '## ', block: 'title' }],
+});
+
+type TaskSpec = { done: boolean; text: string };
+
+/** `done` sits flat on the item, which the open `RteBlockNode` cannot name. */
+const taskList = (...tasks: TaskSpec[]) => ({
+    type: 'taskList',
+    children: tasks.map(({ done, text: value }) => ({ type: 'task', done, children: [paragraph(text(value))] })),
+});
+
+describe('Enter in a list whose items have a state', () => {
+    const plugins = [listsPlugin];
+
+    it('at the end of a done item adds one not done and keeps the first done', () => {
+        const editor = editorWith(plugins, [taskList({ done: true, text: 'done' })]);
+        editor.caretAfter('done');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'taskList',
+                children: [
+                    { type: 'task', done: true, children: [paragraph(text('done'))] },
+                    { type: 'task', done: false, children: [paragraph()] },
+                ],
+            },
+        ]);
+    });
+
+    it('in a nested done item leaves the done item around it as it was', () => {
+        const nestedItem = (done: boolean, ...children: unknown[]) => ({ type: 'task', done, children });
+        const editor = editorWith(plugins, [
+            {
+                type: 'taskList',
+                children: [nestedItem(true, paragraph(text('outer')), taskList({ done: true, text: 'inner' }))],
+            },
+        ]);
+        editor.caretAfter('inner');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'taskList',
+                children: [
+                    nestedItem(true, paragraph(text('outer')), {
+                        type: 'taskList',
+                        children: [nestedItem(true, paragraph(text('inner'))), nestedItem(false, paragraph())],
+                    }),
+                ],
+            },
+        ]);
+    });
+
+    it('in the middle of a done item leaves the second half not done', () => {
+        const editor = editorWith(plugins, [taskList({ done: true, text: 'onetwo' })]);
+        editor.caretAfter('one');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([taskList({ done: true, text: 'one' }, { done: false, text: 'two' })]);
+    });
+
+    it('at the very start of a done item puts one not done and empty above and keeps the text done', () => {
+        const editor = editorWith(plugins, [taskList({ done: true, text: 'text' })]);
+        editor.caretBefore('text');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'taskList',
+                children: [
+                    { type: 'task', done: false, children: [paragraph()] },
+                    { type: 'task', done: true, children: [paragraph(text('text'))] },
+                ],
+            },
+        ]);
+    });
+
+    it('at the start of a later paragraph of a done item keeps the first item done', () => {
+        const editor = editorWith(plugins, [
+            {
+                type: 'taskList',
+                children: [{ type: 'task', done: true, children: [paragraph(text('a')), paragraph(text('b'))] }],
+            },
+        ]);
+        editor.caretBefore('b');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'taskList',
+                children: [
+                    { type: 'task', done: true, children: [paragraph(text('a')), paragraph()] },
+                    { type: 'task', done: false, children: [paragraph(text('b'))] },
+                ],
+            },
+        ]);
+    });
+
+    it('at the start of a paragraph after a nested list keeps the first item done', () => {
+        const nested = { type: 'dotList', children: [{ type: 'row', children: [paragraph(text('n'))] }] };
+        const editor = editorWith(plugins, [
+            {
+                type: 'taskList',
+                children: [
+                    { type: 'task', done: true, children: [paragraph(text('a')), nested, paragraph(text('t'))] },
+                ],
+            },
+        ]);
+        editor.caretBefore('t');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'taskList',
+                children: [
+                    { type: 'task', done: true, children: [paragraph(text('a')), nested, paragraph()] },
+                    { type: 'task', done: false, children: [paragraph(text('t'))] },
+                ],
+            },
+        ]);
+    });
+
+    it('leaves a list whose items have no state as it was', () => {
+        const editor = editorWith(plugins, [
+            { type: 'dotList', children: [{ type: 'row', children: [paragraph(text('one'))] }] },
+        ]);
+        editor.caretAfter('one');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'dotList',
+                children: [
+                    { type: 'row', children: [paragraph(text('one'))] },
+                    { type: 'row', children: [paragraph()] },
+                ],
+            },
+        ]);
+    });
+});
+
+describe('Enter in a block with attributes every text block carries', () => {
+    const plugins = [listsPlugin, titlePlugin, toneAttributePlugin];
+
+    const toned = (value: string, extra: Record<string, unknown> = {}) => {
+        const children = [];
+        if (value !== '') {
+            children.push(text(value));
+        }
+        return { type: 'paragraph', tone: 'warm', children, ...extra };
+    };
+
+    const title = (value: string, tone: string) => ({ type: 'title', tone, children: [text(value)] });
+
+    it('at the end of a paragraph gives the new paragraph the same attribute', () => {
+        const editor = editorWith(plugins, [toned('one')]);
+        editor.caretAfter('one');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([toned('one'), toned('')]);
+    });
+
+    it('in the middle of a paragraph keeps the attribute on both halves', () => {
+        const editor = editorWith(plugins, [toned('onetwo')]);
+        editor.caretAfter('one');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([toned('one'), toned('two')]);
+    });
+
+    it('over a range across two blocks gives both halves the attribute of the block the text stays in', () => {
+        const editor = editorWith(plugins, [
+            { type: 'paragraph', tone: 'cool', children: [text('abc')] },
+            { type: 'paragraph', tone: 'warm', children: [text('def')] },
+        ]);
+        editor.selectBetween('abc', 'd');
+
+        press(editor.view, 'Enter');
+
+        // `tone` is a plugin's block attribute, which RteBlockNode does not declare.
+        expect(editor.stored()?.map((block) => (block as { tone?: string }).tone)).toEqual(['warm', 'warm']);
+    });
+
+    it('at the end of a title gives a paragraph with the attribute', () => {
+        const editor = editorWith(plugins, [title('Title', 'cool')]);
+        editor.caretAfter('Title');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([title('Title', 'cool'), { type: 'paragraph', tone: 'cool', children: [] }]);
+    });
+
+    it('in the middle of a title gives two titles with the same attribute', () => {
+        const editor = editorWith(plugins, [title('TitleText', 'cool')]);
+        editor.caretAfter('Title');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([title('Title', 'cool'), title('Text', 'cool')]);
+    });
+
+    it('at the start of a title gives the empty paragraph above the same attribute', () => {
+        const editor = editorWith(plugins, [title('Title', 'cool')]);
+        editor.caretBefore('Title');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([{ type: 'paragraph', tone: 'cool', children: [] }, title('Title', 'cool')]);
+    });
+
+    it('at the end of a list item gives the new item a paragraph with the attribute', () => {
+        const editor = editorWith(plugins, [
+            { type: 'dotList', children: [{ type: 'row', children: [toned('one')] }] },
+        ]);
+        editor.caretAfter('one');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'dotList',
+                children: [
+                    { type: 'row', children: [toned('one')] },
+                    { type: 'row', children: [toned('')] },
+                ],
+            },
+        ]);
+    });
+});
+
+describe('Enter on a block with stored keys no plugin declares', () => {
+    const plugins = [listsPlugin, toneAttributePlugin];
+
+    // `foo` is an undeclared stored key and `tone` a plugin's attribute, neither of which RteBlockNode names.
+    const toned = (value: string) => ({ ...paragraph(text(value)), tone: 'warm', foo: 1 });
+
+    it('leaves the block Enter opens after the text without them', () => {
+        const editor = editorWith(plugins, [toned('ab')]);
+        editor.caretAfter('b');
+
+        press(editor.view, 'Enter');
+        editor.type('c');
+
+        expect(editor.stored()).toEqual([toned('ab'), { ...paragraph(text('c')), tone: 'warm' }]);
+    });
+
+    it('leaves the block Enter opens before the text without them', () => {
+        const editor = editorWith(plugins, [toned('ab')]);
+        editor.caretBefore('a');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([{ ...paragraph(), tone: 'warm' }, toned('ab')]);
+    });
+
+    it('leaves the item a list split makes without them', () => {
+        const row = (value: string) => ({ type: 'row', foo: 2, children: [toned(value)] });
+        const editor = editorWith(plugins, [{ type: 'dotList', children: [row('ab')] }]);
+        editor.caretAfter('b');
+
+        press(editor.view, 'Enter');
+        editor.type('c');
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'dotList',
+                children: [row('ab'), { type: 'row', children: [{ ...paragraph(text('c')), tone: 'warm' }] }],
+            },
+        ]);
+    });
+});
+
+describe('Backspace and Delete beside a list on an empty line', () => {
+    const plugins = [listsPlugin];
+
+    const list = (type: string, ...items: string[]) => ({
+        type,
+        children: items.map((value) => ({ type: 'row', children: [paragraph(text(value))] })),
+    });
+
+    const placeCaretOnEmptyLine = (view: EditorView): void => {
+        let caret: number | null = null;
+        view.state.doc.descendants((node, position) => {
+            if (node.type.name === 'paragraph' && node.content.size === 0) {
+                caret = position + 1;
+            }
+        });
+        if (caret === null) {
+            throw new Error('There is no empty line in the document');
+        }
+        view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, caret)));
+    };
+
+    const expectCaretAfter = (view: EditorView, value: string): void => {
+        const { $from } = view.state.selection;
+        expect($from.parent.textContent).toBe(value);
+        expect($from.parentOffset).toBe(value.length);
+    };
+
+    it('Backspace deletes the empty line between two lists and joins them', () => {
+        const editor = editorWith(plugins, [list('stepList', 'a', 'b'), paragraph(), list('stepList', 'c', 'd')]);
+        placeCaretOnEmptyLine(editor.view);
+
+        expect(press(editor.view, 'Backspace')).toBe(true);
+
+        expect(editor.stored()).toEqual([list('stepList', 'a', 'b', 'c', 'd')]);
+        expectCaretAfter(editor.view, 'b');
+    });
+
+    it('Delete at the end of the last item removes the empty line below and joins the lists', () => {
+        const editor = editorWith(plugins, [list('stepList', 'a', 'b'), paragraph(), list('stepList', 'c', 'd')]);
+        editor.caretAfter('b');
+
+        expect(press(editor.view, 'Delete')).toBe(true);
+
+        expect(editor.stored()).toEqual([list('stepList', 'a', 'b', 'c', 'd')]);
+        expectCaretAfter(editor.view, 'b');
+    });
+
+    it('removes the empty line but keeps lists of different types apart', () => {
+        const editor = editorWith(plugins, [list('dotList', 'a', 'b'), paragraph(), list('stepList', 'c', 'd')]);
+        placeCaretOnEmptyLine(editor.view);
+
+        expect(press(editor.view, 'Backspace')).toBe(true);
+
+        expect(editor.stored()).toEqual([list('dotList', 'a', 'b'), list('stepList', 'c', 'd')]);
+    });
+
+    it('leaves an empty line after a plain paragraph to the baseline', () => {
+        const editor = editorWith(plugins, [paragraph(text('a')), paragraph()]);
+        placeCaretOnEmptyLine(editor.view);
+
+        press(editor.view, 'Backspace');
+
+        expect(editor.stored()).toEqual([paragraph(text('a'))]);
+    });
+
+    it('is one undo step', () => {
+        const blocks = [list('stepList', 'a', 'b'), paragraph(), list('stepList', 'c', 'd')];
+        const editor = editorWith(plugins, blocks);
+        placeCaretOnEmptyLine(editor.view);
+        press(editor.view, 'Backspace');
+
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual(blocks);
     });
 });

@@ -92,9 +92,10 @@ const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
 /**
  * Text alignment, with a four-way radio group in the toolbar
  */
-export const alignPlugin = /* @__PURE__ */ definePlugin({
-    id: 'align',
-    content: alignContent,
-    toolbarGroup: 'align',
-    toolbar: [{ label: 'Alignment', render: AlignToolbar, floating: 'inline' }],
-});
+export const alignPlugin = () =>
+    definePlugin({
+        id: 'align',
+        content: alignContent,
+        toolbarGroup: 'align',
+        toolbar: [{ label: 'Alignment', render: AlignToolbar, floating: 'inline' }],
+    });

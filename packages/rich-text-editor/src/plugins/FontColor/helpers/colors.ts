@@ -44,19 +44,6 @@ const HEX_FIELD_DIGITS = /^([\dA-Fa-f]{3}){1,2}$/;
 /** A leading `#` on typed hex. */
 const LEADING_HASH = /^#/;
 
-const COMPLETE_HEX = /^#?[\dA-Fa-f]{6}$/;
-
-/**
- * Whether the hex field holds all six digits, with or without a leading `#`, so the picker can preview at once.
- *
- * @example
- * ```ts
- * isCompleteHex('#C5221F'); // true
- * isCompleteHex('f00'); // false
- * ```
- */
-export const isCompleteHex = (text: string): boolean => COMPLETE_HEX.test(text);
-
 const HEX_COLOR = /^#([\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/;
 const COLOR_FUNCTION = new RegExp(`^(${COLOR_FUNCTIONS.join('|')})a?\\(([^()]*)\\)$`);
 const isColorFunction = (kind: string): kind is ColorFunction => COLOR_FUNCTIONS.some((known) => known === kind);

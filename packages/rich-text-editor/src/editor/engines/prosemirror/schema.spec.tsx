@@ -128,6 +128,140 @@ describe('buildSchema', () => {
         ).toThrow('Block "bulletList" declares items of type "nope", which is not registered.');
     });
 
+    describe('a block made of parts', () => {
+        // Three levels, generic names: an outer block holds middles, a middle holds inners of two kinds, an inner holds blocks.
+        const outer = definePlugin({
+            id: 'outer',
+            content: defineContent({
+                blocks: {
+                    outer: defineBlock({
+                        content: { parts: ['middle'] },
+                        toHtml: () => ({ tag: 'section', children: true }),
+                        parse: [{ tag: 'section' }],
+                    }),
+                    middle: defineBlock({
+                        content: { parts: ['inner', 'innerAlt'] },
+                        toHtml: () => ({ tag: 'div', attrs: { class: 'middle' }, children: true }),
+                        parse: [{ tag: 'div.middle' }],
+                    }),
+                    inner: defineBlock({
+                        content: { blocks: ['paragraph'] },
+                        toHtml: () => ({ tag: 'div', attrs: { class: 'inner' }, children: true }),
+                        parse: [{ tag: 'div.inner' }],
+                    }),
+                    innerAlt: defineBlock({
+                        content: { blocks: ['paragraph'] },
+                        toHtml: () => ({ tag: 'div', attrs: { class: 'head' }, children: true }),
+                        parse: [{ tag: 'div.head' }],
+                    }),
+                },
+            }),
+        });
+
+        it('holds one or more of its parts, in any order', () => {
+            const schema = buildSchema([outer]);
+
+            expect(schema.nodes.outer?.spec.content).toBe('(middle)+');
+            expect(schema.nodes.middle?.spec.content).toBe('(inner | innerAlt)+');
+        });
+
+        it('keeps its parts out of the top-level block group, where it stands itself', () => {
+            const schema = buildSchema([outer]);
+
+            expect(schema.nodes.outer?.spec.group).toBe('block');
+            expect(schema.nodes.middle?.spec.group).toBeUndefined();
+            expect(schema.nodes.inner?.spec.group).toBeUndefined();
+            expect(schema.nodes.innerAlt?.spec.group).toBeUndefined();
+            expect(schema.nodes.doc?.contentMatch.matchType(schema.nodes.middle!)).toBeNull();
+        });
+
+        it('is not a list, and not defining', () => {
+            const schema = buildSchema([outer]);
+
+            expect(schema.nodes.outer?.spec.defining).toBeUndefined();
+            expect(schema.nodes.middle?.spec.defining).toBeUndefined();
+        });
+
+        it('round-trips through the engine, three levels deep', () => {
+            const schema = buildSchema([outer]);
+            const paragraph = (text: string) => ({ type: 'paragraph', children: [{ text }] });
+            const stored = {
+                version: 1,
+                blocks: [
+                    {
+                        type: 'outer',
+                        children: [
+                            {
+                                type: 'middle',
+                                children: [
+                                    { type: 'innerAlt', children: [paragraph('A')] },
+                                    { type: 'innerAlt', children: [paragraph('B')] },
+                                ],
+                            },
+                            {
+                                type: 'middle',
+                                children: [
+                                    { type: 'inner', children: [paragraph('1')] },
+                                    { type: 'inner', children: [paragraph('2'), paragraph('3')] },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            } as RteDocumentOf;
+
+            expect(toRteDocument(toEngineDocument(stored, schema))).toEqual(stored);
+        });
+
+        it('refuses a part standing on its own in the document', () => {
+            const schema = buildSchema([outer]);
+            const stored = {
+                version: 1,
+                blocks: [{ type: 'inner', children: [{ type: 'paragraph', children: [{ text: 'x' }] }] }],
+            } as RteDocumentOf;
+
+            expect(() => toEngineDocument(stored, schema)).toThrow();
+        });
+
+        it('refuses a part type that is not registered', () => {
+            expect(() =>
+                buildSchema([
+                    definePlugin({
+                        id: 'outer',
+                        content: defineContent({
+                            blocks: {
+                                outer: defineBlock({
+                                    content: { parts: ['nope'] },
+                                    toHtml: () => ({ tag: 'section', children: true }),
+                                    parse: [{ tag: 'section' }],
+                                }),
+                            },
+                        }),
+                    }),
+                ]),
+            ).toThrow('Block "outer" declares parts of type "nope", which is not registered.');
+        });
+
+        it('refuses parts that name no type', () => {
+            expect(() =>
+                buildSchema([
+                    definePlugin({
+                        id: 'outer',
+                        content: defineContent({
+                            blocks: {
+                                outer: defineBlock({
+                                    content: { parts: [] },
+                                    toHtml: () => ({ tag: 'section', children: true }),
+                                    parse: [{ tag: 'section' }],
+                                }),
+                            },
+                        }),
+                    }),
+                ]),
+            ).toThrow('Block "outer" declares parts but names no type.');
+        });
+    });
+
     it('refuses a mark style rule whose property is not a CSS property name', () => {
         expect(() =>
             buildSchema([

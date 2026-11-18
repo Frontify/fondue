@@ -24,7 +24,7 @@ import { VALUE_ATTR } from './documentConversion';
 /**
  * Priorities for rules that match the same element; the engine otherwise tries
  * equal priorities in schema order. An inline element's markup may also match a
- * mark's rule (a mention `<a href data-mention-id>` matches a link's `a[href]`),
+ * mark's rule (an inline written as `<a href data-…>` matches a link's `a[href]`),
  * so inline rules outrank mark rules.
  */
 export const MARK_PRIORITY = 60;
