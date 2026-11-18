@@ -9,6 +9,7 @@ type TooltipEntry = {
     valueContext?: string;
     type?: string;
     typeByGrouping?: string;
+    description?: string;
 };
 
 type TooltipContentV2Props = {
@@ -54,6 +55,7 @@ export const TooltipContent = ({ title, description, imageUrl, entries }: Toolti
                     value={entry.value}
                     type={entry?.typeByGrouping}
                     valueContext={entry?.valueContext}
+                    description={entry.description}
                 />
             ))}
         </div>
@@ -66,9 +68,10 @@ export type TooltipItemProps = {
     color?: string;
     type?: string;
     valueContext?: string;
+    description?: string;
 };
 
-const TooltipItem = ({ title, value, color, type, valueContext }: TooltipItemProps) => {
+const TooltipItem = ({ title, value, color, type, valueContext, description }: TooltipItemProps) => {
     return (
         <div key={`${title}-value`} className={styles.item}>
             {color && (
@@ -81,6 +84,7 @@ const TooltipItem = ({ title, value, color, type, valueContext }: TooltipItemPro
             )}
             <span>{`${type || title}: `}</span>
             <span className={styles.itemValue}>{`${value} ${valueContext || ''}`}</span>
+            {description && <p className={styles.itemDescription}>{description}</p>}
         </div>
     );
 };

@@ -15,7 +15,9 @@ export const getXTickValues = (series: LineChartSeries[], axisWidth?: number): D
     // @ts-expect-error Wrong typing in the original code
     return series[0].dataPoints
         .filter((_item, index, array) => {
-            return index % Math.round((array.length - 1) / numXTicks) === 0;
+            const step = Math.max(1, Math.round((array.length - 1) / numXTicks));
+
+            return index % step === 0;
         })
         .map((item) => item.timestamp);
 };
