@@ -35,9 +35,12 @@ export type ContentRegistry = {
 /** A bare content has no id, so errors name it by its first type. */
 const firstTypeOf = (content: RteContent): string => typesOf(content)[0] ?? 'content';
 
-/** Throws when two plugins declare one type; the same definition twice is fine (two list plugins share their item). */
+/**
+ * Throws when two plugins declare one type; the same definition twice is fine (two list plugins share their item).
+ * @param kind - What the types are, such as `'block type'`, as the error message names them.
+ */
 export const register = <TDefinition>(
-    kind: 'block type' | 'mark type' | 'inline type' | 'block attribute' | 'edit view',
+    kind: string,
     target: Map<string, TDefinition>,
     owners: Map<string, string>,
     owner: string,
