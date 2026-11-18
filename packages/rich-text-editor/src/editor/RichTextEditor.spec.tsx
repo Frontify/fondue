@@ -2497,9 +2497,8 @@ describe('onBlur', () => {
 
 describe('pasting', () => {
     describe('into a mounted editor', () => {
-        it('turns a copied mention back into a mention, even where links are mounted', () => {
-            // A mention is written as `<a href data-mention-id>`, which the link's
-            // `a[href]` rule matches as well; one with no profile as a `<span>`.
+        it('pastes a copied mention as its text, a linked one as a link', () => {
+            // A mention is written as `<a href data-mention-id>`; one with no profile as a `<span>`.
             const plugins = [
                 ...defaultPlugins,
                 mentionPlugin({
@@ -2533,21 +2532,12 @@ describe('pasting', () => {
 
             const block = stored()?.blocks[0];
             const children = block && 'children' in block ? block.children : [];
-            expect(children).toContainEqual({ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' });
-            expect(children).toContainEqual({
-                type: 'mention',
-                id: 'design',
-                username: 'design',
-                name: 'Design',
-                kind: 'group',
-            });
-            expect(children).toContainEqual({
-                type: 'mention',
-                id: 'all',
-                username: 'all',
-                name: 'Everyone',
-                kind: 'all',
-            });
+            expect(children).toEqual([
+                { text: 'Ask ' },
+                { text: '@jane', link: { href: '/people/jane' } },
+                { text: '@design', link: { href: '/people/design' } },
+                { text: '@all' },
+            ]);
         });
 
         it('keeps the marks and blocks the pasted HTML carried', () => {

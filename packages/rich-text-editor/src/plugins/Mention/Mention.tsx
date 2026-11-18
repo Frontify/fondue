@@ -4,9 +4,9 @@ import { defineContent, defineInline, definePlugin, type RtePlugin } from '#/cor
 
 import { MentionEditor } from './components/MentionEditor';
 import { MentionLink } from './components/MentionLink';
-import { mentionValueOf, safeMentionHref } from './helpers/mention';
+import { safeMentionHref } from './helpers/mention';
 import styles from './mention.module.scss';
-import { type MentionHref, type MentionItem, type MentionItems, type MentionKind, type MentionValue } from './types';
+import { type MentionHref, type MentionItem, type MentionItems, type MentionValue } from './types';
 
 export type MentionContentOptions = {
     /**
@@ -20,8 +20,6 @@ export type MentionContentOptions = {
      */
     trigger?: string;
 };
-
-const KINDS: readonly MentionKind[] = ['user', 'group', 'all'];
 
 /**
  * Throws unless the trigger is exactly one character
@@ -59,24 +57,9 @@ export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = 
                     };
                 },
 
-                // Reads back what `toHtml` wrote, so a copied mention pastes as a
-                // mention. Without an id and a username it names nobody, and
-                // stays the link or text it is. A kind this version does not know
-                // reads as a person.
-                parse: [
-                    {
-                        tag: 'a[data-mention-id], span[data-mention-id]',
-                        value: (element) => {
-                            const id = element.dataset.mentionId ?? '';
-                            const username = element.dataset.mentionUsername ?? '';
-                            const kind = KINDS.find((known) => known === element.dataset.mentionKind);
-                            if (id === '' || username === '') {
-                                return null;
-                            }
-                            return mentionValueOf({ id, username, name: element.title, kind });
-                        },
-                    },
-                ],
+                // Pasted HTML never creates a mention: its id is not trusted, so the
+                // markup reads as the link or text it is, and only the picker inserts one.
+                parse: [],
 
                 render: {
                     component: ({ value }) => (
