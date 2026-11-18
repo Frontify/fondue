@@ -4,8 +4,8 @@
 @use '../../../utilities/transitions.module.scss';
 @use '../../../utilities/sizeToken.module.scss';
 
-// A pressed toggle or checked radio keeps the colours of a button held down
-$pressed-states: "[aria-pressed='true'], [aria-pressed='mixed'], [aria-checked='true']";
+// A pressed toggle, a checked radio or a trigger whose menu is open keeps the colours of a button held down
+$pressed-states: "[aria-pressed='true'], [aria-pressed='mixed'], [aria-checked='true'], [aria-expanded='true']";
 
 // Icon colors for a variant, applied from within the variant's own selector
 @mixin icon-colors($text-color, $text-hover, $text-active, $icon-color, $icon-hover, $icon-active) {

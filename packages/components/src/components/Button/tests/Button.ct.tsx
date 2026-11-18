@@ -119,6 +119,17 @@ test.describe('pressed state', () => {
         await expect(component).toHaveCSS('background-color', WEAK_PRESSED_BACKGROUND);
     });
 
+    test('shows the pressed colour for aria-expanded="true"', async ({ mount }) => {
+        const wrapper = await mount(
+            <Button emphasis="weak" aria-expanded>
+                {BUTTON_TEXT}
+            </Button>,
+        );
+        const component = wrapper.locator('button');
+
+        await expect(component).toHaveCSS('background-color', WEAK_PRESSED_BACKGROUND);
+    });
+
     test('keeps the resting colour for aria-pressed="false"', async ({ mount }) => {
         const wrapper = await mount(
             <Button emphasis="weak" aria-pressed={false}>

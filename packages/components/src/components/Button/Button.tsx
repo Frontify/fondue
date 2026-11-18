@@ -64,6 +64,7 @@ export type ButtonProps = CommonGlobalProps & {
     'aria-describedby'?: string;
     'aria-pressed'?: AriaAttributes['aria-pressed'];
     'aria-checked'?: AriaAttributes['aria-checked'];
+    'aria-expanded'?: AriaAttributes['aria-expanded'];
     role?: ButtonRole;
     'data-test-id'?: string;
     className?: string;
