@@ -1,0 +1,61 @@
+packages/components/src/components/Tree/styles/tree.module.scss
+  s_14ce5cc0103714::t_802cbfa60b0fb5 110
+  s_28d1cd127ab00d::t_f0d1565f26abd4 122-124,125-126
+  s_28d1cd127ab00d::t_f47d35869e17a5 104
+  s_28d1cd127ab00d::t_42a29f3e03ee12 257
+  s_28d1cd127ab00d::t_b1b1714bc30065 216,218
+  s_28d1cd127ab00d::t_e6c78c89f1d076 228
+  s_28d1cd127ab00d::t_6f073cab1cc3c3 108-109
+  s_34c90dc0f927ba::t_f397161222b077 219
+  s_34c90dc0f927ba::t_cde76e96173a77 230
+  s_34c90dc0f927ba::t_e9ecf28e0e75ba 111
+packages/components/src/components/Tree/components/TreeRoot.ct.tsx
+  s_14ce5cc0103714::t_a1f03ddbf8f0a3 1663-1664,1676-1678
+  s_14ce5cc0103714::t_802cbfa60b0fb5 1646,1648-1662,1665-1666,1681-1682
+  s_28d1cd127ab00d::t_bcee0713a91ed9 1667-1675,1679-1680
+  s_28d1cd127ab00d::t_48cd7d54ca3ded 1645,1647
+packages/components/src/components/Tree/components/TreeRow.tsx
+  s_28d1cd127ab00d::t_3c8e065f49463e 196
+packages/components/src/components/Tree/components/TreeRoot.tsx
+  s_28d1cd127ab00d::t_552f588525df25 46,170-174,180-184
+packages/components/src/components/Tree/components/TreeLoadingRow.tsx
+  s_28d1cd127ab00d::t_552f588525df25 13,16,26
+  s_28d1cd127ab00d::t_8d16bb34b0dac7 20-24
+packages/components/src/components/Tree/components/TreeDragLine.ct.tsx
+  s_28d1cd127ab00d::t_715d34b4fe73ff 49,52
+  s_28d1cd127ab00d::t_83fcf428b1d840 41,44
+.changeset/tree-handle-inside-row.md
+  s_28d1cd127ab00d::t_f20182ea87b740 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "35390a03b88f30045d5b8b738564fb33e43031ad",
+  "prompts": {},
+  "sessions": {
+    "s_14ce5cc0103714": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "83da3adc-d2a0-4b6b-aac3-afe8d2a7b2f2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_28d1cd127ab00d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bdcad5ff-b316-4577-9c81-c09e1f3f38b8",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_34c90dc0f927ba": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d1a230f3-cb1d-4fce-8633-117791bf1497",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

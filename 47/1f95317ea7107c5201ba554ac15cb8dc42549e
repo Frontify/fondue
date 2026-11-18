@@ -1,0 +1,51 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_5aa74dc91f3857::t_d7b0ee7f77f68b 5,11-12,17,733-1146
+.changeset/color-picker-hex-typed-value.md
+  s_5aa74dc91f3857::t_d7b0ee7f77f68b 1-6
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_5aa74dc91f3857::t_59d3208df80612 6
+  s_5aa74dc91f3857::t_d7b0ee7f77f68b 18-19
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_5aa74dc91f3857::t_d7b0ee7f77f68b 3-11,31-32,34,60-62,90-97,505-533
+  s_5aa74dc91f3857::t_4a07d977cb4ac2 534
+.changeset/rte-font-color-unfinished-hex.md
+  s_5aa74dc91f3857::t_d7b0ee7f77f68b 1-5
+packages/components/src/components/ColorPicker/__tests__/ColorValueInput.spec.tsx
+  s_5aa74dc91f3857::t_d7b0ee7f77f68b 1-91
+.changeset/rte-editing-bugs.md
+  s_5aa74dc91f3857::t_d7b0ee7f77f68b 1-5
+packages/rich-text-editor/src/editor/engines/prosemirror/lists.spec.tsx
+  s_5aa74dc91f3857::t_d7b0ee7f77f68b 5-6,9,27-57,142-264
+  s_5aa74dc91f3857::t_5c0411e9735548 265
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.spec.tsx
+  s_5aa74dc91f3857::t_d7b0ee7f77f68b 330,337,374-397
+packages/rich-text-editor/src/editor/engines/prosemirror/lists.ts
+  s_5aa74dc91f3857::t_d7b0ee7f77f68b 3-10,12,17,29-30,50-131,138,140,164,168-186,192,282-340
+  s_5aa74dc91f3857::t_9e21820564b489 341
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.tsx
+  s_5aa74dc91f3857::t_d7b0ee7f77f68b 111-112,116,119,204
+.changeset/rte-font-color-last-valid-hex.md
+  s_5aa74dc91f3857::t_d7b0ee7f77f68b 1-5
+.github/workflows/generate-tokens.yaml
+  s_5aa74dc91f3857::t_d7b0ee7f77f68b 64
+packages/components/src/components/ColorPicker/ColorValueInput.tsx
+  s_5aa74dc91f3857::t_d7b0ee7f77f68b 52-60,75-81,112-117
+packages/rich-text-editor/src/editor/engines/prosemirror/carriedAttrs.ts
+  s_5aa74dc91f3857::t_d7b0ee7f77f68b 1-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "471f95317ea7107c5201ba554ac15cb8dc42549e",
+  "prompts": {},
+  "sessions": {
+    "s_5aa74dc91f3857": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "824fa50b-c81a-453f-94e7-5b8c4c1fd034",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
