@@ -10,6 +10,8 @@ import {
     type ToolbarEntry,
     type ToolbarItemProps,
 } from '#/core';
+import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
+import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { turnIntoCommands } from '../helpers/blockCommands';
 import { type GroupSplit, type SlotGroup, splitGroups } from '../helpers/toolbarFit';
@@ -102,7 +104,7 @@ export const Toolbar = ({
                 {group.items.map((item) => (
                     // An element per slot, so the row can measure what each plugin drew.
                     <div key={item.key} className={styles.slot} {...{ [SLOT_ATTRIBUTE]: item.key }}>
-                        <ToolbarItemSlot render={item.render} itemProps={toolbarItemProps(item.own, api, selection)} />
+                        <ToolbarItemSlot item={item} itemProps={toolbarItemProps(item, api, selection)} />
                     </div>
                 ))}
             </div>
@@ -174,12 +176,31 @@ const layoutOf = (groups: SlotGroup<ToolbarEntry>[], fit: ToolbarFit): ToolbarLa
 };
 
 type ToolbarItemSlotProps = {
-    render: ToolbarEntry['render'];
+    item: ToolbarEntry;
     itemProps: ToolbarItemProps;
 };
 
 /**
- * One plugin's control as a component of its own, so the hooks it calls keep
- * their state when another plugin is added or removed.
+ * One toolbar control: the entry's own `render`, else a button drawn from its data.
+ * `render` is called in this component, so its hooks keep their state when another plugin is added or removed.
  */
-const ToolbarItemSlot = ({ render, itemProps }: ToolbarItemSlotProps): ReactNode => render(itemProps);
+const ToolbarItemSlot = ({ item, itemProps }: ToolbarItemSlotProps): ReactNode => {
+    switch (item.control) {
+        case 'custom':
+            // Called, not mounted as an element: a factory-built control changes identity on every host render.
+            return item.render(itemProps);
+        case 'button': {
+            const { icon: Icon } = item;
+            return (
+                <ToolbarButton
+                    title={item.label}
+                    shortcut={item.shortcut}
+                    active={item.pressable ? itemProps.isActive : undefined}
+                    onClick={() => itemProps.toggle()}
+                >
+                    <Icon size={TOOLBAR_ICON_SIZE} />
+                </ToolbarButton>
+            );
+        }
+    }
+};

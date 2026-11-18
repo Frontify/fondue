@@ -8,6 +8,8 @@ import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { type RteToolbarGroup } from '#/core';
+
 // Driven through the package's public API, the way a host does: the props are
 // the whole conversation between a host and a mounted editor.
 import {
@@ -15,6 +17,9 @@ import {
     boldPlugin,
     checkListPlugin,
     defaultPlugins,
+    defineBlock,
+    defineContent,
+    definePlugin,
     linkPlugin,
     mentionPlugin,
     RichTextEditor,
@@ -516,7 +521,10 @@ describe('a page of editors', () => {
 
 describe('the editable element', () => {
     it("follows a plugin's content class when the plugins change", () => {
-        const columns = (className: string) => [...defaultPlugins, { id: 'columns', contentClassName: className }];
+        const columns = (className: string) => [
+            ...defaultPlugins,
+            definePlugin({ id: 'columns', content: defineContent({ contentClassName: className }) }),
+        ];
         const { container, rerender, ready } = mount(() => <RichTextEditor plugins={columns('two')} />);
         ready();
         expect(editableIn(container).classList.contains('two')).toBe(true);
@@ -662,14 +670,17 @@ describe('the toolbar', () => {
             </button>
         );
     };
-    const statefulPlugin: RtePlugin = { id: 'stateful', toolbarItem: ClickCounter };
+    const statefulPlugin: RtePlugin = definePlugin({
+        id: 'stateful',
+        toolbar: [{ label: 'Clicks', render: ClickCounter }],
+    });
 
     /** A control using hooks of other kinds, so a shifted hook order would show. */
     const OtherHooks = (): ReactNode => {
         const [label] = useState(() => 'other');
         return <span>{label}</span>;
     };
-    const otherPlugin: RtePlugin = { id: 'other', toolbarItem: OtherHooks };
+    const otherPlugin: RtePlugin = definePlugin({ id: 'other', toolbar: [{ label: 'Other', render: OtherHooks }] });
 
     const clickCount = (container: HTMLElement): string | null | undefined =>
         container.querySelector('[data-testid="clicks"]')?.textContent;
@@ -696,13 +707,42 @@ describe('the toolbar', () => {
         expect(clickCount(container)).toBe('2');
     });
 
+    it("keeps a control's own state when the host rebuilds a plugin that builds its control in the factory", () => {
+        const buildPlugin = (): RtePlugin => {
+            const Built = (): ReactNode => {
+                const [clicks, setClicks] = useState(0);
+                return (
+                    <button type="button" data-testid="clicks" onClick={() => setClicks((count) => count + 1)}>
+                        {clicks}
+                    </button>
+                );
+            };
+            return definePlugin({ id: 'built', toolbar: [{ label: 'Built', render: Built }] });
+        };
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor plugins={[...defaultPlugins, buildPlugin()]} toolbarPlacement="top" />
+        ));
+        ready();
+
+        const button = container.querySelector<HTMLButtonElement>('[data-testid="clicks"]');
+        act(() => {
+            button?.click();
+            button?.click();
+        });
+        expect(clickCount(container)).toBe('2');
+
+        rerender(<RichTextEditor plugins={[...defaultPlugins, buildPlugin()]} toolbarPlacement="top" />);
+        ready();
+        expect(clickCount(container)).toBe('2');
+    });
+
     it('draws the control of a plugin with an unknown group last', () => {
         // The test passes a group outside RteToolbarGroup on purpose.
-        const unknownGroupPlugin = {
+        const unknownGroupPlugin = definePlugin({
             id: 'unknown-group',
-            toolbarGroup: 'not-a-group',
-            toolbarItem: () => <span data-testid="unknown-group">unknown</span>,
-        } as unknown as RtePlugin;
+            toolbarGroup: 'not-a-group' as RteToolbarGroup,
+            toolbar: [{ label: 'Unknown', render: () => <span data-testid="unknown-group">unknown</span> }],
+        });
         const { container, ready } = mount(() => (
             <RichTextEditor plugins={[unknownGroupPlugin, ...defaultPlugins]} toolbarPlacement="top" />
         ));
@@ -1505,55 +1545,81 @@ describe('an editor that crashes', () => {
         }
         active.blur();
     };
-    const throwingPlugin = (): RtePlugin => ({
-        id: 'throws',
-        toolbarItem: () => {
-            throw new Error('toolbar broke');
-        },
-    });
+    const throwingPlugin = (): RtePlugin =>
+        definePlugin({
+            id: 'throws',
+            toolbar: [
+                {
+                    label: 'Throws',
+                    render: () => {
+                        throw new Error('toolbar broke');
+                    },
+                },
+            ],
+        });
     /** A toolbar item that throws once `state.crash` is set and the selection moves, as an edit makes it. */
-    const lateCrashPlugin = (state: CrashSwitch): RtePlugin => ({
-        id: 'late',
-        toolbarItem: ({ selection }) => {
-            if (state.crash && selection) {
-                throw new Error('after the edit');
-            }
-            return <span>fine</span>;
-        },
-    });
+    const lateCrashPlugin = (state: CrashSwitch): RtePlugin =>
+        definePlugin({
+            id: 'late',
+            toolbar: [
+                {
+                    label: 'Late',
+                    render: ({ selection }) => {
+                        if (state.crash && selection) {
+                            throw new Error('after the edit');
+                        }
+                        return <span>fine</span>;
+                    },
+                },
+            ],
+        });
     /** A toolbar item under its own id, which throws when `crash` is set; new ids remount the engine. */
-    const idPlugin = (id: string, crash = false): RtePlugin => ({
-        id,
-        toolbarItem: () => {
-            if (crash) {
-                throw new Error(`plugin ${id} broke`);
-            }
-            return <span>fine</span>;
-        },
-    });
+    const idPlugin = (id: string, crash = false): RtePlugin =>
+        definePlugin({
+            id,
+            toolbar: [
+                {
+                    label: 'Fine',
+                    render: () => {
+                        if (crash) {
+                            throw new Error(`plugin ${id} broke`);
+                        }
+                        return <span>fine</span>;
+                    },
+                },
+            ],
+        });
     /** A toolbar item that throws while `state.broken` is set. */
-    const flakyPlugin = (state: BrokenSwitch): RtePlugin => ({
-        id: 'flaky',
-        toolbarItem: () => {
-            if (state.broken) {
-                throw new Error('until fixed');
-            }
-            return <span>fine</span>;
-        },
-    });
+    const flakyPlugin = (state: BrokenSwitch): RtePlugin =>
+        definePlugin({
+            id: 'flaky',
+            toolbar: [
+                {
+                    label: 'Flaky',
+                    render: () => {
+                        if (state.broken) {
+                            throw new Error('until fixed');
+                        }
+                        return <span>fine</span>;
+                    },
+                },
+            ],
+        });
     /** A block whose readonly view throws while `calloutState.broken` is set. */
-    const calloutPlugin = (): RtePlugin => ({
-        id: 'callout',
-        // A test-only block type outside the `RteBlock` union.
-        blocks: {
-            callout: {
-                content: 'text',
-                toHtml: () => ({ tag: 'p', attrs: { 'data-callout': '' }, children: true }),
-                parse: [{ tag: 'p[data-callout]' }],
-                render: { component: Callout },
-            },
-        } as unknown as NonNullable<RtePlugin['blocks']>,
-    });
+    const calloutPlugin = (): RtePlugin =>
+        definePlugin({
+            id: 'callout',
+            content: defineContent({
+                blocks: {
+                    callout: defineBlock({
+                        content: 'text',
+                        toHtml: () => ({ tag: 'p', attrs: { 'data-callout': '' }, children: true }),
+                        parse: [{ tag: 'p[data-callout]' }],
+                        render: { component: Callout },
+                    }),
+                },
+            }),
+        });
     // A test-only block type outside the `RteBlock` union.
     const callout = (text: string): RteDocument =>
         ({ version: 1, blocks: [{ type: 'callout', children: [{ text }] }] }) as unknown as RteDocument;
@@ -1977,13 +2043,18 @@ describe('an editor that crashes', () => {
 
     it('hands onError an Error when a plugin throws something else', () => {
         silenceReact();
-        const throwsString: RtePlugin = {
+        const throwsString: RtePlugin = definePlugin({
             id: 'throws',
-            toolbarItem: () => {
-                // oxlint-disable-next-line typescript/only-throw-error -- what a careless plugin throws
-                throw 'not an error';
-            },
-        };
+            toolbar: [
+                {
+                    label: 'Throws',
+                    render: () => {
+                        // oxlint-disable-next-line typescript/only-throw-error -- what a careless plugin throws
+                        throw 'not an error';
+                    },
+                },
+            ],
+        });
         const onError = errorSpy();
         mount(() => <RichTextEditor value={paragraph('still here')} plugins={[throwsString]} onError={onError} />);
 
@@ -2365,18 +2436,19 @@ describe('an editor that crashes', () => {
         const Broken = (): ReactNode => {
             throw new Error('view broke');
         };
-        const broken: RtePlugin = {
+        const broken: RtePlugin = definePlugin({
             id: 'broken',
-            // A test-only block type outside the `RteBlock` union.
-            blocks: {
-                broken: {
-                    content: 'text',
-                    toHtml: () => ({ tag: 'div', attrs: { 'data-broken': '' }, children: true }),
-                    parse: [{ tag: 'div[data-broken]' }],
-                    render: { edit: Broken },
+            content: defineContent({
+                blocks: {
+                    broken: defineBlock({
+                        content: 'text',
+                        toHtml: () => ({ tag: 'div', attrs: { 'data-broken': '' }, children: true }),
+                        parse: [{ tag: 'div[data-broken]' }],
+                    }),
                 },
-            } as unknown as NonNullable<RtePlugin['blocks']>,
-        };
+            }),
+            edit: { broken: Broken },
+        });
         // A test-only block type outside the `RteBlock` union.
         const value = {
             version: 1,
@@ -2423,9 +2495,8 @@ describe('onBlur', () => {
 
 describe('pasting', () => {
     describe('into a mounted editor', () => {
-        it('turns a copied mention back into a mention, even where links are mounted', () => {
-            // A mention is written as `<a href data-mention-id>`, which the link's
-            // `a[href]` rule matches as well; one with no profile as a `<span>`.
+        it('pastes a copied mention as its text, a linked one as a link', () => {
+            // A mention is written as `<a href data-mention-id>`; one with no profile as a `<span>`.
             const plugins = [
                 ...defaultPlugins,
                 mentionPlugin({
@@ -2459,21 +2530,12 @@ describe('pasting', () => {
 
             const block = stored()?.blocks[0];
             const children = block && 'children' in block ? block.children : [];
-            expect(children).toContainEqual({ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' });
-            expect(children).toContainEqual({
-                type: 'mention',
-                id: 'design',
-                username: 'design',
-                name: 'Design',
-                kind: 'group',
-            });
-            expect(children).toContainEqual({
-                type: 'mention',
-                id: 'all',
-                username: 'all',
-                name: 'Everyone',
-                kind: 'all',
-            });
+            expect(children).toEqual([
+                { text: 'Ask ' },
+                { text: '@jane', link: { href: '/people/jane' } },
+                { text: '@design', link: { href: '/people/design' } },
+                { text: '@all' },
+            ]);
         });
 
         it('keeps the marks and blocks the pasted HTML carried', () => {

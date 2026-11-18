@@ -2,10 +2,10 @@
 
 import { i2 } from '#/core';
 import { i6 } from '#/plugins'; // banned
+import { i3 } from '#/ui/ToolbarButton/ToolbarButton';
 
 import { i5 } from '../../../core'; // banned
 import { i4 } from '../../Bold'; // banned
-import { i3 } from '../../shared/ToolbarButton/ToolbarButton';
 import { i0 } from '../helpers/draft';
 
 import { i1 } from './LinkTargetForm';

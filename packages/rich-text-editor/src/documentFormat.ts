@@ -26,6 +26,7 @@ import { type BreakInline } from './plugins/SoftBreak';
 import { type StrikethroughMark } from './plugins/Strikethrough';
 import { type SubscriptMark } from './plugins/Subscript';
 import { type SuperscriptMark } from './plugins/Superscript';
+import { type TableBlock, type TableCellBlock, type TableHeaderBlock, type TableRowBlock } from './plugins/Table';
 import { type TextStyleBlock } from './plugins/TextStyle';
 import { type UnderlineMark } from './plugins/Underline';
 
@@ -79,6 +80,16 @@ interface OfficialNumberedList<TExtraInline extends RteInlineNode> extends Numbe
 interface OfficialCheckList<TExtraInline extends RteInlineNode> extends CheckListBlock<
     OfficialCheckItem<TExtraInline>
 > {}
+interface OfficialTableCell<TExtraInline extends RteInlineNode> extends TableCellBlock<
+    OfficialItemContent<TExtraInline>
+> {}
+interface OfficialTableHeader<TExtraInline extends RteInlineNode> extends TableHeaderBlock<
+    OfficialItemContent<TExtraInline>
+> {}
+interface OfficialTableRow<TExtraInline extends RteInlineNode> extends TableRowBlock<
+    OfficialTableCell<TExtraInline> | OfficialTableHeader<TExtraInline>
+> {}
+interface OfficialTable<TExtraInline extends RteInlineNode> extends TableBlock<OfficialTableRow<TExtraInline>> {}
 /* eslint-enable typescript/no-empty-object-type */
 
 type OfficialItemContent<TExtraInline extends RteInlineNode> =
@@ -100,7 +111,8 @@ type OfficialList<TExtraInline extends RteInlineNode> =
 export type RteBlock<TExtraInline extends RteInlineNode = never> =
     | WithOfficialChildren<ParagraphBlock | QuoteBlock | TextStyleBlock, TExtraInline>
     | ColumnBreakBlock
-    | OfficialList<TExtraInline>;
+    | OfficialList<TExtraInline>
+    | OfficialTable<TExtraInline>;
 
 /**
  * A document of official blocks — what `RichTextEditor` reads and emits, and

@@ -6,7 +6,7 @@
 
 import { type RteBlockNode, type RteDocumentOf, type RteInlineNode } from './document';
 import { type HtmlSpec } from './htmlSpec';
-import { type RtePlugin } from './plugin';
+import { type RteContent, type RtePlugin } from './plugin';
 import { buildPluginRegistry, type PluginRegistry } from './registry';
 
 type AnyNode = RteBlockNode | RteInlineNode;
@@ -85,11 +85,11 @@ const blockLines = (blocks: readonly RteBlockNode[], registry: PluginRegistry): 
 
 export type ToPlainTextOptions = {
     /**
-     * The plugins whose inlines to read — the editor's list. An inline whose
-     * plugin is missing contributes nothing. The package root defaults it to
-     * `defaultPlugins`.
+     * The plugins, or only their content, whose inlines to read. An inline
+     * whose plugin is missing contributes nothing.
+     * @default defaultContent
      */
-    plugins?: readonly RtePlugin[];
+    plugins?: readonly (RtePlugin | RteContent)[];
 };
 
 /**

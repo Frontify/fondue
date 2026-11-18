@@ -10,7 +10,10 @@ import { buildPluginRegistry } from '../core';
 import {
     columnBreakPlugin,
     defaultPlugins,
+    defineBlock,
+    defineContent,
     defineMark,
+    definePlugin,
     mentionPlugin,
     type RteDocument,
     type RteDocumentWith,
@@ -126,20 +129,22 @@ describe('toHtml drawn by React and written out directly', () => {
 describe('a style value that could break out of its declaration', () => {
     // A plugin passing a stored value straight into `style`; the core drops
     // what it must not write, the same way on both paths.
-    const tintPlugin: RtePlugin = {
+    const tintPlugin: RtePlugin = definePlugin({
         id: 'tint',
-        marks: {
-            tint: defineMark<{ color: string }>({
-                defaults: { color: 'inherit' },
-                toHtml: ({ color }) => ({
-                    tag: 'span',
-                    attrs: { style: { color, 'font-weight': 'bold' } },
-                    children: true,
+        content: defineContent({
+            marks: {
+                tint: defineMark<{ color: string }>({
+                    defaults: { color: 'inherit' },
+                    toHtml: ({ color }) => ({
+                        tag: 'span',
+                        attrs: { style: { color, 'font-weight': 'bold' } },
+                        children: true,
+                    }),
+                    parse: [],
                 }),
-                parse: [],
-            }),
-        },
-    };
+            },
+        }),
+    });
     const tinted = (color: string): RteDocumentWith<{ mark: { tint?: { color: string } } }> => ({
         version: 1,
         blocks: [{ type: 'paragraph', children: [{ text: 'x', tint: { color } }] }],
@@ -165,5 +170,78 @@ describe('a style value that could break out of its declaration', () => {
 
         expect(exported).toContain('color: rgb(255, 0, 0);');
         expect(normalized(drawnWithReact(tinted('rgb(255, 0, 0)'), [tintPlugin]))).toBe(normalized(exported));
+    });
+});
+
+describe('attributes that say how far an element spans', () => {
+    // A block made of parts that writes `colspan`, `rowspan` and `scope`: React
+    // spells the first two `colSpan` and `rowSpan`, the export as HTML does.
+    const spanPlugin: RtePlugin = definePlugin({
+        id: 'span',
+        content: defineContent({
+            blocks: {
+                outer: defineBlock({
+                    content: { parts: ['middle'] },
+                    toHtml: () => ({ tag: 'table', children: true }),
+                    parse: [],
+                }),
+                middle: defineBlock({
+                    content: { parts: ['inner', 'innerHead'] },
+                    toHtml: () => ({ tag: 'tr', children: true }),
+                    parse: [],
+                }),
+                inner: defineBlock<{ across: number; down: number }>({
+                    content: { blocks: ['paragraph'] },
+                    defaults: { across: 1, down: 1 },
+                    toHtml: ({ across, down }) => ({
+                        tag: 'td',
+                        attrs: { colspan: String(across), rowspan: String(down) },
+                        children: true,
+                    }),
+                    parse: [],
+                }),
+                innerHead: defineBlock({
+                    content: { blocks: ['paragraph'] },
+                    toHtml: () => ({ tag: 'th', attrs: { scope: 'col' }, children: true }),
+                    parse: [],
+                }),
+            },
+        }),
+    });
+    const spanning = {
+        version: 1,
+        blocks: [
+            {
+                type: 'outer',
+                children: [
+                    {
+                        type: 'middle',
+                        children: [
+                            { type: 'innerHead', children: [{ type: 'paragraph', children: [{ text: 'Head' }] }] },
+                            {
+                                type: 'inner',
+                                across: 2,
+                                down: 3,
+                                children: [{ type: 'paragraph', children: [{ text: 'Wide' }] }],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    } as unknown as RteDocument;
+    const withSpans = [...defaultPlugins, spanPlugin];
+
+    it('writes them as HTML spells them', () => {
+        const exported = serializeToHtml(spanning, { plugins: withSpans, wrap: false });
+
+        expect(exported).toContain('<th scope="col">');
+        expect(exported).toContain('<td colspan="2" rowspan="3">');
+    });
+
+    it('is the same HTML drawn by React', () => {
+        const exported = serializeToHtml(spanning, { plugins: withSpans, wrap: false });
+
+        expect(normalized(drawnWithReact(spanning, withSpans))).toBe(normalized(exported));
     });
 });

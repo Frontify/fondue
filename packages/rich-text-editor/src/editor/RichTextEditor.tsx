@@ -490,6 +490,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
                 ref={readonlyViewRef}
                 // To take a pressed Retry's focus.
                 tabIndex={readonlyViewTabIndex}
+                className={styles.body}
             >
                 {toolbarFloats ? null : toolbar}
                 {/* A host that shows it read-only anyway offered no editing to explain. */}

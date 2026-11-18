@@ -21,8 +21,10 @@ import {
     columnBreakPlugin,
     defaultPlugins,
     defineBlock,
+    defineContent,
     defineInline,
     defineMark,
+    definePlugin,
     emojiPlugin,
     fontColorPlugin,
     italicPlugin,
@@ -37,11 +39,14 @@ import {
     type RteDocumentWith,
     type RtePlugin,
     RichTextEditor,
+    RichTextRenderer,
     softBreakPlugin,
     strikethroughPlugin,
     subscriptPlugin,
     superscriptPlugin,
+    tablePlugin,
     textStylePlugin,
+    typographyPlugin,
     underlinePlugin,
 } from '../index';
 
@@ -85,8 +90,8 @@ const HINT = 'tw-col-span-full tw-m-0 tw-body-small tw-text-secondary';
  */
 const SURFACE = 'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-surface tw-p-medium';
 
-/** The field box around an editor: the surface, plus a ring while focus is inside it. */
-const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-ring-focus`;
+/** The field box around an editor: the surface, with a stronger border on hover and while the caret is inside, as Fondue's Textarea does. */
+const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-line-strong`;
 
 const toolbarButtonClasses = (active: boolean): string =>
     [
@@ -685,6 +690,37 @@ export const MarkdownShortcuts: Story = {
     },
 };
 
+/** Typographic shortcuts as you type; technical text such as `--flag` or `x <= 5` stays as typed. */
+export const Typography: Story = {
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: '' }] }],
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <p className={HINT}>
+                    Try <code>a -- b</code>, <code>&lt;-&gt;</code>, <code>"quoted"</code>, <code>don't</code>,{' '}
+                    <code>3x4 </code>, <code>2^2 </code>, and see <code>--flag</code>, <code>--&gt;</code>, and{' '}
+                    <code>x &lt;= 5</code> stay as typed.
+                </p>
+                <div className={FRAME}>
+                    <RichTextEditor
+                        value={doc}
+                        onChange={setDoc}
+                        plugins={[
+                            codePlugin(),
+                            typographyPlugin({ groups: ['quotes', 'ellipsis', 'dashes', 'symbols', 'numeric'] }),
+                        ]}
+                    />
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
 /** Shift-Enter breaks the line without ending the block. No toolbar: the keybinding is the whole feature. */
 export const SoftBreak: Story = {
     render: () => {
@@ -814,6 +850,78 @@ export const ColumnBreak: Story = {
     },
 };
 
+/** Cells as the story writes them: one paragraph of text. */
+const tableCell = (text: string, colspan?: number) => ({
+    type: 'tableCell' as const,
+    ...(colspan === undefined ? {} : { colspan }),
+    children: [{ type: 'paragraph' as const, children: [{ text }] }],
+});
+
+const tableHeader = (text: string) => ({
+    type: 'tableHeader' as const,
+    children: [{ type: 'paragraph' as const, children: [{ text }] }],
+});
+
+/**
+ * A table: type / and pick Table to insert one with a header row. Tab and
+ * Shift+Tab move between cells, Tab in the last cell adds a row, and dragging
+ * across cells selects them. A stored merged cell keeps its span. The readonly
+ * view below draws the same document.
+ */
+export const Table: Story = {
+    render: () => {
+        const plugins = [...defaultPlugins, tablePlugin()];
+        const [doc, setDoc] = useState<RteDocument>(() => ({
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'The team, with a merged cell in the last row:' }] },
+                {
+                    type: 'table',
+                    children: [
+                        {
+                            type: 'tableRow',
+                            children: [tableHeader('Name'), tableHeader('Role'), tableHeader('Team')],
+                        },
+                        {
+                            type: 'tableRow',
+                            children: [tableCell('Ada'), tableCell('Engineer'), tableCell('Platform')],
+                        },
+                        {
+                            type: 'tableRow',
+                            children: [tableCell('Grace'), tableCell('Away until March', 2)],
+                        },
+                    ],
+                },
+                { type: 'paragraph', children: [] },
+            ],
+        }));
+
+        return (
+            <div className={LAYOUT}>
+                <p className={HINT}>
+                    Type / on the empty line for Table. Tab moves between cells. With the caret in a table, the Table
+                    button in the toolbar adds and deletes rows and columns and toggles the headers. Drag across cells
+                    and choose Merge cells to merge them; Split cell takes a merged cell apart.
+                </p>
+                <div className="tw-flex tw-flex-col tw-gap-4">
+                    <div className={FRAME}>
+                        <RichTextEditor
+                            value={doc}
+                            onChange={setDoc}
+                            plugins={plugins}
+                            placeholder="Type / for commands"
+                        />
+                    </div>
+                    <div className={SURFACE}>
+                        <RichTextRenderer value={doc} plugins={plugins} />
+                    </div>
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
 // Everything at once
 
 /**
@@ -916,36 +1024,44 @@ type HighlightMark = {
     highlight?: boolean;
 };
 
-const highlightPlugin = (): RtePlugin => ({
-    id: 'highlight',
-    marks: {
-        highlight: defineMark({
-            toHtml: () => ({
-                tag: 'mark',
-                attrs: {
-                    class: 'tw-rounded-small tw-bg-container-warning tw-text-container-warning-on-warning-container',
+const highlightPlugin = (): RtePlugin =>
+    definePlugin({
+        id: 'highlight',
+        toolbar: [
+            {
+                label: 'Highlight',
+                render: ({ api, selection }) => {
+                    const active = selection.marks.highlight?.coverage === 'all';
+                    return (
+                        <button
+                            type="button"
+                            aria-pressed={active}
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => api.marks.toggle('highlight')}
+                            className={toolbarButtonClasses(active)}
+                        >
+                            Highlight
+                        </button>
+                    );
                 },
-                children: true,
-            }),
-            parse: [{ tag: 'mark' }],
+            },
+        ],
+        hotkeys: { 'Mod-h': (api) => api.marks.toggle('highlight') },
+        content: defineContent({
+            marks: {
+                highlight: defineMark({
+                    toHtml: () => ({
+                        tag: 'mark',
+                        attrs: {
+                            class: 'tw-rounded-small tw-bg-container-warning tw-text-container-warning-on-warning-container',
+                        },
+                        children: true,
+                    }),
+                    parse: [{ tag: 'mark' }],
+                }),
+            },
         }),
-    },
-    toolbarItem: ({ api, selection }) => {
-        const active = selection.marks.highlight?.coverage === 'all';
-        return (
-            <button
-                type="button"
-                aria-pressed={active}
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => api.marks.toggle('highlight')}
-                className={toolbarButtonClasses(active)}
-            >
-                Highlight
-            </button>
-        );
-    },
-    hotkeys: { 'Mod-h': (api) => api.marks.toggle('highlight') },
-});
+    });
 
 /**
  * The type juggling a consumer plugin costs: one type argument naming the extra
@@ -986,36 +1102,45 @@ type CalloutBlock = {
     children: RtePlugin.InlineNode[];
 };
 
-const calloutPlugin = (): RtePlugin => ({
-    id: 'callout',
-    blocks: {
-        callout: defineBlock({
-            content: 'text',
-            toHtml: () => ({
-                tag: 'aside',
-                attrs: {
-                    class: 'tw-m-0 tw-rounded-medium tw-border tw-border-solid tw-border-warning tw-bg-container-warning tw-px-3 tw-py-2',
+const calloutPlugin = (): RtePlugin =>
+    definePlugin({
+        id: 'callout',
+        toolbar: [
+            {
+                label: 'Callout',
+                render: ({ api, selection, label }) => {
+                    const active = selection.block?.type === 'callout';
+                    return (
+                        <button
+                            type="button"
+                            aria-label={label}
+                            aria-pressed={active}
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => (active ? api.blocks.setType('paragraph') : api.blocks.setType('callout'))}
+                            className={toolbarButtonClasses(active)}
+                        >
+                            💡
+                        </button>
+                    );
                 },
-                children: true,
-            }),
-            parse: [{ tag: 'aside' }],
+            },
+        ],
+        content: defineContent({
+            blocks: {
+                callout: defineBlock({
+                    content: 'text',
+                    toHtml: () => ({
+                        tag: 'aside',
+                        attrs: {
+                            class: 'tw-m-0 tw-rounded-medium tw-border tw-border-solid tw-border-warning tw-bg-container-warning tw-px-3 tw-py-2',
+                        },
+                        children: true,
+                    }),
+                    parse: [{ tag: 'aside' }],
+                }),
+            },
         }),
-    },
-    toolbarItem: ({ api, selection }) => {
-        const active = selection.block?.type === 'callout';
-        return (
-            <button
-                type="button"
-                aria-pressed={active}
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => (active ? api.blocks.setType('paragraph') : api.blocks.setType('callout'))}
-                className={toolbarButtonClasses(active)}
-            >
-                💡
-            </button>
-        );
-    },
-});
+    });
 
 /** An extra block type joins the official union in the same type argument. */
 export const ConsumerBlock: Story = {
@@ -1046,7 +1171,7 @@ export const ConsumerBlock: Story = {
 };
 
 /**
- * A consumer-defined void inline element whose `render.edit` draws its own
+ * A consumer-defined void inline element whose `edit` view draws its own
  * picker while it has no value — the same contract the shipped mention plugin
  * uses, from outside the package.
  */
@@ -1066,18 +1191,17 @@ type EmbedValue = Omit<EmbedInline, 'type'>;
 const embedClasses =
     'tw-rounded-small tw-bg-container-highlight tw-px-1 tw-font-medium tw-text-container-highlight-on-highlight-container';
 
+type EmbedDraftProps = {
+    onChoose: (provider: string) => void;
+    onRemove: () => void;
+};
+
 /**
- * A consumer-written picker, showing what an inline's `render.edit` gives
+ * A consumer-written picker, showing what an inline's `edit` view gives
  * an external plugin: the node is inserted without a value, and the component
  * completes it with `setValue` — or takes it away with `remove`.
  */
-const EmbedDraft = ({
-    onChoose,
-    onRemove,
-}: {
-    onChoose: (provider: string) => void;
-    onRemove: () => void;
-}): ReactNode => (
+const EmbedDraft = ({ onChoose, onRemove }: EmbedDraftProps): ReactNode => (
     <span role="listbox" aria-label="Embed suggestions" className="tw-inline-flex tw-gap-1">
         {EMBEDS.map((item) => (
             <button
@@ -1098,38 +1222,43 @@ const EmbedDraft = ({
     </span>
 );
 
-const embedPlugin = (): RtePlugin => ({
-    id: 'embed',
-    inlines: {
-        embed: defineInline<EmbedValue>({
-            toHtml: ({ provider }) => ({
-                tag: 'span',
-                attrs: { 'data-embed': provider, class: embedClasses },
-                children: `▤ ${provider}`,
-            }),
-            parse: [{ tag: 'span[data-embed]', value: (element) => ({ provider: element.dataset.embed ?? '' }) }],
-            render: {
-                edit: ({ value, setValue, remove, api }) =>
-                    value === null ? (
-                        <EmbedDraft
-                            onChoose={(provider) => {
-                                setValue({ provider });
-                                api.focus();
-                            }}
-                            onRemove={() => {
-                                remove();
-                                api.focus();
-                            }}
-                        />
-                    ) : (
-                        <span data-embed={value.provider} className={embedClasses}>{`▤ ${value.provider}`}</span>
-                    ),
+const embedPlugin = (): RtePlugin =>
+    definePlugin({
+        id: 'embed',
+        // An empty embed, which its `edit` view then takes over.
+        hotkeys: { '/': (api) => api.insert('embed') },
+        content: defineContent({
+            inlines: {
+                embed: defineInline<EmbedValue>({
+                    toHtml: ({ provider }) => ({
+                        tag: 'span',
+                        attrs: { 'data-embed': provider, class: embedClasses },
+                        children: `▤ ${provider}`,
+                    }),
+                    parse: [
+                        { tag: 'span[data-embed]', value: (element) => ({ provider: element.dataset.embed ?? '' }) },
+                    ],
+                }),
             },
         }),
-    },
-    // An empty embed, which its `render.edit` then takes over.
-    hotkeys: { '/': (api) => api.insert('embed') },
-});
+        edit: {
+            embed: ({ value, setValue, remove, api }: RtePlugin.EditProps<EmbedValue, EmbedValue | null>) =>
+                value === null ? (
+                    <EmbedDraft
+                        onChoose={(provider) => {
+                            setValue({ provider });
+                            api.focus();
+                        }}
+                        onRemove={() => {
+                            remove();
+                            api.focus();
+                        }}
+                    />
+                ) : (
+                    <span data-embed={value.provider} className={embedClasses}>{`▤ ${value.provider}`}</span>
+                ),
+        },
+    });
 
 /** A consumer inline element widens the same parameter as a consumer mark. */
 export const ConsumerInline: Story = {

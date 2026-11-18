@@ -33,6 +33,18 @@ export const newerVersionOf = (document: RteDocumentOf): number | null => {
 };
 
 /**
+ * What an inline element (a soft break, a mention) reads as in the text a typing rule matches.
+ */
+export const INLINE_PLACEHOLDER = '\uFFFC';
+
+/**
+ * The characters that may come right before a word starts, besides the start of a block, as the body of a
+ * character class: whitespace, an opening bracket or a quote. Whether an inline element counts is for each
+ * reader to say, as `INLINE_PLACEHOLDER` is not part of it.
+ */
+export const WORD_START_CONTEXT = String.raw`\s([{<'"“‘`;
+
+/**
  * Inside a block's `content.blocks`, stands for every mounted list (a block with
  * `content: { items }`), so a list item can allow nesting without naming lists.
  */

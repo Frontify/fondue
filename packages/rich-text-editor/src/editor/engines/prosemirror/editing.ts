@@ -25,6 +25,7 @@ import { placeholderPlugin } from './placeholder';
 import { buildSchema } from './schema';
 import { createSelectionRectReader } from './selectionRect';
 import { syncDocument } from './syncDocument';
+import { HOST_DOC } from './transactionMeta';
 import { dispatchOutsideHistory, userEditsPlugin } from './userEdits';
 import './engine.scss';
 
@@ -57,9 +58,6 @@ export const mountEditorForTests = (
     options: MountOptions,
     frames: FrameScheduler = browserFrames,
 ): { mounted: MountedDocument; view: EditorView } => mount(options, frames);
-
-/** Transaction meta marking a change that came from the host, not the user. */
-const HOST_DOC = 'rte-host-doc';
 
 type Held = { kind: 'none' } | { kind: 'waiting'; doc: RteDocumentOf; frame: number };
 

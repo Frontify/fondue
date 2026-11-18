@@ -6,6 +6,7 @@ import {
     buildPluginRegistry,
     type PluginRegistry,
     type RteBlockNode,
+    type RteContent,
     type RteDocumentOf,
     type RtePlugin,
 } from '#/core';
@@ -16,12 +17,15 @@ import { specToReact, toReact } from './toReact';
 export type RendererProps<TBlock extends RteBlockNode = RteBlockNode> = {
     value: RteDocumentOf<TBlock>;
     /**
-     * The plugins whose markup draws the document — the editor's list. A node
+     * The plugins, or only their content, whose markup draws the document. A node
      * shows its `render.component`, else its `toHtml`. A node whose plugin is
      * missing is skipped (a block keeps its content), with a warning in development.
+     * @default defaultContent
      */
-    plugins?: readonly RtePlugin[];
-    /** A class for the element the document sits in, beside the document's own. */
+    plugins?: readonly (RtePlugin | RteContent)[];
+    /**
+     * A class for the element the document sits in, beside the document's own
+     */
     className?: string;
 };
 
@@ -31,8 +35,13 @@ type RegistryRendererProps = {
     className?: string;
 };
 
+type BlockProps = {
+    block: RteBlockNode;
+    registry: PluginRegistry;
+};
+
 /** One top-level block, memoized on the block itself: the editor keeps the same object for untouched blocks, so an edit redraws only its block. */
-const Block = memo(({ block, registry }: { block: RteBlockNode; registry: PluginRegistry }): ReactNode => {
+const Block = memo(({ block, registry }: BlockProps): ReactNode => {
     const drawn = blockNode(block, registry, { useComponents: true });
     return drawn === null ? null : toReact([drawn]);
 });

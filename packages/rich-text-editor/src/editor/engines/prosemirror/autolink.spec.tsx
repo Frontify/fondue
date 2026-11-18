@@ -6,7 +6,7 @@ import { undo as pmUndo } from 'prosemirror-history';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { type RtePlugin } from '#/core';
+import { definePlugin } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, text } from './testEditor';
@@ -79,12 +79,12 @@ describe('typing a web address', () => {
     });
 
     it('does nothing inside inline code', () => {
-        const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
+        const editor = editorWith(defaultPlugins, [paragraph(text('xy', { code: true }))]);
         editor.caretAfter('x');
 
         editor.type(' https://example.com ');
 
-        expect(editor.stored()).toEqual([paragraph(text('x https://example.com ', { code: true }))]);
+        expect(editor.stored()).toEqual([paragraph(text('x https://example.com y', { code: true }))]);
     });
 
     it('is taken back by Backspace right after, leaving plain text', () => {
@@ -209,7 +209,7 @@ describe('pressing Enter after a web address', () => {
 
     it('still links when a state is applied and thrown away while Enter is handled', () => {
         let editor: ReturnType<typeof editorWith> | undefined;
-        const peek: RtePlugin = {
+        const peek = definePlugin({
             id: 'peek-on-enter',
             hotkeys: {
                 Enter: () => {
@@ -218,7 +218,7 @@ describe('pressing Enter after a web address', () => {
                     return false;
                 },
             },
-        };
+        });
         editor = editorWith([...defaultPlugins, peek], [paragraph(text('https://example.com'))]);
         editor.caretAfter('https://example.com');
 
@@ -284,7 +284,7 @@ describe('pressing Enter after a web address', () => {
     });
 
     it('is taken back by Backspace after a key that changed nothing, while the editor has focus', async () => {
-        const keepEnter: RtePlugin = { id: 'keep-enter', hotkeys: { Enter: () => true } };
+        const keepEnter = definePlugin({ id: 'keep-enter', hotkeys: { Enter: () => true } });
         const editor = editorWith([...defaultPlugins, keepEnter], [paragraph(text('https://example.com'))]);
         editor.caretAfter('https://example.com');
         vi.spyOn(editor.view, 'hasFocus').mockReturnValue(true);
@@ -312,7 +312,7 @@ describe('pressing Enter after a web address', () => {
 
     it('links the address in an editor where Enter blurs instead of splitting', async () => {
         // What `blurOnBreakPlugin` does outside a list.
-        const blurOnEnter: RtePlugin = {
+        const blurOnEnter = definePlugin({
             id: 'blur-on-enter',
             hotkeys: {
                 Enter: (api) => {
@@ -320,7 +320,7 @@ describe('pressing Enter after a web address', () => {
                     return true;
                 },
             },
-        };
+        });
         const editor = editorWith([...defaultPlugins, blurOnEnter], [paragraph(text('https://example.com'))]);
         editor.caretAfter('https://example.com');
 

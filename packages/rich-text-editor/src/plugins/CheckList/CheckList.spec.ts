@@ -4,9 +4,9 @@ import { describe, expect, it } from 'vitest';
 
 import { type HtmlSpec } from '#/core';
 
-import { checkListPlugin } from './CheckList';
+import { checkListContent } from './CheckList';
 
-const checkItem = checkListPlugin().blocks?.checkItem;
+const checkItem = checkListContent.blocks?.checkItem;
 
 const checkbox = (value: unknown): HtmlSpec | undefined => {
     const children = checkItem?.toHtml(value as never).children;

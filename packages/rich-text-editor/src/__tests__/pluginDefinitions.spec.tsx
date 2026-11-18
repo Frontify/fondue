@@ -6,7 +6,14 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it } from 'vitest';
 
-import { buildPluginRegistry, defineBlock, type EditorControlApi, type RtePlugin } from '../core';
+import {
+    buildPluginRegistry,
+    defineBlock,
+    defineContent,
+    definePlugin,
+    type EditorControlApi,
+    type RtePlugin,
+} from '../core';
 import {
     blurOnBreakPlugin,
     bulletListPlugin,
@@ -52,6 +59,7 @@ const recordingApi = ({ inList = false } = {}) => {
         blur: () => {
             calls.push('blur');
         },
+        selection: { get: () => ({ marks: {} }) },
     } as unknown as EditorControlApi;
     return { api, calls };
 };
@@ -138,9 +146,10 @@ describe('blurOnBreakPlugin', () => {
 describe('the list plugins', () => {
     it('toggle their list on the shortcuts other editors use', () => {
         const { api, calls } = recordingApi();
+        const { hotkeys } = buildPluginRegistry([bulletListPlugin(), numberedListPlugin()]);
 
-        bulletListPlugin().hotkeys?.['Mod-Shift-8']?.(api);
-        numberedListPlugin().hotkeys?.['Mod-Shift-7']?.(api);
+        hotkeys.get('Mod-Shift-8')?.[0]?.(api);
+        hotkeys.get('Mod-Shift-7')?.[0]?.(api);
 
         expect(calls).toEqual(['lists.toggle bulletList', 'lists.toggle numberedList']);
     });
@@ -178,6 +187,23 @@ describe('textStylePlugin', () => {
 
         expect(Object.keys(hotkeys)).toEqual(['Mod-Alt-2']);
     });
+
+    it('adds no toolbar item, command, hotkey or input rule when the editor offers no styles', () => {
+        const plugin = textStylePlugin({ styles: [] });
+
+        expect(plugin.toolbar ?? []).toEqual([]);
+        expect(plugin.commands ?? []).toEqual([]);
+        expect(plugin.hotkeys ?? {}).toEqual({});
+        expect(plugin.inputRules ?? []).toEqual([]);
+    });
+
+    it('adds no toolbar item when the only style is the paragraph, since there is nothing to choose', () => {
+        expect(textStylePlugin({ styles: ['paragraph'] }).toolbar ?? []).toEqual([]);
+    });
+
+    it('adds a toolbar item when the editor offers a style to choose', () => {
+        expect(textStylePlugin({ styles: ['paragraph', 'heading1'] }).toolbar).toHaveLength(1);
+    });
 });
 
 describe('columnBreakPlugin', () => {
@@ -201,22 +227,24 @@ describe('defaultPlugins', () => {
 describe('the readonly renderer', () => {
     it('redraws only the blocks that changed', () => {
         const drawn: string[] = [];
-        const notePlugin: RtePlugin = {
+        const notePlugin: RtePlugin = definePlugin({
             id: 'note',
-            blocks: {
-                note: defineBlock<{ label: string }>({
-                    defaults: { label: '' },
-                    toHtml: ({ label }) => ({ tag: 'p', children: label }),
-                    parse: [],
-                    render: {
-                        component: ({ value }) => {
-                            drawn.push(value.label);
-                            return <p>{value.label}</p>;
+            content: defineContent({
+                blocks: {
+                    note: defineBlock<{ label: string }>({
+                        defaults: { label: '' },
+                        toHtml: ({ label }) => ({ tag: 'p', children: label }),
+                        parse: [],
+                        render: {
+                            component: ({ value }) => {
+                                drawn.push(value.label);
+                                return <p>{value.label}</p>;
+                            },
                         },
-                    },
-                }),
-            },
-        };
+                    }),
+                },
+            }),
+        });
         // One list for both renders, as a host holds it: a new list is a new
         // set of plugins, which redraws everything.
         const plugins = [notePlugin];

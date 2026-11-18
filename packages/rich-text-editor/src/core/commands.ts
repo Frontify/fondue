@@ -12,6 +12,18 @@ export type RteMarkState = { coverage: 'all'; value: Record<string, unknown> } |
 
 /** What is selected, as one value that plugin UI renders itself from. Read it in a toolbar render function, which runs on every state change. */
 export type RteSelectionSnapshot = {
+    /**
+     * What the selection is made of:
+     * - `'text'` → a caret or a range of text, the usual case
+     * - `'node'` → one whole block or inline element, such as a selected column break
+     * - `'grid'` → a rectangle of a block laid out in rows and columns; `grid` says which part
+     */
+    kind: 'text' | 'node' | 'grid';
+    /**
+     * The rows and columns a `'grid'` selection covers, `null` for any other
+     * kind. Both count from 0 and include both ends.
+     */
+    grid: { rows: { from: number; to: number }; columns: { from: number; to: number } } | null;
     /** A caret rather than a range, so it covers nothing and `text` is empty. */
     isCollapsed: boolean;
     /** The plain text the selection covers — what plugin UI prefills a text field with. */
@@ -37,15 +49,11 @@ export type RteSelectionSnapshot = {
 };
 
 /**
- * The API plugins are handed in their toolbar item, hotkeys and `render.edit`:
- * all a plugin needs to drive the editor, whatever the engine.
- *
- * Reads and writes are shaped differently on purpose: everything to *know* is
- * one value (`selection.get()`); everything to *do* is one command per act,
- * keyed by the type it acts on, so new features need nothing added here.
+ * The API plugins are handed in their toolbar controls, hotkeys and `edit` views,
+ * to drive the editor whatever the engine. Read with `selection.get()`; act with
+ * one command per act, keyed by the type it acts on.
  */
 export type EditorControlApi = {
-    /** What is selected. */
     selection: {
         get(): RteSelectionSnapshot;
     };
@@ -106,9 +114,60 @@ export type EditorControlApi = {
     };
 
     /**
+     * The grid (`gridRole: 'grid'`) the selection is in: the slot the caret is
+     * in, or the selected slots. Each change is one undo step and keeps the
+     * text of every slot that stays; each returns false when it did nothing,
+     * outside a grid included.
+     */
+    grid: {
+        /**
+         * The grid around the selection, or null outside one: its size, how
+         * many rows and columns the selection covers (a slot's spans
+         * included), and whether its first row and first column are all
+         * header slots.
+         */
+        shape(): {
+            rows: number;
+            columns: number;
+            selectedRows: number;
+            selectedColumns: number;
+            headerRow: boolean;
+            headerColumn: boolean;
+        } | null;
+        /** Add a row above or below, or a column left or right of, the selection. */
+        add(axis: 'row' | 'column', side: 'before' | 'after'): boolean;
+        /**
+         * Remove the rows or columns the selection covers. Does nothing when
+         * it covers every row or every column: a grid keeps at least one.
+         */
+        removeSelected(axis: 'row' | 'column'): boolean;
+        /** Remove the whole grid. */
+        removeGrid(): boolean;
+        /**
+         * Turn the first row or column into header slots, or back. After any
+         * change a user makes to a grid, a header slot that declares a `scope`
+         * default gets `'col'` when its whole row is header slots, else `'row'`.
+         */
+        toggleHeader(axis: 'row' | 'column'): boolean;
+        /** Merge the selected slots, a rectangle of two or more, into one. Each slot's blocks are kept, in order; empty slots are dropped. */
+        mergeSlots(): boolean;
+        /** Split the slot the selection is in, when it covers several rows or columns, back into single slots. */
+        splitSlot(): boolean;
+        /** Whether `mergeSlots` would do something now — what a menu enables it on. */
+        canMergeSlots(): boolean;
+        /** Whether `splitSlot` would do something now — what a menu enables it on. */
+        canSplitSlot(): boolean;
+    };
+
+    /**
      * Insert a node at the selection — how void blocks (a column break) and
      * inline elements (mentions) get added, with `value` as what it stores.
      * The caret ends up after what was inserted.
+     *
+     * A block whose `value` holds `children` comes in whole, as the document
+     * format writes it: in place of a selected or an empty top-level block, or
+     * after the top-level block the caret is in, with the caret at its first
+     * place for text.
      */
     insert(type: string, value?: Record<string, unknown>): void;
     /** Insert plain text at the selection, carrying the marks typing there would. */
@@ -139,7 +198,9 @@ export type EditorControlApi = {
 
     /** Which node's editing UI is open. The editor holds it so a toolbar button can open it; leaving the node closes it. */
     editors: {
-        /** Open the `render.edit` of the node of this type at the selection. */
+        /**
+         * Open the `edit` view of the node of this type at the selection
+         */
         open(type: string): void;
         close(): void;
     };

@@ -6,7 +6,15 @@ import { undo } from 'prosemirror-history';
 import { NodeSelection } from 'prosemirror-state';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { defineBlock, defineInline, defineMark, type RteBlockNode, type RtePlugin } from '#/core';
+import {
+    defineBlock,
+    defineContent,
+    defineInline,
+    defineMark,
+    definePlugin,
+    type RteBlockNode,
+    type RtePlugin,
+} from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { toEngineDocument } from './documentConversion';
@@ -17,23 +25,36 @@ import { destroyEditors, editorWith, paragraph, text } from './testEditor';
  * method is checked by what it does to the document the host is handed.
  */
 
-const tagPlugin: RtePlugin = {
+const tagPlugin: RtePlugin = definePlugin({
     id: 'tag',
-    inlines: {
-        tag: defineInline<{ name: string }>({
-            toHtml: ({ name }) => ({ tag: 'span', children: name }),
-            parse: [],
-        }),
-    },
-};
+    content: defineContent({
+        inlines: {
+            tag: defineInline<{ name: string }>({
+                toHtml: ({ name }) => ({ tag: 'span', children: name }),
+                parse: [],
+            }),
+        },
+    }),
+});
 
 /** A void block of the spec's own: the shipped ones need options or are not in `defaultPlugins`. */
-const dividerPlugin: RtePlugin = {
+const dividerPlugin: RtePlugin = definePlugin({
     id: 'divider',
-    blocks: {
-        divider: defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [{ tag: 'hr' }] }),
-    },
-};
+    content: defineContent({
+        blocks: {
+            divider: defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [{ tag: 'hr' }] }),
+        },
+    }),
+});
+
+const emphasisPlugin: RtePlugin = definePlugin({
+    id: 'emphasis',
+    content: defineContent({
+        marks: {
+            emphasis: defineMark({ toHtml: () => ({ tag: 'em', children: true }), parse: [] }),
+        },
+    }),
+});
 
 const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin];
 
@@ -108,6 +129,27 @@ describe('the selection snapshot', () => {
         expect(block).toEqual({ type: '__rteUnknownBlock' });
         expect(blocks).toEqual([{ type: '__rteUnknownBlock' }]);
         expect(JSON.stringify([block, blocks])).not.toContain('tok');
+    });
+
+    it('reports a caret or a range of text as a text selection', () => {
+        const editor = editorWith(plugins, [paragraph(text('hello'))]);
+        editor.select('ell');
+
+        const { kind, grid } = editor.api.selection.get();
+
+        expect(kind).toBe('text');
+        expect(grid).toBeNull();
+    });
+
+    it('reports a selected void block as a node selection', () => {
+        const editor = editorWith(plugins, [paragraph(text('a')), { type: 'divider' }, paragraph(text('b'))]);
+        const { view } = editor;
+        view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, 3)));
+
+        const { kind, grid } = editor.api.selection.get();
+
+        expect(kind).toBe('node');
+        expect(grid).toBeNull();
     });
 
     it('reports the marks typing at a caret would carry', () => {
@@ -258,6 +300,29 @@ describe('marks.toggle', () => {
         ]);
     });
 
+    it('takes the mark off a range whose text carries it around a line break', () => {
+        const editor = editorWith(
+            [...plugins, emphasisPlugin],
+            [paragraph(text('a', { emphasis: true }), { type: 'break' }, text('b', { emphasis: true }))],
+        );
+        editor.selectBetween('a', 'b');
+        expect(editor.api.selection.get().marks).toHaveProperty('emphasis');
+
+        editor.api.marks.toggle('emphasis');
+
+        expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('b'))]);
+        expect(editor.api.selection.get().marks).not.toHaveProperty('emphasis');
+    });
+
+    it('puts the mark on a range of blank text', () => {
+        const editor = editorWith([...plugins, emphasisPlugin], [paragraph(text('  '))]);
+        editor.select('  ');
+
+        editor.api.marks.toggle('emphasis');
+
+        expect(editor.stored()).toEqual([paragraph(text('  ', { emphasis: true }))]);
+    });
+
     it('puts the mark on all of a range only part of which carries it', () => {
         const editor = editorWith(plugins, [paragraph(text('half', { bold: true }), text(' plain'))]);
         editor.selectBetween('half', 'plain');
@@ -271,16 +336,18 @@ describe('marks.toggle', () => {
         const editor = editorWith(
             [
                 ...plugins,
-                {
+                definePlugin({
                     id: 'highlight',
-                    marks: {
-                        highlight: defineMark<{ color: string }>({
-                            defaults: { color: 'yellow' },
-                            toHtml: () => ({ tag: 'mark', children: true }),
-                            parse: [],
-                        }),
-                    },
-                },
+                    content: defineContent({
+                        marks: {
+                            highlight: defineMark<{ color: string }>({
+                                defaults: { color: 'yellow' },
+                                toHtml: () => ({ tag: 'mark', children: true }),
+                                parse: [],
+                            }),
+                        },
+                    }),
+                }),
             ],
             [paragraph(text('note'))],
         );
@@ -694,16 +761,18 @@ describe('insert', () => {
         const editor = editorWith(
             [
                 ...plugins,
-                {
+                definePlugin({
                     id: 'chip',
-                    inlines: {
-                        chip: defineInline<{ label: string }>({
-                            defaults: { label: 'new' },
-                            toHtml: ({ label }) => ({ tag: 'span', children: label }),
-                            parse: [],
-                        }),
-                    },
-                },
+                    content: defineContent({
+                        inlines: {
+                            chip: defineInline<{ label: string }>({
+                                defaults: { label: 'new' },
+                                toHtml: ({ label }) => ({ tag: 'span', children: label }),
+                                parse: [],
+                            }),
+                        },
+                    }),
+                }),
             ],
             [paragraph(text('ab'))],
         );

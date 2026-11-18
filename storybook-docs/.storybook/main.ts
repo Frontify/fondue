@@ -12,21 +12,9 @@ const getAbsolutePath = (packageName: string): string => {
     return dirname(fileURLToPath(import.meta.resolve(packageName)));
 };
 
-// Netlify branch subdomains use the branch name lowercased, with anything outside [a-z0-9] replaced by dashes.
-const toBranchSubdomain = (branch: string): string => branch.toLowerCase().replaceAll(/[^a-z0-9]+/g, '-');
 const storybookDir = dirname(fileURLToPath(import.meta.url));
 const packagesRoot = resolve(storybookDir, '../../packages');
 const packagePath = (...segments: string[]): string => join(packagesRoot, ...segments);
-
-const getSubpackageURL = (subpackage: string): string => {
-    if (process.env.CONTEXT === 'deploy-preview' && process.env.REVIEW_ID) {
-        return `https://deploy-preview-${process.env.REVIEW_ID}.${subpackage}.fondue-components.frontify.com/`;
-    }
-    if (process.env.CONTEXT === 'branch-deploy' && process.env.BRANCH) {
-        return `https://${toBranchSubdomain(process.env.BRANCH)}.${subpackage}.fondue-components.frontify.com/`;
-    }
-    return `https://${subpackage}.fondue-components.frontify.com/`;
-};
 
 const config: StorybookConfig = {
     // Story files carry their full sidebar path in `title`; the order lives in `storySort` in preview.tsx.
@@ -61,26 +49,6 @@ const config: StorybookConfig = {
     },
     core: {
         disableTelemetry: true,
-    },
-    refs: (_config, { configType }) => {
-        if (configType === 'DEVELOPMENT') {
-            return {
-                rte: {
-                    title: 'Legacy Rich Text Editor',
-                    url: 'http://localhost:6011',
-                    type: 'auto-inject',
-                    expanded: true,
-                },
-            };
-        }
-
-        return {
-            rte: {
-                title: 'Legacy Rich Text Editor',
-                url: `${getSubpackageURL('rte')}`,
-                expanded: true,
-            },
-        };
     },
     viteFinal: (viteConfig) => {
         const mdxReactShimPath = join(getAbsolutePath('@storybook/addon-docs'), 'mdx-react-shim.js');

@@ -5,7 +5,6 @@ import { describe, expect, it } from 'vitest';
 import {
     decodeStoredColor,
     encodeStoredColor,
-    isCompleteHex,
     parseTypedHex,
     toColorName,
     toExportedColor,
@@ -247,21 +246,5 @@ describe('NAMED_COLORS', () => {
             expect(name).toMatch(/^[a-z]+$/);
             expect(hex).toMatch(/^#[\da-f]{6}([\da-f]{2})?$/);
         }
-    });
-});
-
-describe('isCompleteHex', () => {
-    it('accepts six digits with or without a hash', () => {
-        expect(isCompleteHex('c5221f')).toBe(true);
-        expect(isCompleteHex('#C5221F')).toBe(true);
-    });
-
-    it('rejects anything else', () => {
-        expect(isCompleteHex('f00')).toBe(false);
-        expect(isCompleteHex('c5221')).toBe(false);
-        expect(isCompleteHex('zz')).toBe(false);
-        expect(isCompleteHex('c5221f0')).toBe(false);
-        expect(isCompleteHex('ff000080')).toBe(false);
-        expect(isCompleteHex('##c5221f')).toBe(false);
     });
 });

@@ -5,7 +5,7 @@ import { type InputRule } from 'prosemirror-inputrules';
 import { type Mark as PmMark, type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
 import { type EditorState, Plugin, PluginKey, type Plugin as PmPlugin, type Transaction } from 'prosemirror-state';
 
-import { type PluginRegistry } from '#/core';
+import { INLINE_PLACEHOLDER, type PluginRegistry } from '#/core';
 
 import { valueAttrsFor } from './documentConversion';
 import {
@@ -36,9 +36,6 @@ const trimTrailingPunctuation = (address: string): string => {
     }
 };
 
-/** What reading a block as text gives for an inline element (a line break, a mention). */
-const INLINE_ELEMENT = '￼';
-
 /** How much text before the caret a rule reads, as the engine's input rules do. */
 const MAX_MATCH = 500;
 
@@ -65,11 +62,11 @@ const markPatternMatcher = (rule: RuleOfKind<'markPattern'>, context: RuleContex
     }
     const flags = withoutStateFlags(rule.pattern);
     const token = new RegExp(`^(?:${rule.pattern.source})$`, flags);
-    const pattern = new RegExp(`(?:^|[\\s${INLINE_ELEMENT}])((?:${rule.pattern.source}))\\s$`, flags);
+    const pattern = new RegExp(`(?:^|[\\s${INLINE_PLACEHOLDER}])((?:${rule.pattern.source}))\\s$`, flags);
 
     const find = (state: EditorState, match: RegExpMatchArray, start: number): MarkRange | null => {
         // A token pattern may match across an inline element: only what follows the last one counts.
-        const typed = match[1]?.split(INLINE_ELEMENT).pop();
+        const typed = match[1]?.split(INLINE_PLACEHOLDER).pop();
         if (!typed) {
             return null;
         }
@@ -141,7 +138,7 @@ const addressBeforeCaret = (
         Math.max(0, $from.parentOffset - MAX_MATCH),
         $from.parentOffset,
         undefined,
-        INLINE_ELEMENT,
+        INLINE_PLACEHOLDER,
     );
     for (const { pattern, find } of matchers) {
         const match = pattern.exec(`${textBefore} `);

@@ -12,8 +12,10 @@ import {
     ANY_LIST,
     buildPluginRegistry,
     defineBlock,
+    defineContent,
     defineInline,
     defineMark,
+    definePlugin,
     emptyDocument,
     PARAGRAPH,
     type RteDocumentOf,
@@ -32,104 +34,122 @@ const INLINE_ATOM_STAND_IN = '￼';
  * and what happens then decides whether the editor is usable at all.
  */
 const plugins: RtePlugin[] = [
-    {
+    definePlugin({
         id: 'tag',
-        inlines: {
-            tag: defineInline<{ name: string }>({
-                toHtml: ({ name }) => ({ tag: 'span', children: name }),
+        content: defineContent({
+            inlines: {
+                tag: defineInline<{ name: string }>({
+                    toHtml: ({ name }) => ({ tag: 'span', children: name }),
+                    parse: [],
+                }),
+            },
+        }),
+    }),
+    definePlugin({
+        id: 'bold',
+        content: defineContent({
+            marks: {
+                bold: defineMark({
+                    toHtml: () => ({ tag: 'strong', children: true }),
+                    parse: [{ tag: 'strong' }],
+                }),
+            },
+        }),
+    }),
+];
+
+const toggleMarksPlugin: RtePlugin = definePlugin({
+    id: 'toggle-marks',
+    content: defineContent({
+        marks: {
+            toggleA: defineMark({ toHtml: () => ({ tag: 'strong', children: true }), parse: [] }),
+            toggleB: defineMark({ toHtml: () => ({ tag: 'em', children: true }), parse: [] }),
+            toggleC: defineMark({ toHtml: () => ({ tag: 'u', children: true }), parse: [] }),
+        },
+    }),
+});
+
+const valuedMarkPlugin: RtePlugin = definePlugin({
+    id: 'valued-mark',
+    content: defineContent({
+        marks: {
+            valued: defineMark<{ ref: string }>({
+                toHtml: ({ ref }) => ({ tag: 'a', attrs: { href: ref }, children: true }),
                 parse: [],
             }),
         },
-    },
-    {
-        id: 'bold',
-        marks: {
-            bold: defineMark({
-                toHtml: () => ({ tag: 'strong', children: true }),
-                parse: [{ tag: 'strong' }],
+    }),
+});
+
+const voidInlinePlugin: RtePlugin = definePlugin({
+    id: 'void-inline',
+    content: defineContent({
+        inlines: { marker: defineInline({ toHtml: () => ({ tag: 'br' }), parse: [] }) },
+    }),
+});
+
+const styledPlugin: RtePlugin = definePlugin({
+    id: 'styled',
+    content: defineContent({
+        blocks: {
+            styled: defineBlock<{ style: string }>({
+                content: 'text',
+                defaults: { style: 'large' },
+                toHtml: ({ style }) => ({ tag: 'p', attrs: { 'data-style': style }, children: true }),
+                parse: [],
             }),
         },
-    },
-];
+    }),
+});
 
-const toggleMarksPlugin: RtePlugin = {
-    id: 'toggle-marks',
-    marks: {
-        toggleA: defineMark({ toHtml: () => ({ tag: 'strong', children: true }), parse: [] }),
-        toggleB: defineMark({ toHtml: () => ({ tag: 'em', children: true }), parse: [] }),
-        toggleC: defineMark({ toHtml: () => ({ tag: 'u', children: true }), parse: [] }),
-    },
-};
-
-const valuedMarkPlugin: RtePlugin = {
-    id: 'valued-mark',
-    marks: {
-        valued: defineMark<{ ref: string }>({
-            toHtml: ({ ref }) => ({ tag: 'a', attrs: { href: ref }, children: true }),
-            parse: [],
-        }),
-    },
-};
-
-const voidInlinePlugin: RtePlugin = {
-    id: 'void-inline',
-    inlines: { marker: defineInline({ toHtml: () => ({ tag: 'br' }), parse: [] }) },
-};
-
-const styledPlugin: RtePlugin = {
-    id: 'styled',
-    blocks: {
-        styled: defineBlock<{ style: string }>({
-            content: 'text',
-            defaults: { style: 'large' },
-            toHtml: ({ style }) => ({ tag: 'p', attrs: { 'data-style': style }, children: true }),
-            parse: [],
-        }),
-    },
-};
-
-const tonePlugin: RtePlugin = {
+const tonePlugin: RtePlugin = definePlugin({
     id: 'tone',
-    blockAttributes: { tone: { style: (value) => ({ color: value }) } },
-};
+    content: defineContent({
+        blockAttributes: { tone: { style: (value) => ({ color: value }) } },
+    }),
+});
 
-const listsPlugin: RtePlugin = {
+const listsPlugin: RtePlugin = definePlugin({
     id: 'lists',
-    blocks: {
-        list: defineBlock({
-            content: { items: 'listEntry' },
-            toHtml: () => ({ tag: 'ul', children: true }),
-            parse: [],
-        }),
-        orderedList: defineBlock({
-            content: { items: 'listEntry' },
-            toHtml: () => ({ tag: 'ol', children: true }),
-            parse: [],
-        }),
-        listEntry: defineBlock({
-            content: { blocks: [PARAGRAPH, ANY_LIST] },
-            toHtml: () => ({ tag: 'li', children: true }),
-            parse: [],
-        }),
-    },
-};
+    content: defineContent({
+        blocks: {
+            list: defineBlock({
+                content: { items: 'listEntry' },
+                toHtml: () => ({ tag: 'ul', children: true }),
+                parse: [],
+            }),
+            orderedList: defineBlock({
+                content: { items: 'listEntry' },
+                toHtml: () => ({ tag: 'ol', children: true }),
+                parse: [],
+            }),
+            listEntry: defineBlock({
+                content: { blocks: [PARAGRAPH, ANY_LIST] },
+                toHtml: () => ({ tag: 'li', children: true }),
+                parse: [],
+            }),
+        },
+    }),
+});
 
-const checkablePlugin: RtePlugin = {
+const checkablePlugin: RtePlugin = definePlugin({
     id: 'checkable',
-    blocks: {
-        checkableList: defineBlock({
-            content: { items: 'checkEntry' },
-            toHtml: () => ({ tag: 'ul', children: true }),
-            parse: [],
-        }),
-        checkEntry: defineBlock<{ checked: boolean }>({
-            content: { blocks: [PARAGRAPH, ANY_LIST] },
-            defaults: { checked: false },
-            toHtml: ({ checked }) => ({ tag: 'li', attrs: { 'data-checked': String(checked) }, children: true }),
-            parse: [],
-        }),
-    },
-};
+    content: defineContent({
+        blocks: {
+            checkableList: defineBlock({
+                content: { items: 'checkEntry' },
+                toHtml: () => ({ tag: 'ul', children: true }),
+                parse: [],
+            }),
+            checkEntry: defineBlock<{ checked: boolean }>({
+                content: { blocks: [PARAGRAPH, ANY_LIST] },
+                defaults: { checked: false },
+                toHtml: ({ checked }) => ({ tag: 'li', attrs: { 'data-checked': String(checked) }, children: true }),
+                parse: [],
+            }),
+        },
+    }),
+});
 
 const paragraph = (text: string): RteDocumentOf => ({
     version: 1,

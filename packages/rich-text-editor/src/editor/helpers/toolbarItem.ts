@@ -1,55 +1,41 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// What a plugin's `toolbarItem` is handed, composed from the control API so it holds for any engine.
+// What a toolbar entry's `render` is handed, composed from the control API so it holds for any engine.
 
 import {
     type EditorControlApi,
+    isOwnActive,
     type OwnType,
-    PARAGRAPH,
-    type RteMarkState,
     type RteSelectionSnapshot,
     type SelectedNode,
+    toggleOwn,
+    type ToolbarEntry,
     type ToolbarItemProps,
 } from '#/core';
 
-/** `own` is what the plugin acts on, resolved by the registry (`ownTypeOf`). */
+/**
+ * The part of a registry toolbar entry its `render` props come from
+ */
+type ToolbarItemSource = Pick<ToolbarEntry, 'own' | 'label' | 'shortcut'>;
+
+/**
+ * The props a toolbar entry's `render` is handed, for what the entry acts on
+ * (`own`, resolved by the registry's `ownTypeOf`).
+ */
 export const toolbarItemProps = (
-    own: OwnType,
+    { own, label, shortcut }: ToolbarItemSource,
     api: EditorControlApi,
     selection: RteSelectionSnapshot,
 ): ToolbarItemProps => {
     const selectedNode = selectedNodeOf(own, api, selection);
-    const isActive = activeOf(own, selection, selectedNode);
+    const isActive = isOwnActive(own, selection);
 
-    const toggle = (value?: Record<string, unknown>): void => {
-        switch (own.kind) {
-            case 'mark':
-                api.marks.toggle(own.type, value);
-                break;
-            case 'list':
-                api.lists.toggle(own.type);
-                break;
-            case 'textBlock':
-                if (isActive === true) {
-                    api.blocks.setType(PARAGRAPH, value);
-                } else {
-                    api.blocks.setType(own.type, value);
-                }
-                break;
-            case 'voidBlock':
-            case 'inline':
-                api.insert(own.type, value);
-                break;
-            // A block holding other blocks is not something a selection turns
-            // into, so there is nothing to toggle.
-            case 'container':
-            case 'none':
-                break;
-        }
-    };
+    const toggle = (value?: Record<string, unknown>): void => toggleOwn({ own, api, selection, value });
 
     return {
         api,
+        label,
+        shortcut,
         selectedNode,
         selection,
         isActive,
@@ -60,26 +46,6 @@ export const toolbarItemProps = (
             }
         },
     };
-};
-
-const activeOf = (
-    own: OwnType,
-    selection: RteSelectionSnapshot,
-    selectedNode: SelectedNode | null,
-): ToolbarItemProps['isActive'] => {
-    if (own.kind !== 'mark') {
-        return selectedNode !== null;
-    }
-    const mark: RteMarkState | undefined = selection.marks[own.type];
-    if (mark === undefined) {
-        return false;
-    }
-    switch (mark.coverage) {
-        case 'all':
-            return true;
-        case 'some':
-            return 'mixed';
-    }
 };
 
 const attributesOf = (block: Record<string, unknown>): Record<string, unknown> =>

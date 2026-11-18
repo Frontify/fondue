@@ -21,25 +21,43 @@ export {
 } from './document';
 export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
 export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
+export { DOCUMENT_GAP_VARIABLES, OWN_MARGIN_VARIABLES } from './documentContract';
+export { lookProperties, type TextLook } from './look';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,
     type ContentModel,
+    type DefaultStyle,
     defineBlock,
+    defineContent,
     defineInline,
     defineMark,
+    definePlugin,
     type EditProps,
+    type GridRole,
+    gridSpanOf,
     type HotkeyHandler,
     type InlineDefinition,
+    type MarkClearRule,
     type MarkDefinition,
+    type MarkParseRule,
+    onlyTypeOf,
     type ParseRule,
     type PasteHandler,
     type RteBlockCommand,
+    type RteContent,
+    type RteContentDefinition,
+    type RteDelimiterRule,
+    type RteEditView,
+    type RteIcon,
     type RteInputRule,
     type RtePlugin,
+    type RtePluginDefinition,
+    type RteToolbarEntry,
     RTE_TOOLBAR_GROUPS,
     type RteToolbarGroup,
     type SelectedNode,
+    type StyleParseRule,
     type ToolbarItemProps,
 } from './plugin';
 export {
@@ -47,9 +65,21 @@ export {
     blockHtml,
     blockValueOf,
     buildPluginRegistry,
+    controlOf,
+    isOwnActive,
+    type OwnControl,
     type OwnType,
     ownTypeOf,
     type PluginRegistry,
     type ToolbarEntry,
+    toggleOwn,
 } from './registry';
-export { ANY_LIST, DOCUMENT_VERSION, emptyDocument, newerVersionOf, PARAGRAPH } from './vocabulary';
+export {
+    ANY_LIST,
+    DOCUMENT_VERSION,
+    emptyDocument,
+    INLINE_PLACEHOLDER,
+    newerVersionOf,
+    PARAGRAPH,
+    WORD_START_CONTEXT,
+} from './vocabulary';

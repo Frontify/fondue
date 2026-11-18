@@ -34,7 +34,7 @@ describe('the emoji plugin', () => {
     });
 
     it('reads nothing pasted as a draft', () => {
-        expect(emojiPlugin().inlines?.emojiDraft?.parse).toEqual([]);
+        expect(emojiPlugin().content?.inlines?.emojiDraft?.parse).toEqual([]);
     });
 });
 
