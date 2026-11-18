@@ -12,17 +12,16 @@ const href = (mention: MentionValue): string => `/u/${mention.id}`;
 describe('mentionDisplay', () => {
     it('shows the stored username after the trigger, linking to the stored id', () => {
         expect(mentionDisplay(JANE, { href, trigger: '#' })).toEqual({
-            status: 'linked',
             label: '#jane',
             title: 'Jane Doe',
             href: '/u/jane',
         });
     });
 
-    it('is text without a target, and leaves out a target that is not a safe link', () => {
-        expect(mentionDisplay(JANE, { trigger: '@' }).status).toBe('text');
-        expect(mentionDisplay(JANE, { trigger: '@', href: () => undefined }).status).toBe('text');
-        expect(mentionDisplay(JANE, { trigger: '@', href: () => 'javascript:alert(1)' }).status).toBe('text');
+    it('has no target without one, and leaves out a target that is not a safe link', () => {
+        expect(mentionDisplay(JANE, { trigger: '@' }).href).toBeUndefined();
+        expect(mentionDisplay(JANE, { trigger: '@', href: () => undefined }).href).toBeUndefined();
+        expect(mentionDisplay(JANE, { trigger: '@', href: () => 'javascript:alert(1)' }).href).toBeUndefined();
     });
 
     it('removes control and bidirectional characters from what it shows', () => {
