@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 @use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
 
 .root {
     display: flex;
@@ -95,5 +96,113 @@
         &::after {
             outline: 6px solid var(--color-highlight-default);
         }
+    }
+}
+
+.root[data-variant='pill'] {
+    flex-wrap: wrap;
+    gap: var(--spacing-xx-small);
+
+    & button:not(:first-child) {
+        margin-inline-start: 0;
+    }
+
+    &[data-orientation='vertical'] {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+.pill {
+    all: unset;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xx-small);
+    min-height: sizeToken.get(6);
+    padding: sizeToken.get(1) sizeToken.get(2);
+    border-radius: var(--border-radius-medium);
+    user-select: none;
+    cursor: pointer;
+
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-x-small);
+    line-height: var(--typography-line-height-tight);
+    color: var(--color-container-secondary-on-secondary-container);
+    background-color: var(--color-container-secondary-default);
+
+    transition: background-color cubic-bezier(0.4, 0, 0.2, 1) 150ms;
+
+    & svg {
+        flex-shrink: 0;
+    }
+
+    &:hover:not(:disabled) {
+        background-color: var(--color-container-secondary-hover);
+    }
+
+    &:active:not(:disabled) {
+        background-color: var(--color-container-secondary-active);
+    }
+
+    &[data-state='checked'] {
+        color: var(--color-primary-on-primary);
+        background-color: var(--color-primary-default);
+
+        &:hover:not(:disabled) {
+            background-color: var(--color-primary-hover);
+        }
+
+        &:active:not(:disabled) {
+            background-color: var(--color-primary-active);
+        }
+    }
+
+    .root[data-emphasis='highlight'] &[data-state='checked'] {
+        color: var(--color-highlight-on-highlight);
+        background-color: var(--color-highlight-default);
+
+        &:hover:not(:disabled) {
+            background-color: var(--color-highlight-hover);
+        }
+
+        &:active:not(:disabled) {
+            background-color: var(--color-highlight-active);
+        }
+    }
+
+    &:disabled,
+    .root[data-emphasis='highlight'] &:disabled {
+        cursor: not-allowed;
+        color: var(--color-container-disabled-on-disabled-container);
+        background-color: var(--color-container-disabled-default);
+    }
+
+    &[data-readonly='true'] {
+        pointer-events: none;
+    }
+
+    & {
+        @include focusStyle.focus-outline;
+    }
+}
+
+.pillIndicator {
+    display: inline-flex;
+}
+
+.pillCount {
+    padding-inline: sizeToken.get(1.5);
+    border-radius: var(--border-radius-medium);
+    color: var(--color-container-secondary-on-secondary-container);
+    background-color: var(--color-low-contrast-default);
+
+    .pill[data-state='checked'] & {
+        background-color: var(--color-primary-on-primary);
+    }
+
+    .pill:disabled & {
+        display: none;
     }
 }
