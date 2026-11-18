@@ -23,6 +23,12 @@ export type HtmlAttributes = {
     tabindex?: string;
     /** An ordered list's first number. */
     start?: string;
+    /** How many columns a cell covers. As HTML spells it; the readonly view passes it to React as `colSpan`. */
+    colspan?: string;
+    /** How many rows a cell covers. As HTML spells it; the readonly view passes it to React as `rowSpan`. */
+    rowspan?: string;
+    /** What a header cell labels: `'col'`, `'row'`, `'colgroup'` or `'rowgroup'`. */
+    scope?: string;
     /** Boolean attributes: present when true, absent otherwise. */
     checked?: boolean;
     disabled?: boolean;

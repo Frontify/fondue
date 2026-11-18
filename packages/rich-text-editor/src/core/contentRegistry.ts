@@ -6,6 +6,7 @@ import { type HtmlSpec, type StyleMap, withRootStyle } from './htmlSpec';
 import {
     type BlockAttributeDefinition,
     type BlockDefinition,
+    type GridRole,
     type InlineDefinition,
     type MarkDefinition,
     type RteContent,
@@ -129,6 +130,118 @@ const addContent = (draft: ContentDraft, content: RteContent | undefined, owner:
     }
 };
 
+/** What each role holds. */
+const CONTENT_OF_ROLE: Record<GridRole, 'parts' | 'blocks'> = {
+    grid: 'parts',
+    row: 'parts',
+    slot: 'blocks',
+    headerSlot: 'blocks',
+};
+
+/** The role a row or a slot must sit in, as one of its `{ parts }`. */
+const PARENT_ROLE: Partial<Record<GridRole, GridRole>> = {
+    row: 'grid',
+    slot: 'row',
+    headerSlot: 'row',
+};
+
+/** What a grid's and a row's parts must be, as errors name them. */
+const PART_NAME: Partial<Record<GridRole, string>> = {
+    grid: 'row',
+    row: 'slot',
+};
+
+const parentRoleOf = (role: GridRole | undefined): GridRole | undefined => {
+    if (role === undefined) {
+        return undefined;
+    }
+    return PARENT_ROLE[role];
+};
+
+const partNameOf = (role: GridRole | undefined): string | undefined => {
+    if (role === undefined) {
+        return undefined;
+    }
+    return PART_NAME[role];
+};
+
+const childTypesOf = (content: BlockDefinition['content']): readonly string[] => {
+    if (typeof content !== 'object') {
+        return [];
+    }
+    if ('parts' in content) {
+        return content.parts;
+    }
+    if ('blocks' in content) {
+        return content.blocks;
+    }
+    return [content.items];
+};
+
+type GridBlock = { type: string; definition: BlockDefinition; owner: string };
+
+const assertGridContent = ({ type, definition, owner }: GridBlock, role: GridRole): void => {
+    const expected = CONTENT_OF_ROLE[role];
+    const { content } = definition;
+    if (typeof content !== 'object' || !(expected in content)) {
+        throw new Error(`Plugin "${owner}" makes "${type}" a ${role}, whose content must be \`{ ${expected} }\`.`);
+    }
+};
+
+/** A grid's parts must be rows and a row's parts slots; a row or a slot sits nowhere else. */
+const assertPlacement = (
+    { type, definition, owner }: GridBlock,
+    child: string,
+    childRole: GridRole | undefined,
+): void => {
+    const role = definition.gridRole;
+    const parentRole = parentRoleOf(childRole);
+    const partName = partNameOf(role);
+    if (partName !== undefined && parentRole !== role) {
+        throw new Error(`Plugin "${owner}" makes "${type}" a ${role}, but its part "${child}" is not a ${partName}.`);
+    }
+    if (parentRole !== undefined && parentRole !== role) {
+        throw new Error(
+            `Plugin "${owner}" puts "${child}", a ${childRole}, in "${type}", which is not a ${parentRole}.`,
+        );
+    }
+};
+
+/** Every row needs a grid, and every slot a row, that holds it. */
+const assertPlaced = (draft: ContentDraft, placed: ReadonlySet<string>): void => {
+    for (const [type, definition] of draft.blocks) {
+        const parentRole = parentRoleOf(definition.gridRole);
+        if (parentRole !== undefined && !placed.has(type)) {
+            const owner = draft.blockOwners.get(type) ?? type;
+            throw new Error(
+                `Plugin "${owner}" makes "${type}" a ${definition.gridRole}, but no ${parentRole} holds it.`,
+            );
+        }
+    }
+};
+
+/**
+ * Any other grid shape breaks grid editing at the first keystroke, so it is
+ * rejected here, where the plugin can be named.
+ */
+const assertGridShapes = (draft: ContentDraft): void => {
+    const placed = new Set<string>();
+    for (const [type, definition] of draft.blocks) {
+        const block = { type, definition, owner: draft.blockOwners.get(type) ?? type };
+        if (definition.gridRole !== undefined) {
+            assertGridContent(block, definition.gridRole);
+        }
+        for (const child of childTypesOf(definition.content)) {
+            const childRole = draft.blocks.get(child)?.gridRole;
+            assertPlacement(block, child, childRole);
+            if (parentRoleOf(childRole) !== undefined) {
+                placed.add(child);
+            }
+        }
+    }
+    assertPlaced(draft, placed);
+};
+
 /** Reads only each entry's content, never a plugin's editing parts. */
 export const buildContentRegistry = (entries: readonly (RtePlugin | RteContent)[]): ContentRegistry => {
     const draft: ContentDraft = {
@@ -161,6 +274,8 @@ export const buildContentRegistry = (entries: readonly (RtePlugin | RteContent)[
                 );
         }
     }
+
+    assertGridShapes(draft);
 
     return {
         blocks: draft.blocks,

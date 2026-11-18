@@ -1,0 +1,208 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "before"
+                }
+            ]
+        },
+        {
+            "type": "table",
+            "children": [
+                {
+                    "type": "tableRow",
+                    "children": [
+                        {
+                            "type": "tableHeader",
+                            "colspan": 1,
+                            "rowspan": 1,
+                            "scope": "col",
+                            "children": [
+                                {
+                                    "type": "paragraph",
+                                    "children": [
+                                        {
+                                            "text": "Name"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "tableHeader",
+                            "colspan": 1,
+                            "rowspan": 1,
+                            "scope": "col",
+                            "children": [
+                                {
+                                    "type": "paragraph",
+                                    "children": [
+                                        {
+                                            "text": "Role"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "tableHeader",
+                            "colspan": 1,
+                            "rowspan": 1,
+                            "scope": "col",
+                            "children": [
+                                {
+                                    "type": "paragraph",
+                                    "children": [
+                                        {
+                                            "text": "Notes"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "tableRow",
+                    "children": [
+                        {
+                            "type": "tableHeader",
+                            "colspan": 1,
+                            "rowspan": 1,
+                            "scope": "row",
+                            "children": [
+                                {
+                                    "type": "paragraph",
+                                    "children": [
+                                        {
+                                            "text": "Ada"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "tableCell",
+                            "colspan": 2,
+                            "rowspan": 1,
+                            "children": [
+                                {
+                                    "type": "paragraph",
+                                    "children": [
+                                        {
+                                            "text": "Engineer"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "tableRow",
+                    "children": [
+                        {
+                            "type": "tableHeader",
+                            "colspan": 1,
+                            "rowspan": 1,
+                            "scope": "row",
+                            "children": [
+                                {
+                                    "type": "paragraph",
+                                    "children": [
+                                        {
+                                            "text": "Grace"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "tableCell",
+                            "colspan": 1,
+                            "rowspan": 2,
+                            "children": [
+                                {
+                                    "type": "paragraph",
+                                    "children": [
+                                        {
+                                            "text": "Admiral"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "tableCell",
+                            "colspan": 1,
+                            "rowspan": 1,
+                            "children": [
+                                {
+                                    "type": "bulletList",
+                                    "children": [
+                                        {
+                                            "type": "listItem",
+                                            "children": [
+                                                {
+                                                    "type": "paragraph",
+                                                    "children": [
+                                                        {
+                                                            "text": "compilers"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "tableRow",
+                    "children": [
+                        {
+                            "type": "tableHeader",
+                            "colspan": 1,
+                            "rowspan": 1,
+                            "scope": "row",
+                            "children": [
+                                {
+                                    "type": "paragraph",
+                                    "children": [
+                                        {
+                                            "text": "Alan"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "tableCell",
+                            "colspan": 1,
+                            "rowspan": 1,
+                            "children": [
+                                {
+                                    "type": "paragraph",
+                                    "children": []
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "after"
+                }
+            ]
+        }
+    ]
+}
