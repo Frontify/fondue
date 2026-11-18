@@ -9,7 +9,6 @@ import { MENU_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { activeCommand, availableCommands } from '../helpers/blockCommands';
 import { type RichTextEditorLabels } from '../labels';
-import styles from '../richTextEditor.module.scss';
 
 /** Never take the selection away from the text: the controls act on it. */
 const keepSelection = (event: MouseEvent<HTMLElement>): void => event.preventDefault();
