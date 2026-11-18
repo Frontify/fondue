@@ -61,8 +61,8 @@ const HINT = 'tw-col-span-full tw-m-0 tw-body-small tw-text-secondary';
  */
 const SURFACE = 'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-surface tw-p-medium';
 
-/** The field box around an editor: the surface, plus a ring while focus is inside it. */
-const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-ring-focus`;
+/** The field box around an editor: the surface, with a stronger border on hover and while the caret is inside, as Fondue's Textarea does. */
+const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-line-strong`;
 
 const buttonClasses = (active: boolean): string =>
     [

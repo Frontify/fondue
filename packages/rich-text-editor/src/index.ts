@@ -13,7 +13,6 @@ import {
     type PasteHandler,
     type RteBlockCommand,
     type RteBlockNode,
-    type RteCommandAvailability,
     type RteInlineNode,
     type RtePlugin as CorePlugin,
     type RteSelectionSnapshot,
@@ -116,6 +115,7 @@ export { softBreakContent, softBreakPlugin } from './plugins/SoftBreak';
 export { strikethroughContent, strikethroughPlugin } from './plugins/Strikethrough';
 export { subscriptContent, subscriptPlugin } from './plugins/Subscript';
 export { superscriptContent, superscriptPlugin } from './plugins/Superscript';
+export { tableContent, tablePlugin } from './plugins/Table';
 export { textStyleContent, textStylePlugin } from './plugins/TextStyle';
 export { typographyPlugin } from './plugins/Typography';
 export { underlineContent, underlinePlugin } from './plugins/Underline';
@@ -169,7 +169,6 @@ export declare namespace RtePlugin {
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
     export type BlockCommand = RteBlockCommand;
-    export type CommandAvailability = RteCommandAvailability;
     export type PasteHandler = OnPaste;
     export type HtmlSpec = Html;
 }
