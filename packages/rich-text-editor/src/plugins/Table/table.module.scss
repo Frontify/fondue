@@ -23,8 +23,7 @@
 
 .cell,
 .header {
-    // Fondue has no width tokens, so the floor sits on the spacing scale: 4 × 1.5rem = 6rem.
-    min-width: calc(4 * var(--spacing-large));
+    min-width: 6rem;
     padding: var(--spacing-xx-small) var(--spacing-x-small);
     border: var(--border-width-default) solid var(--color-line-mid);
     text-align: start;
