@@ -59,10 +59,25 @@ export const readableShortcut = (shortcut: string, apple = isApple()): string =>
         : parts.map((part) => (part === 'Mod' ? 'Ctrl' : part)).join('+');
 };
 
+type ToolbarButtonEmphasis = ComponentProps<typeof Button>['emphasis'];
+
 /**
- * The toolbar button the built-in plugins share: Fondue's square low-emphasis
- * `Button` with `aria-pressed` for toggles and a tooltip naming it. Not editor
- * API. Takes a ref so a flyout can anchor to it.
+ * Weak while off, default while on: pressed or partly pressed as a toggle, or checked as a radio
+ */
+const emphasisOf = (
+    active: ToolbarButtonProps['active'],
+    checked: ToolbarButtonProps['aria-checked'],
+): ToolbarButtonEmphasis => {
+    if (active === true || active === 'mixed' || checked === true || checked === 'true') {
+        return 'default';
+    }
+    return 'weak';
+};
+
+/**
+ * The toolbar button the built-in plugins share: Fondue's square `Button`
+ * with `aria-pressed` for toggles and a tooltip naming it. Not editor API.
+ * Takes a ref so a flyout can anchor to it.
  */
 export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(function ToolbarButton(
     { children, active, disabled, onClick, title, shortcut, ...rest },
@@ -103,8 +118,7 @@ export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(f
                     ref={ref}
                     type="button"
                     aspect="square"
-                    // Both states are the ghost button; the editor draws no pressed look of its own.
-                    emphasis="weak"
+                    emphasis={emphasisOf(active, rest['aria-checked'])}
                     disabled={disabled}
                     aria-label={title}
                     onPress={onClick}
