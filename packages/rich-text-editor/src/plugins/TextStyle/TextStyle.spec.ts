@@ -25,7 +25,7 @@ describe('the text style plugin presets', () => {
     });
 
     it('shares the default content when there are no presets', () => {
-        expect(textStylePlugin().content).toBe(textStyleContent);
+        expect(textStylePlugin().content).toBe(textStyleContent());
     });
 
     it('sets a custom property for the body, quote and link looks', () => {
@@ -70,7 +70,25 @@ describe('the text style plugin presets', () => {
     it('keeps the shared block when only presets differ, so it registers next to the default content', () => {
         const plugin = textStylePlugin({ presets: { heading1: { color: 'red' } } });
 
-        expect(plugin.content?.blocks?.textStyle).toBe(textStyleContent.blocks?.textStyle);
-        expect(() => buildPluginRegistry([textStyleContent, plugin])).not.toThrow();
+        expect(plugin.content?.blocks?.textStyle).toBe(textStyleContent().blocks?.textStyle);
+        expect(() => buildPluginRegistry([textStyleContent(), plugin])).not.toThrow();
+    });
+});
+
+describe('the text style content', () => {
+    it('hands out one shared content when given no presets', () => {
+        expect(textStyleContent()).toBe(textStyleContent({}));
+    });
+
+    it('carries the same looks as the plugin given the same presets', () => {
+        const presets = { body: { fontSize: '16px' }, link: { color: 'blue' } };
+
+        expect(textStyleContent({ presets })).toEqual(textStylePlugin({ presets }).content);
+    });
+
+    it('refuses a value that could break out of its declaration', () => {
+        expect(() => textStyleContent({ presets: { quote: { color: 'red; display: none' } } })).toThrow(
+            /"color".*"quote"/,
+        );
     });
 });

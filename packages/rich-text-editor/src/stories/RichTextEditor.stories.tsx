@@ -9,20 +9,25 @@ import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 // that are its own rather than a plugin's.
 import {
     boldPlugin,
+    bulletListContent,
     bulletListPlugin,
+    checkListContent,
     checkListPlugin,
     columnBreakPlugin,
     defaultPlugins,
     definePlugin,
     italicPlugin,
+    linkContent,
     linkPlugin,
     type MentionItem,
     mentionPlugin,
+    quoteContent,
     quotePlugin,
     type RteDocument,
     type RtePlugin,
     RichTextEditor,
     RichTextRenderer,
+    textStyleContent,
     textStylePlugin,
     type TextStylePluginOptions,
     type TextStylePresets,
@@ -56,8 +61,8 @@ const HINT = 'tw-col-span-full tw-m-0 tw-body-small tw-text-secondary';
  */
 const SURFACE = 'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-surface tw-p-medium';
 
-/** The field box around an editor: the surface, plus a ring while focus is inside it. */
-const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-ring-focus`;
+/** The field box around an editor: the surface, with a stronger border on hover and while the caret is inside, as Fondue's Textarea does. */
+const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-line-strong`;
 
 const buttonClasses = (active: boolean): string =>
     [
@@ -701,9 +706,9 @@ export const CommentBox: Story = {
                         value={doc}
                         onChange={setDoc}
                         plugins={[
-                            boldPlugin,
-                            italicPlugin,
-                            linkPlugin,
+                            boldPlugin(),
+                            italicPlugin(),
+                            linkPlugin(),
                             mentionPlugin({
                                 items: MENTIONABLE,
                                 href: profileHref,
@@ -821,7 +826,7 @@ export const TwoEditors: Story = {
                 </div>
                 <div className={LAYOUT}>
                     <div className={FRAME}>
-                        <RichTextEditor value={boldDoc} onChange={setBoldDoc} plugins={[boldPlugin]} />
+                        <RichTextEditor value={boldDoc} onChange={setBoldDoc} plugins={[boldPlugin()]} />
                     </div>
                     <pre className={JSON_PANEL}>{JSON.stringify(boldDoc, null, 2)}</pre>
                 </div>
@@ -906,10 +911,19 @@ const GUIDELINE_PRESETS: TextStylePluginOptions['presets'] = {
 
 const HOST_STYLING_PLUGINS = [
     textStylePlugin({ presets: GUIDELINE_PRESETS }),
-    bulletListPlugin,
-    checkListPlugin,
-    quotePlugin,
-    linkPlugin,
+    bulletListPlugin(),
+    checkListPlugin(),
+    quotePlugin(),
+    linkPlugin(),
+];
+
+// The renderer takes content only, with the same presets, so a page that only shows documents ships no editing code.
+const HOST_STYLING_CONTENT = [
+    textStyleContent({ presets: GUIDELINE_PRESETS }),
+    bulletListContent,
+    checkListContent,
+    quoteContent,
+    linkContent,
 ];
 
 const HOST_STYLING_DOCUMENT: RteDocument = {
@@ -968,7 +982,7 @@ const HostStylingSection = ({ title, guideline }: HostStylingSectionProps) => {
                     <RichTextEditor value={doc} onChange={setDoc} plugins={HOST_STYLING_PLUGINS} />
                 </div>
                 <div className={FRAME}>
-                    <RichTextRenderer value={doc} plugins={HOST_STYLING_PLUGINS} />
+                    <RichTextRenderer value={doc} plugins={HOST_STYLING_CONTENT} />
                 </div>
             </div>
         </div>
@@ -1037,7 +1051,7 @@ const presetsPluginsFor = (presets: TextStylePresets): PresetsPluginsResult => {
     try {
         return {
             status: 'ready',
-            plugins: [textStylePlugin({ presets }), bulletListPlugin, checkListPlugin, quotePlugin, linkPlugin],
+            plugins: [textStylePlugin({ presets }), bulletListPlugin(), checkListPlugin(), quotePlugin(), linkPlugin()],
         };
     } catch (error) {
         if (error instanceof Error) {
@@ -1118,7 +1132,8 @@ export const Presets: StoryObj<PresetsStoryArgs> = {
 
 /**
  * The usual production setup: the values are `var(--f-theme-settings-…)`, so one editor configuration follows the section (light or dark) it sits in.
- * A host sets the look of each text style, body text, quotes and links with `textStylePlugin({ presets })`, usually from its guideline settings.
+ * A host sets the look of each text style, body text, quotes and links with `textStylePlugin({ presets })`, usually from its guideline settings,
+ * and hands the renderer `textStyleContent({ presets })` with the same values.
  * Anything the host leaves out, or a variable nobody defines, keeps Fondue's look.
  * The editor and the renderer draw the same.
  */

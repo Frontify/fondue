@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
 
-import { activeCommand, matchCommands, TEXT_COMMAND } from './blockCommands';
+import { activeCommand, availableCommands, matchCommands, TEXT_COMMAND } from './blockCommands';
 
 const command = (label: string, keywords: string[] = [], group: RteBlockCommand['group'] = 'turnInto') => ({
     id: label,
@@ -102,5 +102,34 @@ describe('the active command', () => {
         expect(TEXT_COMMAND.isActive?.(selection(['paragraph']))).toBe(true);
         expect(TEXT_COMMAND.isActive?.(selection(['paragraph', 'listItem', 'bulletList']))).toBe(false);
         expect(TEXT_COMMAND.isActive?.(selection(['textStyle']))).toBe(false);
+    });
+});
+
+describe('whether a command can run', () => {
+    const selection: RteSelectionSnapshot = {
+        kind: 'text',
+        grid: null,
+        isCollapsed: true,
+        text: '',
+        block: { type: 'paragraph' },
+        blocks: [{ type: 'paragraph' }],
+        marks: {},
+        history: { canUndo: false, canRedo: false },
+    };
+
+    it('keeps a command that says nothing', () => {
+        const always = command('Heading 1');
+
+        expect(availableCommands([always], selection)).toEqual([always]);
+    });
+
+    it('drops a command that says it cannot run on the selection', () => {
+        const limited: RteBlockCommand = {
+            ...command('Add section'),
+            isAvailable: (current) => current.block?.type !== 'paragraph',
+        };
+
+        expect(availableCommands([limited], selection)).toEqual([]);
+        expect(availableCommands([limited], { ...selection, block: { type: 'heading' } })).toEqual([limited]);
     });
 });

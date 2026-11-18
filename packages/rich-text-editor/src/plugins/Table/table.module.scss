@@ -1,0 +1,50 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+/**
+ * A table wider than the content scrolls inside this wrapper, so the page
+ * never scrolls sideways.
+ */
+.scroll {
+    max-width: 100%;
+    margin-block: var(--rte-block-gap, var(--spacing-x-small));
+    overflow-x: auto;
+
+    &:focus-visible {
+        outline: var(--border-width-default) solid var(--color-focus-default);
+        outline-offset: 2px;
+    }
+}
+
+.table {
+    border-collapse: collapse;
+    // Every cell keeps a usable width, however many columns there are; the wrapper scrolls instead.
+    min-width: 100%;
+}
+
+.cell,
+.header {
+    min-width: 6rem;
+    padding: var(--spacing-xx-small) var(--spacing-x-small);
+    border: var(--border-width-default) solid var(--color-line-mid);
+    text-align: start;
+    vertical-align: top;
+
+    // The blocks inside a cell sit flush with its padding.
+    > :first-child {
+        margin-top: 0;
+    }
+
+    > :last-child {
+        margin-bottom: 0;
+    }
+
+    // The editor marks every cell of a selection that spans cells with this class.
+    &:global(.selectedCell) {
+        background-color: var(--color-container-highlight-default);
+    }
+}
+
+.header {
+    background-color: var(--color-surface-hover);
+    font-weight: var(--typography-font-weight-bold);
+}

@@ -8,7 +8,7 @@ import { type ParseRule } from '#/core';
 
 import { fontColorPlugin } from './FontColor';
 
-const fontColor = fontColorPlugin.content?.marks?.fontColor;
+const fontColor = fontColorPlugin().content?.marks?.fontColor;
 
 const parse = (html: string): unknown => {
     const element = document.createElement('div');

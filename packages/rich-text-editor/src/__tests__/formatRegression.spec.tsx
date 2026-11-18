@@ -17,6 +17,7 @@ import {
     type RteBlock,
     type RteDocument,
     type RtePlugin,
+    tablePlugin,
     typographyPlugin,
 } from '../index';
 
@@ -30,7 +31,8 @@ const plugins: readonly RtePlugin[] = [
     ...defaultPlugins,
     mentionPlugin({ items: [] }),
     columnBreakPlugin(),
-    blurOnBreakPlugin,
+    blurOnBreakPlugin(),
+    tablePlugin(),
     typographyPlugin({ groups: ['quotes', 'ellipsis', 'dashes', 'symbols', 'numeric'] }),
 ];
 
