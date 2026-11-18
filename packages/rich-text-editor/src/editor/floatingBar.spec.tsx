@@ -111,6 +111,28 @@ const spokenText = (element: Element): string => {
     return copy.textContent ?? '';
 };
 
+/** A plugin with one command per menu that can never run. */
+const unavailablePlugin = (run: () => void) =>
+    definePlugin({
+        id: 'unavailable',
+        commands: [
+            {
+                id: 'big-block',
+                label: 'Big block',
+                group: 'turnInto',
+                isAvailable: () => false,
+                run,
+            },
+            {
+                id: 'big-insert',
+                label: 'Big insert',
+                group: 'insert',
+                isAvailable: () => false,
+                run,
+            },
+        ],
+    });
+
 describe('the floating bar', () => {
     const open = (html: string) => {
         const editor = mount((onChange) => (
@@ -261,6 +283,31 @@ describe('the floating bar', () => {
         expect(stored()).toBe(before);
         expect(stored()?.blocks[0]).toMatchObject({ type: 'bulletList' });
     });
+
+    it('leaves out a command that cannot run', () => {
+        const editor = mount((onChange) => (
+            <RichTextEditor
+                plugins={[...defaultPlugins, unavailablePlugin(vi.fn())]}
+                toolbarPlacement="floating"
+                onChange={onChange}
+            />
+        ));
+        paste(editor.editable, { html: '<p>text</p>' });
+        act(() => editor.editable.focus());
+        selectText(editor.editable);
+        const trigger = window.document.querySelector<HTMLElement>('[aria-label^="Turn into"]');
+        if (!trigger) {
+            throw new Error('no Turn into');
+        }
+        act(() => trigger.focus());
+        press(trigger, 'ArrowDown');
+
+        const items = [...window.document.querySelectorAll<HTMLElement>('[role="menuitem"]')].map((item) =>
+            item.getAttribute('aria-label'),
+        );
+        expect(items).toContain('Heading 1');
+        expect(items).not.toContain('Big block');
+    });
 });
 
 describe('the / menu', () => {
@@ -405,5 +452,21 @@ describe('the / menu', () => {
         type(editable, ' /');
 
         expect(listbox()).toBeNull();
+    });
+
+    it('leaves out a command that cannot run, so typing its name finds nothing', () => {
+        const { editable } = mount((onChange) => (
+            <RichTextEditor plugins={[...plugins, unavailablePlugin(vi.fn())]} onChange={onChange} />
+        ));
+        act(() => editable.focus());
+        type(editable, '/');
+
+        expect(options()).not.toContain('Big block');
+        expect(options()).not.toContain('Big insert');
+
+        type(editable, 'big');
+
+        expect(listbox()).toBeNull();
+        expect(window.document.body.textContent).toContain('No results');
     });
 });

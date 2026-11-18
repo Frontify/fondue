@@ -9,10 +9,12 @@ import {
     defineInline,
     defineMark,
     definePlugin,
+    type GridRole,
+    gridSpanOf,
     type RteInputRule,
     type RtePlugin,
 } from './plugin';
-import { buildPluginRegistry } from './registry';
+import { buildPluginRegistry, ownTypeOf } from './registry';
 
 /**
  * The registry is the one place plugins are read: it gathers their
@@ -615,5 +617,96 @@ describe('bare content in a registry', () => {
                 definePlugin({ id: 'strong', content: defineContent({ marks: { bold: mark() } }) }),
             ]),
         ).toThrow('Duplicate mark type "bold": declared by plugin "bold" and plugin "strong".');
+    });
+});
+
+describe('a block made of parts', () => {
+    const content = defineContent({
+        blocks: {
+            outer: defineBlock({
+                content: { parts: ['inner'] },
+                toHtml: () => ({ tag: 'div', children: true }),
+                parse: [],
+            }),
+            inner: defineBlock({
+                content: { blocks: ['paragraph'] },
+                toHtml: () => ({ tag: 'div', children: true }),
+                parse: [],
+            }),
+        },
+    });
+
+    it('is a container, like a block holding other blocks', () => {
+        expect(ownTypeOf(content, 'outer')).toEqual({ kind: 'container', type: 'outer' });
+    });
+
+    it('is not a list', () => {
+        expect(buildPluginRegistry([definePlugin({ id: 'outer', content })]).itemTypeByList.has('outer')).toBe(false);
+    });
+
+    it('cannot be toggled from the toolbar, having nothing a selection turns into', () => {
+        expect(() =>
+            buildPluginRegistry([
+                definePlugin({ id: 'outer', content, toolbar: [{ label: 'Outer', toggles: 'outer', icon }] }),
+            ]),
+        ).toThrow(/nothing to toggle/);
+    });
+});
+
+describe('a block laid out as a grid', () => {
+    const container = (content: { parts: string[] } | { blocks: string[] } | 'text', gridRole?: GridRole) =>
+        defineBlock({ content, gridRole, toHtml: () => ({ tag: 'div', children: true }), parse: [] });
+
+    const gridOf = (blocks: Record<string, ReturnType<typeof container>>) =>
+        buildPluginRegistry([definePlugin({ id: 'grid', content: defineContent({ blocks }) })]);
+
+    const shape = {
+        outer: container({ parts: ['band'] }, 'grid'),
+        band: container({ parts: ['slot', 'head'] }, 'row'),
+        slot: container({ blocks: ['paragraph'] }, 'slot'),
+        head: container({ blocks: ['paragraph'] }, 'headerSlot'),
+    };
+
+    it('accepts rows of slots and header slots holding blocks', () => {
+        expect(() => gridOf(shape)).not.toThrow();
+    });
+
+    it('rejects a grid or a row whose content is not parts, and a slot that holds no blocks', () => {
+        expect(() => gridOf({ ...shape, outer: container({ blocks: ['band'] }, 'grid') })).toThrow(
+            'Plugin "grid" makes "outer" a grid, whose content must be `{ parts }`.',
+        );
+        expect(() => gridOf({ ...shape, slot: container('text', 'slot') })).toThrow(
+            'Plugin "grid" makes "slot" a slot, whose content must be `{ blocks }`.',
+        );
+    });
+
+    it('rejects a part of a grid that is not a row, and a part of a row that is not a slot', () => {
+        expect(() =>
+            gridOf({
+                ...shape,
+                outer: container({ parts: ['band', 'plain'] }, 'grid'),
+                plain: container({ blocks: [] }),
+            }),
+        ).toThrow('Plugin "grid" makes "outer" a grid, but its part "plain" is not a row.');
+        expect(() => gridOf({ ...shape, band: container({ parts: ['slot', 'outer'] }, 'row') })).toThrow(
+            'Plugin "grid" makes "band" a row, but its part "outer" is not a slot.',
+        );
+    });
+
+    it('rejects a row or a slot placed anywhere but its grid or row', () => {
+        expect(() => gridOf({ ...shape, plain: container({ blocks: ['slot'] }) })).toThrow(
+            'Plugin "grid" puts "slot", a slot, in "plain", which is not a row.',
+        );
+        expect(() => gridOf({ ...shape, loose: container({ parts: ['slot'] }, 'row') })).toThrow(
+            'Plugin "grid" makes "loose" a row, but no grid holds it.',
+        );
+    });
+});
+
+describe('a slot span', () => {
+    it('is a whole number from 1 to 50, read from a number or from markup', () => {
+        expect([3, '3', 2.7, 400, '400', 0, -2, 'wide', null, undefined, Number.NaN].map(gridSpanOf)).toEqual([
+            3, 3, 2, 50, 50, 1, 1, 1, 1, 1, 1,
+        ]);
     });
 });
