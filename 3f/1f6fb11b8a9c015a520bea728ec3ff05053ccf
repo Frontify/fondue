@@ -1,0 +1,85 @@
+packages/rich-text-editor/src/plugins/TextStyle/index.ts
+  s_d486ecb43c5b4c::t_899d71f33276cb 4,7,11
+packages/rich-text-editor/src/renderer/document.module.scss
+  s_d486ecb43c5b4c::t_899d71f33276cb 67-69,74-77
+  s_d486ecb43c5b4c::t_68a991235718b9 78-79
+packages/rich-text-editor/src/renderer/inlineLooks.spec.ts
+  s_d486ecb43c5b4c::t_582fc8c9e38e03 17-19,106-108,113-114,119-120,125-126,172
+packages/rich-text-editor/src/__tests__/browser/ExportedLooksPair.tsx
+  s_d486ecb43c5b4c::t_5bdb3c17095cbc 5-15,30-45,48-49
+packages/rich-text-editor/src/core/look.ts
+  s_d486ecb43c5b4c::t_17b017670cdcc0 70-71
+  s_d486ecb43c5b4c::t_d61a88b4e74c8a 92-93,95-96,99,101-104
+  s_d486ecb43c5b4c::t_c6dad41d4a8e15 72
+packages/rich-text-editor/src/core/look.spec.ts
+  s_d486ecb43c5b4c::t_17b017670cdcc0 34-35,37-41,45,48-50
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_d486ecb43c5b4c::t_899d71f33276cb 705,890-903,910-911,978-979
+packages/rich-text-editor/src/__tests__/serializeToHtml.node.spec.tsx
+  s_d486ecb43c5b4c::t_57f0981bfb5769 107-111,113-114,161-174,210
+packages/rich-text-editor/src/plugins/Quote/index.ts
+  s_d486ecb43c5b4c::t_899d71f33276cb 3
+packages/rich-text-editor/src/renderer/inlineLooks.ts
+  s_d486ecb43c5b4c::t_b0c9a8127ae157 6,69-81,84,88,100-101,103-104,107,121-122,126,149,158,160-161
+  s_d486ecb43c5b4c::t_57f0981bfb5769 115,131
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_d486ecb43c5b4c::t_899d71f33276cb 48-94,96,106,127-156
+  s_d486ecb43c5b4c::t_1d26f1eff07c9c 97-105
+packages/rich-text-editor/src/plugins/defaultContent.ts
+  s_d486ecb43c5b4c::t_899d71f33276cb 27,36,41
+packages/rich-text-editor/src/core/registry.ts
+  s_d486ecb43c5b4c::t_d61a88b4e74c8a 125,556-561,563,653
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_d486ecb43c5b4c::t_899d71f33276cb 9,292,430-437
+  s_d486ecb43c5b4c::t_57f0981bfb5769 579-581
+  s_d486ecb43c5b4c::t_869770a1da575b 438-440
+packages/rich-text-editor/src/__tests__/typeDerivation.spec.ts
+  s_d486ecb43c5b4c::t_899d71f33276cb 15,164,167,170
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.spec.ts
+  s_d486ecb43c5b4c::t_899d71f33276cb 28-62,74-75
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_d486ecb43c5b4c::t_17f876c1bcc8af 100-108,127
+  s_d486ecb43c5b4c::t_899d71f33276cb 43-51,59-60,64,67,112,132-133,135-138,140-146,206
+  s_d486ecb43c5b4c::t_a7312553d8a4d5 68
+packages/rich-text-editor/src/plugins/Link/Link.spec.ts
+  s_d486ecb43c5b4c::t_899d71f33276cb 5,7
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_d486ecb43c5b4c::t_899d71f33276cb 814,1325,2664
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_d486ecb43c5b4c::t_899d71f33276cb 189,423,673
+packages/rich-text-editor/src/__tests__/browser/HostLooksPair.tsx
+  s_d486ecb43c5b4c::t_899d71f33276cb 5-18,22-25,33-41
+packages/rich-text-editor/src/index.ts
+  s_d486ecb43c5b4c::t_899d71f33276cb 146-152
+packages/rich-text-editor/src/__tests__/browser/HostBodyContentPair.tsx
+  s_d486ecb43c5b4c::t_899d71f33276cb 1-43
+.changeset/rte-paragraph-quote-link-looks.md
+  s_d486ecb43c5b4c::t_899d71f33276cb 5
+packages/rich-text-editor/src/plugins/index.ts
+  s_d486ecb43c5b4c::t_899d71f33276cb 48,53
+packages/rich-text-editor/src/plugins/Link/index.ts
+  s_d486ecb43c5b4c::t_899d71f33276cb 3
+packages/rich-text-editor/src/core/plugin.ts
+  s_d486ecb43c5b4c::t_d61a88b4e74c8a 39-41,43
+packages/rich-text-editor/src/plugins/Quote/Quote.ts
+  s_d486ecb43c5b4c::t_899d71f33276cb 22-30,33,38-43
+  s_d486ecb43c5b4c::t_1d26f1eff07c9c 5,31-32
+packages/rich-text-editor/src/renderer/serializeToHtml.ts
+  s_d486ecb43c5b4c::t_55b9345063cb5a 3-10,16-18,71-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3f1f6fb11b8a9c015a520bea728ec3ff05053ccf",
+  "prompts": {},
+  "sessions": {
+    "s_d486ecb43c5b4c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a225ea0e-d11a-48c2-ac8f-86dd67c3a603",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
