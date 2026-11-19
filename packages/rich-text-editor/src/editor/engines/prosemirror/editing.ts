@@ -186,6 +186,7 @@ const mount = ({
             api,
             selectionRect: createSelectionRectReader(editorView),
             document: () => toRteDocument(editorView.state.doc, rootExtras),
+            isDestroyed: () => editorView.isDestroyed,
         },
         setDoc,
         setPlaceholder(next) {

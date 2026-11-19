@@ -238,7 +238,9 @@ export type EditorControlApi = {
     /**
      * Focus the editor. Without a position, the selection stays as it is, which
      * is how focus returns after plugin UI closes. With one, a collapsed caret
-     * goes to the first or last place for text and is scrolled into view.
+     * goes to the first or last place for text and is scrolled into view. A
+     * document made only of void blocks gets its first or last block selected
+     * instead.
      */
     focus(position?: FocusPosition): void;
     /** Give up focus, e.g. to commit a single-line editor on Enter. */

@@ -3,7 +3,7 @@
 // @vitest-environment happy-dom
 
 import { Dialog } from '@frontify/fondue-components';
-import { act, Profiler, type ReactNode, useState } from 'react';
+import { act, Profiler, type ReactNode, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -27,6 +27,7 @@ import {
     boldPlugin,
     checkListPlugin,
     defaultPlugins,
+    italicPlugin,
     linkPlugin,
     mentionPlugin,
     textStylePlugin,
@@ -1453,11 +1454,35 @@ describe('the toolbar from the keyboard', () => {
     });
 });
 
+/** A host that swaps the plugin set as it mounts, which replaces the engine before the focus request is spent. */
+const PluginsChangeOnMount = (): ReactNode => {
+    const [plugins, setPlugins] = useState<readonly RtePlugin[]>(() => [boldPlugin()]);
+
+    useEffect(() => {
+        // Intentional: the update has to land in the editor's first commit, which only a mount effect does.
+        // eslint-disable-next-line @eslint-react/set-state-in-effect
+        setPlugins([boldPlugin(), italicPlugin()]);
+    }, []);
+
+    return <RichTextEditor value={paragraph('current')} plugins={plugins} autoFocus="end" />;
+};
+
 describe('autoFocus', () => {
     it('focuses the text with the caret at its end when it mounts', () => {
         const { container, ready } = mount(() => (
             <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} autoFocus="end" />
         ));
+        ready();
+
+        const selection = window.getSelection();
+        expect(window.document.activeElement).toBe(editableIn(container));
+        expect(selection?.isCollapsed).toBe(true);
+        expect(selection?.anchorNode?.textContent).toBe('current');
+        expect(selection?.anchorOffset).toBe('current'.length);
+    });
+
+    it('focuses the text with the caret at its end when the host changes the plugins on mount', () => {
+        const { container, ready } = mount(() => <PluginsChangeOnMount />);
         ready();
 
         const selection = window.getSelection();

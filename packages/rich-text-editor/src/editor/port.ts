@@ -67,6 +67,8 @@ export type EditorHandle = {
     selectionRect(): FloatingRect;
     /** The document as it stands now, as the host would be handed it. */
     document(): RteDocumentOf;
+    /** Whether the engine behind this handle was torn down; a handle can outlive its engine by one render. */
+    isDestroyed(): boolean;
 };
 
 /**

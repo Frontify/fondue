@@ -106,7 +106,9 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * Put the caret at the start or end of the text when the editor first
      * mounts: for a reply box, or an Edit button that opens the editor with
      * existing content. Left out, the editor takes no focus on mount. Ignored
-     * while `readonly`, and when editing is turned on later.
+     * while `readonly`, and when editing is turned on later. The position
+     * applies to the document the editor mounts with; a later `value` with
+     * different content puts the caret at its end, as any new document does.
      */
     autoFocus?: FocusPosition;
     /** Shown while the document is empty, and given to assistive technology as the field's placeholder. */
@@ -356,10 +358,25 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
         }
     }, [mountFocus]);
     useEffect(() => {
-        if (focusPendingRef.current && handle !== null && mountFocus.kind === 'text') {
-            focusPendingRef.current = false;
-            handle.api.focus(mountFocus.position);
+        if (!focusPendingRef.current) {
+            return;
         }
+
+        if (handle === null) {
+            return;
+        }
+
+        // The next handle, from the same commit, takes the focus.
+        if (handle.isDestroyed()) {
+            return;
+        }
+
+        if (mountFocus.kind !== 'text') {
+            return;
+        }
+
+        focusPendingRef.current = false;
+        handle.api.focus(mountFocus.position);
     }, [handle, mountFocus]);
 
     const { focusWithin, focusProps } = useFocusWithin();
