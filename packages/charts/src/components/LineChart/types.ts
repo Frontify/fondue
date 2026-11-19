@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ValueFormatter } from '@components/common/types';
+import { type DateGranularity, type ValueFormatter } from '@components/common/types';
 
 export type LineChartDataPoint = {
     timestamp: Date;
@@ -34,4 +34,5 @@ export type LineChartProps = {
     highlightNegativeValues?: boolean;
     markLine?: MarkLineProps;
     valueFormatter?: ValueFormatter;
+    dateGranularity?: DateGranularity;
 };

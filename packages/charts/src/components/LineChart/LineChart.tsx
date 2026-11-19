@@ -3,7 +3,7 @@
 import { Grid, XYChart } from '@visx/xychart';
 
 import { Legend, Tooltip } from '@components/common/components';
-import { colorAccessorByKey, getNonZeroLinearScaleDomain } from '@components/common/helpers';
+import { colorAccessorByKey, getFirstDateTickLabel, getNonZeroLinearScaleDomain } from '@components/common/helpers';
 import { getLinearScaleTicks } from '@components/common/helpers/getLinearScaleTicks';
 import { useMargin } from '@components/common/hooks';
 import { createTheme } from '@theme/createTheme';
@@ -27,6 +27,7 @@ export const LineChart = ({
     highlightNegativeValues = false,
     markLine,
     valueFormatter,
+    dateGranularity,
 }: LineChartProps) => {
     const backfilledSeries = createBackfilledSeries(series);
     const theme = createTheme(getAreaFillColors(series.length, backfilledSeries.length));
@@ -38,6 +39,7 @@ export const LineChart = ({
         tickLabelStyle: theme.axisStyles.y.left.tickLabel,
         valueFormatter,
         tickLength: theme.axisStyles.y.left.tickLength,
+        firstXTickLabel: getFirstDateTickLabel(series, locale, dateGranularity),
     });
 
     return (
@@ -65,6 +67,7 @@ export const LineChart = ({
                     valueFormatter={valueFormatter}
                     locale={locale}
                     series={series}
+                    dateGranularity={dateGranularity}
                 />
                 <Series
                     series={series}
@@ -81,6 +84,7 @@ export const LineChart = ({
                     missingValueLabel={missingValueLabel}
                     valueFormatter={valueFormatter}
                     locale={locale}
+                    dateGranularity={dateGranularity}
                 />
             </XYChart>
             {!hideLegend && legendPosition === 'bottom' && (

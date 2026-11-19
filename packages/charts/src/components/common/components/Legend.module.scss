@@ -2,6 +2,7 @@
 
 @use '../../../utilities/sizeToken.module.scss';
 @use '../../../utilities/text.module.scss';
+@use '../../../utilities/focus.module.scss';
 
 .root {
     display: flex;
@@ -12,6 +13,12 @@
 
 .item {
     display: flex;
+
+    &:focus-visible {
+        @include focus.ring;
+
+        border-radius: var(--border-radius-small);
+    }
 }
 
 .label {

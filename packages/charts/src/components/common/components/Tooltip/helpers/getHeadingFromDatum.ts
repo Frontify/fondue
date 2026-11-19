@@ -2,7 +2,7 @@
 
 import { type BarChartDataPoint } from '@components/BarChart';
 import { type LineChartDataPoint } from '@components/LineChart';
-import { type LabelFormatter } from '@components/common/types';
+import { type DateGranularity, type LabelFormatter } from '@components/common/types';
 
 import { getFormattedTooltipDate } from './getFormattedTooltipDate';
 
@@ -15,9 +15,10 @@ export const getHeadingFromDatum = (
     datum?: LineChartDataPoint | BarChartDataPoint,
     locale?: string,
     labelFormatter?: LabelFormatter,
+    dateGranularity?: DateGranularity,
 ) => {
     if (isLineDataPoint(datum)) {
-        return getFormattedTooltipDate(datum.timestamp, locale);
+        return getFormattedTooltipDate(datum.timestamp, locale, dateGranularity);
     }
     return labelFormatter && datum ? labelFormatter(datum.label) : datum?.label;
 };

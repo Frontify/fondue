@@ -9,7 +9,8 @@ A plugin-based rich text editor for React. Documents are plain JSON (`RteDocumen
 every block, mark and inline comes from a plugin.
 
 ```tsx
-import { defaultPlugins, RichTextEditor, RichTextRenderer } from '@frontify/fondue-rich-text-editor';
+import { RichTextEditor, RichTextRenderer } from '@frontify/fondue-rich-text-editor';
+import { defaultPlugins } from '@frontify/fondue-rich-text-editor/plugins';
 import '@frontify/fondue-rich-text-editor/styles';
 
 <RichTextEditor plugins={defaultPlugins} value={doc} onChange={setDoc} />

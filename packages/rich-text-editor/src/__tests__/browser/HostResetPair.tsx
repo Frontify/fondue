@@ -2,7 +2,7 @@
 
 // Mounted by hostStyling.ct.tsx: a host page's own stylesheet around the document, such as a `p` reset.
 
-import { type TextLook } from '../../index';
+import { type TextLook } from '../../plugins';
 
 import { HostLooksPair } from './HostLooksPair';
 import { HOST_PAGE_CLASS } from './hostStylingValues';
