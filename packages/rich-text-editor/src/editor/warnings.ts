@@ -25,7 +25,7 @@ export const warnMissingEditorStrings = (lang: string): void => {
     }
     warnedLanguages.add(lang);
     console.warn(
-        `[RichTextEditor] The ThemeProvider locale "${lang}" holds no editor strings, so the editor is shown in English. Pass the locale from @frontify/fondue/rich-text-editor/locales instead.`,
+        `[RichTextEditor] The ThemeProvider locale "${lang}" holds no editor strings, so the editor is shown in English. Pass the locale from @frontify/fondue/locales instead.`,
     );
 };
 

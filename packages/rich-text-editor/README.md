@@ -36,16 +36,17 @@ Each locale holds the components' strings and the editor's, so the host passes o
 language, not the words.
 
 ```tsx
-import { deCH } from '@frontify/fondue/rich-text-editor/locales/de-CH';
+import { deCH } from '@frontify/fondue/locales/de-CH';
 
 <ThemeProvider locale={deCH}>
     <RichTextEditor />
 </ThemeProvider>
 ```
 
-Without the editor's package, the same locales come from `@frontify/fondue-rich-text-editor/locales`.
-A `ThemeProvider` locale with only the components' strings shows the editor in English, with a
-warning in development.
+`@frontify/fondue/components/locales` serves the same objects. Without `@frontify/fondue`, they
+come from `@frontify/fondue-rich-text-editor/locales`. A `ThemeProvider` locale with only the
+components' strings, as `@frontify/fondue-components/locales` has, shows the editor in English,
+with a warning in development.
 
 ## Writing a plugin
 
