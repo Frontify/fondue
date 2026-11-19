@@ -19,10 +19,10 @@ type HostStylingPairProps = {
 /** The renderer and the editor side by side, drawing the same document with the same looks. */
 export const HostStylingPair = ({ look, value = ALL_LOOKS_DOCUMENT }: HostStylingPairProps) => (
     <>
-        <div data-testid="renderer">
+        <div data-test-id="renderer">
             <RichTextRenderer value={value} plugins={[textStylePlugin({ look })]} />
         </div>
-        <div data-testid="editor">
+        <div data-test-id="editor">
             <RichTextEditor value={value} plugins={[textStylePlugin({ look })]} />
         </div>
     </>
