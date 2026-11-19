@@ -1,0 +1,27 @@
+packages/rich-text-editor/src/plugins/BlurOnBreak/BlurOnBreak.tsx
+  s_d9c0469efce250::t_0c7033d977d932 69,72-74
+packages/rich-text-editor/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_d9c0469efce250::t_0c7033d977d932 40-43,49-50
+packages/rich-text-editor/src/__tests__/formatRegression.spec.tsx
+  s_d9c0469efce250::t_0c7033d977d932 34
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_d9c0469efce250::t_d6b7ae2cfc8176 51,67-68,446,451,456-465,502,514,524,533,546-547,552,558-559,562,567,571,577,821-822,824
+packages/rich-text-editor/src/editor/engines/prosemirror/testFixtures.ts
+  s_d9c0469efce250::t_d6b7ae2cfc8176 27,30-31,34,36-37,89-90,98-99,106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6db23617e49a58629abb21379bd08b502bb41a0d",
+  "prompts": {},
+  "sessions": {
+    "s_d9c0469efce250": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "548bafad-28bd-4e36-949b-abe6993012cf",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
