@@ -3,7 +3,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator } from '@playwright/test';
 
-import { type ButtonLook, type TextLinkLook, type TextLook, type TextStyleName } from '../../index';
+import { type ButtonLook, type TextLinkLook, type TextLook, type TextStyleName } from '../../plugins';
 
 import { HostLooksPair } from './HostLooksPair';
 import { HostNoHeadingsPair } from './HostNoHeadingsPair';

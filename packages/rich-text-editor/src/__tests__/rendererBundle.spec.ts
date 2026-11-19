@@ -12,7 +12,8 @@ const SHARED_PLUGIN_CODE = String.raw`defaultContent\.ts$|shared/helpers/`;
 const PLUGIN_FILES = String.raw`(?<plugin>[A-Za-z]+)/(\k<plugin>\.tsx?$|helpers/|types\.ts$|\w+\.module\.scss$)`;
 const CONTENT_CODE = new RegExp(`^src/(${OWN_LAYERS}|plugins/(${SHARED_PLUGIN_CODE}|${PLUGIN_FILES}))`);
 const MENTION_READ_VIEW = 'src/plugins/Mention/components/MentionLink.tsx';
-const RENDERER_ENTRY = `export { RichTextRenderer, serializeToHtml, toPlainText, columnBreakContent } from './src/index.ts';`;
+const RENDERER_ENTRY = `export { RichTextRenderer, serializeToHtml, toPlainText } from './src/index.ts';
+export { columnBreakContent } from './src/plugins/index.ts';`;
 const EDITING_ONLY_CORE = /^src\/core\/(registry|hotkeys)\.ts$/;
 
 const bundleInputs = async (exportLine: string): Promise<string[]> => {
@@ -65,7 +66,7 @@ it(
 
 // The read view of a mention links with the icon and component libraries, so only src/ is checked
 it('bundles mentionContent without the mention picker', { timeout: 30_000 }, async () => {
-    const inputs = await bundleInputs(`export { mentionContent } from './src/index.ts';`);
+    const inputs = await bundleInputs(`export { mentionContent } from './src/plugins/index.ts';`);
 
     const isAllowed = (path: string): boolean => CONTENT_CODE.test(path) || path === MENTION_READ_VIEW;
     const sourceInputs = inputs.filter((path) => path.startsWith('src/'));

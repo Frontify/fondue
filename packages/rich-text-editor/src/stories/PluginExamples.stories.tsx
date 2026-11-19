@@ -12,6 +12,19 @@ import { type ReactNode, useRef, useState } from 'react';
 // contributes on its own is visible. The ones that need company to do anything
 // (markdown shortcuts, reset formatting) say so.
 import {
+    defineBlock,
+    defineContent,
+    defineInline,
+    defineMark,
+    definePlugin,
+    RichTextEditor,
+    RichTextRenderer,
+    type RteDocument,
+    type RteDocumentWith,
+    type RtePlugin,
+    toPlainText,
+} from '../index';
+import {
     alignPlugin,
     blurOnBreakPlugin,
     boldContent,
@@ -22,11 +35,6 @@ import {
     codePlugin,
     columnBreakPlugin,
     defaultPlugins,
-    defineBlock,
-    defineContent,
-    defineInline,
-    defineMark,
-    definePlugin,
     emojiPlugin,
     fontColorPlugin,
     italicPlugin,
@@ -39,21 +47,15 @@ import {
     numberedListPlugin,
     quotePlugin,
     resetFormattingPlugin,
-    type RteDocument,
-    type RteDocumentWith,
-    type RtePlugin,
-    RichTextEditor,
-    RichTextRenderer,
     softBreakPlugin,
     strikethroughPlugin,
     subscriptPlugin,
     superscriptPlugin,
     tablePlugin,
     textStylePlugin,
-    toPlainText,
     typographyPlugin,
     underlinePlugin,
-} from '../index';
+} from '../plugins';
 
 /** An avatar as an app would hand one over; inline here so the story needs no network. */
 const ADA_AVATAR = `data:image/svg+xml,${encodeURIComponent(
