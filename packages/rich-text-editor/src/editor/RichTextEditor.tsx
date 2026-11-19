@@ -121,11 +121,6 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     /** The id of an element describing the editor further — help text, an error. */
     'aria-describedby'?: string;
     /**
-     * The test id of the editor's root element.
-     * @default 'fondue-rich-text-editor'
-     */
-    'data-test-id'?: string;
-    /**
      * The words the editor's own UI says (its default name, the toolbar's
      * name, the "Turn into" and `/` menus, the message and button shown when
      * it crashes) for a host that translates them. Each one left out stays English.
@@ -150,6 +145,11 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * React does not route here.
      */
     onError?: (error: Error) => void;
+    /**
+     * The test id of the editor's root element.
+     * @default 'fondue-rich-text-editor'
+     */
+    'data-test-id'?: string;
 };
 
 /** Whether the editor was brought back by Try again, and whether the pressed button had focus. */
@@ -163,7 +163,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     plugins = [],
     labels: hostLabelOverrides,
     onError,
-    'data-test-id': dataTestId = DEFAULT_TEST_ID,
+    'data-test-id': dataTestId = 'fondue-rich-text-editor',
     ...shellProps
 }: EditorShellProps<TBlock>): ReactNode => {
     // What the editor last showed: its own edits and the host documents it
@@ -281,11 +281,12 @@ type ShellProps<TBlock extends RteBlockNode> = Omit<
     onShown: (document: RteDocumentOf) => void;
     registry: PluginRegistry;
     labels: RichTextEditorLabels;
-    dataTestId: string;
     /** How the editor came to be mounted, which decides what takes focus once it has. */
     retryFocus: RetryFocus;
     /** Told when focus enters or leaves the editor, for the fallback a crash puts in its place. */
     onFocusWithinChange: (focusWithin: boolean) => void;
+    /** The test id of the editor's root element. */
+    dataTestId: string;
 };
 
 const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
@@ -294,7 +295,6 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     onShown,
     registry,
     labels,
-    dataTestId,
     retryFocus,
     onFocusWithinChange,
     onChange,
@@ -306,6 +306,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     'aria-labelledby': ariaLabelledBy,
     'aria-describedby': ariaDescribedBy,
     onBlur,
+    dataTestId,
 }: ShellProps<TBlock>): ReactNode => {
     // A document from a newer format may hold what this editor would drop on save, so it is only shown.
     const newerVersion = newerVersionOf(document);
@@ -548,8 +549,6 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
 };
 
 // Helpers
-
-const DEFAULT_TEST_ID = 'fondue-rich-text-editor';
 
 /** The key that moves focus from the text to the toolbar, the usual one for rich text editors. */
 const isToolbarHotkey = (event: KeyboardEvent): boolean => matchesHotkey(EDITOR_SHORTCUTS.focusToolbar.key, event);

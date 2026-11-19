@@ -27,9 +27,10 @@ type EditorFallbackProps = {
     focusWasWithin: () => boolean;
     /** The host's name for the editor as a group, so the message and Retry say which editor failed. */
     groupAttributes: Record<string, string>;
-    dataTestId: string;
     /** Told when the read-only view throws too, as a crash of its own. */
     onCatch?: (error: Error) => void;
+    /** The test id of the editor's root element. */
+    dataTestId: string;
 };
 
 /**
@@ -48,8 +49,8 @@ export const EditorFallback = ({
     onRetry,
     focusWasWithin,
     groupAttributes,
-    dataTestId,
     onCatch,
+    dataTestId,
 }: EditorFallbackProps): ReactNode => {
     const retryRef = useRef<HTMLButtonElement | null>(null);
     const messageId = useId();
