@@ -9,12 +9,14 @@ import {
     type Schema,
 } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem as pmSplitListItem, wrapInList } from 'prosemirror-schema-list';
-import { type Command, type EditorState, Selection, type Transaction } from 'prosemirror-state';
+import { type Command, type EditorState, Selection, TextSelection, type Transaction } from 'prosemirror-state';
+import { Mapping } from 'prosemirror-transform';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry } from '#/core';
 
 import { withCarriedAttrs } from './carriedAttrs';
+import { type Dispatch } from './dispatch';
 import { mapChildren } from './documentConversion';
 import { warnUnknownType } from './warnings';
 
@@ -136,6 +138,7 @@ export const createListApi = (
     getView: () => EditorView,
     schema: Schema,
     registry: PluginRegistry,
+    dispatch: Dispatch,
 ): EditorControlApi['lists'] => {
     const { itemTypeByList } = registry;
     /** Run one of the engine's list commands against the item type in scope. */
@@ -145,7 +148,7 @@ export const createListApi = (
         if (!itemType) {
             return false;
         }
-        return command(itemType)(view.state, view.dispatch, view);
+        return command(itemType)(view.state, dispatch, view);
     };
 
     return {
@@ -161,7 +164,7 @@ export const createListApi = (
             const current = findList(view.state, itemTypeByList);
 
             if (!current) {
-                joiningLists(wrapInList(listType), itemTypeByList)(view.state, view.dispatch);
+                joiningLists(wrapInList(listType), itemTypeByList)(view.state, dispatch);
             } else if (current.node.type === listType) {
                 runListCommand(liftListItem);
             } else {
@@ -183,13 +186,22 @@ export const createListApi = (
                     transaction.setSelection(Selection.fromJSON(transaction.doc, state.selection.toJSON()));
                     dispatch?.(transaction);
                     return true;
-                }, itemTypeByList)(view.state, view.dispatch);
+                }, itemTypeByList)(view.state, dispatch);
             }
             view.focus();
         },
         indent: () => runListCommand(sinkListItem),
         outdent: () => runListCommand(liftListItem),
-        split: () => runListCommand((itemType) => splitListItem(registry, itemType)),
+        split() {
+            if (runListCommand((itemType) => splitListItem(registry, itemType))) {
+                return true;
+            }
+            // The engine's split refuses an empty top-level item, which Enter leaves the list from instead.
+            if (inEmptyBlock(getView().state)) {
+                return runListCommand(liftListItem);
+            }
+            return false;
+        },
         unwrapAll() {
             const view = getView();
             const { from, to } = view.state.selection;
@@ -215,7 +227,7 @@ export const createListApi = (
             for (const { node, pos } of [...lists].reverse()) {
                 transaction.replaceWith(pos, pos + node.nodeSize, contentOf(node));
             }
-            view.dispatch(transaction);
+            dispatch(transaction);
             view.focus();
             return true;
         },
@@ -227,11 +239,52 @@ export const createListApi = (
 /** More than any realistic nesting: a guard so a command that never settles cannot hang the editor. */
 const MAX_NESTING = 32;
 
+/** The outermost lists the selection touches, each with the part of the selection inside it, last first. */
+const touchedLists = (
+    doc: PmNode,
+    { from, to }: Selection,
+    itemTypeByList: Map<string, string>,
+): { from: number; to: number }[] => {
+    const parts: { from: number; to: number }[] = [];
+    doc.nodesBetween(from, to, (node, pos) => {
+        if (!itemTypeByList.has(node.type.name)) {
+            return true;
+        }
+        parts.unshift({ from: Math.max(from, pos + 1), to: Math.min(to, pos + node.nodeSize - 1) });
+        return false;
+    });
+    return parts;
+};
+
+/**
+ * One lift of the selected items of a list out one level, in the last touched list that has some; null when none has.
+ * The list command works on a single list, so each sees only the part of the selection inside it.
+ */
+const liftOnce = (
+    state: EditorState,
+    selection: Selection,
+    itemTypeByList: Map<string, string>,
+    itemTypes: readonly PmNodeType[],
+): Transaction | null => {
+    for (const part of touchedLists(state.doc, selection, itemTypeByList)) {
+        const inside = TextSelection.between(state.doc.resolve(part.from), state.doc.resolve(part.to));
+        const narrowed = state.apply(state.tr.setSelection(inside));
+        for (const itemType of itemTypes) {
+            const lifts: Transaction[] = [];
+            if (liftListItem(itemType)(narrowed, (transaction) => lifts.push(transaction))) {
+                return lifts[0] ?? null;
+            }
+        }
+    }
+    return null;
+};
+
 /**
  * The transactions that take every list item the selection touches out of its
- * list, nested levels included, in the order they apply. Empty when the
- * selection is in no list. The caller decides whether to dispatch them, so a
- * follow-up edit can share one undo step with them.
+ * list, nested levels included and across as many lists as it spans, in the
+ * order they apply. Empty when the selection is in no list. The caller decides
+ * whether to dispatch them, so a follow-up edit can share one undo step with
+ * them.
  */
 export const liftOutOfLists = (
     state: EditorState,
@@ -240,19 +293,23 @@ export const liftOutOfLists = (
 ): Transaction[] => {
     const itemTypes = [...new Set(itemTypeByList.values())].flatMap((name) => schema.nodes[name] ?? []);
     const transactions: Transaction[] = [];
+    const mapping = new Mapping();
     let current = state;
     for (let round = 0; round < MAX_NESTING; round++) {
-        let lifted: Transaction | null = null;
-        for (const itemType of itemTypes) {
-            if (liftListItem(itemType)(current, (transaction) => (lifted = transaction))) {
-                break;
-            }
-        }
+        const callerSelection = state.selection.map(current.doc, mapping);
+        const lifted = liftOnce(current, callerSelection, itemTypeByList, itemTypes);
         if (lifted === null) {
             break;
         }
         transactions.push(lifted);
+        for (const step of lifted.steps) {
+            mapping.appendMap(step.getMap());
+        }
         current = current.apply(lifted);
+    }
+    if (transactions.length > 0) {
+        // Back on what the caller had selected, whatever the lifts left selected.
+        transactions.push(current.tr.setSelection(state.selection.map(current.doc, mapping)));
     }
     return transactions;
 };
@@ -345,10 +402,8 @@ export const deleteEmptyBlockBesideList = (itemTypeByList: Map<string, string>, 
  * they report "not handled" and the baseline keymap takes over.
  */
 export const listKeys = (api: EditorControlApi, itemTypeByList: Map<string, string>): Record<string, Command> => ({
-    // The engine's own split deliberately refuses on an empty item at the top
-    // level, leaving it to be lifted out of the list instead. It also refuses
-    // a range across blocks or a selected node; those go to the baseline keymap.
-    Enter: (state) => api.lists.split() || (inEmptyBlock(state) && api.lists.outdent()),
+    // Refuses a range across blocks or a selected node; those go to the baseline keymap.
+    Enter: () => api.lists.split(),
     Tab: () => api.lists.indent(),
     'Shift-Tab': () => api.lists.outdent(),
     // At the start of an item, lift it out one level (out of the list at the

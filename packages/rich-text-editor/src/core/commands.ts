@@ -63,6 +63,24 @@ export type RteSelectionSnapshot = {
 };
 
 /**
+ * What a caret clears: the marks it would type with (`'typing'`) or its whole text block (`'block'`). A range is cleared either way.
+ */
+export type ClearMarksScope = 'typing' | 'block';
+
+export type ClearMarksOptions = {
+    /**
+     * How much a caret clears.
+     * @default 'typing'
+     */
+    scope?: ClearMarksScope;
+    /**
+     * Leave on the marks that declare `survivesClear`.
+     * @default false
+     */
+    keepSurviving?: boolean;
+};
+
+/**
  * The API plugins are handed in their toolbar controls, hotkeys and `edit` views,
  * to drive the editor whatever the engine. Read with `selection.get()`; act with
  * one command per act, keyed by the type it acts on.
@@ -89,8 +107,10 @@ export type EditorControlApi = {
          * mark, as one undo step: how a colour is removed.
          */
         remove(type: string): void;
-        /** Strip every mark from the selection — the formatting half of "reset formatting". */
-        removeAll(): void;
+        /**
+         * Strip every mark from the selection, except those that declare `survivesClear` when `keepSurviving` is set.
+         */
+        removeAll(options?: ClearMarksOptions): void;
         /**
          * The whole run of a mark around the selection (its value and text), or
          * null. Unlike the snapshot's `marks` it is about the run, not the
@@ -102,7 +122,8 @@ export type EditorControlApi = {
     blocks: {
         /**
          * Turn every text block the selection touches into this type, with `value` as its attributes.
-         * A block inside a list is first taken out of its list, so the result stands on its own.
+         * A block inside a list is first taken out of its list, so the result stands on its own, whichever lists
+         * the selection spans.
          */
         setType(type: string, value?: Record<string, unknown>): void;
         /** Set attributes on every block the selection touches — how alignment is applied. */
@@ -121,7 +142,9 @@ export type EditorControlApi = {
         indent(): boolean;
         /** Lift the current list item out one level, leaving the list entirely at the top. */
         outdent(): boolean;
-        /** Split the current list item in two — Enter inside a list. Returns false outside one. */
+        /**
+         * Split the current list item in two or, in an empty item, leave the list (outdent) — Enter inside a list. Returns false outside one.
+         */
         split(): boolean;
         /** Replace every list the selection touches with the blocks its items held, even when the selection merely contains lists. */
         unwrapAll(): boolean;

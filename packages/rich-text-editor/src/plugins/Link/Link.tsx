@@ -73,6 +73,8 @@ export const linkContent = defineContent({
             nesting: -2,
             // Typing at the end of a link does not extend it.
             inclusive: false,
+            // Clearing formatting is about how text looks; where a link goes is not.
+            survivesClear: true,
 
             toHtml: (value) => ({
                 tag: 'a',

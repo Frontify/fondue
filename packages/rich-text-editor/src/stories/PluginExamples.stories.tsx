@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useRef, useState } from 'react';
 
 // Stories import only the package public API. The consumer-plugin stories at
 // the bottom double as proof that the plugin contract is open: they define a
@@ -22,6 +22,7 @@ import {
     type RteDocument,
     type RteDocumentWith,
     type RtePlugin,
+    toPlainText,
 } from '../index';
 import {
     alignPlugin,
@@ -97,6 +98,7 @@ const LAYOUT =
 const JSON_PANEL =
     'tw-m-0 tw-min-h-[200px] tw-overflow-auto tw-rounded tw-bg-surface-dim tw-text-primary tw-p-3 tw-font-monospace tw-text-x-small tw-leading-medium';
 const HINT = 'tw-col-span-full tw-m-0 tw-body-small tw-text-secondary';
+const LIST = 'tw-m-0 tw-body-small';
 
 /**
  * The box around a renderer. The package draws none of its own — no border,
@@ -813,8 +815,8 @@ export const SoftBreak: Story = {
 };
 
 /**
- * Puts the selection back to plain text: marks gone, block type back to
- * paragraph, alignment cleared, lists unwrapped. It owns no schema — it only
+ * Puts the selection back to plain text: marks gone (links stay), block type
+ * back to paragraph, alignment cleared, lists unwrapped. It owns no schema — it only
  * drives the control API, so it needs something to undo.
  */
 export const ResetFormatting: Story = {
@@ -842,7 +844,10 @@ export const ResetFormatting: Story = {
 
         return (
             <div className={LAYOUT}>
-                <p className={HINT}>Select something, then hit the eraser button.</p>
+                <p className={HINT}>
+                    Put the caret in a block (or select some text), then hit the eraser button. One undo brings
+                    everything back.
+                </p>
                 <div className={FRAME}>
                     <RichTextEditor
                         value={doc}
@@ -862,24 +867,53 @@ export const ResetFormatting: Story = {
     },
 };
 
-/** Enter commits (blurs) instead of adding a paragraph — a single-line editor. */
+/**
+ * Enter commits instead of adding a paragraph, what a single-line editor wants.
+ * `onBreak` hears the commit (here it files the text below and clears the
+ * field), and checks for empty text itself.
+ */
 export const BlurOnBreak: Story = {
     render: () => {
-        const [doc, setDoc] = useState<RteDocument>({
-            version: 1,
-            blocks: [{ type: 'paragraph', children: [{ text: 'A title field. Press Enter to commit.' }] }],
-        });
+        const [doc, setDoc] = useState<RteDocument>({ version: 1, blocks: [{ type: 'paragraph', children: [] }] });
+        const [submitted, setSubmitted] = useState<{ id: number; text: string }[]>([]);
+        // The plugin is built once, so its `onBreak` reads the document through a ref.
+        const docRef = useRef(doc);
+        docRef.current = doc;
+        const [plugins] = useState<RtePlugin[]>(() => [
+            boldPlugin(),
+            italicPlugin(),
+            blurOnBreakPlugin({
+                onBreak: () => {
+                    const text = toPlainText(docRef.current);
+                    if (text.trim() === '') {
+                        return;
+                    }
+                    setSubmitted((previous) => [...previous, { id: previous.length, text }]);
+                    setDoc({ version: 1, blocks: [{ type: 'paragraph', children: [] }] });
+                },
+            }),
+        ]);
 
         return (
             <div className={LAYOUT}>
+                <p className={HINT}>
+                    Press Enter to submit: the text moves to the list below and the field clears. Enter on an empty
+                    field submits nothing.
+                </p>
                 <div className={FRAME}>
                     <RichTextEditor
                         value={doc}
                         onChange={setDoc}
-                        plugins={[boldPlugin(), italicPlugin(), blurOnBreakPlugin()]}
+                        plugins={plugins}
+                        placeholder="Type a comment"
+                        aria-label="Comment"
                     />
                 </div>
-                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+                <ul className={LIST}>
+                    {submitted.map(({ id, text }) => (
+                        <li key={id}>{text}</li>
+                    ))}
+                </ul>
             </div>
         );
     },

@@ -3,8 +3,8 @@
 // @vitest-environment happy-dom
 
 import { undo } from 'prosemirror-history';
-import { NodeSelection } from 'prosemirror-state';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { NodeSelection, TextSelection } from 'prosemirror-state';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
     defineBlock,
@@ -19,6 +19,7 @@ import { defaultPlugins } from '#/plugins';
 
 import { toEngineDocument } from './documentConversion';
 import { destroyEditors, editorWith, paragraph, text, tokenPlugin } from './testEditor';
+import { fixturePlugins } from './testFixtures';
 
 /**
  * The control API is what every feature drives the editor through, so each
@@ -47,6 +48,16 @@ const dividerPlugin: RtePlugin = definePlugin({
     }),
 });
 
+/** A mark of the spec's own that survives a clear: the engine reads the declaration, not the name. */
+const pinPlugin: RtePlugin = definePlugin({
+    id: 'pin',
+    content: defineContent({
+        marks: {
+            pin: defineMark({ survivesClear: true, toHtml: () => ({ tag: 'span', children: true }), parse: [] }),
+        },
+    }),
+});
+
 const emphasisPlugin: RtePlugin = definePlugin({
     id: 'emphasis',
     content: defineContent({
@@ -58,8 +69,15 @@ const emphasisPlugin: RtePlugin = definePlugin({
 
 const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin, tokenPlugin()];
 
+/** The engine's own fixtures, never a shipped plugin. */
+const fixtures: RtePlugin[] = [...fixturePlugins, dividerPlugin, tagPlugin, pinPlugin];
+
 const LINK = { href: 'https://example.com' };
+
+const REF = { target: 'somewhere' };
 const TOKEN = { id: 'tok:a' };
+
+const FROZEN_TIME = new Date('2026-01-01T00:00:00Z');
 
 afterEach(destroyEditors);
 
@@ -497,6 +515,102 @@ describe('marks.removeAll', () => {
 
         expect(editor.stored()).toEqual([paragraph(text('bo', { bold: true }), text('X'), text('ld', { bold: true }))]);
     });
+
+    it('clears the whole text block around a caret with scope block, and only that block', () => {
+        const editor = editorWith(fixtures, [
+            paragraph(text('bo', { bold: true }), text('ld', { italic: true })),
+            paragraph(text('next', { bold: true })),
+        ]);
+        editor.caretAfter('bo');
+
+        editor.api.marks.removeAll({ scope: 'block' });
+
+        expect(editor.stored()).toEqual([paragraph(text('bold')), paragraph(text('next', { bold: true }))]);
+    });
+
+    it('leaves the text at a caret alone with scope typing, and only stops what is typed next', () => {
+        const editor = editorWith(fixtures, [paragraph(text('bold', { bold: true }))]);
+        editor.caretAfter('bold');
+
+        editor.api.marks.removeAll({ scope: 'typing' });
+        editor.api.insertText('X');
+
+        expect(editor.stored()).toEqual([paragraph(text('bold', { bold: true }), text('X'))]);
+    });
+
+    it('clears a range the same with either scope', () => {
+        const blocks = [paragraph(text('bold', { bold: true }), text(' it', { italic: true }))];
+        const typing = editorWith(fixtures, blocks);
+        typing.selectBetween('bold', 'it');
+        typing.api.marks.removeAll({ scope: 'typing' });
+        const block = editorWith(fixtures, blocks);
+        block.selectBetween('bold', 'it');
+        block.api.marks.removeAll({ scope: 'block' });
+
+        expect(typing.stored()).toEqual(block.stored());
+        expect(block.stored()).toEqual([paragraph(text('bold it'))]);
+    });
+
+    it('stops a mark toggled on at a caret from being typed, with scope block', () => {
+        const editor = editorWith(fixtures, [paragraph(text('plain'))]);
+        editor.caretAfter('plain');
+        editor.api.marks.toggle('bold');
+
+        editor.api.marks.removeAll({ scope: 'block' });
+        editor.api.insertText('X');
+
+        expect(editor.stored()).toEqual([paragraph(text('plainX'))]);
+    });
+
+    it('removes a mark that survives a clear unless `keepSurviving` is set', () => {
+        const editor = editorWith(fixtures, [paragraph(text('pinned', { pin: true, ref: REF }))]);
+        editor.select('pinned');
+
+        editor.api.marks.removeAll({ scope: 'block' });
+
+        expect(editor.stored()).toEqual([paragraph(text('pinned'))]);
+    });
+
+    it('keeps every mark that declares `survivesClear` when `keepSurviving` is set, over a range and at a caret', () => {
+        const blocks = [
+            paragraph(text('bold', { bold: true, ref: REF, pin: true }), text(' '), text('it', { italic: true })),
+        ];
+        const range = editorWith(fixtures, blocks);
+        range.selectBetween('bold', 'it');
+        range.api.marks.removeAll({ scope: 'block', keepSurviving: true });
+        const caret = editorWith(fixtures, blocks);
+        caret.caretAfter('bo');
+        caret.api.marks.removeAll({ scope: 'block', keepSurviving: true });
+
+        const expected = [paragraph(text('bold', { ref: REF, pin: true }), text(' it'))];
+        expect(range.stored()).toEqual(expected);
+        expect(caret.stored()).toEqual(expected);
+    });
+
+    it('with no options strips a range of every mark and, at a caret, only stops what is typed next', () => {
+        const range = editorWith(fixtures, [
+            paragraph(text('bold', { bold: true, ref: REF, pin: true }), text(' end')),
+        ]);
+        range.selectBetween('bold', 'end');
+        range.api.marks.removeAll();
+        const caret = editorWith(fixtures, [paragraph(text('bold', { bold: true, ref: REF, pin: true }))]);
+        caret.caretAfter('bold');
+        caret.api.marks.removeAll();
+        caret.api.insertText('X');
+
+        expect(range.stored()).toEqual([paragraph(text('bold end'))]);
+        expect(caret.stored()).toEqual([paragraph(text('bold', { bold: true, ref: REF, pin: true }), text('X'))]);
+    });
+
+    it('keeps a mention', () => {
+        const mention = { type: 'tag', name: 'Ada' };
+        const editor = editorWith(fixtures, [paragraph(text('hi ', { bold: true }), mention)]);
+        editor.caretAfter('hi');
+
+        editor.api.marks.removeAll({ scope: 'block' });
+
+        expect(editor.stored()).toEqual([paragraph(text('hi '), mention)]);
+    });
 });
 
 describe('the run of a mark around a caret', () => {
@@ -562,10 +676,27 @@ describe('blocks.setType', () => {
     });
 });
 
+describe('lists.split', () => {
+    const item = (...children: RteBlockNode[]): RteBlockNode => ({ type: 'listItem', children }) as RteBlockNode;
+    const bullets = (...children: RteBlockNode[]): RteBlockNode => ({ type: 'bulletList', children }) as RteBlockNode;
+
+    it('turns an empty top-level item into a paragraph after the list', () => {
+        const editor = editorWith(fixtures, [bullets(item(paragraph(text('one'))), item(paragraph()))]);
+        // The caret goes to the end of the document: the empty item.
+        editor.view.dispatch(editor.view.state.tr.setSelection(TextSelection.atEnd(editor.view.state.doc)));
+
+        expect(editor.api.lists.split()).toBe(true);
+
+        expect(editor.stored()).toEqual([bullets(item(paragraph(text('one')))), paragraph()]);
+    });
+});
+
 describe('blocks.setType inside a list', () => {
     const item = (...children: RteBlockNode[]): RteBlockNode => ({ type: 'listItem', children }) as RteBlockNode;
     const bullets = (...children: RteBlockNode[]): RteBlockNode => ({ type: 'bulletList', children }) as RteBlockNode;
     const heading = { type: 'textStyle', style: 'heading1', children: [{ text: 'one' }] } as RteBlockNode;
+    const headed = (value: string): RteBlockNode =>
+        ({ type: 'heading', level: 1, children: [{ text: value }] }) as RteBlockNode;
 
     it('takes the item out of its list to leave a paragraph', () => {
         const editor = editorWith(plugins, [bullets(item(paragraph(text('one'))))]);
@@ -618,6 +749,75 @@ describe('blocks.setType inside a list', () => {
         undo(editor.view.state, editor.view.dispatch);
 
         expect(editor.stored()).toEqual([bullets(item(paragraph(text('one'))))]);
+    });
+
+    it('lifts only the selected items of a list, leaving the others in it', () => {
+        const editor = editorWith(fixtures, [
+            bullets(item(paragraph(text('one'))), item(paragraph(text('two'))), item(paragraph(text('three')))),
+        ]);
+        editor.selectBetween('two', 'three');
+
+        editor.api.blocks.setType('paragraph');
+
+        expect(editor.stored()).toEqual([
+            bullets(item(paragraph(text('one')))),
+            paragraph(text('two')),
+            paragraph(text('three')),
+        ]);
+    });
+
+    it('lifts every list a range spans, and the plain blocks between them stay', () => {
+        const editor = editorWith(fixtures, [
+            bullets(item(paragraph(text('one')))),
+            paragraph(text('between')),
+            {
+                type: 'numberedList',
+                children: [{ type: 'listItem', children: [paragraph(text('two'))] }],
+            } as RteBlockNode,
+        ]);
+        editor.selectBetween('one', 'two');
+
+        editor.api.blocks.setType('heading', { level: 1 });
+
+        expect(editor.stored()).toEqual([headed('one'), headed('between'), headed('two')]);
+    });
+
+    it('lifts nested lists across a range, keeping the order', () => {
+        const numbered = (...children: RteBlockNode[]): RteBlockNode =>
+            ({ type: 'numberedList', children }) as RteBlockNode;
+        const editor = editorWith(fixtures, [
+            paragraph(text('before')),
+            bullets(item(paragraph(text('outer')), numbered(item(paragraph(text('inner')))))),
+            bullets(item(paragraph(text('second')))),
+            paragraph(text('after')),
+        ]);
+        editor.selectBetween('before', 'after');
+
+        editor.api.blocks.setType('paragraph');
+
+        expect(editor.stored()).toEqual([
+            paragraph(text('before')),
+            paragraph(text('outer')),
+            paragraph(text('inner')),
+            paragraph(text('second')),
+            paragraph(text('after')),
+        ]);
+    });
+
+    it('keeps the selection over the blocks it covered, so one undo takes back every lift', () => {
+        const editor = editorWith(fixtures, [
+            bullets(item(paragraph(text('one')))),
+            bullets(item(paragraph(text('two')))),
+        ]);
+        editor.selectBetween('one', 'two');
+
+        editor.api.blocks.setType('paragraph');
+        const { from, to } = editor.view.state.selection;
+        const covered = editor.view.state.doc.textBetween(from, to, ' ');
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(covered).toBe('one two');
+        expect(editor.stored()).toEqual([bullets(item(paragraph(text('one')))), bullets(item(paragraph(text('two'))))]);
     });
 });
 
@@ -975,5 +1175,88 @@ describe('blocks.setType with attributes every text block carries', () => {
             { type: 'quote', align: 'center', children: [{ text: 'one' }] },
             { type: 'quote', align: 'right', children: [{ text: 'two' }] },
         ]);
+    });
+});
+
+describe('the commands of one turn', () => {
+    const original = [paragraph(text('one')), paragraph(text('two')), paragraph(text('three'))];
+
+    /** A command in each block, so history has no reason to merge them by itself. */
+    const formatEach = async (editor: ReturnType<typeof editorWith>, { between }: { between: boolean }) => {
+        editor.select('one');
+        editor.api.marks.toggle('bold');
+        if (between) {
+            await Promise.resolve();
+        }
+        editor.select('two');
+        editor.api.marks.toggle('italic');
+        if (between) {
+            await Promise.resolve();
+        }
+        editor.select('three');
+        editor.api.marks.toggle('underline');
+    };
+
+    const countUndos = (editor: ReturnType<typeof editorWith>): number => {
+        let steps = 0;
+        while (undo(editor.view.state, editor.view.dispatch)) {
+            steps++;
+        }
+        return steps;
+    };
+
+    it('are one undo step', async () => {
+        const editor = editorWith(fixtures, original);
+
+        await formatEach(editor, { between: false });
+
+        expect(editor.stored()).not.toEqual(original);
+        expect(countUndos(editor)).toBe(1);
+        expect(editor.stored()).toEqual(original);
+    });
+
+    it('are separate steps when each is run in a turn of its own', async () => {
+        const editor = editorWith(fixtures, original);
+
+        await formatEach(editor, { between: true });
+
+        expect(countUndos(editor)).toBe(3);
+    });
+
+    describe('around typing', () => {
+        // History merges typing closer together than its group delay, so the clock is frozen: only closeHistory can separate the steps.
+        beforeEach(() => {
+            vi.useFakeTimers({ toFake: ['Date'] });
+            vi.setSystemTime(FROZEN_TIME);
+        });
+        afterEach(() => {
+            vi.useRealTimers();
+        });
+
+        // Mark steps change no range, so history never sees them as adjacent: these commands insert text.
+        it('keep the typing right before them as its own step', () => {
+            const editor = editorWith(fixtures, [paragraph(text('one'))]);
+            editor.caretAfter('one');
+            editor.type('x');
+
+            editor.api.insertText('y');
+            editor.api.insertText('z');
+            undo(editor.view.state, editor.view.dispatch);
+
+            expect(editor.stored()).toEqual([paragraph(text('onex'))]);
+        });
+
+        it('keep the typing right after them as its own step', async () => {
+            const editor = editorWith(fixtures, [paragraph(text('one'))]);
+            editor.caretAfter('one');
+
+            editor.api.insertText('y');
+            editor.api.marks.toggle('bold');
+            await Promise.resolve();
+            editor.type('x');
+            undo(editor.view.state, editor.view.dispatch);
+
+            expect(editor.stored()).toEqual([paragraph(text('oney'))]);
+        });
     });
 });
