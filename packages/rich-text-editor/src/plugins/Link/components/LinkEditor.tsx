@@ -6,10 +6,11 @@ import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 
 import { type EditProps } from '#/core';
 
 import { isSafeHref } from '../../shared/helpers/href';
+import { isButtonLink, linkClassName } from '../helpers/appearance';
 import { type LinkSearch } from '../helpers/destination';
 import { NEW_TAB_REL, NEW_TAB_TARGET } from '../helpers/newTab';
 import { NEW_TAB_NOTE } from '../helpers/strings';
-import { type LinkValue } from '../helpers/value';
+import { type LinkAppearance, type LinkValue } from '../helpers/value';
 import styles from '../link.module.scss';
 
 import { LinkTargetForm } from './LinkTargetForm';
@@ -18,6 +19,7 @@ const PANEL_CONTROLS = 'a[href], button:not([disabled])';
 
 type LinkEditorProps = EditProps<LinkValue> & {
     search?: LinkSearch;
+    appearances?: readonly LinkAppearance[];
 };
 
 /**
@@ -38,6 +40,7 @@ export const LinkEditor = ({
     remove,
     api,
     search,
+    appearances,
 }: LinkEditorProps): ReactNode => {
     // A flyout closed by hand stays closed until the caret leaves the link and returns.
     const [dismissed, setDismissed] = useState(false);
@@ -111,6 +114,11 @@ export const LinkEditor = ({
         href = value.href;
     }
 
+    let appearance: LinkAppearance | undefined;
+    if (isButtonLink(value)) {
+        appearance = value.appearance;
+    }
+
     return (
         <Flyout.Root
             open={open}
@@ -125,7 +133,7 @@ export const LinkEditor = ({
                 <a
                     ref={anchorRef}
                     href={href}
-                    className={styles.link}
+                    className={linkClassName(appearance)}
                     // ARIA 1.3 global attribute that the lint rule's table does not know yet.
                     // oxlint-disable-next-line jsx-a11y/role-supports-aria-props
                     aria-description={value.openInNewTab === true ? 'Opens in a new tab' : undefined}
@@ -153,6 +161,7 @@ export const LinkEditor = ({
                             initial={value}
                             kind="edit"
                             search={search}
+                            appearances={appearances}
                             onSave={(next) => {
                                 // Close first: the link is rebuilt with its new value and would reopen.
                                 setOpen(false);

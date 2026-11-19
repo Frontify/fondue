@@ -4,17 +4,19 @@
 
 import { RichTextEditor, RichTextRenderer, type RteDocument, type RtePlugin } from '../../index';
 import {
+    type ButtonLook,
     bulletListContent,
     bulletListPlugin,
     checkListContent,
     checkListPlugin,
     fontColorContent,
     fontColorPlugin,
+    type LinkAppearance,
     linkContent,
-    type LinkLook,
     linkPlugin,
     quoteContent,
     quotePlugin,
+    type TextLinkLook,
     type TextLook,
     textStyleContent,
     textStylePlugin,
@@ -25,7 +27,8 @@ import { BODY_QUOTE_LINK_DOCUMENT } from './hostStylingValues';
 type HostLooksPairProps = {
     body?: TextLook;
     quote?: TextLook;
-    link?: LinkLook;
+    link?: TextLinkLook;
+    buttons?: Partial<Record<LinkAppearance, ButtonLook>>;
     /**
      * The document both surfaces draw.
      * @default BODY_QUOTE_LINK_DOCUMENT
@@ -33,23 +36,23 @@ type HostLooksPairProps = {
     value?: RteDocument;
 };
 
-const pluginsWithLooks = ({ body, quote, link }: HostLooksPairProps): RtePlugin[] => [
+const pluginsWithLooks = ({ body, quote, link, buttons }: HostLooksPairProps): RtePlugin[] => [
     textStylePlugin({ presets: { body, quote } }),
     bulletListPlugin(),
     checkListPlugin(),
     fontColorPlugin(),
     quotePlugin(),
-    linkPlugin({ look: link }),
+    linkPlugin({ look: { text: link, button: buttons } }),
 ];
 
 // The renderer gets content only, as a page that only shows documents would, so the looks must travel with the content.
-const contentWithLooks = ({ body, quote, link }: HostLooksPairProps) => [
+const contentWithLooks = ({ body, quote, link, buttons }: HostLooksPairProps) => [
     textStyleContent({ presets: { body, quote } }),
     bulletListContent,
     checkListContent,
     fontColorContent,
     quoteContent,
-    linkContent({ look: link }),
+    linkContent({ look: { text: link, button: buttons } }),
 ];
 
 /** The renderer and the editor side by side, drawing body text, a quote and links with the same looks. */

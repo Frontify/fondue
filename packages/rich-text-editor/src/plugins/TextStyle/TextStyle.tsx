@@ -6,6 +6,7 @@ import {
     defineBlock,
     defineContent,
     definePlugin,
+    LOOK_PROPERTIES,
     lookProperties,
     PARAGRAPH,
     type RteBlockCommand,
@@ -98,7 +99,7 @@ const textStyleContentFor = (options: readonly TextStyleOption[], presets: TextS
     const contentProperties: Record<string, string> = {};
     for (const [name, look] of Object.entries(presets)) {
         if (look !== undefined) {
-            Object.assign(contentProperties, lookProperties(name, look));
+            Object.assign(contentProperties, lookProperties(name, look, LOOK_PROPERTIES));
         }
     }
 

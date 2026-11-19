@@ -1,13 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, Checkbox, Label, TextInput } from '@frontify/fondue-components';
+import { Button, Checkbox, Label, Select, TextInput } from '@frontify/fondue-components';
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
 import { toHref } from '../../shared/helpers/href';
 import { isCompositionKey } from '../../shared/helpers/keys';
+import { APPEARANCES, isButtonLink, isLinkAppearance, NO_APPEARANCES } from '../helpers/appearance';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
 import { TEXT_LABEL } from '../helpers/strings';
-import { type LinkValue } from '../helpers/value';
+import { type LinkAppearance, type LinkValue } from '../helpers/value';
 
 import { DestinationField } from './DestinationField';
 import styles from './linkForm.module.scss';
@@ -15,6 +16,10 @@ import styles from './linkForm.module.scss';
 const UNREADABLE = 'Enter a web address (example.com), an email address, or a phone number (tel:…).';
 const MISSING_ADDRESS = 'Enter where the link goes.';
 const LINK_TO_LABEL = 'Link to';
+const STYLE_LABEL = 'Style';
+const NO_STYLE_LABEL = 'No style';
+// The Select's value for no appearance; it cannot clash with an appearance's name.
+const NO_STYLE_VALUE = 'none';
 const NEW_TAB_LABEL = 'Open in new tab';
 const REMOVE_LABEL = 'Remove link';
 const CANCEL_LABEL = 'Cancel';
@@ -29,6 +34,10 @@ export type LinkTargetFormProps = {
      * Turns the "Link to" field into a search over the app's pages.
      */
     search?: LinkSearch;
+    /**
+     * The button looks a Style select offers, after "No style". Left out, the form has no Style select.
+     */
+    appearances?: readonly LinkAppearance[];
     onCancel: () => void;
     /** Offered for a link that exists: take it away, keeping its text. */
     onRemove?: () => void;
@@ -69,7 +78,7 @@ const resolveMode = (props: LinkTargetFormProps): FormMode => {
  * the field.
  */
 export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
-    const { initial, search, onCancel, onRemove } = props;
+    const { initial, search, appearances = NO_APPEARANCES, onCancel, onRemove } = props;
     const { textField, onSave } = resolveMode(props);
     // A stored link without a string target opens the form empty rather than uncontrolled.
     const [typed, setTyped] = useState(typeof initial.href === 'string' ? initial.href : '');
@@ -79,10 +88,26 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
     }
     const [text, setText] = useState(initialText);
     const [openInNewTab, setOpenInNewTab] = useState(initial.openInNewTab === true);
+
+    // A stored value this form cannot name is not kept, as the renderer shows it plain.
+    let storedAppearance: LinkAppearance | null = null;
+    if (isButtonLink(initial)) {
+        storedAppearance = initial.appearance;
+    }
+
+    const [appearance, setAppearance] = useState(storedAppearance);
+    // A stored style the editor no longer offers stays selectable, so editing never drops it silently.
+    const styleOptions = [...appearances];
+    if (storedAppearance !== null && !appearances.includes(storedAppearance)) {
+        styleOptions.push(storedAppearance);
+    }
+
     // Set by a failed save, cleared when the field changes.
     const [error, setError] = useState<string | null>(null);
     const textId = useId();
     const urlId = useId();
+    const styleId = useId();
+    const styleLabelId = useId();
     const newTabId = useId();
     const errorId = useId();
     const urlFieldRef = useRef<HTMLInputElement>(null);
@@ -113,6 +138,11 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
         if (openInNewTab) {
             value = { href, openInNewTab: true };
         }
+
+        if (appearance !== null) {
+            value = { ...value, appearance };
+        }
+
         onSave(value, text);
     };
 
@@ -132,6 +162,14 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
         // An empty Text field takes the page's name; text already there is the author's.
         if (textField !== null && text === '') {
             setText(destination.label);
+        }
+    };
+
+    const chooseStyle = (selected: string | null): void => {
+        if (isLinkAppearance(selected)) {
+            setAppearance(selected);
+        } else {
+            setAppearance(null);
         }
     };
 
@@ -171,6 +209,29 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
                     {error}
                 </span>
             </div>
+            {styleOptions.length === 0 ? null : (
+                <div className={styles.field}>
+                    <Label id={styleLabelId} htmlFor={styleId}>
+                        {STYLE_LABEL}
+                    </Label>
+                    {/* A combobox is not a labelable element, so `htmlFor` alone does not name it. */}
+                    <Select
+                        id={styleId}
+                        aria-labelledby={styleLabelId}
+                        value={appearance ?? NO_STYLE_VALUE}
+                        onSelect={chooseStyle}
+                    >
+                        <Select.Item value={NO_STYLE_VALUE} label={NO_STYLE_LABEL}>
+                            {NO_STYLE_LABEL}
+                        </Select.Item>
+                        {styleOptions.map((option) => (
+                            <Select.Item key={option} value={option} label={APPEARANCES[option].label}>
+                                {APPEARANCES[option].label}
+                            </Select.Item>
+                        ))}
+                    </Select>
+                </div>
+            )}
             <div className={styles.newTab}>
                 <Checkbox
                     id={newTabId}

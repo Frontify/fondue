@@ -6,6 +6,8 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { type LinkAppearance, type LinkValue } from '../helpers/value';
+
 import { LinkTargetForm } from './LinkTargetForm';
 
 declare global {
@@ -25,13 +27,20 @@ type FormMode = { kind: 'create'; text: string } | { kind: 'edit' };
 
 type EnterPressInit = KeyboardEventInit & { keyCode?: number };
 
-const mountForm = (mode: FormMode = { kind: 'edit' }) => {
+type FormLink = {
+    initial?: LinkValue;
+    appearances?: readonly LinkAppearance[];
+};
+
+const mountForm = (mode: FormMode = { kind: 'edit' }, { initial = { href: '' }, appearances }: FormLink = {}) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
     const root = createRoot(container);
     const onSave = vi.fn();
     act(() => {
-        root.render(<LinkTargetForm initial={{ href: '' }} {...mode} onSave={onSave} onCancel={vi.fn()} />);
+        root.render(
+            <LinkTargetForm initial={initial} appearances={appearances} {...mode} onSave={onSave} onCancel={vi.fn()} />,
+        );
     });
     teardown.push(() => {
         act(() => root.unmount());
@@ -56,7 +65,33 @@ const mountForm = (mode: FormMode = { kind: 'edit' }) => {
             );
         });
     };
-    return { container, field, save: () => act(() => save.click()), type, press, alert, onSave };
+
+    const styleSelect = (): HTMLElement | null => container.querySelector<HTMLElement>('[role="combobox"]');
+    const chooseStyle = (label: string): void => {
+        act(() => styleSelect()?.click());
+
+        const option = [...window.document.querySelectorAll<HTMLElement>('[role="option"]')].find(
+            (candidate) => candidate.textContent === label,
+        );
+
+        if (!option) {
+            throw new Error(`the Style select offers no ${label}`);
+        }
+
+        act(() => option.click());
+    };
+
+    return {
+        container,
+        field,
+        save: () => act(() => save.click()),
+        type,
+        press,
+        alert,
+        onSave,
+        styleSelect,
+        chooseStyle,
+    };
 };
 
 /** The label text a person reads: Fondue's label repeats it in a hidden copy that only sizes the box. */
@@ -173,6 +208,101 @@ describe('the link target form', () => {
 
             const filled = mountForm({ kind: 'create', text: 'the docs' });
             expect(window.document.activeElement).toBe(filled.field);
+        });
+    });
+
+    describe('the Style select', () => {
+        const BUTTON_STYLES: readonly LinkAppearance[] = ['primary', 'secondary', 'tertiary'];
+
+        const styleOptions = (): (string | null)[] =>
+            [...window.document.querySelectorAll('[role="option"]')].map((option) => option.textContent);
+
+        it('is not there without appearances', () => {
+            expect(mountForm().styleSelect()).toBeNull();
+            expect(mountForm({ kind: 'edit' }, { appearances: [] }).styleSelect()).toBeNull();
+        });
+
+        it('is labelled Style and sits between Link to and Open in new tab', () => {
+            const { container, styleSelect } = mountForm({ kind: 'edit' }, { appearances: BUTTON_STYLES });
+
+            const stops = [...container.querySelectorAll<HTMLElement>('input, [role="combobox"], button')].map(
+                (control) => labelOf(container, control) ?? control.textContent,
+            );
+
+            expect(styleSelect()).not.toBeNull();
+            expect(stops.slice(0, 3)).toEqual(['Link to', 'Style', 'Open in new tab']);
+
+            const nameId = styleSelect()?.getAttribute('aria-labelledby') ?? '';
+            expect(window.document.getElementById(nameId)?.textContent).toContain('Style');
+        });
+
+        it('offers No style, then the offered styles in order', () => {
+            const { styleSelect } = mountForm({ kind: 'edit' }, { appearances: ['tertiary', 'primary'] });
+
+            act(() => styleSelect()?.click());
+
+            expect(styleOptions()).toEqual(['No style', 'Tertiary button', 'Primary button']);
+        });
+
+        it('saves the chosen style with the link', () => {
+            const { type, save, chooseStyle, onSave } = mountForm({ kind: 'edit' }, { appearances: BUTTON_STYLES });
+
+            type('example.com');
+
+            chooseStyle('Secondary button');
+            save();
+
+            expect(onSave).toHaveBeenCalledWith({ href: 'https://example.com', appearance: 'secondary' });
+        });
+
+        it('saves no style when No style is chosen', () => {
+            const { save, chooseStyle, onSave } = mountForm(
+                { kind: 'edit' },
+                { initial: { href: 'https://example.com', appearance: 'primary' }, appearances: BUTTON_STYLES },
+            );
+
+            chooseStyle('No style');
+            save();
+
+            expect(onSave).toHaveBeenCalledWith({ href: 'https://example.com' });
+        });
+
+        it('starts on the stored style', () => {
+            const { save, onSave } = mountForm(
+                { kind: 'edit' },
+                { initial: { href: 'https://example.com', appearance: 'tertiary' }, appearances: BUTTON_STYLES },
+            );
+
+            save();
+
+            expect(onSave).toHaveBeenCalledWith({ href: 'https://example.com', appearance: 'tertiary' });
+        });
+
+        it('keeps a stored style the editor does not offer selectable, and on save', () => {
+            const { styleSelect, save, onSave } = mountForm(
+                { kind: 'edit' },
+                { initial: { href: 'https://example.com', appearance: 'tertiary' }, appearances: ['primary'] },
+            );
+
+            act(() => styleSelect()?.click());
+
+            expect(styleOptions()).toEqual(['No style', 'Primary button', 'Tertiary button']);
+
+            act(() => window.document.body.click());
+            save();
+
+            expect(onSave).toHaveBeenCalledWith({ href: 'https://example.com', appearance: 'tertiary' });
+        });
+
+        it('keeps a stored style when the form has no Style select', () => {
+            const { save, onSave } = mountForm(
+                { kind: 'edit' },
+                { initial: { href: 'https://example.com', appearance: 'primary' } },
+            );
+
+            save();
+
+            expect(onSave).toHaveBeenCalledWith({ href: 'https://example.com', appearance: 'primary' });
         });
     });
 

@@ -42,11 +42,18 @@ export { type BlurOnBreakPluginOptions } from './BlurOnBreak';
 export { type ColumnBreakPluginOptions } from './ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './Emoji';
 export {
+    type ButtonHoverLook,
+    type ButtonLink,
+    type ButtonLook,
+    type LinkAppearance,
     type LinkContentOptions,
     type LinkDestination,
+    type LinkKind,
     type LinkLook,
     type LinkPluginOptions,
     type LinkSearch,
+    type TextLink,
+    type TextLinkLook,
 } from './Link';
 export { type MentionContentOptions, type MentionItem, type MentionPluginOptions, type MentionValue } from './Mention';
 export { type TextLook } from '#/core';
