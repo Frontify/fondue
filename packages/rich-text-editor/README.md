@@ -94,10 +94,11 @@ src/
 ├── renderer/        Readonly view and HTML export, both from each feature's content (`toHtml`).
 ├── editor/          The editing shell.
 │   ├── RichTextEditor.tsx   The component a host mounts.
+│   ├── parseHtml.ts         Stored HTML to a document; with useEditorHandle, the only file that loads the engine.
 │   ├── port.ts              The seam between the shell and an engine.
 │   ├── components/          Toolbar, floating bar, Turn into, `/` menu.
 │   ├── helpers/             Pure logic the components share.
-│   ├── hooks/               State and DOM wiring; useEditorHandle is the only file that loads the engine.
+│   ├── hooks/               State and DOM wiring; useEditorHandle loads the engine for the live editor.
 │   └── engines/prosemirror/ The only code that knows ProseMirror.
 ├── stories/         Storybook.
 ├── __tests__/       Package-level specs: rendering, HTML parity, SSR, type derivation.

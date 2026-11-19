@@ -3,8 +3,8 @@
 /**
  * Owns the live editor: mounts it once per plugin set, carries later prop
  * changes into it, and notifies subscribers whenever the editor state moves.
- * The only file outside `engines/prosemirror/` that imports that adapter (a
- * second engine is a new folder plus changing that import).
+ * With `editor/parseHtml.ts`, the only file outside `engines/prosemirror/` that
+ * imports that adapter (a second engine is a new folder plus changing those imports).
  *
  * The editor state is NOT React state: every transaction goes to the
  * subscribers of `editorState` and only they re-render (the toolbar reads the

@@ -24,7 +24,12 @@ import {
     type ToPlainTextOptions,
 } from './core';
 import { type RteBlock, type RteDocument } from './documentFormat';
-import { type EditorShellProps, RichTextEditor as EditorShell } from './editor';
+import {
+    type EditorShellProps,
+    RichTextEditor as EditorShell,
+    parseHtml as parse,
+    type ParseHtmlOptions,
+} from './editor';
 import { defaultContent } from './plugins/defaultContent';
 import { defaultPlugins } from './plugins/defaultPlugins';
 import {
@@ -84,6 +89,22 @@ export const serializeToHtml = <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,
     options: SerializeToHtmlOptions = {},
 ): string => serialize(doc, { ...options, plugins: options.plugins ?? defaultContent });
+
+/**
+ * HTML as a document, read by the same rules as a paste into the editor, but
+ * without the clean-up only a clipboard needs (Word, Outlook, Google Docs). What
+ * no plugin reads stays as its text. Opens what `serializeToHtml` saved. Uses
+ * `defaultContent` when given no `plugins`, and the page's `document` when
+ * given none; without a browser, pass one from a DOM library. The blocks are
+ * whatever the plugins read, so the document's block type is the open one.
+ * Plugin `onPaste` handlers do not run: they act on a live editor's selection,
+ * and there is none here.
+ *
+ * @example
+ * const value = parseHtml(storedHtml, { plugins: [...defaultContent, mentionContent()] });
+ */
+export const parseHtml = (html: string, options: ParseHtmlOptions = {}): RteDocument<RteBlockNode> =>
+    parse(html, { ...options, plugins: options.plugins ?? defaultContent });
 
 // --- Document format ---
 

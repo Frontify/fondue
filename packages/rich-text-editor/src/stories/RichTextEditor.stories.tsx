@@ -11,6 +11,7 @@ import { definePlugin, RichTextEditor, RichTextRenderer, type RteDocument, type 
 import {
     boldPlugin,
     bulletListContent,
+    type BulletLevelLook,
     bulletListPlugin,
     checkListContent,
     checkListPlugin,
@@ -21,6 +22,9 @@ import {
     linkPlugin,
     type MentionItem,
     mentionPlugin,
+    numberedListContent,
+    type NumberedLevelLook,
+    numberedListPlugin,
     quoteContent,
     quotePlugin,
     type TextLinkLook,
@@ -851,6 +855,12 @@ const LIGHT_GUIDELINE: GuidelineVariables = {
     '--f-theme-settings-quote-color': 'rgb(90, 50, 110)',
     '--f-theme-settings-link-color': 'rgb(190, 40, 90)',
     '--f-theme-settings-link-font-weight': '600',
+    '--f-theme-settings-list-bullet1-shape': "'– '",
+    '--f-theme-settings-list-bullet1-color': 'rgb(190, 40, 90)',
+    '--f-theme-settings-list-bullet2-color': 'rgb(30, 90, 60)',
+    '--f-theme-settings-list-bullet2-size': '1.4em',
+    '--f-theme-settings-list-numbered1-counter-type': 'upper-roman',
+    '--f-theme-settings-list-numbered1-color': 'rgb(20, 60, 120)',
 };
 
 const DARK_GUIDELINE: GuidelineVariables = {
@@ -869,6 +879,12 @@ const DARK_GUIDELINE: GuidelineVariables = {
     '--f-theme-settings-quote-color': 'rgb(210, 170, 235)',
     '--f-theme-settings-link-color': 'rgb(255, 150, 190)',
     '--f-theme-settings-link-font-weight': '600',
+    '--f-theme-settings-list-bullet1-shape': "'– '",
+    '--f-theme-settings-list-bullet1-color': 'rgb(255, 150, 190)',
+    '--f-theme-settings-list-bullet2-color': 'rgb(150, 230, 190)',
+    '--f-theme-settings-list-bullet2-size': '1.4em',
+    '--f-theme-settings-list-numbered1-counter-type': 'upper-roman',
+    '--f-theme-settings-list-numbered1-color': 'rgb(150, 190, 255)',
 };
 
 /**
@@ -907,9 +923,30 @@ const GUIDELINE_LINK_LOOK: TextLinkLook = {
     color: 'var(--f-theme-settings-link-color)',
 };
 
+/** A bullet level read from the guideline's list variables, as the brand SDK names them. */
+const guidelineBulletLevel = (level: number): BulletLevelLook => ({
+    marker: `var(--f-theme-settings-list-bullet${level}-shape)`,
+    color: `var(--f-theme-settings-list-bullet${level}-color)`,
+    size: `var(--f-theme-settings-list-bullet${level}-size)`,
+});
+
+const guidelineNumberedLevel = (level: number): NumberedLevelLook => ({
+    marker: `var(--f-theme-settings-list-numbered${level}-counter-type)`,
+    color: `var(--f-theme-settings-list-numbered${level}-color)`,
+});
+
+// The third levels read variables no section defines, so they keep Fondue's look.
+const GUIDELINE_BULLET_LOOK = [guidelineBulletLevel(1), guidelineBulletLevel(2), guidelineBulletLevel(3)] as const;
+const GUIDELINE_NUMBERED_LOOK = [
+    guidelineNumberedLevel(1),
+    guidelineNumberedLevel(2),
+    guidelineNumberedLevel(3),
+] as const;
+
 const HOST_STYLING_PLUGINS = [
     textStylePlugin({ presets: GUIDELINE_PRESETS }),
-    bulletListPlugin(),
+    bulletListPlugin({ look: GUIDELINE_BULLET_LOOK }),
+    numberedListPlugin({ look: GUIDELINE_NUMBERED_LOOK }),
     checkListPlugin(),
     quotePlugin(),
     linkPlugin({ look: { text: GUIDELINE_LINK_LOOK } }),
@@ -918,7 +955,8 @@ const HOST_STYLING_PLUGINS = [
 // The renderer takes content only, with the same presets, so a page that only shows documents ships no editing code.
 const HOST_STYLING_CONTENT = [
     textStyleContent({ presets: GUIDELINE_PRESETS }),
-    bulletListContent,
+    bulletListContent({ look: GUIDELINE_BULLET_LOOK }),
+    numberedListContent({ look: GUIDELINE_NUMBERED_LOOK }),
     checkListContent,
     quoteContent,
     linkContent({ look: { text: GUIDELINE_LINK_LOOK } }),
@@ -939,7 +977,59 @@ const HOST_STYLING_DOCUMENT: RteDocument = {
         { type: 'paragraph', children: [{ text: 'Body text takes the body look.' }] },
         {
             type: 'bulletList',
-            children: [{ type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'A bullet item' }] }] }],
+            children: [
+                {
+                    type: 'listItem',
+                    children: [
+                        { type: 'paragraph', children: [{ text: 'A bullet item' }] },
+                        {
+                            type: 'bulletList',
+                            children: [
+                                {
+                                    type: 'listItem',
+                                    children: [
+                                        { type: 'paragraph', children: [{ text: 'A second-level item' }] },
+                                        {
+                                            type: 'bulletList',
+                                            children: [
+                                                {
+                                                    type: 'listItem',
+                                                    children: [
+                                                        {
+                                                            type: 'paragraph',
+                                                            children: [{ text: 'A third-level item, Fondue look' }],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            type: 'numberedList',
+            children: [
+                {
+                    type: 'listItem',
+                    children: [
+                        { type: 'paragraph', children: [{ text: 'A numbered item' }] },
+                        {
+                            type: 'numberedList',
+                            children: [
+                                {
+                                    type: 'listItem',
+                                    children: [{ type: 'paragraph', children: [{ text: 'A second-level item' }] }],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
         },
         {
             type: 'checkList',
@@ -1061,6 +1151,7 @@ const presetsPluginsFor = ({ presets, linkLook }: PresetsStoryArgs): PresetsPlug
             plugins: [
                 textStylePlugin({ presets }),
                 bulletListPlugin(),
+                numberedListPlugin(),
                 checkListPlugin(),
                 quotePlugin(),
                 linkPlugin({ look: { text: linkLook } }),
@@ -1142,8 +1233,8 @@ export const Presets: StoryObj<PresetsStoryArgs> = {
 
 /**
  * The usual production setup: the values are `var(--f-theme-settings-…)`, so one editor configuration follows the section (light or dark) it sits in.
- * A host sets the look of each text style, body text and quotes with `textStylePlugin({ presets })`, and of links with `linkPlugin({ look: { text } })`, usually from its guideline settings,
- * and hands the renderer `textStyleContent({ presets })` and `linkContent({ look: { text } })` with the same values.
+ * A host sets the look of each text style, body text and quotes with `textStylePlugin({ presets })`, of links with `linkPlugin({ look: { text } })`, and of list markers per level with `bulletListPlugin({ look })` and `numberedListPlugin({ look })`, usually from its guideline settings,
+ * and hands the renderer `textStyleContent({ presets })`, `linkContent({ look: { text } })`, `bulletListContent({ look })` and `numberedListContent({ look })` with the same values.
  * Anything the host leaves out, or a variable nobody defines, keeps Fondue's look.
  * The editor and the renderer draw the same.
  */
