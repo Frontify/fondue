@@ -4,7 +4,7 @@ import { type MutableRefObject, type RefObject, useLayoutEffect, useRef, useStat
 import { flushSync } from 'react-dom';
 
 import { fittingSlotCount, type SlotGroup } from '../helpers/toolbarFit';
-import { GROUP_ATTRIBUTE, MORE_ATTRIBUTE, SLOT_ATTRIBUTE } from '../helpers/toolbarMarkers';
+import { GROUP_ATTRIBUTE, MORE_ATTRIBUTE, SEPARATOR_ATTRIBUTE, SLOT_ATTRIBUTE } from '../helpers/toolbarMarkers';
 
 /**
  * Whether the row has been measured for the current items.
@@ -45,6 +45,8 @@ export const useToolbarFit = ({
     // By item key, so a slot moved behind More keeps the width it had in the row.
     const widthsRef = useRef(new Map<string, number>());
     const moreWidthRef = useRef(0);
+    // Kept while the row shows one group, which still reserves the divider before More.
+    const separatorWidthRef = useRef(0);
     // Whether the focus was in the toolbar or its panel when a refit moved slots.
     const refocusRef = useRef(false);
     const measured = fitted !== null && fitted.itemsKey === itemsKey;
@@ -79,9 +81,16 @@ export const useToolbarFit = ({
             if (more !== null) {
                 moreWidthRef.current = more.getBoundingClientRect().width;
             }
+            const separator = toolbar.querySelector(`[${SEPARATOR_ATTRIBUTE}]`);
+            if (separator !== null) {
+                separatorWidthRef.current = separator.getBoundingClientRect().width;
+            }
+            const metrics = rowMetricsOf(toolbar);
             const next = fittingSlotCount({
                 groups: slotWidths(keys, widthsRef.current),
-                ...rowMetricsOf(toolbar),
+                ...metrics,
+                // The divider and the toolbar's gap either side of it.
+                gap: 2 * metrics.gap + separatorWidthRef.current,
                 more: moreWidthRef.current,
             });
             const focused = toolbar.ownerDocument.activeElement;

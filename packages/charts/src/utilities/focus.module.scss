@@ -1,0 +1,8 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@mixin ring {
+    outline-style: none;
+    box-shadow:
+        0 0 0 2px var(--color-surface-default),
+        0 0 0 6px var(--color-focus-default);
+}

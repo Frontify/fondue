@@ -15,6 +15,7 @@ import {
     type RtePlugin,
     type ToolbarItemProps,
 } from '../core';
+import { RichTextRenderer, serializeToHtml } from '../index';
 import {
     blurOnBreakPlugin,
     type BlurOnBreakPluginOptions,
@@ -24,10 +25,8 @@ import {
     mentionPlugin,
     numberedListPlugin,
     resetFormattingPlugin,
-    RichTextRenderer,
-    serializeToHtml,
     textStylePlugin,
-} from '../index';
+} from '../plugins';
 import { searchIn } from '../plugins/Mention/Mention';
 
 /**
