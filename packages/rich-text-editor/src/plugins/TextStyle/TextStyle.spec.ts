@@ -28,26 +28,18 @@ describe('the text style plugin presets', () => {
         expect(textStylePlugin().content).toBe(textStyleContent());
     });
 
-    it('sets a custom property for the body, quote and link looks', () => {
+    it('sets a custom property for the body and quote looks', () => {
         const plugin = textStylePlugin({
             presets: {
                 body: { fontSize: 'var(--f-body)' },
                 quote: { color: 'blue' },
-                link: { fontWeight: '600' },
             },
         });
 
         expect(plugin.content?.contentProperties).toEqual({
             '--rte-body-font-size': 'var(--f-body)',
             '--rte-quote-color': 'blue',
-            '--rte-link-font-weight': '600',
         });
-    });
-
-    it('refuses a link value that could break out of its declaration', () => {
-        expect(() => textStylePlugin({ presets: { link: { color: 'red; display: none' } } })).toThrow(
-            /"color".*"link"/,
-        );
     });
 
     it('carries the body look of a plugin that offers no styles, and adds nothing else', () => {
@@ -81,7 +73,7 @@ describe('the text style content', () => {
     });
 
     it('carries the same looks as the plugin given the same presets', () => {
-        const presets = { body: { fontSize: '16px' }, link: { color: 'blue' } };
+        const presets = { body: { fontSize: '16px' }, quote: { color: 'blue' } };
 
         expect(textStyleContent({ presets })).toEqual(textStylePlugin({ presets }).content);
     });

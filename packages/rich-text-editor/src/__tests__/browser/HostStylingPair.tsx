@@ -2,13 +2,8 @@
 
 // Mounted by hostStyling.ct.tsx: a component test mounts imported components, and the plugin list holds functions, which cannot travel as props.
 
-import {
-    RichTextEditor,
-    RichTextRenderer,
-    type RteDocument,
-    textStylePlugin,
-    type TextStylePluginOptions,
-} from '../../index';
+import { RichTextEditor, RichTextRenderer, type RteDocument } from '../../index';
+import { textStylePlugin, type TextStylePluginOptions } from '../../plugins';
 
 import { ALL_PRESETS_DOCUMENT } from './hostStylingValues';
 

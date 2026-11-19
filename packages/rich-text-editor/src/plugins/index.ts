@@ -1,62 +1,75 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/core';
-
-import { alignPlugin } from './Align';
-import { boldPlugin } from './Bold';
-import { checkListPlugin } from './CheckList';
-import { codePlugin } from './Code';
-import { emojiPlugin } from './Emoji';
-import { fontColorPlugin } from './FontColor';
-import { historyPlugin } from './History';
-import { italicPlugin } from './Italic';
-import { linkPlugin } from './Link';
-import { bulletListPlugin, numberedListPlugin } from './List';
-import { quotePlugin } from './Quote';
-import { resetFormattingPlugin } from './ResetFormatting';
-import { softBreakPlugin } from './SoftBreak';
-import { strikethroughPlugin } from './Strikethrough';
-import { subscriptPlugin } from './Subscript';
-import { superscriptPlugin } from './Superscript';
-import { textStylePlugin } from './TextStyle';
-import { underlinePlugin } from './Underline';
-
 // One folder per plugin, plus `shared/` for what plugins are built *out of* —
 // the toolbar button they all use. Nothing under `shared/` is a plugin, and it
 // plays by the same rules as one: it may reach for the core (`#/core`) and
 // nothing else. UI only one plugin needs stays with that plugin (Mention's
 // picker, Link's flyout).
 
-/**
- * The built-in plugins that need no configuration, which `RichTextEditor` mounts when given no `plugins`.
- * The toolbar draws them by `toolbarGroup` in the fixed group order, list order within a group, ungrouped plugins last.
- * Pass a subset, or spread it into your own list to add more.
- * Left out because they need arguments or change how the editor behaves: `mentionPlugin`, `columnBreakPlugin`,
- * `blurOnBreakPlugin` and `typographyPlugin`.
- */
-export const defaultPlugins: readonly RtePlugin[] = Object.freeze([
-    historyPlugin(),
-    textStylePlugin(),
-    boldPlugin(),
-    italicPlugin(),
-    underlinePlugin(),
-    strikethroughPlugin(),
-    codePlugin(),
-    subscriptPlugin(),
-    superscriptPlugin(),
-    fontColorPlugin(),
-    linkPlugin(),
-    alignPlugin(),
-    bulletListPlugin(),
-    numberedListPlugin(),
-    checkListPlugin(),
-    quotePlugin(),
-    resetFormattingPlugin(),
-    // Default in the old editor too; it adds no node, only text.
-    emojiPlugin(),
-    // No toolbar of its own: a keybinding.
-    softBreakPlugin(),
-]);
+// The `@frontify/fondue-rich-text-editor/plugins` package entry: every export here is public API.
 
-export { emojiPlugin } from './Emoji';
+// --- Plugins ---
+
+export { defaultPlugins } from './defaultPlugins';
+export { defaultContent } from './defaultContent';
+export { alignContent, alignPlugin } from './Align';
+export { blurOnBreakPlugin } from './BlurOnBreak';
+export { boldContent, boldPlugin } from './Bold';
+export { checkListContent, checkListPlugin } from './CheckList';
+export { codeContent, codePlugin } from './Code';
+export { columnBreakContent, columnBreakPlugin } from './ColumnBreak';
+export { defaultEmojis, emojiPlugin } from './Emoji';
+export { fontColorContent, fontColorPlugin } from './FontColor';
+export { historyPlugin } from './History';
+export { italicContent, italicPlugin } from './Italic';
+export { linkContent, linkPlugin } from './Link';
+export { bulletListContent, bulletListPlugin, numberedListContent, numberedListPlugin } from './List';
+export { mentionContent, mentionPlugin } from './Mention';
+export { quoteContent, quotePlugin } from './Quote';
+export { resetFormattingPlugin } from './ResetFormatting';
+export { softBreakContent, softBreakPlugin } from './SoftBreak';
+export { strikethroughContent, strikethroughPlugin } from './Strikethrough';
+export { subscriptContent, subscriptPlugin } from './Subscript';
+export { superscriptContent, superscriptPlugin } from './Superscript';
+export { tableContent, tablePlugin } from './Table';
+export { textStyleContent, textStylePlugin } from './TextStyle';
 export { typographyPlugin } from './Typography';
+export { underlineContent, underlinePlugin } from './Underline';
+
+// --- Plugin options ---
+
+export { type BlurOnBreakPluginOptions } from './BlurOnBreak';
+export { type ColumnBreakPluginOptions } from './ColumnBreak';
+export { type EmojiItem, type EmojiPluginOptions } from './Emoji';
+export {
+    type ButtonHoverLook,
+    type ButtonLink,
+    type ButtonLook,
+    type LinkAppearance,
+    type LinkContentOptions,
+    type LinkDestination,
+    type LinkKind,
+    type LinkLook,
+    type LinkPluginOptions,
+    type LinkSearch,
+    type TextLink,
+    type TextLinkLook,
+} from './Link';
+export {
+    type BulletLevelLook,
+    type BulletListLook,
+    type BulletListPluginOptions,
+    type ListLook,
+    type NumberedLevelLook,
+    type NumberedListLook,
+    type NumberedListPluginOptions,
+} from './List';
+export { type MentionContentOptions, type MentionItem, type MentionPluginOptions, type MentionValue } from './Mention';
+export { type TextLook } from '#/core';
+export {
+    type TextStyleContentOptions,
+    type TextStyleName,
+    type TextStylePluginOptions,
+    type TextStylePresets,
+} from './TextStyle';
+export { type TypographyGroup, type TypographyPluginOptions } from './Typography';

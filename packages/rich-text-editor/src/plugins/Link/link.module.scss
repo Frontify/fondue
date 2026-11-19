@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use 'sass:map';
+
 @use '../../styles/look.module.scss';
 @use './underline' as link;
 
@@ -31,6 +33,91 @@
      */
     [style*='color'] {
         @include link.underline;
+    }
+}
+
+$button-border-width: 1px;
+
+// Fondue's own Button colours for each kind, where the host sets no look.
+$buttons: (
+    buttonPrimary: (
+        kind: 'primary',
+        background: var(--color-primary-default),
+        background-hover: var(--color-primary-hover),
+        color: var(--color-primary-on-primary),
+        color-hover: var(--color-primary-on-primary),
+    ),
+    buttonSecondary: (
+        kind: 'secondary',
+        background: var(--color-container-secondary-default),
+        background-hover: var(--color-container-secondary-hover),
+        color: var(--color-primary-default),
+        color-hover: var(--color-primary-hover),
+    ),
+    buttonTertiary: (
+        kind: 'tertiary',
+        background: transparent,
+        background-hover: var(--color-container-secondary-hover),
+        color: var(--color-primary-default),
+        color-hover: var(--color-primary-hover),
+    ),
+);
+
+// A button link: the host's `--rte-button-<kind>-<property>`, falling back to Fondue's Button. It is written after
+// `.link` with the same selectors, so where both set a property the button wins.
+@each $class, $button in $buttons {
+    $kind: map.get($button, kind);
+
+    .#{$class} {
+        &,
+        &:link,
+        &:visited {
+            display: inline-block;
+            box-sizing: border-box;
+            max-width: 100%;
+            vertical-align: middle;
+            // Set here so a button keeps its edge, which forced colours draws, whatever the host's border looks like.
+            border-style: solid;
+            cursor: pointer;
+            font-family: var(--rte-button-#{$kind}-font-family, inherit);
+            font-size: var(--rte-button-#{$kind}-font-size, inherit);
+            font-weight: var(--rte-button-#{$kind}-font-weight, var(--typography-font-weight-medium));
+            font-style: var(--rte-button-#{$kind}-font-style, inherit);
+            line-height: var(--rte-button-#{$kind}-line-height, inherit);
+            letter-spacing: var(--rte-button-#{$kind}-letter-spacing, inherit);
+            text-transform: var(--rte-button-#{$kind}-text-transform, inherit);
+            text-decoration: var(--rte-button-#{$kind}-text-decoration, none);
+            color: var(--rte-button-#{$kind}-color, #{map.get($button, color)});
+            padding-top: var(--rte-button-#{$kind}-padding-top, var(--spacing-x-small));
+            padding-right: var(--rte-button-#{$kind}-padding-right, var(--spacing-small));
+            padding-bottom: var(--rte-button-#{$kind}-padding-bottom, var(--spacing-x-small));
+            padding-left: var(--rte-button-#{$kind}-padding-left, var(--spacing-small));
+            background-color: var(--rte-button-#{$kind}-background-color, #{map.get($button, background)});
+            border-color: var(--rte-button-#{$kind}-border-color, transparent);
+            border-width: var(--rte-button-#{$kind}-border-width, #{$button-border-width});
+            border-radius: var(--rte-button-#{$kind}-border-radius, var(--border-radius-medium));
+        }
+
+        // Under the pointer a field the host left out keeps what the button has at rest, not Fondue's hover.
+        &:hover {
+            color: var(
+                --rte-button-#{$kind}-hover-color,
+                var(--rte-button-#{$kind}-color, #{map.get($button, color-hover)})
+            );
+            background-color: var(
+                --rte-button-#{$kind}-hover-background-color,
+                var(--rte-button-#{$kind}-background-color, #{map.get($button, background-hover)})
+            );
+            border-color: var(
+                --rte-button-#{$kind}-hover-border-color,
+                var(--rte-button-#{$kind}-border-color, transparent)
+            );
+        }
+
+        // The coloured-run underline of `.link` does not draw on a button.
+        [style*='color'] {
+            text-decoration: none;
+        }
     }
 }
 

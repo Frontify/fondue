@@ -3,7 +3,16 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator } from '@playwright/test';
 
-import { type LinkLook, type TextLook, type TextStyleName } from '../../index';
+import {
+    type BulletLevelLook,
+    type BulletListLook,
+    type ButtonLook,
+    type NumberedLevelLook,
+    type NumberedListLook,
+    type TextLinkLook,
+    type TextLook,
+    type TextStyleName,
+} from '../../plugins';
 
 import { HostLooksPair } from './HostLooksPair';
 import { HostNoHeadingsPair } from './HostNoHeadingsPair';
@@ -11,11 +20,17 @@ import { HostResetPair } from './HostResetPair';
 import { HostStylingPair } from './HostStylingPair';
 import { HostStylingSections } from './HostStylingSections';
 import {
+    BULLET_ITEMS,
+    BUTTON_LINK_TEXT,
+    BUTTON_LINKS_DOCUMENT,
     H1_COLOR_VARIABLE,
     HOST_RESET_CSS,
     HOST_SCOPED_CSS,
     LAST_QUOTE_TEXT,
     MIDDLE_QUOTE_TEXT,
+    NESTED_LISTS_DOCUMENT,
+    NUMBERED_ITEMS,
+    PLAIN_LINK_TEXT,
     QUOTES_DOCUMENT,
     SECTION_A_H1_COLOR,
     SECTION_B_H1_COLOR,
@@ -288,7 +303,7 @@ test.describe('host styling of text styles', () => {
     });
 });
 
-// Body text, block quotes and links take a look through `textStylePlugin({ presets })`.
+// Body text and block quotes take a look through `textStylePlugin({ presets })`, links through `linkPlugin({ look: { text } })`; the renderer gets the same through `textStyleContent` and `linkContent`.
 
 type LookedBlock = 'body' | 'bullet' | 'check' | 'quote' | 'link' | 'custom1' | 'heading1';
 
@@ -363,7 +378,7 @@ const COLOURED_RUN = 'span[style*=color]';
 const COLOURED_RUN_COLOR = 'rgb(255, 0, 0)';
 
 /** A link's look has no decoration or vertical margins, so the host look leaves those as Fondue draws them. */
-const HOST_LINK_LOOK: LinkLook = {
+const HOST_LINK_LOOK: TextLinkLook = {
     fontFamily: HOST_LOOK.fontFamily,
     fontSize: HOST_LOOK.fontSize,
     fontWeight: HOST_LOOK.fontWeight,
@@ -384,7 +399,7 @@ const HOST_LINK_COMPUTED_LOOK: ComputedLook = {
 /** Margins for a quote, which the document must not trim when the quote is last. */
 const QUOTE_MARGINS = { marginTop: '24px', marginBottom: '12px' } satisfies TextLook;
 
-const UNSET_LINK_LOOK: LinkLook = {
+const UNSET_LINK_LOOK: TextLinkLook = {
     fontFamily: UNSET_VARIABLE,
     fontSize: UNSET_VARIABLE,
     fontWeight: UNSET_VARIABLE,
@@ -505,6 +520,88 @@ test.describe('host styling of body text, quotes and links', () => {
     });
 });
 
+// A stored button link takes its look from `linkPlugin({ look: { button } })`; rendering needs no offered appearances.
+
+const HOST_BUTTON_LOOK: ButtonLook = {
+    fontWeight: '700',
+    textDecoration: 'underline',
+    color: 'rgb(255, 255, 255)',
+    paddingTop: '6px',
+    paddingRight: '20px',
+    paddingBottom: '6px',
+    paddingLeft: '20px',
+    backgroundColor: 'rgb(0, 0, 200)',
+    borderColor: 'rgb(0, 0, 100)',
+    borderWidth: '2px',
+    borderRadius: '8px',
+    hover: { backgroundColor: 'rgb(0, 0, 100)', color: 'rgb(250, 250, 0)' },
+};
+
+const HOST_BUTTON_COMPUTED: Record<string, string> = {
+    'font-weight': '700',
+    'text-decoration-line': 'underline',
+    color: 'rgb(255, 255, 255)',
+    'padding-top': '6px',
+    'padding-right': '20px',
+    'padding-bottom': '6px',
+    'padding-left': '20px',
+    'background-color': 'rgb(0, 0, 200)',
+    'border-top-color': 'rgb(0, 0, 100)',
+    'border-top-width': '2px',
+    'border-top-style': 'solid',
+    'border-top-left-radius': '8px',
+};
+
+/** What a button link looks like where the host sets nothing: no underline, an edge, and the shape of a button. */
+const FONDUE_BUTTON_COMPUTED: Record<string, string> = {
+    'text-decoration-line': 'none',
+    'border-top-style': 'solid',
+    'border-top-width': '1px',
+    'border-top-color': 'rgba(0, 0, 0, 0)',
+    display: 'inline-block',
+};
+
+test.describe('host styling of button links', () => {
+    test('draws a button link without an underline and keeps a plain link underlined', async ({ mount }) => {
+        const component = await mount(<HostLooksPair value={BUTTON_LINKS_DOCUMENT} />);
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            const button = section.getByRole('link', { name: BUTTON_LINK_TEXT, exact: true });
+
+            for (const [property, value] of Object.entries(FONDUE_BUTTON_COMPUTED)) {
+                await expect(button).toHaveCSS(property, value);
+            }
+
+            await expect(section.getByRole('link', { name: PLAIN_LINK_TEXT, exact: true })).toHaveCSS(
+                'text-decoration-line',
+                'underline',
+            );
+        }
+    });
+
+    test('applies the host button look, the same in the renderer and the editor, and its hover look', async ({
+        mount,
+    }) => {
+        const component = await mount(
+            <HostLooksPair value={BUTTON_LINKS_DOCUMENT} buttons={{ primary: HOST_BUTTON_LOOK }} />,
+        );
+
+        for (const surface of SURFACES) {
+            const button = component.getByTestId(surface).getByRole('link', { name: BUTTON_LINK_TEXT, exact: true });
+
+            for (const [property, value] of Object.entries(HOST_BUTTON_COMPUTED)) {
+                await expect(button).toHaveCSS(property, value);
+            }
+
+            await button.hover();
+
+            await expect(button).toHaveCSS('background-color', 'rgb(0, 0, 100)');
+            await expect(button).toHaveCSS('color', 'rgb(250, 250, 0)');
+        }
+    });
+});
+
 test.describe('the document next to a host page stylesheet', () => {
     test('keeps the gap between blocks under a host reset of margins', async ({ mount }) => {
         const component = await mount(<HostResetPair hostCss={HOST_RESET_CSS} />);
@@ -531,6 +628,175 @@ test.describe('the document next to a host page stylesheet', () => {
             const body = blockIn(component.getByTestId(surface), 'body');
             await expect(body).toHaveCSS('margin-top', HOST_COMPUTED_LOOK['margin-top']);
             await expect(body).toHaveCSS('margin-bottom', HOST_COMPUTED_LOOK['margin-bottom']);
+        }
+    });
+});
+
+/** A list level as drawn: the list's marker type and indent, and its item's marker colour and size. */
+type ComputedMarkerLook = { marker: string; color: string; size: string; indent: string };
+
+/** The look of the list level holding the item with `text`. */
+const markerLookOf = (surface: Locator, text: string): Promise<ComputedMarkerLook> =>
+    // The text's paragraph sits in its item, which sits in its list.
+    surface
+        .getByText(text, { exact: true })
+        .locator('xpath=..')
+        .evaluate((item) => {
+            const list = item.parentElement;
+            if (list === null) {
+                throw new Error('A list item outside a list');
+            }
+            const marker = getComputedStyle(item, '::marker');
+            const listStyle = getComputedStyle(list);
+            return {
+                marker: listStyle.listStyleType,
+                color: marker.color,
+                size: marker.fontSize,
+                indent: listStyle.paddingLeft,
+            };
+        });
+
+const markerLooksIn = async (surface: Locator, texts: readonly string[]): Promise<ComputedMarkerLook[]> => {
+    const looks: ComputedMarkerLook[] = [];
+    for (const text of texts) {
+        looks.push(await markerLookOf(surface, text));
+    }
+    return looks;
+};
+
+// Fondue's markers as drawn before lists could take a look, with the default theme in Chromium and WebKit.
+const BULLET_MARKER: ComputedMarkerLook = {
+    marker: 'disc',
+    color: PLAIN.color,
+    size: '14px',
+    indent: '21px',
+};
+const NUMBER_MARKER: ComputedMarkerLook = { ...BULLET_MARKER, marker: 'decimal', indent: '28px' };
+
+// The three levels repeat from the fourth on.
+const FONDUE_BULLET_MARKERS: ComputedMarkerLook[] = [
+    BULLET_MARKER,
+    { ...BULLET_MARKER, marker: 'circle' },
+    { ...BULLET_MARKER, marker: 'square' },
+    BULLET_MARKER,
+    { ...BULLET_MARKER, marker: 'circle' },
+];
+const FONDUE_NUMBER_MARKERS: ComputedMarkerLook[] = [
+    NUMBER_MARKER,
+    { ...NUMBER_MARKER, marker: 'lower-alpha' },
+    { ...NUMBER_MARKER, marker: 'lower-roman' },
+    NUMBER_MARKER,
+];
+
+const HOST_BULLET_LOOK: BulletListLook = [
+    { marker: "'– '", color: 'rgb(200, 0, 0)', size: '20px', indent: '30px' },
+    { marker: 'square', color: 'rgb(0, 120, 0)' },
+    { marker: 'disc', indent: '10px' },
+];
+const HOST_NUMBERED_LOOK: NumberedListLook = [{ marker: 'upper-roman', color: 'rgb(0, 0, 200)', indent: '40px' }];
+
+const UNSET_BULLET_LEVEL: BulletLevelLook = {
+    marker: UNSET_VARIABLE,
+    color: UNSET_VARIABLE,
+    size: UNSET_VARIABLE,
+    indent: UNSET_VARIABLE,
+};
+const UNSET_NUMBERED_LEVEL: NumberedLevelLook = {
+    marker: UNSET_VARIABLE,
+    color: UNSET_VARIABLE,
+    indent: UNSET_VARIABLE,
+};
+
+test.describe('host styling of list markers', () => {
+    test('keeps Fondue markers when the host sets none, in the renderer and the editor', async ({ mount }) => {
+        const component = await mount(<HostLooksPair value={NESTED_LISTS_DOCUMENT} />);
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            expect(await markerLooksIn(section, BULLET_ITEMS)).toEqual(FONDUE_BULLET_MARKERS);
+            expect(await markerLooksIn(section, NUMBERED_ITEMS)).toEqual(FONDUE_NUMBER_MARKERS);
+        }
+    });
+
+    test('applies each level its look, repeating the three from the fourth level on', async ({ mount }) => {
+        const component = await mount(
+            <HostLooksPair
+                value={NESTED_LISTS_DOCUMENT}
+                bulletLook={HOST_BULLET_LOOK}
+                numberedLook={HOST_NUMBERED_LOOK}
+            />,
+        );
+        // Browsers write a string in double quotes.
+        const firstBullet: ComputedMarkerLook = {
+            marker: '"– "',
+            color: 'rgb(200, 0, 0)',
+            size: '20px',
+            indent: '30px',
+        };
+        const secondBullet: ComputedMarkerLook = { ...BULLET_MARKER, marker: 'square', color: 'rgb(0, 120, 0)' };
+        const firstNumber: ComputedMarkerLook = {
+            ...NUMBER_MARKER,
+            marker: 'upper-roman',
+            color: 'rgb(0, 0, 200)',
+            indent: '40px',
+        };
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            expect(await markerLooksIn(section, BULLET_ITEMS)).toEqual([
+                firstBullet,
+                secondBullet,
+                { ...BULLET_MARKER, marker: 'disc', indent: '10px' },
+                firstBullet,
+                secondBullet,
+            ]);
+            expect(await markerLooksIn(section, NUMBERED_ITEMS)).toEqual([
+                firstNumber,
+                FONDUE_NUMBER_MARKERS[1],
+                FONDUE_NUMBER_MARKERS[2],
+                firstNumber,
+            ]);
+        }
+    });
+
+    test('keeps Fondue markers for values that resolve to an unset guideline variable', async ({ mount }) => {
+        const component = await mount(
+            <HostLooksPair
+                value={NESTED_LISTS_DOCUMENT}
+                bulletLook={[UNSET_BULLET_LEVEL, UNSET_BULLET_LEVEL, UNSET_BULLET_LEVEL]}
+                numberedLook={[UNSET_NUMBERED_LEVEL, UNSET_NUMBERED_LEVEL, UNSET_NUMBERED_LEVEL]}
+            />,
+        );
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            expect(await markerLooksIn(section, BULLET_ITEMS)).toEqual(FONDUE_BULLET_MARKERS);
+            expect(await markerLooksIn(section, NUMBERED_ITEMS)).toEqual(FONDUE_NUMBER_MARKERS);
+        }
+    });
+
+    test('sizes a marker like its item text under a relative body size, at every depth', async ({ mount }) => {
+        const component = await mount(<HostLooksPair value={NESTED_LISTS_DOCUMENT} body={{ fontSize: '1.2em' }} />);
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            for (const text of [...BULLET_ITEMS, ...NUMBERED_ITEMS]) {
+                const item = section.getByText(text, { exact: true });
+                const itemSize = await item.evaluate((paragraph) => getComputedStyle(paragraph).fontSize);
+                const marker = await markerLookOf(section, text);
+                expect(marker.size).toBe(itemSize);
+            }
+        }
+    });
+
+    test('draws markers in the body colour and size where the list sets none', async ({ mount }) => {
+        const component = await mount(<HostLooksPair value={NESTED_LISTS_DOCUMENT} body={HOST_LOOK} />);
+        const body = { color: HOST_COMPUTED_LOOK.color, size: HOST_COMPUTED_LOOK['font-size'] };
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            expect(await markerLookOf(section, BULLET_ITEMS[0])).toMatchObject(body);
+            expect(await markerLookOf(section, NUMBERED_ITEMS[0])).toMatchObject(body);
         }
     });
 });

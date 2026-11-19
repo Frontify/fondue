@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useRef, useState } from 'react';
 
 // Stories import only the package public API. The consumer-plugin stories at
 // the bottom double as proof that the plugin contract is open: they define a
@@ -12,22 +12,34 @@ import { type ReactNode, useState } from 'react';
 // contributes on its own is visible. The ones that need company to do anything
 // (markdown shortcuts, reset formatting) say so.
 import {
-    alignPlugin,
-    blurOnBreakPlugin,
-    boldPlugin,
-    bulletListPlugin,
-    checkListPlugin,
-    codePlugin,
-    columnBreakPlugin,
-    defaultPlugins,
     defineBlock,
     defineContent,
     defineInline,
     defineMark,
     definePlugin,
+    RichTextEditor,
+    RichTextRenderer,
+    type RteDocument,
+    type RteDocumentWith,
+    type RtePlugin,
+    toPlainText,
+} from '../index';
+import {
+    alignPlugin,
+    blurOnBreakPlugin,
+    boldContent,
+    boldPlugin,
+    type ButtonLook,
+    bulletListPlugin,
+    checkListPlugin,
+    codePlugin,
+    columnBreakPlugin,
+    defaultPlugins,
     emojiPlugin,
     fontColorPlugin,
     italicPlugin,
+    type LinkAppearance,
+    type LinkDestination,
     linkPlugin,
     type MentionItem,
     mentionPlugin,
@@ -35,11 +47,6 @@ import {
     numberedListPlugin,
     quotePlugin,
     resetFormattingPlugin,
-    type RteDocument,
-    type RteDocumentWith,
-    type RtePlugin,
-    RichTextEditor,
-    RichTextRenderer,
     softBreakPlugin,
     strikethroughPlugin,
     subscriptPlugin,
@@ -48,7 +55,7 @@ import {
     textStylePlugin,
     typographyPlugin,
     underlinePlugin,
-} from '../index';
+} from '../plugins';
 
 /** An avatar as an app would hand one over; inline here so the story needs no network. */
 const ADA_AVATAR = `data:image/svg+xml,${encodeURIComponent(
@@ -69,6 +76,17 @@ const MENTIONABLE: readonly MentionItem[] = [
 const profileHref = (mention: MentionValue): string | undefined =>
     mention.kind === 'all' ? undefined : `#/people/${mention.id}`;
 
+/** A search that fails for the query "fail", to show the retry. */
+const searchMentionable = (query: string): Promise<readonly MentionItem[]> => {
+    if (query === 'fail') {
+        return Promise.reject(new Error('The people service is down'));
+    }
+    const needle = query.toLowerCase();
+    return Promise.resolve(
+        MENTIONABLE.filter((item) => item.username.includes(needle) || item.name.toLowerCase().includes(needle)),
+    );
+};
+
 /** Everything the package ships, plus the ones that need arguments. */
 const ALL_PLUGINS: readonly RtePlugin[] = [...defaultPlugins, mentionPlugin({ items: MENTIONABLE, href: profileHref })];
 
@@ -83,6 +101,7 @@ const LAYOUT =
 const JSON_PANEL =
     'tw-m-0 tw-min-h-[200px] tw-overflow-auto tw-rounded tw-bg-surface-dim tw-text-primary tw-p-3 tw-font-monospace tw-text-x-small tw-leading-medium';
 const HINT = 'tw-col-span-full tw-m-0 tw-body-small tw-text-secondary';
+const LIST = 'tw-m-0 tw-body-small';
 
 /**
  * The box around a renderer. The package draws none of its own — no border,
@@ -93,7 +112,7 @@ const SURFACE = 'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-s
 /** The field box around an editor: the surface, with a stronger border on hover and while the caret is inside, as Fondue's Textarea does. */
 const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-line-strong`;
 
-const toolbarButtonClasses = (active: boolean): string =>
+const toolbarButtonClasses = (active: boolean | 'mixed'): string =>
     [
         'tw-body-small tw-rounded tw-border tw-border-solid tw-border-line-strong tw-px-2 tw-py-1 tw-text-secondary tw-cursor-pointer',
         active ? 'tw-bg-container-secondary' : 'tw-bg-transparent',
@@ -270,7 +289,7 @@ export const Underline: Story = {
     },
 };
 
-/** ⌘⇧X, or the toolbar button. */
+/** ⇧⌘X, or the toolbar button. */
 export const Strikethrough: Story = {
     render: () => {
         const [doc, setDoc] = useState<RteDocument>({
@@ -281,7 +300,7 @@ export const Strikethrough: Story = {
                     children: [
                         { text: 'Some ' },
                         { text: 'struck-through', strikethrough: true },
-                        { text: ' text (⌘⇧X).' },
+                        { text: ' text (⇧⌘X).' },
                     ],
                 },
             ],
@@ -423,6 +442,140 @@ export const Link: Story = {
             <div className={LAYOUT}>
                 <div className={FRAME}>
                     <RichTextEditor value={doc} onChange={setDoc} plugins={[linkPlugin()]} />
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/** The app's own pages, as a search service would return them. */
+const INTERNAL_PAGES: readonly LinkDestination[] = [
+    { id: 'brand', label: 'Brand guidelines', href: 'https://brand.frontify.com/guidelines' },
+    { id: 'logos', label: 'Logo library', href: 'https://brand.frontify.com/logos' },
+    { id: 'colors', label: 'Colour palette', href: 'https://brand.frontify.com/colors' },
+    { id: 'press', label: 'Press kit', href: 'https://frontify.com/press' },
+];
+
+/** How long the fake lookup takes, so the story shows the field while it searches. */
+const FAKE_LOOKUP_MS = 300;
+
+/** A fake lookup that gives up when aborted, as a real request would. */
+const searchPages = (query: string, signal: AbortSignal): Promise<readonly LinkDestination[]> =>
+    new Promise((resolve, reject) => {
+        const timer = setTimeout(() => {
+            const needle = query.toLowerCase();
+            resolve(INTERNAL_PAGES.filter((page) => page.label.toLowerCase().includes(needle)));
+        }, FAKE_LOOKUP_MS);
+        signal.addEventListener('abort', () => {
+            clearTimeout(timer);
+            reject(new DOMException('Aborted', 'AbortError'));
+        });
+    });
+
+/**
+ * Given a `search`, the "Link to" field offers the app's own pages as the
+ * author types.
+ */
+export const LinkWithSearch: Story = {
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'Select this text and press Mod-k to add a link.' }] }],
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <p className={HINT}>
+                    Open the link form and type <code>logo</code> in Link to: the list shows one page after a short
+                    wait. Press Down or Tab to reach the pages, then Enter or a click to pick one, or keep typing an
+                    address. A pick fills an empty Text field with the page name.
+                </p>
+                <div className={FRAME}>
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[linkPlugin({ search: searchPages })]} />
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/** How a brand's theme could look each button; the values a host would take from its guideline variables. */
+const BUTTON_LOOKS: Record<LinkAppearance, ButtonLook> = {
+    primary: {
+        fontWeight: '600',
+        color: '#ffffff',
+        backgroundColor: '#5b3df5',
+        borderColor: '#5b3df5',
+        borderRadius: '999px',
+        paddingTop: '8px',
+        paddingRight: '20px',
+        paddingBottom: '8px',
+        paddingLeft: '20px',
+        hover: { backgroundColor: '#3f27c4', borderColor: '#3f27c4' },
+    },
+    secondary: {
+        fontWeight: '600',
+        color: '#5b3df5',
+        backgroundColor: '#ece9ff',
+        borderColor: '#ece9ff',
+        borderRadius: '999px',
+        paddingTop: '8px',
+        paddingRight: '20px',
+        paddingBottom: '8px',
+        paddingLeft: '20px',
+        hover: { backgroundColor: '#d9d3ff', borderColor: '#d9d3ff' },
+    },
+    tertiary: {
+        fontWeight: '600',
+        color: '#5b3df5',
+        borderColor: '#5b3df5',
+        borderWidth: '2px',
+        borderRadius: '4px',
+        textTransform: 'uppercase',
+        letterSpacing: '0.08em',
+        hover: { color: '#3f27c4', borderColor: '#3f27c4' },
+    },
+};
+
+/**
+ * A link can look like a button. Adding `'button'` to `kinds` adds a Style select to the link
+ * form, and `look.button` says how each style looks, here with literal values where a host would
+ * pass its guideline variables. A plain link stays a plain link.
+ */
+export const ButtonLinks: Story = {
+    name: 'Button links',
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'Primary', link: { href: 'https://example.com', appearance: 'primary' } },
+                        { text: ' ' },
+                        { text: 'Secondary', link: { href: 'https://example.com', appearance: 'secondary' } },
+                        { text: ' ' },
+                        { text: 'Tertiary', link: { href: 'https://example.com', appearance: 'tertiary' } },
+                        { text: ' ' },
+                        { text: 'A plain link', link: { href: 'https://example.com' } },
+                    ],
+                },
+            ],
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <p className={HINT}>
+                    Click a button and choose Edit: the form has a Style select, with No style to make it a plain link
+                    again.
+                </p>
+                <div className={FRAME}>
+                    <RichTextEditor
+                        value={doc}
+                        onChange={setDoc}
+                        plugins={[linkPlugin({ kinds: ['text', 'button'], look: { button: BUTTON_LOOKS } })]}
+                    />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -605,13 +758,14 @@ export const Mention: Story = {
                 <p className={HINT}>
                     Type <code>@</code> to open the picker. A mention is a void inline element: clicking one puts the
                     caret after it, and it deletes as one. A mention names a person, a group or everyone; the picker
-                    shows an avatar when the app gives one.
+                    shows an avatar when the app gives one. Type <code>@fail</code> to see a search that fails, with its
+                    retry.
                 </p>
                 <div className={FRAME}>
                     <RichTextEditor
                         value={doc}
                         onChange={setDoc}
-                        plugins={[mentionPlugin({ items: MENTIONABLE, href: profileHref })]}
+                        plugins={[mentionPlugin({ items: searchMentionable, href: profileHref })]}
                     />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
@@ -747,8 +901,8 @@ export const SoftBreak: Story = {
 };
 
 /**
- * Puts the selection back to plain text: marks gone, block type back to
- * paragraph, alignment cleared, lists unwrapped. It owns no schema — it only
+ * Puts the selection back to plain text: marks gone (links stay), block type
+ * back to paragraph, alignment cleared, lists unwrapped. It owns no schema — it only
  * drives the control API, so it needs something to undo.
  */
 export const ResetFormatting: Story = {
@@ -776,7 +930,10 @@ export const ResetFormatting: Story = {
 
         return (
             <div className={LAYOUT}>
-                <p className={HINT}>Select something, then hit the eraser button.</p>
+                <p className={HINT}>
+                    Put the caret in a block (or select some text), then hit the eraser button. One undo brings
+                    everything back.
+                </p>
                 <div className={FRAME}>
                     <RichTextEditor
                         value={doc}
@@ -796,24 +953,53 @@ export const ResetFormatting: Story = {
     },
 };
 
-/** Enter commits (blurs) instead of adding a paragraph — a single-line editor. */
+/**
+ * Enter commits instead of adding a paragraph, what a single-line editor wants.
+ * `onBreak` hears the commit (here it files the text below and clears the
+ * field), and checks for empty text itself.
+ */
 export const BlurOnBreak: Story = {
     render: () => {
-        const [doc, setDoc] = useState<RteDocument>({
-            version: 1,
-            blocks: [{ type: 'paragraph', children: [{ text: 'A title field. Press Enter to commit.' }] }],
-        });
+        const [doc, setDoc] = useState<RteDocument>({ version: 1, blocks: [{ type: 'paragraph', children: [] }] });
+        const [submitted, setSubmitted] = useState<{ id: number; text: string }[]>([]);
+        // The plugin is built once, so its `onBreak` reads the document through a ref.
+        const docRef = useRef(doc);
+        docRef.current = doc;
+        const [plugins] = useState<RtePlugin[]>(() => [
+            boldPlugin(),
+            italicPlugin(),
+            blurOnBreakPlugin({
+                onBreak: () => {
+                    const text = toPlainText(docRef.current);
+                    if (text.trim() === '') {
+                        return;
+                    }
+                    setSubmitted((previous) => [...previous, { id: previous.length, text }]);
+                    setDoc({ version: 1, blocks: [{ type: 'paragraph', children: [] }] });
+                },
+            }),
+        ]);
 
         return (
             <div className={LAYOUT}>
+                <p className={HINT}>
+                    Press Enter to submit: the text moves to the list below and the field clears. Enter on an empty
+                    field submits nothing.
+                </p>
                 <div className={FRAME}>
                     <RichTextEditor
                         value={doc}
                         onChange={setDoc}
-                        plugins={[boldPlugin(), italicPlugin(), blurOnBreakPlugin()]}
+                        plugins={plugins}
+                        placeholder="Type a comment"
+                        aria-label="Comment"
                     />
                 </div>
-                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+                <ul className={LIST}>
+                    {submitted.map(({ id, text }) => (
+                        <li key={id}>{text}</li>
+                    ))}
+                </ul>
             </div>
         );
     },
@@ -1021,47 +1207,48 @@ export const AllPlugins: Story = {
 
 /** A consumer-defined mark, plus the type its plugin writes on text nodes. */
 type HighlightMark = {
-    highlight?: boolean;
+    'acme-highlight'?: boolean;
 };
 
-const highlightPlugin = (): RtePlugin =>
+const acmeHighlightContent = defineContent({
+    marks: {
+        'acme-highlight': defineMark({
+            toHtml: () => ({
+                tag: 'mark',
+                attrs: {
+                    class: 'tw-rounded-small tw-bg-container-warning tw-text-container-warning-on-warning-container',
+                },
+                children: true,
+            }),
+            parse: [{ tag: 'mark' }],
+        }),
+    },
+});
+
+const acmeHighlightPlugin = () =>
     definePlugin({
-        id: 'highlight',
+        content: acmeHighlightContent,
         toolbar: [
             {
                 label: 'Highlight',
-                render: ({ api, selection }) => {
-                    const active = selection.marks.highlight?.coverage === 'all';
-                    return (
-                        <button
-                            type="button"
-                            aria-pressed={active}
-                            onMouseDown={(event) => event.preventDefault()}
-                            onClick={() => api.marks.toggle('highlight')}
-                            className={toolbarButtonClasses(active)}
-                        >
-                            Highlight
-                        </button>
-                    );
-                },
+                shortcut: 'Mod-Shift-u',
+                render: ({ isActive, toggle, label }) => (
+                    <button
+                        type="button"
+                        aria-pressed={isActive}
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => toggle()}
+                        className={toolbarButtonClasses(isActive)}
+                    >
+                        {label}
+                    </button>
+                ),
             },
         ],
-        hotkeys: { 'Mod-h': (api) => api.marks.toggle('highlight') },
-        content: defineContent({
-            marks: {
-                highlight: defineMark({
-                    toHtml: () => ({
-                        tag: 'mark',
-                        attrs: {
-                            class: 'tw-rounded-small tw-bg-container-warning tw-text-container-warning-on-warning-container',
-                        },
-                        children: true,
-                    }),
-                    parse: [{ tag: 'mark' }],
-                }),
-            },
-        }),
     });
+
+const acmeEditorPlugins = [boldPlugin(), acmeHighlightPlugin()];
+const acmeRendererContent = [boldContent, acmeHighlightContent];
 
 /**
  * The type juggling a consumer plugin costs: one type argument naming the extra
@@ -1076,7 +1263,7 @@ export const ConsumerMark: Story = {
                     type: 'paragraph',
                     children: [
                         { text: 'This ' },
-                        { text: 'highlight', highlight: true },
+                        { text: 'highlight', 'acme-highlight': true },
                         {
                             text: ' mark comes from a plugin defined in the story file — the package was not modified for it.',
                         },
@@ -1087,8 +1274,13 @@ export const ConsumerMark: Story = {
 
         return (
             <div className={LAYOUT}>
-                <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin(), highlightPlugin()]} />
+                <div className="tw-flex tw-flex-col tw-gap-4">
+                    <div className={FRAME}>
+                        <RichTextEditor value={doc} onChange={setDoc} plugins={acmeEditorPlugins} />
+                    </div>
+                    <div className={SURFACE}>
+                        <RichTextRenderer value={doc} plugins={acmeRendererContent} />
+                    </div>
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -1098,48 +1290,46 @@ export const ConsumerMark: Story = {
 
 /** A consumer-defined block type, following the shipped QuoteBlock pattern. */
 type CalloutBlock = {
-    type: 'callout';
+    type: 'acme-callout';
     children: RtePlugin.InlineNode[];
 };
 
-const calloutPlugin = (): RtePlugin =>
+const acmeCalloutContent = defineContent({
+    blocks: {
+        'acme-callout': defineBlock({
+            content: 'text',
+            toHtml: () => ({
+                tag: 'aside',
+                attrs: {
+                    class: 'tw-m-0 tw-rounded-medium tw-border tw-border-solid tw-border-warning tw-bg-container-warning tw-px-3 tw-py-2',
+                },
+                children: true,
+            }),
+            parse: [{ tag: 'aside' }],
+        }),
+    },
+});
+
+const acmeCalloutPlugin = () =>
     definePlugin({
-        id: 'callout',
+        content: acmeCalloutContent,
         toolbar: [
             {
                 label: 'Callout',
-                render: ({ api, selection, label }) => {
-                    const active = selection.block?.type === 'callout';
-                    return (
-                        <button
-                            type="button"
-                            aria-label={label}
-                            aria-pressed={active}
-                            onMouseDown={(event) => event.preventDefault()}
-                            onClick={() => (active ? api.blocks.setType('paragraph') : api.blocks.setType('callout'))}
-                            className={toolbarButtonClasses(active)}
-                        >
-                            💡
-                        </button>
-                    );
-                },
+                render: ({ isActive, toggle, label }) => (
+                    <button
+                        type="button"
+                        aria-label={label}
+                        aria-pressed={isActive}
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => toggle()}
+                        className={toolbarButtonClasses(isActive)}
+                    >
+                        💡
+                    </button>
+                ),
             },
         ],
-        content: defineContent({
-            blocks: {
-                callout: defineBlock({
-                    content: 'text',
-                    toHtml: () => ({
-                        tag: 'aside',
-                        attrs: {
-                            class: 'tw-m-0 tw-rounded-medium tw-border tw-border-solid tw-border-warning tw-bg-container-warning tw-px-3 tw-py-2',
-                        },
-                        children: true,
-                    }),
-                    parse: [{ tag: 'aside' }],
-                }),
-            },
-        }),
     });
 
 /** An extra block type joins the official union in the same type argument. */
@@ -1153,7 +1343,7 @@ export const ConsumerBlock: Story = {
                     children: [{ text: 'A consumer-defined block type: hit 💡 to toggle a callout.' }],
                 },
                 {
-                    type: 'callout',
+                    type: 'acme-callout',
                     children: [{ text: 'This callout block comes from a plugin defined in the story file.' }],
                 },
             ],
@@ -1162,7 +1352,7 @@ export const ConsumerBlock: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin(), calloutPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin(), acmeCalloutPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -1176,7 +1366,7 @@ export const ConsumerBlock: Story = {
  * uses, from outside the package.
  */
 type EmbedInline = {
-    type: 'embed';
+    type: 'acme-embed';
     provider: string;
 };
 
@@ -1202,13 +1392,11 @@ type EmbedDraftProps = {
  * completes it with `setValue` — or takes it away with `remove`.
  */
 const EmbedDraft = ({ onChoose, onRemove }: EmbedDraftProps): ReactNode => (
-    <span role="listbox" aria-label="Embed suggestions" className="tw-inline-flex tw-gap-1">
+    <fieldset aria-label="Embed suggestions" className="tw-m-0 tw-inline-flex tw-gap-1 tw-border-0 tw-p-0">
         {EMBEDS.map((item) => (
             <button
                 key={item.id}
                 type="button"
-                role="option"
-                aria-selected={false}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => onChoose(item.id)}
                 className="tw-rounded-small tw-bg-container-secondary tw-px-1"
@@ -1219,45 +1407,46 @@ const EmbedDraft = ({ onChoose, onRemove }: EmbedDraftProps): ReactNode => (
         <button type="button" aria-label="Cancel" onClick={onRemove} className="tw-px-1">
             ×
         </button>
-    </span>
+    </fieldset>
 );
 
-const embedPlugin = (): RtePlugin =>
-    definePlugin({
-        id: 'embed',
-        // An empty embed, which its `edit` view then takes over.
-        hotkeys: { '/': (api) => api.insert('embed') },
-        content: defineContent({
-            inlines: {
-                embed: defineInline<EmbedValue>({
-                    toHtml: ({ provider }) => ({
-                        tag: 'span',
-                        attrs: { 'data-embed': provider, class: embedClasses },
-                        children: `▤ ${provider}`,
-                    }),
-                    parse: [
-                        { tag: 'span[data-embed]', value: (element) => ({ provider: element.dataset.embed ?? '' }) },
-                    ],
-                }),
-            },
+const acmeEmbedContent = defineContent({
+    inlines: {
+        'acme-embed': defineInline<EmbedValue>({
+            toHtml: ({ provider }) => ({
+                tag: 'span',
+                attrs: { 'data-embed': provider, class: embedClasses },
+                children: `▤ ${provider}`,
+            }),
+            parse: [{ tag: 'span[data-embed]', value: (element) => ({ provider: element.dataset.embed ?? '' }) }],
         }),
-        edit: {
-            embed: ({ value, setValue, remove, api }: RtePlugin.EditProps<EmbedValue, EmbedValue | null>) =>
-                value === null ? (
-                    <EmbedDraft
-                        onChoose={(provider) => {
-                            setValue({ provider });
-                            api.focus();
-                        }}
-                        onRemove={() => {
-                            remove();
-                            api.focus();
-                        }}
-                    />
-                ) : (
-                    <span data-embed={value.provider} className={embedClasses}>{`▤ ${value.provider}`}</span>
-                ),
-        },
+    },
+});
+
+const AcmeEmbedEdit = ({ value, setValue, remove, api }: RtePlugin.EditProps<EmbedValue, EmbedValue | null>) => {
+    if (value === null) {
+        return (
+            <EmbedDraft
+                onChoose={(provider) => {
+                    setValue({ provider });
+                    api.focus();
+                }}
+                onRemove={() => {
+                    remove();
+                    api.focus();
+                }}
+            />
+        );
+    }
+    return <span data-embed={value.provider} className={embedClasses}>{`▤ ${value.provider}`}</span>;
+};
+
+const acmeEmbedPlugin = () =>
+    definePlugin({
+        content: acmeEmbedContent,
+        // The editor's `/` menu owns the `/` key, so the embed is one of its entries.
+        commands: [{ id: 'acme-embed', label: 'Embed', group: 'insert', run: (api) => api.insert('acme-embed') }],
+        edit: { 'acme-embed': AcmeEmbedEdit },
     });
 
 /** A consumer inline element widens the same parameter as a consumer mark. */
@@ -1270,8 +1459,8 @@ export const ConsumerInline: Story = {
                     type: 'paragraph',
                     children: [
                         { text: 'Attach a ' },
-                        { type: 'embed', provider: 'figma' },
-                        { text: ' — or type / to pick another one.' },
+                        { type: 'acme-embed', provider: 'figma' },
+                        { text: ' — or, on an empty line, type /embed to pick another one.' },
                     ],
                 },
             ],
@@ -1280,10 +1469,11 @@ export const ConsumerInline: Story = {
         return (
             <div className={LAYOUT}>
                 <p className={HINT}>
-                    Type <code>/</code> to open the consumer plugin&apos;s own picker.
+                    On an empty line, type <code>/embed</code> and press Enter to open the consumer plugin&apos;s own
+                    picker.
                 </p>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[...defaultPlugins, embedPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[...defaultPlugins, acmeEmbedPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>

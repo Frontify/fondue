@@ -1,19 +1,49 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 @use '../../utilities/sizeToken.module.scss';
+@use '../../utilities/focus.module.scss';
+
+$bar-radius: sizeToken.get(1.5);
 
 .stack {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-large);
+    gap: var(--spacing-medium);
 }
 
 .bar {
-    overflow: hidden;
-    border-radius: sizeToken.get(1.5);
+    border-radius: $bar-radius;
     width: 100%;
     position: relative;
     display: flex;
     height: sizeToken.get(3);
     background-color: var(--color-container-secondary-hover);
+}
+
+.section {
+    &:first-child {
+        border-start-start-radius: $bar-radius;
+        border-end-start-radius: $bar-radius;
+    }
+
+    &[data-rounded-end='true'] {
+        border-start-end-radius: $bar-radius;
+        border-end-end-radius: $bar-radius;
+    }
+
+    &:focus-visible {
+        @include focus.ring;
+
+        position: relative;
+        z-index: 1;
+    }
+}
+
+.description {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
 }
