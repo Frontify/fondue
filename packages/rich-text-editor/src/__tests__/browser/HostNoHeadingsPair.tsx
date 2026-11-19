@@ -33,10 +33,10 @@ export const HostNoHeadingsPair = ({ body }: HostNoHeadingsPairProps) => {
 
     return (
         <>
-            <div data-testid="renderer">
+            <div data-test-id="renderer">
                 <RichTextRenderer value={BODY_QUOTE_LINK_DOCUMENT} plugins={plugins} />
             </div>
-            <div data-testid="editor">
+            <div data-test-id="editor">
                 <RichTextEditor value={BODY_QUOTE_LINK_DOCUMENT} plugins={plugins} />
             </div>
         </>
