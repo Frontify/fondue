@@ -1,0 +1,62 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/htmlSpecToDom.ts
+  s_743396444745a0::t_3b2a74aa407630 15,22
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.tsx
+  s_743396444745a0::t_941a7ca5cf5bda 100,105-106,146
+packages/rich-text-editor/src/core/index.ts
+  s_743396444745a0::t_ef082a97877ba6 8-9
+packages/rich-text-editor/src/renderer/toHtmlString.ts
+  s_743396444745a0::t_3b2a74aa407630 49
+packages/rich-text-editor/src/plugins/Link/helpers/policy.spec.ts
+  s_743396444745a0::t_0a27c3e03b8909 29,34-35,50,54-57,84
+packages/rich-text-editor/src/index.ts
+  s_743396444745a0::t_e794622a2a0177 18-19,179-180,201-202
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_743396444745a0::t_e794622a2a0177 418-419
+  s_743396444745a0::t_ef082a97877ba6 4,421,426-433
+packages/rich-text-editor/src/plugins/Link/Link.spec.ts
+  s_743396444745a0::t_312ec95faa0e53 40,43-44
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_743396444745a0::t_4127c1aebf5354 3-5,37-71,73-85,87-104,130,132-135
+  s_743396444745a0::t_9cc06fb599d00b 86
+  s_743396444745a0::t_ef082a97877ba6 232-233
+  s_743396444745a0::t_4be18204de93fa 72
+  s_743396444745a0::t_0cfe862f2cca1c 139
+packages/rich-text-editor/src/plugins/Link/helpers/policy.ts
+  s_743396444745a0::t_0a27c3e03b8909 10-12,21,27,32,44-45,86-87,104,106,108
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_743396444745a0::t_00d06e928aea8f 475
+packages/rich-text-editor/src/core/htmlSpec.ts
+  s_743396444745a0::t_3b2a74aa407630 36,41
+packages/rich-text-editor/src/core/commands.ts
+  s_743396444745a0::t_ef082a97877ba6 13-29,146,148,150
+packages/rich-text-editor/src/core/documentText.ts
+  s_743396444745a0::t_3b2a74aa407630 47-49
+packages/rich-text-editor/src/editor/linkFlows.spec.tsx
+  s_743396444745a0::t_312ec95faa0e53 479,482,494
+  s_743396444745a0::t_00d06e928aea8f 11
+  s_743396444745a0::t_9cc06fb599d00b 467-478
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_743396444745a0::t_00d06e928aea8f 300-309
+  s_743396444745a0::t_312ec95faa0e53 294,312-323,329,331-334
+packages/rich-text-editor/src/editor/engines/prosemirror/paste.spec.tsx
+  s_743396444745a0::t_a83867cce985e1 276,285-286
+  s_743396444745a0::t_4be18204de93fa 287-288
+packages/rich-text-editor/src/renderer/toReact.ts
+  s_743396444745a0::t_3b2a74aa407630 58-60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e3e19a7ed8eedb00b26301cb4fda454152df5e2d",
+  "prompts": {},
+  "sessions": {
+    "s_743396444745a0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "10709e34-13a4-4961-b961-1b8389df4dc9",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

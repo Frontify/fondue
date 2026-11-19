@@ -1,0 +1,69 @@
+packages/components/src/components/Tree/components/testutils/ControlledExpansionHarness.tsx
+  s_0c3c68492f7859::t_edcdf57992f0b6 1-7,9-10,12-22
+  s_0c3c68492f7859::t_4fa9e5d8b0ce4c 7,12
+  s_0c3c68492f7859::t_d9809e64ec4f16 8,11
+packages/components/src/components/Tree/components/TreeRoot.ct.tsx
+  s_0c3c68492f7859::t_4715469e350f79 1219-1227
+  s_0c3c68492f7859::t_0954484eb32818 11
+  s_0c3c68492f7859::t_c68f87fa0550ab 1256-1257,1276-1277,1282-1283
+  s_0c3c68492f7859::t_9db39283b35406 1216-1217,1231-1233,1235-1254,1258-1260,1262-1275,1278-1281
+  s_0c3c68492f7859::t_d9809e64ec4f16 1215,1218,1228,1234,1255-1257,1261
+.changeset/tree-folder-click-uncontrolled-selection.md
+  s_0c3c68492f7859::t_c5bf74d270216d 1-6
+  s_0c3c68492f7859::t_d9809e64ec4f16 7
+packages/components/src/components/Tree/components/TreeRow.tsx
+  s_0c3c68492f7859::t_6384c99f05bb80 44-50,52
+  s_0c3c68492f7859::t_0c2098e0eeea25 88
+  s_0c3c68492f7859::t_d9809e64ec4f16 40-41,51,87,95
+packages/components/src/components/Tree/components/TreeRoot.tsx
+  s_0c3c68492f7859::t_20768f895efbae 70-71
+  s_0c3c68492f7859::t_0c2098e0eeea25 67-69,72-73
+  s_0c3c68492f7859::t_d9809e64ec4f16 74,84,182
+packages/components/src/components/Tree/Tree.stories.tsx
+  s_0c3c68492f7859::t_20768f895efbae 243,332-337,339-342
+  s_0c3c68492f7859::t_9ffe9c19edb828 344-345
+  s_0c3c68492f7859::t_d9809e64ec4f16 242,338,343
+packages/components/src/components/Tree/Tree.metadata.json
+  s_0c3c68492f7859::t_d9809e64ec4f16 4
+.github/workflows/rich-text-editor-pull-requests.yaml
+  s_0c78ff5c576d6d::t_e6705c3ac43b9a 33-34,51-55,75-78
+  s_0c78ff5c576d6d::t_757cf20e909867 30-32
+  s_0c78ff5c576d6d::t_bf96f5e6a11ce9 79
+.github/actions/build-packages/action.yaml
+  s_0c78ff5c576d6d::t_c7b10716f1a4a6 15-31,33,37,42-65,69
+  s_0c78ff5c576d6d::t_5d1194563761ba 32,34-36,38-41
+  s_0c78ff5c576d6d::t_2e54c9ea2ae29d 12-14
+  s_0c78ff5c576d6d::t_c8b5c9df7ddca9 66-68
+  s_0c78ff5c576d6d::t_93d61249c6aab1 70
+  s_0c78ff5c576d6d::t_0e1fde768b2e28 1-11
+.github/workflows/continuous-deployment.yaml
+  s_0c78ff5c576d6d::t_e6705c3ac43b9a 31-33,69-73,94-97,121-124
+  s_0c78ff5c576d6d::t_09fd061cd156ea 29-30
+.github/workflows/fondue-pull-requests.yaml
+  s_0c78ff5c576d6d::t_e6705c3ac43b9a 38-40,76-80,101-104,128-131
+  s_0c78ff5c576d6d::t_899f1bbdc52df7 36-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "769474154a8d57c12278067a2f01f084fef47296",
+  "prompts": {},
+  "sessions": {
+    "s_0c3c68492f7859": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a134a3b0-0ba1-4fac-a15c-2620fc4876ae",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_0c78ff5c576d6d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "81a33e14-ea9e-4419-a91f-21fae0f9e44d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

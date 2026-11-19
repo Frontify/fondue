@@ -1,0 +1,23 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.spec.tsx
+  s_743396444745a0::t_1706a02f4813db 25
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.tsx
+  s_743396444745a0::t_1706a02f4813db 104-107
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.spec.tsx
+  s_743396444745a0::t_8f20ed2dac3f83 165-187
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4980278e644981627baa31a36a0022b70cae0d69",
+  "prompts": {},
+  "sessions": {
+    "s_743396444745a0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "10709e34-13a4-4961-b961-1b8389df4dc9",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

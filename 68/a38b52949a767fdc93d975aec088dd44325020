@@ -1,0 +1,44 @@
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_658c7f1b19f4a8::t_d499b07a09de33 982-988,996-1027,1036
+  s_658c7f1b19f4a8::t_94449133913680 1028-1035
+  s_658c7f1b19f4a8::t_90145fb91874e5 989-995
+packages/rich-text-editor/src/plugins/CheckList/CheckList.tsx
+  s_658c7f1b19f4a8::t_897760eb91742e 115-116,120,128
+  s_658c7f1b19f4a8::t_198cf240cdf154 193,199
+  s_658c7f1b19f4a8::t_803a0193d3e087 22
+  s_658c7f1b19f4a8::t_16b768839a87cb 14-15
+  s_658c7f1b19f4a8::t_90145fb91874e5 175-180
+  s_658c7f1b19f4a8::t_7224a5dce0656d 154,157,163,165
+  s_658c7f1b19f4a8::t_6210bb96970764 31-44,47-69
+  s_658c7f1b19f4a8::t_5e22918990f4ff 82,84,86,88
+  s_658c7f1b19f4a8::t_de60071e50eb38 174
+packages/rich-text-editor/src/plugins/CheckList/CheckList.spec.ts
+  s_658c7f1b19f4a8::t_90145fb91874e5 28-31
+  s_658c7f1b19f4a8::t_f85eee0515a0e0 23-27,32
+.changeset/rte-editing-extras.md
+  s_658c7f1b19f4a8::t_52e15a9cb43668 4
+packages/rich-text-editor/src/__tests__/htmlParity.spec.tsx
+  s_658c7f1b19f4a8::t_e01d7f8e58c9da 76-80
+packages/rich-text-editor/src/__tests__/formatRegression.spec.tsx
+  s_658c7f1b19f4a8::t_8f9a93315569fb 304
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_658c7f1b19f4a8::t_6c41a7e4ab539c 108-116
+packages/rich-text-editor/src/__tests__/goldens/check-list.json
+  s_658c7f1b19f4a8::t_7638f9dee23762 108-121
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "68a38b52949a767fdc93d975aec088dd44325020",
+  "prompts": {},
+  "sessions": {
+    "s_658c7f1b19f4a8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f3e07995-91f5-44af-8678-aa1487d11fd5",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
