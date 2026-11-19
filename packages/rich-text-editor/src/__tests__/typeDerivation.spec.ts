@@ -164,10 +164,10 @@ const linkMarginTop = linkPlugin({ look: { text: { marginTop: '4px' } } });
 const linkMarginBottom = linkPlugin({ look: { text: { marginBottom: '4px' } } });
 
 // @ts-expect-error links take their look from the link plugin
-const textStyleLink = textStylePlugin({ presets: { link: { color: 'red' } } });
+const textStyleLink = textStylePlugin({ look: { link: { color: 'red' } } });
 
 // @ts-expect-error links take their look from the link content
-const textStyleContentLink = textStyleContent({ presets: { link: { color: 'red' } } });
+const textStyleContentLink = textStyleContent({ look: { link: { color: 'red' } } });
 
 export const __typeAssertions = [
     doc,

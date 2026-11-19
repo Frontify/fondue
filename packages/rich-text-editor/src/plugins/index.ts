@@ -70,6 +70,6 @@ export {
     type TextStyleContentOptions,
     type TextStyleName,
     type TextStylePluginOptions,
-    type TextStylePresets,
+    type TextStyleLook,
 } from './TextStyle';
 export { type TypographyGroup, type TypographyPluginOptions } from './Typography';

@@ -14,7 +14,7 @@ export const SECTION_A_H1_COLOR = 'rgb(255, 0, 0)';
 export const SECTION_B_H1_COLOR = 'rgb(0, 0, 255)';
 
 /** One block per text style, in the dropdown's order. */
-export const ALL_PRESETS_DOCUMENT: RteDocument = {
+export const ALL_LOOKS_DOCUMENT: RteDocument = {
     version: 1,
     blocks: [
         { type: 'textStyle', style: 'heading1', children: [{ text: 'Heading 1' }] },
@@ -47,7 +47,7 @@ const hostVariable = (name: string, value: string): CSSProperties =>
 export const SECTION_A = hostVariable(H1_COLOR_VARIABLE, SECTION_A_H1_COLOR);
 export const SECTION_B = hostVariable(H1_COLOR_VARIABLE, SECTION_B_H1_COLOR);
 
-/** Body text, a block quote and links, with a preset and a heading beside them that the body look must not reach. */
+/** Body text, a block quote and links, with a text style and a heading beside them that the body look must not reach. */
 export const BODY_QUOTE_LINK_DOCUMENT: RteDocument = {
     version: 1,
     blocks: [

@@ -31,7 +31,7 @@ import {
     textStyleContent,
     textStylePlugin,
     type TextStylePluginOptions,
-    type TextStylePresets,
+    type TextStyleLook,
 } from '../plugins';
 
 /** Who can be mentioned is the app's business, which is why the mention plugin requires it as an option. */
@@ -836,7 +836,7 @@ export const TwoEditors: Story = {
     },
 };
 
-/** The guideline settings a host defines around its editors; the presets below read them. */
+/** The guideline settings a host defines around its editors; the looks below read them. */
 type GuidelineVariables = Record<`--f-theme-settings-${string}`, string>;
 
 const LIGHT_GUIDELINE: GuidelineVariables = {
@@ -888,10 +888,10 @@ const DARK_GUIDELINE: GuidelineVariables = {
 };
 
 /**
- * Each preset reads the guideline variables the host defines. `heading3` reads one that
+ * Each look reads the guideline variables the host defines. `heading3` reads one that
  * no section defines, so it keeps Fondue's look.
  */
-const GUIDELINE_PRESETS: TextStylePluginOptions['presets'] = {
+const GUIDELINE_LOOKS: TextStylePluginOptions['look'] = {
     heading1: {
         fontFamily: 'var(--f-theme-settings-heading1-font-family)',
         fontSize: 'var(--f-theme-settings-heading1-font-size)',
@@ -944,7 +944,7 @@ const GUIDELINE_NUMBERED_LOOK = [
 ] as const;
 
 const HOST_STYLING_PLUGINS = [
-    textStylePlugin({ presets: GUIDELINE_PRESETS }),
+    textStylePlugin({ look: GUIDELINE_LOOKS }),
     bulletListPlugin({ look: GUIDELINE_BULLET_LOOK }),
     numberedListPlugin({ look: GUIDELINE_NUMBERED_LOOK }),
     checkListPlugin(),
@@ -952,9 +952,9 @@ const HOST_STYLING_PLUGINS = [
     linkPlugin({ look: { text: GUIDELINE_LINK_LOOK } }),
 ];
 
-// The renderer takes content only, with the same presets, so a page that only shows documents ships no editing code.
+// The renderer takes content only, with the same looks, so a page that only shows documents ships no editing code.
 const HOST_STYLING_CONTENT = [
-    textStyleContent({ presets: GUIDELINE_PRESETS }),
+    textStyleContent({ look: GUIDELINE_LOOKS }),
     bulletListContent({ look: GUIDELINE_BULLET_LOOK }),
     numberedListContent({ look: GUIDELINE_NUMBERED_LOOK }),
     checkListContent,
@@ -1077,7 +1077,7 @@ const HostStylingSection = ({ title, guideline }: HostStylingSectionProps) => {
     );
 };
 
-const PRESETS_DEFAULT: TextStylePresets = {
+const LOOKS_DEFAULT: TextStyleLook = {
     heading1: { fontFamily: 'Georgia, serif', fontSize: '36px', color: 'rgb(120, 40, 20)' },
     heading2: { textTransform: 'uppercase' },
     custom1: { letterSpacing: '0.1em' },
@@ -1091,7 +1091,7 @@ const PRESETS_DEFAULT: TextStylePresets = {
 
 const LINK_LOOK_DEFAULT: TextLinkLook = { fontWeight: '600', color: 'rgb(190, 40, 90)' };
 
-const PRESETS_TEXT_STYLE_KEYS = [
+const LOOKS_TEXT_STYLE_KEYS = [
     'heading1',
     'heading2',
     'heading3',
@@ -1103,7 +1103,7 @@ const PRESETS_TEXT_STYLE_KEYS = [
     'imageCaption',
 ];
 
-const PRESETS_FIELDS = [
+const LOOKS_FIELDS = [
     'fontFamily',
     'fontSize',
     'fontWeight',
@@ -1117,39 +1117,39 @@ const PRESETS_FIELDS = [
     'color',
 ];
 
-const PRESETS_LEGEND_LINES = [
-    `Keys, one per text style: ${PRESETS_TEXT_STYLE_KEYS.join(', ')}.`,
+const LOOKS_LEGEND_LINES = [
+    `Keys, one per text style: ${LOOKS_TEXT_STYLE_KEYS.join(', ')}.`,
     'Keys for the rest: body (plain paragraphs and list items), quote.',
-    `Fields: ${PRESETS_FIELDS.join(', ')}.`,
+    `Fields: ${LOOKS_FIELDS.join(', ')}.`,
     'linkPlugin({ look: { text } }) takes the same fields but textDecoration, marginTop and marginBottom.',
     "A key or field left out keeps Fondue's look.",
     'A value that could end its CSS declaration early throws.',
 ];
 
-const PRESETS_CODE_INDENT = 4;
-const PRESETS_LEGEND = 'tw-m-0 tw-pl-4 tw-body-small tw-text-secondary';
-const PRESETS_ERROR = 'tw-m-0 tw-rounded tw-bg-surface-dim tw-p-3 tw-body-small tw-text-primary';
+const LOOKS_CODE_INDENT = 4;
+const LOOKS_LEGEND = 'tw-m-0 tw-pl-4 tw-body-small tw-text-secondary';
+const LOOKS_ERROR = 'tw-m-0 tw-rounded tw-bg-surface-dim tw-p-3 tw-body-small tw-text-primary';
 
-type PresetsStoryArgs = {
-    presets: TextStylePresets;
+type LooksStoryArgs = {
+    look: TextStyleLook;
     linkLook: TextLinkLook;
 };
 
-const presetsConfigurationCode = ({ presets, linkLook }: PresetsStoryArgs): string =>
+const looksConfigurationCode = ({ look, linkLook }: LooksStoryArgs): string =>
     [
-        `textStylePlugin({ presets: ${JSON.stringify(presets, null, PRESETS_CODE_INDENT)} })`,
-        `linkPlugin({ look: { text: ${JSON.stringify(linkLook, null, PRESETS_CODE_INDENT)} } })`,
+        `textStylePlugin({ look: ${JSON.stringify(look, null, LOOKS_CODE_INDENT)} })`,
+        `linkPlugin({ look: { text: ${JSON.stringify(linkLook, null, LOOKS_CODE_INDENT)} } })`,
     ].join('\n');
 
-type PresetsPluginsResult = { status: 'ready'; plugins: RtePlugin[] } | { status: 'invalid'; message: string };
+type LooksPluginsResult = { status: 'ready'; plugins: RtePlugin[] } | { status: 'invalid'; message: string };
 
 // Both plugins throw on a value that could end its CSS declaration early, so a bad Controls entry is reported here.
-const presetsPluginsFor = ({ presets, linkLook }: PresetsStoryArgs): PresetsPluginsResult => {
+const looksPluginsFor = ({ look, linkLook }: LooksStoryArgs): LooksPluginsResult => {
     try {
         return {
             status: 'ready',
             plugins: [
-                textStylePlugin({ presets }),
+                textStylePlugin({ look }),
                 bulletListPlugin(),
                 numberedListPlugin(),
                 checkListPlugin(),
@@ -1165,20 +1165,20 @@ const presetsPluginsFor = ({ presets, linkLook }: PresetsStoryArgs): PresetsPlug
     }
 };
 
-type PresetsSurfacesProps = {
-    looks: PresetsStoryArgs;
+type LooksSurfacesProps = {
+    looks: LooksStoryArgs;
     doc: RteDocument;
     onChange: (doc: RteDocument) => void;
 };
 
-const PresetsSurfaces = ({ looks, doc, onChange }: PresetsSurfacesProps) => {
-    const { presets, linkLook } = looks;
-    const result = useMemo(() => presetsPluginsFor({ presets, linkLook }), [presets, linkLook]);
+const LooksSurfaces = ({ looks, doc, onChange }: LooksSurfacesProps) => {
+    const { look, linkLook } = looks;
+    const result = useMemo(() => looksPluginsFor({ look, linkLook }), [look, linkLook]);
 
     switch (result.status) {
         case 'invalid':
             return (
-                <p role="alert" className={PRESETS_ERROR}>
+                <p role="alert" className={LOOKS_ERROR}>
                     {result.message}
                 </p>
             );
@@ -1196,50 +1196,50 @@ const PresetsSurfaces = ({ looks, doc, onChange }: PresetsSurfacesProps) => {
     }
 };
 
-type PresetsPlaygroundProps = {
-    looks: PresetsStoryArgs;
+type LooksPlaygroundProps = {
+    looks: LooksStoryArgs;
 };
 
-const PresetsPlayground = ({ looks }: PresetsPlaygroundProps) => {
+const LooksPlayground = ({ looks }: LooksPlaygroundProps) => {
     const [doc, setDoc] = useState<RteDocument>(HOST_STYLING_DOCUMENT);
 
     return (
         <div className="tw-grid tw-gap-4 tw-p-4 tw-font-primary">
             <pre className={JSON_PANEL}>
-                <code>{presetsConfigurationCode(looks)}</code>
+                <code>{looksConfigurationCode(looks)}</code>
             </pre>
-            <ul className={PRESETS_LEGEND}>
-                {PRESETS_LEGEND_LINES.map((line) => (
+            <ul className={LOOKS_LEGEND}>
+                {LOOKS_LEGEND_LINES.map((line) => (
                     <li key={line}>{line}</li>
                 ))}
             </ul>
             {/* The plugin list is read at mount, so a change to the looks remounts both surfaces. */}
-            <PresetsSurfaces key={JSON.stringify(looks)} looks={looks} doc={doc} onChange={setDoc} />
+            <LooksSurfaces key={JSON.stringify(looks)} looks={looks} doc={doc} onChange={setDoc} />
         </div>
     );
 };
 
 /**
- * The configuration of `textStylePlugin({ presets })` and `linkPlugin({ look: { text } })` as plain values, printed above the
- * editor and the renderer. Edit `presets` or `linkLook` in Controls and both surfaces redraw.
+ * The configuration of `textStylePlugin({ look })` and `linkPlugin({ look: { text } })` as plain values, printed above the
+ * editor and the renderer. Edit `look` or `linkLook` in Controls and both surfaces redraw.
  */
-export const Presets: StoryObj<PresetsStoryArgs> = {
-    args: { presets: PRESETS_DEFAULT, linkLook: LINK_LOOK_DEFAULT },
-    argTypes: { presets: { control: 'object' }, linkLook: { control: 'object' } },
+export const Look: StoryObj<LooksStoryArgs> = {
+    args: { look: LOOKS_DEFAULT, linkLook: LINK_LOOK_DEFAULT },
+    argTypes: { look: { control: 'object' }, linkLook: { control: 'object' } },
     // The meta's editor props are not this story's args, so Controls lists only the looks.
-    parameters: { controls: { include: ['presets', 'linkLook'] } },
-    render: ({ presets, linkLook }) => <PresetsPlayground looks={{ presets, linkLook }} />,
+    parameters: { controls: { include: ['look', 'linkLook'] } },
+    render: ({ look, linkLook }) => <LooksPlayground looks={{ look, linkLook }} />,
 };
 
 /**
  * The usual production setup: the values are `var(--f-theme-settings-…)`, so one editor configuration follows the section (light or dark) it sits in.
- * A host sets the look of each text style, body text and quotes with `textStylePlugin({ presets })`, of links with `linkPlugin({ look: { text } })`, and of list markers per level with `bulletListPlugin({ look })` and `numberedListPlugin({ look })`, usually from its guideline settings,
- * and hands the renderer `textStyleContent({ presets })`, `linkContent({ look: { text } })`, `bulletListContent({ look })` and `numberedListContent({ look })` with the same values.
+ * A host sets the look of each text style, body text and quotes with `textStylePlugin({ look })`, of links with `linkPlugin({ look: { text } })`, and of list markers per level with `bulletListPlugin({ look })` and `numberedListPlugin({ look })`, usually from its guideline settings,
+ * and hands the renderer `textStyleContent({ look })`, `linkContent({ look: { text } })`, `bulletListContent({ look })` and `numberedListContent({ look })` with the same values.
  * Anything the host leaves out, or a variable nobody defines, keeps Fondue's look.
  * The editor and the renderer draw the same.
  */
-export const PresetsFromGuidelineVariables: Story = {
-    name: 'Presets from guideline variables',
+export const LookFromGuidelineVariables: Story = {
+    name: 'Looks from guideline variables',
     render: () => (
         <div className="tw-grid tw-font-primary">
             <ThemeProvider theme="light">
