@@ -1,0 +1,52 @@
+packages/rich-text-editor/src/core/registry.ts
+  s_8b381d41f2155d::t_489ce2fd0249ca 125,468-471,496-498,500-501,503,567-571,623
+  s_8b381d41f2155d::t_6f05ea60ca430e 499,502,573
+  s_8b381d41f2155d::t_153b51b70e5823 564,566,572
+  s_8b381d41f2155d::t_b15044d5fdedc3 504-505
+packages/rich-text-editor/src/plugins/BlurOnBreak/BlurOnBreak.tsx
+  s_8b381d41f2155d::t_056fab1ef4a80b 94-95
+  s_8b381d41f2155d::t_1ec50d6a87d86e 49-56,65-67,93
+  s_8b381d41f2155d::t_6f05ea60ca430e 23,85,92
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_8b381d41f2155d::t_8ba8774d1da0f0 261,263
+  s_8b381d41f2155d::t_6f05ea60ca430e 262,268,271,276-278
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_8b381d41f2155d::t_6f05ea60ca430e 11,426
+  s_8b381d41f2155d::t_1ec50d6a87d86e 3-10,419-421,425
+  s_8b381d41f2155d::t_df21a709024c85 427
+packages/rich-text-editor/src/core/commands.ts
+  s_8b381d41f2155d::t_489ce2fd0249ca 115-118
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_8b381d41f2155d::t_8ba8774d1da0f0 1153,1162-1163,1170,1172,1185-1186,1188-1191,1193,1196-1199,1201,1203-1204,1206-1209,1213,1215
+  s_8b381d41f2155d::t_2b3076a9239aa6 1165-1168
+  s_8b381d41f2155d::t_056fab1ef4a80b 1180,1182-1183
+  s_8b381d41f2155d::t_153b51b70e5823 1205
+  s_8b381d41f2155d::t_6f05ea60ca430e 1161,1164,1169,1171,1173-1179,1181,1184,1187,1192,1194-1195,1200,1202,1210-1212,1214
+packages/rich-text-editor/src/core/plugin.ts
+  s_8b381d41f2155d::t_489ce2fd0249ca 132-135
+  s_8b381d41f2155d::t_2b3076a9239aa6 128
+  s_8b381d41f2155d::t_776243b9796cee 131
+packages/rich-text-editor/src/editor/helpers/toolbarItem.spec.ts
+  s_8b381d41f2155d::t_7b415a426e4d99 91
+packages/rich-text-editor/src/core/registry.spec.ts
+  s_8b381d41f2155d::t_153b51b70e5823 444,446
+  s_8b381d41f2155d::t_6f05ea60ca430e 437,443,445,449,452-453
+  s_8b381d41f2155d::t_8ba8774d1da0f0 438-442,447-448,450,454-457
+  s_8b381d41f2155d::t_f2e0db6deacac5 451
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f6166ca8070e7cbf58411f67d452b33f1ca66a6c",
+  "prompts": {},
+  "sessions": {
+    "s_8b381d41f2155d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "814a7226-dabf-40db-820e-5d02eb89f4a5",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
