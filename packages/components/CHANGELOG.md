@@ -1,5 +1,13 @@
 # @frontify/fondue-components
 
+## 37.0.0-rc.1
+
+### Patch Changes
+
+- [#3026](https://github.com/Frontify/fondue/pull/3026) [`9b6a452`](https://github.com/Frontify/fondue/commit/9b6a452773883a485b221894cea4496708a679db) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(ColorPicker): the HEX field of `ColorPicker.Values` reports each valid typed value through `onColorChange`, as the R, G, B and alpha fields already do, instead of only on blur
+
+- [#3083](https://github.com/Frontify/fondue/pull/3083) [`8d134e1`](https://github.com/Frontify/fondue/commit/8d134e1ec9dd723a9782bda0f15e1e8919dec3a2) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Divider): set `aria-orientation` on a vertical divider and stop the browser default border width from widening it
+
 ## 37.0.0-rc.0
 
 ### Patch Changes
