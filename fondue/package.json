@@ -73,6 +73,11 @@
             "require": "./dist/packages/rich-text-editor/fondue-rich-text-editor.umd.cjs",
             "import": "./dist/packages/rich-text-editor/fondue-rich-text-editor.js"
         },
+        "./rich-text-editor/plugins": {
+            "types": "./dist/packages/rich-text-editor/plugins/rich-text-editor-plugins.d.ts",
+            "require": "./dist/packages/rich-text-editor/plugins/fondue-rich-text-editor-plugins.umd.cjs",
+            "import": "./dist/packages/rich-text-editor/plugins/fondue-rich-text-editor-plugins.js"
+        },
         "./rich-text-editor/styles": {
             "types": "./dist/packages/rich-text-editor/style.css.d.ts",
             "default": "./dist/packages/rich-text-editor/style.css"
@@ -100,7 +105,7 @@
     },
     "scripts": {
         "storybook": "pnpm --workspace-root storybook",
-        "build": "pnpm clean && pnpm build:package:components && pnpm build:package:locales && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens && pnpm build:package:rte && pnpm build:package:rich-text-editor && pnpm build:package:sdk",
+        "build": "pnpm clean && pnpm build:package:components && pnpm build:package:locales && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens && pnpm build:package:rte && pnpm build:package:rich-text-editor && pnpm build:package:rich-text-editor-plugins && pnpm build:package:sdk",
         "build:package:components": "vite build -c components.vite.config.ts",
         "build:package:locales": "tsx scripts/copyLocales.ts",
         "build:package:icons": "vite build -c icons.vite.config.ts",
@@ -108,6 +113,7 @@
         "build:package:tokens": "vite build -c tokens.vite.config.ts",
         "build:package:rte": "vite build -c rte.vite.config.ts",
         "build:package:rich-text-editor": "vite build -c rich-text-editor.vite.config.ts",
+        "build:package:rich-text-editor-plugins": "vite build -c rich-text-editor-plugins.vite.config.ts",
         "build:package:sdk": "vite build -c sdk.vite.config.ts",
         "clean": "rimraf dist",
         "format": "oxfmt",
