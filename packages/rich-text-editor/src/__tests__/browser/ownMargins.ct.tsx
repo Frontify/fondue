@@ -48,6 +48,20 @@ for (const surface of SURFACES) {
             await expect(component.getByTestId(surface).locator('blockquote')).toHaveCSS('margin-top', FRAME_MARGIN);
         });
 
+        test('leave a block of any tag the document gap', async ({ mount }) => {
+            const component = await mount(<OwnMarginsFrame />);
+            const root = component.getByTestId(surface);
+            const documentGap = await root
+                .locator('p')
+                .first()
+                .evaluate((node) => getComputedStyle(node).marginBottom);
+            const section = root.locator('section');
+
+            await expect(section).toHaveCSS('margin-top', '0px');
+            await expect(section).toHaveCSS('margin-bottom', documentGap);
+            expect(documentGap).not.toBe('0px');
+        });
+
         test('do not reach the last paragraph inside the block', async ({ mount }) => {
             const component = await mount(<OwnMarginsFrame />);
 

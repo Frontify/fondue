@@ -50,7 +50,7 @@ const pluginsWithLooks = ({
     bulletLook,
     numberedLook,
 }: HostLooksPairProps): RtePlugin[] => [
-    textStylePlugin({ presets: { body, quote } }),
+    textStylePlugin({ look: { body, quote } }),
     bulletListPlugin({ look: bulletLook }),
     numberedListPlugin({ look: numberedLook }),
     checkListPlugin(),
@@ -61,7 +61,7 @@ const pluginsWithLooks = ({
 
 // The renderer gets content only, as a page that only shows documents would, so the looks must travel with the content.
 const contentWithLooks = ({ body, quote, link, buttons, bulletLook, numberedLook }: HostLooksPairProps) => [
-    textStyleContent({ presets: { body, quote } }),
+    textStyleContent({ look: { body, quote } }),
     bulletListContent({ look: bulletLook }),
     numberedListContent({ look: numberedLook }),
     checkListContent,

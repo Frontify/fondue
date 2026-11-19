@@ -42,17 +42,17 @@ import styles from './textStyle.module.scss';
 export type { TextStyleBlock, TextStyleName } from './helpers/presets';
 
 /** The look of each kind of text, by name: the 9 text styles, body text and block quotes. */
-export type TextStylePresets = Partial<Record<TextStyleName | 'body' | 'quote', TextLook>>;
+export type TextStyleLook = Partial<Record<TextStyleName | 'body' | 'quote', TextLook>>;
 
 /** How the text-style content looks; what a renderer needs to draw a document the way the editor does. */
 export type TextStyleContentOptions = {
     /**
      * How each kind of text looks, by name: a text style, `body` for plain paragraphs and `quote`.
      * A kind left out, and a field left out of one, keeps Fondue's look.
-     * A value that is empty or can end its CSS declaration early throws an error that names the preset and the
+     * A value that is empty or can end its CSS declaration early throws an error that names the look and the
      * field, so a mistake in the host's configuration never passes silently.
      */
-    presets?: TextStylePresets;
+    look?: TextStyleLook;
 };
 
 export type TextStylePluginOptions = TextStyleContentOptions & {
@@ -96,11 +96,11 @@ const textStyleBlockFor = (options: readonly TextStyleOption[]): BlockDefinition
 // Shared so every content offering all styles declares the very same block, which the registry requires.
 const ALL_STYLES_BLOCK = textStyleBlockFor(ALL_TEXT_STYLES);
 
-const textStyleContentFor = (options: readonly TextStyleOption[], presets: TextStylePresets = {}): RteContent => {
+const textStyleContentFor = (options: readonly TextStyleOption[], look: TextStyleLook = {}): RteContent => {
     const contentProperties: Record<string, string> = {};
-    for (const [name, look] of Object.entries(presets)) {
-        if (look !== undefined) {
-            Object.assign(contentProperties, lookProperties(name, look, LOOK_PROPERTIES));
+    for (const [name, entry] of Object.entries(look)) {
+        if (entry !== undefined) {
+            Object.assign(contentProperties, lookProperties(name, entry, LOOK_PROPERTIES));
         }
     }
 
@@ -117,21 +117,21 @@ const textStyleContentFor = (options: readonly TextStyleOption[], presets: TextS
     });
 };
 
-// Shared so the default plugin, `defaultContent` and every call without presets hand out the very same content.
+// Shared so the default plugin, `defaultContent` and every call without looks hand out the very same content.
 const DEFAULT_TEXT_STYLE_CONTENT = textStyleContentFor(ALL_TEXT_STYLES);
 
 /**
  * The text block carrying a style, and the look of each kind of text. Renders every style, whatever the editor
- * offers. Pass the same `presets` as `textStylePlugin`, so a renderer given only content draws the host's looks.
+ * offers. Pass the same `look` as `textStylePlugin`, so a renderer given only content draws the host's looks.
  *
  * @example
- * <RichTextRenderer plugins={[textStyleContent({ presets }), boldContent]} value={doc} />
+ * <RichTextRenderer plugins={[textStyleContent({ look }), boldContent]} value={doc} />
  */
-export const textStyleContent = ({ presets }: TextStyleContentOptions = {}): RteContent => {
-    if (presets === undefined) {
+export const textStyleContent = ({ look }: TextStyleContentOptions = {}): RteContent => {
+    if (look === undefined) {
         return DEFAULT_TEXT_STYLE_CONTENT;
     }
-    return textStyleContentFor(ALL_TEXT_STYLES, presets);
+    return textStyleContentFor(ALL_TEXT_STYLES, look);
 };
 
 const HEADING_LEVEL: Partial<Record<string, number>> = { h1: 1, h2: 2, h3: 3, h4: 4 };
@@ -155,7 +155,7 @@ const HEADING_KEYWORDS: Partial<Record<number, readonly string[]>> = {
  */
 export const textStylePlugin = ({
     styles: options = ALL_TEXT_STYLES,
-    presets,
+    look,
 }: TextStylePluginOptions = {}): RtePlugin => {
     const offered = presetsFor(options);
 
@@ -203,9 +203,9 @@ export const textStylePlugin = ({
     }
 
     // Offering every style is exactly `textStyleContent`, so the default plugin and `defaultContent` share one object.
-    let content = textStyleContent({ presets });
+    let content = textStyleContent({ look });
     if (options !== ALL_TEXT_STYLES) {
-        content = textStyleContentFor(options, presets);
+        content = textStyleContentFor(options, look);
     }
 
     return definePlugin({

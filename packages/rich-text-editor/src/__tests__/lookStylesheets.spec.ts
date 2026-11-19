@@ -31,7 +31,6 @@ type LookDeclaration = { property: string; variable: string };
 const lookDeclarationsIn = (css: string): LookDeclaration[] =>
     [...css.matchAll(LOOK_DECLARATION)].map(([, property = '', variable = '']) => ({ property, variable }));
 
-/** The margins a look hands to the document as custom properties, which alone writes margins. */
 const HANDED_OVER_PROPERTIES: Record<string, string> = {
     'margin-top': OWN_MARGIN_VARIABLES.top,
     'margin-bottom': OWN_MARGIN_VARIABLES.bottom,

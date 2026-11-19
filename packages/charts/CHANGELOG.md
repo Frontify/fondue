@@ -1,5 +1,20 @@
 # @frontify/fondue-charts
 
+## 10.0.0-rc.1
+
+### Minor Changes
+
+- [#3087](https://github.com/Frontify/fondue/pull/3087) [`b3ee8c8`](https://github.com/Frontify/fondue/commit/b3ee8c8b495023a9219a764194f213acfb00fd92) Thanks [@joseazevedo88](https://github.com/joseazevedo88)! - feat(LinearGauge): add `tooltipMode="hovered"` to show only the section under the pointer or keyboard focus with its new `description`, `legendPosition="bottom"`, and keyboard access to the sections in both modes
+  feat(AreaStackChart, LineChart): add `dateGranularity="month"` to show months on the axis and in the tooltip
+  fix(LinearGauge): reduce the gap between the bar and the legend to 16px
+  fix(AreaStackChart): keep five grid lines for all-zero or small values, and draw a circle per series for a single date
+  fix(AreaStackChart, LineChart): make room for the first date label, so it is not clipped
+  fix(AreaStackChart, BarChart, LineChart): measure the axis labels again once the web font has loaded, so they are not clipped
+
+### Patch Changes
+
+- [#3086](https://github.com/Frontify/fondue/pull/3086) [`65e0562`](https://github.com/Frontify/fondue/commit/65e0562e44a65caa35a31fcdc4be5e0111d126d6) Thanks [@joseazevedo88](https://github.com/joseazevedo88)! - fix(PieChart): use the v14 font size token for the labels, so the chart gets a valid height again
+
 ## 10.0.0-rc.0
 
 ### Patch Changes
