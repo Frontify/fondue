@@ -2,18 +2,16 @@
 
 // Mounted by hostStyling.ct.tsx.
 
+import { RichTextEditor, RichTextRenderer, type RtePlugin } from '../../index';
 import {
     bulletListPlugin,
     checkListPlugin,
     fontColorPlugin,
     linkPlugin,
     quotePlugin,
-    RichTextEditor,
-    RichTextRenderer,
-    type RtePlugin,
     type TextLook,
     textStylePlugin,
-} from '../../index';
+} from '../../plugins';
 
 import { BODY_QUOTE_LINK_DOCUMENT } from './hostStylingValues';
 

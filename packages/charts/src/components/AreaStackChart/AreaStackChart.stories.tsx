@@ -59,6 +59,12 @@ export default {
                 defaultValue: { summary: 'false' },
             },
         },
+        dateGranularity: {
+            name: 'dateGranularity',
+            options: ['day', 'month'],
+            control: { type: 'radio' },
+            description: '`month` shows the dates on the axis and in the tooltip as months, for data with one point per month.',
+        },
         legendPosition: {
             name: 'legendPosition',
             type: { name: 'other', value: 'top | bottom', required: false },
@@ -149,4 +155,47 @@ AreaStackedChart.args = {
     height: 500,
     valueFormatter,
     childSumLabel: 'Total',
+};
+
+const MONTHS = ['2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-09-01', '2026-10-01'];
+
+const createMonthlySeries = (months: string[], getValue: (seriesIndex: number, monthIndex: number) => number) =>
+    ['A', 'B', 'C'].map((name, seriesIndex) => ({
+        name,
+        dataPoints: months.map((month, monthIndex) => ({
+            timestamp: new Date(month),
+            value: getValue(seriesIndex, monthIndex),
+        })),
+    }));
+
+const MONTHLY_ARGS = {
+    width: 760,
+    height: 400,
+    domain: 'count' as const,
+    valueFormatter: (value: number) => value.toFixed(0),
+    dateGranularity: 'month' as const,
+};
+
+export const MonthlyData = Template.bind({});
+MonthlyData.args = {
+    series: createMonthlySeries(MONTHS, (seriesIndex, monthIndex) => [190, 95, 30][seriesIndex]! + monthIndex * 5),
+    ...MONTHLY_ARGS,
+};
+
+export const SingleMonth = Template.bind({});
+SingleMonth.args = {
+    series: createMonthlySeries(MONTHS.slice(0, 1), (seriesIndex) => [190, 95, 30][seriesIndex]!),
+    ...MONTHLY_ARGS,
+};
+
+export const SmallValues = Template.bind({});
+SmallValues.args = {
+    series: createMonthlySeries(MONTHS.slice(0, 2), () => 1),
+    ...MONTHLY_ARGS,
+};
+
+export const AllZero = Template.bind({});
+AllZero.args = {
+    series: createMonthlySeries(MONTHS, () => 0),
+    ...MONTHLY_ARGS,
 };
