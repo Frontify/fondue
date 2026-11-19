@@ -46,7 +46,8 @@ it(
     { timeout: 30_000 },
     async () => {
         const inputs = await bundleInputs(
-            `export { RichTextRenderer, serializeToHtml, toPlainText, columnBreakContent } from './src/index.ts';`,
+            `export { RichTextRenderer, serializeToHtml, toPlainText } from './src/index.ts';
+            export { columnBreakContent } from './src/plugins/index.ts';`,
         );
 
         expect(inputs.filter((path) => !CONTENT_CODE.test(path))).toEqual([]);
@@ -55,7 +56,7 @@ it(
 
 // The read view of a mention links with the icon and component libraries, so only src/ is checked
 it('bundles mentionContent without the mention picker', { timeout: 30_000 }, async () => {
-    const inputs = await bundleInputs(`export { mentionContent } from './src/index.ts';`);
+    const inputs = await bundleInputs(`export { mentionContent } from './src/plugins/index.ts';`);
 
     const isAllowed = (path: string): boolean => CONTENT_CODE.test(path) || path === MENTION_READ_VIEW;
     const sourceInputs = inputs.filter((path) => path.startsWith('src/'));

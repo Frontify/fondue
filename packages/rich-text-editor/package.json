@@ -24,6 +24,10 @@
             "types": "./dist/index.d.ts",
             "import": "./dist/index.es.js"
         },
+        "./plugins": {
+            "types": "./dist/plugins.d.ts",
+            "import": "./dist/plugins.es.js"
+        },
         "./styles": "./dist/style.css"
     },
     "files": [

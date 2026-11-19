@@ -4,6 +4,7 @@
     display: flex;
     align-self: stretch;
     justify-content: center;
+    border-width: 0;
 
     // Direction variants
     &[data-orientation='horizontal'] {
