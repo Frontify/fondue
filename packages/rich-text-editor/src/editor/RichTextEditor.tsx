@@ -362,6 +362,12 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
             return;
         }
 
+        // Turning editing off spends the request: it never claims focus when editing comes back.
+        if (readOnly) {
+            focusPendingRef.current = false;
+            return;
+        }
+
         if (handle === null) {
             return;
         }
@@ -377,7 +383,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
 
         focusPendingRef.current = false;
         handle.api.focus(mountFocus.position);
-    }, [handle, mountFocus]);
+    }, [handle, mountFocus, readOnly]);
 
     const { focusWithin, focusProps } = useFocusWithin();
     // Blur as the host hears it: focus leaving the whole editor — text,

@@ -1467,6 +1467,30 @@ const PluginsChangeOnMount = (): ReactNode => {
     return <RichTextEditor value={paragraph('current')} plugins={plugins} autoFocus="end" />;
 };
 
+type ReadonlyOnMountProps = {
+    editable: boolean;
+};
+
+/** A host that turns readonly on as it mounts, which destroys the engine before the focus request is spent. */
+const ReadonlyOnMount = ({ editable }: ReadonlyOnMountProps): ReactNode => {
+    const [readonlyOnMount, setReadonlyOnMount] = useState(false);
+
+    useEffect(() => {
+        // Intentional: the update has to land in the editor's first commit, which only a mount effect does.
+        // eslint-disable-next-line @eslint-react/set-state-in-effect
+        setReadonlyOnMount(true);
+    }, []);
+
+    return (
+        <RichTextEditor
+            value={paragraph('current')}
+            plugins={defaultPlugins}
+            autoFocus="end"
+            readonly={readonlyOnMount && !editable}
+        />
+    );
+};
+
 describe('autoFocus', () => {
     it('focuses the text with the caret at its end when it mounts', () => {
         const { container, ready } = mount(() => (
@@ -1490,6 +1514,15 @@ describe('autoFocus', () => {
         expect(selection?.isCollapsed).toBe(true);
         expect(selection?.anchorNode?.textContent).toBe('current');
         expect(selection?.anchorOffset).toBe('current'.length);
+    });
+
+    it('takes no focus when editing is turned off on mount and back on later', () => {
+        const { container, rerender, ready } = mount(() => <ReadonlyOnMount editable={false} />);
+
+        rerender(<ReadonlyOnMount editable />);
+        ready();
+
+        expect(window.document.activeElement).not.toBe(editableIn(container));
     });
 
     it('puts the caret before the first character at start', () => {
