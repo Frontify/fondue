@@ -1,0 +1,21 @@
+packages/rich-text-editor/src/index.ts
+  s_fd833482ae93cf::t_e8e3d1da8fe4bb 156
+.changeset/rte-unexport-any-list.md
+  s_fd833482ae93cf::t_e8e3d1da8fe4bb 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "27e1aca3f9053c15203bd7394e41edaac92cde45",
+  "prompts": {},
+  "sessions": {
+    "s_fd833482ae93cf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f5a25338-59c9-4169-b75a-20a3a21efbd7",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

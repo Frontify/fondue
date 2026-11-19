@@ -1,0 +1,14 @@
+packages/sdk/docs/mental-model.md
+  h_2139c5e5c94509 179
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.11",
+  "base_commit_sha": "9fea01facf8645ad0a2a8e79eebac90623b316d5",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
