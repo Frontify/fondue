@@ -1,0 +1,19 @@
+.changeset/rte-reader-unknown-list-items.md
+  s_8282e3f2640093::t_4d2857480e6fe6 1-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "63fafbcd44795805a06dcbe342f088c51995dfce",
+  "prompts": {},
+  "sessions": {
+    "s_8282e3f2640093": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "09e96eb6-2aed-4563-bae3-8725ecdaff1d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

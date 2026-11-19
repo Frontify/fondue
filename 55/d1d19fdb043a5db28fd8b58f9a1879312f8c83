@@ -1,0 +1,24 @@
+packages/rich-text-editor/src/plugins/shared/look.module.scss
+  s_6513c7c173ff96::t_93c78f207492ee 1-41
+packages/rich-text-editor/src/core/look.ts
+  s_6513c7c173ff96::t_93c78f207492ee 23
+packages/rich-text-editor/src/plugins/TextStyle/textStyle.module.scss
+  s_6513c7c173ff96::t_e79b41361945a2 3
+  s_6513c7c173ff96::t_93c78f207492ee 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "55d1d19fdb043a5db28fd8b58f9a1879312f8c83",
+  "prompts": {},
+  "sessions": {
+    "s_6513c7c173ff96": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aece77c5-31e1-41b8-8f8c-d0099f17ec8b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

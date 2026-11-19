@@ -1,0 +1,19 @@
+.changeset/rte-plugin-content-split.md
+  s_3da29b36b0ad36::t_865544b3a8d480 2,5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6072bd8cfe44a21a8243707a035acbdd84cebd35",
+  "prompts": {},
+  "sessions": {
+    "s_3da29b36b0ad36": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52275dbb-cfd4-472c-b295-02ca60ef0ab1",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
