@@ -1,0 +1,19 @@
+.changeset/docs-rte-keyboard-reference.md
+  s_ea2f21f7c5681f::t_8e98f18d58e48f 2,5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0c5ecdb5eb53e73fc159404485d74d09605c2180",
+  "prompts": {},
+  "sessions": {
+    "s_ea2f21f7c5681f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d419d63e-7548-4781-aa3e-b5ac225be4e2",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,114 @@
+packages/rich-text-editor/src/plugins/Link/helpers/policy.spec.ts
+  s_743396444745a0::t_0b6243887495a8 105-116
+  s_743396444745a0::t_b5834d2849f30f 81,84-86,89-90,96,100,118-119
+  s_743396444745a0::t_db2d70d6036f07 5-8
+packages/rich-text-editor/src/plugins/Link/Link.spec.ts
+  s_743396444745a0::t_da91bae3edad8e 3,5-7
+  s_743396444745a0::t_05d1735bac9922 49-219
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.spec.tsx
+  s_743396444745a0::t_b87584d49cd8e3 10
+  s_743396444745a0::t_b2758865675bad 46
+  s_743396444745a0::t_65a7d5da7449bf 352-380
+  s_743396444745a0::t_6b8691659d9ab2 58
+  s_743396444745a0::t_a721d85c7717e2 39
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.spec.tsx
+  s_743396444745a0::t_1a965082b4d492 38-45
+  s_743396444745a0::t_0bb2ae81aa9478 152-157
+  s_743396444745a0::t_49cfd3b93c1883 31
+  s_743396444745a0::t_7a65ad1c345e72 9
+packages/rich-text-editor/src/core/commands.ts
+  s_743396444745a0::t_b940cb5349431f 30
+packages/rich-text-editor/src/plugins/Link/components/LinkToolbarButton.tsx
+  s_743396444745a0::t_1967741e160d1d 13
+  s_743396444745a0::t_99360f706cf3f7 39
+  s_743396444745a0::t_cafa95e96616c9 55
+  s_743396444745a0::t_08e48f4c7594bb 106
+packages/rich-text-editor/src/editor/engines/prosemirror/testEditor.ts
+  s_743396444745a0::t_7f00ab787d2c78 163-232
+  s_743396444745a0::t_4316321af117bc 7-17
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.spec.tsx
+  s_743396444745a0::t_4acb448964aca5 171
+  s_743396444745a0::t_db229ec7f21f7f 10-21,114-115,117-121,123-125,127,131,135-136,138,141-142,144,147-153,155,158-159,161,164-167,169,174-175,177,180-181,183,186-187,190-191,193
+packages/rich-text-editor/src/plugins/Link/helpers/policy.ts
+  s_743396444745a0::t_c1ada409ab3c9e 97,101,110,112,118,121,124
+  s_743396444745a0::t_2bd5e8970adaf0 5-6
+packages/rich-text-editor/src/plugins/Link/helpers/labels.ts
+  s_743396444745a0::t_f838c13b7e61c6 1-73
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_743396444745a0::t_c2a904f1a4b1db 294-302
+.changeset/feat-rte-link-flows.md
+  s_743396444745a0::t_e263d8841fa4f0 5
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.tsx
+  s_743396444745a0::t_b716d7f07ff657 234-236
+  s_743396444745a0::t_49d0a2a273d945 46
+  s_743396444745a0::t_29fa193848c74f 209
+  s_743396444745a0::t_239c256be97d16 7-8,17,22,24,27,29
+  s_743396444745a0::t_185277e28297e9 62
+packages/rich-text-editor/src/plugins/Link/helpers/address.ts
+  s_743396444745a0::t_2e54a6abf6faeb 1-11
+packages/rich-text-editor/src/index.ts
+  s_743396444745a0::t_f93c3d60d1d7f4 150,152
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.tsx
+  s_743396444745a0::t_9c1a8ee325a977 114
+  s_743396444745a0::t_1e34989ba014bc 174
+  s_743396444745a0::t_f9ff0bf8c981a4 30
+  s_743396444745a0::t_a9a56f362b203b 8
+  s_743396444745a0::t_f0d9a953da81d0 9
+  s_743396444745a0::t_d8065e98398094 76
+  s_743396444745a0::t_eafd950e14da58 153
+packages/rich-text-editor/src/plugins/Link/index.ts
+  s_743396444745a0::t_4cfd3a894c82b2 3,5
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_743396444745a0::t_1bf7ef353db383 245,247-249
+  s_743396444745a0::t_62b6cd1bdbc9ee 24,29,31
+  s_743396444745a0::t_88679c8482becb 218
+  s_743396444745a0::t_d94a36abd60e5e 96
+  s_743396444745a0::t_a3f4954752f758 65,67
+  s_743396444745a0::t_3f384a008fba4e 44,51
+  s_743396444745a0::t_22ea09563d3420 74
+  s_743396444745a0::t_e8586a827d0297 9-10
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_743396444745a0::t_482966086447cd 8
+  s_743396444745a0::t_8ad099ba7318e2 29-40
+  s_743396444745a0::t_37b3f871cd39cd 12,14,16
+  s_743396444745a0::t_659232dbd39b19 172,176
+  s_743396444745a0::t_7eaef76aedaa9d 106,114,124-125,131,137,145,148,153-154,159
+  s_743396444745a0::t_a710d7eca2b346 194
+  s_743396444745a0::t_abc7feaa30d49f 246,248,254-256,259-263
+packages/rich-text-editor/src/editor/engines/prosemirror/paste.spec.tsx
+  s_37db616537927d::t_884ef228e67fe3 9,11,284-286,288,290,292,294-319,321,323,326-329,331,334,336,339-340,343,345,348-349,352,354,357-358,361,363,366,368,372,375,383,386
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_d9c0469efce250::t_9cfdcfa9954dd6 21,50,53,268,272,834,837,845,847,850-852,855,857,865,878,880
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6b04351071bc7fb7c9d654554916e0934f41926a",
+  "prompts": {},
+  "sessions": {
+    "s_37db616537927d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "789d1117-7913-4539-b8c3-b762a7c9695f",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_743396444745a0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "10709e34-13a4-4961-b961-1b8389df4dc9",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_d9c0469efce250": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "548bafad-28bd-4e36-949b-abe6993012cf",
+        "model": "unknown"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

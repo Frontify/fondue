@@ -1,0 +1,28 @@
+packages/rich-text-editor/src/plugins/Mention/Mention.tsx
+  s_a585d10f570924::t_1ecd0410c47871 22,24-25
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_a585d10f570924::t_577079314a5bd9 1689-1700,1702-1716
+  s_a585d10f570924::t_9eadea3c2d66f4 1701
+packages/rich-text-editor/src/plugins/Mention/helpers/display.spec.ts
+  s_a585d10f570924::t_82a93fe59b5ee9 70,75
+packages/rich-text-editor/src/plugins/Mention/helpers/display.ts
+  s_a585d10f570924::t_c16b01c7fbfe6e 147-150,156,158
+  s_a585d10f570924::t_51c6e4f5e6197b 117-118,120,123-125
+  s_a585d10f570924::t_297baf41b672e7 167
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8cdffad89e1a7b956599e3498e862d27e3e08d36",
+  "prompts": {},
+  "sessions": {
+    "s_a585d10f570924": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12fffd99-7ec0-43c7-a09b-65001cf93f56",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

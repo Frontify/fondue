@@ -1,0 +1,30 @@
+packages/rich-text-editor/src/plugins/SoftBreak/SoftBreak.tsx
+  s_3da29b36b0ad36::t_10d59b77588fe4 11
+packages/rich-text-editor/src/core/plugin.ts
+  s_3da29b36b0ad36::t_10d59b77588fe4 108-110
+  s_3da29b36b0ad36::t_ec773cd3c6a194 14-15,17-18
+packages/rich-text-editor/src/index.ts
+  s_3da29b36b0ad36::t_10d59b77588fe4 65,79,96
+packages/rich-text-editor/src/core/registry.ts
+  s_3da29b36b0ad36::t_c3a87a20cdc260 4-5
+packages/rich-text-editor/oxlint.config.ts
+  s_3da29b36b0ad36::t_10d59b77588fe4 10-16
+packages/rich-text-editor/src/plugins/Mention/Mention.tsx
+  s_3da29b36b0ad36::t_10d59b77588fe4 13-14,18-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1e3dc77469796922c3d41b0083ae33ae5837199b",
+  "prompts": {},
+  "sessions": {
+    "s_3da29b36b0ad36": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52275dbb-cfd4-472c-b295-02ca60ef0ab1",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
