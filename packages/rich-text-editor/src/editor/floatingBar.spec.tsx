@@ -9,7 +9,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { deDE } from '#/locales/de-DE';
 import { translatorFor } from '#/ui/translation';
 
-import { columnBreakPlugin, defaultPlugins, definePlugin, RichTextEditor, type RteDocument } from '../index';
+import { definePlugin, RichTextEditor, type RteDocument } from '../index';
+import { columnBreakPlugin, defaultPlugins } from '../plugins';
 
 declare global {
     // eslint-disable-next-line no-var

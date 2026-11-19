@@ -9,7 +9,6 @@ import { MENU_ICON_SIZE } from '#/ui/toolbarIconSize';
 import { useTranslate } from '#/ui/translation';
 
 import { activeCommand, availableCommands } from '../helpers/blockCommands';
-import styles from '../richTextEditor.module.scss';
 
 /** Never take the selection away from the text: the controls act on it. */
 const keepSelection = (event: MouseEvent<HTMLElement>): void => event.preventDefault();
@@ -70,12 +69,10 @@ export const TurnInto = ({
             <Dropdown.Trigger>
                 <Button
                     type="button"
-                    size="small"
                     emphasis="weak"
                     aria-label={translate('RichTextEditor_turnIntoCurrent', { type: label })}
                     title={translate('RichTextEditor_turnInto')}
                     {...keepsSelection}
-                    className={styles.turnInto}
                 >
                     <span>{label}</span>
                     <IconCaretDown size={16} />

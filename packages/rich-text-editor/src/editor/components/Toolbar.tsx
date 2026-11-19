@@ -1,6 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type MutableRefObject, type ReactNode, useCallback, useRef, useState, useSyncExternalStore } from 'react';
+import { Divider } from '@frontify/fondue-components';
+import {
+    Fragment,
+    type MutableRefObject,
+    type ReactNode,
+    useCallback,
+    useRef,
+    useState,
+    useSyncExternalStore,
+} from 'react';
 
 import {
     type EditorControlApi,
@@ -17,7 +26,7 @@ import { useTranslate } from '#/ui/translation';
 import { turnIntoCommands } from '../helpers/blockCommands';
 import { type GroupSplit, type SlotGroup, splitGroups } from '../helpers/toolbarFit';
 import { toolbarItemProps } from '../helpers/toolbarItem';
-import { GROUP_ATTRIBUTE, SLOT_ATTRIBUTE } from '../helpers/toolbarMarkers';
+import { GROUP_ATTRIBUTE, SEPARATOR_ATTRIBUTE, SLOT_ATTRIBUTE } from '../helpers/toolbarMarkers';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
 import { type ToolbarFit, useToolbarFit } from '../hooks/useToolbarFit';
 import { useToolbarRoving } from '../hooks/useToolbarRoving';
@@ -120,6 +129,27 @@ export const Toolbar = ({
         );
     }
 
+    const sections: ToolbarSection[] = [];
+    if (showTurnInto) {
+        sections.push({
+            key: 'turn-into',
+            node: <TurnInto api={api} commands={turnInto} selection={selection} />,
+        });
+    }
+    for (const group of row) {
+        sections.push({ key: group.key, node: drawGroups([group]) });
+    }
+    if (moreNode !== null) {
+        sections.push({ key: 'more', node: moreNode });
+    }
+    const rowChildren: ReactNode[] = [];
+    for (const [index, section] of sections.entries()) {
+        if (index > 0) {
+            rowChildren.push(<ToolbarSeparator key={`separator-${section.key}`} />);
+        }
+        rowChildren.push(<Fragment key={section.key}>{section.node}</Fragment>);
+    }
+
     return (
         <div
             ref={toolbarRef}
@@ -136,12 +166,19 @@ export const Toolbar = ({
             // Where the bar ended up, for the stylesheet to read.
             data-placement={placement}
         >
-            {showTurnInto ? <TurnInto api={api} commands={turnInto} selection={selection} /> : null}
-            {drawGroups(row)}
-            {moreNode}
+            {rowChildren}
         </div>
     );
 };
+
+type ToolbarSection = { key: string; node: ReactNode };
+
+/** The line between two sections of the row; a toolbar separator for assistive technology. */
+const ToolbarSeparator = (): ReactNode => (
+    <div className={styles.separator} {...{ [SEPARATOR_ATTRIBUTE]: '' }}>
+        <Divider direction="vertical" color="weak" padding="none" />
+    </div>
+);
 
 const UNGROUPED_GROUP_KEY = 'ungrouped';
 

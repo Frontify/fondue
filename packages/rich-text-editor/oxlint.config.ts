@@ -315,7 +315,10 @@ export default defineConfig({
                             NO_ENGINE,
                             noEngineFromShell('.'),
                             SHELL_OUTER_LAYERS,
-                            { ...noRelativeEscape('..', SHELL_ESCAPE_MESSAGE), group: ['../**', '!../index'] },
+                            {
+                                ...noRelativeEscape('..', SHELL_ESCAPE_MESSAGE),
+                                group: ['../**', '!../index', '!../plugins'],
+                            },
                         ],
                     },
                 ],
@@ -389,8 +392,8 @@ export default defineConfig({
                             NO_SERVER_RENDER,
                             NO_ENGINE,
                             {
-                                group: ['#/**', './**', '../**', '!../index'],
-                                message: 'Stories may only import the package public API (../index).',
+                                group: ['#/**', './**', '../**', '!../index', '!../plugins'],
+                                message: 'Stories may only import the package public API (../index, ../plugins).',
                             },
                         ],
                     },
