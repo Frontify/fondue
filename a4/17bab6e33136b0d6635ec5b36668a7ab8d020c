@@ -1,0 +1,43 @@
+.changeset/tree-handle-inside-row.md
+  s_e090dd636f75c9::t_aa590b481a716b 1-5
+.changeset/tree-row-geometry.md
+  s_e090dd636f75c9::t_69f55b7024fc62 1-7
+packages/components/src/components/Tree/components/TreeDragLine.ct.tsx
+  s_e090dd636f75c9::t_6814465f2db312 5,20,27,36,41-42,44,49-50,52-72
+packages/components/src/components/Tree/components/TreeLoadingRow.tsx
+  s_e090dd636f75c9::t_c9af82f453ed0c 20-24
+packages/components/src/components/Tree/components/TreeRoot.ct.tsx
+  s_e090dd636f75c9::t_90efebfe86beb9 8,1646-1683,1701-1735
+packages/components/src/components/Tree/components/TreeRoot.tsx
+  s_e090dd636f75c9::t_53c9dfddfa62cc 13,19,145-146,149,151
+packages/components/src/components/Tree/components/TreeRow.tsx
+  s_e090dd636f75c9::t_10c8716254c517 196
+packages/components/src/components/Tree/components/testutils/DragLineHarness.tsx
+  s_e090dd636f75c9::t_be6a0a015121c5 1-19
+packages/components/src/components/Tree/constants.ts
+  s_e090dd636f75c9::t_ae42345d869861 14
+packages/components/src/components/Tree/styles/tree.module.scss
+  s_e090dd636f75c9::t_e6c4d211f31de8 7-17,68-69,72,115,119-123,127-128,134-138,226-227,229-235,243,245,251,257,259,276-277,279
+packages/rich-text-editor/src/__tests__/paste/vendorPaste.spec.tsx
+  s_e090dd636f75c9::t_6ce9dad24ada50 347-352
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteGoogleDocs.ts
+  s_e090dd636f75c9::t_3e4a1a77578cb0 56-60,62
+pnpm-lock.yaml
+  s_e090dd636f75c9::t_b84a356408a60a 9019-9020,9632-9633,11457,16069,19096,19805,20155
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a417bab6e33136b0d6635ec5b36668a7ab8d020c",
+  "prompts": {},
+  "sessions": {
+    "s_e090dd636f75c9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c7d6ea89-316e-49b8-b097-cf331faa9e19",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
