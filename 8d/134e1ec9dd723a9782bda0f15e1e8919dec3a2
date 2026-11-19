@@ -1,0 +1,25 @@
+.changeset/steady-lines-stand.md
+  s_07b5924e944226::t_6243ed385e6e51 1-6
+packages/components/src/components/Divider/Divider.tsx
+  s_07b5924e944226::t_03a76fe67fd09e 74
+packages/components/src/components/Divider/__tests__/Divider.ct.tsx
+  s_07b5924e944226::t_9cca0ad15700a0 113-147
+packages/components/src/components/Divider/styles/divider.module.scss
+  s_07b5924e944226::t_61541e8f82d0d7 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8d134e1ec9dd723a9782bda0f15e1e8919dec3a2",
+  "prompts": {},
+  "sessions": {
+    "s_07b5924e944226": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f539660c-db83-4efc-b82c-5adcd1eadc6d",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,84 @@
+.changeset/feat-rte-mention-names.md
+  s_a585d10f570924::t_e7cf17ff8a7a2f 5
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.spec.tsx
+  s_a585d10f570924::t_33f890faeda4ed 44-45,47,57
+  s_a585d10f570924::t_c365ecf9a3260f 441-482
+  s_a585d10f570924::t_90457b5f236808 320,322,334-335
+  s_b7b6d6b9b0e51b::t_04dd7f818aec55 14,46
+packages/rich-text-editor/src/plugins/Mention/helpers/display.ts
+  s_a585d10f570924::t_29fd179d2d5d12 23,28,34,90,94,96,98,108-113,115,189-194,199
+  s_b7b6d6b9b0e51b::t_100e3c2362464f 15,175
+packages/rich-text-editor/src/plugins/Mention/components/MentionEditor.tsx
+  s_a585d10f570924::t_bebfb80b74ef05 18,35,41,62
+  s_b7b6d6b9b0e51b::t_25a1a177d581c1 11
+packages/rich-text-editor/src/plugins/Mention/Mention.spec.ts
+  s_a585d10f570924::t_1ae874c6effeaf 143-162
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_a585d10f570924::t_e1e39ecda7ca1e 1689,1694-1707,1711-1712,1714-1715,1720
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_a585d10f570924::t_2efd64232762f8 12,400-412,414-415,513-514,516-517,523-524,529,533,535,542,545-546,548,553,556-557
+  s_b7b6d6b9b0e51b::t_2928e2428e591a 413
+packages/rich-text-editor/src/plugins/shared/helpers/text.spec.ts
+  s_a585d10f570924::t_b5e8c9e98eb568 7-9,15-24
+packages/rich-text-editor/src/plugins/Mention/Mention.tsx
+  s_a585d10f570924::t_bebfb80b74ef05 30-33,54,63,102-105,113-117,142,146,156,159-166
+  s_b7b6d6b9b0e51b::t_45199e1fc61c9c 7,9,56,143-145
+packages/rich-text-editor/src/plugins/Mention/helpers/labels.ts
+  s_a585d10f570924::t_9a5f75e74942f1 1-35
+packages/rich-text-editor/src/plugins/Mention/helpers/display.spec.ts
+  s_a585d10f570924::t_6b9b7e97a4e56f 52,58
+  s_a585d10f570924::t_1ae874c6effeaf 89-90,92-99,101-109
+  s_b7b6d6b9b0e51b::t_1c50dacc64acb1 8,40,91,100
+packages/rich-text-editor/src/plugins/shared/helpers/href.ts
+  s_a585d10f570924::t_a0af22fa3ffb43 96
+  s_a585d10f570924::t_2a3adaab12d98d 53-54,70,113
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.tsx
+  s_a585d10f570924::t_96e60031af951e 382-383
+  s_a585d10f570924::t_b429daee2bb059 17,137,143,145,147,178,194,206,210,219,227,230,298-310,322,328,427,436,445
+  s_b7b6d6b9b0e51b::t_1de7f15fdd2a25 15
+packages/rich-text-editor/src/plugins/Mention/components/MentionLink.spec.tsx
+  s_a585d10f570924::t_1ae874c6effeaf 55-65
+packages/rich-text-editor/src/plugins/Mention/components/MentionLink.tsx
+  s_a585d10f570924::t_bebfb80b74ef05 7,63
+packages/rich-text-editor/src/plugins/Mention/components/pickerLabels.ts
+  s_a585d10f570924::t_bb09aa9a99b03a 3-59
+  s_37db616537927d::t_2d9d6c62d0d50e 1-2,60-68
+packages/rich-text-editor/src/index.ts
+  s_a585d10f570924::t_b429daee2bb059 157,160-161
+packages/rich-text-editor/src/plugins/shared/helpers/text.ts
+  s_a585d10f570924::t_b64e9176d09020 4-8,17,23
+packages/rich-text-editor/src/plugins/Mention/index.ts
+  s_b7b6d6b9b0e51b::t_626eec0ed2b901 4-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9a376029fd9f90da6ba1f66f459cff5618f44937",
+  "prompts": {},
+  "sessions": {
+    "s_37db616537927d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "789d1117-7913-4539-b8c3-b762a7c9695f",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_a585d10f570924": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12fffd99-7ec0-43c7-a09b-65001cf93f56",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_b7b6d6b9b0e51b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "474a4608-55ee-422f-b661-5b660b80f0c5",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

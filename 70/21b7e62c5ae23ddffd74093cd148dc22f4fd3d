@@ -1,0 +1,75 @@
+packages/rich-text-editor/src/index.ts
+  s_be5af688b9a432::t_95860214c52e5f 7,74,111,190,217
+packages/rich-text-editor/src/plugins/SoftBreak/SoftBreak.tsx
+  s_be5af688b9a432::t_95860214c52e5f 11
+packages/rich-text-editor/src/plugins/Typography/Typography.ts
+  s_be5af688b9a432::t_95860214c52e5f 3,46-47,49,52,54
+packages/rich-text-editor/src/core/registry.spec.ts
+  s_be5af688b9a432::t_95860214c52e5f 64-81
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteRules.ts
+  s_be5af688b9a432::t_95860214c52e5f 12,16,62,64,68,77-86,88,90-92,95,97-98,101-102,104-112,115,127,133,158,160-164,180
+packages/rich-text-editor/src/plugins/shared/helpers/declaredStyle.ts
+  s_be5af688b9a432::t_95860214c52e5f 83-101
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.ts
+  s_be5af688b9a432::t_95860214c52e5f 8,24,26,33-40,42-43,53-54,56-57,89,93-96,168
+packages/rich-text-editor/src/core/hotkeys.ts
+  s_be5af688b9a432::t_95860214c52e5f 1-88
+packages/rich-text-editor/src/core/registry.ts
+  s_be5af688b9a432::t_95860214c52e5f 4-5,409-435,617
+packages/rich-text-editor/src/core/plugin.ts
+  s_be5af688b9a432::t_95860214c52e5f 14-15,17-18,108-110,267-268,320,329-330,362-385,598-613,637-641,661,665-669
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_be5af688b9a432::t_95860214c52e5f 14,19,136-137,139,145,285,448-449,451,458,462
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_be5af688b9a432::t_95860214c52e5f 6,40,42,191
+packages/rich-text-editor/src/plugins/Mention/Mention.tsx
+  s_be5af688b9a432::t_95860214c52e5f 14-15
+packages/rich-text-editor/src/core/index.ts
+  s_be5af688b9a432::t_95860214c52e5f 25,31,56,80-88
+packages/rich-text-editor/src/ui/shortcut.ts
+  s_be5af688b9a432::t_6aed07a133cd06 3-8
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.spec.tsx
+  s_be5af688b9a432::t_95860214c52e5f 185-210
+packages/rich-text-editor/src/core/hotkeys.spec.ts
+  s_be5af688b9a432::t_95860214c52e5f 1-75
+packages/rich-text-editor/oxlint.config.ts
+  s_be5af688b9a432::t_95860214c52e5f 10-16
+packages/rich-text-editor/src/editor/linkFlows.spec.tsx
+  s_be5af688b9a432::t_95860214c52e5f 45-46,48
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_be5af688b9a432::t_95860214c52e5f 15,749-753,756-759,766-767
+packages/rich-text-editor/src/editor/engines/prosemirror/paste.spec.tsx
+  s_be5af688b9a432::t_95860214c52e5f 8,206-232
+  s_be5af688b9a432::t_b06194ca3351e0 233
+packages/rich-text-editor/src/core/vocabulary.ts
+  s_be5af688b9a432::t_95860214c52e5f 41-46
+  s_be5af688b9a432::t_425054b02f3e51 40
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.ts
+  s_be5af688b9a432::t_95860214c52e5f 25-32,138,141,145,148-152,156-157,209,211
+packages/rich-text-editor/src/editor/engines/prosemirror/textRules.spec.tsx
+  s_be5af688b9a432::t_95860214c52e5f 179-187,502,504-508,512-514,516-517,519-520
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_be5af688b9a432::t_95860214c52e5f 5,7-8,36-42,181-183,250
+packages/rich-text-editor/src/plugins/shared/helpers/href.ts
+  s_be5af688b9a432::t_6aed07a133cd06 4
+  s_be5af688b9a432::t_95860214c52e5f 3,39-45
+  s_be5af688b9a432::t_2d374ab7bea62e 46
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_be5af688b9a432::t_95860214c52e5f 4,16-17,44-48,59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7021b7e62c5ae23ddffd74093cd148dc22f4fd3d",
+  "prompts": {},
+  "sessions": {
+    "s_be5af688b9a432": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0dcd0245-e19d-48cb-aebc-74746cda6895",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

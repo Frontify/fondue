@@ -1,0 +1,69 @@
+packages/rich-text-editor/src/__tests__/browser/HostLooksPair.tsx
+  s_9209af244cd592::t_931779e7673be9 13,33,48,58
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.tsx
+  s_9209af244cd592::t_8da243f62d2e35 8
+  s_9209af244cd592::t_b8dc2b168b31c0 94
+packages/rich-text-editor/src/plugins/Link/helpers/appearance.ts
+  s_9209af244cd592::t_672244681bf3c9 7
+  s_9209af244cd592::t_5f373a1e825fb6 26-35
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_9209af244cd592::t_4304c0c628cba7 105,108
+  s_9209af244cd592::t_da13339e37be39 153,156,162,165
+  s_9209af244cd592::t_112e6274bc59e4 197-205,207-212,214-220,226-227,230,232-237,242,249-250
+  s_9209af244cd592::t_7c455b2362319a 279-280,285-289,292-293,296
+  s_9209af244cd592::t_1776cfc058e66a 33-40
+  s_9209af244cd592::t_5aff43e241aa8f 51,53-61,66-69,71,73-76,78
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_9209af244cd592::t_d75d6e73307bd8 540-541
+  s_9209af244cd592::t_51caca328a9601 575
+packages/rich-text-editor/src/__tests__/serializeToHtml.spec.tsx
+  s_9209af244cd592::t_1530cc694ec84c 88-90
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_9209af244cd592::t_ab1500b40c9279 1149
+  s_9209af244cd592::t_e504ab15839844 30
+  s_9209af244cd592::t_bdfccf09230951 909,919,928,1006,1038,1049,1055,1070,1136,1150
+packages/rich-text-editor/src/plugins/defaultContent.ts
+  s_9209af244cd592::t_931779e7673be9 25
+.changeset/feat-rte-button-links.md
+  s_9209af244cd592::t_661e9dc1eed1f5 5
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_9209af244cd592::t_e5d477938aa1b1 294
+  s_9209af244cd592::t_931779e7673be9 6,369,390,511
+packages/rich-text-editor/src/plugins/Link/index.ts
+  s_9209af244cd592::t_58c05f65c16dfe 6,10,14
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_9209af244cd592::t_81b5c20d0d0f24 9
+  s_9209af244cd592::t_38af0dba742b42 136
+  s_9209af244cd592::t_d70ed9d4c688de 117-121
+packages/rich-text-editor/src/plugins/Link/helpers/value.ts
+  s_9209af244cd592::t_9d737d0a5291f5 9,11-22
+  s_9209af244cd592::t_3e787e85dbdb4a 10
+packages/rich-text-editor/src/__tests__/typeDerivation.spec.ts
+  s_9209af244cd592::t_931779e7673be9 166,169,172
+packages/rich-text-editor/src/plugins/Link/Link.spec.ts
+  s_9209af244cd592::t_d1ba8d04f6f754 134-137,142,147-150,154-156
+  s_9209af244cd592::t_bdc90715cb5a66 162,200-206,208,211,215-223,227,230,236-250,257,266-270,272
+  s_9209af244cd592::t_540b009afc916f 182-188
+  s_9209af244cd592::t_149b38363d8faf 46,59,66,108,165,212,263
+  s_9209af244cd592::t_446976b56d0954 16-19
+  s_9209af244cd592::t_1530cc694ec84c 157-161
+  s_9209af244cd592::t_f288adc9470eec 163
+packages/rich-text-editor/src/index.ts
+  s_9209af244cd592::t_3000955407f1f6 136,141-142,145-146
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "009d4f92f9f33d1309077b0f224cfc9aaf9eea5b",
+  "prompts": {},
+  "sessions": {
+    "s_9209af244cd592": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2937942f-4fd4-4ace-942d-ce576d430ce1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

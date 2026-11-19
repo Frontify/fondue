@@ -1,0 +1,75 @@
+packages/rich-text-editor/src/plugins/Bold/Bold.ts
+  s_53de767222940a::t_911f4142b6034b 7,32
+packages/rich-text-editor/src/plugins/Superscript/Superscript.ts
+  s_53de767222940a::t_911f4142b6034b 7-8,30
+packages/rich-text-editor/src/plugins/Underline/Underline.ts
+  s_53de767222940a::t_911f4142b6034b 7,27
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_53de767222940a::t_911f4142b6034b 83,760-767
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_53de767222940a::t_911f4142b6034b 43
+storybook-docs/.storybook/main.ts
+  s_53de767222940a::t_911f4142b6034b 26-32,42,71,81,123
+packages/rich-text-editor/src/plugins/FontColor/FontColor.spec.ts
+  s_53de767222940a::t_911f4142b6034b 7-8,16-17
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.ts
+  s_53de767222940a::t_911f4142b6034b 131,135,150
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_53de767222940a::t_911f4142b6034b 238-265,289-296
+  s_53de767222940a::t_15a066fd9eca0e 297
+storybook-docs/.storybook/tailwind.config.ts
+  s_53de767222940a::t_911f4142b6034b 22
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.spec.tsx
+  s_53de767222940a::t_911f4142b6034b 131-148
+packages/rich-text-editor/src/__tests__/formatRegression.spec.tsx
+  s_53de767222940a::t_911f4142b6034b 34
+packages/rich-text-editor/src/plugins/Italic/Italic.ts
+  s_53de767222940a::t_911f4142b6034b 7-8,30-31
+packages/rich-text-editor/src/editor/engines/prosemirror/paste.spec.tsx
+  s_53de767222940a::t_911f4142b6034b 109-129,174-176,180-204
+  s_53de767222940a::t_5577121d0159f5 205
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteRules.ts
+  s_53de767222940a::t_911f4142b6034b 30-33,54,60-67,72,75,79-92,94-99,102-104,110,117-121,127-128,136,140-144,160-164,174
+packages/rich-text-editor/src/editor/engines/prosemirror/ruleContext.ts
+  s_53de767222940a::t_911f4142b6034b 40-49,65
+packages/rich-text-editor/src/core/plugin.ts
+  s_53de767222940a::t_b8c51c480e79df 455-458
+  s_53de767222940a::t_911f4142b6034b 341,413,428,439-442,684-686
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_53de767222940a::t_911f4142b6034b 451-454,459-467
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_53de767222940a::t_911f4142b6034b 7,30,265-271,347,350-351,353,367-397,399-412,419-420,423,437-438,445,447-448,452-453
+packages/rich-text-editor/src/core/index.ts
+  s_53de767222940a::t_911f4142b6034b 60
+packages/rich-text-editor/src/editor/engines/prosemirror/textRules.spec.tsx
+  s_53de767222940a::t_911f4142b6034b 8-15,36-52,70-99,112-135,148-159,284,290,305-317,341-349,369-432,452,462-480,483,493-505,510-513,522
+packages/rich-text-editor/src/plugins/shared/helpers/declaredStyle.ts
+  s_53de767222940a::t_911f4142b6034b 3-4,25-29,33-39,44-75,81-104,110-111
+packages/rich-text-editor/src/plugins/Strikethrough/Strikethrough.ts
+  s_53de767222940a::t_911f4142b6034b 7,27
+packages/rich-text-editor/src/plugins/Typography/Typography.ts
+  s_53de767222940a::t_911f4142b6034b 7-12,18-20,24,30-57,59,62-63,65,67-70,89-90,92-96,99-135,158-173,182,184,189,192-193,204,206,218-219,225-234
+packages/rich-text-editor/src/plugins/Subscript/Subscript.ts
+  s_53de767222940a::t_911f4142b6034b 7-8,30
+packages/rich-text-editor/src/index.ts
+  s_53de767222940a::t_911f4142b6034b 12,34,190,214
+  s_53de767222940a::t_ce1f2c17df437b 14,191,215
+.github/workflows/rich-text-editor-pull-requests.yaml
+  s_53de767222940a::t_911f4142b6034b 7-12,14-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ff818a0a0880dc033880988d031291948d31f419",
+  "prompts": {},
+  "sessions": {
+    "s_53de767222940a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f9b7337-8455-4b7f-ac95-dde194f54be3",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
