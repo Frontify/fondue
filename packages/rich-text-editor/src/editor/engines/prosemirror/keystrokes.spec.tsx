@@ -20,7 +20,8 @@ import {
 } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
-import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
+import { trimTrailingPunctuation } from './autolink';
+import { destroyEditors, editorWith, paragraph, shipped, text, TOKEN_TRIM } from './testEditor';
 
 /**
  * What typing and key presses do, through the pipeline `keystrokePipeline`
@@ -728,6 +729,22 @@ describe('Enter in a list over a range across items', () => {
         press(editor.view, 'Enter');
 
         expect(editor.stored()?.[0]?.type).toBe('bulletList');
+    });
+});
+
+describe('trimming punctuation off a typed address', () => {
+    it('strips closing quotes, brackets and stops one by one', () => {
+        expect(trimTrailingPunctuation('https://a.com/x"),.', TOKEN_TRIM)).toBe('https://a.com/x');
+        expect(trimTrailingPunctuation('https://a.com/Foo_(bar)).', TOKEN_TRIM)).toBe('https://a.com/Foo_(bar)');
+    });
+
+    it('finishes quickly on a long run of full stops', () => {
+        const run = '.'.repeat(5000);
+        const started = performance.now();
+
+        expect(trimTrailingPunctuation(`https://a.com/x${run}a`, TOKEN_TRIM)).toBe(`https://a.com/x${run}a`);
+        expect(trimTrailingPunctuation(`https://a.com/x${run}`, TOKEN_TRIM)).toBe('https://a.com/x');
+        expect(performance.now() - started).toBeLessThan(1000);
     });
 });
 

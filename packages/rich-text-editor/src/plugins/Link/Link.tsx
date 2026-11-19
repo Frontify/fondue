@@ -3,11 +3,14 @@
 import { type DefaultStyle, defineContent, defineMark, definePlugin, type HotkeyHandler } from '#/core';
 
 import { withoutDecorationLine } from '../shared/helpers/declaredStyle';
-import { isLinkablePaste, isSafeHref, toHref, WEB_ADDRESS } from '../shared/helpers/href';
+import { isLinkablePaste, isSafeHref, LINKABLE_ADDRESS, toHref } from '../shared/helpers/href';
 
 import { LinkEditor } from './components/LinkEditor';
 import { LinkToolbarButton } from './components/LinkToolbarButton';
+import { LINKABLE_ADDRESS_TRIM } from './helpers/address';
+import { type LinkSearch } from './helpers/destination';
 import { openNewLinkForm } from './helpers/newLinkForms';
+import { NEW_TAB_REL, NEW_TAB_TARGET } from './helpers/newTab';
 import { type LinkValue } from './helpers/value';
 import styles from './link.module.scss';
 
@@ -19,8 +22,12 @@ export type LinkMark = {
     link?: LinkValue;
 };
 
-const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string, string> =>
-    link?.openInNewTab === true ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+export type LinkPluginOptions = {
+    /**
+     * Offers the app's own pages as link targets while the author types. Editing only: the content never needs it.
+     */
+    search?: LinkSearch;
+};
 
 const withoutUnderline = (value: string): string => withoutDecorationLine(value, 'underline');
 
@@ -29,6 +36,32 @@ const LINK_DEFAULT_STYLES: readonly DefaultStyle[] = [
     { property: 'text-decoration-line', scope: 'inside', strip: withoutUnderline },
 ];
 
+type LinkAnchorAttrs = {
+    href?: string;
+    target?: string;
+    rel?: string;
+};
+
+/**
+ * A stored link's anchor attributes, without its target when that target is not safe.
+ */
+const anchorAttrs = (value: unknown): LinkAnchorAttrs => {
+    // A stored document may hold anything here (`{}`, `true`), so its shape is not taken on trust.
+    let link: Partial<LinkValue> | null = null;
+    if (typeof value === 'object') {
+        // The declared type is trusted only this far: every field is checked before use.
+        link = value as Partial<LinkValue> | null;
+    }
+    const href = link?.href;
+    if (!isSafeHref(href)) {
+        return {};
+    }
+    if (link?.openInNewTab === true) {
+        return { href, target: NEW_TAB_TARGET, rel: NEW_TAB_REL };
+    }
+    return { href };
+};
+
 /**
  * Links as a mark on text, written as `<a href>`.
  * Only web, mail, phone and relative targets count, so a `javascript:` URL is never clickable.
@@ -36,30 +69,16 @@ const LINK_DEFAULT_STYLES: readonly DefaultStyle[] = [
 export const linkContent = defineContent({
     marks: {
         link: defineMark<LinkValue>({
-            // Outside every other mark, so a partly styled link still renders
-            // as ONE anchor: an element stays open across text runs only while
-            // the marks around it are the same, and a colour or an emphasis
-            // inside would otherwise cut it up.
+            // Outside every other mark, so a partly styled link renders as one anchor, not cut up by a colour or an emphasis inside.
             nesting: -2,
             // Typing at the end of a link does not extend it.
             inclusive: false,
 
-            /** The link everywhere but while editing: readonly, export, copy. */
-            toHtml: (value) => {
-                // A stored document may hold anything here — `{}`, `true` — so
-                // nothing about its shape is taken on trust.
-                const link = typeof value === 'object' ? (value as Partial<LinkValue> | null) : null;
-                const href = link?.href;
-                return {
-                    tag: 'a',
-                    attrs: {
-                        ...(isSafeHref(href) ? { href } : {}),
-                        class: styles.link,
-                        ...newTabAttrs(link),
-                    },
-                    children: true,
-                };
-            },
+            toHtml: (value) => ({
+                tag: 'a',
+                attrs: { ...anchorAttrs(value), class: styles.link },
+                children: true,
+            }),
 
             // A pasted span inside a link, such as Google Docs writes, repeats the underline the link already shows.
             defaultStyles: LINK_DEFAULT_STYLES,
@@ -69,14 +88,13 @@ export const linkContent = defineContent({
                     tag: 'a[href]',
                     value: (element) => {
                         const href = element.getAttribute('href') ?? '';
-                        return isSafeHref(href)
-                            ? {
-                                  href,
-                                  ...(element.getAttribute('target') === '_blank'
-                                      ? { openInNewTab: true as const }
-                                      : {}),
-                              }
-                            : null;
+                        if (!isSafeHref(href)) {
+                            return null;
+                        }
+                        if (element.getAttribute('target') === NEW_TAB_TARGET) {
+                            return { href, openInNewTab: true as const };
+                        }
+                        return { href };
                     },
                 },
             ],
@@ -91,9 +109,11 @@ const hotkeys = {
             api.editors.open('link');
             return true;
         }
-        // Nothing selected is nothing to link, but the key is still the
-        // editor's, not the browser's search bar.
-        return api.selection.get().isCollapsed || openNewLinkForm(api);
+        // At a caret the key stays the editor's even with no form to open (floating toolbar), never the browser's.
+        if (openNewLinkForm(api)) {
+            return true;
+        }
+        return api.selection.get().isCollapsed;
     },
 } satisfies Record<string, HotkeyHandler>;
 
@@ -101,32 +121,67 @@ const HOTKEY: keyof typeof hotkeys = 'Mod-k';
 
 /**
  * Links, made with a toolbar button or `Mod-k` and edited in a flyout while the caret is inside.
- * A web address followed by a space becomes a link, and pasting one over selected text links that text.
+ * A web, mail or phone address followed by a space becomes a link, and pasting one links the
+ * selected text, or goes in linked at a caret outside a link. `search` offers the app's own
+ * pages as targets.
+ *
+ * @example
+ * const links = linkPlugin({ search });
  */
-export const linkPlugin = () =>
+export const linkPlugin = ({ search }: LinkPluginOptions = {}) =>
     definePlugin({
         content: linkContent,
         toolbarGroup: 'link',
-        toolbar: [{ label: 'Link', shortcut: HOTKEY, render: LinkToolbarButton }],
-        edit: { link: LinkEditor },
+        toolbar: [
+            {
+                label: 'Link',
+                shortcut: HOTKEY,
+                render: (props) => <LinkToolbarButton {...props} search={search} />,
+            },
+        ],
+        edit: {
+            link: (props) => <LinkEditor {...props} search={search} />,
+        },
         hotkeys,
-        // A web address typed and followed by a space becomes a link. The pattern
-        // names only web schemes, so what it matches is always a safe href.
-        inputRules: [{ kind: 'markPattern', pattern: WEB_ADDRESS, mark: 'link', value: (href) => ({ href }) }],
-        // A web or mail address pasted over selected text links that text, as
-        // in most editors; anything else pastes as usual.
-        onPaste: ({ text }, api) => {
+        inputRules: [
+            {
+                kind: 'markPattern',
+                pattern: LINKABLE_ADDRESS,
+                mark: 'link',
+                trim: LINKABLE_ADDRESS_TRIM,
+                // The pattern names only safe schemes; the check still refuses an address too long to keep.
+                value: (href) => {
+                    if (isSafeHref(href)) {
+                        return { href };
+                    }
+                    return null;
+                },
+            },
+        ],
+        onPaste: ({ text, source }, api) => {
             const typed = text.trim();
             const { isCollapsed, marks } = api.selection.get();
             let href: string | null = null;
             if (isLinkablePaste(typed)) {
                 href = toHref(typed);
             }
-            if (isCollapsed || href === null || !isSafeHref(href)) {
+            if (href === null) {
                 return false;
             }
-            // A toggle over text that is all linked already would take the link
-            // off, so it goes first and the new target is set after.
+            if (isCollapsed) {
+                // Inside a link the address stays plain text rather than nesting a link.
+                if ('link' in marks) {
+                    return false;
+                }
+                // Copied from an editor, the address pastes back with its link and marks as they were.
+                if (source === 'editor') {
+                    return false;
+                }
+                // The first undo takes the link off and keeps the address, as after an autolink.
+                api.insertText(href, { link: { href } }, { undo: 'marksFirst' });
+                return true;
+            }
+            // A toggle over text that is all linked already would take the link off, so it goes first.
             if ('link' in marks) {
                 api.marks.toggle('link');
             }

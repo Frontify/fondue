@@ -5,6 +5,8 @@
 
 export {
     type EditorControlApi,
+    type InsertTextOptions,
+    type InsertTextUndo,
     REDO_HOTKEY,
     type RteMarkState,
     type RteSelectionSnapshot,
@@ -43,7 +45,9 @@ export {
     type MarkParseRule,
     onlyTypeOf,
     type ParseRule,
+    type Paste,
     type PasteHandler,
+    type PasteSource,
     type RteBlockCommand,
     type RteContent,
     type RteContentDefinition,
@@ -51,6 +55,7 @@ export {
     type RteEditView,
     type RteIcon,
     type RteInputRule,
+    type RteMarkPatternTrim,
     type RtePlugin,
     type RtePluginDefinition,
     type RteToolbarEntry,

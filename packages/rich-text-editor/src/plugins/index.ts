@@ -40,6 +40,7 @@ export { underlineContent, underlinePlugin } from './Underline';
 
 export { type ColumnBreakPluginOptions } from './ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './Emoji';
+export { type LinkDestination, type LinkPluginOptions, type LinkSearch } from './Link';
 export { type MentionContentOptions, type MentionItem, type MentionPluginOptions, type MentionValue } from './Mention';
 export { type TextLook } from '#/core';
 export {

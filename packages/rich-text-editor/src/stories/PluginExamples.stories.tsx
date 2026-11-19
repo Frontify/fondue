@@ -35,6 +35,7 @@ import {
     emojiPlugin,
     fontColorPlugin,
     italicPlugin,
+    type LinkDestination,
     linkPlugin,
     type MentionItem,
     mentionPlugin,
@@ -425,6 +426,57 @@ export const Link: Story = {
             <div className={LAYOUT}>
                 <div className={FRAME}>
                     <RichTextEditor value={doc} onChange={setDoc} plugins={[linkPlugin()]} />
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/** The app's own pages, as a search service would return them. */
+const INTERNAL_PAGES: readonly LinkDestination[] = [
+    { id: 'brand', label: 'Brand guidelines', href: 'https://brand.frontify.com/guidelines' },
+    { id: 'logos', label: 'Logo library', href: 'https://brand.frontify.com/logos' },
+    { id: 'colors', label: 'Colour palette', href: 'https://brand.frontify.com/colors' },
+    { id: 'press', label: 'Press kit', href: 'https://frontify.com/press' },
+];
+
+/** How long the fake lookup takes, so the story shows the field while it searches. */
+const FAKE_LOOKUP_MS = 300;
+
+/** A fake lookup that gives up when aborted, as a real request would. */
+const searchPages = (query: string, signal: AbortSignal): Promise<readonly LinkDestination[]> =>
+    new Promise((resolve, reject) => {
+        const timer = setTimeout(() => {
+            const needle = query.toLowerCase();
+            resolve(INTERNAL_PAGES.filter((page) => page.label.toLowerCase().includes(needle)));
+        }, FAKE_LOOKUP_MS);
+        signal.addEventListener('abort', () => {
+            clearTimeout(timer);
+            reject(new DOMException('Aborted', 'AbortError'));
+        });
+    });
+
+/**
+ * Given a `search`, the "Link to" field offers the app's own pages as the
+ * author types.
+ */
+export const LinkWithSearch: Story = {
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'Select this text and press Mod-k to add a link.' }] }],
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <p className={HINT}>
+                    Open the link form and type <code>logo</code> in Link to: the list shows one page after a short
+                    wait. Press Down or Tab to reach the pages, then Enter or a click to pick one, or keep typing an
+                    address. A pick fills an empty Text field with the page name.
+                </p>
+                <div className={FRAME}>
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[linkPlugin({ search: searchPages })]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
