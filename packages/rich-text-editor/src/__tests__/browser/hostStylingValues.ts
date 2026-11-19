@@ -2,7 +2,8 @@
 
 import { type CSSProperties } from 'react';
 
-import { type RteDocument, type TextStyleName } from '../../index';
+import { type RteDocument } from '../../index';
+import { type TextStyleName } from '../../plugins';
 
 // Shared by the fixtures and the tests. Apart from the fixture components, because a component
 // test cannot import plain values from the file holding the components it mounts.

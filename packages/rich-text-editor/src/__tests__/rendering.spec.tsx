@@ -7,19 +7,16 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
-    columnBreakPlugin,
-    defaultContent,
-    defaultPlugins,
     defineContent,
     defineMark,
     definePlugin,
+    RichTextRenderer,
     type RteDocument,
     type RteDocumentWith,
-    RichTextRenderer,
     type RtePlugin,
     serializeToHtml,
-    textStyleContent,
 } from '../index';
+import { columnBreakPlugin, defaultContent, defaultPlugins, textStyleContent } from '../plugins';
 
 // The readonly view and export draw the same tree, so they are tested side by
 // side: the renderer as React in the test DOM, export as the string it returns.
