@@ -53,7 +53,7 @@ export type LinkMark = {
 export type TextLinkLook = Omit<TextLook, 'textDecoration' | 'marginTop' | 'marginBottom'>;
 
 /** How each kind of link looks. */
-export type LinkLooks = {
+export type LinkLook = {
     /** How text links look. */
     text?: TextLinkLook;
     /** How each button style looks. */
@@ -75,7 +75,7 @@ export type LinkContentOptions = {
      * field left out keeps Fondue's look. A value that is empty or can end its CSS declaration early throws an error
      * that names the field. A look never offers a kind: `look.button` alone only styles buttons already stored.
      */
-    look?: LinkLooks;
+    look?: LinkLook;
 };
 
 export type LinkPluginOptions = LinkContentOptions & {

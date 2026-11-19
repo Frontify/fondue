@@ -49,7 +49,7 @@ export {
     type LinkContentOptions,
     type LinkDestination,
     type LinkKind,
-    type LinkLooks,
+    type LinkLook,
     type LinkPluginOptions,
     type LinkSearch,
     type TextLink,

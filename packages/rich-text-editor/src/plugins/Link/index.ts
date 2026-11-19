@@ -3,7 +3,7 @@
 export {
     linkContent,
     type LinkContentOptions,
-    type LinkLooks,
+    type LinkLook,
     type LinkMark,
     linkPlugin,
     type LinkPluginOptions,
