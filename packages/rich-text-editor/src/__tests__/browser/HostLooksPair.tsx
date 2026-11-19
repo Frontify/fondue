@@ -34,22 +34,22 @@ type HostLooksPairProps = {
 };
 
 const pluginsWithLooks = ({ body, quote, link }: HostLooksPairProps): RtePlugin[] => [
-    textStylePlugin({ presets: { body, quote, link } }),
+    textStylePlugin({ presets: { body, quote } }),
     bulletListPlugin(),
     checkListPlugin(),
     fontColorPlugin(),
     quotePlugin(),
-    linkPlugin(),
+    linkPlugin({ look: link }),
 ];
 
 // The renderer gets content only, as a page that only shows documents would, so the looks must travel with the content.
 const contentWithLooks = ({ body, quote, link }: HostLooksPairProps) => [
-    textStyleContent({ presets: { body, quote, link } }),
+    textStyleContent({ presets: { body, quote } }),
     bulletListContent,
     checkListContent,
     fontColorContent,
     quoteContent,
-    linkContent,
+    linkContent({ look: link }),
 ];
 
 /** The renderer and the editor side by side, drawing body text, a quote and links with the same looks. */

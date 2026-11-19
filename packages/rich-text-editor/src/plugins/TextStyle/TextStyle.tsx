@@ -39,18 +39,13 @@ import styles from './textStyle.module.scss';
 // official document union.
 export type { TextStyleBlock, TextStyleName } from './helpers/presets';
 
-/**
- * How links look. A link keeps its underline, and vertical margins do nothing on inline text, so neither is a field.
- */
-export type LinkLook = Omit<TextLook, 'textDecoration' | 'marginTop' | 'marginBottom'>;
-
-/** The look of each kind of text, by name: the 9 text styles, body text, block quotes and links. */
-export type TextStylePresets = Partial<Record<TextStyleName | 'body' | 'quote', TextLook>> & { link?: LinkLook };
+/** The look of each kind of text, by name: the 9 text styles, body text and block quotes. */
+export type TextStylePresets = Partial<Record<TextStyleName | 'body' | 'quote', TextLook>>;
 
 /** How the text-style content looks; what a renderer needs to draw a document the way the editor does. */
 export type TextStyleContentOptions = {
     /**
-     * How each kind of text looks, by name: a text style, `body` for plain paragraphs, `quote` and `link`.
+     * How each kind of text looks, by name: a text style, `body` for plain paragraphs and `quote`.
      * A kind left out, and a field left out of one, keeps Fondue's look.
      * A value that is empty or can end its CSS declaration early throws an error that names the preset and the
      * field, so a mistake in the host's configuration never passes silently.

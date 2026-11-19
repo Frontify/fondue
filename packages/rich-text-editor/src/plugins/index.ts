@@ -41,11 +41,16 @@ export { underlineContent, underlinePlugin } from './Underline';
 export { type BlurOnBreakPluginOptions } from './BlurOnBreak';
 export { type ColumnBreakPluginOptions } from './ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './Emoji';
-export { type LinkDestination, type LinkPluginOptions, type LinkSearch } from './Link';
+export {
+    type LinkContentOptions,
+    type LinkDestination,
+    type LinkLook,
+    type LinkPluginOptions,
+    type LinkSearch,
+} from './Link';
 export { type MentionContentOptions, type MentionItem, type MentionPluginOptions, type MentionValue } from './Mention';
 export { type TextLook } from '#/core';
 export {
-    type LinkLook,
     type TextStyleContentOptions,
     type TextStyleName,
     type TextStylePluginOptions,
