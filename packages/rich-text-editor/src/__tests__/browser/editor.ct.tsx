@@ -250,6 +250,26 @@ test.describe('editor', () => {
 
         await expect(editable.locator('ul > li')).toHaveText('item');
     });
+
+    test('types after the last text when autoFocus is "end"', async ({ mount, page }) => {
+        const component = await mount(<RichTextEditor value={document} autoFocus="end" />);
+        const editable = component.getByRole('textbox');
+
+        await expect(editable).toBeFocused();
+        await page.keyboard.type(' more');
+
+        await expect(editable.locator('li').last()).toHaveText('Second more');
+    });
+
+    test('types before the first text when autoFocus is "start"', async ({ mount, page }) => {
+        const component = await mount(<RichTextEditor value={document} autoFocus="start" />);
+        const editable = component.getByRole('textbox');
+
+        await expect(editable).toBeFocused();
+        await page.keyboard.type('More ');
+
+        await expect(editable.locator('p').first()).toHaveText('More Hello bold and a link');
+    });
 });
 
 const SELECT_ALL = 'ControlOrMeta+a';

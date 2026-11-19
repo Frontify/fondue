@@ -67,6 +67,9 @@ export type RteSelectionSnapshot = {
  */
 export type ClearMarksScope = 'typing' | 'block';
 
+/** Where the caret goes when the editor takes focus: before the first text, or after the last. */
+export type FocusPosition = 'start' | 'end';
+
 export type ClearMarksOptions = {
     /**
      * How much a caret clears.
@@ -232,8 +235,12 @@ export type EditorControlApi = {
         redo(): void;
     };
 
-    /** Return focus to the editor, e.g. after closing plugin UI. */
-    focus(): void;
+    /**
+     * Focus the editor. Without a position, the selection stays as it is, which
+     * is how focus returns after plugin UI closes. With one, a collapsed caret
+     * goes to the first or last place for text and is scrolled into view.
+     */
+    focus(position?: FocusPosition): void;
     /** Give up focus, e.g. to commit a single-line editor on Enter. */
     blur(): void;
 

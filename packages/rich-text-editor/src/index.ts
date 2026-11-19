@@ -6,6 +6,7 @@ import {
     type BlockDefinition,
     type EditorControlApi,
     type EditProps,
+    type FocusPosition,
     type HtmlSpec,
     type InlineDefinition,
     isEmpty,
@@ -44,6 +45,8 @@ import {
 
 /** `TBlock` widens the document when a plugin adds blocks: `RichTextEditorProps<RteBlock | CalloutBlock>`. */
 export type RichTextEditorProps<TBlock extends RteBlockNode = RteBlock> = EditorShellProps<TBlock>;
+
+export { type FocusPosition };
 
 /**
  * The editor. Uses `defaultPlugins` when given no `plugins`.
@@ -135,11 +138,13 @@ type MarkDef<TValue> = MarkDefinition<TValue>;
 type InlineDef<TValue> = InlineDefinition<TValue>;
 type EditComponentProps<TValue, TCurrent> = EditProps<TValue, TCurrent>;
 type Html = HtmlSpec;
+type Position = FocusPosition;
 
 // oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
 export declare namespace RtePlugin {
     export type EditorControlApi = ControlApi;
     export type SelectionSnapshot = RteSelectionSnapshot;
+    export type FocusPosition = Position;
     export type ToolbarItemProps = ToolbarProps;
     export type EditProps<TValue, TCurrent = TValue> = EditComponentProps<TValue, TCurrent>;
     export type BlockNode = RteBlockNode;

@@ -21,6 +21,7 @@ import {
     emptyDocument,
     matchesHotkey,
     newerVersionOf,
+    type FocusPosition,
     type PluginRegistry,
     type RteBlockNode,
     type RteDocumentOf,
@@ -101,6 +102,13 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * @default true
      */
     showEditor?: boolean;
+    /**
+     * Put the caret at the start or end of the text when the editor first
+     * mounts: for a reply box, or an Edit button that opens the editor with
+     * existing content. Left out, the editor takes no focus on mount. Ignored
+     * while `readonly`, and when editing is turned on later.
+     */
+    autoFocus?: FocusPosition;
     /** Shown while the document is empty, and given to assistive technology as the field's placeholder. */
     placeholder?: string;
     /**
@@ -142,8 +150,8 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
 /** Whether the editor was brought back by Try again, and whether the pressed button had focus. */
 type RetryFocus = 'fresh' | 'focused' | 'unfocused';
 
-/** What a freshly mounted shell focuses: nothing, the text to edit, or the readonly view. */
-type MountFocusTarget = 'none' | 'text' | 'view';
+/** What a freshly mounted shell focuses: nothing, the text to edit with the caret at a position, or the readonly view. */
+type MountFocusTarget = { kind: 'none' } | { kind: 'text'; position: FocusPosition } | { kind: 'view' };
 
 export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     value,
@@ -281,6 +289,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     toolbarPlacement = 'top',
     readonly: readonlyProp = false,
     showEditor = true,
+    autoFocus,
     placeholder = '',
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
@@ -338,20 +347,20 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
 
     // A pending focus request is spent once, never claiming focus when editing is turned on later.
     // A readonly retry has no text to focus, so the view takes the focus the pressed Retry held.
-    const [mountFocus] = useState(() => mountFocusTarget(retryFocus, readOnly));
-    const focusPendingRef = useRef(mountFocus === 'text');
+    const [mountFocus] = useState(() => mountFocusTarget({ retryFocus, readOnly, autoFocus }));
+    const focusPendingRef = useRef(mountFocus.kind === 'text');
     const readonlyViewRef = useRef<HTMLDivElement | null>(null);
     useEffect(() => {
-        if (mountFocus === 'view') {
+        if (mountFocus.kind === 'view') {
             readonlyViewRef.current?.focus();
         }
     }, [mountFocus]);
     useEffect(() => {
-        if (focusPendingRef.current && handle !== null) {
+        if (focusPendingRef.current && handle !== null && mountFocus.kind === 'text') {
             focusPendingRef.current = false;
-            handle.focusAtEnd();
+            handle.api.focus(mountFocus.position);
         }
-    }, [handle]);
+    }, [handle, mountFocus]);
 
     const { focusWithin, focusProps } = useFocusWithin();
     // Blur as the host hears it: focus leaving the whole editor — text,
@@ -458,7 +467,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
         readonlyViewAttributes = groupAttributesOf(hostLabels, isNamed);
     }
     let readonlyViewTabIndex: number | undefined;
-    if (mountFocus === 'view') {
+    if (mountFocus.kind === 'view') {
         readonlyViewTabIndex = FOCUSABLE_BY_SCRIPT_ONLY;
     }
 
@@ -546,21 +555,30 @@ const groupAttributesOf = (hostLabels: Record<string, string>, isNamed: boolean)
     return { role: GROUP_ROLE, ...hostLabels };
 };
 
+type MountFocusTargetParams = {
+    retryFocus: RetryFocus;
+    readOnly: boolean;
+    autoFocus: FocusPosition | undefined;
+};
+
 /** What the first render of a shell focuses, given how the editor came to be mounted. */
-const mountFocusTarget = (retryFocus: RetryFocus, readOnly: boolean): MountFocusTarget => {
+const mountFocusTarget = ({ retryFocus, readOnly, autoFocus }: MountFocusTargetParams): MountFocusTarget => {
     switch (retryFocus) {
         case 'fresh':
-            return 'none';
+            if (readOnly || autoFocus === undefined) {
+                return { kind: 'none' };
+            }
+            return { kind: 'text', position: autoFocus };
         case 'focused':
             if (readOnly) {
-                return 'view';
+                return { kind: 'view' };
             }
-            return 'text';
+            return { kind: 'text', position: 'end' };
         case 'unfocused':
             if (readOnly) {
-                return 'none';
+                return { kind: 'none' };
             }
-            return 'text';
+            return { kind: 'text', position: 'end' };
     }
 };
 

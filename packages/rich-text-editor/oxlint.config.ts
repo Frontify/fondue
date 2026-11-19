@@ -127,6 +127,10 @@ export default defineConfig({
         typeAware: true,
     },
     ignorePatterns: ['dist/', 'storybook-static/', 'lint-fixtures/src/'],
+    rules: {
+        // The editor's own `autoFocus` prop is a host's deliberate choice; the rule still guards DOM elements.
+        'jsx-a11y/no-autofocus': ['error', { ignoreNonDOM: true }],
+    },
     /**
      * A later override's `no-restricted-imports` replaces an earlier one for the
      * same file rather than adding to it. So every override repeats each shared

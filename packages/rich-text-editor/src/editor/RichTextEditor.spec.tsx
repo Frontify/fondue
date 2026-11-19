@@ -1453,6 +1453,61 @@ describe('the toolbar from the keyboard', () => {
     });
 });
 
+describe('autoFocus', () => {
+    it('focuses the text with the caret at its end when it mounts', () => {
+        const { container, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} autoFocus="end" />
+        ));
+        ready();
+
+        const selection = window.getSelection();
+        expect(window.document.activeElement).toBe(editableIn(container));
+        expect(selection?.isCollapsed).toBe(true);
+        expect(selection?.anchorNode?.textContent).toBe('current');
+        expect(selection?.anchorOffset).toBe('current'.length);
+    });
+
+    it('puts the caret before the first character at start', () => {
+        const { container, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} autoFocus="start" />
+        ));
+        ready();
+
+        const selection = window.getSelection();
+        expect(window.document.activeElement).toBe(editableIn(container));
+        expect(selection?.anchorNode?.textContent).toBe('current');
+        expect(selection?.anchorOffset).toBe(0);
+    });
+
+    it('takes no focus when left out', () => {
+        const { container, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} />
+        ));
+        ready();
+
+        expect(container.contains(window.document.activeElement)).toBe(false);
+    });
+
+    it('takes no focus while readonly', () => {
+        const { container } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} autoFocus="end" readonly />
+        ));
+
+        expect(container.contains(window.document.activeElement)).toBe(false);
+    });
+
+    it('does not claim focus when editing is turned on later', () => {
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} autoFocus="end" readonly />
+        ));
+
+        rerender(<RichTextEditor value={paragraph('current')} plugins={defaultPlugins} autoFocus="end" />);
+        ready();
+
+        expect(container.contains(window.document.activeElement)).toBe(false);
+    });
+});
+
 describe('focus within', () => {
     /** A trigger inside, and a field it portals out of the subtree — a flyout. */
     const Probe = (): ReactNode => {

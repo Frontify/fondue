@@ -685,7 +685,15 @@ export const PlainText: Story = {
  * comment box — inline formatting and mentions, no block types.
  */
 export const CommentBox: Story = {
-    render: () => {
+    args: { autoFocus: 'end' },
+    argTypes: {
+        autoFocus: {
+            control: 'select',
+            options: ['start', 'end', 'none'],
+            mapping: { start: 'start', end: 'end', none: undefined },
+        },
+    },
+    render: ({ autoFocus }) => {
         const [doc, setDoc] = useState<RteDocument>({
             version: 1,
             blocks: [
@@ -704,8 +712,11 @@ export const CommentBox: Story = {
             <div className={LAYOUT}>
                 <div className={FRAME}>
                     <RichTextEditor
+                        // autoFocus is read once on mount, so a changed control remounts the editor.
+                        key={autoFocus ?? 'none'}
                         value={doc}
                         onChange={setDoc}
+                        autoFocus={autoFocus}
                         plugins={[
                             boldPlugin(),
                             italicPlugin(),

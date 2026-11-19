@@ -18,6 +18,7 @@ import {
     type ClearMarksOptions,
     type ClearMarksScope,
     type EditorControlApi,
+    type FocusPosition,
     INLINE_PLACEHOLDER,
     type PluginRegistry,
     type RteMarkState,
@@ -536,6 +537,18 @@ const insertWhole = (view: EditorView, node: PmNode, dispatch: Dispatch): void =
     view.focus();
 };
 
+/** The first or last place for text, or the document's own edge when it has none (only void blocks). */
+const selectionAt = (doc: PmNode, position: FocusPosition): Selection => {
+    switch (position) {
+        case 'start': {
+            return Selection.findFrom(doc.resolve(0), 1, true) ?? Selection.atStart(doc);
+        }
+        case 'end': {
+            return Selection.findFrom(doc.resolve(doc.content.size), -1, true) ?? Selection.atEnd(doc);
+        }
+    }
+};
+
 /** The flat members act on the editor as a whole rather than on one kind of thing in it. */
 export const createControlApi = (
     getView: () => EditorView,
@@ -664,8 +677,15 @@ export const createControlApi = (
                 }
             },
         },
-        focus() {
-            getView().focus();
+        focus(position) {
+            const view = getView();
+            if (position === undefined) {
+                view.focus();
+                return;
+            }
+
+            dispatch(view.state.tr.setSelection(selectionAt(view.state.doc, position)).scrollIntoView());
+            view.focus();
         },
         editors: {
             open(type) {
