@@ -10,7 +10,7 @@ import {
     type NumberedListLook,
     type TextLook,
     type TextStyleName,
-} from '../../index';
+} from '../../plugins';
 
 import { HostLooksPair } from './HostLooksPair';
 import { HostNoHeadingsPair } from './HostNoHeadingsPair';

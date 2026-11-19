@@ -7,7 +7,8 @@ import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
 import { PARAGRAPH, type RteDocumentOf } from '../core';
-import { defaultPlugins, RichTextEditor } from '../index';
+import { RichTextEditor } from '../index';
+import { defaultPlugins } from '../plugins';
 
 // The package root imported where a server imports it: no page, no `document`.
 // Imported statically, so loading happens at collection rather than inside the
