@@ -3,7 +3,7 @@
 import { IconTextFormatItalic } from '@frontify/fondue-icons';
 
 import { defineContent, defineMark, definePlugin } from '#/core';
-import { localeLabel } from '#/ui/translation';
+import { translatedLabel } from '#/ui/translation';
 
 import { isItalicStyle, isNormalStyle, markWhen } from '../shared/helpers/declaredStyle';
 
@@ -42,7 +42,7 @@ export const italicPlugin = () =>
     definePlugin({
         content: italicContent,
         toolbarGroup: 'marks',
-        toolbar: [{ label: localeLabel('RichTextEditor_italic'), icon: IconTextFormatItalic, shortcut: 'Mod-i' }],
+        toolbar: [{ label: translatedLabel('RichTextEditor_italic'), icon: IconTextFormatItalic, shortcut: 'Mod-i' }],
         // `_text_` is emphasis in markdown, as `*text*` is.
         inputRules: [{ delimiter: '*' }, { delimiter: '_' }],
     });

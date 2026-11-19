@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { PARAGRAPH, type PluginRegistry, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
-import { localeLabel } from '#/ui/translation';
+import { translatedLabel } from '#/ui/translation';
 
 /**
  * The paragraph is the editor's own block rather than a plugin's, so its
@@ -10,7 +10,7 @@ import { localeLabel } from '#/ui/translation';
  */
 export const TEXT_COMMAND: RteBlockCommand = {
     id: 'paragraph',
-    label: localeLabel('RichTextEditor_text'),
+    label: translatedLabel('RichTextEditor_text'),
     keywords: ['paragraph', 'plain'],
     group: 'turnInto',
     // A paragraph inside a list item is the list's, not plain text.

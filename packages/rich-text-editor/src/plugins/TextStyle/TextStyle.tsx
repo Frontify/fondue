@@ -17,7 +17,7 @@ import {
     type RteToolbarEntry,
     type TextLook,
 } from '#/core';
-import { localeLabel } from '#/ui/translation';
+import { translatedLabel } from '#/ui/translation';
 
 import { withoutBoldWeight } from '../shared/helpers/declaredStyle';
 
@@ -184,7 +184,7 @@ export const textStylePlugin = ({
         }
         return {
             id: preset.tag === 'p' ? preset.name : `heading-${level}`,
-            label: localeLabel(preset.label),
+            label: translatedLabel(preset.label),
             icon,
             keywords: level === undefined ? [] : (HEADING_KEYWORDS[level] ?? []),
             group: 'turnInto',
@@ -197,7 +197,7 @@ export const textStylePlugin = ({
     const toolbar: RteToolbarEntry[] = [];
     if (offered.length > 0) {
         toolbar.push({
-            label: localeLabel('RichTextEditor_textStyle'),
+            label: translatedLabel('RichTextEditor_textStyle'),
             render: (props) => <TextStyleSelect {...props} options={options} />,
         });
     }

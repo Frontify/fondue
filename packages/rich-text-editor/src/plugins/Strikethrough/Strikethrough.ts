@@ -3,7 +3,7 @@
 import { IconTextFormatStrikethrough } from '@frontify/fondue-icons';
 
 import { defineContent, defineMark, definePlugin } from '#/core';
-import { localeLabel } from '#/ui/translation';
+import { translatedLabel } from '#/ui/translation';
 
 import { decorationLineRules } from '../shared/helpers/declaredStyle';
 
@@ -39,7 +39,7 @@ export const strikethroughPlugin = () =>
         toolbarGroup: 'marks',
         toolbar: [
             {
-                label: localeLabel('RichTextEditor_strikethrough'),
+                label: translatedLabel('RichTextEditor_strikethrough'),
                 icon: IconTextFormatStrikethrough,
                 shortcut: 'Mod-Shift-x',
             },

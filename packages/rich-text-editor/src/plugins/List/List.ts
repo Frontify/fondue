@@ -15,7 +15,7 @@ import {
     type RtePlugin,
     type StyleMap,
 } from '#/core';
-import { localeLabel } from '#/ui/translation';
+import { translatedLabel } from '#/ui/translation';
 
 import styles from './list.module.scss';
 
@@ -287,7 +287,7 @@ export const bulletListPlugin = (options: BulletListPluginOptions = {}): RtePlug
         content: bulletListContent(options),
         type: 'bulletList',
         icon: IconListBullet,
-        label: localeLabel('RichTextEditor_bulletedList'),
+        label: translatedLabel('RichTextEditor_bulletedList'),
         keywords: ['ul', 'unordered', 'bullets'],
         markdown: ['- ', '* '],
         shortcut: 'Mod-Shift-8',
@@ -302,7 +302,7 @@ export const numberedListPlugin = (options: NumberedListPluginOptions = {}): Rte
         content: numberedListContent(options),
         type: 'numberedList',
         icon: IconListNumbers,
-        label: localeLabel('RichTextEditor_numberedList'),
+        label: translatedLabel('RichTextEditor_numberedList'),
         keywords: ['ol', 'ordered', 'numbers'],
         markdown: ['1. ', '1) '],
         shortcut: 'Mod-Shift-7',

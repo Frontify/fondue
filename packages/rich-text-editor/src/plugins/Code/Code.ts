@@ -3,7 +3,7 @@
 import { IconCode } from '@frontify/fondue-icons';
 
 import { defineContent, defineMark, definePlugin } from '#/core';
-import { localeLabel } from '#/ui/translation';
+import { translatedLabel } from '#/ui/translation';
 
 import styles from './code.module.scss';
 
@@ -40,6 +40,6 @@ export const codePlugin = () =>
     definePlugin({
         content: codeContent,
         toolbarGroup: 'marks',
-        toolbar: [{ label: localeLabel('RichTextEditor_code'), icon: IconCode, shortcut: 'Mod-e' }],
+        toolbar: [{ label: translatedLabel('RichTextEditor_code'), icon: IconCode, shortcut: 'Mod-e' }],
         inputRules: [{ delimiter: '`' }],
     });

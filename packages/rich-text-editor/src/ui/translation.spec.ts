@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { EDITOR_STRINGS } from '#/locales/en-US';
 import { frFR } from '#/locales/fr-FR';
 
-import { labelContextOf, localeLabel, resolveLabel, translatorFor } from './translation';
+import { labelContextOf, translatedLabel, resolveLabel, translatorFor } from './translation';
 
 const LANG = 'fr-FR';
 
@@ -34,15 +34,15 @@ describe('resolveLabel', () => {
     });
 
     it("says a shipped plugin's label in the editor's language", () => {
-        expect(resolveLabel(localeLabel('RichTextEditor_quote'), context)).toBe(
+        expect(resolveLabel(translatedLabel('RichTextEditor_quote'), context)).toBe(
             frFR.translationStrings.RichTextEditor_quote,
         );
     });
 });
 
-describe('localeLabel', () => {
+describe('translatedLabel', () => {
     it('throws when something other than the editor reads it', () => {
-        const label = localeLabel('RichTextEditor_quote');
+        const label = translatedLabel('RichTextEditor_quote');
 
         expect(() => resolveLabel(label, { lang: LANG } as never)).toThrow('RichTextEditor_quote');
     });

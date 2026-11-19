@@ -5,7 +5,7 @@ import { IconArrowRoundAntiClockwise, IconArrowRoundClockwise } from '@frontify/
 import { definePlugin, REDO_HOTKEY, type ToolbarItemProps, UNDO_HOTKEY } from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
-import { localeLabel } from '#/ui/translation';
+import { translatedLabel } from '#/ui/translation';
 
 const UndoButton = ({ api, selection, label }: ToolbarItemProps) => (
     <ToolbarButton
@@ -38,7 +38,7 @@ export const historyPlugin = () =>
         id: 'history',
         toolbarGroup: 'history',
         toolbar: [
-            { label: localeLabel('RichTextEditor_undo'), render: UndoButton, floating: 'hidden' },
-            { label: localeLabel('RichTextEditor_redo'), render: RedoButton, floating: 'hidden' },
+            { label: translatedLabel('RichTextEditor_undo'), render: UndoButton, floating: 'hidden' },
+            { label: translatedLabel('RichTextEditor_redo'), render: RedoButton, floating: 'hidden' },
         ],
     });

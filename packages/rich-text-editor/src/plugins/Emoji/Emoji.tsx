@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { defineContent, defineInline, definePlugin, type RtePlugin } from '#/core';
-import { localeLabel } from '#/ui/translation';
+import { translatedLabel } from '#/ui/translation';
 
 import { EmojiDraft, TRIGGER } from './components/EmojiDraft';
 import { EmojiToolbarButton } from './components/EmojiToolbarButton';
@@ -37,7 +37,7 @@ export const emojiPlugin = (options: EmojiPluginOptions = {}): RtePlugin => {
         toolbarGroup: 'insert',
         toolbar: [
             {
-                label: localeLabel('RichTextEditor_emoji'),
+                label: translatedLabel('RichTextEditor_emoji'),
                 render: (props) => <EmojiToolbarButton {...props} emojis={emojis} />,
             },
         ],

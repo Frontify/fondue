@@ -3,7 +3,7 @@
 import { IconTextFormatUnderline } from '@frontify/fondue-icons';
 
 import { defineContent, defineMark, definePlugin } from '#/core';
-import { localeLabel } from '#/ui/translation';
+import { translatedLabel } from '#/ui/translation';
 
 import { decorationLineRules } from '../shared/helpers/declaredStyle';
 
@@ -37,5 +37,7 @@ export const underlinePlugin = () =>
     definePlugin({
         content: underlineContent,
         toolbarGroup: 'marks',
-        toolbar: [{ label: localeLabel('RichTextEditor_underline'), icon: IconTextFormatUnderline, shortcut: 'Mod-u' }],
+        toolbar: [
+            { label: translatedLabel('RichTextEditor_underline'), icon: IconTextFormatUnderline, shortcut: 'Mod-u' },
+        ],
     });

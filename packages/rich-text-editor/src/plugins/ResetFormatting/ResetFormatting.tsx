@@ -5,7 +5,7 @@ import { IconEraser } from '@frontify/fondue-icons';
 import { definePlugin, type EditorControlApi, PARAGRAPH, type ToolbarItemProps } from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
-import { localeLabel } from '#/ui/translation';
+import { translatedLabel } from '#/ui/translation';
 
 /**
  * Puts the selection back to plain text, as one undo step: marks gone, except
@@ -35,6 +35,10 @@ export const resetFormattingPlugin = () =>
         id: 'reset-formatting',
         toolbarGroup: 'marks',
         toolbar: [
-            { label: localeLabel('RichTextEditor_resetFormatting'), render: ResetFormattingButton, floating: 'inline' },
+            {
+                label: translatedLabel('RichTextEditor_resetFormatting'),
+                render: ResetFormattingButton,
+                floating: 'inline',
+            },
         ],
     });

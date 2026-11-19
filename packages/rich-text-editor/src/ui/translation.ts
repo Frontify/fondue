@@ -52,9 +52,9 @@ const isEditorLabelContext = (context: RteLabelContext): context is EditorLabelC
 /**
  * A shipped plugin's label: its string in the language the editor shows.
  * @example
- * toolbar: [{ label: localeLabel('RichTextEditor_bold'), icon: IconTextFormatBold }]
+ * toolbar: [{ label: translatedLabel('RichTextEditor_bold'), icon: IconTextFormatBold }]
  */
-export const localeLabel =
+export const translatedLabel =
     (key: RichTextStringKey): RteLabel =>
     (context) => {
         if (!isEditorLabelContext(context)) {
