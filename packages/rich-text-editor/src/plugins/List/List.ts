@@ -131,7 +131,7 @@ const numberedList = defineBlock<NumberedListValue>({
  * How a bulleted list looks at one nesting level. Each value is any CSS value, a guideline variable
  * (`var(--f-theme-settings-list-bullet1-color)`) included. A field left out keeps Fondue's look.
  */
-export type BulletListLook = {
+export type BulletLevelLook = {
     /**
      * A `list-style-type`, such as `square`, or a quoted string, such as `'– '`, drawn as written, so it carries
      * its own space before the item text
@@ -154,12 +154,22 @@ export type BulletListLook = {
 /**
  * How a numbered list looks at one nesting level. A number keeps the size of the item text, which its room is made for.
  */
-export type NumberedListLook = Omit<BulletListLook, 'size'>;
+export type NumberedLevelLook = Omit<BulletLevelLook, 'size'>;
 
 /**
  * A look for each of the first three nesting levels, outermost first. The three repeat deeper down: the fourth level looks like the first.
  */
-export type ListLooks<TLook> = readonly [first?: TLook, second?: TLook, third?: TLook];
+export type ListLook<TLevel> = readonly [first?: TLevel, second?: TLevel, third?: TLevel];
+
+/**
+ * How a bulleted list looks at each of its first three nesting levels
+ */
+export type BulletListLook = ListLook<BulletLevelLook>;
+
+/**
+ * How a numbered list looks at each of its first three nesting levels
+ */
+export type NumberedListLook = ListLook<NumberedLevelLook>;
 
 /**
  * The name each field's variable ends in. `list.module.scss` reads the same names.
@@ -168,27 +178,27 @@ const NUMBERED_LOOK_FIELDS = {
     marker: 'marker',
     color: 'color',
     indent: 'indent',
-} as const satisfies Record<keyof NumberedListLook, string>;
+} as const satisfies Record<keyof NumberedLevelLook, string>;
 
 const BULLET_LOOK_FIELDS = {
     ...NUMBERED_LOOK_FIELDS,
     size: 'size',
-} as const satisfies Record<keyof BulletListLook, string>;
+} as const satisfies Record<keyof BulletLevelLook, string>;
 
 type ListType = 'bulletList' | 'numberedList';
 
 /**
- * The custom properties of a list's looks, `--rte-<list type><level>-<field>`, such as `--rte-bullet-list2-color`
+ * The custom properties of a list's look, `--rte-<list type><level>-<field>`, such as `--rte-bullet-list2-color`
  */
-const listLookProperties = <TLook extends Partial<Record<string, string>>>(
+const listLookProperties = <TLevel extends Partial<Record<string, string>>>(
     type: ListType,
-    looks: ListLooks<TLook>,
-    fields: Readonly<Record<keyof TLook & string, string>>,
+    look: ListLook<TLevel>,
+    fields: Readonly<Record<keyof TLevel & string, string>>,
 ): Record<string, string> => {
     const properties: Record<string, string> = {};
-    for (const [index, look] of looks.entries()) {
-        if (look !== undefined) {
-            Object.assign(properties, lookProperties(`${type}${index + 1}`, look, fields));
+    for (const [index, level] of look.entries()) {
+        if (level !== undefined) {
+            Object.assign(properties, lookProperties(`${type}${index + 1}`, level, fields));
         }
     }
     return properties;
@@ -200,7 +210,7 @@ export type BulletListPluginOptions = {
      * Fondue's look. A value that is empty or can end its CSS declaration early throws an error naming the level.
      * @default []
      */
-    looks?: ListLooks<BulletListLook>;
+    look?: BulletListLook;
 };
 
 export type NumberedListPluginOptions = {
@@ -209,27 +219,27 @@ export type NumberedListPluginOptions = {
      * Fondue's look. A value that is empty or can end its CSS declaration early throws an error naming the level.
      * @default []
      */
-    looks?: ListLooks<NumberedListLook>;
+    look?: NumberedListLook;
 };
 
 /**
- * A bulleted list, written as `<ul>`, in the host's looks. Shares its item with `numberedListContent`. Pass the same
- * `looks` as `bulletListPlugin`, so a renderer given only content draws them.
+ * A bulleted list, written as `<ul>`, in the host's look. Shares its item with `numberedListContent`. Pass the same
+ * `look` as `bulletListPlugin`, so a renderer given only content draws them.
  */
-export const bulletListContent = ({ looks = [] }: BulletListPluginOptions = {}): RteContent =>
+export const bulletListContent = ({ look = [] }: BulletListPluginOptions = {}): RteContent =>
     defineContent({
         blocks: { bulletList, listItem },
-        contentProperties: listLookProperties('bulletList', looks, BULLET_LOOK_FIELDS),
+        contentProperties: listLookProperties('bulletList', look, BULLET_LOOK_FIELDS),
     });
 
 /**
- * A numbered list, written as `<ol>`, starting at any number, in the host's looks. Shares its item with
- * `bulletListContent`. Pass the same `looks` as `numberedListPlugin`, so a renderer given only content draws them.
+ * A numbered list, written as `<ol>`, starting at any number, in the host's look. Shares its item with
+ * `bulletListContent`. Pass the same `look` as `numberedListPlugin`, so a renderer given only content draws them.
  */
-export const numberedListContent = ({ looks = [] }: NumberedListPluginOptions = {}): RteContent =>
+export const numberedListContent = ({ look = [] }: NumberedListPluginOptions = {}): RteContent =>
     defineContent({
         blocks: { numberedList, listItem },
-        contentProperties: listLookProperties('numberedList', looks, NUMBERED_LOOK_FIELDS),
+        contentProperties: listLookProperties('numberedList', look, NUMBERED_LOOK_FIELDS),
     });
 
 type ListPluginParams = {

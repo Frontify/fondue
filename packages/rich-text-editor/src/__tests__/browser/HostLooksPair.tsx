@@ -14,7 +14,6 @@ import {
     linkContent,
     type LinkLook,
     linkPlugin,
-    type ListLooks,
     numberedListContent,
     type NumberedListLook,
     numberedListPlugin,
@@ -31,8 +30,8 @@ type HostLooksPairProps = {
     body?: TextLook;
     quote?: TextLook;
     link?: LinkLook;
-    bulletLooks?: ListLooks<BulletListLook>;
-    numberedLooks?: ListLooks<NumberedListLook>;
+    bulletLook?: BulletListLook;
+    numberedLook?: NumberedListLook;
     /**
      * The document both surfaces draw.
      * @default BODY_QUOTE_LINK_DOCUMENT
@@ -40,10 +39,10 @@ type HostLooksPairProps = {
     value?: RteDocument;
 };
 
-const pluginsWithLooks = ({ body, quote, link, bulletLooks, numberedLooks }: HostLooksPairProps): RtePlugin[] => [
+const pluginsWithLooks = ({ body, quote, link, bulletLook, numberedLook }: HostLooksPairProps): RtePlugin[] => [
     textStylePlugin({ presets: { body, quote, link } }),
-    bulletListPlugin({ looks: bulletLooks }),
-    numberedListPlugin({ looks: numberedLooks }),
+    bulletListPlugin({ look: bulletLook }),
+    numberedListPlugin({ look: numberedLook }),
     checkListPlugin(),
     fontColorPlugin(),
     quotePlugin(),
@@ -51,10 +50,10 @@ const pluginsWithLooks = ({ body, quote, link, bulletLooks, numberedLooks }: Hos
 ];
 
 // The renderer gets content only, as a page that only shows documents would, so the looks must travel with the content.
-const contentWithLooks = ({ body, quote, link, bulletLooks, numberedLooks }: HostLooksPairProps) => [
+const contentWithLooks = ({ body, quote, link, bulletLook, numberedLook }: HostLooksPairProps) => [
     textStyleContent({ presets: { body, quote, link } }),
-    bulletListContent({ looks: bulletLooks }),
-    numberedListContent({ looks: numberedLooks }),
+    bulletListContent({ look: bulletLook }),
+    numberedListContent({ look: numberedLook }),
     checkListContent,
     fontColorContent,
     quoteContent,

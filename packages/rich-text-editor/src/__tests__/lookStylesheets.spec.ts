@@ -119,10 +119,10 @@ describe('the list stylesheet', () => {
     const css = compile(LIST_STYLESHEET).css;
     const written = Object.keys({
         ...bulletListPlugin({
-            looks: [BULLET_LOOK, BULLET_LOOK, BULLET_LOOK],
+            look: [BULLET_LOOK, BULLET_LOOK, BULLET_LOOK],
         }).content?.contentProperties,
         ...numberedListPlugin({
-            looks: [NUMBERED_LOOK, NUMBERED_LOOK, NUMBERED_LOOK],
+            look: [NUMBERED_LOOK, NUMBERED_LOOK, NUMBERED_LOOK],
         }).content?.contentProperties,
     });
 

@@ -41,9 +41,11 @@ export { underlineContent, underlinePlugin } from './Underline';
 export { type ColumnBreakPluginOptions } from './ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './Emoji';
 export {
+    type BulletLevelLook,
     type BulletListLook,
     type BulletListPluginOptions,
-    type ListLooks,
+    type ListLook,
+    type NumberedLevelLook,
     type NumberedListLook,
     type NumberedListPluginOptions,
 } from './List';

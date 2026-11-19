@@ -11,7 +11,7 @@ import { definePlugin, RichTextEditor, RichTextRenderer, type RteDocument, type 
 import {
     boldPlugin,
     bulletListContent,
-    type BulletListLook,
+    type BulletLevelLook,
     bulletListPlugin,
     checkListContent,
     checkListPlugin,
@@ -23,7 +23,7 @@ import {
     type MentionItem,
     mentionPlugin,
     numberedListContent,
-    type NumberedListLook,
+    type NumberedLevelLook,
     numberedListPlugin,
     quoteContent,
     quotePlugin,
@@ -922,29 +922,29 @@ const GUIDELINE_PRESETS: TextStylePluginOptions['presets'] = {
 };
 
 /** A bullet level read from the guideline's list variables, as the brand SDK names them. */
-const guidelineBulletLook = (level: number): BulletListLook => ({
+const guidelineBulletLevel = (level: number): BulletLevelLook => ({
     marker: `var(--f-theme-settings-list-bullet${level}-shape)`,
     color: `var(--f-theme-settings-list-bullet${level}-color)`,
     size: `var(--f-theme-settings-list-bullet${level}-size)`,
 });
 
-const guidelineNumberedLook = (level: number): NumberedListLook => ({
+const guidelineNumberedLevel = (level: number): NumberedLevelLook => ({
     marker: `var(--f-theme-settings-list-numbered${level}-counter-type)`,
     color: `var(--f-theme-settings-list-numbered${level}-color)`,
 });
 
 // The third levels read variables no section defines, so they keep Fondue's look.
-const GUIDELINE_BULLET_LOOKS = [guidelineBulletLook(1), guidelineBulletLook(2), guidelineBulletLook(3)] as const;
-const GUIDELINE_NUMBERED_LOOKS = [
-    guidelineNumberedLook(1),
-    guidelineNumberedLook(2),
-    guidelineNumberedLook(3),
+const GUIDELINE_BULLET_LOOK = [guidelineBulletLevel(1), guidelineBulletLevel(2), guidelineBulletLevel(3)] as const;
+const GUIDELINE_NUMBERED_LOOK = [
+    guidelineNumberedLevel(1),
+    guidelineNumberedLevel(2),
+    guidelineNumberedLevel(3),
 ] as const;
 
 const HOST_STYLING_PLUGINS = [
     textStylePlugin({ presets: GUIDELINE_PRESETS }),
-    bulletListPlugin({ looks: GUIDELINE_BULLET_LOOKS }),
-    numberedListPlugin({ looks: GUIDELINE_NUMBERED_LOOKS }),
+    bulletListPlugin({ look: GUIDELINE_BULLET_LOOK }),
+    numberedListPlugin({ look: GUIDELINE_NUMBERED_LOOK }),
     checkListPlugin(),
     quotePlugin(),
     linkPlugin(),
@@ -953,8 +953,8 @@ const HOST_STYLING_PLUGINS = [
 // The renderer takes content only, with the same presets, so a page that only shows documents ships no editing code.
 const HOST_STYLING_CONTENT = [
     textStyleContent({ presets: GUIDELINE_PRESETS }),
-    bulletListContent({ looks: GUIDELINE_BULLET_LOOKS }),
-    numberedListContent({ looks: GUIDELINE_NUMBERED_LOOKS }),
+    bulletListContent({ look: GUIDELINE_BULLET_LOOK }),
+    numberedListContent({ look: GUIDELINE_NUMBERED_LOOK }),
     checkListContent,
     quoteContent,
     linkContent,
@@ -1225,8 +1225,8 @@ export const Presets: StoryObj<PresetsStoryArgs> = {
 
 /**
  * The usual production setup: the values are `var(--f-theme-settings-…)`, so one editor configuration follows the section (light or dark) it sits in.
- * A host sets the look of each text style, body text, quotes and links with `textStylePlugin({ presets })`, and of list markers per level with `bulletListPlugin({ looks })` and `numberedListPlugin({ looks })`, usually from its guideline settings,
- * and hands the renderer `textStyleContent({ presets })`, `bulletListContent({ looks })` and `numberedListContent({ looks })` with the same values.
+ * A host sets the look of each text style, body text, quotes and links with `textStylePlugin({ presets })`, and of list markers per level with `bulletListPlugin({ look })` and `numberedListPlugin({ look })`, usually from its guideline settings,
+ * and hands the renderer `textStyleContent({ presets })`, `bulletListContent({ look })` and `numberedListContent({ look })` with the same values.
  * Anything the host leaves out, or a variable nobody defines, keeps Fondue's look.
  * The editor and the renderer draw the same.
  */
