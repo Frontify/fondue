@@ -1,0 +1,29 @@
+packages/rich-text-editor/src/core/registry.spec.ts
+  s_c9a64d0619ac64::t_73e64a33b36533 15,620-652
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.spec.tsx
+  s_c9a64d0619ac64::t_cad625ab9cc842 131-264
+.changeset/rte-nested-content-model.md
+  s_c9a64d0619ac64::t_34d18ba6b07bd0 1-5
+packages/rich-text-editor/src/core/plugin.ts
+  s_c9a64d0619ac64::t_bfe8bd8c3137fb 296-301,303
+packages/rich-text-editor/src/core/registry.ts
+  s_c9a64d0619ac64::t_bd2291e350c561 40,127-128
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.ts
+  s_c9a64d0619ac64::t_c3b6db4660955f 47-51,75-85,97-98,106,110,121,123,205-212,220
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "65fb353d12c9066dda289f09b195e7ee66a81efc",
+  "prompts": {},
+  "sessions": {
+    "s_c9a64d0619ac64": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b7991064-efd0-43dc-a4d0-9efb5810725e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

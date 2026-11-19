@@ -1,0 +1,49 @@
+packages/rich-text-editor/src/__tests__/lookStylesheets.spec.ts
+  s_6513c7c173ff96::t_55fe069e20d1d6 8,26-34,37-40,57,63,93
+packages/rich-text-editor/src/__tests__/browser/ownMargins.ct.tsx
+  s_6513c7c173ff96::t_39022752164b78 13-14
+  s_6513c7c173ff96::t_ba9676c5d3801f 40-50
+  s_6513c7c173ff96::t_9960e0452dd57b 15
+  s_6513c7c173ff96::t_ccb44ab0174ae2 1-12,16-39,51-60
+packages/rich-text-editor/src/__tests__/documentContract.spec.ts
+  s_6513c7c173ff96::t_55fe069e20d1d6 9,19-29,44,47-50,53-58,60-61
+packages/rich-text-editor/src/core/index.ts
+  s_6513c7c173ff96::t_9ec256eed531f5 24
+packages/rich-text-editor/src/styles/look.module.scss
+  s_6513c7c173ff96::t_fda36295f59b0c 28-33,54-58
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_6513c7c173ff96::t_fda36295f59b0c 71
+packages/rich-text-editor/src/__tests__/browser/ownMarginsValues.ts
+  s_6513c7c173ff96::t_c86e3e744f3239 12
+  s_6513c7c173ff96::t_a75da3fb32b14e 1-11,13-27
+packages/rich-text-editor/src/core/registry.ts
+  s_6513c7c173ff96::t_9ec256eed531f5 657-658
+packages/rich-text-editor/src/renderer/document.module.scss
+  s_6513c7c173ff96::t_9ad19977c5afe5 8-17
+  s_6513c7c173ff96::t_fda36295f59b0c 7,70,80
+  s_6513c7c173ff96::t_8942579ea579f2 71-74,79
+packages/rich-text-editor/src/__tests__/browser/OwnMarginsFrame.tsx
+  s_6513c7c173ff96::t_803a338078d4ff 1-45
+packages/rich-text-editor/src/core/registry.spec.ts
+  s_6513c7c173ff96::t_939e3f88f88c9b 15
+packages/rich-text-editor/src/core/documentContract.ts
+  s_6513c7c173ff96::t_9ec256eed531f5 17-18,20-25
+.changeset/rte-text-style-looks.md
+  s_6513c7c173ff96::t_9da523f5372796 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fdc4f4c2cf4ea1c37093b642ada01c29237e67b6",
+  "prompts": {},
+  "sessions": {
+    "s_6513c7c173ff96": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aece77c5-31e1-41b8-8f8c-d0099f17ec8b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

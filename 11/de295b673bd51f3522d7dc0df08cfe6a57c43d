@@ -1,0 +1,22 @@
+storybook-docs/scripts/generateGuideStories.mjs
+  s_8197022310eb41::t_6155f644807862 26-28,34,36-38
+  s_8197022310eb41::t_641f0c5ffb04e0 15-25,29-33,35,39-45,52,61-62,64
+storybook-docs/.storybook/preview.ts
+  s_8197022310eb41::t_8c06e6fc4dec87 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "11de295b673bd51f3522d7dc0df08cfe6a57c43d",
+  "prompts": {},
+  "sessions": {
+    "s_8197022310eb41": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6535070-2e94-40ca-9a12-0bbd416c3f86",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
