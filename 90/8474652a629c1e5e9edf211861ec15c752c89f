@@ -1,0 +1,97 @@
+packages/rich-text-editor/oxlint.config.ts
+  s_e5d4df7b2d201d::t_00c9578cde21bb 10-16
+packages/rich-text-editor/src/__tests__/lookStylesheets.spec.ts
+  s_e5d4df7b2d201d::t_00c9578cde21bb 1-89
+packages/rich-text-editor/src/__tests__/documentContract.spec.ts
+  s_e5d4df7b2d201d::t_00c9578cde21bb 1-42
+packages/rich-text-editor/src/core/plugin.ts
+  s_e5d4df7b2d201d::t_00c9578cde21bb 14-15,17-18,119-121,278-283
+  s_e5d4df7b2d201d::t_6fd890ab821f5e 40-41,43
+  s_e5d4df7b2d201d::t_d2eef48d432773 38-39,42,44-48
+packages/rich-text-editor/src/core/vocabulary.ts
+  s_e5d4df7b2d201d::t_d2eef48d432773 15
+packages/rich-text-editor/src/styles/look.module.scss
+  s_e5d4df7b2d201d::t_00c9578cde21bb 1-52
+packages/rich-text-editor/src/editor/engines/prosemirror/nodeViews.tsx
+  s_e5d4df7b2d201d::t_d2eef48d432773 345
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_e5d4df7b2d201d::t_00c9578cde21bb 54-55
+packages/rich-text-editor/src/__tests__/serializeToHtml.node.spec.tsx
+  s_e5d4df7b2d201d::t_7ea588517006f4 64
+packages/rich-text-editor/src/core/look.ts
+  s_e5d4df7b2d201d::t_00c9578cde21bb 23,38,47-57,73
+packages/rich-text-editor/src/__tests__/htmlParity.spec.tsx
+  s_e5d4df7b2d201d::t_7ea588517006f4 163
+packages/rich-text-editor/src/plugins/Paragraph/Paragraph.ts
+  s_e5d4df7b2d201d::t_fc0bad066dc649 3,20-22
+packages/rich-text-editor/src/plugins/Paragraph/paragraph.module.scss
+  s_e5d4df7b2d201d::t_fc0bad066dc649 3,5-9
+packages/rich-text-editor/src/plugins/Quote/quote.module.scss
+  s_e5d4df7b2d201d::t_fc0bad066dc649 3
+packages/rich-text-editor/src/plugins/Link/link.module.scss
+  s_e5d4df7b2d201d::t_fc0bad066dc649 3
+packages/rich-text-editor/src/core/registry.spec.ts
+  s_e5d4df7b2d201d::t_00c9578cde21bb 6,16,604-612,614-624,626
+  s_e5d4df7b2d201d::t_5fdaac3fb24aaa 613,625,627-663
+  s_e5d4df7b2d201d::t_fc0bad066dc649 17
+  s_e5d4df7b2d201d::t_0db133cdb98901 664
+packages/rich-text-editor/src/core/documentContract.ts
+  s_e5d4df7b2d201d::t_00c9578cde21bb 1-24
+packages/rich-text-editor/src/core/registry.ts
+  s_e5d4df7b2d201d::t_6fd890ab821f5e 538-540
+  s_e5d4df7b2d201d::t_5fdaac3fb24aaa 662-669
+  s_e5d4df7b2d201d::t_00c9578cde21bb 4-5,10,648,650,658-660,670,672-674
+  s_e5d4df7b2d201d::t_d2eef48d432773 121-124,436-437,537,541-544,573-574,620-621,649,654,661,671
+packages/rich-text-editor/src/index.ts
+  s_e5d4df7b2d201d::t_00c9578cde21bb 65,79,96
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_e5d4df7b2d201d::t_00c9578cde21bb 6,84
+packages/rich-text-editor/src/__tests__/serverRendering.spec.tsx
+  s_e5d4df7b2d201d::t_7ea588517006f4 28
+packages/rich-text-editor/src/renderer/RichTextRenderer.tsx
+  s_e5d4df7b2d201d::t_00c9578cde21bb 7,51-55,60
+packages/rich-text-editor/src/plugins/TextStyle/textStyle.module.scss
+  s_e5d4df7b2d201d::t_00c9578cde21bb 3
+packages/rich-text-editor/src/plugins/SoftBreak/SoftBreak.tsx
+  s_e5d4df7b2d201d::t_00c9578cde21bb 11
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_e5d4df7b2d201d::t_7ea588517006f4 183
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.spec.tsx
+  s_e5d4df7b2d201d::t_7ea588517006f4 75,81,87
+packages/rich-text-editor/src/plugins/Mention/Mention.tsx
+  s_e5d4df7b2d201d::t_00c9578cde21bb 13-14,18-19
+packages/rich-text-editor/src/plugins/Quote/Quote.ts
+  s_e5d4df7b2d201d::t_fc0bad066dc649 28
+packages/rich-text-editor/src/renderer/documentTree.ts
+  s_e5d4df7b2d201d::t_d2eef48d432773 276
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_e5d4df7b2d201d::t_00c9578cde21bb 20,601
+packages/rich-text-editor/src/plugins/Quote/Quote.spec.ts
+  s_e5d4df7b2d201d::t_f27277cf435793 31-37
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.ts
+  s_e5d4df7b2d201d::t_d2eef48d432773 111
+packages/rich-text-editor/src/core/index.ts
+  s_e5d4df7b2d201d::t_00c9578cde21bb 24-25
+packages/rich-text-editor/src/plugins/Paragraph/Paragraph.spec.ts
+  s_e5d4df7b2d201d::t_5f2cc0cbce9aae 5,24-28
+  s_e5d4df7b2d201d::t_b9752fff0b1e29 29-30
+packages/rich-text-editor/src/renderer/document.module.scss
+  s_e5d4df7b2d201d::t_00c9578cde21bb 59
+  s_e5d4df7b2d201d::t_0244c770111a73 62
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "908474652a629c1e5e9edf211861ec15c752c89f",
+  "prompts": {},
+  "sessions": {
+    "s_e5d4df7b2d201d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e2f8400f-8896-4748-803b-8acbbeb26020",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
