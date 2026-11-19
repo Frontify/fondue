@@ -8,18 +8,16 @@ import { describe, expect, it } from 'vitest';
 
 import { buildPluginRegistry } from '../core';
 import {
-    columnBreakPlugin,
-    defaultPlugins,
     defineBlock,
     defineContent,
     defineMark,
     definePlugin,
-    mentionPlugin,
     type RteDocument,
     type RteDocumentWith,
     type RtePlugin,
     serializeToHtml,
 } from '../index';
+import { columnBreakPlugin, defaultPlugins, mentionPlugin } from '../plugins';
 import { documentTree } from '../renderer/documentTree';
 import { toReact } from '../renderer/toReact';
 

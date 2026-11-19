@@ -4,31 +4,18 @@ import { createElement, type ReactNode } from 'react';
 
 import {
     type BlockDefinition,
-    type DefaultStyle,
     type EditorControlApi,
     type EditProps,
     type HtmlSpec,
     type InlineDefinition,
     isEmpty,
-    type MarkClearRule,
     type MarkDefinition,
-    type MarkParseRule,
-    type ParseRule,
     type PasteHandler,
     type RteBlockCommand,
     type RteBlockNode,
-    type RteCommandAvailability,
-    type RteContent,
-    type RteEditView,
-    type RteIcon,
     type RteInlineNode,
     type RtePlugin as CorePlugin,
-    type RteMarkState,
     type RteSelectionSnapshot,
-    type RteToolbarEntry,
-    type RteToolbarGroup,
-    type RtePluginDefinition,
-    type StyleParseRule,
     type ToolbarItemProps,
     toPlainText as plainText,
     type ToPlainTextOptions,
@@ -40,8 +27,8 @@ import {
     parseHtml as parse,
     type ParseHtmlOptions,
 } from './editor';
-import { defaultPlugins } from './plugins';
 import { defaultContent } from './plugins/defaultContent';
+import { defaultPlugins } from './plugins/defaultPlugins';
 import {
     type RendererProps,
     RichTextRenderer as Renderer,
@@ -126,60 +113,14 @@ export const toPlainText = <TBlock extends RteBlockNode = RteBlock>(
     options: ToPlainTextOptions = {},
 ): string => plainText(doc, { ...options, plugins: options.plugins ?? defaultContent });
 
-// --- Plugins ---
-
-export { defaultPlugins } from './plugins';
-export { defaultContent } from './plugins/defaultContent';
-export { alignContent, alignPlugin } from './plugins/Align';
-export { blurOnBreakPlugin } from './plugins/BlurOnBreak';
-export { boldContent, boldPlugin } from './plugins/Bold';
-export { checkListContent, checkListPlugin } from './plugins/CheckList';
-export { codeContent, codePlugin } from './plugins/Code';
-export { columnBreakContent, columnBreakPlugin } from './plugins/ColumnBreak';
-export { defaultEmojis, emojiPlugin } from './plugins/Emoji';
-export { fontColorContent, fontColorPlugin } from './plugins/FontColor';
-export { historyPlugin } from './plugins/History';
-export { italicContent, italicPlugin } from './plugins/Italic';
-export { linkContent, linkPlugin } from './plugins/Link';
-export { bulletListContent, bulletListPlugin, numberedListContent, numberedListPlugin } from './plugins/List';
-export { mentionContent, mentionPlugin } from './plugins/Mention';
-export { quoteContent, quotePlugin } from './plugins/Quote';
-export { resetFormattingPlugin } from './plugins/ResetFormatting';
-export { softBreakContent, softBreakPlugin } from './plugins/SoftBreak';
-export { strikethroughContent, strikethroughPlugin } from './plugins/Strikethrough';
-export { subscriptContent, subscriptPlugin } from './plugins/Subscript';
-export { superscriptContent, superscriptPlugin } from './plugins/Superscript';
-export { textStyleContent, textStylePlugin } from './plugins/TextStyle';
-export { typographyPlugin } from './plugins/Typography';
-export { underlineContent, underlinePlugin } from './plugins/Underline';
-
-// --- Plugin options ---
-
-export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
-export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
-export {
-    type MentionContentOptions,
-    type MentionItem,
-    type MentionPluginOptions,
-    type MentionValue,
-} from './plugins/Mention';
-export { type TextLook } from './core';
-export {
-    type LinkLook,
-    type TextStyleName,
-    type TextStylePluginOptions,
-    type TextStylePresets,
-} from './plugins/TextStyle';
-export { type TypographyGroup, type TypographyPluginOptions } from './plugins/Typography';
-
 // --- Plugin authoring ---
 
-export { ANY_LIST, defineBlock, defineContent, defineInline, defineMark, definePlugin } from './core';
+export { defineBlock, defineContent, defineInline, defineMark, definePlugin } from './core';
 
 /** A plugin. The types to write one with are nested: `RtePlugin.EditorControlApi`, `RtePlugin.BlockDefinition<T>`, … */
 export type RtePlugin = CorePlugin;
 
-// Aliases so a namespace member doesn't refer to itself (`type ParseRule<T> = ParseRule<T>`).
+// Aliases so a namespace member doesn't refer to itself (`type HtmlSpec = HtmlSpec`).
 type ControlApi = EditorControlApi;
 type ToolbarProps = ToolbarItemProps;
 type OnPaste = PasteHandler;
@@ -187,39 +128,20 @@ type BlockDef<TValue> = BlockDefinition<TValue>;
 type MarkDef<TValue> = MarkDefinition<TValue>;
 type InlineDef<TValue> = InlineDefinition<TValue>;
 type EditComponentProps<TValue, TCurrent> = EditProps<TValue, TCurrent>;
-type Parse<TValue> = ParseRule<TValue>;
-type MarkParse<TValue> = MarkParseRule<TValue>;
-type StyleParse<TValue> = StyleParseRule<TValue>;
-type MarkClear = MarkClearRule;
-type DefaultStyleType = DefaultStyle;
 type Html = HtmlSpec;
 
 // oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
 export declare namespace RtePlugin {
     export type EditorControlApi = ControlApi;
     export type SelectionSnapshot = RteSelectionSnapshot;
-    export type MarkState = RteMarkState;
-    export type BlockCommand = RteBlockCommand;
-    export type CommandAvailability = RteCommandAvailability;
     export type ToolbarItemProps = ToolbarProps;
-    export type ToolbarGroup = RteToolbarGroup;
-    export type PasteHandler = OnPaste;
+    export type EditProps<TValue, TCurrent = TValue> = EditComponentProps<TValue, TCurrent>;
+    export type BlockNode = RteBlockNode;
+    export type InlineNode = RteInlineNode;
     export type BlockDefinition<TValue = Record<string, unknown>> = BlockDef<TValue>;
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
-    export type EditProps<TValue, TCurrent = TValue> = EditComponentProps<TValue, TCurrent>;
-    export type ParseRule<TValue> = Parse<TValue>;
-    export type MarkParseRule<TValue> = MarkParse<TValue>;
-    export type StyleParseRule<TValue> = StyleParse<TValue>;
-    // A namespace member cannot take the name of the type it renames, so each of these needs an alias outside.
-    export type MarkClearRule = MarkClear; // NOSONAR
-    export type DefaultStyle = DefaultStyleType; // NOSONAR
+    export type BlockCommand = RteBlockCommand;
+    export type PasteHandler = OnPaste;
     export type HtmlSpec = Html;
-    export type Content = RteContent;
-    export type ToolbarEntry = RteToolbarEntry;
-    export type EditView = RteEditView;
-    export type Icon = RteIcon;
-    export type Definition = RtePluginDefinition;
-    export type BlockNode = RteBlockNode;
-    export type InlineNode = RteInlineNode;
 }

@@ -80,6 +80,13 @@ export default {
                 defaultValue: { summary: 'false' },
             },
         },
+        dateGranularity: {
+            name: 'dateGranularity',
+            options: ['day', 'month'],
+            control: { type: 'radio' },
+            description:
+                '`month` shows the dates on the axis and in the tooltip as months, for data with one point per month.',
+        },
         legendPosition: {
             name: 'legendPosition',
             type: { name: 'other', value: 'top | bottom', required: false },
@@ -443,4 +450,29 @@ ContentOnTopOfChart.args = {
     height: 500,
     missingValueLabel: 'Missing data',
     valueFormatter,
+};
+
+const monthlySeries = (months: number): LineChartSeries[] =>
+    ['A', 'B', 'C'].map((name, seriesIndex) => ({
+        name,
+        dataPoints: Array.from({ length: months }, (_, monthIndex) => ({
+            value: 200 / (seriesIndex + 1) + monthIndex * 10,
+            timestamp: new Date(2026, 4 + monthIndex, 1),
+        })),
+    }));
+
+export const MonthlyData = Template.bind({});
+MonthlyData.args = {
+    series: monthlySeries(6),
+    width: 760,
+    height: 400,
+    dateGranularity: 'month',
+};
+
+export const SinglePoint = Template.bind({});
+SinglePoint.args = {
+    series: monthlySeries(1),
+    width: 760,
+    height: 400,
+    dateGranularity: 'month',
 };

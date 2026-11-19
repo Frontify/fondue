@@ -8,7 +8,7 @@ import { type CSSProperties, useContext } from 'react';
 import { type BarChartDataPoint } from '@components/BarChart';
 import { type LineChartDataPoint } from '@components/LineChart';
 import { MISSING_VALUE_LABEL } from '@components/common/components/consts';
-import { type LabelFormatter, type ValueFormatter } from '@components/common/types';
+import { type DateGranularity, type LabelFormatter, type ValueFormatter } from '@components/common/types';
 
 import { Crosshair } from './Crosshair';
 import { TooltipContent } from './TooltipContent';
@@ -36,6 +36,7 @@ type TooltipPropsBase = {
     valueFormatter?: ValueFormatter;
     labelFormatter?: LabelFormatter;
     locale?: string;
+    dateGranularity?: DateGranularity;
 };
 
 type TooltipBarProps = {
@@ -68,6 +69,7 @@ export const Tooltip = ({
     labelFormatter,
     locale,
     stackingGlyphs = false,
+    dateGranularity,
 }: TooltipProps) => {
     const tooltipContext = useContext(TooltipContext) as TooltipContextType<LineChartDataPoint | BarChartDataPoint>;
     // eslint-disable-next-line @eslint-react/static-components
@@ -145,6 +147,7 @@ export const Tooltip = ({
                             tooltipContext.tooltipData.nearestDatum?.datum,
                             locale,
                             labelFormatter,
+                            dateGranularity,
                         )}
                         description={tooltipContext.tooltipData.nearestDatum?.datum?.description}
                         imageUrl={imageUrl}

@@ -30,9 +30,10 @@ export const quoteContent = defineContent({
 /**
  * A block quote, with a `/` entry, and `> ` while typing
  */
-export const quotePlugin = /* @__PURE__ */ definePlugin({
-    content: quoteContent,
-    toolbarGroup: 'text',
-    toolbar: [{ label: 'Quote', icon: IconSpeechBubbleQuote, menu: { keywords: ['blockquote', 'citation'] } }],
-    inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
-});
+export const quotePlugin = () =>
+    definePlugin({
+        content: quoteContent,
+        toolbarGroup: 'text',
+        toolbar: [{ label: 'Quote', icon: IconSpeechBubbleQuote, menu: { keywords: ['blockquote', 'citation'] } }],
+        inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
+    });

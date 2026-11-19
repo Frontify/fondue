@@ -4,15 +4,8 @@
 
 import { describe, expect, it } from 'vitest';
 
-import {
-    columnBreakPlugin,
-    defaultPlugins,
-    mentionPlugin,
-    parseHtml,
-    type RteDocument,
-    type RteDocumentWith,
-    serializeToHtml,
-} from '../index';
+import { parseHtml, type RteDocument, type RteDocumentWith, serializeToHtml } from '../index';
+import { columnBreakPlugin, defaultPlugins, mentionPlugin } from '../plugins';
 
 // A host that stores HTML opens it with `parseHtml` and saves it with
 // `serializeToHtml`: each save and open must give back the document it saved.
@@ -44,8 +37,6 @@ const doc: RteDocumentWith<{ block: { type: 'columnBreak' } }> = {
                 { text: 'link', link: { href: 'https://example.com', openInNewTab: true } },
                 { type: 'break' },
                 { text: 'after the break' },
-                { type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' },
-                { type: 'mention', id: 'all', username: 'all', name: 'Everyone', kind: 'all' },
             ],
         },
         { type: 'paragraph', children: [] },
@@ -78,6 +69,26 @@ const doc: RteDocumentWith<{ block: { type: 'columnBreak' } }> = {
 describe('parseHtml', () => {
     it('gives back the document serializeToHtml wrote', () => {
         expect(parseHtml(serializeToHtml(doc, { plugins }), { plugins })).toEqual(doc);
+    });
+
+    it('reads a mention as its text, linked when it carries a link, as a paste does', () => {
+        const withMentions: RteDocument = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' },
+                        { text: ' and ' },
+                        { type: 'mention', id: 'all', username: 'all', name: 'Everyone', kind: 'all' },
+                    ],
+                },
+            ],
+        };
+
+        expect(parseHtml(serializeToHtml(withMentions, { plugins }), { plugins }).blocks).toEqual([
+            { type: 'paragraph', children: [{ text: '@jane', link: { href: '/people/jane' } }, { text: ' and @all' }] },
+        ]);
     });
 
     it('reads with the shipped content when given no plugins', () => {

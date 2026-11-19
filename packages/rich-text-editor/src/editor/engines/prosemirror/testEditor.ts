@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Node as PmNode } from 'prosemirror-model';
-import { TextSelection } from 'prosemirror-state';
+import { type Selection, TextSelection } from 'prosemirror-state';
+import { CellSelection } from 'prosemirror-tables';
 import { vi } from 'vitest';
 
 import { buildPluginRegistry, type RteBlockNode, type RteDocumentOf, type RtePlugin } from '#/core';
@@ -18,6 +19,10 @@ import { mountEditorForTests } from './editing';
  */
 
 const mounted: MountedDocument[] = [];
+
+/** A selection of the grid slots from the one starting at `anchor` to the one starting at `head`. */
+export const slotSelection = (doc: PmNode, anchor: number, head = anchor): Selection =>
+    CellSelection.create(doc, anchor, head);
 
 /** Destroy every editor `editorWith` mounted. Call it from `afterEach`. */
 export const destroyEditors = (): void => {

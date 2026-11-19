@@ -17,6 +17,8 @@ type UseMarginProps = {
     maxLabelHeight?: number;
     firstLabelOverflowsBy?: number;
     maxLabelLength?: number;
+    /** The first label of a bottom axis, centred on the left edge of the chart: the left margin makes room for its first half. */
+    firstXTickLabel?: string;
 };
 
 const DEFAULT_MARGIN = { bottom: 24, left: 52.265625, right: 20, top: 10 };
@@ -37,6 +39,21 @@ const getTickLabelOffset = ({ tickLabelStyle, tickLength }: Pick<UseMarginProps,
     return tickLength + Math.abs(labelOffset);
 };
 
+// Labels are measured with the fallback font until the web font has loaded, which makes them too narrow.
+const useFontsLoadedCount = () => {
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+        const onLoadingDone = () => setCount((previousCount) => previousCount + 1);
+
+        document.fonts?.addEventListener('loadingdone', onLoadingDone);
+
+        return () => document.fonts?.removeEventListener('loadingdone', onLoadingDone);
+    }, []);
+
+    return count;
+};
+
 export const useMargin = (props: UseMarginProps) => {
     const {
         tickLabelStyle,
@@ -46,8 +63,10 @@ export const useMargin = (props: UseMarginProps) => {
         maxLabelHeight = 6,
         firstLabelOverflowsBy = 0,
         maxLabelLength,
+        firstXTickLabel,
     } = props;
     const [margin, setMargin] = useState<Margin>(DEFAULT_MARGIN);
+    const fontsLoadedCount = useFontsLoadedCount();
 
     const tickLabelOffset = getTickLabelOffset({ tickLabelStyle, tickLength });
     const ticksJSON = JSON.stringify(ticks);
@@ -68,6 +87,9 @@ export const useMargin = (props: UseMarginProps) => {
         if (firstLabelOverflowsBy > marginLeft) {
             marginLeft = firstLabelOverflowsBy;
         }
+        if (firstXTickLabel) {
+            marginLeft = Math.max(marginLeft, getSVGTextDimensions(firstXTickLabel, style as TextProps).width / 2);
+        }
         // eslint-disable-next-line @eslint-react/set-state-in-effect
         setMargin({
             top: 10,
@@ -75,7 +97,17 @@ export const useMargin = (props: UseMarginProps) => {
             bottom: maxLabelHeight + 18,
             left: marginLeft,
         });
-    }, [ticksJSON, styleJSON, valueFormatter, maxLabelHeight, firstLabelOverflowsBy, tickLabelOffset, maxLabelLength]);
+    }, [
+        ticksJSON,
+        styleJSON,
+        valueFormatter,
+        maxLabelHeight,
+        firstLabelOverflowsBy,
+        tickLabelOffset,
+        maxLabelLength,
+        firstXTickLabel,
+        fontsLoadedCount,
+    ]);
 
     return margin;
 };

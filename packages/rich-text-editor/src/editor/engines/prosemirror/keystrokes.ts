@@ -31,6 +31,7 @@ import { autolinkOnEnter, markPatternRule } from './autolink';
 import { keepCarriedAttrs, withCarriedAttrs } from './carriedAttrs';
 import { undoStep } from './controlApi';
 import { EXTRA_ATTR } from './documentConversion';
+import { gridEditing, gridKeys, hasGrids, outsideGrids } from './grid';
 import { deleteEmptyBlockBesideList, listKeys } from './lists';
 import {
     type RuleContext,
@@ -55,7 +56,8 @@ import {
  *    Backspace right after takes the link back.
  * 3. Feature hotkeys (Mod-b, ...). Before the list keys so a feature can take a
  *    key lists would claim (`blurOnBreak` takes Enter).
- * 4. List keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
+ * 4. Grid keys, then list keys; each only when a grid or a list exists. Grid
+ *    keys come first, so Tab in a list inside a slot moves to the next slot.
  * 5. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`); held until a composition ends.
  * 6. Enter keeping the attributes every text block carries, then the baseline
  *    keymap, plus Backspace resetting an emptied first heading, and Backspace
@@ -67,6 +69,13 @@ import {
 
 export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api: EditorControlApi): PmPlugin[] => {
     const hasLists = registry.itemTypeByList.size > 0;
+    const hasGrid = hasGrids(registry);
+    const lists = listKeys(api, registry.itemTypeByList);
+    const outdent = lists['Shift-Tab'];
+    // Shift-Tab in a grid's first slot goes to the browser, even from a list.
+    if (hasGrid && outdent !== undefined) {
+        lists['Shift-Tab'] = outsideGrids(outdent);
+    }
 
     return [
         // 1
@@ -83,7 +92,8 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         keymap(featureHotkeys(registry.hotkeys, api)),
         characterHotkeys(registry.hotkeys, api),
         // 4
-        ...(hasLists ? [keymap(listKeys(api, registry.itemTypeByList))] : []),
+        ...(hasGrid ? [gridKeys(), ...gridEditing()] : []),
+        ...(hasLists ? [keymap(lists)] : []),
         // 5
         ...typingRewrites(registry, schema),
         // 6

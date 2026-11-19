@@ -2,18 +2,16 @@
 
 // Mounted by hostStyling.ct.tsx.
 
+import { RichTextEditor, RichTextRenderer, type RtePlugin } from '../../index';
 import {
     bulletListPlugin,
     checkListPlugin,
     fontColorPlugin,
     linkPlugin,
     quotePlugin,
-    RichTextEditor,
-    RichTextRenderer,
-    type RtePlugin,
     type TextLook,
     textStylePlugin,
-} from '../../index';
+} from '../../plugins';
 
 import { BODY_QUOTE_LINK_DOCUMENT } from './hostStylingValues';
 
@@ -21,7 +19,13 @@ type HostNoHeadingsPairProps = {
     body: TextLook;
 };
 
-const OTHER_PLUGINS: RtePlugin[] = [bulletListPlugin, checkListPlugin, fontColorPlugin, quotePlugin, linkPlugin];
+const OTHER_PLUGINS: RtePlugin[] = [
+    bulletListPlugin(),
+    checkListPlugin(),
+    fontColorPlugin(),
+    quotePlugin(),
+    linkPlugin(),
+];
 
 /** The renderer and the editor of a surface without headings, which still carries the body look */
 export const HostNoHeadingsPair = ({ body }: HostNoHeadingsPairProps) => {

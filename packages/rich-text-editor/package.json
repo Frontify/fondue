@@ -24,6 +24,10 @@
             "types": "./dist/index.d.ts",
             "import": "./dist/index.es.js"
         },
+        "./plugins": {
+            "types": "./dist/plugins.d.ts",
+            "import": "./dist/plugins.es.js"
+        },
         "./styles": "./dist/style.css"
     },
     "files": [
@@ -64,6 +68,7 @@
         "prosemirror-model": "^1.25.12",
         "prosemirror-schema-list": "^1.5.1",
         "prosemirror-state": "^1.4.4",
+        "prosemirror-tables": "^1.8.5",
         "prosemirror-transform": "^1.12.2",
         "prosemirror-view": "^1.42.8"
     },

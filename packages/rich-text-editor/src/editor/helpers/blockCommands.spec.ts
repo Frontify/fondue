@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
 
-import { activeCommand, availabilityOf, matchCommands, TEXT_COMMAND } from './blockCommands';
+import { activeCommand, availableCommands, matchCommands, TEXT_COMMAND } from './blockCommands';
 
 const command = (label: string, keywords: string[] = [], group: RteBlockCommand['group'] = 'turnInto') => ({
     id: label,
@@ -117,23 +117,19 @@ describe('whether a command can run', () => {
         history: { canUndo: false, canRedo: false },
     };
 
-    it('is enabled when the command says nothing', () => {
-        expect(availabilityOf(command('Heading 1'), selection)).toEqual({ enabled: true });
+    it('keeps a command that says nothing', () => {
+        const always = command('Heading 1');
+
+        expect(availableCommands([always], selection)).toEqual([always]);
     });
 
-    it('is what the command says, read from the selection', () => {
+    it('drops a command that says it cannot run on the selection', () => {
         const limited: RteBlockCommand = {
             ...command('Add section'),
-            availability: (current) =>
-                current.block?.type === 'paragraph'
-                    ? { enabled: false, reason: 'This block is at its size limit' }
-                    : { enabled: true },
+            isAvailable: (current) => current.block?.type !== 'paragraph',
         };
 
-        expect(availabilityOf(limited, selection)).toEqual({
-            enabled: false,
-            reason: 'This block is at its size limit',
-        });
-        expect(availabilityOf(limited, { ...selection, block: { type: 'heading' } })).toEqual({ enabled: true });
+        expect(availableCommands([limited], selection)).toEqual([]);
+        expect(availableCommands([limited], { ...selection, block: { type: 'heading' } })).toEqual([limited]);
     });
 });

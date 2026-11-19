@@ -115,6 +115,12 @@ const engineRing = (allowPluginBarrel: boolean) => ({
 
 const ENGINE = 'src/editor/engines/prosemirror';
 
+/** The grid library speaks of tables and cells, so one engine file reaches it and renames it there. */
+const NO_GRID_LIBRARY = {
+    group: ['prosemirror-tables'],
+    message: 'Only grid.ts imports prosemirror-tables. Use what grid.ts exports instead.',
+};
+
 export default defineConfig({
     extends: [reactConfig],
     options: {
@@ -292,7 +298,10 @@ export default defineConfig({
                             NO_ENGINE,
                             noEngineFromShell('.'),
                             SHELL_OUTER_LAYERS,
-                            { ...noRelativeEscape('..', SHELL_ESCAPE_MESSAGE), group: ['../**', '!../index'] },
+                            {
+                                ...noRelativeEscape('..', SHELL_ESCAPE_MESSAGE),
+                                group: ['../**', '!../index', '!../plugins'],
+                            },
                         ],
                     },
                 ],
@@ -353,6 +362,16 @@ export default defineConfig({
         },
         {
             files: [`${ENGINE}/**/*.{ts,tsx}`],
+            excludeFiles: [`${ENGINE}/grid.ts`],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    { patterns: [NO_SERVER_RENDER, engineRing(false), NO_GRID_LIBRARY] },
+                ],
+            },
+        },
+        {
+            files: [`${ENGINE}/grid.ts`],
             rules: {
                 'no-restricted-imports': ['error', { patterns: [NO_SERVER_RENDER, engineRing(false)] }],
             },
@@ -374,8 +393,8 @@ export default defineConfig({
                             NO_SERVER_RENDER,
                             NO_ENGINE,
                             {
-                                group: ['#/**', './**', '../**', '!../index'],
-                                message: 'Stories may only import the package public API (../index).',
+                                group: ['#/**', './**', '../**', '!../index', '!../plugins'],
+                                message: 'Stories may only import the package public API (../index, ../plugins).',
                             },
                         ],
                     },

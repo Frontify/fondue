@@ -13,22 +13,24 @@ import { type RteToolbarGroup } from '#/core';
 // Driven through the package's public API, the way a host does: the props are
 // the whole conversation between a host and a mounted editor.
 import {
-    alignPlugin,
-    boldPlugin,
-    checkListPlugin,
-    defaultPlugins,
     defineBlock,
     defineContent,
     definePlugin,
-    linkPlugin,
-    mentionPlugin,
     RichTextEditor,
     RichTextRenderer,
     type RteDocument,
     type RtePlugin,
     serializeToHtml,
-    textStylePlugin,
 } from '../index';
+import {
+    alignPlugin,
+    boldPlugin,
+    checkListPlugin,
+    defaultPlugins,
+    linkPlugin,
+    mentionPlugin,
+    textStylePlugin,
+} from '../plugins';
 
 import { useFocusWithin } from './hooks/useFocusWithin';
 
@@ -130,7 +132,7 @@ const childrenOf = (doc: RteDocument | null, index = 0): unknown[] => {
     return block && 'children' in block ? block.children : [];
 };
 
-const checkListPlugins = [checkListPlugin];
+const checkListPlugins = [checkListPlugin()];
 
 const toDo: RteDocument = {
     version: 1,
@@ -811,7 +813,7 @@ describe('the toolbar', () => {
 });
 
 describe('the toolbar from the keyboard', () => {
-    const plugins = [boldPlugin, alignPlugin, linkPlugin];
+    const plugins = [boldPlugin(), alignPlugin(), linkPlugin()];
 
     const toolbarIn = (container: HTMLElement): HTMLElement => {
         const toolbar = container.querySelector<HTMLElement>('[role="toolbar"]');
@@ -832,6 +834,20 @@ describe('the toolbar from the keyboard', () => {
         expect(toolbar.getAttribute('aria-label')).toBe('Formatting');
         expect(toolbar.getAttribute('aria-controls')).toBe(editableIn(container).id);
         expect(tabStops(toolbar)).toEqual(['Bold']);
+    });
+
+    it('parts two groups with a separator, none before the first or after the last', () => {
+        const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
+        ready();
+
+        const toolbar = toolbarIn(container);
+        const groups = toolbar.querySelectorAll('[data-toolbar-group]');
+        const separators = toolbar.querySelectorAll('[role="separator"]');
+        expect(separators).toHaveLength(groups.length - 1);
+        expect(separators[0]?.getAttribute('aria-orientation')).toBe('vertical');
+        expect(groups[0]?.nextElementSibling?.contains(separators[0] ?? null)).toBe(true);
+        expect(toolbar.firstElementChild).toBe(groups[0]);
+        expect(toolbar.lastElementChild).toBe(groups[groups.length - 1]);
     });
 
     it('moves between its controls with the arrow keys, Home and End, passing over disabled ones', () => {
@@ -954,6 +970,7 @@ describe('the toolbar from the keyboard', () => {
 
         const radios = [...container.querySelectorAll('[role="radiogroup"] [role="radio"]')];
         expect(radios.map((radio) => radio.getAttribute('aria-checked'))).toEqual(['true', 'false', 'false', 'false']);
+        expect(radios.map((radio) => radio.getAttribute('data-emphasis'))).toEqual(['default', 'weak', 'weak', 'weak']);
     });
 
     describe('in a narrow top row', () => {
@@ -1003,6 +1020,20 @@ describe('the toolbar from the keyboard', () => {
 
         const more = (container: HTMLElement): HTMLButtonElement | null =>
             container.querySelector<HTMLButtonElement>('[aria-label="More"]');
+
+        it('parts the row from More with a separator, and draws none inside the panel', () => {
+            const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
+            ready();
+            const toolbar = toolbarIn(container);
+
+            resize(70);
+            expect(toolbar.querySelectorAll('[role="separator"]')).toHaveLength(1);
+
+            act(() => more(container)?.click());
+            const panel = window.document.querySelector<HTMLElement>('[role="toolbar"][aria-label="More"]');
+            expect(panel?.querySelector('[aria-label="Add link"]')).not.toBeNull();
+            expect(panel?.querySelector('[role="separator"]')).toBeNull();
+        });
 
         it('moves what does not fit behind More, whose panel the arrow keys move through', () => {
             const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
@@ -1322,7 +1353,7 @@ describe('the toolbar from the keyboard', () => {
         });
 
         it('keeps the panel usable after a text style menu opened from it is closed with Escape', async () => {
-            const withSelect = [boldPlugin, linkPlugin, alignPlugin, textStylePlugin()];
+            const withSelect = [boldPlugin(), linkPlugin(), alignPlugin(), textStylePlugin()];
             const { container, ready } = mount(() => (
                 <RichTextEditor value={paragraph('text')} plugins={withSelect} toolbarPlacement="top" />
             ));
@@ -1496,7 +1527,7 @@ describe('content no mounted plugin knows', () => {
         } as unknown as RteDocument;
 
         const { container, ready, stored } = mount((onChange) => (
-            <RichTextEditor value={value} onChange={onChange} plugins={[boldPlugin]} />
+            <RichTextEditor value={value} onChange={onChange} plugins={[boldPlugin()]} />
         ));
         ready();
         const placeholder = container.querySelector('[data-rte-unknown]');
@@ -2472,7 +2503,7 @@ describe('onBlur', () => {
         const onBlur = vi.fn<(doc: RteDocument) => void>();
 
         const { container, ready } = mount(() => (
-            <RichTextEditor value={paragraph('text')} onBlur={onBlur} plugins={[boldPlugin]} />
+            <RichTextEditor value={paragraph('text')} onBlur={onBlur} plugins={[boldPlugin()]} />
         ));
         ready();
         const focus = (element: Element | null): void => {
@@ -2495,9 +2526,8 @@ describe('onBlur', () => {
 
 describe('pasting', () => {
     describe('into a mounted editor', () => {
-        it('turns a copied mention back into a mention, even where links are mounted', () => {
-            // A mention is written as `<a href data-mention-id>`, which the link's
-            // `a[href]` rule matches as well; one with no profile as a `<span>`.
+        it('pastes a copied mention as its text, a linked one as a link', () => {
+            // A mention is written as `<a href data-mention-id>`; one with no profile as a `<span>`.
             const plugins = [
                 ...defaultPlugins,
                 mentionPlugin({
@@ -2531,21 +2561,12 @@ describe('pasting', () => {
 
             const block = stored()?.blocks[0];
             const children = block && 'children' in block ? block.children : [];
-            expect(children).toContainEqual({ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' });
-            expect(children).toContainEqual({
-                type: 'mention',
-                id: 'design',
-                username: 'design',
-                name: 'Design',
-                kind: 'group',
-            });
-            expect(children).toContainEqual({
-                type: 'mention',
-                id: 'all',
-                username: 'all',
-                name: 'Everyone',
-                kind: 'all',
-            });
+            expect(children).toEqual([
+                { text: 'Ask ' },
+                { text: '@jane', link: { href: '/people/jane' } },
+                { text: '@design', link: { href: '/people/design' } },
+                { text: '@all' },
+            ]);
         });
 
         it('keeps the marks and blocks the pasted HTML carried', () => {
@@ -2661,7 +2682,7 @@ describe('exported links', () => {
                     { type: 'paragraph', children: [{ text: 'good', link: { href: 'https://example.com' } }] },
                 ],
             },
-            { plugins: [linkPlugin] },
+            { plugins: [linkPlugin()] },
         );
 
         expect(html).not.toContain('javascript:');

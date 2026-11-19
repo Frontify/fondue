@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { i3 } from 'prosemirror-model';
+import { i18 } from 'prosemirror-tables'; // banned
 import { i16 } from 'react-dom/server'; // banned
 
 import { i1 } from '#/core';
@@ -22,4 +23,4 @@ import { i4 } from '../../RichTextEditor'; // banned
 
 import { i0 } from './schema';
 
-export const all = [i0, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16, i17];
+export const all = [i0, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16, i17, i18];
