@@ -1,0 +1,19 @@
+packages/rich-text-editor/src/core/contentRegistry.ts
+  s_6c40cd588cd91d::t_c7cb4fc94292bd 46-47,50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a05d87c6ed44e38e88e55c56ab7c99bddc91245f",
+  "prompts": {},
+  "sessions": {
+    "s_6c40cd588cd91d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a879e979-0aca-4994-8339-40a950c48ce5",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

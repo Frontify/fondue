@@ -1,0 +1,53 @@
+packages/rich-text-editor/src/docs/keyboardReference.spec.ts
+  s_22527a1a684ccf::t_2c109900826dcc 30
+.changeset/feat-rte-mention-names.md
+  s_22527a1a684ccf::t_c88245500b3f85 5
+.changeset/feat-rte-shortcuts-submit.md
+  s_22527a1a684ccf::t_4885d0338bd7db 5
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_22527a1a684ccf::t_7d2560a2e45f6f 261-265,268,276,284,292
+packages/rich-text-editor/src/core/registry.spec.ts
+  s_22527a1a684ccf::t_3630db867e01a2 579,582
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_22527a1a684ccf::t_0027ace5f81220 574,578,586,1262
+packages/rich-text-editor/src/editor/engines/prosemirror/warnings.ts
+  s_22527a1a684ccf::t_86d662fb664283 11-12,15-19,26-30
+packages/rich-text-editor/src/editor/warnings.ts
+  s_22527a1a684ccf::t_7d773dc977c193 3-5,11-15
+packages/rich-text-editor/src/plugins/Align/Align.tsx
+  s_22527a1a684ccf::t_932822308e047b 59-70,72,111,118,131
+packages/rich-text-editor/src/plugins/Mention/Mention.tsx
+  s_22527a1a684ccf::t_7c0576f7d1c34d 10,38,46,74,81,113,123,125
+packages/rich-text-editor/src/plugins/Mention/components/MentionEditor.tsx
+  s_22527a1a684ccf::t_dd9fd8ebe4cd2f 7,56
+packages/rich-text-editor/src/plugins/Mention/components/MentionLink.spec.tsx
+  s_22527a1a684ccf::t_12552d1a7afa81 42-44,47,53
+packages/rich-text-editor/src/plugins/Mention/helpers/display.spec.ts
+  s_22527a1a684ccf::t_982b2f64a7f531 3,5,13-14,16,18,28
+packages/rich-text-editor/src/plugins/Mention/helpers/display.ts
+  s_22527a1a684ccf::t_fbf39405420d6d 3,13,17,37,69-70,72-73,76,78
+packages/rich-text-editor/src/plugins/Mention/index.ts
+  s_22527a1a684ccf::t_4d0f0a03cec0b0 4
+packages/rich-text-editor/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_22527a1a684ccf::t_1b211f5115f85a 5,9,44
+packages/rich-text-editor/src/renderer/documentTree.ts
+  s_22527a1a684ccf::t_e4cc4a61c85306 48,50-54
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_22527a1a684ccf::t_d9166b81ab879a 671-672,678,844-845
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8131320ca4479511246b2ed1d27da55323fa24d6",
+  "prompts": {},
+  "sessions": {
+    "s_22527a1a684ccf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2a5abef-0d60-4dfb-93a0-af8f62c61098",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

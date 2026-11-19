@@ -1,0 +1,29 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_3c6b1394227db8::t_83c97fea113305 85
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_d9c0469efce250::t_bcfe7f97cdf869 271
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e0c08c4e36e0d3405fc1649ff8987a56f5fd3d38",
+  "prompts": {},
+  "sessions": {
+    "s_3c6b1394227db8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9b985b6a-9fd8-40d4-b0ec-6d7a78f67808",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_d9c0469efce250": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "548bafad-28bd-4e36-949b-abe6993012cf",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,55 @@
+packages/rich-text-editor/src/index.ts
+  s_d9c0469efce250::t_d15f5c4c96cfda 23-24,203-204
+  s_d9c0469efce250::t_792afdf9e1682f 25,205
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_d9c0469efce250::t_c1b973314d7913 50-59,62-63,394,399,406,411-434,440,446-459,461-462,464,466,482-485,494-495,503,644-679,702-715
+  s_d9c0469efce250::t_eb84db29e7843b 680-701
+  s_d9c0469efce250::t_a752cb6e52e7e4 716,783-816
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_d9c0469efce250::t_89e19cd5064a50 18,23,127-137,139-168,176,181,190,247-265,267-272,304,307-309,312-319,326,449-450,453,566-567
+  s_d9c0469efce250::t_25a038a7d58c19 138
+packages/rich-text-editor/src/core/plugin.ts
+  s_d9c0469efce250::t_7dfb3fabd43e4a 340-344
+packages/rich-text-editor/src/editor/floatingBar.spec.tsx
+  s_d9c0469efce250::t_e81dd9a039ab08 87-102,243-254
+  s_d9c0469efce250::t_f7db23136f5af0 255
+packages/rich-text-editor/src/core/commands.ts
+  s_d9c0469efce250::t_3524814bb0ade3 58-62
+  s_d9c0469efce250::t_5aa51c8ed1537f 13,72-85,87-88,90
+  s_d9c0469efce250::t_6798f34052c941 14-18
+  s_d9c0469efce250::t_c96ad04e1a8be4 116-117,121
+  s_d9c0469efce250::t_95b2f5c51256c4 133-134
+packages/rich-text-editor/src/editor/helpers/blockCommands.spec.ts
+  s_d9c0469efce250::t_429067e3e23d92 60,81,95
+packages/rich-text-editor/src/editor/helpers/toolbarItem.spec.ts
+  s_d9c0469efce250::t_429067e3e23d92 37
+packages/rich-text-editor/src/core/index.ts
+  s_d9c0469efce250::t_d15f5c4c96cfda 8-9,14
+packages/rich-text-editor/src/editor/engines/prosemirror/lists.ts
+  s_d9c0469efce250::t_7ccd6fba06d082 6,116,122,124-132,151-152,154-155,170,185,187-188
+  s_d9c0469efce250::t_e764208db682fe 182
+  s_d9c0469efce250::t_022eb0d90c34cf 5,117-121,123,133-150,153,158-161,173-175,180-181,186
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_d9c0469efce250::t_194e575ab565af 156,199-200,240,262,274-275,277
+  s_d9c0469efce250::t_65b0dd308b34d2 161-162
+packages/rich-text-editor/src/plugins/Align/Align.tsx
+  s_d9c0469efce250::t_d8f33861e87782 104-112,129,132
+packages/rich-text-editor/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_d9c0469efce250::t_d8f33861e87782 17,26,28,48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2dd4481b29b22cb07f0b8fa13791e79f2b79f63f",
+  "prompts": {},
+  "sessions": {
+    "s_d9c0469efce250": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "548bafad-28bd-4e36-949b-abe6993012cf",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

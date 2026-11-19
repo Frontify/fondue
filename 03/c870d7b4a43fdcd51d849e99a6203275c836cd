@@ -1,0 +1,101 @@
+packages/rich-text-edior/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_ed44a55d015bd5::t_43798c73a54400 15,18-20
+packages/rich-text-edior/src/plugins/Code/Code.tsx
+  s_ed44a55d015bd5::t_dfed5e51bd5c4b 22-26,30
+packages/rich-text-edior/src/RichTextEditor/prosemirror/inputRules.ts
+  s_3d4f3e5917c6b8::t_aeb5712df2a8c4 26,33-37
+packages/rich-text-edior/src/plugins/FontColor/components/ColorSelect.tsx
+  s_ed44a55d015bd5::t_497214cf23f189 13-15,18,26-27,30
+packages/rich-text-edior/src/RichTextEditor/prosemirror/api/marks.ts
+  s_ed44a55d015bd5::t_40a16aeef22dfe 12-18,25-29,31,44,48
+packages/rich-text-edior/src/index.ts
+  s_ed44a55d015bd5::t_125d1d7a7fee41 58
+packages/rich-text-edior/src/RichTextEditor/types/index.ts
+  s_ed44a55d015bd5::t_8e5601972bf848 10
+packages/rich-text-edior/src/plugins/Link/Link.tsx
+  s_ed44a55d015bd5::t_dc3a96db49b48b 58-59
+packages/rich-text-edior/src/RichTextEditor/types/api.ts
+  s_ed44a55d015bd5::t_d21689eee59f29 9-14,16-28,30-32,34,36-39,41,43-49,51-91,93-117
+  s_ed44a55d015bd5::t_c245010bc5e6d1 92
+packages/rich-text-edior/src/plugins/Link/helpers/draft.ts
+  s_ed44a55d015bd5::t_95260751eefd4b 26-28
+packages/rich-text-edior/src/plugins/List/List.tsx
+  s_ed44a55d015bd5::t_12f0b08fa194e1 86-92,99-101
+packages/rich-text-edior/src/plugins/Align/Align.tsx
+  s_ed44a55d015bd5::t_988ebff899949e 42-65
+packages/rich-text-edior/src/plugins.stories.tsx
+  s_ed44a55d015bd5::t_87d42e53821d5c 942
+  s_ed44a55d015bd5::t_674e0dd3b3838c 866-880
+  s_ed44a55d015bd5::t_8a4bea07ad06e9 936
+  s_ed44a55d015bd5::t_2c990c2606cd8d 293
+packages/rich-text-edior/src/RichTextEditor/prosemirror/api/selection.ts
+  s_ed44a55d015bd5::t_56ac153c00075a 1-111
+packages/rich-text-edior/src/plugins/Link/components/LinkPanel.tsx
+  s_ed44a55d015bd5::t_41489701ec00b7 47-48
+packages/rich-text-edior/src/plugins/Link/components/LinkForm.tsx
+  s_ed44a55d015bd5::t_c8e5de1ad41832 60,66,70-71,73,78-79
+packages/rich-text-edior/src/RichTextEditor/prosemirror/api/index.ts
+  s_ed44a55d015bd5::t_a10d566142c954 11,17-20,23-44
+packages/rich-text-edior/src/RichTextEditor/types/schema.ts
+  s_ed44a55d015bd5::t_011c6f845a04b2 62
+packages/rich-text-edior/src/plugins/Bold/Bold.tsx
+  s_ed44a55d015bd5::t_954112c2312a25 20-24,28
+packages/rich-text-edior/src/plugins/Italic/Italic.tsx
+  s_ed44a55d015bd5::t_0b575ecf082b59 20-24,28
+packages/rich-text-edior/src/plugins/Superscript/Superscript.tsx
+  s_ed44a55d015bd5::t_3ef28c650d8ee6 22-23,28
+packages/rich-text-edior/src/plugins/CheckList/CheckList.tsx
+  s_ed44a55d015bd5::t_ad17459261e4ae 79,81,87-89
+packages/rich-text-edior/src/plugins/Link/components/LinkFlyout.tsx
+  s_ed44a55d015bd5::t_bd66eca5e250de 19
+packages/rich-text-edior/src/RichTextEditor/index.ts
+  s_ed44a55d015bd5::t_ac94961ad3ca24 30
+packages/rich-text-edior/src/plugins/Quote/Quote.tsx
+  s_ed44a55d015bd5::t_b59d0387a5a698 29-31,36
+packages/rich-text-edior/src/plugins/Underline/Underline.tsx
+  s_ed44a55d015bd5::t_b8145791773566 22-23,28
+packages/rich-text-edior/src/RichTextEditor/prosemirror/api/lists.ts
+  s_ed44a55d015bd5::t_1de71b4b4d063f 32
+  s_ed44a55d015bd5::t_4a6c0e5043662c 59-62
+  s_ed44a55d015bd5::t_876820e1c7a393 18-21
+packages/rich-text-edior/src/plugins/Strikethrough/Strikethrough.tsx
+  s_ed44a55d015bd5::t_28b7164594d707 28-29,34
+packages/rich-text-edior/src/RichTextEditor/prosemirror/api/blocks.ts
+  s_ed44a55d015bd5::t_0990e6f642b687 9-15,22
+packages/rich-text-edior/src/plugins/TextStyle/components/TextStyleSelect.tsx
+  s_ed44a55d015bd5::t_1beb3957907d08 24
+  s_ed44a55d015bd5::t_8c12c80d6401c7 35,37,40
+packages/rich-text-edior/src/plugins/Subscript/Subscript.tsx
+  s_ed44a55d015bd5::t_1c2a5b1c337f8e 22-23,28
+packages/rich-text-edior/src/plugins/TextStyle/helpers/presets.ts
+  s_ed44a55d015bd5::t_bedce73e2d1a88 79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "03c870d7b4a43fdcd51d849e99a6203275c836cd",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_3d4f3e5917c6b8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "daeab2a3-46da-45cf-9403-eede9dbf82d4",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_ed44a55d015bd5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0451edae-2bcb-43e2-b157-ac4fb3290ad7",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

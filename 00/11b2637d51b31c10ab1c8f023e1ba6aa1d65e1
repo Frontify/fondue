@@ -1,0 +1,40 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_be5af688b9a432::t_132843fa7c664f 52-54,83,304-316,318
+  s_be5af688b9a432::t_ae65d629f99a71 317,319-321
+.changeset/feat-rte-typing-rules.md
+  s_be5af688b9a432::t_5f780312a1cd35 2,5
+.changeset/feat-rte-link-flows.md
+  s_be5af688b9a432::t_5f780312a1cd35 2
+.changeset/feat-rte-mention-names.md
+  s_be5af688b9a432::t_5f780312a1cd35 2
+.changeset/feat-rte-paste-marks.md
+  s_be5af688b9a432::t_5f780312a1cd35 2
+.changeset/rte-plugin-content-split.md
+  s_be5af688b9a432::t_5f780312a1cd35 2,5
+packages/rich-text-editor/src/core/commands.ts
+  s_be5af688b9a432::t_132843fa7c664f 55-57,117-121
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_be5af688b9a432::t_ee86591a6cfc1f 206,208-217,221-224,395-438
+packages/rich-text-editor/src/editor/helpers/toolbarItem.spec.ts
+  s_be5af688b9a432::t_cfd1a24a1635cf 74-77
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.spec.tsx
+  s_be5af688b9a432::t_0109b2642f5c94 29,32,34-36,39-40,48,117,120-121,340-341,345-372
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.tsx
+  s_be5af688b9a432::t_f16172f5e64063 46-48,73,76-78,105,113,115-116,123-130,137-138,207,210-215,219
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0011b2637d51b31c10ab1c8f023e1ba6aa1d65e1",
+  "prompts": {},
+  "sessions": {
+    "s_be5af688b9a432": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0dcd0245-e19d-48cb-aebc-74746cda6895",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
