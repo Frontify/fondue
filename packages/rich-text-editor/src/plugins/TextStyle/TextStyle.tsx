@@ -44,7 +44,7 @@ export type { TextStyleBlock, TextStyleName } from './helpers/presets';
 export type LinkLook = Omit<TextLook, 'textDecoration' | 'marginTop' | 'marginBottom'>;
 
 /** The look of each kind of text, by name: the 9 text styles, body text, block quotes and links. */
-export type TextStyleLooks = Partial<Record<TextStyleName | 'body' | 'quote', TextLook>> & { link?: LinkLook };
+export type TextStyleLook = Partial<Record<TextStyleName | 'body' | 'quote', TextLook>> & { link?: LinkLook };
 
 /** How the text-style content looks; what a renderer needs to draw a document the way the editor does. */
 export type TextStyleContentOptions = {
@@ -54,7 +54,7 @@ export type TextStyleContentOptions = {
      * A value that is empty or can end its CSS declaration early throws an error that names the look and the
      * field, so a mistake in the host's configuration never passes silently.
      */
-    looks?: TextStyleLooks;
+    look?: TextStyleLook;
 };
 
 export type TextStylePluginOptions = TextStyleContentOptions & {
@@ -98,11 +98,11 @@ const textStyleBlockFor = (options: readonly TextStyleOption[]): BlockDefinition
 // Shared so every content offering all styles declares the very same block, which the registry requires.
 const ALL_STYLES_BLOCK = textStyleBlockFor(ALL_TEXT_STYLES);
 
-const textStyleContentFor = (options: readonly TextStyleOption[], looks: TextStyleLooks = {}): RteContent => {
+const textStyleContentFor = (options: readonly TextStyleOption[], look: TextStyleLook = {}): RteContent => {
     const contentProperties: Record<string, string> = {};
-    for (const [name, look] of Object.entries(looks)) {
-        if (look !== undefined) {
-            Object.assign(contentProperties, lookProperties(name, look));
+    for (const [name, entry] of Object.entries(look)) {
+        if (entry !== undefined) {
+            Object.assign(contentProperties, lookProperties(name, entry));
         }
     }
 
@@ -124,16 +124,16 @@ const DEFAULT_TEXT_STYLE_CONTENT = textStyleContentFor(ALL_TEXT_STYLES);
 
 /**
  * The text block carrying a style, and the look of each kind of text. Renders every style, whatever the editor
- * offers. Pass the same `looks` as `textStylePlugin`, so a renderer given only content draws the host's looks.
+ * offers. Pass the same `look` as `textStylePlugin`, so a renderer given only content draws the host's looks.
  *
  * @example
- * <RichTextRenderer plugins={[textStyleContent({ looks }), boldContent]} value={doc} />
+ * <RichTextRenderer plugins={[textStyleContent({ look }), boldContent]} value={doc} />
  */
-export const textStyleContent = ({ looks }: TextStyleContentOptions = {}): RteContent => {
-    if (looks === undefined) {
+export const textStyleContent = ({ look }: TextStyleContentOptions = {}): RteContent => {
+    if (look === undefined) {
         return DEFAULT_TEXT_STYLE_CONTENT;
     }
-    return textStyleContentFor(ALL_TEXT_STYLES, looks);
+    return textStyleContentFor(ALL_TEXT_STYLES, look);
 };
 
 const HEADING_LEVEL: Partial<Record<string, number>> = { h1: 1, h2: 2, h3: 3, h4: 4 };
@@ -157,7 +157,7 @@ const HEADING_KEYWORDS: Partial<Record<number, readonly string[]>> = {
  */
 export const textStylePlugin = ({
     styles: options = ALL_TEXT_STYLES,
-    looks,
+    look,
 }: TextStylePluginOptions = {}): RtePlugin => {
     const offered = presetsFor(options);
 
@@ -199,9 +199,9 @@ export const textStylePlugin = ({
     }
 
     // Offering every style is exactly `textStyleContent`, so the default plugin and `defaultContent` share one object.
-    let content = textStyleContent({ looks });
+    let content = textStyleContent({ look });
     if (options !== ALL_TEXT_STYLES) {
-        content = textStyleContentFor(options, looks);
+        content = textStyleContentFor(options, look);
     }
 
     return definePlugin({

@@ -2,4 +2,4 @@
 "@frontify/fondue-rich-text-editor": minor
 ---
 
-feat(RichTextEditor): let hosts set the look of body text, block quotes and links through `textStylePlugin({ looks })`.
+feat(RichTextEditor): let hosts set the look of body text, block quotes and links through `textStylePlugin({ look })`.

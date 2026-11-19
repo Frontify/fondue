@@ -186,10 +186,10 @@ describe('the element a document sits in', () => {
 
 describe('host looks given only as content', () => {
     const doc = paragraph([{ text: 'Hello' }]);
-    const looks = { body: { fontSize: '17px' }, heading1: { color: 'red' } };
+    const look = { body: { fontSize: '17px' }, heading1: { color: 'red' } };
 
     it('reach the readonly view and export without the text style plugin', () => {
-        const plugins = [textStyleContent({ looks })];
+        const plugins = [textStyleContent({ look })];
         const view = rendered(<RichTextRenderer value={doc} plugins={plugins} />).firstElementChild;
         const exportRoot = exported(serializeToHtml(doc, { plugins })).firstElementChild;
 
@@ -200,7 +200,7 @@ describe('host looks given only as content', () => {
     });
 
     it('reach the readonly view when added after the default content', () => {
-        const plugins = [...defaultContent, textStyleContent({ looks })];
+        const plugins = [...defaultContent, textStyleContent({ look })];
         const view = rendered(<RichTextRenderer value={doc} plugins={plugins} />).firstElementChild;
 
         expect((view as HTMLElement | null)?.style.getPropertyValue('--rte-body-font-size')).toBe('17px');

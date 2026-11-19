@@ -47,6 +47,6 @@ export {
     type TextStyleContentOptions,
     type TextStyleName,
     type TextStylePluginOptions,
-    type TextStyleLooks,
+    type TextStyleLook,
 } from './TextStyle';
 export { type TypographyGroup, type TypographyPluginOptions } from './Typography';

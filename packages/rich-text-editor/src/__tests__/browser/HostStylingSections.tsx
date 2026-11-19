@@ -8,17 +8,17 @@ import { textStylePlugin, type TextStylePluginOptions } from '../../plugins';
 import { ALL_LOOKS_DOCUMENT, SECTION_A, SECTION_B } from './hostStylingValues';
 
 type HostStylingSectionsProps = {
-    looks?: TextStylePluginOptions['looks'];
+    look?: TextStylePluginOptions['look'];
 };
 
 /** Two sections that define the same variable differently, each with its own renderer. */
-export const HostStylingSections = ({ looks }: HostStylingSectionsProps) => (
+export const HostStylingSections = ({ look }: HostStylingSectionsProps) => (
     <>
         <div data-testid="section-a" style={SECTION_A}>
-            <RichTextRenderer value={ALL_LOOKS_DOCUMENT} plugins={[textStylePlugin({ looks })]} />
+            <RichTextRenderer value={ALL_LOOKS_DOCUMENT} plugins={[textStylePlugin({ look })]} />
         </div>
         <div data-testid="section-b" style={SECTION_B}>
-            <RichTextRenderer value={ALL_LOOKS_DOCUMENT} plugins={[textStylePlugin({ looks })]} />
+            <RichTextRenderer value={ALL_LOOKS_DOCUMENT} plugins={[textStylePlugin({ look })]} />
         </div>
     </>
 );

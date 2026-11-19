@@ -34,7 +34,7 @@ type HostLooksPairProps = {
 };
 
 const pluginsWithLooks = ({ body, quote, link }: HostLooksPairProps): RtePlugin[] => [
-    textStylePlugin({ looks: { body, quote, link } }),
+    textStylePlugin({ look: { body, quote, link } }),
     bulletListPlugin(),
     checkListPlugin(),
     fontColorPlugin(),
@@ -44,7 +44,7 @@ const pluginsWithLooks = ({ body, quote, link }: HostLooksPairProps): RtePlugin[
 
 // The renderer gets content only, as a page that only shows documents would, so the looks must travel with the content.
 const contentWithLooks = ({ body, quote, link }: HostLooksPairProps) => [
-    textStyleContent({ looks: { body, quote, link } }),
+    textStyleContent({ look: { body, quote, link } }),
     bulletListContent,
     checkListContent,
     fontColorContent,

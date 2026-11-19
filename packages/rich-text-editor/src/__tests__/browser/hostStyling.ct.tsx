@@ -22,7 +22,7 @@ import {
     UNKNOWN_STYLE_DOCUMENT,
 } from './hostStylingValues';
 
-// Hosts set the look of each text style with `textStylePlugin({ looks })`. Without a
+// Hosts set the look of each text style with `textStylePlugin({ look })`. Without a
 // value, or with one that resolves to nothing, Fondue's look stays, in the editor and the renderer alike.
 
 const COMPUTED_PROPERTIES = [
@@ -225,7 +225,7 @@ test.describe('host styling of text styles', () => {
     test('applies the host look to its own text style alone, the same in the renderer and the editor', async ({
         mount,
     }) => {
-        const component = await mount(<HostStylingPair looks={{ heading1: HOST_LOOK, custom1: HOST_LOOK }} />);
+        const component = await mount(<HostStylingPair look={{ heading1: HOST_LOOK, custom1: HOST_LOOK }} />);
         const expected = { ...FONDUE_LOOKS, heading1: HOST_COMPUTED_LOOK, custom1: HOST_COMPUTED_LOOK };
 
         const rendered = await computedLooksIn(component.getByTestId('renderer'));
@@ -236,7 +236,7 @@ test.describe('host styling of text styles', () => {
     });
 
     test('applies host margins as given between blocks, and keeps the first heading flush', async ({ mount }) => {
-        const component = await mount(<HostStylingPair looks={{ heading2: HOST_MARGINS }} />);
+        const component = await mount(<HostStylingPair look={{ heading2: HOST_MARGINS }} />);
         const expected = {
             ...FONDUE_LOOKS,
             heading2: {
@@ -262,7 +262,7 @@ test.describe('host styling of text styles', () => {
     });
 
     test('keeps Fondue looks for a value that resolves to an unset guideline variable', async ({ mount }) => {
-        const component = await mount(<HostStylingPair looks={{ heading1: UNSET_LOOK, imageTitle: UNSET_LOOK }} />);
+        const component = await mount(<HostStylingPair look={{ heading1: UNSET_LOOK, imageTitle: UNSET_LOOK }} />);
 
         expect(await computedLooksIn(component.getByTestId('renderer'))).toEqual(FONDUE_LOOKS);
         expect(await computedLooksIn(component.getByTestId('editor'))).toEqual(FONDUE_LOOKS);
@@ -270,7 +270,7 @@ test.describe('host styling of text styles', () => {
 
     test('reads a guideline variable where the editor stands, so sections can differ', async ({ mount }) => {
         const component = await mount(
-            <HostStylingSections looks={{ heading1: { color: `var(${H1_COLOR_VARIABLE})` } }} />,
+            <HostStylingSections look={{ heading1: { color: `var(${H1_COLOR_VARIABLE})` } }} />,
         );
 
         await expect(component.getByTestId('section-a').locator('h1')).toHaveCSS('color', SECTION_A_H1_COLOR);
@@ -278,7 +278,7 @@ test.describe('host styling of text styles', () => {
     });
 
     test('previews a text style in the dropdown with Fondue look, not the host one', async ({ mount, page }) => {
-        const component = await mount(<HostStylingPair looks={{ heading1: HOST_LOOK }} />);
+        const component = await mount(<HostStylingPair look={{ heading1: HOST_LOOK }} />);
 
         await component.getByTestId('editor').getByRole('combobox', { name: 'Text style' }).click();
         const preview = page.getByRole('option', { name: 'Heading 1' }).getByText('Heading 1', { exact: true });
@@ -290,7 +290,7 @@ test.describe('host styling of text styles', () => {
     });
 });
 
-// Body text, block quotes and links take a look through `textStylePlugin({ looks })`.
+// Body text, block quotes and links take a look through `textStylePlugin({ look })`.
 
 type LookedBlock = 'body' | 'bullet' | 'check' | 'quote' | 'link' | 'custom1' | 'heading1';
 

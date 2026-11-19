@@ -8,7 +8,7 @@ import { textStylePlugin, type TextStylePluginOptions } from '../../plugins';
 import { ALL_LOOKS_DOCUMENT } from './hostStylingValues';
 
 type HostStylingPairProps = {
-    looks?: TextStylePluginOptions['looks'];
+    look?: TextStylePluginOptions['look'];
     /**
      * The document both surfaces draw.
      * @default ALL_LOOKS_DOCUMENT
@@ -17,13 +17,13 @@ type HostStylingPairProps = {
 };
 
 /** The renderer and the editor side by side, drawing the same document with the same looks. */
-export const HostStylingPair = ({ looks, value = ALL_LOOKS_DOCUMENT }: HostStylingPairProps) => (
+export const HostStylingPair = ({ look, value = ALL_LOOKS_DOCUMENT }: HostStylingPairProps) => (
     <>
         <div data-testid="renderer">
-            <RichTextRenderer value={value} plugins={[textStylePlugin({ looks })]} />
+            <RichTextRenderer value={value} plugins={[textStylePlugin({ look })]} />
         </div>
         <div data-testid="editor">
-            <RichTextEditor value={value} plugins={[textStylePlugin({ looks })]} />
+            <RichTextEditor value={value} plugins={[textStylePlugin({ look })]} />
         </div>
     </>
 );

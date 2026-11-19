@@ -8,5 +8,5 @@ export {
     type TextStyleName,
     textStylePlugin,
     type TextStylePluginOptions,
-    type TextStyleLooks,
+    type TextStyleLook,
 } from './TextStyle';

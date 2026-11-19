@@ -26,7 +26,7 @@ import {
     textStyleContent,
     textStylePlugin,
     type TextStylePluginOptions,
-    type TextStyleLooks,
+    type TextStyleLook,
 } from '../plugins';
 
 /** Who can be mentioned is the app's business, which is why the mention plugin requires it as an option. */
@@ -874,7 +874,7 @@ const DARK_GUIDELINE: GuidelineVariables = {
  * Each look reads the guideline variables the host defines. `heading3` reads one that
  * no section defines, so it keeps Fondue's look.
  */
-const GUIDELINE_LOOKS: TextStylePluginOptions['looks'] = {
+const GUIDELINE_LOOKS: TextStylePluginOptions['look'] = {
     heading1: {
         fontFamily: 'var(--f-theme-settings-heading1-font-family)',
         fontSize: 'var(--f-theme-settings-heading1-font-size)',
@@ -906,7 +906,7 @@ const GUIDELINE_LOOKS: TextStylePluginOptions['looks'] = {
 };
 
 const HOST_STYLING_PLUGINS = [
-    textStylePlugin({ looks: GUIDELINE_LOOKS }),
+    textStylePlugin({ look: GUIDELINE_LOOKS }),
     bulletListPlugin(),
     checkListPlugin(),
     quotePlugin(),
@@ -915,7 +915,7 @@ const HOST_STYLING_PLUGINS = [
 
 // The renderer takes content only, with the same looks, so a page that only shows documents ships no editing code.
 const HOST_STYLING_CONTENT = [
-    textStyleContent({ looks: GUIDELINE_LOOKS }),
+    textStyleContent({ look: GUIDELINE_LOOKS }),
     bulletListContent,
     checkListContent,
     quoteContent,
@@ -985,7 +985,7 @@ const HostStylingSection = ({ title, guideline }: HostStylingSectionProps) => {
     );
 };
 
-const LOOKS_DEFAULT: TextStyleLooks = {
+const LOOKS_DEFAULT: TextStyleLook = {
     heading1: { fontFamily: 'Georgia, serif', fontSize: '36px', color: 'rgb(120, 40, 20)' },
     heading2: { textTransform: 'uppercase' },
     custom1: { letterSpacing: '0.1em' },
@@ -1037,17 +1037,17 @@ const LOOKS_CODE_INDENT = 4;
 const LOOKS_LEGEND = 'tw-m-0 tw-pl-4 tw-body-small tw-text-secondary';
 const LOOKS_ERROR = 'tw-m-0 tw-rounded tw-bg-surface-dim tw-p-3 tw-body-small tw-text-primary';
 
-const looksConfigurationCode = (looks: TextStyleLooks): string =>
-    `textStylePlugin({ looks: ${JSON.stringify(looks, null, LOOKS_CODE_INDENT)} })`;
+const looksConfigurationCode = (look: TextStyleLook): string =>
+    `textStylePlugin({ look: ${JSON.stringify(look, null, LOOKS_CODE_INDENT)} })`;
 
 type LooksPluginsResult = { status: 'ready'; plugins: RtePlugin[] } | { status: 'invalid'; message: string };
 
 // textStylePlugin throws on a value that could end its CSS declaration early, so a bad Controls entry is reported here.
-const looksPluginsFor = (looks: TextStyleLooks): LooksPluginsResult => {
+const looksPluginsFor = (look: TextStyleLook): LooksPluginsResult => {
     try {
         return {
             status: 'ready',
-            plugins: [textStylePlugin({ looks }), bulletListPlugin(), checkListPlugin(), quotePlugin(), linkPlugin()],
+            plugins: [textStylePlugin({ look }), bulletListPlugin(), checkListPlugin(), quotePlugin(), linkPlugin()],
         };
     } catch (error) {
         if (error instanceof Error) {
@@ -1058,13 +1058,13 @@ const looksPluginsFor = (looks: TextStyleLooks): LooksPluginsResult => {
 };
 
 type LooksSurfacesProps = {
-    looks: TextStyleLooks;
+    look: TextStyleLook;
     doc: RteDocument;
     onChange: (doc: RteDocument) => void;
 };
 
-const LooksSurfaces = ({ looks, doc, onChange }: LooksSurfacesProps) => {
-    const result = useMemo(() => looksPluginsFor(looks), [looks]);
+const LooksSurfaces = ({ look, doc, onChange }: LooksSurfacesProps) => {
+    const result = useMemo(() => looksPluginsFor(look), [look]);
 
     switch (result.status) {
         case 'invalid':
@@ -1088,16 +1088,16 @@ const LooksSurfaces = ({ looks, doc, onChange }: LooksSurfacesProps) => {
 };
 
 type LooksPlaygroundProps = {
-    looks: TextStyleLooks;
+    look: TextStyleLook;
 };
 
-const LooksPlayground = ({ looks }: LooksPlaygroundProps) => {
+const LooksPlayground = ({ look }: LooksPlaygroundProps) => {
     const [doc, setDoc] = useState<RteDocument>(HOST_STYLING_DOCUMENT);
 
     return (
         <div className="tw-grid tw-gap-4 tw-p-4 tw-font-primary">
             <pre className={JSON_PANEL}>
-                <code>{looksConfigurationCode(looks)}</code>
+                <code>{looksConfigurationCode(look)}</code>
             </pre>
             <ul className={LOOKS_LEGEND}>
                 {LOOKS_LEGEND_LINES.map((line) => (
@@ -1105,35 +1105,35 @@ const LooksPlayground = ({ looks }: LooksPlaygroundProps) => {
                 ))}
             </ul>
             {/* The plugin list is read at mount, so a change to the looks remounts both surfaces. */}
-            <LooksSurfaces key={JSON.stringify(looks)} looks={looks} doc={doc} onChange={setDoc} />
+            <LooksSurfaces key={JSON.stringify(look)} look={look} doc={doc} onChange={setDoc} />
         </div>
     );
 };
 
 type LooksStoryArgs = {
-    looks: TextStyleLooks;
+    look: TextStyleLook;
 };
 
 /**
- * The configuration of `textStylePlugin({ looks })` as plain values, printed above the editor and the renderer.
- * Edit `looks` in Controls and both surfaces redraw.
+ * The configuration of `textStylePlugin({ look })` as plain values, printed above the editor and the renderer.
+ * Edit `look` in Controls and both surfaces redraw.
  */
-export const Looks: StoryObj<LooksStoryArgs> = {
-    args: { looks: LOOKS_DEFAULT },
-    argTypes: { looks: { control: 'object' } },
+export const Look: StoryObj<LooksStoryArgs> = {
+    args: { look: LOOKS_DEFAULT },
+    argTypes: { look: { control: 'object' } },
     // The meta's editor props are not this story's args, so Controls lists only the looks.
-    parameters: { controls: { include: ['looks'] } },
-    render: ({ looks }) => <LooksPlayground looks={looks} />,
+    parameters: { controls: { include: ['look'] } },
+    render: ({ look }) => <LooksPlayground look={look} />,
 };
 
 /**
  * The usual production setup: the values are `var(--f-theme-settings-…)`, so one editor configuration follows the section (light or dark) it sits in.
- * A host sets the look of each text style, body text, quotes and links with `textStylePlugin({ looks })`, usually from its guideline settings,
- * and hands the renderer `textStyleContent({ looks })` with the same values.
+ * A host sets the look of each text style, body text, quotes and links with `textStylePlugin({ look })`, usually from its guideline settings,
+ * and hands the renderer `textStyleContent({ look })` with the same values.
  * Anything the host leaves out, or a variable nobody defines, keeps Fondue's look.
  * The editor and the renderer draw the same.
  */
-export const LooksFromGuidelineVariables: Story = {
+export const LookFromGuidelineVariables: Story = {
     name: 'Looks from guideline variables',
     render: () => (
         <div className="tw-grid tw-font-primary">
