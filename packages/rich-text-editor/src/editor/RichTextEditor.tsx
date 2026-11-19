@@ -49,6 +49,14 @@ import { warnNewerVersion } from './warnings';
  * `RichTextEditor<RteBlock | CalloutBlock>`.
  */
 export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
+    /**
+     * The id of the editable element, or of the read-only view's root while the
+     * editor is read-only or shows its crash message: the target for a host's
+     * `aria-*` references and a label's `htmlFor`. A label's `htmlFor` alone does
+     * not name an editable `div`, so name the editor with `aria-labelledby`
+     * pointing at the label.
+     */
+    id?: string;
     value?: RteDocumentOf<TBlock>;
     onChange?: (value: RteDocumentOf<TBlock>) => void;
     /**
@@ -112,14 +120,6 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     'aria-labelledby'?: string;
     /** The id of an element describing the editor further — help text, an error. */
     'aria-describedby'?: string;
-    /**
-     * The id of the editable element, or of the read-only view's root while the
-     * editor is read-only or shows its crash message: the target for a host's
-     * `aria-*` references and a label's `htmlFor`. A label's `htmlFor` alone does
-     * not name an editable `div`, so name the editor with `aria-labelledby`
-     * pointing at the label.
-     */
-    id?: string;
     /**
      * The test id of the editor's root element.
      * @default 'fondue-rich-text-editor'
@@ -252,7 +252,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                     focusWasWithin={focusWasWithin}
                     groupAttributes={fallbackGroupAttributes}
                     id={shellProps.id}
-                    testId={dataTestId}
+                    dataTestId={dataTestId}
                     onCatch={onFallbackCatch}
                 />
             }
@@ -265,7 +265,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                 onShown={onShown}
                 registry={registry}
                 labels={labels}
-                testId={dataTestId}
+                dataTestId={dataTestId}
             />
         </EditorErrorBoundary>
     );
@@ -281,8 +281,7 @@ type ShellProps<TBlock extends RteBlockNode> = Omit<
     onShown: (document: RteDocumentOf) => void;
     registry: PluginRegistry;
     labels: RichTextEditorLabels;
-    /** The test id of the editor's root element. */
-    testId: string;
+    dataTestId: string;
     /** How the editor came to be mounted, which decides what takes focus once it has. */
     retryFocus: RetryFocus;
     /** Told when focus enters or leaves the editor, for the fallback a crash puts in its place. */
@@ -290,11 +289,12 @@ type ShellProps<TBlock extends RteBlockNode> = Omit<
 };
 
 const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
+    id,
     document,
     onShown,
     registry,
     labels,
-    testId,
+    dataTestId,
     retryFocus,
     onFocusWithinChange,
     onChange,
@@ -305,7 +305,6 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
     'aria-describedby': ariaDescribedBy,
-    id,
     onBlur,
 }: ShellProps<TBlock>): ReactNode => {
     // A document from a newer format may hold what this editor would drop on save, so it is only shown.
@@ -492,7 +491,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
             {...focusProps}
             onKeyDown={onKeyDown}
             className={styles.root}
-            data-test-id={testId}
+            data-test-id={dataTestId}
             style={registry.contentProperties as CSSProperties}
         >
             {/* Its mousedown is for the text inside: a drag starting, or a click beside it. */}
