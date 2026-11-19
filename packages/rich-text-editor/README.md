@@ -36,7 +36,7 @@ Each locale holds the components' strings and the editor's, so the host passes o
 language, not the words.
 
 ```tsx
-import { deCH } from '@frontify/fondue/locales/de-CH';
+import { deCH } from '@frontify/fondue/rich-text-editor/locales/de-CH';
 
 <ThemeProvider locale={deCH}>
     <RichTextEditor />

@@ -17,4 +17,5 @@ const copyLocales = (entryPoint: string, outFolder: string): void => {
 
 copyLocales('@frontify/fondue-components/locales', 'locales');
 // The components' strings and the editor's in one object per language, for `ThemeProvider`'s `locale`.
-copyLocales('@frontify/fondue-rich-text-editor/locales', 'fondue-locales');
+// Run after the editor's build, which empties `rich-text-editor/`.
+copyLocales('@frontify/fondue-rich-text-editor/locales', 'rich-text-editor/locales');
