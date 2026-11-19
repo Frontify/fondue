@@ -74,3 +74,11 @@
 .itemValue {
     @include text.body-small-x-strong;
 }
+
+.itemDescription {
+    @include text.body-small;
+
+    margin: var(--spacing-small) 0 0;
+    word-break: normal;
+    overflow-wrap: break-word;
+}

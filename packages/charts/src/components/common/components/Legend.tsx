@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type HTMLAttributes } from 'react';
+
 import { colorAccessorByIndex } from '@components/common/helpers';
 
 import styles from './Legend.module.scss';
@@ -10,13 +12,14 @@ type LegendProps = {
     names: string[];
     style: ColorBoxStyle;
     colorAccessor?: (index: number) => string | undefined;
+    getItemProps?: (index: number) => HTMLAttributes<HTMLSpanElement>;
 };
 
-export const Legend = ({ names, style, colorAccessor = colorAccessorByIndex }: LegendProps) => {
+export const Legend = ({ names, style, colorAccessor = colorAccessorByIndex, getItemProps }: LegendProps) => {
     return (
         <div className={styles.root}>
             {names.map((title, index) => (
-                <span className={styles.item} key={`${title}-legend-${index}`}>
+                <span key={`${title}-legend-${index}`} {...getItemProps?.(index)} className={styles.item}>
                     <ColorBox color={colorAccessor(index)} style={style} />
                     <span className={styles.label}>{title}</span>
                 </span>
