@@ -1,0 +1,114 @@
+packages/components/src/components/Tree/components/TreeRow.tsx
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 40-41,44-52,87-88,95
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteGoogleDocs.ts
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 33-34
+packages/components/scripts/buildManifest/__tests__/extractProps.spec.ts
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 9,102,104
+packages/fondue/CHANGELOG.md
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 3-28
+packages/charts/src/components/BarChart/helpers/truncateText.spec.ts
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 18-35
+.github/workflows/rich-text-editor-pull-requests.yaml
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 30-34,51-55,75-79
+.github/workflows/charts-pull-requests.yaml
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 7,18-19
+packages/charts/src/components/BarChart/helpers/truncateText.ts
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 3-7,10
+packages/components/src/components/Card/__tests__/Card.ct.tsx
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 370-432
+.github/actions/setup/action.yaml
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 6,30,45,51-55
+  s_c9bef17c5c3a0c::t_bccaec2045f478 56
+packages/components/src/components/Tree/components/testutils/RenameMenuHarness.tsx
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 1-50
+.changeset/components-manifest-shared-parsing.md
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 1-4
+.github/workflows/icon-generation.yaml
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 20
+packages/components/CHANGELOG.md
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 3-36
+packages/components/src/components/Tree/components/TreeRowRenameInput.ct.tsx
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 7-8,89-122
+  s_c9bef17c5c3a0c::t_53803dae70edf8 123
+packages/components/src/components/Tree/Tree.stories.tsx
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 242-243,332-343
+  s_c9bef17c5c3a0c::t_5be1cf60a6f3f2 344-345
+packages/components/src/components/Tree/components/TreeRoot.tsx
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 67-74,84,182
+packages/rich-text-editor/package.json
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 78
+packages/rte/package.json
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 4,173
+packages/components/src/components/Tree/components/TreeRoot.ct.tsx
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 11,1215-1283,1581-1590,1682-1691
+  s_c9bef17c5c3a0c::t_5d7e5e13edaf52 1692
+packages/fondue/package.json
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 4,204
+.github/workflows/fondue-pull-requests.yaml
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 36-40,57-60,80-84,105-108,132-135
+packages/charts/src/components/common/hooks/useMargin.ts
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 9,19,24,27-28,41-49,65,78
+packages/sdk/package.json
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 4
+packages/charts/src/components/BarChart/types.ts
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 43
+packages/charts/src/components/BarChart/BarChart.tsx
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 7,35,54,97
+packages/charts/src/components/BarChart/components/Axes.tsx
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 10,20,41,43
+.github/actions/build-packages/action.yaml
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 1-70
+packages/components/scripts/buildManifest/extractProps.ts
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 21-23,40-72,75-86,88,143
+packages/components/src/components/Tree/components/TreeRowRenameInput.tsx
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 4,51-53
+packages/components/src/components/Card/Card.stories.tsx
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 151,154,156,159,470,476,488-489,499-510
+packages/components/src/components/Tree/Tree.metadata.json
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 4
+packages/charts/CHANGELOG.md
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 3-13
+packages/charts/src/components/BarChart/BarChart.stories.tsx
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 89-97,266-281
+  s_c9bef17c5c3a0c::t_8b190e49c74d14 282-283
+packages/icons/package.json
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 67
+packages/rte/CHANGELOG.md
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 3-15
+packages/tokens/package.json
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 67
+packages/charts/package.json
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 4,84
+packages/sdk/CHANGELOG.md
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 3-22
+.github/workflows/continuous-deployment.yaml
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 29-33,69-73,94-97,121-124,147
+.sonarcloud.properties
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 1-2
+packages/components/src/components/Tree/components/testutils/ControlledExpansionHarness.tsx
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 1-22
+.github/workflows/generate-tokens.yaml
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 22
+packages/components/package.json
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 3,100
+packages/components/src/components/Card/styles/card.module.scss
+  s_c9bef17c5c3a0c::t_f5612657dcb10a 338,340,345-352
+pnpm-lock.yaml
+  s_c9bef17c5c3a0c::t_33832d2392e256 121-122,311-312,579-580,691-692,806-807,1161-1162,1333-1334,5281-5283,5287-5289,5293-5295,5299-5301,5305-5307,5311-5313,5317-5319,5323-5325,14628,14631,14634,14637,14640,14643,14646,14649,14651-14657
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8bc9f61539d06afb0b3596af55db06b65d228c9f",
+  "prompts": {},
+  "sessions": {
+    "s_c9bef17c5c3a0c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c6c8eb0b-549e-438a-aaf8-1b7abc83dee2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
