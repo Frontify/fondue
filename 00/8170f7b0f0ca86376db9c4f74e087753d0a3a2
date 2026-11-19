@@ -1,0 +1,19 @@
+storybook-docs/.storybook/preview.tsx
+  s_fa9668816ba898::t_c6995f789366ad 109
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "008170f7b0f0ca86376db9c4f74e087753d0a3a2",
+  "prompts": {},
+  "sessions": {
+    "s_fa9668816ba898": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cfcca945-d475-4d7c-a0d1-9af6a406dc6b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
