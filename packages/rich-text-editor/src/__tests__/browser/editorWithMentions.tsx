@@ -2,14 +2,8 @@
 
 import { type ReactNode } from 'react';
 
-import {
-    defaultPlugins,
-    mentionPlugin,
-    RichTextEditor,
-    type RichTextEditorProps,
-    RichTextRenderer,
-    type RichTextRendererProps,
-} from '../../index';
+import { RichTextEditor, type RichTextEditorProps, RichTextRenderer, type RichTextRendererProps } from '../../index';
+import { defaultPlugins, mentionPlugin } from '../../plugins';
 
 // A component test can only pass serialisable props, so the plugin list is built here, on the page.
 

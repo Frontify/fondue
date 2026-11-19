@@ -22,8 +22,8 @@ import {
 } from './core';
 import { type RteBlock, type RteDocument } from './documentFormat';
 import { type EditorShellProps, RichTextEditor as EditorShell } from './editor';
-import { defaultPlugins } from './plugins';
 import { defaultContent } from './plugins/defaultContent';
+import { defaultPlugins } from './plugins/defaultPlugins';
 import {
     type RendererProps,
     RichTextRenderer as Renderer,
@@ -91,54 +91,6 @@ export const toPlainText = <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,
     options: ToPlainTextOptions = {},
 ): string => plainText(doc, { ...options, plugins: options.plugins ?? defaultContent });
-
-// --- Plugins ---
-
-export { defaultPlugins } from './plugins';
-export { defaultContent } from './plugins/defaultContent';
-export { alignContent, alignPlugin } from './plugins/Align';
-export { blurOnBreakPlugin } from './plugins/BlurOnBreak';
-export { boldContent, boldPlugin } from './plugins/Bold';
-export { checkListContent, checkListPlugin } from './plugins/CheckList';
-export { codeContent, codePlugin } from './plugins/Code';
-export { columnBreakContent, columnBreakPlugin } from './plugins/ColumnBreak';
-export { defaultEmojis, emojiPlugin } from './plugins/Emoji';
-export { fontColorContent, fontColorPlugin } from './plugins/FontColor';
-export { historyPlugin } from './plugins/History';
-export { italicContent, italicPlugin } from './plugins/Italic';
-export { linkContent, linkPlugin } from './plugins/Link';
-export { bulletListContent, bulletListPlugin, numberedListContent, numberedListPlugin } from './plugins/List';
-export { mentionContent, mentionPlugin } from './plugins/Mention';
-export { quoteContent, quotePlugin } from './plugins/Quote';
-export { resetFormattingPlugin } from './plugins/ResetFormatting';
-export { softBreakContent, softBreakPlugin } from './plugins/SoftBreak';
-export { strikethroughContent, strikethroughPlugin } from './plugins/Strikethrough';
-export { subscriptContent, subscriptPlugin } from './plugins/Subscript';
-export { superscriptContent, superscriptPlugin } from './plugins/Superscript';
-export { tableContent, tablePlugin } from './plugins/Table';
-export { textStyleContent, textStylePlugin } from './plugins/TextStyle';
-export { typographyPlugin } from './plugins/Typography';
-export { underlineContent, underlinePlugin } from './plugins/Underline';
-
-// --- Plugin options ---
-
-export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
-export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
-export {
-    type MentionContentOptions,
-    type MentionItem,
-    type MentionPluginOptions,
-    type MentionValue,
-} from './plugins/Mention';
-export { type TextLook } from './core';
-export {
-    type LinkLook,
-    type TextStyleContentOptions,
-    type TextStyleName,
-    type TextStylePluginOptions,
-    type TextStylePresets,
-} from './plugins/TextStyle';
-export { type TypographyGroup, type TypographyPluginOptions } from './plugins/Typography';
 
 // --- Plugin authoring ---
 
