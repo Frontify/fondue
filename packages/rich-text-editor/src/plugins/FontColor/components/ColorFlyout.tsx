@@ -4,7 +4,7 @@ import { Button, ColorPicker, Flyout } from '@frontify/fondue-components';
 import { IconDroplet } from '@frontify/fondue-icons';
 import { type ComponentProps, type ReactNode, useId, useRef, useState } from 'react';
 
-import { type EditorControlApi, type SelectedNode, type ToolbarItemProps } from '#/core';
+import { type EditorControlApi, type RteSelectionSnapshot, type ToolbarItemProps } from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
@@ -12,6 +12,7 @@ import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
 import {
     decodeStoredColor,
     encodeStoredColor,
+    type FontColorValue,
     OPAQUE_ALPHA,
     type Rgba,
     toColorName,
@@ -41,8 +42,7 @@ const PRESETS: readonly { name: string; color: string }[] = [
 const NO_COLOR_DRAFT: PickerColor = { red: 255, green: 255, blue: 255, alpha: 1 };
 
 type ColorFlyoutProps = {
-    /** The colour run at the selection, or null when it has none. */
-    selectedNode: SelectedNode | null;
+    selection: RteSelectionSnapshot;
     api: EditorControlApi;
     /**
      * The control's name, for its button and the flyout's header
@@ -57,7 +57,7 @@ type ColorFlyoutProps = {
  * picker in a flyout. The colour reaches the document on save, not while
  * dragging, so the undo history gets one step per choice.
  */
-export const ColorFlyout = ({ selectedNode, api, label, isActive }: ColorFlyoutProps): ReactNode => {
+export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProps): ReactNode => {
     const [open, setOpen] = useState(false);
     const [draft, setDraft] = useState<PickerColor>(NO_COLOR_DRAFT);
     const titleId = useId();
@@ -68,13 +68,16 @@ export const ColorFlyout = ({ selectedNode, api, label, isActive }: ColorFlyoutP
 
     const { returnToText, contentProps } = useFocusAfterClose(api);
 
-    let storedColor: string | undefined;
+    // The colour typing would use, not the run beside the caret: at the edge between two colours they differ.
+    const fontColor = selection.marks.fontColor;
+    let value: Partial<FontColorValue> | undefined;
     // A half-coloured selection has no one colour to show.
-    if (isActive === true) {
-        storedColor = toStoredColor(selectedNode?.value.color);
+    if (fontColor?.coverage === 'all') {
+        value = fontColor.value;
     }
     // A stored value that is no colour shows none, and is still removable.
     const hasColor = isActive !== false;
+    const storedColor = toStoredColor(value?.color);
     let currentColor: Rgba | undefined;
     let title = label;
     if (storedColor !== undefined) {
