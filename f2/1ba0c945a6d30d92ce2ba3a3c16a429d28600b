@@ -1,0 +1,27 @@
+packages/rich-text-editor/src/core/vocabulary.ts
+  s_53de767222940a::t_8dfc909d11478a 35-37
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_53de767222940a::t_8dfc909d11478a 163-165,169-171,173
+  s_53de767222940a::t_01b8fe2fcf977c 301-303,311-313,331-333,336-338
+  s_53de767222940a::t_738fbe9fb38f63 168,172
+packages/rich-text-editor/src/core/plugin.ts
+  s_53de767222940a::t_96edf7ed8bf4c8 608-621
+packages/rich-text-editor/src/plugins/Typography/Typography.ts
+  s_53de767222940a::t_8dfc909d11478a 7-9,13-16,20-22,25-27,30-32,116-117
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f21ba0c945a6d30d92ce2ba3a3c16a429d28600b",
+  "prompts": {},
+  "sessions": {
+    "s_53de767222940a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f9b7337-8455-4b7f-ac95-dde194f54be3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

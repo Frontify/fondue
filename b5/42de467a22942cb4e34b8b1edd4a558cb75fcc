@@ -1,0 +1,57 @@
+packages/rich-text-editor/src/__tests__/browser/HostLooksPair.tsx
+  s_13885db2afc9e8::t_ea0c7677621fc6 3,14,30,33-40
+packages/rich-text-editor/src/__tests__/documentContract.spec.ts
+  s_13885db2afc9e8::t_a112d7be8641d5 9,16-17,36-37,60-61
+packages/rich-text-editor/src/__tests__/headingGap.spec.ts
+  s_13885db2afc9e8::t_a189d209ecab5c 10-12,16
+packages/rich-text-editor/src/core/index.ts
+  s_13885db2afc9e8::t_3729678333405b 23-25
+packages/rich-text-editor/src/core/look.spec.ts
+  s_13885db2afc9e8::t_64a96394a93af1 5
+packages/rich-text-editor/src/core/look.ts
+  s_13885db2afc9e8::t_20a9a7d3c86151 3
+packages/rich-text-editor/src/core/registry.ts
+  s_13885db2afc9e8::t_f84c4bec13dee3 10,657-658
+packages/rich-text-editor/src/index.ts
+  s_13885db2afc9e8::t_c5a35b94c3c45f 85
+packages/rich-text-editor/src/plugins/CheckList/CheckList.tsx
+  s_13885db2afc9e8::t_bbfe58f66a6899 6,92
+packages/rich-text-editor/src/plugins/ColumnBreak/ColumnBreak.ts
+  s_13885db2afc9e8::t_247b92e53d1b07 5
+packages/rich-text-editor/src/plugins/ColumnBreak/columnBreak.module.scss
+  s_13885db2afc9e8::t_acc06a0f8bd7eb 16
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_13885db2afc9e8::t_93ff7c9fd6af9f 3
+packages/rich-text-editor/src/plugins/Quote/Quote.ts
+  s_13885db2afc9e8::t_c63ccf38bcb68d 5
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_13885db2afc9e8::t_3be46fa307fb89 5
+packages/rich-text-editor/src/plugins/TextStyle/helpers/presets.ts
+  s_13885db2afc9e8::t_41e786c4499af9 3,16-24
+packages/rich-text-editor/src/plugins/TextStyle/textStyle.module.scss
+  s_13885db2afc9e8::t_149da48ba58b9d 11-12
+packages/rich-text-editor/src/renderer/document.module.scss
+  s_13885db2afc9e8::t_f790be9563f5ae 3-8,51-53,61-67,69,74,79-84
+packages/rich-text-editor/src/renderer/documentTree.ts
+  s_13885db2afc9e8::t_efe0d839f3df4b 227,235-238,241,249-250,253
+packages/rich-text-editor/src/renderer/index.ts
+  s_13885db2afc9e8::t_83919eaf566bd1 4
+packages/rich-text-editor/src/renderer/serializeToHtml.ts
+  s_13885db2afc9e8::t_3fc88c6cadc589 3,5,30-31,35,38-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b542de467a22942cb4e34b8b1edd4a558cb75fcc",
+  "prompts": {},
+  "sessions": {
+    "s_13885db2afc9e8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "64b8eec0-3c52-4e7e-be82-baf74b07421b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

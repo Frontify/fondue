@@ -1,0 +1,59 @@
+packages/rich-text-editor/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_22527a1a684ccf::t_c41c45ba569e88 78
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_22527a1a684ccf::t_47c69e402e40c7 53,56,78,87,413,464
+packages/rich-text-editor/src/core/commands.ts
+  s_22527a1a684ccf::t_53a542a91f1b27 57
+packages/rich-text-editor/src/core/warnings.ts
+  s_22527a1a684ccf::t_a500b843ee69ce 6,9
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_22527a1a684ccf::t_d20dceb9f5be1d 1277,1293,1302,1306
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_22527a1a684ccf::t_a0c7efd406bb03 539
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_22527a1a684ccf::t_96291b5fd533a0 51,63,1179,1193,1202,1219,1237,1290
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_22527a1a684ccf::t_1748459733e505 204
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_22527a1a684ccf::t_9077fd1e2e0be8 400
+packages/rich-text-editor/src/editor/engines/prosemirror/lists.ts
+  s_22527a1a684ccf::t_88d122801ba1d5 196-197
+packages/rich-text-editor/src/editor/engines/prosemirror/testFixtures.ts
+  s_22527a1a684ccf::t_abb9cbf014e575 14
+packages/rich-text-editor/src/editor/floatingBar.spec.tsx
+  s_22527a1a684ccf::t_9d9c6e32a4464c 87,244
+packages/rich-text-editor/src/editor/hooks/useAnnouncer.ts
+  s_22527a1a684ccf::t_b77095637208d1 5,23-24
+packages/rich-text-editor/src/plugins/Align/Align.tsx
+  s_22527a1a684ccf::t_22f04920c4dc43 168
+packages/rich-text-editor/src/plugins/Mention/Mention.tsx
+  s_22527a1a684ccf::t_dd2eee1f84c75f 21-23,69
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.spec.tsx
+  s_22527a1a684ccf::t_6ce502de68073b 20-23,394,399
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.tsx
+  s_22527a1a684ccf::t_4604656ffcdb92 15,53,118,136,391
+packages/rich-text-editor/src/plugins/Mention/components/MentionLink.tsx
+  s_22527a1a684ccf::t_a0f3d86ae2a696 30-31
+packages/rich-text-editor/src/plugins/Mention/helpers/display.ts
+  s_22527a1a684ccf::t_3f1e5aa3883deb 49,52,62,132-133,148-149
+packages/rich-text-editor/src/plugins/Mention/helpers/text.ts
+  s_22527a1a684ccf::t_e0f32cb9d6ad5a 3,16
+packages/rich-text-editor/src/plugins/Mention/hooks/usePeople.ts
+  s_22527a1a684ccf::t_04bc3f90877207 24-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7bbdb1b0323fbac3606248555649318e5a425db1",
+  "prompts": {},
+  "sessions": {
+    "s_22527a1a684ccf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2a5abef-0d60-4dfb-93a0-af8f62c61098",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

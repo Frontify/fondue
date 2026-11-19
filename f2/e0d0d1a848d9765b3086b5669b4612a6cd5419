@@ -1,0 +1,21 @@
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.tsx
+  s_743396444745a0::t_a0becd1908d7ca 7
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.tsx
+  s_743396444745a0::t_c05bca6b5d33a9 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f2e0d0d1a848d9765b3086b5669b4612a6cd5419",
+  "prompts": {},
+  "sessions": {
+    "s_743396444745a0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "10709e34-13a4-4961-b961-1b8389df4dc9",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

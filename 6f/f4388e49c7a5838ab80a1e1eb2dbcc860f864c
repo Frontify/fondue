@@ -1,0 +1,25 @@
+packages/components/src/components/Tree/styles/tree.module.scss
+  s_68254d0d83d78c::t_58af6f5dd7f19e 114-120
+packages/components/src/components/Tree/components/TreeRoot.ct.tsx
+  s_68254d0d83d78c::t_491b5873c52973 548
+  s_68254d0d83d78c::t_e7e37b83549674 567-570
+  s_68254d0d83d78c::t_a6176663defba4 571-574
+.changeset/tree-drag-handle-visibility.md
+  s_68254d0d83d78c::t_fef62cc600c3a1 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6ff4388e49c7a5838ab80a1e1eb2dbcc860f864c",
+  "prompts": {},
+  "sessions": {
+    "s_68254d0d83d78c": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "df3dcb80-010b-40ab-bde9-b5db35224c1d",
+        "model": "grok-4.7"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

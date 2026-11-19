@@ -1,0 +1,19 @@
+packages/rich-text-editor/src/docs/authoring.mdx
+  s_fa9668816ba898::t_732a7292281325 13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "919fc4f13d66f24f149246542591c4ec1b3ddee1",
+  "prompts": {},
+  "sessions": {
+    "s_fa9668816ba898": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cfcca945-d475-4d7c-a0d1-9af6a406dc6b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
