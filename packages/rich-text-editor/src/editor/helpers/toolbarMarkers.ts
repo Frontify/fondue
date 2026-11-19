@@ -8,3 +8,5 @@ export const SLOT_ATTRIBUTE = 'data-toolbar-slot';
 export const GROUP_ATTRIBUTE = 'data-toolbar-group';
 /** Marks the More button, for the measuring to find. */
 export const MORE_ATTRIBUTE = 'data-toolbar-more';
+/** Marks a divider's element, for the measuring to read its width from. */
+export const SEPARATOR_ATTRIBUTE = 'data-toolbar-separator';
