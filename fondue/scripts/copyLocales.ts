@@ -6,9 +6,15 @@ import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
-const componentsLocalesDir = dirname(fileURLToPath(import.meta.resolve('@frontify/fondue-components/locales')));
-const outDir = resolve(here, '../dist/packages/locales');
+const copyLocales = (entryPoint: string, outFolder: string): void => {
+    const sourceDir = dirname(fileURLToPath(import.meta.resolve(entryPoint)));
+    const outDir = resolve(here, '../dist/packages', outFolder);
 
-rmSync(outDir, { recursive: true, force: true });
-mkdirSync(outDir, { recursive: true });
-cpSync(componentsLocalesDir, outDir, { recursive: true });
+    rmSync(outDir, { recursive: true, force: true });
+    mkdirSync(outDir, { recursive: true });
+    cpSync(sourceDir, outDir, { recursive: true });
+};
+
+copyLocales('@frontify/fondue-components/locales', 'locales');
+// The components' strings and the editor's in one object per language, for `ThemeProvider`'s `locale`.
+copyLocales('@frontify/fondue-rich-text-editor/locales', 'fondue-locales');

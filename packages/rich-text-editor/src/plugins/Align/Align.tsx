@@ -12,7 +12,7 @@ import { defineContent, definePlugin, type StyleMap, type ToolbarItemProps } fro
 import { type RichTextStringKey } from '#/locales/types';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
-import { useTranslate } from '#/ui/translation';
+import { localeLabel, useTranslate } from '#/ui/translation';
 
 import styles from './align.module.scss';
 
@@ -102,5 +102,5 @@ export const alignPlugin = () =>
         id: 'align',
         content: alignContent,
         toolbarGroup: 'align',
-        toolbar: [{ label: 'RichTextEditor_alignment', render: AlignToolbar, floating: 'inline' }],
+        toolbar: [{ label: localeLabel('RichTextEditor_alignment'), render: AlignToolbar, floating: 'inline' }],
     });

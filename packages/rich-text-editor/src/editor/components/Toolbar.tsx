@@ -11,21 +11,14 @@ import {
     useSyncExternalStore,
 } from 'react';
 
-import {
-    type EditorControlApi,
-    type RteBlockCommand,
-    RTE_TOOLBAR_GROUPS,
-    type RteToolbarGroup,
-    type ToolbarEntry,
-    type ToolbarItemProps,
-} from '#/core';
+import { type EditorControlApi, RTE_TOOLBAR_GROUPS, type RteToolbarGroup, type ToolbarItemProps } from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 import { useTranslate } from '#/ui/translation';
 
-import { turnIntoCommands } from '../helpers/blockCommands';
+import { type ShownCommand, turnIntoCommands } from '../helpers/blockCommands';
 import { type GroupSplit, type SlotGroup, splitGroups } from '../helpers/toolbarFit';
-import { toolbarItemProps } from '../helpers/toolbarItem';
+import { type ShownToolbarEntry, toolbarItemProps } from '../helpers/toolbarItem';
 import { GROUP_ATTRIBUTE, SEPARATOR_ATTRIBUTE, SLOT_ATTRIBUTE } from '../helpers/toolbarMarkers';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
 import { type ToolbarFit, useToolbarFit } from '../hooks/useToolbarFit';
@@ -46,12 +39,12 @@ export type ToolbarPlacement = 'floating' | 'top';
 
 type ToolbarProps = {
     /** The registry's toolbar entries, in mount order. The floating bar keeps the inline ones. */
-    items: readonly ToolbarEntry[];
+    items: readonly ShownToolbarEntry[];
     /**
      * Floating bar only: every block command, for its "Turn into" menu.
      * @default []
      */
-    commands?: readonly RteBlockCommand[];
+    commands?: readonly ShownCommand[];
     api: EditorControlApi;
     editorState: EditorStateStore;
     /** The row above the text sits flush with it; a floating bar is a surface of its own, inset. */
@@ -105,7 +98,7 @@ export const Toolbar = ({
     const roving = useToolbarRoving({ toolbarRef, focusRequestRef, onEscape: () => api.focus() });
     const { row, overflow, more } = layoutOf(groups, fit);
 
-    const drawGroups = (drawn: readonly SlotGroup<ToolbarEntry>[]): ReactNode =>
+    const drawGroups = (drawn: readonly SlotGroup<ShownToolbarEntry>[]): ReactNode =>
         drawn.map((group) => (
             <div key={group.key} className={styles.group} {...{ [GROUP_ATTRIBUTE]: '' }}>
                 {group.items.map((item) => (
@@ -183,7 +176,7 @@ const ToolbarSeparator = (): ReactNode => (
 const UNGROUPED_GROUP_KEY = 'ungrouped';
 
 /** The items by group in drawing order, those with no group or an unknown one last; empty groups are left out. */
-const groupsOf = (items: readonly ToolbarEntry[]): SlotGroup<ToolbarEntry>[] => {
+const groupsOf = (items: readonly ShownToolbarEntry[]): SlotGroup<ShownToolbarEntry>[] => {
     const known: readonly (RteToolbarGroup | undefined)[] = RTE_TOOLBAR_GROUPS;
     const groups = [
         ...RTE_TOOLBAR_GROUPS.map((group) => ({
@@ -196,10 +189,10 @@ const groupsOf = (items: readonly ToolbarEntry[]): SlotGroup<ToolbarEntry>[] => 
     return groups.filter((group) => group.items.length > 0);
 };
 
-type ToolbarLayout = GroupSplit<ToolbarEntry> & { more: boolean };
+type ToolbarLayout = GroupSplit<ShownToolbarEntry> & { more: boolean };
 
 /** What the row draws and what goes behind More; while measuring, every slot and More, so each has a size to read. */
-const layoutOf = (groups: SlotGroup<ToolbarEntry>[], fit: ToolbarFit): ToolbarLayout => {
+const layoutOf = (groups: SlotGroup<ShownToolbarEntry>[], fit: ToolbarFit): ToolbarLayout => {
     switch (fit.kind) {
         case 'measuring':
             return { row: groups, overflow: [], more: true };
@@ -211,7 +204,7 @@ const layoutOf = (groups: SlotGroup<ToolbarEntry>[], fit: ToolbarFit): ToolbarLa
 };
 
 type ToolbarItemSlotProps = {
-    item: ToolbarEntry;
+    item: ShownToolbarEntry;
     itemProps: ToolbarItemProps;
 };
 

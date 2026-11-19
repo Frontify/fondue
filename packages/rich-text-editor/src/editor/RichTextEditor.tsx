@@ -24,10 +24,16 @@ import {
     type RteDocumentOf,
     type RtePlugin,
 } from '#/core';
-import { type RichTextLocale } from '#/locales/types';
 import { RegistryRenderer } from '#/renderer';
 import documentStyles from '#/renderer/document.module.scss';
-import { translateLabel, translatorFor, TranslationContext, useTranslate } from '#/ui/translation';
+import {
+    type EditorLabelContext,
+    labelContextOf,
+    resolveLabel,
+    translatorFor,
+    TranslationContext,
+    useTranslate,
+} from '#/ui/translation';
 
 import { EditorErrorBoundary } from './components/EditorErrorBoundary';
 import { EditorFallback } from './components/EditorFallback';
@@ -36,7 +42,7 @@ import { SlashMenu } from './components/SlashMenu';
 import { Toolbar, type ToolbarPlacement } from './components/Toolbar';
 import { commandsOf, turnIntoCommands } from './helpers/blockCommands';
 import { useEditorHandle } from './hooks/useEditorHandle';
-import { useEditorLocale } from './hooks/useEditorLocale';
+import { useEditorStrings } from './hooks/useEditorStrings';
 import { useFocusWithin } from './hooks/useFocusWithin';
 import { useMouseDrag } from './hooks/useMouseDrag';
 import styles from './richTextEditor.module.scss';
@@ -112,14 +118,6 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     /** The id of an element describing the editor further — help text, an error. */
     'aria-describedby'?: string;
     /**
-     * The language of the editor's own UI and its shipped plugins, imported
-     * from `@frontify/fondue-rich-text-editor/locales`. Without it, the editor
-     * loads the locale for the `ThemeProvider`'s `lang`, and shows English until
-     * that has loaded or when it ships none for that language. A server-rendered
-     * host passes it, so the first render is already in the right language.
-     */
-    locale?: RichTextLocale;
-    /**
      * The editor lost focus, handed the document as it stands: the hook to
      * commit on instead of every keystroke. Fires once focus has left the
      * editor: moving into its toolbar or a plugin's UI (the link flyout's
@@ -135,8 +133,7 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * Try again for the read-only view shown after a crash when that throws
      * too (never in a readonly editor, whose own view was the one that threw);
      * not for errors in event handlers, such as a key press or a paste, which
-     * React does not route here. Also handed a locale for the `ThemeProvider`'s
-     * `lang` that failed to load; the editor then keeps the language it shows.
+     * React does not route here.
      */
     onError?: (error: Error) => void;
 };
@@ -150,7 +147,6 @@ type MountFocusTarget = 'none' | 'text' | 'view';
 export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     value,
     plugins = [],
-    locale: localeProp,
     onError,
     ...shellProps
 }: EditorShellProps<TBlock>): ReactNode => {
@@ -162,8 +158,10 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     const ownDocumentRef = useRef<RteDocumentOf>(value ?? emptyDocument());
     const document = value ?? ownDocumentRef.current;
 
-    const locale = useEditorLocale(localeProp, onError);
-    const translate = useMemo(() => translatorFor(locale), [locale]);
+    // The language comes with the components' strings, in the `ThemeProvider`'s `locale`.
+    const { lang, strings } = useEditorStrings();
+    const translate = useMemo(() => translatorFor(strings), [strings]);
+    const labelContext = useMemo(() => labelContextOf(lang, translate), [lang, translate]);
     const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
 
     // A new key mounts the boundary and the shell afresh.
@@ -250,21 +248,21 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                     document={shellDocument}
                     onShown={onShown}
                     registry={registry}
+                    labelContext={labelContext}
                 />
             </EditorErrorBoundary>
         </TranslationContext.Provider>
     );
 };
 
-type ShellProps<TBlock extends RteBlockNode> = Omit<
-    EditorShellProps<TBlock>,
-    'value' | 'plugins' | 'locale' | 'onError'
-> & {
+type ShellProps<TBlock extends RteBlockNode> = Omit<EditorShellProps<TBlock>, 'value' | 'plugins' | 'onError'> & {
     /** The document to show: the host's `value`, else what the editor last reported. */
     document: RteDocumentOf;
     /** Told what the editor shows, for the fallback a crash puts in its place. */
     onShown: (document: RteDocumentOf) => void;
     registry: PluginRegistry;
+    /** What a plugin's label function is called with: the shown language, and the translator. */
+    labelContext: EditorLabelContext;
     /** How the editor came to be mounted, which decides what takes focus once it has. */
     retryFocus: RetryFocus;
     /** Told when focus enters or leaves the editor, for the fallback a crash puts in its place. */
@@ -275,6 +273,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     document,
     onShown,
     registry,
+    labelContext,
     retryFocus,
     onFocusWithinChange,
     onChange,
@@ -297,14 +296,14 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     }, [newerVersion]);
 
     const translate = useTranslate();
-    // A shipped plugin names its controls by locale keys, looked up here once for every menu and toolbar.
+    // A label function is called here, once per language, for every menu and toolbar.
     const commands = useMemo(
-        () => commandsOf(registry).map((command) => ({ ...command, label: translateLabel(command.label, translate) })),
-        [registry, translate],
+        () => commandsOf(registry).map((command) => ({ ...command, label: resolveLabel(command.label, labelContext) })),
+        [registry, labelContext],
     );
     const toolbarItems = useMemo(
-        () => registry.toolbarItems.map((item) => ({ ...item, label: translateLabel(item.label, translate) })),
-        [registry, translate],
+        () => registry.toolbarItems.map((item) => ({ ...item, label: resolveLabel(item.label, labelContext) })),
+        [registry, labelContext],
     );
     const editorName = translate('RichTextEditor_editor');
 

@@ -2,11 +2,12 @@
 
 import { readdirSync } from 'node:fs';
 
+import * as fondue from '@frontify/fondue-components/locales';
 import { describe, expect, it } from 'vitest';
 
-import { enUS } from '../en-US';
+import { EDITOR_STRINGS } from '../en-US';
 import * as shipped from '../index';
-import { type RichTextLocale } from '../types';
+import { type RichTextLocale, type RichTextStringKey } from '../types';
 
 const LOCALE_FILE = /^[a-z]{2}-[A-Z]{2}\.ts$/;
 const PLACEHOLDER = /\$\{\w+\}/g;
@@ -30,6 +31,11 @@ const files = readdirSync(new URL('..', import.meta.url))
     .filter((name) => LOCALE_FILE.test(name))
     .map((name) => name.replace('.ts', ''))
     .sort();
+
+const EDITOR_KEYS = Object.keys(EDITOR_STRINGS) as RichTextStringKey[];
+
+const editorStringsOf = ({ translationStrings }: RichTextLocale): [string, string][] =>
+    EDITOR_KEYS.map((key) => [key, translationStrings[key]]);
 
 const localeOf = (id: string): RichTextLocale => {
     const locale = (shipped as Record<string, RichTextLocale | undefined>)[id.replace('-', '')];
@@ -55,21 +61,27 @@ describe('the shipped locales', () => {
         expect(Object.keys(shipped).sort()).toEqual(FONDUE_LOCALES.map((id) => id.replace('-', '')).sort());
     });
 
-    it.each(files)('%s says every English string, with the same variables, under its own lang', (id) => {
+    it.each(files)("%s holds Fondue's own locale for its lang, then the editor's strings", (id) => {
         const locale = localeOf(id);
+        const components = Object.values(fondue).find((candidate) => candidate.lang === id);
 
         expect(locale.lang).toBe(id);
-        expect(Object.keys(locale.translationStrings).sort()).toEqual(Object.keys(enUS.translationStrings).sort());
-        for (const [key, english] of Object.entries(enUS.translationStrings)) {
-            const translated = locale.translationStrings[key as keyof typeof enUS.translationStrings];
-            expect([key, placeholdersOf(translated)]).toEqual([key, placeholdersOf(english)]);
+        expect(components?.lang).toBe(id);
+        expect(locale.dateLocale).toBe(components?.dateLocale);
+        expect(locale.translationStrings).toEqual(expect.objectContaining(components?.translationStrings));
+    });
+
+    it.each(files)('%s says every English editor string, with the same variables', (id) => {
+        for (const [key, translated] of editorStringsOf(localeOf(id))) {
+            expect([key, placeholdersOf(translated)]).toEqual([
+                key,
+                placeholdersOf(EDITOR_STRINGS[key as RichTextStringKey]),
+            ]);
         }
     });
 
-    it.each(files)('%s puts every count after a colon, as a value of its own', (id) => {
-        const { translationStrings } = localeOf(id);
-
-        expect(Object.entries(translationStrings).filter(([, value]) => misplacedCounts(value).length > 0)).toEqual([]);
+    it.each(files)('%s puts every count of an editor string after a colon, as a value of its own', (id) => {
+        expect(editorStringsOf(localeOf(id)).filter(([, value]) => misplacedCounts(value).length > 0)).toEqual([]);
     });
 
     it('accepts a count after a colon only, at the end', () => {

@@ -185,6 +185,20 @@ export type RteIconProps = { size?: 16 | 20 };
 export type RteIcon = (props: RteIconProps) => ReactNode;
 
 /**
+ * What the editor hands a label function: the language its own UI is shown in, such as `'de-CH'`
+ */
+export type RteLabelContext = { lang: string };
+
+/**
+ * A control's name: text already in the host's language, or a function the editor
+ * calls with its language each time it draws the control, so the name follows a
+ * change of language without the plugin being built again.
+ * @example
+ * label: ({ lang }) => hostStrings(lang).insertVideo
+ */
+export type RteLabel = string | ((context: RteLabelContext) => string);
+
+/**
  * What every toolbar control has, whether it is a button or custom UI
  */
 type RteToolbarEntryBase = {
@@ -196,7 +210,7 @@ type RteToolbarEntryBase = {
     /**
      * The button's accessible name and tooltip, and the control's name in the `/` menu
      */
-    label: string;
+    label: RteLabel;
     /**
      * Hotkey in `Mod-b` style, shown in the tooltip. It toggles `toggles`
      * unless the plugin's `hotkeys` binds the same key.
@@ -605,7 +619,7 @@ export type RteBlockCommand = {
     /** Unique across plugins, e.g. `'heading-1'`. */
     id: string;
     /** What the menus call it: `'Heading 1'`. */
-    label: string;
+    label: RteLabel;
     icon?: RteIcon;
     /** Further words the `/` menu filters by: `['h1', 'title']`. */
     keywords?: readonly string[];

@@ -3,6 +3,7 @@
 import { DOCUMENT_VERSION } from '#/core';
 
 const warnedVersions = new Set<number>();
+const warnedLanguages = new Set<string>();
 
 const EDITOR_CRASHED_MESSAGE = '[RichTextEditor] The editor crashed and was replaced by a read-only view.';
 
@@ -14,6 +15,17 @@ export const warnNewerVersion = (version: number): void => {
     warnedVersions.add(version);
     console.warn(
         `[RichTextEditor] The document has version ${version} but this editor writes version ${DOCUMENT_VERSION}, so it is shown read-only.`,
+    );
+};
+
+/** Dev-only warning, once per language, for a `ThemeProvider` locale that holds no editor strings, so the editor shows English. */
+export const warnMissingEditorStrings = (lang: string): void => {
+    if (process.env.NODE_ENV === 'production' || warnedLanguages.has(lang)) {
+        return;
+    }
+    warnedLanguages.add(lang);
+    console.warn(
+        `[RichTextEditor] The ThemeProvider locale "${lang}" holds no editor strings, so the editor is shown in English. Pass the locale from @frontify/fondue/locales instead.`,
     );
 };
 

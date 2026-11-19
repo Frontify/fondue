@@ -38,6 +38,8 @@ export default defineConfig({
             formats: ['es'],
         },
         rollupOptions: {
+            // Each locale spreads Fondue's own locale for its language, which the host installs anyway.
+            external: [/^@frontify\/fondue-components/, /^date-fns/],
             output: {
                 entryFileNames: '[name].js',
                 chunkFileNames: 'chunks/[name]-[hash].js',

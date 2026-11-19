@@ -4,11 +4,11 @@ import { Button, Dropdown } from '@frontify/fondue-components';
 import { IconCaretDown, IconCheckMark } from '@frontify/fondue-icons';
 import { type ComponentProps, type MouseEvent, type ReactNode, useRef } from 'react';
 
-import { type EditorControlApi, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
+import { type EditorControlApi, type RteSelectionSnapshot } from '#/core';
 import { MENU_ICON_SIZE } from '#/ui/toolbarIconSize';
 import { useTranslate } from '#/ui/translation';
 
-import { activeCommand, availableCommands } from '../helpers/blockCommands';
+import { activeCommand, availableCommands, type ShownCommand } from '../helpers/blockCommands';
 
 /** Never take the selection away from the text: the controls act on it. */
 const keepSelection = (event: MouseEvent<HTMLElement>): void => event.preventDefault();
@@ -56,7 +56,7 @@ export const TurnInto = ({
 }: {
     api: EditorControlApi;
     /** The `'turnInto'` commands. */
-    commands: readonly RteBlockCommand[];
+    commands: readonly ShownCommand[];
     selection: RteSelectionSnapshot;
 }): ReactNode => {
     const translate = useTranslate();

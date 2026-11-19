@@ -1,5 +1,6 @@
 ---
 "@frontify/fondue-rich-text-editor": minor
+"@frontify/fondue": minor
 ---
 
-feat(RichTextEditor)!: translate the editor and its shipped plugins into the 11 Fondue languages, chosen by `ThemeProvider`'s `lang` or the new `locale` prop from `@frontify/fondue-rich-text-editor/locales`; the `labels` prop is removed
+feat(RichTextEditor)!: translate the editor and its shipped plugins into the 11 Fondue languages. Each locale in `@frontify/fondue/locales` holds the components' strings and the editor's, for `ThemeProvider`'s `locale`. A plugin `label` can be a function of the editor's language. The `labels` prop is removed

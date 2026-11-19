@@ -2,7 +2,7 @@
 
 // @vitest-environment happy-dom
 
-import { Dialog } from '@frontify/fondue-components';
+import { Dialog, ThemeProvider } from '@frontify/fondue-components';
 import { act, Profiler, type ReactNode, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
@@ -329,7 +329,11 @@ describe('a document from a newer format version', () => {
     it('says so in the language of its locale', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         teardown.push(() => warn.mockRestore());
-        const { container } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} locale={deDE} />);
+        const { container } = mount(() => (
+            <ThemeProvider locale={deDE}>
+                <RichTextEditor value={newer} plugins={defaultPlugins} />
+            </ThemeProvider>
+        ));
 
         expect(container.querySelector('[role="status"]')?.textContent).toBe(
             deDE.translationStrings.RichTextEditor_newerVersion,
@@ -754,6 +758,26 @@ describe('the toolbar', () => {
         const group = container.querySelector('[data-testid="unknown-group"]')?.parentElement;
         expect(group).toBeTruthy();
         expect(group?.parentElement?.lastElementChild).toBe(group);
+    });
+
+    it("names a host plugin's control by its label function, called with the editor's language", () => {
+        const hostPlugin = definePlugin({
+            id: 'host-label',
+            toolbar: [
+                {
+                    label: ({ lang }) => `Host control ${lang}`,
+                    render: ({ label }) => <span data-testid="host-label">{label}</span>,
+                },
+            ],
+        });
+        const { container, ready } = mount(() => (
+            <ThemeProvider locale={deDE}>
+                <RichTextEditor plugins={[hostPlugin]} toolbarPlacement="top" />
+            </ThemeProvider>
+        ));
+        ready();
+
+        expect(container.querySelector('[data-testid="host-label"]')?.textContent).toBe('Host control de-DE');
     });
 
     it('keeps Undo and Redo current as edits are made and taken back', () => {
@@ -2119,7 +2143,9 @@ describe('an editor that crashes', () => {
     it('says its crash texts in the language of its locale', () => {
         silenceReact();
         const { container } = mount(() => (
-            <RichTextEditor value={paragraph('still here')} plugins={[throwingPlugin()]} locale={deDE} />
+            <ThemeProvider locale={deDE}>
+                <RichTextEditor value={paragraph('still here')} plugins={[throwingPlugin()]} />
+            </ThemeProvider>
         ));
 
         const button = [...container.querySelectorAll('button')].find(

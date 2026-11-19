@@ -11,7 +11,7 @@ import { type RichTextStringKey } from '#/locales/types';
 import { MENU_ICON_SIZE } from '#/ui/toolbarIconSize';
 import { type Translate, useTranslate } from '#/ui/translation';
 
-import { availableCommands, matchCommands } from '../helpers/blockCommands';
+import { availableCommands, matchCommands, type ShownCommand } from '../helpers/blockCommands';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
 import { useSelectionAnchor } from '../hooks/useSelectionAnchor';
 import { type EditorHandle } from '../port';
@@ -35,7 +35,7 @@ type Session = { query: string; index: number };
  * The commands in the order they are listed: grouped, each group in the order
  * the plugins gave them. The arrow keys and the highlight walk this order.
  */
-const inListOrder = (commands: readonly RteBlockCommand[]): RteBlockCommand[] =>
+const inListOrder = (commands: readonly ShownCommand[]): ShownCommand[] =>
     GROUPS.flatMap(({ group }) => commands.filter((command) => command.group === group));
 
 /** How many commands match, or that none does — what the status region says as the list narrows. */
@@ -71,7 +71,7 @@ export const SlashMenu = ({
     handle: EditorHandle;
     editorState: EditorStateStore;
     editableRef: RefObject<HTMLElement | null>;
-    commands: readonly RteBlockCommand[];
+    commands: readonly ShownCommand[];
 }): ReactNode => {
     const { api } = handle;
     // Null while closed. Escape closes it and it stays shut until a `/` is
@@ -119,7 +119,7 @@ export const SlashMenu = ({
         });
     }, [api, editorState]);
 
-    const run = (command: RteBlockCommand): void => {
+    const run = (command: ShownCommand): void => {
         const typed = api.text.beforeCaret().length;
         updateSession(null);
         api.text.deleteBefore(typed);
@@ -211,10 +211,10 @@ const SlashList = ({
     editorState: EditorStateStore;
     editableRef: RefObject<HTMLElement | null>;
     /** The matches, in list order. */
-    commands: readonly RteBlockCommand[];
+    commands: readonly ShownCommand[];
     index: number;
     onHover: (index: number) => void;
-    onRun: (command: RteBlockCommand) => void;
+    onRun: (command: ShownCommand) => void;
     onDismiss: () => void;
 }): ReactNode => {
     const translate = useTranslate();
@@ -323,7 +323,7 @@ const SlashList = ({
 
 type SlashOptionProps = {
     id: string;
-    command: RteBlockCommand;
+    command: ShownCommand;
     isActive: boolean;
     onHover: () => void;
     onRun: () => void;

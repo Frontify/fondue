@@ -31,15 +31,21 @@ A host that sets its own text looks passes the same `presets` to both sides:
 ## Language
 
 The editor and its shipped plugins speak the 11 languages of `@frontify/fondue-components`.
-Under a `ThemeProvider` with a `lang`, the editor loads that language itself, and shows English
-until it has loaded. The wording is fixed: a host chooses the language, not the words.
-A server-rendered host passes the locale, so the first render is already in that language:
+Each locale holds the components' strings and the editor's, so the host passes one object to
+`ThemeProvider`, as it does for the components alone. The wording is fixed: a host chooses the
+language, not the words.
 
 ```tsx
-import { deCH } from '@frontify/fondue-rich-text-editor/locales/de-CH';
+import { deCH } from '@frontify/fondue/locales/de-CH';
 
-<RichTextEditor locale={deCH} />
+<ThemeProvider locale={deCH}>
+    <RichTextEditor />
+</ThemeProvider>
 ```
+
+Without the editor's package, the same locales come from `@frontify/fondue-rich-text-editor/locales`.
+A `ThemeProvider` locale with only the components' strings shows the editor in English, with a
+warning in development.
 
 ## Writing a plugin
 
@@ -67,7 +73,9 @@ export const highlightPlugin = () =>
 <RichTextRenderer plugins={[...defaultContent, highlightContent]} value={doc} />
 ```
 
-Your plugin's `label` and any other text it shows is your own, already in the host's language.
+Your plugin's `label` is its own text in the host's language, or a function the editor calls with
+its language (`({ lang }) => …`), so the label follows a change of language. Any other text
+your plugin shows is its own too.
 
 `@frontify/fondue-components`, `@frontify/fondue-icons` and `@frontify/fondue-tokens` are peer dependencies:
 the host installs them beside this package and loads `@frontify/fondue-tokens/styles` and

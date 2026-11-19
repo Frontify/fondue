@@ -12,6 +12,8 @@ import {
     type MarkDefinition,
     type PasteHandler,
     type RteBlockCommand,
+    type RteLabel,
+    type RteLabelContext,
     type RteBlockNode,
     type RteInlineNode,
     type RtePlugin as CorePlugin,
@@ -77,9 +79,6 @@ export const serializeToHtml = <TBlock extends RteBlockNode = RteBlock>(
     options: SerializeToHtmlOptions = {},
 ): string => serialize(doc, { ...options, plugins: options.plugins ?? defaultContent });
 
-/** What the editor's `locale` takes; the locales themselves come from `@frontify/fondue-rich-text-editor/locales`. */
-export { type RichTextLocale } from './locales/types';
-
 // --- Document format ---
 
 export { type RteBlock, type RteDocument, type RteDocumentWith } from './documentFormat';
@@ -111,6 +110,8 @@ type MarkDef<TValue> = MarkDefinition<TValue>;
 type InlineDef<TValue> = InlineDefinition<TValue>;
 type EditComponentProps<TValue, TCurrent> = EditProps<TValue, TCurrent>;
 type Html = HtmlSpec;
+type ControlLabel = RteLabel;
+type ControlLabelContext = RteLabelContext;
 
 // oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
 export declare namespace RtePlugin {
@@ -124,6 +125,8 @@ export declare namespace RtePlugin {
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
     export type BlockCommand = RteBlockCommand;
+    export type Label = ControlLabel;
+    export type LabelContext = ControlLabelContext;
     export type PasteHandler = OnPaste;
     export type HtmlSpec = Html;
 }

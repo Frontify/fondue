@@ -18,14 +18,16 @@ type Globals = {
     lang?: string;
 };
 
-/** The languages the editor ships, as `ThemeProvider`'s `lang` names them. */
-const LANGUAGES = Object.values(locales).map((locale) => locale.lang);
+const ENGLISH = 'en-US';
+
+/** The shipped locales, by language tag, each holding the components' strings and the editor's. */
+const LOCALES = new Map(Object.values(locales).map((locale) => [locale.lang ?? ENGLISH, locale]));
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {
     // Storybook types globals as a loose record, and `globalTypes` below declares `theme` with only these values.
-    const { theme = 'light', lang = 'en-US' } = context.globals as Globals;
+    const { theme = 'light', lang = ENGLISH } = context.globals as Globals;
     return (
-        <ThemeProvider theme={theme} lang={lang}>
+        <ThemeProvider theme={theme} locale={LOCALES.get(lang) ?? locales.enUS}>
             {/* The theme's colours exist only inside the provider, so the canvas is painted here, not on the body. */}
             <div className="tw-min-h-screen tw-bg-surface tw-text-primary">
                 <Story />
@@ -49,18 +51,18 @@ const preview: Preview = {
             },
         },
         lang: {
-            description: "Language of the editor's own UI, as a host's ThemeProvider sets it",
+            description: "Language of the components and the editor, as a host's ThemeProvider locale sets it",
             toolbar: {
                 title: 'Language',
                 icon: 'globe',
-                items: LANGUAGES,
+                items: [...LOCALES.keys()],
                 dynamicTitle: true,
             },
         },
     },
     initialGlobals: {
         theme: 'light',
-        lang: 'en-US',
+        lang: ENGLISH,
     },
     parameters: {
         layout: 'fullscreen',

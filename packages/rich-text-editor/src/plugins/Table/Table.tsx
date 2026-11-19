@@ -4,6 +4,7 @@ import { IconTable } from '@frontify/fondue-icons';
 import { type ReactNode } from 'react';
 
 import { ANY_LIST, defineBlock, defineContent, definePlugin, gridSpanOf, PARAGRAPH, type RteBlockNode } from '#/core';
+import { localeLabel } from '#/ui/translation';
 
 import { TableMenu } from './components/TableMenu';
 import styles from './table.module.scss';
@@ -164,7 +165,7 @@ export const tablePlugin = () =>
         toolbarGroup: 'insert',
         toolbar: [
             {
-                label: 'RichTextEditor_table',
+                label: localeLabel('RichTextEditor_table'),
                 floating: 'inline',
                 render: ({ api, selection, label }) => <TableMenu api={api} selection={selection} label={label} />,
             },
@@ -172,7 +173,7 @@ export const tablePlugin = () =>
         commands: [
             {
                 id: 'table',
-                label: 'RichTextEditor_table',
+                label: localeLabel('RichTextEditor_table'),
                 icon: IconTable,
                 keywords: ['grid', 'rows', 'columns', 'spreadsheet'],
                 group: 'insert',

@@ -23,6 +23,7 @@ import {
     type RteEditView,
     type RteIcon,
     type RteInputRule,
+    type RteLabel,
     type RtePlugin,
     type RteToolbarEntry,
     type RteToolbarGroup,
@@ -58,7 +59,7 @@ export type ToolbarEntry = {
     floating: 'inline' | 'hidden';
     /** The plugin's `toolbarGroup`; none puts it in the last group. */
     group: RteToolbarGroup | undefined;
-    label: string;
+    label: RteLabel;
     shortcut?: string;
 } & (
     | {
@@ -306,13 +307,16 @@ const register = <TDefinition>(
     }
 };
 
+/** What a `label` may be: text, or a function of the editor's language. */
+const LABEL_KINDS: ReadonlySet<string> = new Set(['string', 'function']);
+
 const NOTHING_TO_TOGGLE = 'nothing to toggle: name a mark, list, text block, void block or inline with `toggles`.';
 
 /**
  * Throws unless the entry has a label. The label is the control's only accessible name, so an untyped caller cannot leave it out.
  */
 const assertLabelled = (plugin: RtePlugin, entry: RteToolbarEntry): void => {
-    if (typeof entry.label !== 'string' || entry.label === '') {
+    if (entry.label === '' || !LABEL_KINDS.has(typeof entry.label)) {
         throw new Error(`Plugin "${plugin.id}" has a toolbar entry with no \`label\`.`);
     }
 };

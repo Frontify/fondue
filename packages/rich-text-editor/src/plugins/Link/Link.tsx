@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type DefaultStyle, defineContent, defineMark, definePlugin, type HotkeyHandler } from '#/core';
+import { localeLabel } from '#/ui/translation';
 
 import { withoutDecorationLine } from '../shared/helpers/declaredStyle';
 import { isLinkablePaste, isSafeHref, toHref, WEB_ADDRESS } from '../shared/helpers/href';
@@ -107,7 +108,7 @@ export const linkPlugin = () =>
     definePlugin({
         content: linkContent,
         toolbarGroup: 'link',
-        toolbar: [{ label: 'RichTextEditor_link', shortcut: HOTKEY, render: LinkToolbarButton }],
+        toolbar: [{ label: localeLabel('RichTextEditor_link'), shortcut: HOTKEY, render: LinkToolbarButton }],
         edit: { link: LinkEditor },
         hotkeys,
         // A web address typed and followed by a space becomes a link. The pattern

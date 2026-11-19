@@ -51,6 +51,8 @@ export {
     type RteEditView,
     type RteIcon,
     type RteInputRule,
+    type RteLabel,
+    type RteLabelContext,
     type RtePlugin,
     type RtePluginDefinition,
     type RteToolbarEntry,

@@ -10,8 +10,10 @@ import {
     PARAGRAPH,
     type RteBlockNode,
     type RteContent,
+    type RteLabel,
     type StyleMap,
 } from '#/core';
+import { localeLabel } from '#/ui/translation';
 
 import styles from './list.module.scss';
 
@@ -140,7 +142,7 @@ type ListPluginParams = {
     content: RteContent;
     type: 'bulletList' | 'numberedList';
     icon: FondueIcon;
-    label: string;
+    label: RteLabel;
     /**
      * Extra words the `/` menu matches this entry by
      */
@@ -178,7 +180,7 @@ export const bulletListPlugin = () =>
         content: bulletListContent,
         type: 'bulletList',
         icon: IconListBullet,
-        label: 'RichTextEditor_bulletedList',
+        label: localeLabel('RichTextEditor_bulletedList'),
         keywords: ['ul', 'unordered', 'bullets'],
         markdown: ['- ', '* '],
         shortcut: 'Mod-Shift-8',
@@ -193,7 +195,7 @@ export const numberedListPlugin = () =>
         content: numberedListContent,
         type: 'numberedList',
         icon: IconListNumbers,
-        label: 'RichTextEditor_numberedList',
+        label: localeLabel('RichTextEditor_numberedList'),
         keywords: ['ol', 'ordered', 'numbers'],
         markdown: ['1. ', '1) '],
         shortcut: 'Mod-Shift-7',

@@ -2,6 +2,7 @@
 
 // @vitest-environment happy-dom
 
+import { ThemeProvider } from '@frontify/fondue-components';
 import { act, type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -165,9 +166,11 @@ describe('the floating bar', () => {
     });
 
     it('says everything in the language of its locale', () => {
-        const translate = translatorFor(deDE);
+        const translate = translatorFor(deDE.translationStrings);
         const editor = mount((onChange) => (
-            <RichTextEditor plugins={defaultPlugins} toolbarPlacement="floating" onChange={onChange} locale={deDE} />
+            <ThemeProvider locale={deDE}>
+                <RichTextEditor plugins={defaultPlugins} toolbarPlacement="floating" onChange={onChange} />
+            </ThemeProvider>
         ));
         paste(editor.editable, { html: '<h2>text</h2>' });
         act(() => editor.editable.focus());
@@ -384,8 +387,12 @@ describe('the / menu', () => {
     });
 
     it('says everything in the language of its locale', () => {
-        const translate = translatorFor(deDE);
-        const { editable } = mount(() => <RichTextEditor plugins={plugins} locale={deDE} />);
+        const translate = translatorFor(deDE.translationStrings);
+        const { editable } = mount(() => (
+            <ThemeProvider locale={deDE}>
+                <RichTextEditor plugins={plugins} />
+            </ThemeProvider>
+        ));
         act(() => editable.focus());
 
         type(editable, '/');

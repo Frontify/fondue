@@ -41,6 +41,14 @@
             "types": "./dist/packages/locales/*.d.ts",
             "import": "./dist/packages/locales/*.js"
         },
+        "./locales": {
+            "types": "./dist/packages/fondue-locales/index.d.ts",
+            "import": "./dist/packages/fondue-locales/index.js"
+        },
+        "./locales/*": {
+            "types": "./dist/packages/fondue-locales/*.d.ts",
+            "import": "./dist/packages/fondue-locales/*.js"
+        },
         "./icons": {
             "types": "./dist/packages/icons/icons.d.ts",
             "require": "./dist/packages/icons/fondue-icons.umd.cjs",
