@@ -1,0 +1,19 @@
+.changeset/rte-mark-toggle-matches-toolbar.md
+  s_5aa74dc91f3857::t_c2053819b961d2 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bc311d41c80bf6db024bdbfa2c3359f4f0e56178",
+  "prompts": {},
+  "sessions": {
+    "s_5aa74dc91f3857": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "824fa50b-c81a-453f-94e7-5b8c4c1fd034",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

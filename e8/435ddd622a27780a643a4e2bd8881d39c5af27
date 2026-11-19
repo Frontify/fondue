@@ -1,0 +1,21 @@
+packages/rich-text-editor/src/plugins/Mention/hooks/usePeople.ts
+  s_53de767222940a::t_fa3ccab221f6a4 47-49
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.spec.tsx
+  s_53de767222940a::t_fa3ccab221f6a4 306,311,330
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e8435ddd622a27780a643a4e2bd8881d39c5af27",
+  "prompts": {},
+  "sessions": {
+    "s_53de767222940a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f9b7337-8455-4b7f-ac95-dde194f54be3",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
