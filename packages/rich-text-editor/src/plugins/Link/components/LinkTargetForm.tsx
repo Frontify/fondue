@@ -4,6 +4,7 @@ import { Button, Checkbox, Label, TextInput } from '@frontify/fondue-components'
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
 import { toHref } from '../../shared/helpers/href';
+import { isImeKey } from '../../shared/helpers/imeKey';
 import { type LinkValue } from '../helpers/value';
 
 import styles from './linkForm.module.scss';
@@ -54,6 +55,9 @@ export const LinkTargetForm = ({
     };
 
     const saveOnEnter = (event: KeyboardEvent<HTMLInputElement>): void => {
+        if (isImeKey(event)) {
+            return;
+        }
         if (event.key === 'Enter') {
             event.preventDefault();
             save();

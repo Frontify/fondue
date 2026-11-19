@@ -18,6 +18,7 @@ import {
 } from 'react';
 
 import { type CommonGlobalProps } from '#/helpers/aria';
+import { isImeKey } from '#/helpers/imeKey';
 import { useSyncRefs } from '#/hooks/useSyncRefs';
 
 import styles from './styles/textarea.module.scss';
@@ -194,7 +195,9 @@ export const TextareaRoot = (
 
     const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
         if (event.key === 'Enter') {
-            onEnterPressed?.(event);
+            if (!isImeKey(event)) {
+                onEnterPressed?.(event);
+            }
         }
         props.onKeyDown?.(event);
     };

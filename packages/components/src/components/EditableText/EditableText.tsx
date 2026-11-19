@@ -4,6 +4,7 @@ import { Slot } from '@radix-ui/react-slot';
 import { type ReactNode, forwardRef, useRef, useState } from 'react';
 
 import { type CommonGlobalProps } from '#/helpers/aria';
+import { isImeKey } from '#/helpers/imeKey';
 
 import styles from './styles/editable-text.module.scss';
 
@@ -68,6 +69,9 @@ export const EditableText = forwardRef<HTMLElement, EditableTextProps>(
         };
 
         const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+            if (isImeKey(event)) {
+                return;
+            }
             if (event.key === 'Enter') {
                 event.preventDefault();
                 event.currentTarget.blur();
