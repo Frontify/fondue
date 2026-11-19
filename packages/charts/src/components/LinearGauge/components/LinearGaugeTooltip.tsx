@@ -3,14 +3,14 @@
 import { type TooltipInPortalProps } from '@visx/tooltip';
 import { type FC } from 'react';
 
-import { TOOLTIP_OFFSET } from '@components/Treemap/components/TreemapTooltip/constants';
 import { TooltipContent } from '@components/common/components';
+import { TOOLTIP_OFFSET } from '@components/Treemap/components/TreemapTooltip/constants';
 
 type LinearGaugeTooltipProps = {
     TooltipInPortal: FC<TooltipInPortalProps>;
     x: number;
     y: number;
-    entries: { color: string; title: string; value: string }[];
+    entries: { color: string; title: string; value: string; description?: string }[];
 };
 
 export const LinearGaugeTooltip = ({ TooltipInPortal, x, y, entries }: LinearGaugeTooltipProps) => {

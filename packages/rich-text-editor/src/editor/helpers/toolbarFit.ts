@@ -6,6 +6,7 @@ const TOLERANCE = 0.5;
 export type FittingSlotCountParams = {
     /** Each group's slot widths, in drawing order. */
     groups: readonly (readonly number[])[];
+    /** The space between two groups, which is also reserved before More: the divider and the gaps either side of it. */
     gap: number;
     itemGap: number;
     /** The More button's width. */

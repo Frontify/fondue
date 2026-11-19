@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ValueFormatter } from '@components/common/types';
+import { type DateGranularity, type ValueFormatter } from '@components/common/types';
 
 import { type LegendPosition, type MarkLineProps } from '..';
 
@@ -27,4 +27,5 @@ export type AreaStackChartProps = {
     markLine?: MarkLineProps;
     valueFormatter?: ValueFormatter;
     domain?: 'storage' | 'count';
+    dateGranularity?: DateGranularity;
 };

@@ -5,7 +5,7 @@ import { XYChart } from '@visx/xychart';
 import { Axes, MarkLine } from '@components/LineChart/components';
 import { createBackfilledSeries, getAreaFillColors } from '@components/LineChart/helpers';
 import { Legend, Tooltip } from '@components/common/components';
-import { colorAccessorByKey, getLinearScaleTicks } from '@components/common/helpers';
+import { colorAccessorByKey, getFirstDateTickLabel, getLinearScaleTicks } from '@components/common/helpers';
 import { getNonZeroLinearStackingScaleDomain } from '@components/common/helpers/getNonZeroLinearStackingScaleDomain';
 import { getTransformedScaleTicks } from '@components/common/helpers/getTransformedScaleTicks';
 import { transformDomainToStorageDomain } from '@components/common/helpers/transformDomainToStorageDomain';
@@ -13,7 +13,7 @@ import { useMargin } from '@components/common/hooks';
 import { createTheme } from '@theme/createTheme';
 
 import styles from './AreaStackChart.module.scss';
-import { AreaStack } from './components/AreaStack';
+import { AreaStack, SinglePointGlyphs } from './components/AreaStack';
 import { GridRows } from './components/GridRows';
 import { type AreaStackChartProps } from './types';
 
@@ -34,8 +34,10 @@ export const AreaStackChart = ({
     valueFormatter,
     childSumLabel,
     domain = COUNT_DOMAIN,
+    dateGranularity,
 }: AreaStackChartProps) => {
     const backfilledSeries = createBackfilledSeries(series);
+    const hasSingleDate = series[0]?.dataPoints.length === 1;
     const theme = createTheme(getAreaFillColors(series.length, backfilledSeries.length));
 
     const yDomain = getNonZeroLinearStackingScaleDomain(series, markLine?.value ?? 0);
@@ -48,6 +50,7 @@ export const AreaStackChart = ({
         tickLabelStyle: theme.axisStyles.y.left.tickLabel,
         valueFormatter,
         tickLength: theme.axisStyles.y.left.tickLength,
+        firstXTickLabel: getFirstDateTickLabel(series, locale, dateGranularity),
     });
 
     return (
@@ -65,11 +68,13 @@ export const AreaStackChart = ({
             >
                 <GridRows tickValues={transformedLinearScaleTicks} />
                 <AreaStack series={series} />
+                {hasSingleDate ? <SinglePointGlyphs series={series} /> : null}
                 <Axes
                     linearScaleTicks={transformedLinearScaleTicks}
                     valueFormatter={valueFormatter}
                     locale={locale}
                     series={series}
+                    dateGranularity={dateGranularity}
                 />
                 {markLine && <MarkLine {...markLine} />}
                 <Tooltip
@@ -81,6 +86,7 @@ export const AreaStackChart = ({
                     valueFormatter={valueFormatter}
                     locale={locale}
                     stackingGlyphs
+                    dateGranularity={dateGranularity}
                 />
             </XYChart>
             {!hideLegend && legendPosition === 'bottom' && (

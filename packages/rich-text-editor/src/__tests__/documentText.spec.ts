@@ -2,7 +2,8 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { defaultPlugins, isEmpty, mentionPlugin, type RteDocument, toPlainText } from '../index';
+import { isEmpty, type RteDocument, toPlainText } from '../index';
+import { defaultPlugins, mentionPlugin } from '../plugins';
 
 // The document helpers against the shipped plugins; their rules are in `core/documentText.spec.ts`.
 

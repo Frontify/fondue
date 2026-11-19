@@ -13,22 +13,24 @@ import { type RteToolbarGroup } from '#/core';
 // Driven through the package's public API, the way a host does: the props are
 // the whole conversation between a host and a mounted editor.
 import {
-    alignPlugin,
-    boldPlugin,
-    checkListPlugin,
-    defaultPlugins,
     defineBlock,
     defineContent,
     definePlugin,
-    linkPlugin,
-    mentionPlugin,
     RichTextEditor,
     RichTextRenderer,
     type RteDocument,
     type RtePlugin,
     serializeToHtml,
-    textStylePlugin,
 } from '../index';
+import {
+    alignPlugin,
+    boldPlugin,
+    checkListPlugin,
+    defaultPlugins,
+    linkPlugin,
+    mentionPlugin,
+    textStylePlugin,
+} from '../plugins';
 
 import { useFocusWithin } from './hooks/useFocusWithin';
 
@@ -844,6 +846,20 @@ describe('the toolbar from the keyboard', () => {
         expect(tabStops(toolbar)).toEqual(['Bold']);
     });
 
+    it('parts two groups with a separator, none before the first or after the last', () => {
+        const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
+        ready();
+
+        const toolbar = toolbarIn(container);
+        const groups = toolbar.querySelectorAll('[data-toolbar-group]');
+        const separators = toolbar.querySelectorAll('[role="separator"]');
+        expect(separators).toHaveLength(groups.length - 1);
+        expect(separators[0]?.getAttribute('aria-orientation')).toBe('vertical');
+        expect(groups[0]?.nextElementSibling?.contains(separators[0] ?? null)).toBe(true);
+        expect(toolbar.firstElementChild).toBe(groups[0]);
+        expect(toolbar.lastElementChild).toBe(groups[groups.length - 1]);
+    });
+
     it('moves between its controls with the arrow keys, Home and End, passing over disabled ones', () => {
         const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
         ready();
@@ -965,6 +981,7 @@ describe('the toolbar from the keyboard', () => {
 
         const radios = [...container.querySelectorAll('[role="radiogroup"] [role="radio"]')];
         expect(radios.map((radio) => radio.getAttribute('aria-checked'))).toEqual(['true', 'false', 'false', 'false']);
+        expect(radios.map((radio) => radio.getAttribute('data-emphasis'))).toEqual(['default', 'weak', 'weak', 'weak']);
     });
 
     describe('in a narrow top row', () => {
@@ -1014,6 +1031,20 @@ describe('the toolbar from the keyboard', () => {
 
         const more = (container: HTMLElement): HTMLButtonElement | null =>
             container.querySelector<HTMLButtonElement>('[aria-label="More"]');
+
+        it('parts the row from More with a separator, and draws none inside the panel', () => {
+            const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
+            ready();
+            const toolbar = toolbarIn(container);
+
+            resize(70);
+            expect(toolbar.querySelectorAll('[role="separator"]')).toHaveLength(1);
+
+            act(() => more(container)?.click());
+            const panel = window.document.querySelector<HTMLElement>('[role="toolbar"][aria-label="More"]');
+            expect(panel?.querySelector('[aria-label="Add link"]')).not.toBeNull();
+            expect(panel?.querySelector('[role="separator"]')).toBeNull();
+        });
 
         it('moves what does not fit behind More, whose panel the arrow keys move through', () => {
             const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
