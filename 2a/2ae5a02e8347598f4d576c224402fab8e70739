@@ -1,0 +1,31 @@
+packages/rich-text-editor/src/docs/PluginKeyboardReference.tsx
+  s_ea2f21f7c5681f::t_1d5e1ba4181cbd 13-17,51-52,54-55
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_ea2f21f7c5681f::t_485b774d1a78df 16,19,406-424,426-428,437-438,515,554,586
+  s_ea2f21f7c5681f::t_6030cb0b470dc2 429-436
+  s_ea2f21f7c5681f::t_a1bdcf728d518e 512
+  s_ea2f21f7c5681f::t_e6b961cd8d90f5 425,439-444,551,555,562,570,573-574,583,595
+packages/rich-text-editor/src/docs/keyboardReference.ts
+  s_ea2f21f7c5681f::t_1d5e1ba4181cbd 6,9,30-45,48,55
+packages/rich-text-editor/src/docs/keyboardReference.spec.ts
+  s_ea2f21f7c5681f::t_3d40b5383eeb43 15,19-20,26,30,36,45-46,48-50,52,54
+  s_ea2f21f7c5681f::t_ccee3547cf3fb7 47,51
+.changeset/docs-rte-keyboard-reference.md
+  s_ea2f21f7c5681f::t_ac20746e2caf9f 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2a2ae5a02e8347598f4d576c224402fab8e70739",
+  "prompts": {},
+  "sessions": {
+    "s_ea2f21f7c5681f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d419d63e-7548-4781-aa3e-b5ac225be4e2",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
