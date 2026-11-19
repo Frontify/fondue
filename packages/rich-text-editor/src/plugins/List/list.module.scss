@@ -3,6 +3,8 @@
 @use 'sass:list';
 @use 'sass:map';
 
+@use '../../styles/stack.module.scss';
+
 // The host's look of a level, `--rte-<list><level>-<field>` as `listLookProperties` in List.ts writes it, or Fondue's.
 @function level-look($list, $level, $field, $fallback) {
     @return var(--rte-#{$list}#{$level}-#{$field}, #{$fallback});
@@ -94,4 +96,8 @@ $numbered-indent: 2em;
     ) {
         font-size: $body-font-size;
     }
+}
+
+.item {
+    @include stack.stack(0);
 }
