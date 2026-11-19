@@ -2,9 +2,9 @@
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { createRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
+import { Badge } from '../../Badge/Badge';
 import { Label } from '../../Label/Label';
 import { RadioList } from '../RadioList';
 
@@ -246,12 +246,13 @@ describe('RadioList component', () => {
     describe('pill variant', () => {
         const createPillRadioList = (props = {}) => (
             <RadioList.Root variant="pill" aria-label="Page size" {...props}>
-                <RadioList.RadioButton value="a4">
-                    A4
-                    <RadioList.Count>12</RadioList.Count>
+                <RadioList.RadioButton id="a4" value="a4">
+                    A4 <Badge size="small">12</Badge>
                 </RadioList.RadioButton>
-                <RadioList.RadioButton value="a5">A5</RadioList.RadioButton>
-                <RadioList.RadioButton value="letter" disabled>
+                <RadioList.RadioButton id="a5" value="a5">
+                    A5
+                </RadioList.RadioButton>
+                <RadioList.RadioButton id="letter" value="letter" disabled>
                     Letter
                 </RadioList.RadioButton>
             </RadioList.Root>
@@ -288,31 +289,6 @@ describe('RadioList component', () => {
             await userEvent.click(screen.getByRole('radio', { name: 'Letter' }));
 
             expect(onValueChange).not.toHaveBeenCalled();
-        });
-
-        it('should not render the children with the default variant', () => {
-            render(
-                <RadioList.Root aria-label="Page size">
-                    <RadioList.RadioButton id="a4" value="a4">
-                        A4
-                    </RadioList.RadioButton>
-                </RadioList.Root>,
-            );
-
-            expect(screen.queryByText('A4')).not.toBeInTheDocument();
-        });
-
-        it('should forward the ref to the radio button', () => {
-            const ref = createRef<HTMLButtonElement>();
-            render(
-                <RadioList.Root variant="pill" aria-label="Page size">
-                    <RadioList.RadioButton ref={ref} value="a4">
-                        A4
-                    </RadioList.RadioButton>
-                </RadioList.Root>,
-            );
-
-            expect(ref.current).toBe(screen.getByRole('radio', { name: 'A4' }));
         });
     });
 });

@@ -4,6 +4,7 @@ import { IconDocumentText, IconImage, IconPlay, IconQuestionMarkCircle } from '@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useId } from 'react';
 
+import { Badge } from '../Badge/Badge';
 import { Flex } from '../Flex/Flex';
 import { Label } from '../Label/Label';
 import { Text } from '../Text/Text';
@@ -245,26 +246,46 @@ export const Pill: Story = {
         variant: 'pill',
         value: '2',
     },
-    render: (args) => (
-        <RadioList.Root {...args} aria-label="Pick an option">
-            <RadioList.RadioButton value="1">Option 1</RadioList.RadioButton>
-            <RadioList.RadioButton value="2">Option 2</RadioList.RadioButton>
-            <RadioList.RadioButton value="3">Option 3</RadioList.RadioButton>
-        </RadioList.Root>
-    ),
+    render: (args) => {
+        const id = useId();
+
+        return (
+            <RadioList.Root {...args} aria-label="Pick an option">
+                <RadioList.RadioButton id={`${id}-1`} value="1">
+                    Option 1
+                </RadioList.RadioButton>
+                <RadioList.RadioButton id={`${id}-2`} value="2">
+                    Option 2
+                </RadioList.RadioButton>
+                <RadioList.RadioButton id={`${id}-3`} value="3">
+                    Option 3
+                </RadioList.RadioButton>
+            </RadioList.Root>
+        );
+    },
 };
 
 export const PillUncontrolled: Story = {
     args: {
         variant: 'pill',
     },
-    render: ({ value: _value, ...args }) => (
-        <RadioList.Root {...args} aria-label="Pick an option">
-            <RadioList.RadioButton value="1">Option 1</RadioList.RadioButton>
-            <RadioList.RadioButton value="2">Option 2</RadioList.RadioButton>
-            <RadioList.RadioButton value="3">Option 3</RadioList.RadioButton>
-        </RadioList.Root>
-    ),
+    render: ({ value: _value, ...args }) => {
+        const id = useId();
+
+        return (
+            <RadioList.Root {...args} aria-label="Pick an option">
+                <RadioList.RadioButton id={`${id}-1`} value="1">
+                    Option 1
+                </RadioList.RadioButton>
+                <RadioList.RadioButton id={`${id}-2`} value="2">
+                    Option 2
+                </RadioList.RadioButton>
+                <RadioList.RadioButton id={`${id}-3`} value="3">
+                    Option 3
+                </RadioList.RadioButton>
+            </RadioList.Root>
+        );
+    },
 };
 
 export const PillWithIcons: Story = {
@@ -272,49 +293,53 @@ export const PillWithIcons: Story = {
         variant: 'pill',
         value: 'print',
     },
-    render: (args) => (
-        <RadioList.Root {...args} aria-label="Template type">
-            <RadioList.RadioButton value="print">
-                <IconDocumentText size={16} />
-                Print
-            </RadioList.RadioButton>
-            <RadioList.RadioButton value="digital">
-                <IconImage size={16} />
-                Digital
-            </RadioList.RadioButton>
-            <RadioList.RadioButton value="video">
-                <IconPlay size={16} />
-                Video
-            </RadioList.RadioButton>
-        </RadioList.Root>
-    ),
+    render: (args) => {
+        const id = useId();
+
+        return (
+            <RadioList.Root {...args} aria-label="Template type">
+                <RadioList.RadioButton id={`${id}-print`} value="print">
+                    <IconDocumentText size={16} />
+                    Print
+                </RadioList.RadioButton>
+                <RadioList.RadioButton id={`${id}-digital`} value="digital">
+                    <IconImage size={16} />
+                    Digital
+                </RadioList.RadioButton>
+                <RadioList.RadioButton id={`${id}-video`} value="video">
+                    <IconPlay size={16} />
+                    Video
+                </RadioList.RadioButton>
+            </RadioList.Root>
+        );
+    },
 };
 
-export const PillWithCounts: Story = {
+export const PillWithBadges: Story = {
     args: {
         variant: 'pill',
         value: 'a4',
     },
-    render: (args) => (
-        <RadioList.Root {...args} aria-label="Page size">
-            <RadioList.RadioButton value="a4">
-                A4
-                <RadioList.Count>12</RadioList.Count>
-            </RadioList.RadioButton>
-            <RadioList.RadioButton value="a5">
-                A5
-                <RadioList.Count>3</RadioList.Count>
-            </RadioList.RadioButton>
-            <RadioList.RadioButton value="letter">
-                Letter
-                <RadioList.Count>7</RadioList.Count>
-            </RadioList.RadioButton>
-            <RadioList.RadioButton value="legal" disabled>
-                Legal
-                <RadioList.Count>0</RadioList.Count>
-            </RadioList.RadioButton>
-        </RadioList.Root>
-    ),
+    render: (args) => {
+        const id = useId();
+
+        return (
+            <RadioList.Root {...args} aria-label="Page size">
+                <RadioList.RadioButton id={`${id}-a4`} value="a4">
+                    A4 <Badge size="small">12</Badge>
+                </RadioList.RadioButton>
+                <RadioList.RadioButton id={`${id}-a5`} value="a5">
+                    A5 <Badge size="small">3</Badge>
+                </RadioList.RadioButton>
+                <RadioList.RadioButton id={`${id}-letter`} value="letter">
+                    Letter <Badge size="small">7</Badge>
+                </RadioList.RadioButton>
+                <RadioList.RadioButton id={`${id}-legal`} value="legal" disabled>
+                    Legal
+                </RadioList.RadioButton>
+            </RadioList.Root>
+        );
+    },
 };
 
 export const PillWithDisabledItem: Story = {
@@ -322,15 +347,23 @@ export const PillWithDisabledItem: Story = {
         variant: 'pill',
         value: '1',
     },
-    render: (args) => (
-        <RadioList.Root {...args} aria-label="Pick an option">
-            <RadioList.RadioButton value="1">Option 1</RadioList.RadioButton>
-            <RadioList.RadioButton value="2" disabled>
-                Option 2
-            </RadioList.RadioButton>
-            <RadioList.RadioButton value="3">Option 3</RadioList.RadioButton>
-        </RadioList.Root>
-    ),
+    render: (args) => {
+        const id = useId();
+
+        return (
+            <RadioList.Root {...args} aria-label="Pick an option">
+                <RadioList.RadioButton id={`${id}-1`} value="1">
+                    Option 1
+                </RadioList.RadioButton>
+                <RadioList.RadioButton id={`${id}-2`} value="2" disabled>
+                    Option 2
+                </RadioList.RadioButton>
+                <RadioList.RadioButton id={`${id}-3`} value="3">
+                    Option 3
+                </RadioList.RadioButton>
+            </RadioList.Root>
+        );
+    },
 };
 
 export const PillDisabled: Story = {
@@ -365,22 +398,30 @@ export const PillWithTooltip: Story = {
         variant: 'pill',
         value: '1',
     },
-    render: (args) => (
-        <RadioList.Root {...args} aria-label="Page size">
-            <RadioList.RadioButton value="1">A4</RadioList.RadioButton>
-            <Tooltip.Root enterDelay={0}>
-                <Tooltip.Trigger asChild>
-                    <span style={{ display: 'inline-flex' }}>
-                        <RadioList.RadioButton value="2" disabled>
-                            Letter
-                        </RadioList.RadioButton>
-                    </span>
-                </Tooltip.Trigger>
-                <Tooltip.Content padding="compact">No template page uses this size</Tooltip.Content>
-            </Tooltip.Root>
-            <RadioList.RadioButton value="3">A5</RadioList.RadioButton>
-        </RadioList.Root>
-    ),
+    render: (args) => {
+        const id = useId();
+
+        return (
+            <RadioList.Root {...args} aria-label="Page size">
+                <RadioList.RadioButton id={`${id}-1`} value="1">
+                    A4
+                </RadioList.RadioButton>
+                <Tooltip.Root enterDelay={0}>
+                    <Tooltip.Trigger asChild>
+                        <span style={{ display: 'inline-flex' }}>
+                            <RadioList.RadioButton id={`${id}-2`} value="2" disabled>
+                                Letter
+                            </RadioList.RadioButton>
+                        </span>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content padding="compact">No template page uses this size</Tooltip.Content>
+                </Tooltip.Root>
+                <RadioList.RadioButton id={`${id}-3`} value="3">
+                    A5
+                </RadioList.RadioButton>
+            </RadioList.Root>
+        );
+    },
 };
 
 export const PillWrapping: Story = {
@@ -388,18 +429,21 @@ export const PillWrapping: Story = {
         variant: 'pill',
         value: SIZES[3],
     },
-    render: (args) => (
-        <div style={{ maxWidth: 320, resize: 'horizontal', overflow: 'auto', padding: 8, border: '1px dashed' }}>
-            <RadioList.Root {...args} aria-label="Page size">
-                {SIZES.map((size, index) => (
-                    <RadioList.RadioButton key={size} value={size}>
-                        {size}
-                        <RadioList.Count>{index + 1}</RadioList.Count>
-                    </RadioList.RadioButton>
-                ))}
-            </RadioList.Root>
-        </div>
-    ),
+    render: (args) => {
+        const id = useId();
+
+        return (
+            <div style={{ maxWidth: 320, resize: 'horizontal', overflow: 'auto', padding: 8, border: '1px dashed' }}>
+                <RadioList.Root {...args} aria-label="Page size">
+                    {SIZES.map((size, index) => (
+                        <RadioList.RadioButton key={size} id={`${id}-${index}`} value={size}>
+                            {size} <Badge size="small">{index + 1}</Badge>
+                        </RadioList.RadioButton>
+                    ))}
+                </RadioList.Root>
+            </div>
+        );
+    },
 };
 
 export const PillWithGroupLabel: Story = {
@@ -416,8 +460,12 @@ export const PillWithGroupLabel: Story = {
                     Template type
                 </Text>
                 <RadioList.Root {...args} aria-labelledby={idGroupLabel}>
-                    <RadioList.RadioButton value="print">Print</RadioList.RadioButton>
-                    <RadioList.RadioButton value="digital">Digital</RadioList.RadioButton>
+                    <RadioList.RadioButton id={`${id}-print`} value="print">
+                        Print
+                    </RadioList.RadioButton>
+                    <RadioList.RadioButton id={`${id}-digital`} value="digital">
+                        Digital
+                    </RadioList.RadioButton>
                 </RadioList.Root>
             </Flex>
         );
