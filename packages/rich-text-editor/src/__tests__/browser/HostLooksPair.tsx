@@ -2,33 +2,33 @@
 
 // Mounted by hostStyling.ct.tsx: a component test mounts imported components, and the plugin list holds functions, which cannot travel as props.
 
+import { RichTextEditor, RichTextRenderer, type RteDocument, type RtePlugin } from '../../index';
 import {
+    type ButtonLook,
     bulletListContent,
     bulletListPlugin,
     checkListContent,
     checkListPlugin,
     fontColorContent,
     fontColorPlugin,
-    type LinkLook,
+    type LinkAppearance,
     linkContent,
     linkPlugin,
     quoteContent,
     quotePlugin,
-    RichTextEditor,
-    RichTextRenderer,
-    type RteDocument,
-    type RtePlugin,
+    type TextLinkLook,
     type TextLook,
     textStyleContent,
     textStylePlugin,
-} from '../../index';
+} from '../../plugins';
 
 import { BODY_QUOTE_LINK_DOCUMENT } from './hostStylingValues';
 
 type HostLooksPairProps = {
     body?: TextLook;
     quote?: TextLook;
-    link?: LinkLook;
+    link?: TextLinkLook;
+    buttons?: Partial<Record<LinkAppearance, ButtonLook>>;
     /**
      * The document both surfaces draw.
      * @default BODY_QUOTE_LINK_DOCUMENT
@@ -36,23 +36,23 @@ type HostLooksPairProps = {
     value?: RteDocument;
 };
 
-const pluginsWithLooks = ({ body, quote, link }: HostLooksPairProps): RtePlugin[] => [
-    textStylePlugin({ presets: { body, quote, link } }),
+const pluginsWithLooks = ({ body, quote, link, buttons }: HostLooksPairProps): RtePlugin[] => [
+    textStylePlugin({ presets: { body, quote } }),
     bulletListPlugin(),
     checkListPlugin(),
     fontColorPlugin(),
     quotePlugin(),
-    linkPlugin(),
+    linkPlugin({ look: { text: link, button: buttons } }),
 ];
 
 // The renderer gets content only, as a page that only shows documents would, so the looks must travel with the content.
-const contentWithLooks = ({ body, quote, link }: HostLooksPairProps) => [
-    textStyleContent({ presets: { body, quote, link } }),
+const contentWithLooks = ({ body, quote, link, buttons }: HostLooksPairProps) => [
+    textStyleContent({ presets: { body, quote } }),
     bulletListContent,
     checkListContent,
     fontColorContent,
     quoteContent,
-    linkContent,
+    linkContent({ look: { text: link, button: buttons } }),
 ];
 
 /** The renderer and the editor side by side, drawing body text, a quote and links with the same looks. */

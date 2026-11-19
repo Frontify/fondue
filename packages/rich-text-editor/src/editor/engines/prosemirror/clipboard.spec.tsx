@@ -9,7 +9,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { type RteBlockNode } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
-import { clipboardSerializer } from './clipboard';
+import { clipboardSerializer, COPIED_FROM_EDITOR } from './clipboard';
 import { destroyEditors, editorWith, paragraph, text } from './testEditor';
 
 /**
@@ -24,6 +24,8 @@ const copied = (editor: ReturnType<typeof editorWith>): string => {
     const { schema, doc } = editor.view.state;
     const container = window.document.createElement('div');
     container.append(clipboardSerializer(schema).serializeFragment(doc.content));
+    // The copy marker says where a paste came from; these tests look at the markup alone.
+    container.querySelector(`[${COPIED_FROM_EDITOR}]`)?.removeAttribute(COPIED_FROM_EDITOR);
     return container.innerHTML;
 };
 

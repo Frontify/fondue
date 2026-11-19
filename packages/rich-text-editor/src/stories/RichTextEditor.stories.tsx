@@ -7,6 +7,7 @@ import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 // Stories import only the package public API. The plugins have their own story
 // file (`PluginExamples.stories.tsx`); this one is about the editor itself — the props
 // that are its own rather than a plugin's.
+import { definePlugin, RichTextEditor, RichTextRenderer, type RteDocument, type RtePlugin } from '../index';
 import {
     boldPlugin,
     bulletListContent,
@@ -15,7 +16,6 @@ import {
     checkListPlugin,
     columnBreakPlugin,
     defaultPlugins,
-    definePlugin,
     italicPlugin,
     linkContent,
     linkPlugin,
@@ -23,15 +23,12 @@ import {
     mentionPlugin,
     quoteContent,
     quotePlugin,
-    type RteDocument,
-    type RtePlugin,
-    RichTextEditor,
-    RichTextRenderer,
+    type TextLinkLook,
     textStyleContent,
     textStylePlugin,
     type TextStylePluginOptions,
     type TextStylePresets,
-} from '../index';
+} from '../plugins';
 
 /** Who can be mentioned is the app's business, which is why the mention plugin requires it as an option. */
 const MENTIONABLE: readonly MentionItem[] = [
@@ -903,10 +900,11 @@ const GUIDELINE_PRESETS: TextStylePluginOptions['presets'] = {
         lineHeight: 'var(--f-theme-settings-quote-line-height)',
         color: 'var(--f-theme-settings-quote-color)',
     },
-    link: {
-        fontWeight: 'var(--f-theme-settings-link-font-weight)',
-        color: 'var(--f-theme-settings-link-color)',
-    },
+};
+
+const GUIDELINE_LINK_LOOK: TextLinkLook = {
+    fontWeight: 'var(--f-theme-settings-link-font-weight)',
+    color: 'var(--f-theme-settings-link-color)',
 };
 
 const HOST_STYLING_PLUGINS = [
@@ -914,7 +912,7 @@ const HOST_STYLING_PLUGINS = [
     bulletListPlugin(),
     checkListPlugin(),
     quotePlugin(),
-    linkPlugin(),
+    linkPlugin({ look: { text: GUIDELINE_LINK_LOOK } }),
 ];
 
 // The renderer takes content only, with the same presets, so a page that only shows documents ships no editing code.
@@ -923,7 +921,7 @@ const HOST_STYLING_CONTENT = [
     bulletListContent,
     checkListContent,
     quoteContent,
-    linkContent,
+    linkContent({ look: { text: GUIDELINE_LINK_LOOK } }),
 ];
 
 const HOST_STYLING_DOCUMENT: RteDocument = {
@@ -999,8 +997,9 @@ const PRESETS_DEFAULT: TextStylePresets = {
     imageCaption: { fontSize: '11px' },
     body: { fontSize: '16px', lineHeight: '1.7', color: 'rgb(40, 40, 60)' },
     quote: { fontStyle: 'italic', color: 'rgb(90, 50, 110)' },
-    link: { fontWeight: '600', color: 'rgb(190, 40, 90)' },
 };
+
+const LINK_LOOK_DEFAULT: TextLinkLook = { fontWeight: '600', color: 'rgb(190, 40, 90)' };
 
 const PRESETS_TEXT_STYLE_KEYS = [
     'heading1',
@@ -1030,9 +1029,9 @@ const PRESETS_FIELDS = [
 
 const PRESETS_LEGEND_LINES = [
     `Keys, one per text style: ${PRESETS_TEXT_STYLE_KEYS.join(', ')}.`,
-    'Keys for the rest: body (plain paragraphs and list items), quote, link.',
+    'Keys for the rest: body (plain paragraphs and list items), quote.',
     `Fields: ${PRESETS_FIELDS.join(', ')}.`,
-    'A link takes no textDecoration, marginTop or marginBottom.',
+    'linkPlugin({ look: { text } }) takes the same fields but textDecoration, marginTop and marginBottom.',
     "A key or field left out keeps Fondue's look.",
     'A value that could end its CSS declaration early throws.',
 ];
@@ -1041,17 +1040,31 @@ const PRESETS_CODE_INDENT = 4;
 const PRESETS_LEGEND = 'tw-m-0 tw-pl-4 tw-body-small tw-text-secondary';
 const PRESETS_ERROR = 'tw-m-0 tw-rounded tw-bg-surface-dim tw-p-3 tw-body-small tw-text-primary';
 
-const presetsConfigurationCode = (presets: TextStylePresets): string =>
-    `textStylePlugin({ presets: ${JSON.stringify(presets, null, PRESETS_CODE_INDENT)} })`;
+type PresetsStoryArgs = {
+    presets: TextStylePresets;
+    linkLook: TextLinkLook;
+};
+
+const presetsConfigurationCode = ({ presets, linkLook }: PresetsStoryArgs): string =>
+    [
+        `textStylePlugin({ presets: ${JSON.stringify(presets, null, PRESETS_CODE_INDENT)} })`,
+        `linkPlugin({ look: { text: ${JSON.stringify(linkLook, null, PRESETS_CODE_INDENT)} } })`,
+    ].join('\n');
 
 type PresetsPluginsResult = { status: 'ready'; plugins: RtePlugin[] } | { status: 'invalid'; message: string };
 
-// textStylePlugin throws on a value that could end its CSS declaration early, so a bad Controls entry is reported here.
-const presetsPluginsFor = (presets: TextStylePresets): PresetsPluginsResult => {
+// Both plugins throw on a value that could end its CSS declaration early, so a bad Controls entry is reported here.
+const presetsPluginsFor = ({ presets, linkLook }: PresetsStoryArgs): PresetsPluginsResult => {
     try {
         return {
             status: 'ready',
-            plugins: [textStylePlugin({ presets }), bulletListPlugin(), checkListPlugin(), quotePlugin(), linkPlugin()],
+            plugins: [
+                textStylePlugin({ presets }),
+                bulletListPlugin(),
+                checkListPlugin(),
+                quotePlugin(),
+                linkPlugin({ look: { text: linkLook } }),
+            ],
         };
     } catch (error) {
         if (error instanceof Error) {
@@ -1062,13 +1075,14 @@ const presetsPluginsFor = (presets: TextStylePresets): PresetsPluginsResult => {
 };
 
 type PresetsSurfacesProps = {
-    presets: TextStylePresets;
+    looks: PresetsStoryArgs;
     doc: RteDocument;
     onChange: (doc: RteDocument) => void;
 };
 
-const PresetsSurfaces = ({ presets, doc, onChange }: PresetsSurfacesProps) => {
-    const result = useMemo(() => presetsPluginsFor(presets), [presets]);
+const PresetsSurfaces = ({ looks, doc, onChange }: PresetsSurfacesProps) => {
+    const { presets, linkLook } = looks;
+    const result = useMemo(() => presetsPluginsFor({ presets, linkLook }), [presets, linkLook]);
 
     switch (result.status) {
         case 'invalid':
@@ -1092,48 +1106,44 @@ const PresetsSurfaces = ({ presets, doc, onChange }: PresetsSurfacesProps) => {
 };
 
 type PresetsPlaygroundProps = {
-    presets: TextStylePresets;
+    looks: PresetsStoryArgs;
 };
 
-const PresetsPlayground = ({ presets }: PresetsPlaygroundProps) => {
+const PresetsPlayground = ({ looks }: PresetsPlaygroundProps) => {
     const [doc, setDoc] = useState<RteDocument>(HOST_STYLING_DOCUMENT);
 
     return (
         <div className="tw-grid tw-gap-4 tw-p-4 tw-font-primary">
             <pre className={JSON_PANEL}>
-                <code>{presetsConfigurationCode(presets)}</code>
+                <code>{presetsConfigurationCode(looks)}</code>
             </pre>
             <ul className={PRESETS_LEGEND}>
                 {PRESETS_LEGEND_LINES.map((line) => (
                     <li key={line}>{line}</li>
                 ))}
             </ul>
-            {/* The plugin list is read at mount, so a change to the presets remounts both surfaces. */}
-            <PresetsSurfaces key={JSON.stringify(presets)} presets={presets} doc={doc} onChange={setDoc} />
+            {/* The plugin list is read at mount, so a change to the looks remounts both surfaces. */}
+            <PresetsSurfaces key={JSON.stringify(looks)} looks={looks} doc={doc} onChange={setDoc} />
         </div>
     );
 };
 
-type PresetsStoryArgs = {
-    presets: TextStylePresets;
-};
-
 /**
- * The configuration of `textStylePlugin({ presets })` as plain values, printed above the editor and the renderer.
- * Edit `presets` in Controls and both surfaces redraw.
+ * The configuration of `textStylePlugin({ presets })` and `linkPlugin({ look: { text } })` as plain values, printed above the
+ * editor and the renderer. Edit `presets` or `linkLook` in Controls and both surfaces redraw.
  */
 export const Presets: StoryObj<PresetsStoryArgs> = {
-    args: { presets: PRESETS_DEFAULT },
-    argTypes: { presets: { control: 'object' } },
-    // The meta's editor props are not this story's args, so Controls lists only the presets.
-    parameters: { controls: { include: ['presets'] } },
-    render: ({ presets }) => <PresetsPlayground presets={presets} />,
+    args: { presets: PRESETS_DEFAULT, linkLook: LINK_LOOK_DEFAULT },
+    argTypes: { presets: { control: 'object' }, linkLook: { control: 'object' } },
+    // The meta's editor props are not this story's args, so Controls lists only the looks.
+    parameters: { controls: { include: ['presets', 'linkLook'] } },
+    render: ({ presets, linkLook }) => <PresetsPlayground looks={{ presets, linkLook }} />,
 };
 
 /**
  * The usual production setup: the values are `var(--f-theme-settings-…)`, so one editor configuration follows the section (light or dark) it sits in.
- * A host sets the look of each text style, body text, quotes and links with `textStylePlugin({ presets })`, usually from its guideline settings,
- * and hands the renderer `textStyleContent({ presets })` with the same values.
+ * A host sets the look of each text style, body text and quotes with `textStylePlugin({ presets })`, and of links with `linkPlugin({ look: { text } })`, usually from its guideline settings,
+ * and hands the renderer `textStyleContent({ presets })` and `linkContent({ look: { text } })` with the same values.
  * Anything the host leaves out, or a variable nobody defines, keeps Fondue's look.
  * The editor and the renderer draw the same.
  */

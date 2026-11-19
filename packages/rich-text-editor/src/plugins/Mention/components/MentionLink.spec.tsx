@@ -8,10 +8,12 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 import { type EditorControlApi } from '#/core';
 
+import { mentionDisplay } from '../helpers/display';
 import { mentionContent } from '../Mention';
 import { type MentionValue } from '../types';
 
 import { MentionEditor } from './MentionEditor';
+import { MentionLink } from './MentionLink';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -39,6 +41,29 @@ const mount = (node: ReactNode): HTMLElement => {
     });
     return container;
 };
+
+describe('a mention with nowhere to link to', () => {
+    it('is text with its name isolated, and no tab stop', () => {
+        const container = mount(
+            <MentionLink value={JANE} display={mentionDisplay(JANE, { trigger: '@' })} placesCaret={false} />,
+        );
+        const mention = container.querySelector('span[data-mention-id]');
+
+        expect(mention?.textContent).toBe('@jane');
+        expect(mention?.querySelector('bdi')?.textContent).toBe('@jane');
+        expect(mention?.hasAttribute('tabindex')).toBe(false);
+    });
+
+    it('stays out of the tab order in the reading view', () => {
+        const Component = mentionContent().inlines?.mention?.render?.component;
+        if (!Component) {
+            throw new Error('no reading view');
+        }
+        const container = mount(<Component value={JANE} />);
+
+        expect(container.querySelector('span[data-mention-id]')?.hasAttribute('tabindex')).toBe(false);
+    });
+});
 
 describe('a click on a linked mention', () => {
     const href = (mention: MentionValue): string => `/people/${mention.id}`;
@@ -86,5 +111,17 @@ describe('a click on a linked mention', () => {
         const container = mount(<Component value={JANE} />);
 
         expect(click(container).defaultPrevented).toBe(false);
+    });
+});
+
+describe('a mention stored with a field of the wrong type', () => {
+    it('is drawn without throwing, named by its kind and with no kind attribute', () => {
+        // Stored documents are not validated, so a field can be missing or the wrong type.
+        const wrongType = { id: 'x', username: 7, name: 'X', kind: 7 } as unknown as MentionValue;
+        const display = mentionDisplay(wrongType, { trigger: '@' });
+        const container = mount(<MentionLink value={wrongType} display={display} placesCaret={false} />);
+
+        expect(container.querySelector('[data-mention-id]')?.textContent).toBe('Unknown person');
+        expect(container.querySelector('[data-mention-kind]')).toBeNull();
     });
 });

@@ -2,7 +2,8 @@
 
 import { type CSSProperties } from 'react';
 
-import { type RteDocument, type TextStyleName } from '../../index';
+import { type RteDocument } from '../../index';
+import { type TextStyleName } from '../../plugins';
 
 // Shared by the fixtures and the tests. Apart from the fixture components, because a component
 // test cannot import plain values from the file holding the components it mounts.
@@ -84,6 +85,21 @@ export const BODY_QUOTE_LINK_DOCUMENT: RteDocument = {
         },
         { type: 'textStyle', style: 'custom1', children: [{ text: 'Custom 1' }] },
         { type: 'textStyle', style: 'heading1', children: [{ text: 'Heading 1' }] },
+    ],
+};
+
+export const BUTTON_LINK_TEXT = 'Buy now';
+export const PLAIN_LINK_TEXT = 'Read more';
+
+/** A link that looks like a button and a plain link beside it. */
+export const BUTTON_LINKS_DOCUMENT: RteDocument = {
+    version: 1,
+    blocks: [
+        {
+            type: 'paragraph',
+            children: [{ text: BUTTON_LINK_TEXT, link: { href: 'https://example.com', appearance: 'primary' } }],
+        },
+        { type: 'paragraph', children: [{ text: PLAIN_LINK_TEXT, link: { href: 'https://example.com' } }] },
     ],
 };
 

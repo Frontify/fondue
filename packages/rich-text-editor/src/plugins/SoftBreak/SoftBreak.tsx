@@ -26,5 +26,5 @@ export const softBreakPlugin = () =>
     definePlugin({
         id: 'soft-break',
         content: softBreakContent,
-        hotkeys: { 'Shift-Enter': (api) => api.insert('break') },
+        hotkeys: { 'Shift-Enter': { label: 'Line break', run: (api) => api.insert('break') } },
     });

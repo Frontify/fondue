@@ -27,7 +27,7 @@ describe('the mention inline', () => {
         const spec = mentionFor()?.toHtml(ALL);
         expect(spec?.tag).toBe('span');
         expect(spec?.attrs?.href).toBeUndefined();
-        expect(spec?.children).toBe('@all');
+        expect(spec?.children).toEqual([{ tag: 'bdi', children: '@all' }]);
         const noProfile = mentionPlugin({ items: [], href: (m) => (m.kind === 'all' ? undefined : `/u/${m.id}`) });
         expect(noProfile.content?.inlines?.mention?.toHtml(ALL).tag).toBe('span');
         expect(noProfile.content?.inlines?.mention?.toHtml(JANE).tag).toBe('a');
@@ -45,5 +45,22 @@ describe('the mention inline', () => {
 
     it('refuses a trigger that is not one character, in the content too', () => {
         expect(() => mentionContent({ trigger: '@@' })).toThrow(/exactly one character/);
+    });
+
+    it('isolates the label so a right-to-left name cannot reorder the text around it', () => {
+        expect(mentionFor('/u')?.toHtml(JANE).children).toEqual([{ tag: 'bdi', children: '@jane' }]);
+    });
+});
+
+describe('a stored mention that is missing a field', () => {
+    // Stored documents are not validated, so a field can be missing or the wrong type.
+    const wrongType = { id: 'x', username: 7, name: 'X', kind: 7 } as unknown as typeof JANE;
+
+    it('is exported without throwing, named by its kind and with no kind attribute', () => {
+        const mention = mentionFor();
+
+        expect(() => mention?.toHtml(wrongType)).not.toThrow();
+        expect(mention?.toHtml(wrongType).children).toEqual([{ tag: 'bdi', children: 'Unknown person' }]);
+        expect(mention?.toHtml(wrongType).attrs?.['data-mention-kind']).toBeUndefined();
     });
 });

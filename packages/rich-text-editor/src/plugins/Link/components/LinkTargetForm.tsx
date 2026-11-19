@@ -1,108 +1,256 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, Checkbox, Label, TextInput } from '@frontify/fondue-components';
+import { Button, Checkbox, Label, Select, TextInput } from '@frontify/fondue-components';
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
 import { toHref } from '../../shared/helpers/href';
-import { type LinkValue } from '../helpers/value';
+import { isCompositionKey } from '../../shared/helpers/keys';
+import { APPEARANCES, isButtonLink, isLinkAppearance, NO_APPEARANCES } from '../helpers/appearance';
+import { type LinkDestination, type LinkSearch } from '../helpers/destination';
+import { TEXT_LABEL } from '../helpers/strings';
+import { type LinkAppearance, type LinkValue } from '../helpers/value';
 
+import { DestinationField } from './DestinationField';
 import styles from './linkForm.module.scss';
 
+const UNREADABLE = 'Enter a web address (example.com), an email address, or a phone number (tel:…).';
+const MISSING_ADDRESS = 'Enter where the link goes.';
+const LINK_TO_LABEL = 'Link to';
+const STYLE_LABEL = 'Style';
+const NO_STYLE_LABEL = 'No style';
+// The Select's value for no appearance; it cannot clash with an appearance's name.
+const NO_STYLE_VALUE = 'none';
+const NEW_TAB_LABEL = 'Open in new tab';
+const REMOVE_LABEL = 'Remove link';
+const CANCEL_LABEL = 'Cancel';
+const SAVE_LABEL = 'Save';
+
 /**
- * Where a link points, and whether it opens a new tab. The text is edited in
- * place, not here. Input is validated on save, with the reason announced under
- * the field.
+ * A `create` form has a Text field and saves the text too. An `edit` form leaves the text to the editor.
  */
-export const LinkTargetForm = ({
-    initial,
-    onSave,
-    onCancel,
-    onRemove,
-}: {
+export type LinkTargetFormProps = {
     initial: LinkValue;
-    onSave: (value: LinkValue) => void;
+    /**
+     * Turns the "Link to" field into a search over the app's pages.
+     */
+    search?: LinkSearch;
+    /**
+     * The button looks a Style select offers, after "No style". Left out, the form has no Style select.
+     */
+    appearances?: readonly LinkAppearance[];
     onCancel: () => void;
     /** Offered for a link that exists: take it away, keeping its text. */
     onRemove?: () => void;
-}): ReactNode => {
+} & (
+    | {
+          kind: 'create';
+          /**
+           * The text the new link shows, to start with.
+           */
+          text: string;
+          /**
+           * The Text field's value.
+           */
+          onSave: (value: LinkValue, text: string) => void;
+      }
+    | { kind: 'edit'; onSave: (value: LinkValue) => void }
+);
+
+type FormMode = {
+    /** What the Text field of a new link starts with; null for an existing link, whose text is edited in place. */
+    textField: string | null;
+    onSave: (value: LinkValue, text: string) => void;
+};
+
+const resolveMode = (props: LinkTargetFormProps): FormMode => {
+    switch (props.kind) {
+        case 'create':
+            return { textField: props.text, onSave: props.onSave };
+        case 'edit': {
+            const { onSave } = props;
+            return { textField: null, onSave: (value) => onSave(value) };
+        }
+    }
+};
+
+/**
+ * Where a link points, and whether it opens a new tab. Input is validated on save, with the reason announced under
+ * the field.
+ */
+export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
+    const { initial, search, appearances = NO_APPEARANCES, onCancel, onRemove } = props;
+    const { textField, onSave } = resolveMode(props);
     // A stored link without a string target opens the form empty rather than uncontrolled.
     const [typed, setTyped] = useState(typeof initial.href === 'string' ? initial.href : '');
+    let initialText = '';
+    if (textField !== null) {
+        initialText = textField;
+    }
+    const [text, setText] = useState(initialText);
     const [openInNewTab, setOpenInNewTab] = useState(initial.openInNewTab === true);
+
+    // A stored value this form cannot name is not kept, as the renderer shows it plain.
+    let storedAppearance: LinkAppearance | null = null;
+    if (isButtonLink(initial)) {
+        storedAppearance = initial.appearance;
+    }
+
+    const [appearance, setAppearance] = useState(storedAppearance);
+    // A stored style the editor no longer offers stays selectable, so editing never drops it silently.
+    const styleOptions = [...appearances];
+    if (storedAppearance !== null && !appearances.includes(storedAppearance)) {
+        styleOptions.push(storedAppearance);
+    }
+
     // Set by a failed save, cleared when the field changes.
     const [error, setError] = useState<string | null>(null);
+    const textId = useId();
     const urlId = useId();
+    const styleId = useId();
+    const styleLabelId = useId();
     const newTabId = useId();
     const errorId = useId();
     const urlFieldRef = useRef<HTMLInputElement>(null);
+    const textFieldRef = useRef<HTMLInputElement>(null);
 
+    const startsOnText = textField === '';
     useEffect(() => {
-        urlFieldRef.current?.focus();
-    }, []);
+        // Selected text is already there to keep, so the address is what is left to type.
+        let first = urlFieldRef.current;
+        if (startsOnText) {
+            first = textFieldRef.current;
+        }
+        first?.focus();
+    }, [startsOnText]);
 
     const save = (): void => {
         const href = toHref(typed);
         if (href === null) {
-            setError(
-                typed.trim() === ''
-                    ? 'Enter where the link goes.'
-                    : 'Enter a web address (example.com), an email address, or a phone number (tel:…).',
-            );
+            if (typed.trim() === '') {
+                setError(MISSING_ADDRESS);
+            } else {
+                setError(UNREADABLE);
+            }
             urlFieldRef.current?.focus();
             return;
         }
-        onSave(openInNewTab ? { href, openInNewTab: true } : { href });
+        let value: LinkValue = { href };
+        if (openInNewTab) {
+            value = { href, openInNewTab: true };
+        }
+
+        if (appearance !== null) {
+            value = { ...value, appearance };
+        }
+
+        onSave(value, text);
     };
 
     const saveOnEnter = (event: KeyboardEvent<HTMLInputElement>): void => {
+        if (isCompositionKey(event)) {
+            return;
+        }
         if (event.key === 'Enter') {
             event.preventDefault();
             save();
         }
     };
 
+    const pick = (destination: LinkDestination): void => {
+        setTyped(destination.href);
+        setError(null);
+        // An empty Text field takes the page's name; text already there is the author's.
+        if (textField !== null && text === '') {
+            setText(destination.label);
+        }
+    };
+
+    const chooseStyle = (selected: string | null): void => {
+        if (isLinkAppearance(selected)) {
+            setAppearance(selected);
+        } else {
+            setAppearance(null);
+        }
+    };
+
     return (
         <div className={styles.fields}>
+            {textField === null ? null : (
+                <div className={styles.field}>
+                    <Label htmlFor={textId}>{TEXT_LABEL}</Label>
+                    <TextInput
+                        id={textId}
+                        ref={textFieldRef}
+                        type="text"
+                        value={text}
+                        onChange={(event) => setText(event.target.value)}
+                        onKeyDown={saveOnEnter}
+                    />
+                </div>
+            )}
             <div className={styles.field}>
-                <Label htmlFor={urlId}>Link to</Label>
-                <TextInput
+                <Label htmlFor={urlId}>{LINK_TO_LABEL}</Label>
+                <DestinationField
                     id={urlId}
-                    ref={urlFieldRef}
-                    type="url"
-                    placeholder="example.com"
+                    inputRef={urlFieldRef}
                     value={typed}
                     status={error === null ? 'neutral' : 'error'}
-                    aria-describedby={error === null ? undefined : errorId}
-                    aria-errormessage={errorId}
-                    onChange={(event) => {
-                        setTyped(event.target.value);
+                    errorId={errorId}
+                    search={search}
+                    onChange={(next) => {
+                        setTyped(next);
                         setError(null);
                     }}
-                    onKeyDown={saveOnEnter}
+                    onPick={pick}
+                    onEnter={saveOnEnter}
                 />
                 {/* Always in the page, so the message is announced as it appears. */}
                 <span id={errorId} role="alert" className={styles.error}>
                     {error}
                 </span>
             </div>
+            {styleOptions.length === 0 ? null : (
+                <div className={styles.field}>
+                    <Label id={styleLabelId} htmlFor={styleId}>
+                        {STYLE_LABEL}
+                    </Label>
+                    {/* A combobox is not a labelable element, so `htmlFor` alone does not name it. */}
+                    <Select
+                        id={styleId}
+                        aria-labelledby={styleLabelId}
+                        value={appearance ?? NO_STYLE_VALUE}
+                        onSelect={chooseStyle}
+                    >
+                        <Select.Item value={NO_STYLE_VALUE} label={NO_STYLE_LABEL}>
+                            {NO_STYLE_LABEL}
+                        </Select.Item>
+                        {styleOptions.map((option) => (
+                            <Select.Item key={option} value={option} label={APPEARANCES[option].label}>
+                                {APPEARANCES[option].label}
+                            </Select.Item>
+                        ))}
+                    </Select>
+                </div>
+            )}
             <div className={styles.newTab}>
                 <Checkbox
                     id={newTabId}
                     value={openInNewTab}
                     onChange={() => setOpenInNewTab((previous) => !previous)}
                 />
-                <Label htmlFor={newTabId}>Open in new tab</Label>
+                <Label htmlFor={newTabId}>{NEW_TAB_LABEL}</Label>
             </div>
             <div className={styles.formActions}>
                 {onRemove ? (
                     <Button size="small" emphasis="weak" onPress={onRemove}>
-                        Remove link
+                        {REMOVE_LABEL}
                     </Button>
                 ) : null}
                 <Button size="small" emphasis="weak" onPress={onCancel}>
-                    Cancel
+                    {CANCEL_LABEL}
                 </Button>
                 <Button size="small" onPress={save}>
-                    Save
+                    {SAVE_LABEL}
                 </Button>
             </div>
         </div>

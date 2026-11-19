@@ -163,7 +163,7 @@ const slotOf = (element: HTMLElement | null): string | null => {
     return slot.getAttribute(SLOT_ATTRIBUTE);
 };
 
-/** A click on the toolbar that misses a control would move focus, and the selection with it. */
+/** A press anywhere on the toolbar would move focus, and the selection with it, unless it lands on a control that takes text. */
 const keepSelection = (event: MouseEvent<HTMLElement>): void => {
     const { target } = event;
     // An icon's SVG is an Element, not an HTMLElement, and a press on it still counts.
@@ -174,13 +174,13 @@ const keepSelection = (event: MouseEvent<HTMLElement>): void => {
     if (!event.currentTarget.contains(target)) {
         return;
     }
-    if (target.closest(PRESSABLE) === null) {
+    if (target.closest(TEXT_CONTROL) === null) {
         event.preventDefault();
     }
 };
 
-/** What a press on the toolbar may land on without taking the selection: the controls handle it themselves. */
-const PRESSABLE = 'button, input, [role="combobox"]';
+/** What takes text: a press on one must reach it, or it could never be focused. */
+const TEXT_CONTROL = 'input, textarea, select, [role="combobox"], [contenteditable]:not([contenteditable="false"])';
 
 /** Every element in the toolbar a keyboard can land on. Disabled controls are passed over. */
 const CONTROLS = 'button, input, select, textarea, a[href], [role="combobox"]';

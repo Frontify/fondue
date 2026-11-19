@@ -2,7 +2,8 @@
 
 import { type EditProps } from '#/core';
 
-import { mentionValueOf, safeMentionHref } from '../helpers/mention';
+import { mentionDisplay } from '../helpers/display';
+import { mentionValueOf } from '../helpers/mention';
 import { type MentionHref, type MentionItems, type MentionValue } from '../types';
 
 import { MentionDraft } from './MentionDraft';
@@ -53,5 +54,5 @@ export const MentionEditor = ({
             />
         );
     }
-    return <MentionLink value={value} href={safeMentionHref(href, value)} trigger={trigger} placesCaret={editing} />;
+    return <MentionLink value={value} display={mentionDisplay(value, { href, trigger })} placesCaret={editing} />;
 };

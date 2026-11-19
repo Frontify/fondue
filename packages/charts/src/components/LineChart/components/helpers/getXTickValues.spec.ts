@@ -69,4 +69,9 @@ describe('getXTickValues', () => {
         const result = getXTickValues(SERIES, 50);
         expect(result).toEqual([new Date('2021-01-01')]);
     });
+
+    it('should keep the date of a single data point', () => {
+        const result = getXTickValues([{ name: 'foo', dataPoints: [{ timestamp: new Date('2026-05-01'), value: 1 }] }], 600);
+        expect(result).toEqual([new Date('2026-05-01')]);
+    });
 });

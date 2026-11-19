@@ -6,11 +6,12 @@ import {
     defineBlock,
     defineContent,
     definePlugin,
-    type HotkeyHandler,
+    LOOK_PROPERTIES,
     lookProperties,
     PARAGRAPH,
     type RteBlockCommand,
     type RteContent,
+    type RteHotkey,
     type RteIcon,
     type RtePlugin,
     type RteToolbarEntry,
@@ -26,6 +27,7 @@ import {
     findPreset,
     FIRST_PRESET,
     isTextStyle,
+    labelOf,
     markdownRuleFor,
     parseRuleFor,
     presetsFor,
@@ -38,18 +40,13 @@ import styles from './textStyle.module.scss';
 // official document union.
 export type { TextStyleBlock, TextStyleName } from './helpers/presets';
 
-/**
- * How links look. A link keeps its underline, and vertical margins do nothing on inline text, so neither is a field.
- */
-export type LinkLook = Omit<TextLook, 'textDecoration' | 'marginTop' | 'marginBottom'>;
-
-/** The look of each kind of text, by name: the 9 text styles, body text, block quotes and links. */
-export type TextStylePresets = Partial<Record<TextStyleName | 'body' | 'quote', TextLook>> & { link?: LinkLook };
+/** The look of each kind of text, by name: the 9 text styles, body text and block quotes. */
+export type TextStylePresets = Partial<Record<TextStyleName | 'body' | 'quote', TextLook>>;
 
 /** How the text-style content looks; what a renderer needs to draw a document the way the editor does. */
 export type TextStyleContentOptions = {
     /**
-     * How each kind of text looks, by name: a text style, `body` for plain paragraphs, `quote` and `link`.
+     * How each kind of text looks, by name: a text style, `body` for plain paragraphs and `quote`.
      * A kind left out, and a field left out of one, keeps Fondue's look.
      * A value that is empty or can end its CSS declaration early throws an error that names the preset and the
      * field, so a mistake in the host's configuration never passes silently.
@@ -102,7 +99,7 @@ const textStyleContentFor = (options: readonly TextStyleOption[], presets: TextS
     const contentProperties: Record<string, string> = {};
     for (const [name, look] of Object.entries(presets)) {
         if (look !== undefined) {
-            Object.assign(contentProperties, lookProperties(name, look));
+            Object.assign(contentProperties, lookProperties(name, look, LOOK_PROPERTIES));
         }
     }
 
@@ -163,14 +160,17 @@ export const textStylePlugin = ({
 
     // The shortcuts other editors use: `Mod-Alt-0` for a paragraph, `Mod-Alt-1`
     // to `Mod-Alt-4` for the headings — each only when this editor offers it.
-    const hotkeys: Record<string, HotkeyHandler> = {};
+    const hotkeys: Record<string, RteHotkey> = {};
     if (options.includes(PARAGRAPH)) {
-        hotkeys['Mod-Alt-0'] = (api) => api.blocks.setType(PARAGRAPH);
+        hotkeys['Mod-Alt-0'] = { label: labelOf(PARAGRAPH), run: (api) => api.blocks.setType(PARAGRAPH) };
     }
     for (const preset of offered) {
         const level = HEADING_LEVEL[preset.tag];
         if (level !== undefined) {
-            hotkeys[`Mod-Alt-${level}`] = (api) => api.blocks.setType('textStyle', { style: preset.name });
+            hotkeys[`Mod-Alt-${level}`] = {
+                label: preset.label,
+                run: (api) => api.blocks.setType('textStyle', { style: preset.name }),
+            };
         }
     }
 
