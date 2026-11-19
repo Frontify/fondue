@@ -1,0 +1,19 @@
+packages/rich-text-editor/src/core/look.ts
+  s_9209af244cd592::t_1ee3208a2a9413 60,68,70-71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bb0172170a7d6b0aba7527b9e2f7af8caf94a6cc",
+  "prompts": {},
+  "sessions": {
+    "s_9209af244cd592": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2937942f-4fd4-4ace-942d-ce576d430ce1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

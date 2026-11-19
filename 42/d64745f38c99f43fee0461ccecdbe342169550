@@ -1,0 +1,39 @@
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.spec.tsx
+  s_53de767222940a::t_bf5f6342dfb51c 101
+  s_53de767222940a::t_d4d726b9808898 122
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.spec.tsx
+  s_53de767222940a::t_6834288388f7d0 163
+packages/rich-text-editor/src/plugins/shared/helpers/keys.ts
+  s_53de767222940a::t_0cff158008a963 1-7
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.tsx
+  s_53de767222940a::t_7ed691aed7cf8f 7,38-39,78,82,117-131
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_53de767222940a::t_0cff158008a963 25-29,139,150
+packages/rich-text-editor/src/plugins/Link/components/LinkToolbarButton.tsx
+  s_53de767222940a::t_0cff158008a963 80
+packages/rich-text-editor/src/plugins/Link/index.ts
+  s_53de767222940a::t_0cff158008a963 4
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.tsx
+  s_53de767222940a::t_9c713f4af5b4ff 102,119-122,131-140,152,184-188
+  s_53de767222940a::t_7ed691aed7cf8f 6,54-55,99
+packages/rich-text-editor/src/index.ts
+  s_53de767222940a::t_0cff158008a963 127-133
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_53de767222940a::t_0cff158008a963 17,108,124
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "42d64745f38c99f43fee0461ccecdbe342169550",
+  "prompts": {},
+  "sessions": {
+    "s_53de767222940a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f9b7337-8455-4b7f-ac95-dde194f54be3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

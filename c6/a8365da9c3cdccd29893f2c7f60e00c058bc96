@@ -1,0 +1,43 @@
+packages/rich-text-editor/src/core/plugin.ts
+  s_53de767222940a::t_54c4cdc00cc84e 284-290,292,294-295
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_53de767222940a::t_913f1560a3eaaf 205
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteRules.ts
+  s_53de767222940a::t_9efe0190d15782 73-75
+  s_53de767222940a::t_cf15ee4f9d2af3 67
+packages/rich-text-editor/src/plugins/Link/Link.spec.ts
+  s_53de767222940a::t_252fcad9bbfd06 30-39
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_53de767222940a::t_88915bb3356c50 54,58,63,67-71
+  s_53de767222940a::t_0d6a7e4f40944e 78
+  s_53de767222940a::t_a2b2ad7d933424 79
+packages/rich-text-editor/src/core/index.ts
+  s_53de767222940a::t_04cf2beb0e5d5a 32
+packages/rich-text-editor/src/index.ts
+  s_53de767222940a::t_0ace0bc6f99d3f 14
+  s_53de767222940a::t_33807ebf79db02 72-73
+  s_53de767222940a::t_a368b9d21e98c8 174
+  s_53de767222940a::t_a242a75ddcd983 156
+packages/rich-text-editor/src/editor/linkFlows.spec.tsx
+  s_53de767222940a::t_97e8f25d76c144 319,322,324-326
+  s_53de767222940a::t_5c40fdea1b81eb 9
+  s_53de767222940a::t_3c7929b48f98bf 274-288
+  s_53de767222940a::t_0655f63a5b3004 298-314,317-318,320-321,323,327-328
+  s_53de767222940a::t_8385bef7637e13 315-316
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c6a8365da9c3cdccd29893f2c7f60e00c058bc96",
+  "prompts": {},
+  "sessions": {
+    "s_53de767222940a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f9b7337-8455-4b7f-ac95-dde194f54be3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
