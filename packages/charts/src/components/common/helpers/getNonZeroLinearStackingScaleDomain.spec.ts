@@ -78,4 +78,16 @@ describe('getNonZeroLinearStackingScaleDomain', () => {
         const result = getNonZeroLinearStackingScaleDomain(MOCK_SERIES_5, 10000);
         expect(result).toEqual([0, 30000]);
     });
+
+    it('should keep five whole steps when there is no data', () => {
+        expect(getNonZeroLinearStackingScaleDomain([{ name: 'foo', dataPoints: [] }])).toEqual([0, 5]);
+    });
+
+    it('should keep five whole steps when every value is zero or the stack stays below five', () => {
+        const zeros = [{ name: 'foo', dataPoints: [{ timestamp: new Date('2026-05-01'), value: 0 }] }];
+        const small = [{ name: 'foo', dataPoints: [{ timestamp: new Date('2026-05-01'), value: 3 }] }];
+
+        expect(getNonZeroLinearStackingScaleDomain(zeros)).toEqual([0, 5]);
+        expect(getNonZeroLinearStackingScaleDomain(small)).toEqual([0, 5]);
+    });
 });

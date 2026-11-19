@@ -110,3 +110,38 @@ test('should render with padding large vertical', async ({ mount }) => {
     const component = wrapper.getByTestId('divider-root');
     await expect(component).toHaveAttribute('data-padding', 'large');
 });
+
+test('should expose a vertical divider as vertical to assistive technology', async ({ mount }) => {
+    const wrapper = await mount(<Divider direction="vertical" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    await expect(component).toHaveAttribute('role', 'separator');
+    await expect(component).toHaveAttribute('aria-orientation', 'vertical');
+});
+
+test('should not set aria-orientation on a horizontal divider', async ({ mount }) => {
+    const wrapper = await mount(<Divider data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    await expect(component).toHaveAttribute('role', 'separator');
+    await expect(component).not.toHaveAttribute('aria-orientation');
+});
+
+test('should render a vertical divider 1px wide without a CSS reset', async ({ mount }) => {
+    const wrapper = await mount(<Divider direction="vertical" padding="none" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    const widths = await component.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return [style.borderTopWidth, style.borderRightWidth, style.borderBottomWidth, style.borderLeftWidth];
+    });
+    const box = await component.boundingBox();
+
+    expect(widths.filter((width) => width !== '0px')).toHaveLength(1);
+    expect(box?.width).toBe(1);
+});
+
+test('should render a horizontal divider 1px high without a CSS reset', async ({ mount }) => {
+    const wrapper = await mount(<Divider padding="none" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    const box = await component.boundingBox();
+
+    expect(box?.height).toBe(1);
+});

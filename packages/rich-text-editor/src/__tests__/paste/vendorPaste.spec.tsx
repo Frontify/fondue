@@ -12,7 +12,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 // Driven through the package's public API, the way a host does: what a paste
 // from another application leaves in the document the host is told about.
-import { defaultPlugins, RichTextEditor, type RteDocument } from '../../index';
+import { RichTextEditor, type RteDocument } from '../../index';
+import { defaultPlugins } from '../../plugins';
 
 declare global {
     // Only a `var` declares a property on `globalThis`, which is where React reads this flag.

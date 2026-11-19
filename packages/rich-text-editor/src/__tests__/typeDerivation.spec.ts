@@ -6,16 +6,8 @@
  */
 // `RteText` is the document format's own building block, not a root export.
 import { type RteText } from '../documentFormat';
-import {
-    defineBlock,
-    linkPlugin,
-    type RteBlock,
-    type RteDocument,
-    type RteDocumentWith,
-    type RtePlugin,
-    textStyleContent,
-    textStylePlugin,
-} from '../index';
+import { defineBlock, type RteBlock, type RteDocument, type RteDocumentWith, type RtePlugin } from '../index';
+import { linkPlugin, textStyleContent, textStylePlugin } from '../plugins';
 
 // The shipped case: one annotation, everything checked
 const doc: RteDocument = {

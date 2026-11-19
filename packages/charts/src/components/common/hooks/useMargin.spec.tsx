@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { type TextProps } from '@visx/text';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { truncateTextLabel } from '@components/BarChart/helpers';
 import { useMargin } from '@components/common/hooks/useMargin';
+import { getSVGTextDimensions } from '@components/LineChart/helpers';
 
 const TICK_LENGTH = 4;
 const VALUE_FORMATTER = (value: number | string) => `${value}°C`;
@@ -152,6 +153,24 @@ describe('useMargin', () => {
                 TICK_LENGTH +
                 Math.abs(TICK_LABEL_STYLE.dx as number),
         });
+    });
+
+    it('measures the labels again once the fonts have loaded', () => {
+        const fonts = new EventTarget();
+        Object.defineProperty(document, 'fonts', { value: fonts, configurable: true });
+        const { result } = renderHook(() =>
+            useMargin({ ticks: NUMERIC_TICKS, tickLabelStyle: TICK_LABEL_STYLE, tickLength: TICK_LENGTH }),
+        );
+
+        vi.mocked(getSVGTextDimensions).mockReturnValue({ width: 40, height: 12 });
+        act(() => {
+            fonts.dispatchEvent(new Event('loadingdone'));
+        });
+
+        expect(result.current.left).toBe(40 + TICK_LENGTH + Math.abs(TICK_LABEL_STYLE.dx as number));
+
+        vi.mocked(getSVGTextDimensions).mockRestore();
+        Reflect.deleteProperty(document, 'fonts');
     });
 
     it('long tick labels are truncated and truncation reflected in calculated margin', () => {
