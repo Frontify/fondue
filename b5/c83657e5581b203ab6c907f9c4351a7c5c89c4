@@ -1,0 +1,19 @@
+packages/rich-text-editor/src/__tests__/paste/fixtures/word-windows-paragraphs.document.json
+  s_26e734472ae971::t_841d9b9ffca99a 42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b5c83657e5581b203ab6c907f9c4351a7c5c89c4",
+  "prompts": {},
+  "sessions": {
+    "s_26e734472ae971": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e290a8b1-bf74-4678-92c9-eca5854b6849",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

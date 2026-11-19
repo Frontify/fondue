@@ -1,0 +1,55 @@
+packages/rich-text-editor/src/plugins/Quote/quote.module.scss
+  s_e5e5c02af574bd::t_ec22de856b64ee 3-4,6-7
+packages/rich-text-editor/src/plugins/TextStyle/textStyle.module.scss
+  s_e5e5c02af574bd::t_a6d8a87bfb62bb 3-4
+  s_e5e5c02af574bd::t_4135171257d5ca 57
+  s_e5e5c02af574bd::t_e3f00d84ec2f72 80
+packages/rich-text-editor/src/editor/components/FloatingToolbar.tsx
+  s_e5e5c02af574bd::t_48cb0eb47b119d 34
+  s_e5e5c02af574bd::t_823b4d00e8e1ed 11-19
+packages/rich-text-editor/src/__tests__/browser/composition.ct.tsx
+  s_e5e5c02af574bd::t_04682abf7c3c19 12-14,31,49-69,74-84,98-103,105-121,123-131
+  s_e5e5c02af574bd::t_7418f33022d9d6 144-147
+packages/rich-text-editor/playwright.config.ts
+  s_e5e5c02af574bd::t_c4753de1eb79c3 6-8
+  s_e5e5c02af574bd::t_6c3a2baa4b4c7c 30-31
+packages/rich-text-editor/src/plugins/shared/_mutedText.scss
+  s_e5e5c02af574bd::t_9cdebdca59918e 1-7
+packages/rich-text-editor/src/__tests__/browser/editorWithMentions.tsx
+  s_e5e5c02af574bd::t_1542a877baa787 23-26,28,33
+packages/rich-text-editor/src/plugins/Emoji/components/EmojiDraft.tsx
+  s_e5e5c02af574bd::t_8343d6936feff4 184
+  s_e5e5c02af574bd::t_39fa1c141adf31 199
+  s_e5e5c02af574bd::t_e8d81bccb7e99d 23-25
+packages/rich-text-editor/src/__tests__/browser/editor.ct.tsx
+  s_e5e5c02af574bd::t_2dd432077742df 168-177,179-181,183,185-188,190-192,194,197
+  s_e5e5c02af574bd::t_b747e7cf0c97ff 255-256,261
+  s_e5e5c02af574bd::t_013cc09c355bfe 352-356
+  s_e5e5c02af574bd::t_bf7a3c3c2ebaab 373
+  s_e5e5c02af574bd::t_daf7de6987343c 363,365-366
+packages/rich-text-editor/src/editor/labels.ts
+  s_e5e5c02af574bd::t_994f44b59efef1 11
+  s_e5e5c02af574bd::t_5bb8d873f2a334 25
+.github/workflows/rich-text-editor-nightly.yaml
+  s_e5e5c02af574bd::t_1a1a534dee3d0c 25
+.github/workflows/rich-text-editor-pull-requests.yaml
+  s_e5e5c02af574bd::t_1a1a534dee3d0c 96
+packages/rich-text-editor/package.json
+  s_e5e5c02af574bd::t_ee5eb09fa77a8d 41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ad82eac3c19da7da8c98bd0de058905953c24395",
+  "prompts": {},
+  "sessions": {
+    "s_e5e5c02af574bd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "305fce7a-de69-4ef6-85a7-57269eb92863",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
