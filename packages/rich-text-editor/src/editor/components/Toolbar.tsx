@@ -82,8 +82,7 @@ type ToolbarProps = {
  * The top row is one line: the plugins' controls that do not fit move behind a
  * More button at its end.
  *
- * A control that draws nothing takes no place in the row and gets no divider;
- * it keeps rendering out of sight, and returns to its group once it draws.
+ * A control that draws nothing is hidden in place and gets no divider.
  */
 export const Toolbar = ({
     items: allItems,
@@ -106,10 +105,7 @@ export const Toolbar = ({
     // The built-in Text alone is nothing to turn into.
     const showTurnInto = turnInto.length > 1;
     const emptySlots = useEmptySlots({ toolbarRef, panel });
-    // A control that draws nothing is parked out of the row, so it brings no group and no divider.
-    const drawn = items.filter((item) => !emptySlots.has(item.key));
-    const parked = items.filter((item) => emptySlots.has(item.key));
-    const groups = groupsOf(drawn);
+    const groups = groupsOf(items);
     // Before the roving focus, whose layout effect then honours a refocus the refit asked for.
     const fit = useToolbarFit({ toolbarRef, panel, groups, fits: !floating, focusRequestRef });
     const roving = useToolbarRoving({ toolbarRef, focusRequestRef, onEscape: () => api.focus() });
@@ -117,9 +113,19 @@ export const Toolbar = ({
 
     const drawGroups = (shown: readonly SlotGroup<ToolbarEntry>[]): ReactNode =>
         shown.map((group) => (
-            <div key={group.key} className={styles.group} {...{ [GROUP_ATTRIBUTE]: '' }}>
+            <div
+                key={group.key}
+                className={styles.group}
+                hidden={!groupDraws(group, emptySlots)}
+                {...{ [GROUP_ATTRIBUTE]: '' }}
+            >
                 {group.items.map((item) => (
-                    <ToolbarSlot key={item.key} item={item} itemProps={toolbarItemProps(item, api, selection)} />
+                    <ToolbarSlot
+                        key={item.key}
+                        item={item}
+                        itemProps={toolbarItemProps(item, api, selection)}
+                        hidden={emptySlots.has(item.key)}
+                    />
                 ))}
             </div>
         ));
@@ -141,31 +147,25 @@ export const Toolbar = ({
         sections.push({
             key: 'turn-into',
             node: <TurnInto api={api} commands={turnInto} selection={selection} labels={labels} />,
+            draws: true,
         });
     }
     for (const group of row) {
-        sections.push({ key: group.key, node: drawGroups([group]) });
+        sections.push({ key: group.key, node: drawGroups([group]), draws: groupDraws(group, emptySlots) });
     }
     if (moreNode !== null) {
-        sections.push({ key: 'more', node: moreNode });
+        sections.push({ key: 'more', node: moreNode, draws: true });
     }
     const rowChildren: ReactNode[] = [];
-    for (const [index, section] of sections.entries()) {
-        if (index > 0) {
+    let drawingSectionBefore = false;
+    for (const section of sections) {
+        if (section.draws && drawingSectionBefore) {
             rowChildren.push(<ToolbarSeparator key={`separator-${section.key}`} />);
         }
         rowChildren.push(<Fragment key={section.key}>{section.node}</Fragment>);
-    }
-
-    if (parked.length > 0) {
-        // Still rendered, so the toolbar sees when one starts drawing and moves it back to its group.
-        rowChildren.push(
-            <div key="parked" hidden>
-                {parked.map((item) => (
-                    <ToolbarSlot key={item.key} item={item} itemProps={toolbarItemProps(item, api, selection)} />
-                ))}
-            </div>,
-        );
+        if (section.draws) {
+            drawingSectionBefore = true;
+        }
     }
 
     return (
@@ -189,7 +189,18 @@ export const Toolbar = ({
     );
 };
 
-type ToolbarSection = { key: string; node: ReactNode };
+/** `draws` is false for a section that shows nothing: it stays in the row, hidden, and gets no divider. */
+type ToolbarSection = { key: string; node: ReactNode; draws: boolean };
+
+/** Whether any control of the group drew something. */
+const groupDraws = (group: SlotGroup<ToolbarEntry>, emptySlots: ReadonlySet<string>): boolean => {
+    for (const item of group.items) {
+        if (!emptySlots.has(item.key)) {
+            return true;
+        }
+    }
+    return false;
+};
 
 /** The line between two sections of the row; a toolbar separator for assistive technology. */
 const ToolbarSeparator = (): ReactNode => (
@@ -231,11 +242,13 @@ const layoutOf = (groups: SlotGroup<ToolbarEntry>[], fit: ToolbarFit): ToolbarLa
 type ToolbarSlotProps = {
     item: ToolbarEntry;
     itemProps: ToolbarItemProps;
+    /** Set when the control drew nothing: the slot stays mounted and takes no place. */
+    hidden: boolean;
 };
 
 /** An element per slot, so the row can measure what each plugin drew. */
-const ToolbarSlot = ({ item, itemProps }: ToolbarSlotProps): ReactNode => (
-    <div className={styles.slot} {...{ [SLOT_ATTRIBUTE]: item.key }}>
+const ToolbarSlot = ({ item, itemProps, hidden }: ToolbarSlotProps): ReactNode => (
+    <div className={styles.slot} hidden={hidden} {...{ [SLOT_ATTRIBUTE]: item.key }}>
         <ToolbarItemSlot item={item} itemProps={itemProps} />
     </div>
 );

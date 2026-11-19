@@ -85,6 +85,12 @@ $separator-size: 2rem;
     align-items: center;
 }
 
+/** A control that draws nothing, or a group of them, takes no place; its slot stays mounted to see when it draws again. */
+.group[hidden],
+.slot[hidden] {
+    display: none;
+}
+
 /** More, and the zero-size spot below it its controls are parked in; a flyout they open hangs from here. */
 .moreAnchor {
     position: relative;

@@ -16,7 +16,7 @@ import {
 } from '../../plugins';
 
 import { TABLE_DOCUMENT } from './tableCellValues';
-import { PANEL_LABEL } from './toolbarDividersValues';
+import { PANEL_LABEL, TEXT_ONLY_DOCUMENT } from './toolbarDividersValues';
 
 // A group drawn after the table's own, so the table's group sits between two others.
 const panelPlugin = () =>
@@ -44,14 +44,31 @@ type ToolbarDividersHostProps = {
     placement: NonNullable<RichTextEditorProps['toolbarPlacement']>;
     /** Adds a group after the table's, which draws something wherever the table's does not. */
     withPanel?: boolean;
+    /** Shows a document with no table instead, as a host pushing a new value would. */
+    withoutTable?: boolean;
+    /** The width of the editor in pixels, so the toolbar can be made to overflow. */
+    width?: number;
 };
 
 /** The editor with the formatting plugins and the table, over a paragraph and a table. */
-export const ToolbarDividersHost = ({ placement, withPanel = false }: ToolbarDividersHostProps): ReactNode => {
+export const ToolbarDividersHost = ({
+    placement,
+    withPanel = false,
+    withoutTable = false,
+    width,
+}: ToolbarDividersHostProps): ReactNode => {
     let plugins = PLUGINS;
     if (withPanel) {
         plugins = PLUGINS_WITH_PANEL;
     }
+    let value = TABLE_DOCUMENT;
+    if (withoutTable) {
+        value = TEXT_ONLY_DOCUMENT;
+    }
 
-    return <RichTextEditor value={TABLE_DOCUMENT} plugins={plugins} toolbarPlacement={placement} />;
+    return (
+        <div style={{ width }}>
+            <RichTextEditor value={value} plugins={plugins} toolbarPlacement={placement} />
+        </div>
+    );
 };
