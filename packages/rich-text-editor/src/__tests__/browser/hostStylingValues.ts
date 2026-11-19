@@ -14,7 +14,7 @@ export const SECTION_A_H1_COLOR = 'rgb(255, 0, 0)';
 export const SECTION_B_H1_COLOR = 'rgb(0, 0, 255)';
 
 /** One block per text style, in the dropdown's order. */
-export const ALL_PRESETS_DOCUMENT: RteDocument = {
+export const ALL_LOOKS_DOCUMENT: RteDocument = {
     version: 1,
     blocks: [
         { type: 'textStyle', style: 'heading1', children: [{ text: 'Heading 1' }] },
@@ -47,7 +47,7 @@ const hostVariable = (name: string, value: string): CSSProperties =>
 export const SECTION_A = hostVariable(H1_COLOR_VARIABLE, SECTION_A_H1_COLOR);
 export const SECTION_B = hostVariable(H1_COLOR_VARIABLE, SECTION_B_H1_COLOR);
 
-/** Body text, a block quote and links, with a preset and a heading beside them that the body look must not reach. */
+/** Body text, a block quote and links, with a text style and a heading beside them that the body look must not reach. */
 export const BODY_QUOTE_LINK_DOCUMENT: RteDocument = {
     version: 1,
     blocks: [
@@ -125,3 +125,124 @@ export const HOST_RESET_CSS = 'p, blockquote { margin: 0; }';
 
 /** A host rule scoped to a class, as a prose stylesheet writes it. */
 export const HOST_SCOPED_CSS = `.${HOST_PAGE_CLASS} p { margin-bottom: 50px; }`;
+
+/** A bulleted list five levels deep and a numbered list four deep, past the three levels whose looks repeat. */
+export const NESTED_LISTS_DOCUMENT: RteDocument = {
+    version: 1,
+    blocks: [
+        {
+            type: 'bulletList',
+            children: [
+                {
+                    type: 'listItem',
+                    children: [
+                        { type: 'paragraph', children: [{ text: 'Bullet 1' }] },
+                        {
+                            type: 'bulletList',
+                            children: [
+                                {
+                                    type: 'listItem',
+                                    children: [
+                                        { type: 'paragraph', children: [{ text: 'Bullet 2' }] },
+                                        {
+                                            type: 'bulletList',
+                                            children: [
+                                                {
+                                                    type: 'listItem',
+                                                    children: [
+                                                        { type: 'paragraph', children: [{ text: 'Bullet 3' }] },
+                                                        {
+                                                            type: 'bulletList',
+                                                            children: [
+                                                                {
+                                                                    type: 'listItem',
+                                                                    children: [
+                                                                        {
+                                                                            type: 'paragraph',
+                                                                            children: [{ text: 'Bullet 4' }],
+                                                                        },
+                                                                        {
+                                                                            type: 'bulletList',
+                                                                            children: [
+                                                                                {
+                                                                                    type: 'listItem',
+                                                                                    children: [
+                                                                                        {
+                                                                                            type: 'paragraph',
+                                                                                            children: [
+                                                                                                { text: 'Bullet 5' },
+                                                                                            ],
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                            ],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            type: 'numberedList',
+            children: [
+                {
+                    type: 'listItem',
+                    children: [
+                        { type: 'paragraph', children: [{ text: 'Number 1' }] },
+                        {
+                            type: 'numberedList',
+                            children: [
+                                {
+                                    type: 'listItem',
+                                    children: [
+                                        { type: 'paragraph', children: [{ text: 'Number 2' }] },
+                                        {
+                                            type: 'numberedList',
+                                            children: [
+                                                {
+                                                    type: 'listItem',
+                                                    children: [
+                                                        { type: 'paragraph', children: [{ text: 'Number 3' }] },
+                                                        {
+                                                            type: 'numberedList',
+                                                            children: [
+                                                                {
+                                                                    type: 'listItem',
+                                                                    children: [
+                                                                        {
+                                                                            type: 'paragraph',
+                                                                            children: [{ text: 'Number 4' }],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+};
+
+/** The item text at each depth of `NESTED_LISTS_DOCUMENT`, outermost first. */
+export const BULLET_ITEMS = ['Bullet 1', 'Bullet 2', 'Bullet 3', 'Bullet 4', 'Bullet 5'] as const;
+export const NUMBERED_ITEMS = ['Number 1', 'Number 2', 'Number 3', 'Number 4'] as const;

@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../../styles/stack.module.scss';
+
 .checkList {
     margin: 0;
     padding-left: 0;
@@ -43,6 +45,9 @@
 }
 
 .label {
+    // The editor wraps an item's blocks in elements of its own, so they are selected by tag.
+    @include stack.stack(0, ':is(p, ul, ol)');
+
     flex: 1;
     min-width: 0;
     // A div of the plugin's own around editable text: it keeps the editor's

@@ -55,12 +55,21 @@ export {
     type TextLink,
     type TextLinkLook,
 } from './Link';
+export {
+    type BulletLevelLook,
+    type BulletListLook,
+    type BulletListPluginOptions,
+    type ListLook,
+    type NumberedLevelLook,
+    type NumberedListLook,
+    type NumberedListPluginOptions,
+} from './List';
 export { type MentionContentOptions, type MentionItem, type MentionPluginOptions, type MentionValue } from './Mention';
 export { type TextLook } from '#/core';
 export {
     type TextStyleContentOptions,
     type TextStyleName,
     type TextStylePluginOptions,
-    type TextStylePresets,
+    type TextStyleLook,
 } from './TextStyle';
 export { type TypographyGroup, type TypographyPluginOptions } from './Typography';

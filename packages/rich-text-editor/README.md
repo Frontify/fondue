@@ -21,11 +21,11 @@ The renderer needs no editing code, so it reads only each feature's content, not
 With no `plugins` it uses `defaultContent`. Pass your own content, or your plugins, when the
 document holds more than the defaults.
 
-A host that sets its own text looks passes the same `presets` to both sides:
+A host that sets its own text looks passes the same `look` to both sides:
 
 ```tsx
-<RichTextEditor plugins={[textStylePlugin({ presets }), boldPlugin]} value={doc} onChange={setDoc} />
-<RichTextRenderer plugins={[textStyleContent({ presets }), boldContent]} value={doc} />
+<RichTextEditor plugins={[textStylePlugin({ look }), boldPlugin]} value={doc} onChange={setDoc} />
+<RichTextRenderer plugins={[textStyleContent({ look }), boldContent]} value={doc} />
 ```
 
 ## Writing a plugin
@@ -70,10 +70,11 @@ src/
 ├── renderer/        Readonly view and HTML export, both from each feature's content (`toHtml`).
 ├── editor/          The editing shell.
 │   ├── RichTextEditor.tsx   The component a host mounts.
+│   ├── parseHtml.ts         Stored HTML to a document; with useEditorHandle, the only file that loads the engine.
 │   ├── port.ts              The seam between the shell and an engine.
 │   ├── components/          Toolbar, floating bar, Turn into, `/` menu.
 │   ├── helpers/             Pure logic the components share.
-│   ├── hooks/               State and DOM wiring; useEditorHandle is the only file that loads the engine.
+│   ├── hooks/               State and DOM wiring; useEditorHandle loads the engine for the live editor.
 │   └── engines/prosemirror/ The only code that knows ProseMirror.
 ├── stories/         Storybook.
 ├── __tests__/       Package-level specs: rendering, HTML parity, SSR, type derivation.

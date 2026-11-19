@@ -29,14 +29,14 @@ const OTHER_PLUGINS: RtePlugin[] = [
 
 /** The renderer and the editor of a surface without headings, which still carries the body look */
 export const HostNoHeadingsPair = ({ body }: HostNoHeadingsPairProps) => {
-    const plugins = [textStylePlugin({ styles: [], presets: { body } }), ...OTHER_PLUGINS];
+    const plugins = [textStylePlugin({ styles: [], look: { body } }), ...OTHER_PLUGINS];
 
     return (
         <>
-            <div data-testid="renderer">
+            <div data-test-id="renderer">
                 <RichTextRenderer value={BODY_QUOTE_LINK_DOCUMENT} plugins={plugins} />
             </div>
-            <div data-testid="editor">
+            <div data-test-id="editor">
                 <RichTextEditor value={BODY_QUOTE_LINK_DOCUMENT} plugins={plugins} />
             </div>
         </>

@@ -9,6 +9,7 @@ import { OWN_MARGIN_VARIABLES } from '../core/documentContract';
 import { LOOK_PROPERTIES, lookVariableName } from '../core/look';
 import { BUTTON_HOVER_LOOK_FIELDS, BUTTON_LOOK_FIELDS } from '../plugins/Link/helpers/appearance';
 import { ALL_LINK_APPEARANCES, type LinkAppearance } from '../plugins/Link/helpers/value';
+import { bulletListPlugin, numberedListPlugin } from '../plugins/List/List';
 import { ALL_TEXT_STYLES, findPreset } from '../plugins/TextStyle/helpers/presets';
 
 // The look is spelled twice: in core (what a host sets) and in the stylesheets (what they read).
@@ -30,7 +31,6 @@ type LookDeclaration = { property: string; variable: string };
 const lookDeclarationsIn = (css: string): LookDeclaration[] =>
     [...css.matchAll(LOOK_DECLARATION)].map(([, property = '', variable = '']) => ({ property, variable }));
 
-/** The margins a look hands to the document as custom properties, which alone writes margins. */
 const HANDED_OVER_PROPERTIES: Record<string, string> = {
     'margin-top': OWN_MARGIN_VARIABLES.top,
     'margin-bottom': OWN_MARGIN_VARIABLES.bottom,
@@ -148,4 +148,46 @@ describe('the link stylesheet', () => {
             );
         });
     }
+});
+
+const LIST_STYLESHEET = fileURLToPath(new URL('../plugins/List/list.module.scss', import.meta.url));
+
+/** A list level's variable, such as `--rte-bullet-list2-color`. */
+const LIST_LEVEL_VARIABLE = /--rte-(?:bullet|numbered)-list\d+-[a-z]+/g;
+
+const SAMPLE_VALUE = 'sample';
+const BULLET_LOOK = {
+    marker: SAMPLE_VALUE,
+    color: SAMPLE_VALUE,
+    size: SAMPLE_VALUE,
+    indent: SAMPLE_VALUE,
+};
+const NUMBERED_LOOK = {
+    marker: SAMPLE_VALUE,
+    color: SAMPLE_VALUE,
+    indent: SAMPLE_VALUE,
+};
+
+describe('the list stylesheet', () => {
+    const css = compile(LIST_STYLESHEET).css;
+    const written = Object.keys({
+        ...bulletListPlugin({
+            look: [BULLET_LOOK, BULLET_LOOK, BULLET_LOOK],
+        }).content?.contentProperties,
+        ...numberedListPlugin({
+            look: [NUMBERED_LOOK, NUMBERED_LOOK, NUMBERED_LOOK],
+        }).content?.contentProperties,
+    });
+
+    it('falls back to the body look for the marker colour and size', () => {
+        for (const property of [LOOK_PROPERTIES.color, LOOK_PROPERTIES.fontSize]) {
+            expect(css).toContain(`var(${lookVariableName('body', property)},`);
+        }
+    });
+
+    it('reads every variable the list plugins write for a level, and no other', () => {
+        const read = new Set(css.match(LIST_LEVEL_VARIABLE));
+
+        expect(read).toEqual(new Set(written));
+    });
 });
