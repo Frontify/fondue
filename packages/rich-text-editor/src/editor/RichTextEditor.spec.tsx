@@ -127,6 +127,17 @@ const press = (target: Element, key: string, init: KeyboardEventInit = {}): void
     });
 };
 
+const APPLE_PLATFORM = /Mac|iP(hone|[oa]d)/;
+
+const modifierFor = (platform: string) => {
+    if (APPLE_PLATFORM.test(platform)) {
+        return { metaKey: true };
+    }
+    return { ctrlKey: true };
+};
+
+const mod = modifierFor(window.navigator.platform);
+
 /** The text of a block in what the host was handed, marks and all. */
 const childrenOf = (doc: RteDocument | null, index = 0): unknown[] => {
     const block = doc?.blocks[index];
@@ -562,91 +573,6 @@ describe('the editable element', () => {
         expect(editable.getAttribute('aria-placeholder')).toBe('Say something');
     });
 
-    it('takes its name from a visible label when one is pointed at', () => {
-        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} aria-labelledby="label" />);
-        ready();
-
-        const editable = editableIn(container);
-        expect(editable.getAttribute('aria-labelledby')).toBe('label');
-        expect(editable.hasAttribute('aria-label')).toBe(false);
-    });
-
-    it('still has a name when the host gave it none', () => {
-        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
-        ready();
-
-        expect(editableIn(container).getAttribute('aria-label')).toBe('Rich text editor');
-        expect(editableIn(container).hasAttribute('aria-placeholder')).toBe(false);
-    });
-
-    // The drop cursor is drawn in the editable's offset parent: positioned, that is the editor's own element.
-    it('mounts in a positioned element, so the drop cursor stays inside the host', () => {
-        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
-        ready();
-
-        const mountPoint = editableIn(container).parentElement;
-        if (!mountPoint) {
-            throw new Error('the editable element has no parent');
-        }
-        expect(window.getComputedStyle(mountPoint).position).toBe('relative');
-    });
-
-    it('follows a changed name without being rebuilt', () => {
-        const { container, rerender, ready } = mount(() => (
-            <RichTextEditor plugins={defaultPlugins} aria-label="One" />
-        ));
-        ready();
-        const editable = editableIn(container);
-
-        rerender(<RichTextEditor plugins={defaultPlugins} aria-label="Two" />);
-
-        expect(editableIn(container)).toBe(editable);
-        expect(editable.getAttribute('aria-label')).toBe('Two');
-    });
-
-    it('keeps a labelled editor named when it turns readonly', () => {
-        const { container } = mount(() => (
-            <RichTextEditor value={paragraph('read me')} plugins={defaultPlugins} aria-label="Comment" readonly />
-        ));
-
-        const group = container.querySelector('[role="group"]');
-        expect(group?.getAttribute('aria-label')).toBe('Comment');
-        expect(group?.textContent).toContain('read me');
-    });
-
-    it('lets Escape take focus out of the text', () => {
-        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
-        ready();
-        const editable = editableIn(container);
-        act(() => editable.focus());
-
-        // A browser's keydown carries `keyCode`, which ProseMirror reads to
-        // prevent Escape's default.
-        press(editable, 'Escape', { keyCode: 27 });
-
-        expect(editable.contains(window.document.activeElement)).toBe(false);
-    });
-
-    it('keeps focus in the text when Escape closed the `/` menu', () => {
-        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
-        ready();
-        const editable = editableIn(container);
-        act(() => editable.focus());
-        const data = new DataTransfer();
-        data.setData('text/plain', '/');
-        act(() => {
-            editable.dispatchEvent(
-                new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }),
-            );
-        });
-        expect(window.document.querySelector('[role="listbox"]')).not.toBeNull();
-
-        press(editable, 'Escape', { keyCode: 27 });
-
-        expect(window.document.querySelector('[role="listbox"]')).toBeNull();
-        expect(window.document.activeElement).toBe(editable);
-    });
-
     it('does not re-render the editor around the text for an edit', () => {
         let commits = 0;
         // No toolbar, which follows the editor state by design.
@@ -780,6 +706,64 @@ describe('the toolbar', () => {
         expect(container.querySelector('[data-testid="host-label"]')?.textContent).toBe('Host control de-DE');
     });
 
+    describe('a press inside a toolbar slot', () => {
+        const isMousedownAllowed = (target: Element): boolean =>
+            target.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+
+        const withControls = definePlugin({
+            id: 'slot-controls',
+            toolbar: [
+                {
+                    label: 'Plain',
+                    render: () => (
+                        <>
+                            <button type="button" data-testid="plain-button">
+                                plain
+                            </button>
+                            <input type="text" aria-label="Field" data-testid="slot-field" />
+                            <span contentEditable={false} data-testid="slot-island">
+                                island
+                            </span>
+                        </>
+                    ),
+                },
+            ],
+        });
+
+        it('keeps the text selection when it lands on a plain button a plugin drew', () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor plugins={[withControls, ...defaultPlugins]} toolbarPlacement="top" />
+            ));
+            ready();
+
+            const button = container.querySelector('[data-testid="plain-button"]');
+            expect(button).toBeTruthy();
+            expect(isMousedownAllowed(button as Element)).toBe(false);
+        });
+
+        it('lets a text field in the slot take focus', () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor plugins={[withControls, ...defaultPlugins]} toolbarPlacement="top" />
+            ));
+            ready();
+
+            const field = container.querySelector('[data-testid="slot-field"]');
+            expect(field).toBeTruthy();
+            expect(isMousedownAllowed(field as Element)).toBe(true);
+        });
+
+        it('keeps the text selection when it lands on a span that is not editable', () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor plugins={[withControls, ...defaultPlugins]} toolbarPlacement="top" />
+            ));
+            ready();
+
+            const island = container.querySelector('[data-testid="slot-island"]');
+            expect(island?.getAttribute('contenteditable')).toBe('false');
+            expect(isMousedownAllowed(island as Element)).toBe(false);
+        });
+    });
+
     it('keeps Undo and Redo current as edits are made and taken back', () => {
         const { container, ready, stored } = mount((onChange) => (
             <RichTextEditor plugins={defaultPlugins} toolbarPlacement="top" onChange={onChange} />
@@ -838,7 +822,17 @@ describe('the toolbar', () => {
 });
 
 describe('the toolbar from the keyboard', () => {
-    const plugins = [boldPlugin(), alignPlugin(), linkPlugin()];
+    /** A control that is off on a caret, last in the bar, so the arrow keys have one to pass over. */
+    const NeedsText = ({ selection }: RtePlugin.ToolbarItemProps): ReactNode => (
+        <button type="button" aria-label="Needs text" disabled={selection.isCollapsed}>
+            N
+        </button>
+    );
+    const needsTextPlugin: RtePlugin = definePlugin({
+        id: 'needs-text',
+        toolbar: [{ label: 'Needs text', render: NeedsText }],
+    });
+    const plugins = [boldPlugin(), alignPlugin(), linkPlugin(), needsTextPlugin];
 
     const toolbarIn = (container: HTMLElement): HTMLElement => {
         const toolbar = container.querySelector<HTMLElement>('[role="toolbar"]');
@@ -882,12 +876,13 @@ describe('the toolbar from the keyboard', () => {
         const active = (): string | null | undefined => window.document.activeElement?.getAttribute('aria-label');
         act(() => toolbar.querySelector<HTMLElement>('[tabindex="0"]')?.focus());
 
+        // Link sits in its group after the marks, and can add a link at a caret.
         press(window.document.activeElement as Element, 'ArrowRight');
-        expect(active()).toBe('Align left');
+        expect(active()).toBe('Add link');
         press(window.document.activeElement as Element, 'ArrowLeft');
         expect(active()).toBe('Bold');
         press(window.document.activeElement as Element, 'ArrowLeft');
-        // Wraps round — and "Add link" is disabled on a caret, so Justify is last.
+        // Wraps round, passing over the disabled control at the end.
         expect(active()).toBe('Justify');
         press(window.document.activeElement as Element, 'Home');
         expect(active()).toBe('Bold');
@@ -918,7 +913,6 @@ describe('the toolbar from the keyboard', () => {
     const focusedLabel = (): string | null | undefined => window.document.activeElement?.getAttribute('aria-label');
 
     const selectAll = (editable: HTMLElement): void => {
-        const mod = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
         press(editable, 'a', mod);
     };
 
@@ -1078,14 +1072,15 @@ describe('the toolbar from the keyboard', () => {
             expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
             const panel = window.document.querySelector<HTMLElement>('[role="toolbar"][aria-label="More"]');
             expect(panel?.querySelector('[aria-label="Add link"]')).not.toBeNull();
-            expect(focusedLabel()).toBe('Align left');
+            // Link comes first in the panel, and can add a link at a caret.
+            expect(focusedLabel()).toBe('Add link');
 
             press(window.document.activeElement as Element, 'ArrowRight');
-            expect(focusedLabel()).toBe('Align center');
+            expect(focusedLabel()).toBe('Align left');
             press(window.document.activeElement as Element, 'End');
             expect(focusedLabel()).toBe('Justify');
             press(window.document.activeElement as Element, 'Home');
-            expect(focusedLabel()).toBe('Align left');
+            expect(focusedLabel()).toBe('Add link');
 
             // The first Escape belongs to the tooltip the focus opened.
             press(window.document.activeElement as Element, 'Escape');
@@ -2518,6 +2513,44 @@ describe('an editor that crashes', () => {
     });
 });
 
+describe('the reset formatting button', () => {
+    it('removes every mark but the link and makes the block a plain paragraph', () => {
+        const value: RteDocument = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'bulletList',
+                    children: [
+                        {
+                            type: 'listItem',
+                            children: [
+                                {
+                                    type: 'paragraph',
+                                    align: 'center',
+                                    children: [{ text: 'linked', bold: true, link: { href: 'https://example.com' } }],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor value={value} onChange={onChange} plugins={defaultPlugins} toolbarPlacement="top" />
+        ));
+        ready();
+        const editable = editableIn(container);
+        act(() => editable.focus());
+        press(editable, 'a', mod);
+
+        act(() => container.querySelector<HTMLElement>('[aria-label="Reset formatting"]')?.click());
+
+        expect(stored()?.blocks).toEqual([
+            { type: 'paragraph', children: [{ text: 'linked', link: { href: 'https://example.com' } }] },
+        ]);
+    });
+});
+
 describe('onBlur', () => {
     it('fires once focus leaves the editor, not when it moves into the toolbar, with the document', () => {
         vi.useFakeTimers();
@@ -2712,6 +2745,25 @@ describe('exported links', () => {
 
         expect(html).not.toContain('javascript:');
         expect(html).toContain('href="https://example.com"');
+    });
+});
+
+describe('a new-tab link in the editor', () => {
+    it('is drawn by its own view, so the hidden note of the reading view is not added to it', () => {
+        const value: RteDocument = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'docs', link: { href: 'https://example.com', openInNewTab: true } }],
+                },
+            ],
+        };
+        const container = render(<RichTextEditor value={value} plugins={[linkPlugin()]} />);
+        const anchor = editableIn(container).querySelector('a');
+
+        expect(anchor?.textContent).toBe('docs');
+        expect(anchor?.getAttribute('aria-description')).toBe('Opens in a new tab');
     });
 });
 

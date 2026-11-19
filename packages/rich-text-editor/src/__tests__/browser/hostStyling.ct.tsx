@@ -3,7 +3,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator } from '@playwright/test';
 
-import { type LinkLook, type TextLook, type TextStyleName } from '../../plugins';
+import { type ButtonLook, type TextLinkLook, type TextLook, type TextStyleName } from '../../plugins';
 
 import { HostLooksPair } from './HostLooksPair';
 import { HostNoHeadingsPair } from './HostNoHeadingsPair';
@@ -11,11 +11,14 @@ import { HostResetPair } from './HostResetPair';
 import { HostStylingPair } from './HostStylingPair';
 import { HostStylingSections } from './HostStylingSections';
 import {
+    BUTTON_LINK_TEXT,
+    BUTTON_LINKS_DOCUMENT,
     H1_COLOR_VARIABLE,
     HOST_RESET_CSS,
     HOST_SCOPED_CSS,
     LAST_QUOTE_TEXT,
     MIDDLE_QUOTE_TEXT,
+    PLAIN_LINK_TEXT,
     QUOTES_DOCUMENT,
     SECTION_A_H1_COLOR,
     SECTION_B_H1_COLOR,
@@ -288,7 +291,7 @@ test.describe('host styling of text styles', () => {
     });
 });
 
-// Body text, block quotes and links take a look through `textStylePlugin({ presets })`.
+// Body text and block quotes take a look through `textStylePlugin({ presets })`, links through `linkPlugin({ look: { text } })`; the renderer gets the same through `textStyleContent` and `linkContent`.
 
 type LookedBlock = 'body' | 'bullet' | 'check' | 'quote' | 'link' | 'custom1' | 'heading1';
 
@@ -363,7 +366,7 @@ const COLOURED_RUN = 'span[style*=color]';
 const COLOURED_RUN_COLOR = 'rgb(255, 0, 0)';
 
 /** A link's look has no decoration or vertical margins, so the host look leaves those as Fondue draws them. */
-const HOST_LINK_LOOK: LinkLook = {
+const HOST_LINK_LOOK: TextLinkLook = {
     fontFamily: HOST_LOOK.fontFamily,
     fontSize: HOST_LOOK.fontSize,
     fontWeight: HOST_LOOK.fontWeight,
@@ -384,7 +387,7 @@ const HOST_LINK_COMPUTED_LOOK: ComputedLook = {
 /** Margins for a quote, which the document must not trim when the quote is last. */
 const QUOTE_MARGINS = { marginTop: '24px', marginBottom: '12px' } satisfies TextLook;
 
-const UNSET_LINK_LOOK: LinkLook = {
+const UNSET_LINK_LOOK: TextLinkLook = {
     fontFamily: UNSET_VARIABLE,
     fontSize: UNSET_VARIABLE,
     fontWeight: UNSET_VARIABLE,
@@ -501,6 +504,88 @@ test.describe('host styling of body text, quotes and links', () => {
 
         for (const surface of SURFACES) {
             expect(await looksOfBlocksIn(component.getByTestId(surface))).toEqual(BASELINE_LOOKS);
+        }
+    });
+});
+
+// A stored button link takes its look from `linkPlugin({ look: { button } })`; rendering needs no offered appearances.
+
+const HOST_BUTTON_LOOK: ButtonLook = {
+    fontWeight: '700',
+    textDecoration: 'underline',
+    color: 'rgb(255, 255, 255)',
+    paddingTop: '6px',
+    paddingRight: '20px',
+    paddingBottom: '6px',
+    paddingLeft: '20px',
+    backgroundColor: 'rgb(0, 0, 200)',
+    borderColor: 'rgb(0, 0, 100)',
+    borderWidth: '2px',
+    borderRadius: '8px',
+    hover: { backgroundColor: 'rgb(0, 0, 100)', color: 'rgb(250, 250, 0)' },
+};
+
+const HOST_BUTTON_COMPUTED: Record<string, string> = {
+    'font-weight': '700',
+    'text-decoration-line': 'underline',
+    color: 'rgb(255, 255, 255)',
+    'padding-top': '6px',
+    'padding-right': '20px',
+    'padding-bottom': '6px',
+    'padding-left': '20px',
+    'background-color': 'rgb(0, 0, 200)',
+    'border-top-color': 'rgb(0, 0, 100)',
+    'border-top-width': '2px',
+    'border-top-style': 'solid',
+    'border-top-left-radius': '8px',
+};
+
+/** What a button link looks like where the host sets nothing: no underline, an edge, and the shape of a button. */
+const FONDUE_BUTTON_COMPUTED: Record<string, string> = {
+    'text-decoration-line': 'none',
+    'border-top-style': 'solid',
+    'border-top-width': '1px',
+    'border-top-color': 'rgba(0, 0, 0, 0)',
+    display: 'inline-block',
+};
+
+test.describe('host styling of button links', () => {
+    test('draws a button link without an underline and keeps a plain link underlined', async ({ mount }) => {
+        const component = await mount(<HostLooksPair value={BUTTON_LINKS_DOCUMENT} />);
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            const button = section.getByRole('link', { name: BUTTON_LINK_TEXT, exact: true });
+
+            for (const [property, value] of Object.entries(FONDUE_BUTTON_COMPUTED)) {
+                await expect(button).toHaveCSS(property, value);
+            }
+
+            await expect(section.getByRole('link', { name: PLAIN_LINK_TEXT, exact: true })).toHaveCSS(
+                'text-decoration-line',
+                'underline',
+            );
+        }
+    });
+
+    test('applies the host button look, the same in the renderer and the editor, and its hover look', async ({
+        mount,
+    }) => {
+        const component = await mount(
+            <HostLooksPair value={BUTTON_LINKS_DOCUMENT} buttons={{ primary: HOST_BUTTON_LOOK }} />,
+        );
+
+        for (const surface of SURFACES) {
+            const button = component.getByTestId(surface).getByRole('link', { name: BUTTON_LINK_TEXT, exact: true });
+
+            for (const [property, value] of Object.entries(HOST_BUTTON_COMPUTED)) {
+                await expect(button).toHaveCSS(property, value);
+            }
+
+            await button.hover();
+
+            await expect(button).toHaveCSS('background-color', 'rgb(0, 0, 100)');
+            await expect(button).toHaveCSS('color', 'rgb(250, 250, 0)');
         }
     });
 });

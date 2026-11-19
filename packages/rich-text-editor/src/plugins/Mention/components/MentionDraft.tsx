@@ -1,63 +1,267 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconPeople, IconPerson, IconTarget } from '@frontify/fondue-icons';
-import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
+import { type KeyboardEvent, type ReactElement, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { useTranslate } from '#/ui/translation';
+import { type Translate, useTranslate } from '#/ui/translation';
 
+import { isCompositionKey } from '../../shared/helpers/keys';
+import { storedKind } from '../helpers/display';
+import { isSafeImageSrc } from '../helpers/image';
+import { withoutControlCharacters } from '../helpers/text';
+import { type PeopleLookup, type PeopleOutcome, usePeople } from '../hooks/usePeople';
 import styles from '../mention.module.scss';
 import { type MentionItem, type MentionItems } from '../types';
 
-/** How many people the picker offers at once. */
-const SUGGESTION_LIMIT = 8;
+/** Keeps a quick answer from flashing the Searching row. */
+const SEARCHING_DELAY_MS = 300;
+
+const AVATAR_ICON_SIZE = 12;
 
 /** The gap between the query and the list under it. */
 const LIST_OFFSET = 4;
+
+const avatarPicture = (person: MentionItem): ReactElement => {
+    if (isSafeImageSrc(person.image)) {
+        return <img src={person.image} alt="" />;
+    }
+    // The app's list is read at runtime, so a kind this version does not know shows as a person.
+    const kind = storedKind(person.kind);
+    switch (kind) {
+        case undefined:
+        case 'user':
+            return <IconPerson size={AVATAR_ICON_SIZE} />;
+        case 'group':
+            return <IconPeople size={AVATAR_ICON_SIZE} />;
+        case 'all':
+            return <IconTarget size={AVATAR_ICON_SIZE} />;
+    }
+};
+
+type AvatarProps = { person: MentionItem };
 
 /**
  * The round picture beside a name: the avatar when there is one, otherwise the
  * kind's icon — a person, a group, everyone. Decorative: the name is beside it.
  */
-const Avatar = ({ person }: { person: MentionItem }): ReactNode => (
+const Avatar = ({ person }: AvatarProps): ReactNode => (
     <span className={styles.avatar} aria-hidden>
-        {person.image ? (
-            <img src={person.image} alt="" />
-        ) : person.kind === 'group' ? (
-            <IconPeople size={12} />
-        ) : person.kind === 'all' ? (
-            <IconTarget size={12} />
-        ) : (
-            <IconPerson size={12} />
-        )}
+        {avatarPicture(person)}
     </span>
 );
 
-/**
- * The people for a query. Answers are tagged with their query so a slow one
- * never overwrites a newer one; the last answer stays up while `pending`, so a
- * server-backed list does not flicker on every key.
- */
-const usePeople = (items: MentionItems, query: string): { people: readonly MentionItem[]; pending: boolean } => {
-    const [answer, setAnswer] = useState<{ query: string; people: readonly MentionItem[] } | null>(null);
+/** `waiting` is a lookup inside the searching delay, or a newer one after an empty or failed answer: nothing is shown or announced yet. */
+type PeoplePhase = 'waiting' | 'searching' | 'failed' | 'empty' | 'list';
 
-    useEffect(() => {
-        let current = true;
-        const settle = (people: readonly MentionItem[]): void => {
-            if (current) {
-                setAnswer({ query, people: people.slice(0, SUGGESTION_LIMIT) });
+type PhaseOfParams = { outcome: PeopleOutcome | null; lookup: PeopleLookup; slow: boolean };
+
+const peopleOf = (outcome: PeopleOutcome | null): readonly MentionItem[] => {
+    if (outcome === null) {
+        return [];
+    }
+    switch (outcome.status) {
+        case 'found':
+            return outcome.people;
+        case 'failed':
+            return [];
+    }
+};
+
+const phaseOf = ({ outcome, lookup, slow }: PhaseOfParams): PeoplePhase => {
+    if (peopleOf(outcome).length > 0) {
+        return 'list';
+    }
+    if (slow) {
+        return 'searching';
+    }
+    if (outcome === null) {
+        return 'waiting';
+    }
+    switch (outcome.status) {
+        case 'found':
+            // An earlier empty answer is not this query's: a space must not end the mention before it arrives.
+            if (lookup !== 'settled') {
+                return 'waiting';
             }
-        };
-        // A failed lookup offers nobody rather than leaving the last list up.
-        Promise.resolve(items(query))
-            .then(settle)
-            .catch(() => settle([]));
-        return () => {
-            current = false;
-        };
-    }, [items, query]);
+            return 'empty';
+        case 'failed':
+            switch (lookup) {
+                case 'settled':
+                    return 'failed';
+                case 'asking':
+                    return 'waiting';
+                // Asked for, so it shows at once; cleared, so a second failure is announced again.
+                case 'retrying':
+                    return 'searching';
+            }
+    }
+};
 
-    return { people: answer?.people ?? [], pending: answer?.query !== query };
+const isOpen = (phase: PeoplePhase, query: string): boolean => {
+    switch (phase) {
+        case 'waiting':
+            return false;
+        case 'searching':
+        case 'failed':
+        case 'list':
+            return true;
+        case 'empty':
+            return query !== '';
+    }
+};
+
+/** Silent while waiting or searching, so a count or a failure is not interrupted on every key. */
+const statusOf = (phase: PeoplePhase, people: readonly MentionItem[], translate: Translate): string => {
+    switch (phase) {
+        case 'waiting':
+        case 'searching':
+            return '';
+        case 'failed':
+            return translate('RichTextEditor_mentionFailed');
+        case 'empty':
+            return translate('RichTextEditor_noResults');
+        case 'list':
+            return translate('RichTextEditor_results', { count: String(people.length) });
+    }
+};
+
+/** Whether the pending lookup has run past the searching delay; each new query or retry restarts it. */
+const useSlowLookup = (pending: boolean, query: string): boolean => {
+    const [slowQuery, setSlowQuery] = useState<string | null>(null);
+    useEffect(() => {
+        if (!pending) {
+            return undefined;
+        }
+        const timer = setTimeout(() => setSlowQuery(query), SEARCHING_DELAY_MS);
+        return () => {
+            clearTimeout(timer);
+            setSlowQuery(null);
+        };
+    }, [pending, query]);
+    return pending && slowQuery === query;
+};
+
+type ActiveOptionIdParams = {
+    listboxShown: boolean;
+    phase: PeoplePhase;
+    active: MentionItem | undefined;
+    activeIndex: number;
+    retryId: string;
+    optionId: (index: number) => string;
+};
+
+const activeOptionId = ({
+    listboxShown,
+    phase,
+    active,
+    activeIndex,
+    retryId,
+    optionId,
+}: ActiveOptionIdParams): string | undefined => {
+    if (!listboxShown) {
+        return undefined;
+    }
+    if (phase === 'failed') {
+        return retryId;
+    }
+    if (active === undefined) {
+        return undefined;
+    }
+    return optionId(activeIndex);
+};
+
+type MentionPopupBodyProps = {
+    phase: PeoplePhase;
+    people: readonly MentionItem[];
+    trigger: string;
+    listId: string;
+    retryId: string;
+    activeIndex: number;
+    optionId: (index: number) => string;
+    onRetry: () => void;
+    onPick: (person: MentionItem) => void;
+    onHighlight: (index: number) => void;
+};
+
+const MentionPopupBody = ({
+    phase,
+    people,
+    trigger,
+    listId,
+    retryId,
+    activeIndex,
+    optionId,
+    onRetry,
+    onPick,
+    onHighlight,
+}: MentionPopupBodyProps): ReactElement | null => {
+    const translate = useTranslate();
+    switch (phase) {
+        case 'waiting':
+            return null;
+        case 'searching':
+            return <div className={styles.empty}>{translate('RichTextEditor_searching')}</div>;
+        case 'failed':
+            return (
+                <>
+                    <div className={styles.empty}>{translate('RichTextEditor_mentionFailed')}</div>
+                    <ul
+                        id={listId}
+                        role="listbox"
+                        aria-label={translate('RichTextEditor_people')}
+                        className={styles.list}
+                    >
+                        {/* The keyboard runs it from the input as the active option; the mouse runs it here. */}
+                        {/* oxlint-disable-next-line jsx-a11y/click-events-have-key-events */}
+                        <li
+                            id={retryId}
+                            role="option"
+                            aria-selected
+                            // Keep focus in the input: blurring would cancel before the click lands.
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={onRetry}
+                            className={`${styles.option} ${styles.optionActive}`}
+                        >
+                            {translate('RichTextEditor_retry')}
+                        </li>
+                    </ul>
+                </>
+            );
+        case 'empty':
+            return <div className={styles.empty}>{translate('RichTextEditor_noResults')}</div>;
+        case 'list':
+            return (
+                <ul id={listId} role="listbox" aria-label={translate('RichTextEditor_people')} className={styles.list}>
+                    {people.map((person, index) => (
+                        // The keyboard drives the list from the input; the mouse picks here.
+                        // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
+                        <li
+                            key={optionId(index)}
+                            id={optionId(index)}
+                            role="option"
+                            aria-selected={index === activeIndex}
+                            // Keep focus in the input: blurring would cancel before the click lands.
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => onPick(person)}
+                            onMouseEnter={() => onHighlight(index)}
+                            className={
+                                index === activeIndex ? `${styles.option} ${styles.optionActive}` : styles.option
+                            }
+                        >
+                            <Avatar person={person} />
+                            <bdi>{withoutControlCharacters(person.name)}</bdi>
+                            <span className={styles.hint}>
+                                <bdi>
+                                    {trigger}
+                                    {withoutControlCharacters(person.username)}
+                                </bdi>
+                            </span>
+                        </li>
+                    ))}
+                </ul>
+            );
+    }
 };
 
 /** Viewport position under the query, kept in step with scrolling and resizing. */
@@ -95,6 +299,18 @@ const useListPosition = (
     return open ? position : null;
 };
 
+type MentionDraftProps = {
+    trigger: string;
+    items: MentionItems;
+    /** The editor's selection is on this mention — the input takes the caret. */
+    focused: boolean;
+    onChoose: (person: MentionItem) => void;
+    /** Give up, keeping what was typed as ordinary text. */
+    onCancel: (text: string) => void;
+    /** Give up and leave nothing behind, not even the trigger. */
+    onRemove: () => void;
+};
+
 /**
  * A mention being made, from the typed trigger until a person is chosen.
  *
@@ -111,17 +327,7 @@ export const MentionDraft = ({
     onChoose,
     onCancel,
     onRemove,
-}: {
-    trigger: string;
-    items: MentionItems;
-    /** The editor's selection is on this mention — the input takes the caret. */
-    focused: boolean;
-    onChoose: (person: MentionItem) => void;
-    /** Give up, keeping what was typed as ordinary text. */
-    onCancel: (text: string) => void;
-    /** Give up and leave nothing behind, not even the trigger. */
-    onRemove: () => void;
-}): ReactNode => {
+}: MentionDraftProps): ReactNode => {
     const translate = useTranslate();
     const listId = useId();
     const draftRef = useRef<HTMLSpanElement | null>(null);
@@ -136,10 +342,13 @@ export const MentionDraft = ({
         leave();
     };
     const [query, setQuery] = useState('');
-    const { people, pending } = usePeople(items, query);
-    const noMatches = people.length === 0 && !pending;
-    const open = people.length > 0 || (noMatches && query !== '');
+    const { outcome, lookup, retry } = usePeople(items, query);
+    const slow = useSlowLookup(lookup !== 'settled', query);
+    const people = peopleOf(outcome);
+    const phase = phaseOf({ outcome, lookup, slow });
+    const open = isOpen(phase, query);
     const position = useListPosition(draftRef, open);
+    const listboxShown = open && position !== null && (phase === 'list' || phase === 'failed');
 
     // Tagged with its query so a new query resets the highlight to the top without an effect.
     const [highlighted, setHighlighted] = useState({ query, index: 0 });
@@ -147,6 +356,7 @@ export const MentionDraft = ({
     const highlight = (index: number): void => setHighlighted({ query, index });
     const active = people[activeIndex];
     const optionId = (index: number): string => `${listId}-option-${index}`;
+    const retryId = `${listId}-retry`;
 
     useEffect(() => {
         if (focused) {
@@ -154,21 +364,36 @@ export const MentionDraft = ({
         }
     }, [focused]);
 
+    /** Moves the highlight by `step`, wrapping around the list. */
+    const move = (step: number): void => {
+        if (people.length === 0) {
+            return;
+        }
+        highlight((activeIndex + step + people.length) % people.length);
+    };
+
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
+        // While an input method composes, no key is a command, not even Space or Escape.
+        if (isCompositionKey(event)) {
+            return;
+        }
         switch (event.key) {
             case 'ArrowDown':
+                move(1);
+                break;
             case 'ArrowUp':
-                if (people.length === 0) {
-                    break;
-                }
-                highlight(
-                    event.key === 'ArrowDown'
-                        ? (activeIndex + 1) % people.length
-                        : (activeIndex - 1 + people.length) % people.length,
-                );
+                move(-1);
                 break;
             case 'Enter':
             case 'Tab':
+                // Retry is the active option; Tab stays free so focus is never trapped.
+                if (phase === 'failed') {
+                    if (event.key !== 'Enter') {
+                        return;
+                    }
+                    retry();
+                    break;
+                }
                 if (!active) {
                     return;
                 }
@@ -176,7 +401,7 @@ export const MentionDraft = ({
                 break;
             case ' ':
                 // Nobody by that name: the text was just text after all.
-                if (!noMatches) {
+                if (phase !== 'empty') {
                     return;
                 }
                 finish(() => onCancel(`${trigger}${query} `));
@@ -198,24 +423,17 @@ export const MentionDraft = ({
         event.preventDefault();
     };
 
-    let status = '';
-    if (!pending && noMatches) {
-        status = translate('RichTextEditor_noResults');
-    } else if (!pending) {
-        status = translate('RichTextEditor_results', { count: String(people.length) });
-    }
-
     return (
         <span ref={draftRef} className={styles.draft}>
             {trigger}
             <input
                 ref={inputRef}
                 role="combobox"
-                aria-expanded={open}
+                aria-expanded={listboxShown}
                 // Only while the listbox is in the page: an id pointing at nothing is an error.
-                aria-controls={open && position !== null && !noMatches ? listId : undefined}
+                aria-controls={listboxShown ? listId : undefined}
                 aria-autocomplete="list"
-                aria-activedescendant={open && active ? optionId(activeIndex) : undefined}
+                aria-activedescendant={activeOptionId({ listboxShown, phase, active, activeIndex, retryId, optionId })}
                 aria-label={translate('RichTextEditor_mentionSomeone')}
                 value={query}
                 size={Math.max(query.length, 1)}
@@ -225,48 +443,23 @@ export const MentionDraft = ({
                 className={styles.input}
             />
             <span role="status" className={styles.visuallyHidden}>
-                {status}
+                {statusOf(phase, people, translate)}
             </span>
             {open && position !== null
                 ? createPortal(
                       <div className={styles.popup} style={{ left: position.left, top: position.top }}>
-                          {noMatches ? (
-                              <div className={styles.empty}>{translate('RichTextEditor_noResults')}</div>
-                          ) : (
-                              <ul
-                                  id={listId}
-                                  role="listbox"
-                                  aria-label={translate('RichTextEditor_people')}
-                                  className={styles.list}
-                              >
-                                  {people.map((person, index) => (
-                                      // The keyboard drives the list from the input; the mouse picks here.
-                                      // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
-                                      <li
-                                          key={optionId(index)}
-                                          id={optionId(index)}
-                                          role="option"
-                                          aria-selected={index === activeIndex}
-                                          // Keep focus in the input: blurring would cancel before the click lands.
-                                          onMouseDown={(event) => event.preventDefault()}
-                                          onClick={() => finish(() => onChoose(person))}
-                                          onMouseEnter={() => highlight(index)}
-                                          className={
-                                              index === activeIndex
-                                                  ? `${styles.option} ${styles.optionActive}`
-                                                  : styles.option
-                                          }
-                                      >
-                                          <Avatar person={person} />
-                                          <span>{person.name}</span>
-                                          <span className={styles.hint}>
-                                              {trigger}
-                                              {person.username}
-                                          </span>
-                                      </li>
-                                  ))}
-                              </ul>
-                          )}
+                          <MentionPopupBody
+                              phase={phase}
+                              people={people}
+                              trigger={trigger}
+                              listId={listId}
+                              retryId={retryId}
+                              activeIndex={activeIndex}
+                              optionId={optionId}
+                              onRetry={retry}
+                              onPick={(person) => finish(() => onChoose(person))}
+                              onHighlight={highlight}
+                          />
                       </div>,
                       draftRef.current?.ownerDocument.body ?? document.body,
                   )

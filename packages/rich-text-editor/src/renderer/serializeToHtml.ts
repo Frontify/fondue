@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { buildPluginRegistry, type RteBlockNode, type RteContent, type RteDocumentOf, type RtePlugin } from '#/core';
+import { buildContentRegistry, type RteBlockNode, type RteContent, type RteDocumentOf, type RtePlugin } from '#/core';
 
 import { documentRootSpec, documentTree } from './documentTree';
 import { toHtmlString } from './toHtmlString';
@@ -34,7 +34,7 @@ export const serializeToHtml = <TBlock extends RteBlockNode>(
     doc: RteDocumentOf<TBlock>,
     { plugins = [], wrap = true }: SerializeToHtmlOptions = {},
 ): string => {
-    const registry = buildPluginRegistry(plugins);
+    const registry = buildContentRegistry(plugins);
     const blocks = documentTree(doc, registry, { useComponents: false });
     return toHtmlString(wrap ? [{ kind: 'html', spec: documentRootSpec(registry), content: blocks }] : blocks);
 };

@@ -10,14 +10,38 @@ import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 import { useTranslate } from '#/ui/translation';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
+import { type LinkSearch } from '../helpers/destination';
 import { registerNewLinkForm } from '../helpers/newLinkForms';
+import { type LinkAppearance, type LinkValue } from '../helpers/value';
 
 import { LinkTargetForm } from './LinkTargetForm';
 
+type NewLinkAction = { kind: 'toggle'; value: LinkValue } | { kind: 'insert'; text: string; value: LinkValue };
+
+type NewLinkActionOptions = {
+    selection: ToolbarItemProps['selection'];
+    value: LinkValue;
+    text: string;
+};
+
+const decideNewLinkAction = ({ selection, value, text }: NewLinkActionOptions): NewLinkAction => {
+    if (text === selection.text && !selection.isCollapsed) {
+        // Formatting inside the selection survives.
+        return { kind: 'toggle', value };
+    }
+    if (text === '') {
+        return { kind: 'insert', text: value.href, value };
+    }
+    return { kind: 'insert', text, value };
+};
+
+type LinkToolbarButtonProps = ToolbarItemProps & { search?: LinkSearch; appearances?: readonly LinkAppearance[] };
+
 /**
- * The toolbar entry point. On a link it opens the link's own editor; on plain
- * selected text it opens a form of its own, and the text becomes a link only on
- * save, so the document never holds a link without a target.
+ * The toolbar entry point. On a link it opens the link's own editor; on selected
+ * text or at a caret it opens a form of its own, and the text becomes a link, or
+ * the typed text goes in linked, only on save, so the document never holds a link
+ * without a target.
  */
 export const LinkToolbarButton = ({
     api,
@@ -26,7 +50,9 @@ export const LinkToolbarButton = ({
     toggle,
     openEditor,
     shortcut,
-}: ToolbarItemProps): ReactNode => {
+    search,
+    appearances,
+}: LinkToolbarButtonProps): ReactNode => {
     const translate = useTranslate();
     const inLink = selectedNode !== null;
     const [creating, setCreating] = useState(false);
@@ -58,8 +84,6 @@ export const LinkToolbarButton = ({
                     title={inLink ? translate('RichTextEditor_linkEdit') : translate('RichTextEditor_linkAdd')}
                     shortcut={shortcut}
                     active={inLink}
-                    // A link needs text to sit on.
-                    disabled={!inLink && selection.isCollapsed}
                 >
                     <IconLink size={TOOLBAR_ICON_SIZE} />
                 </ToolbarButton>
@@ -79,8 +103,20 @@ export const LinkToolbarButton = ({
                 <Flyout.Body>
                     <LinkTargetForm
                         initial={{ href: '' }}
-                        onSave={(value) => {
-                            toggle(value);
+                        kind="create"
+                        text={selection.text}
+                        search={search}
+                        appearances={appearances}
+                        onSave={(value, text) => {
+                            const action = decideNewLinkAction({ selection, value, text });
+                            switch (action.kind) {
+                                case 'toggle':
+                                    toggle(action.value);
+                                    break;
+                                case 'insert':
+                                    api.insertText(action.text, { link: action.value });
+                                    break;
+                            }
                             finish();
                         }}
                         onCancel={finish}

@@ -13,18 +13,23 @@ import {
     definePlugin,
     type EditorControlApi,
     type RtePlugin,
+    type ToolbarItemProps,
 } from '../core';
 import { RichTextRenderer, serializeToHtml } from '../index';
+import { EDITOR_STRINGS } from '../locales/en-US';
 import {
     blurOnBreakPlugin,
+    type BlurOnBreakPluginOptions,
     bulletListPlugin,
     columnBreakPlugin,
     defaultPlugins,
     mentionPlugin,
     numberedListPlugin,
+    resetFormattingPlugin,
     textStylePlugin,
 } from '../plugins';
 import { searchIn } from '../plugins/Mention/Mention';
+import { labelContextOf, resolveLabel, translatorFor } from '../ui/translation';
 
 /**
  * The plugin definitions that hold behaviour of their own — what they declare,
@@ -38,7 +43,11 @@ declare global {
 }
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
-const recordingApi = ({ inList = false } = {}) => {
+type RecordingApiOptions = {
+    inList?: boolean;
+};
+
+const recordingApi = ({ inList = false }: RecordingApiOptions = {}) => {
     const calls: string[] = [];
     const api = {
         lists: {
@@ -54,6 +63,14 @@ const recordingApi = ({ inList = false } = {}) => {
             setType: (type: string, value?: Record<string, unknown>) => {
                 calls.push(`blocks.setType ${type}${value ? ` ${JSON.stringify(value)}` : ''}`);
             },
+            resetAttributes: () => {
+                calls.push('blocks.resetAttributes');
+            },
+        },
+        marks: {
+            removeAll: (options?: Record<string, unknown>) => {
+                calls.push(`marks.removeAll ${JSON.stringify(options)}`);
+            },
         },
         blur: () => {
             calls.push('blur');
@@ -61,6 +78,37 @@ const recordingApi = ({ inList = false } = {}) => {
         selection: { get: () => ({ marks: {} }) },
     } as unknown as EditorControlApi;
     return { api, calls };
+};
+
+type ClickToolbarButtonParams = { plugin: RtePlugin; api: EditorControlApi; name: string };
+
+const clickToolbarButton = ({ plugin, api, name }: ClickToolbarButtonParams): void => {
+    const entry = buildPluginRegistry([plugin]).toolbarItems[0];
+    if (entry?.control !== 'custom') {
+        throw new Error('the plugin has no custom toolbar entry');
+    }
+    const container = window.document.createElement('div');
+    window.document.body.append(container);
+    const root = createRoot(container);
+    const Entry = entry.render;
+    // The entries read `api`, `label` and `selection`; the rest is what any entry is handed.
+    const props: ToolbarItemProps = {
+        api,
+        label: resolveLabel(entry.label, labelContextOf('en-US', translatorFor(EDITOR_STRINGS))),
+        selection: api.selection.get(),
+        selectedNode: null,
+        isActive: false,
+        toggle: () => {},
+        openEditor: () => {},
+    };
+    act(() => root.render(<Entry {...props} />));
+    const button = container.querySelector<HTMLElement>(`[aria-label="${name}"]`);
+    if (button === null) {
+        throw new Error(`the entry drew no button named ${name}`);
+    }
+    act(() => button.click());
+    act(() => root.unmount());
+    container.remove();
 };
 
 const PEOPLE = [
@@ -125,20 +173,46 @@ describe('mentionPlugin', () => {
 });
 
 describe('blurOnBreakPlugin', () => {
-    const enter = blurOnBreakPlugin().hotkeys?.Enter;
+    const enterOf = (options?: BlurOnBreakPluginOptions) => blurOnBreakPlugin(options).hotkeys?.Enter?.run;
 
     it('splits the list item when Enter is pressed inside a list, and keeps focus', () => {
         const { api, calls } = recordingApi({ inList: true });
 
-        expect(enter?.(api)).toBe(true);
+        expect(enterOf({ onBreak: () => calls.push('onBreak') })?.(api)).toBe(true);
         expect(calls).toEqual(['split']);
     });
 
     it('gives up focus when Enter is pressed anywhere else, adding no paragraph', () => {
         const { api, calls } = recordingApi();
 
-        expect(enter?.(api)).toBe(true);
+        expect(enterOf()?.(api)).toBe(true);
         expect(calls).toEqual(['split', 'blur']);
+    });
+
+    it('calls onBreak before it gives up focus', () => {
+        const { api, calls } = recordingApi();
+
+        enterOf({ onBreak: () => calls.push('onBreak') })?.(api);
+
+        expect(calls).toEqual(['split', 'onBreak', 'blur']);
+    });
+
+    it('binds Enter alone, so Shift-Enter stays with whatever else binds it', () => {
+        expect(Object.keys(blurOnBreakPlugin().hotkeys ?? {})).toEqual(['Enter']);
+    });
+});
+
+describe('resetFormattingPlugin', () => {
+    it('resets the marks, keeping those that survive, the block type and the attributes with its button', () => {
+        const { api, calls } = recordingApi();
+
+        clickToolbarButton({ plugin: resetFormattingPlugin(), api, name: 'Reset formatting' });
+
+        expect(calls).toEqual([
+            'marks.removeAll {"scope":"block","keepSurviving":true}',
+            'blocks.setType paragraph',
+            'blocks.resetAttributes',
+        ]);
     });
 });
 
@@ -171,7 +245,7 @@ describe('textStylePlugin', () => {
         const hotkeys = textStylePlugin().hotkeys ?? {};
 
         for (const keys of ['Mod-Alt-0', 'Mod-Alt-1', 'Mod-Alt-4']) {
-            hotkeys[keys]?.(api);
+            hotkeys[keys]?.run(api);
         }
 
         expect(calls).toEqual([

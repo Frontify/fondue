@@ -1,14 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button, Tooltip } from '@frontify/fondue-components';
-import {
-    type ButtonHTMLAttributes,
-    type ComponentProps,
-    forwardRef,
-    type MouseEvent,
-    type ReactNode,
-    useState,
-} from 'react';
+import { type ButtonHTMLAttributes, type ComponentProps, forwardRef, type ReactNode, useState } from 'react';
+
+import { ariaKeyShortcut, readableShortcut } from '../shortcut';
 
 import styles from './toolbarButton.module.scss';
 
@@ -30,34 +25,6 @@ type ToolbarButtonProps = {
     shortcut?: string;
     // Other props reach the button so it works as a `Flyout.Trigger`, whose injected handlers and `aria-expanded` must hit the DOM.
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'title' | 'children' | 'className'>;
-
-/**
- * The platform names of Apple systems, where `Mod` is the Command key
- */
-const APPLE_PLATFORM = /Mac|iPhone|iPad/;
-
-const isApple = (): boolean => typeof navigator !== 'undefined' && APPLE_PLATFORM.test(navigator.platform);
-
-/**
- * `Mod-Shift-x` as `aria-keyshortcuts` spells it: `Meta+Shift+X` on Apple systems, `Control+Shift+X` elsewhere
- */
-export const ariaKeyShortcut = (shortcut: string, apple = isApple()): string =>
-    shortcut
-        .split('-')
-        .map((part) => (part === 'Mod' ? (apple ? 'Meta' : 'Control') : part.length === 1 ? part.toUpperCase() : part))
-        .join('+');
-
-const APPLE_SYMBOLS: Record<string, string> = { Mod: '⌘', Shift: '⇧', Alt: '⌥', Ctrl: '⌃' };
-
-/**
- * `Mod-Shift-x` as people read it: `⌘⇧X` on Apple systems, `Ctrl+Shift+X` elsewhere
- */
-export const readableShortcut = (shortcut: string, apple = isApple()): string => {
-    const parts = shortcut.split('-').map((part) => (part.length === 1 ? part.toUpperCase() : part));
-    return apple
-        ? parts.map((part) => APPLE_SYMBOLS[part] ?? part).join('')
-        : parts.map((part) => (part === 'Mod' ? 'Ctrl' : part)).join('+');
-};
 
 type ToolbarButtonEmphasis = ComponentProps<typeof Button>['emphasis'];
 
@@ -88,11 +55,6 @@ export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(f
         ...rest,
         'aria-pressed': active,
         'aria-keyshortcuts': shortcut === undefined ? undefined : ariaKeyShortcut(shortcut),
-        onMouseDown: (event: MouseEvent<HTMLButtonElement>) => {
-            // Keep the selection in the editor; runs before the flyout trigger's own handler.
-            event.preventDefault();
-            rest.onMouseDown?.(event);
-        },
     } as ComponentProps<typeof Button>;
 
     const [tooltipOpen, setTooltipOpen] = useState(false);
