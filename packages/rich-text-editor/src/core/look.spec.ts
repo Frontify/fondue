@@ -14,13 +14,6 @@ describe('lookProperties', () => {
         });
     });
 
-    it('names the variables after the fields it is given', () => {
-        expect(lookProperties('sample1', { glyph: "'*'", width: '2em' }, { glyph: 'glyph', width: 'width' })).toEqual({
-            '--rte-sample1-glyph': "'*'",
-            '--rte-sample1-width': '2em',
-        });
-    });
-
     it('leaves a name without capitals as it is', () => {
         expect(lookProperties('plain', { marginBottom: '8px' }, LOOK_PROPERTIES)).toEqual({
             '--rte-plain-margin-bottom': '8px',
@@ -30,6 +23,12 @@ describe('lookProperties', () => {
     it('writes nothing for a field that is not set', () => {
         expect(lookProperties('plain', {}, LOOK_PROPERTIES)).toEqual({});
         expect(lookProperties('plain', { color: undefined }, LOOK_PROPERTIES)).toEqual({});
+    });
+
+    it('names the properties of the fields it is given', () => {
+        expect(lookProperties('box', { borderWidth: '1px' }, { borderWidth: 'border-width' })).toEqual({
+            '--rte-box-border-width': '1px',
+        });
     });
 
     for (const value of ['red; display: none', 'url(https://example.com/a.png)', '}', '', '   ']) {

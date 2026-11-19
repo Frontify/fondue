@@ -7,6 +7,8 @@ import { describe, expect, it } from 'vitest';
 
 import { OWN_MARGIN_VARIABLES } from '../core/documentContract';
 import { LOOK_PROPERTIES, lookVariableName } from '../core/look';
+import { BUTTON_HOVER_LOOK_FIELDS, BUTTON_LOOK_FIELDS } from '../plugins/Link/helpers/appearance';
+import { ALL_LINK_APPEARANCES, type LinkAppearance } from '../plugins/Link/helpers/value';
 import { bulletListPlugin, numberedListPlugin } from '../plugins/List/List';
 import { ALL_TEXT_STYLES, findPreset } from '../plugins/TextStyle/helpers/presets';
 
@@ -15,6 +17,11 @@ import { ALL_TEXT_STYLES, findPreset } from '../plugins/TextStyle/helpers/preset
 
 const STYLES_DIRECTORY = fileURLToPath(new URL('../styles/', import.meta.url));
 const TEXT_STYLE_STYLESHEET = fileURLToPath(new URL('../plugins/TextStyle/textStyle.module.scss', import.meta.url));
+
+/** The characters of a selector that a regular expression reads as more than themselves. */
+const SELECTOR_PUNCTUATION = /[.:]/g;
+
+const LINK_STYLESHEET = fileURLToPath(new URL('../plugins/Link/link.module.scss', import.meta.url));
 
 /** `font-size: var(--rte-heading1-font-size, ...)`: a property and the host variable it reads first. */
 const LOOK_DECLARATION = /([a-z-]+):\s*var\((--[a-z0-9-]+),/g;
@@ -93,6 +100,53 @@ describe('the text style stylesheet', () => {
     for (const name of presetNames) {
         it(`reads the ${name} look from the variables core names and hands its margins to the document`, () => {
             expect(lookDeclarationsIn(ruleBodyOf(css, name))).toEqual(declarationsCoreNames(name, CORE_PROPERTIES));
+        });
+    }
+});
+
+// A button link reads its own variables, which the link plugin compiles from the tables in `appearance.ts`.
+describe('the link stylesheet', () => {
+    const css = compile(LINK_STYLESHEET).css;
+
+    const BUTTON_CLASSES: Record<LinkAppearance, string> = {
+        primary: 'buttonPrimary',
+        secondary: 'buttonSecondary',
+        tertiary: 'buttonTertiary',
+    };
+
+    /** The body of the rule with exactly this selector list, which a button writes for its link states. */
+    const ruleBodyForSelector = (selector: string): string => {
+        const escaped = selector.replaceAll(SELECTOR_PUNCTUATION, String.raw`\$&`);
+        const body = new RegExp(`${escaped}\\s*\\{([^}]*)\\}`).exec(css)?.[1];
+
+        if (body === undefined) {
+            throw new Error(`No rule for ${selector} in the compiled stylesheet`);
+        }
+
+        return body;
+    };
+
+    const declarationsOf = (kind: string, fields: Record<string, string>): LookDeclaration[] =>
+        Object.values(fields).map((property) => ({
+            property,
+            variable: lookVariableName(kind, property),
+        }));
+
+    for (const appearance of ALL_LINK_APPEARANCES) {
+        const className = BUTTON_CLASSES[appearance];
+
+        it(`reads the ${appearance} button look from the variables the link plugin sets`, () => {
+            const selector = `.${className}, .${className}:link, .${className}:visited`;
+
+            expect(lookDeclarationsIn(ruleBodyForSelector(selector))).toEqual(
+                declarationsOf(`button-${appearance}`, BUTTON_LOOK_FIELDS),
+            );
+        });
+
+        it(`reads the ${appearance} button hover look from the variables the link plugin sets`, () => {
+            expect(lookDeclarationsIn(ruleBodyForSelector(`.${className}:hover`))).toEqual(
+                declarationsOf(`button-${appearance}-hover`, BUTTON_HOVER_LOOK_FIELDS),
+            );
         });
     }
 });

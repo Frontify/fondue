@@ -13,6 +13,7 @@ import {
     type PasteHandler,
     type RteBlockCommand,
     type RteBlockNode,
+    type RteHotkey,
     type RteInlineNode,
     type RtePlugin as CorePlugin,
     type RteSelectionSnapshot,
@@ -71,6 +72,11 @@ export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlock>(
  * clipboard. No React or browser needed. Uses `defaultContent` when given no
  * `plugins`; `wrap: false` leaves out the root element. Style it with this
  * package's stylesheet (emails need the styles inlined).
+ * @example
+ * const html = serializeToHtml(
+ *     { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'Hello', bold: true }] }] },
+ *     { wrap: false },
+ * );
  */
 export const serializeToHtml = <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,
@@ -117,6 +123,7 @@ export declare namespace RtePlugin {
     export type EditProps<TValue, TCurrent = TValue> = EditComponentProps<TValue, TCurrent>;
     export type BlockNode = RteBlockNode;
     export type InlineNode = RteInlineNode;
+    export type Hotkey = RteHotkey;
     export type BlockDefinition<TValue = Record<string, unknown>> = BlockDef<TValue>;
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
