@@ -2,7 +2,8 @@
 
 // Mounted by tableCell.ct.tsx.
 
-import { RichTextEditor, RichTextRenderer, tablePlugin, textStylePlugin } from '../../index';
+import { RichTextEditor, RichTextRenderer } from '../../index';
+import { tablePlugin, textStylePlugin } from '../../plugins';
 
 import { TABLE_DOCUMENT } from './tableCellValues';
 
