@@ -57,7 +57,7 @@ const noRelativeEscape = (up: string, message: string) => ({
 
 const CORE_ONLY = {
     group: OUTER_LAYERS,
-    message: 'Plugins may only import the core surface (#/core) and the shared UI (#/ui).',
+    message: 'Plugins may only import the core surface (#/core), the shared UI (#/ui) and the strings (#/locales).',
 };
 
 /**
@@ -179,6 +179,25 @@ export default defineConfig({
             excludeFiles: ['src/__tests__/serverRendering*.spec.tsx', `${ENGINE}/**/*.{ts,tsx}`],
             rules: {
                 'no-restricted-imports': ['error', { patterns: [NO_ENGINE, NO_SERVER_RENDER] }],
+            },
+        },
+        {
+            files: ['src/ui/**/*.{ts,tsx}'],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    {
+                        patterns: [
+                            NO_ENGINE,
+                            NO_SERVER_RENDER,
+                            {
+                                group: OUTER_LAYERS,
+                                message:
+                                    'The shared UI may import the core (#/core) and the strings (#/locales), nothing further out.',
+                            },
+                        ],
+                    },
+                ],
             },
         },
         {

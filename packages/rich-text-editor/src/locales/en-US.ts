@@ -4,6 +4,9 @@ import { enUS as fondueEnUS } from '@frontify/fondue-components/locales/en-US';
 
 import { type RichTextLocale } from './types';
 
+/** The language every other locale translates from, and the one shown when a locale holds no editor strings. */
+export const ENGLISH = 'en-US';
+
 /** The editor's own strings in English: the keys and wording every other locale translates. */
 export const EDITOR_STRINGS = {
     RichTextEditor_alignCenter: 'Align center',

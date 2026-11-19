@@ -3,12 +3,10 @@
 import { type LocaleConfig, useFondueTheme } from '@frontify/fondue-components';
 import { useEffect, useMemo } from 'react';
 
-import { EDITOR_STRINGS } from '#/locales/en-US';
+import { EDITOR_STRINGS, ENGLISH } from '#/locales/en-US';
 import { type RichTextStrings } from '#/locales/types';
 
 import { warnMissingEditorStrings } from '../warnings';
-
-const ENGLISH = 'en-US';
 
 const EDITOR_KEYS = Object.keys(EDITOR_STRINGS);
 

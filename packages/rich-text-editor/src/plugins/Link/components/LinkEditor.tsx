@@ -196,7 +196,7 @@ export const LinkEditor = ({
                                 </span>
                             </a>
                             <Button size="small" emphasis="weak" onPress={() => setOpen(true)}>
-                                Edit
+                                {translate('RichTextEditor_edit')}
                             </Button>
                             <Button
                                 size="small"
@@ -206,7 +206,7 @@ export const LinkEditor = ({
                                     api.focus();
                                 }}
                             >
-                                Remove
+                                {translate('RichTextEditor_remove')}
                             </Button>
                         </div>
                     )}

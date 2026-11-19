@@ -10,6 +10,7 @@ import '@frontify/fondue-tokens/styles';
 import '@frontify/fondue-components/styles';
 
 import * as locales from '../src/locales';
+import { ENGLISH } from '../src/locales/en-US';
 
 import './styles.css';
 
@@ -17,8 +18,6 @@ type Globals = {
     theme?: 'light' | 'dark';
     lang?: string;
 };
-
-const ENGLISH = 'en-US';
 
 /** The shipped locales, by language tag, each holding the components' strings and the editor's. */
 const LOCALES = new Map(Object.values(locales).map((locale) => [locale.lang ?? ENGLISH, locale]));
