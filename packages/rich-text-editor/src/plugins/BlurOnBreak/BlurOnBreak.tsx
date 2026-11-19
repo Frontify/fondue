@@ -2,6 +2,11 @@
 
 import { definePlugin } from '#/core';
 
+/** The name of Enter in the keyboard reference. */
+const BLUR_ON_BREAK_STRINGS = Object.freeze({
+    submitTitle: 'Submit, outside a list',
+});
+
 /**
  * Read once, when the editor mounts the plugin: a new `onBreak` from a later render is not seen.
  * Build the plugin once and read changing state, such as the text to save, through a ref.
@@ -28,13 +33,16 @@ export const blurOnBreakPlugin = ({ onBreak }: BlurOnBreakPluginOptions = {}) =>
     definePlugin({
         id: 'blur-on-break',
         hotkeys: {
-            // Enter is always this plugin's: it splits an item or submits.
-            Enter: (api) => {
-                if (!api.lists.split()) {
-                    onBreak?.();
-                    api.blur();
-                }
-                return true;
+            Enter: {
+                label: BLUR_ON_BREAK_STRINGS.submitTitle,
+                // Enter is always this plugin's: it splits an item or submits.
+                run: (api) => {
+                    if (!api.lists.split()) {
+                        onBreak?.();
+                        api.blur();
+                    }
+                    return true;
+                },
             },
         },
     });

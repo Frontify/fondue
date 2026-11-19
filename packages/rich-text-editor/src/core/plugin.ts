@@ -115,7 +115,7 @@ export type RtePlugin = {
      * Alt and Shift in any case; any other throws when the editor mounts. They run
      * before the editor's own, in plugin order.
      */
-    hotkeys?: Record<string, HotkeyHandler>;
+    hotkeys?: Record<string, RteHotkey>;
     /** Text rewritten as it is typed: markdown shortcuts and autolinks. */
     inputRules?: readonly (RteInputRule | RteDelimiterRule)[];
     /** Runs before the editor's own paste, in plugin order. */
@@ -624,6 +624,14 @@ export type RteBlockCommand = {
     /** Whether the command can run on the selection; omitted, it always can. The menus leave out one that cannot. */
     isAvailable?: (selection: RteSelectionSnapshot) => boolean;
     run: (api: EditorControlApi) => void;
+};
+
+export type RteHotkey = {
+    /**
+     * What the keyboard reference calls the binding: `Align left`
+     */
+    label: string;
+    run: HotkeyHandler;
 };
 
 /** A plugin's handler for one key. Return `false` to leave the key to the next handler, and in the end the editor and browser. */

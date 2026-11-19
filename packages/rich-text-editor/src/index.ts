@@ -13,6 +13,7 @@ import {
     type PasteHandler,
     type RteBlockCommand,
     type RteBlockNode,
+    type RteHotkey,
     type RteInlineNode,
     type RtePlugin as CorePlugin,
     type RteSelectionSnapshot,
@@ -122,6 +123,7 @@ export declare namespace RtePlugin {
     export type EditProps<TValue, TCurrent = TValue> = EditComponentProps<TValue, TCurrent>;
     export type BlockNode = RteBlockNode;
     export type InlineNode = RteInlineNode;
+    export type Hotkey = RteHotkey;
     export type BlockDefinition<TValue = Record<string, unknown>> = BlockDef<TValue>;
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
