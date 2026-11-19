@@ -65,12 +65,14 @@ const buttonAfterArrow = (
 type PageButtonProps = {
     destination: LinkDestination;
     onPick: (destination: LinkDestination) => void;
+    /** The arrow keys, which move focus to the next or previous page. */
+    onKeyDown: (event: KeyboardEvent<HTMLButtonElement>) => void;
 };
 
 /**
  * Named by the page, with its address as the description, so a screen reader does not run the two together.
  */
-const PageButton = ({ destination, onPick }: PageButtonProps): ReactNode => {
+const PageButton = ({ destination, onPick, onKeyDown }: PageButtonProps): ReactNode => {
     const labelId = useId();
     const hrefId = useId();
     return (
@@ -80,6 +82,7 @@ const PageButton = ({ destination, onPick }: PageButtonProps): ReactNode => {
             aria-labelledby={labelId}
             aria-describedby={hrefId}
             onClick={() => onPick(destination)}
+            onKeyDown={onKeyDown}
         >
             <span id={labelId}>{destination.label}</span>
             <span id={hrefId} className={styles.optionHref}>
@@ -147,7 +150,7 @@ export const DestinationField = ({
         }
     };
 
-    const onListKeyDown = (event: KeyboardEvent<HTMLUListElement>): void => {
+    const onPageKeyDown = (event: KeyboardEvent<HTMLButtonElement>): void => {
         if (!isArrowKey(event.key)) {
             return;
         }
@@ -178,17 +181,10 @@ export const DestinationField = ({
                 onKeyDown={onFieldKeyDown}
             />
             {found.length === 0 ? null : (
-                // The arrow keys move focus between the buttons; each button is the control.
-                // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-                <ul
-                    ref={listRef}
-                    aria-label={translate('RichTextEditor_linkPages')}
-                    className={styles.results}
-                    onKeyDown={onListKeyDown}
-                >
+                <ul ref={listRef} aria-label={translate('RichTextEditor_linkPages')} className={styles.results}>
                     {found.map((destination) => (
                         <li key={destination.id}>
-                            <PageButton destination={destination} onPick={pick} />
+                            <PageButton destination={destination} onPick={pick} onKeyDown={onPageKeyDown} />
                         </li>
                     ))}
                 </ul>

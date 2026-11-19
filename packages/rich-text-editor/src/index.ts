@@ -137,8 +137,6 @@ type MarkDef<TValue> = MarkDefinition<TValue>;
 type InlineDef<TValue> = InlineDefinition<TValue>;
 type EditComponentProps<TValue, TCurrent> = EditProps<TValue, TCurrent>;
 type Html = HtmlSpec;
-type ControlLabel = RteLabel;
-type ControlLabelContext = RteLabelContext;
 
 // oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
 export declare namespace RtePlugin {
@@ -153,8 +151,8 @@ export declare namespace RtePlugin {
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
     export type BlockCommand = RteBlockCommand;
-    export type Label = ControlLabel;
-    export type LabelContext = ControlLabelContext;
+    export type Label = RteLabel;
+    export type LabelContext = RteLabelContext;
     export type PasteHandler = OnPaste;
     export type HtmlSpec = Html;
 }
