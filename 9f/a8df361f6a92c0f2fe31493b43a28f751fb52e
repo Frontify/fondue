@@ -1,0 +1,104 @@
+packages/rich-text-editor/src/core/storedColor.ts
+  s_db1d4607d5e58e::t_eaeab1bf4f3acd 1-16,18-96
+  s_db1d4607d5e58e::t_870508458878e6 17
+packages/rich-text-editor/src/plugins/Mention/Mention.spec.ts
+  s_db1d4607d5e58e::t_3cd0057cdc5e94 20-22,26
+  s_db1d4607d5e58e::t_3606ffa4ba2ad6 7-8
+.changeset/rte-renderer-content-registry.md
+  s_db1d4607d5e58e::t_2a0f129cba5e0c 1-5
+packages/rich-text-editor/src/core/registry.ts
+  s_db1d4607d5e58e::t_73f3befd3ab8b0 383-389,392
+  s_db1d4607d5e58e::t_f7db6046e1115b 3-6,11
+  s_db1d4607d5e58e::t_fdce25c8c49aab 97
+  s_db1d4607d5e58e::t_f7bda98058196b 30
+  s_db1d4607d5e58e::t_9234d211eded63 527,530,534,561
+packages/rich-text-editor/src/index.ts
+  s_db1d4607d5e58e::t_ab35bb4487f0c6 18
+  s_db1d4607d5e58e::t_4d0cee454a28fb 224
+packages/rich-text-editor/src/renderer/serializeToHtml.ts
+  s_db1d4607d5e58e::t_c56c2f5cee52a1 3
+  s_db1d4607d5e58e::t_66868cfe2b370c 37
+packages/rich-text-editor/src/plugins/FontColor/FontColor.tsx
+  s_db1d4607d5e58e::t_9c2fc6f1b5e604 43
+  s_db1d4607d5e58e::t_8dde43bb753364 3,6
+  s_db1d4607d5e58e::t_ecc20c3179b70a 30,33-34,44
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteRules.ts
+  s_db1d4607d5e58e::t_b757a53d8c9ac9 214
+  s_db1d4607d5e58e::t_3b1d3e9fa0f686 61
+  s_db1d4607d5e58e::t_2fecf55e4a6fb6 15,19
+  s_db1d4607d5e58e::t_c51c6f931bdc94 51-60,62-67,71
+packages/rich-text-editor/src/core/cssColor.ts
+  s_db1d4607d5e58e::t_e6f79336cd21f6 1-4,6-378
+  s_db1d4607d5e58e::t_e75ee9d7b7deb3 5
+packages/rich-text-editor/src/core/plugin.ts
+  s_db1d4607d5e58e::t_58d9116aed398b 402-407,416-417
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.spec.tsx
+  s_db1d4607d5e58e::t_3096934d34b134 137,139
+  s_db1d4607d5e58e::t_a06a0266d6b1ef 215,217-218
+packages/rich-text-editor/src/core/contentRegistry.spec.ts
+  s_db1d4607d5e58e::t_8afe33c12f03e2 1-44
+packages/rich-text-editor/src/core/index.ts
+  s_db1d4607d5e58e::t_7a0d7a932a29c2 22-27
+  s_db1d4607d5e58e::t_32fd031e90fc02 103-112
+  s_db1d4607d5e58e::t_d04f1f6649ef30 28
+  s_db1d4607d5e58e::t_fb3182b0fad0dd 66
+  s_db1d4607d5e58e::t_2c08a78287aa41 21
+  s_db1d4607d5e58e::t_fc8c42192d0bbd 102
+packages/rich-text-editor/src/core/documentText.ts
+  s_db1d4607d5e58e::t_93e8aa77157413 51,67,76
+  s_db1d4607d5e58e::t_9ff34e570705f7 103
+  s_db1d4607d5e58e::t_d9853846c416d7 7
+packages/rich-text-editor/src/plugins/FontColor/helpers/colors.ts
+  s_db1d4607d5e58e::t_21d4c936fae99a 3-14,84
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.tsx
+  s_db1d4607d5e58e::t_2042fb944e5779 89,93-94
+  s_db1d4607d5e58e::t_b4b17b171e9798 90
+  s_db1d4607d5e58e::t_1a718e35d1ab45 9,11,14-21
+packages/rich-text-editor/src/core/cssColor.spec.ts
+  s_db1d4607d5e58e::t_90d7fe0378e8a4 1-105,109-159
+  s_db1d4607d5e58e::t_e9a221e89a4f6d 106-108
+packages/rich-text-editor/src/plugins/FontColor/helpers/colors.spec.ts
+  s_db1d4607d5e58e::t_a64c944b95475e 5,7
+packages/rich-text-editor/src/renderer/RichTextRenderer.tsx
+  s_db1d4607d5e58e::t_4c6d50b9da79e5 6-7,34,40,64
+packages/rich-text-editor/src/core/contentRegistry.ts
+  s_db1d4607d5e58e::t_dc18bd8879bfd9 3
+  s_db1d4607d5e58e::t_2d520a810a06ce 224-227
+  s_db1d4607d5e58e::t_1cfa77ff8ee0f1 1-2,4-223,228
+packages/rich-text-editor/src/renderer/documentTree.ts
+  s_db1d4607d5e58e::t_fe32b4c5aab37e 16
+  s_db1d4607d5e58e::t_ad67173d56fc45 89-90,100,134,154,202,217,226,242,256,277,285
+packages/rich-text-editor/src/__tests__/rendererBundle.spec.ts
+  s_db1d4607d5e58e::t_826369e4956979 15-17
+  s_db1d4607d5e58e::t_9b50195c2fec8b 51,57-63
+  s_db1d4607d5e58e::t_9cd6f130cfc8ba 64-66
+packages/rich-text-editor/src/core/storedColor.spec.ts
+  s_db1d4607d5e58e::t_d265219ea21931 1-47
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteRules.spec.tsx
+  s_db1d4607d5e58e::t_6c4d50d0332e03 15-18
+  s_db1d4607d5e58e::t_2f920acd09e75a 1-14,19-28,30-47,49-56
+  s_db1d4607d5e58e::t_6cc9fd6b81a8ac 29
+  s_db1d4607d5e58e::t_3299a1b783a4a1 48
+packages/rich-text-editor/src/plugins/FontColor/FontColor.spec.ts
+  s_db1d4607d5e58e::t_5a3f84ba06baae 7,13-17,21,24
+  s_db1d4607d5e58e::t_56f091fadd6520 33-36
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_db1d4607d5e58e::t_381d480c44a880 233-235
+  s_db1d4607d5e58e::t_6aaeb7b0c5dd24 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9fa8df361f6a92c0f2fe31493b43a28f751fb52e",
+  "prompts": {},
+  "sessions": {
+    "s_db1d4607d5e58e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1084a074-7586-420c-8797-a9dbcd3c7659",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
