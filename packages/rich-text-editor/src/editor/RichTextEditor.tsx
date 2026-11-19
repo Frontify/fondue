@@ -114,9 +114,10 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     'aria-describedby'?: string;
     /**
      * The id of the editable element, or of the read-only view's root while the
-     * editor is read-only: the target for a host's `aria-*` references and a
-     * label's `htmlFor`. A label's `htmlFor` alone does not name an editable
-     * `div`, so name the editor with `aria-labelledby` pointing at the label.
+     * editor is read-only or shows its crash message: the target for a host's
+     * `aria-*` references and a label's `htmlFor`. A label's `htmlFor` alone does
+     * not name an editable `div`, so name the editor with `aria-labelledby`
+     * pointing at the label.
      */
     id?: string;
     /**
@@ -250,6 +251,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                     onRetry={onRetry}
                     focusWasWithin={focusWasWithin}
                     groupAttributes={fallbackGroupAttributes}
+                    id={shellProps.id}
                     testId={dataTestId}
                     onCatch={onFallbackCatch}
                 />

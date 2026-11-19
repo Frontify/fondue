@@ -26,6 +26,8 @@ type EditorFallbackProps = {
     focusWasWithin: () => boolean;
     /** The host's name for the editor as a group, so the message and Retry say which editor failed. */
     groupAttributes: Record<string, string>;
+    /** The host's id for the editor, on the root, as on the read-only view the crash replaced. */
+    id: string | undefined;
     /** The test id of the editor's root element. */
     testId: string;
     /** Told when the read-only view throws too, as a crash of its own. */
@@ -47,6 +49,7 @@ export const EditorFallback = ({
     onRetry,
     focusWasWithin,
     groupAttributes,
+    id,
     testId,
     onCatch,
 }: EditorFallbackProps): ReactNode => {
@@ -76,7 +79,7 @@ export const EditorFallback = ({
         onShown(document);
     }, [onShown, document]);
     return (
-        <div className={styles.root} data-test-id={testId} {...groupAttributes}>
+        <div id={id} className={styles.root} data-test-id={testId} {...groupAttributes}>
             {/* A plugin whose readonly view throws too leaves just the message and Retry. */}
             <EditorErrorBoundary fallback={null} resetKey={document} onCatch={onCatch}>
                 <RegistryRenderer value={document} registry={registry} className={styles.content} />

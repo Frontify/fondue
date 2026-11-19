@@ -1724,18 +1724,20 @@ describe('an editor that crashes', () => {
         expect(container.querySelector('[role="group"]')).toBeNull();
     });
 
-    it("puts the host's test id on the fallback's root", () => {
+    it("puts the host's id and test id on the fallback's root", () => {
         silenceReact();
         const { container } = mount(() => (
             <RichTextEditor
                 value={paragraph('still here')}
                 plugins={[throwingPlugin()]}
+                id="comment"
                 data-test-id="comment-editor"
             />
         ));
 
         expect(container.querySelector('[role="alert"]')).not.toBeNull();
         expect(container.firstElementChild?.getAttribute('data-test-id')).toBe('comment-editor');
+        expect(container.firstElementChild?.id).toBe('comment');
     });
 
     it('shows the fallback again when Retry meets the same failure, and reports it again', () => {
