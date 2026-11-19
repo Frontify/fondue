@@ -12,7 +12,7 @@ import {
 import { history, redo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
-import { type Mark as PmMark, type Node as PmNode, type Schema } from 'prosemirror-model';
+import { type Mark as PmMark, type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, TextSelection } from 'prosemirror-state';
 import { canJoin, findWrapping } from 'prosemirror-transform';
 
@@ -34,6 +34,7 @@ import { EXTRA_ATTR } from './documentConversion';
 import { gridEditing, gridKeys, hasGrids, outsideGrids } from './grid';
 import { deleteEmptyBlockBesideList, listKeys } from './lists';
 import {
+    isInExcludedMark,
     type RuleContext,
     type RuleHandler,
     type RuleOfKind,
@@ -69,6 +70,7 @@ import {
 
 export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api: EditorControlApi): PmPlugin[] => {
     const hasLists = registry.itemTypeByList.size > 0;
+    const { excludedMarks } = ruleContext(registry, schema);
     const hasGrid = hasGrids(registry);
     const lists = listKeys(api, registry.itemTypeByList);
     const outdent = lists['Shift-Tab'];
@@ -90,7 +92,7 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         ...autolinkOnEnter(registry, schema),
         // 3
         keymap(featureHotkeys(registry.hotkeys, api)),
-        characterHotkeys(registry.hotkeys, api),
+        characterHotkeys(registry.hotkeys, excludedMarks, api),
         // 4
         ...(hasGrid ? [gridKeys(), ...gridEditing()] : []),
         ...(hasLists ? [keymap(lists)] : []),
@@ -176,20 +178,35 @@ const isAtWordStart = (state: EditorState, from: number): boolean => {
  * Character hotkeys fire on the character being TYPED, not on the keys pressed
  * (on a Swiss Mac `@` is Option-G, which a keymap would read as `Alt-@`). They
  * only fire at a word start: `@` in `noah@frontify.com` is not a mention.
+ * Text carrying a mark that opts out of rules (inline code) is typed as is.
  */
-const characterHotkeys = (hotkeys: PluginRegistry['hotkeys'], api: EditorControlApi): PmPlugin =>
-    new Plugin({
+const characterHotkeys = (
+    hotkeys: PluginRegistry['hotkeys'],
+    excludedMarks: readonly PmMarkType[],
+    api: EditorControlApi,
+): PmPlugin => {
+    return new Plugin({
         props: {
             handleTextInput: (view, from, _to, text) => {
                 // Mid-composition the character is not typed yet: the IME owns it.
                 if (view.composing) {
                     return false;
                 }
-                const handlers = isCharacterHotkey(text) ? hotkeys.get(text) : undefined;
-                return handlers && isAtWordStart(view.state, from) ? runUntilHandled(handlers, api) : false;
+                if (!isCharacterHotkey(text)) {
+                    return false;
+                }
+                const handlers = hotkeys.get(text);
+                if (!handlers || !isAtWordStart(view.state, from)) {
+                    return false;
+                }
+                if (isInExcludedMark(view.state, excludedMarks, from)) {
+                    return false;
+                }
+                return runUntilHandled(handlers, api);
             },
         },
     });
+};
 
 // Typing rewrites: one function per `RteInputRule` kind
 //

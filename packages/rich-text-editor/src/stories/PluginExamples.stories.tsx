@@ -72,6 +72,17 @@ const MENTIONABLE: readonly MentionItem[] = [
 const profileHref = (mention: MentionValue): string | undefined =>
     mention.kind === 'all' ? undefined : `#/people/${mention.id}`;
 
+/** A search that fails for the query "fail", to show the retry. */
+const searchMentionable = (query: string): Promise<readonly MentionItem[]> => {
+    if (query === 'fail') {
+        return Promise.reject(new Error('The people service is down'));
+    }
+    const needle = query.toLowerCase();
+    return Promise.resolve(
+        MENTIONABLE.filter((item) => item.username.includes(needle) || item.name.toLowerCase().includes(needle)),
+    );
+};
+
 /** Everything the package ships, plus the ones that need arguments. */
 const ALL_PLUGINS: readonly RtePlugin[] = [...defaultPlugins, mentionPlugin({ items: MENTIONABLE, href: profileHref })];
 
@@ -659,13 +670,14 @@ export const Mention: Story = {
                 <p className={HINT}>
                     Type <code>@</code> to open the picker. A mention is a void inline element: clicking one puts the
                     caret after it, and it deletes as one. A mention names a person, a group or everyone; the picker
-                    shows an avatar when the app gives one.
+                    shows an avatar when the app gives one. Type <code>@fail</code> to see a search that fails, with its
+                    retry.
                 </p>
                 <div className={FRAME}>
                     <RichTextEditor
                         value={doc}
                         onChange={setDoc}
-                        plugins={[mentionPlugin({ items: MENTIONABLE, href: profileHref })]}
+                        plugins={[mentionPlugin({ items: searchMentionable, href: profileHref })]}
                     />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>

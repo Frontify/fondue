@@ -12,6 +12,7 @@ import {
     defineBlock,
     defineContent,
     defineInline,
+    defineMark,
     definePlugin,
     type EditorControlApi,
     PARAGRAPH,
@@ -399,6 +400,34 @@ describe('Backspace', () => {
     });
 });
 
+/** A mark that keeps typing rules and hotkeys on, unlike `verbatimPlugin`'s. */
+const plainMarkPlugin = definePlugin({
+    id: 'plain',
+    content: defineContent({
+        marks: {
+            plain: defineMark({
+                toHtml: () => ({ tag: 'u', children: true }),
+                parse: [{ tag: 'u' }],
+            }),
+        },
+    }),
+});
+
+const verbatimPlugin = definePlugin({
+    id: 'verbatim',
+    content: defineContent({
+        marks: {
+            verbatim: defineMark({
+                excludesInputRules: true,
+                inclusive: false,
+                toHtml: () => ({ tag: 'kbd', children: true }),
+                parse: [{ tag: 'kbd' }],
+            }),
+        },
+    }),
+    hotkeys: { 'Mod-q': (api) => api.marks.toggle('verbatim') },
+});
+
 describe('a feature hotkey', () => {
     it('runs when its keys are pressed — Shift-Enter breaks the line', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('ab'))]);
@@ -494,6 +523,53 @@ describe('a feature hotkey', () => {
 
         expect(mention).toHaveBeenCalledTimes(1);
         expect(editor.stored()).toEqual([paragraph(text('hi [mention]'))]);
+    });
+
+    it('naming a character is typed as it is inside a mark that opts out of rules, and fires outside it', () => {
+        const trigger = vi.fn<(api: EditorControlApi) => void>();
+        const editor = editorWith(
+            [...defaultPlugins, verbatimPlugin, definePlugin({ id: 'trigger', hotkeys: { '@': trigger } })],
+            [paragraph(text('a b', { verbatim: true }), text(' c'))],
+        );
+
+        editor.caretAfter('a ');
+        editor.type('@');
+
+        expect(trigger).not.toHaveBeenCalled();
+        expect(editor.stored()).toEqual([paragraph(text('a @b', { verbatim: true }), text(' c'))]);
+
+        editor.caretAfter(' c');
+        editor.type(' @');
+
+        expect(trigger).toHaveBeenCalledTimes(1);
+    });
+
+    it('naming a character still fires after a space in a mark that does not opt out of rules', () => {
+        const trigger = vi.fn<(api: EditorControlApi) => void>();
+        const editor = editorWith(
+            [...defaultPlugins, plainMarkPlugin, definePlugin({ id: 'trigger', hotkeys: { '@': trigger } })],
+            [paragraph(text('hi ', { plain: true }))],
+        );
+
+        editor.caretAfter('hi ');
+        editor.type('@');
+
+        expect(trigger).toHaveBeenCalledTimes(1);
+    });
+
+    it('naming a character does not fire at a caret where a mark that opts out of rules was just turned on', () => {
+        const trigger = vi.fn<(api: EditorControlApi) => void>();
+        const editor = editorWith(
+            [...defaultPlugins, verbatimPlugin, definePlugin({ id: 'trigger', hotkeys: { '@': trigger } })],
+            [paragraph(text('hi '))],
+        );
+        editor.caretAfter('hi ');
+
+        expect(press(editor.view, 'q', mod)).toBe(true);
+        editor.type('@');
+
+        expect(trigger).not.toHaveBeenCalled();
+        expect(editor.stored()).toEqual([paragraph(text('hi '), text('@', { verbatim: true }))]);
     });
 });
 
