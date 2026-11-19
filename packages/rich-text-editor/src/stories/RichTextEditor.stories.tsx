@@ -23,6 +23,7 @@ import {
     mentionPlugin,
     quoteContent,
     quotePlugin,
+    type TextLinkLook,
     textStyleContent,
     textStylePlugin,
     type TextStylePluginOptions,
@@ -899,10 +900,11 @@ const GUIDELINE_LOOKS: TextStylePluginOptions['look'] = {
         lineHeight: 'var(--f-theme-settings-quote-line-height)',
         color: 'var(--f-theme-settings-quote-color)',
     },
-    link: {
-        fontWeight: 'var(--f-theme-settings-link-font-weight)',
-        color: 'var(--f-theme-settings-link-color)',
-    },
+};
+
+const GUIDELINE_LINK_LOOK: TextLinkLook = {
+    fontWeight: 'var(--f-theme-settings-link-font-weight)',
+    color: 'var(--f-theme-settings-link-color)',
 };
 
 const HOST_STYLING_PLUGINS = [
@@ -910,7 +912,7 @@ const HOST_STYLING_PLUGINS = [
     bulletListPlugin(),
     checkListPlugin(),
     quotePlugin(),
-    linkPlugin(),
+    linkPlugin({ look: { text: GUIDELINE_LINK_LOOK } }),
 ];
 
 // The renderer takes content only, with the same looks, so a page that only shows documents ships no editing code.
@@ -919,7 +921,7 @@ const HOST_STYLING_CONTENT = [
     bulletListContent,
     checkListContent,
     quoteContent,
-    linkContent,
+    linkContent({ look: { text: GUIDELINE_LINK_LOOK } }),
 ];
 
 const HOST_STYLING_DOCUMENT: RteDocument = {
@@ -995,8 +997,9 @@ const LOOKS_DEFAULT: TextStyleLook = {
     imageCaption: { fontSize: '11px' },
     body: { fontSize: '16px', lineHeight: '1.7', color: 'rgb(40, 40, 60)' },
     quote: { fontStyle: 'italic', color: 'rgb(90, 50, 110)' },
-    link: { fontWeight: '600', color: 'rgb(190, 40, 90)' },
 };
+
+const LINK_LOOK_DEFAULT: TextLinkLook = { fontWeight: '600', color: 'rgb(190, 40, 90)' };
 
 const LOOKS_TEXT_STYLE_KEYS = [
     'heading1',
@@ -1026,9 +1029,9 @@ const LOOKS_FIELDS = [
 
 const LOOKS_LEGEND_LINES = [
     `Keys, one per text style: ${LOOKS_TEXT_STYLE_KEYS.join(', ')}.`,
-    'Keys for the rest: body (plain paragraphs and list items), quote, link.',
+    'Keys for the rest: body (plain paragraphs and list items), quote.',
     `Fields: ${LOOKS_FIELDS.join(', ')}.`,
-    'A link takes no textDecoration, marginTop or marginBottom.',
+    'linkPlugin({ look: { text } }) takes the same fields but textDecoration, marginTop and marginBottom.',
     "A key or field left out keeps Fondue's look.",
     'A value that could end its CSS declaration early throws.',
 ];
@@ -1037,17 +1040,31 @@ const LOOKS_CODE_INDENT = 4;
 const LOOKS_LEGEND = 'tw-m-0 tw-pl-4 tw-body-small tw-text-secondary';
 const LOOKS_ERROR = 'tw-m-0 tw-rounded tw-bg-surface-dim tw-p-3 tw-body-small tw-text-primary';
 
-const looksConfigurationCode = (look: TextStyleLook): string =>
-    `textStylePlugin({ look: ${JSON.stringify(look, null, LOOKS_CODE_INDENT)} })`;
+type LooksStoryArgs = {
+    look: TextStyleLook;
+    linkLook: TextLinkLook;
+};
+
+const looksConfigurationCode = ({ look, linkLook }: LooksStoryArgs): string =>
+    [
+        `textStylePlugin({ look: ${JSON.stringify(look, null, LOOKS_CODE_INDENT)} })`,
+        `linkPlugin({ look: { text: ${JSON.stringify(linkLook, null, LOOKS_CODE_INDENT)} } })`,
+    ].join('\n');
 
 type LooksPluginsResult = { status: 'ready'; plugins: RtePlugin[] } | { status: 'invalid'; message: string };
 
-// textStylePlugin throws on a value that could end its CSS declaration early, so a bad Controls entry is reported here.
-const looksPluginsFor = (look: TextStyleLook): LooksPluginsResult => {
+// Both plugins throw on a value that could end its CSS declaration early, so a bad Controls entry is reported here.
+const looksPluginsFor = ({ look, linkLook }: LooksStoryArgs): LooksPluginsResult => {
     try {
         return {
             status: 'ready',
-            plugins: [textStylePlugin({ look }), bulletListPlugin(), checkListPlugin(), quotePlugin(), linkPlugin()],
+            plugins: [
+                textStylePlugin({ look }),
+                bulletListPlugin(),
+                checkListPlugin(),
+                quotePlugin(),
+                linkPlugin({ look: { text: linkLook } }),
+            ],
         };
     } catch (error) {
         if (error instanceof Error) {
@@ -1058,13 +1075,14 @@ const looksPluginsFor = (look: TextStyleLook): LooksPluginsResult => {
 };
 
 type LooksSurfacesProps = {
-    look: TextStyleLook;
+    looks: LooksStoryArgs;
     doc: RteDocument;
     onChange: (doc: RteDocument) => void;
 };
 
-const LooksSurfaces = ({ look, doc, onChange }: LooksSurfacesProps) => {
-    const result = useMemo(() => looksPluginsFor(look), [look]);
+const LooksSurfaces = ({ looks, doc, onChange }: LooksSurfacesProps) => {
+    const { look, linkLook } = looks;
+    const result = useMemo(() => looksPluginsFor({ look, linkLook }), [look, linkLook]);
 
     switch (result.status) {
         case 'invalid':
@@ -1088,16 +1106,16 @@ const LooksSurfaces = ({ look, doc, onChange }: LooksSurfacesProps) => {
 };
 
 type LooksPlaygroundProps = {
-    look: TextStyleLook;
+    looks: LooksStoryArgs;
 };
 
-const LooksPlayground = ({ look }: LooksPlaygroundProps) => {
+const LooksPlayground = ({ looks }: LooksPlaygroundProps) => {
     const [doc, setDoc] = useState<RteDocument>(HOST_STYLING_DOCUMENT);
 
     return (
         <div className="tw-grid tw-gap-4 tw-p-4 tw-font-primary">
             <pre className={JSON_PANEL}>
-                <code>{looksConfigurationCode(look)}</code>
+                <code>{looksConfigurationCode(looks)}</code>
             </pre>
             <ul className={LOOKS_LEGEND}>
                 {LOOKS_LEGEND_LINES.map((line) => (
@@ -1105,31 +1123,27 @@ const LooksPlayground = ({ look }: LooksPlaygroundProps) => {
                 ))}
             </ul>
             {/* The plugin list is read at mount, so a change to the looks remounts both surfaces. */}
-            <LooksSurfaces key={JSON.stringify(look)} look={look} doc={doc} onChange={setDoc} />
+            <LooksSurfaces key={JSON.stringify(looks)} looks={looks} doc={doc} onChange={setDoc} />
         </div>
     );
 };
 
-type LooksStoryArgs = {
-    look: TextStyleLook;
-};
-
 /**
- * The configuration of `textStylePlugin({ look })` as plain values, printed above the editor and the renderer.
- * Edit `look` in Controls and both surfaces redraw.
+ * The configuration of `textStylePlugin({ look })` and `linkPlugin({ look: { text } })` as plain values, printed above the
+ * editor and the renderer. Edit `look` or `linkLook` in Controls and both surfaces redraw.
  */
 export const Look: StoryObj<LooksStoryArgs> = {
-    args: { look: LOOKS_DEFAULT },
-    argTypes: { look: { control: 'object' } },
+    args: { look: LOOKS_DEFAULT, linkLook: LINK_LOOK_DEFAULT },
+    argTypes: { look: { control: 'object' }, linkLook: { control: 'object' } },
     // The meta's editor props are not this story's args, so Controls lists only the looks.
-    parameters: { controls: { include: ['look'] } },
-    render: ({ look }) => <LooksPlayground look={look} />,
+    parameters: { controls: { include: ['look', 'linkLook'] } },
+    render: ({ look, linkLook }) => <LooksPlayground looks={{ look, linkLook }} />,
 };
 
 /**
  * The usual production setup: the values are `var(--f-theme-settings-…)`, so one editor configuration follows the section (light or dark) it sits in.
- * A host sets the look of each text style, body text, quotes and links with `textStylePlugin({ look })`, usually from its guideline settings,
- * and hands the renderer `textStyleContent({ look })` with the same values.
+ * A host sets the look of each text style, body text and quotes with `textStylePlugin({ look })`, and of links with `linkPlugin({ look: { text } })`, usually from its guideline settings,
+ * and hands the renderer `textStyleContent({ look })` and `linkContent({ look: { text } })` with the same values.
  * Anything the host leaves out, or a variable nobody defines, keeps Fondue's look.
  * The editor and the renderer draw the same.
  */

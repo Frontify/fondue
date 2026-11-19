@@ -12,6 +12,7 @@ import {
     defineBlock,
     defineContent,
     defineInline,
+    defineMark,
     definePlugin,
     type EditorControlApi,
     PARAGRAPH,
@@ -20,7 +21,8 @@ import {
 } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
-import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
+import { trimTrailingPunctuation } from './autolink';
+import { destroyEditors, editorWith, paragraph, shipped, text, TOKEN_TRIM } from './testEditor';
 
 /**
  * What typing and key presses do, through the pipeline `keystrokePipeline`
@@ -398,6 +400,34 @@ describe('Backspace', () => {
     });
 });
 
+/** A mark that keeps typing rules and hotkeys on, unlike `verbatimPlugin`'s. */
+const plainMarkPlugin = definePlugin({
+    id: 'plain',
+    content: defineContent({
+        marks: {
+            plain: defineMark({
+                toHtml: () => ({ tag: 'u', children: true }),
+                parse: [{ tag: 'u' }],
+            }),
+        },
+    }),
+});
+
+const verbatimPlugin = definePlugin({
+    id: 'verbatim',
+    content: defineContent({
+        marks: {
+            verbatim: defineMark({
+                excludesInputRules: true,
+                inclusive: false,
+                toHtml: () => ({ tag: 'kbd', children: true }),
+                parse: [{ tag: 'kbd' }],
+            }),
+        },
+    }),
+    hotkeys: { 'Mod-q': { label: 'Verbatim', run: (api) => api.marks.toggle('verbatim') } },
+});
+
 describe('a feature hotkey', () => {
     it('runs when its keys are pressed — Shift-Enter breaks the line', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('ab'))]);
@@ -413,8 +443,8 @@ describe('a feature hotkey', () => {
         const second = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('!'));
         const editor = editorWith(
             [
-                definePlugin({ id: 'first', hotkeys: { 'Alt-x': first } }),
-                definePlugin({ id: 'second', hotkeys: { 'Alt-x': second } }),
+                definePlugin({ id: 'first', hotkeys: { 'Alt-x': { label: 'First', run: first } } }),
+                definePlugin({ id: 'second', hotkeys: { 'Alt-x': { label: 'Second', run: second } } }),
             ],
             [paragraph(text('a'))],
         );
@@ -436,7 +466,7 @@ describe('a feature hotkey', () => {
             vi.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
             const run = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('!'));
             const editor = editorWith(
-                [definePlugin({ id: 'option', hotkeys: { [keys]: run } })],
+                [definePlugin({ id: 'option', hotkeys: { [keys]: { label: 'Option', run } } })],
                 [paragraph(text('a'))],
             );
             editor.caretAfter('a');
@@ -451,7 +481,7 @@ describe('a feature hotkey', () => {
         vi.spyOn(navigator, 'platform', 'get').mockReturnValue('Win32');
         const run = vi.fn();
         const editor = editorWith(
-            [definePlugin({ id: 'ctrl-alt', hotkeys: { 'Ctrl-Alt-x': run } })],
+            [definePlugin({ id: 'ctrl-alt', hotkeys: { 'Ctrl-Alt-x': { label: 'Ctrl Alt', run } } })],
             [paragraph(text('a'))],
         );
         editor.caretAfter('a');
@@ -464,7 +494,10 @@ describe('a feature hotkey', () => {
     it('takes a key the list keys would otherwise claim', () => {
         const claim = vi.fn(() => true);
         const editor = editorWith(
-            [...defaultPlugins, definePlugin({ id: 'claims-enter', hotkeys: { Enter: claim } })],
+            [
+                ...defaultPlugins,
+                definePlugin({ id: 'claims-enter', hotkeys: { Enter: { label: 'Claim Enter', run: claim } } }),
+            ],
             [{ type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('ab'))] }] }],
         );
         editor.caretAfter('a');
@@ -477,7 +510,10 @@ describe('a feature hotkey', () => {
 
     it('naming a character does not fire in the middle of a word', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>();
-        const editor = editorWith([definePlugin({ id: 'mention', hotkeys: { '@': mention } })], empty());
+        const editor = editorWith(
+            [definePlugin({ id: 'mention', hotkeys: { '@': { label: 'Mention', run: mention } } })],
+            empty(),
+        );
 
         editor.type('noah@frontify.com');
 
@@ -487,12 +523,74 @@ describe('a feature hotkey', () => {
 
     it('naming a character fires on that character being typed, and the character is not inserted', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('[mention]'));
-        const editor = editorWith([definePlugin({ id: 'mention', hotkeys: { '@': mention } })], empty());
+        const editor = editorWith(
+            [definePlugin({ id: 'mention', hotkeys: { '@': { label: 'Mention', run: mention } } })],
+            empty(),
+        );
 
         editor.type('hi @');
 
         expect(mention).toHaveBeenCalledTimes(1);
         expect(editor.stored()).toEqual([paragraph(text('hi [mention]'))]);
+    });
+
+    it('naming a character is typed as it is inside a mark that opts out of rules, and fires outside it', () => {
+        const trigger = vi.fn<(api: EditorControlApi) => void>();
+        const editor = editorWith(
+            [
+                ...defaultPlugins,
+                verbatimPlugin,
+                definePlugin({ id: 'trigger', hotkeys: { '@': { label: 'Trigger', run: trigger } } }),
+            ],
+            [paragraph(text('a b', { verbatim: true }), text(' c'))],
+        );
+
+        editor.caretAfter('a ');
+        editor.type('@');
+
+        expect(trigger).not.toHaveBeenCalled();
+        expect(editor.stored()).toEqual([paragraph(text('a @b', { verbatim: true }), text(' c'))]);
+
+        editor.caretAfter(' c');
+        editor.type(' @');
+
+        expect(trigger).toHaveBeenCalledTimes(1);
+    });
+
+    it('naming a character still fires after a space in a mark that does not opt out of rules', () => {
+        const trigger = vi.fn<(api: EditorControlApi) => void>();
+        const editor = editorWith(
+            [
+                ...defaultPlugins,
+                plainMarkPlugin,
+                definePlugin({ id: 'trigger', hotkeys: { '@': { label: 'Trigger', run: trigger } } }),
+            ],
+            [paragraph(text('hi ', { plain: true }))],
+        );
+
+        editor.caretAfter('hi ');
+        editor.type('@');
+
+        expect(trigger).toHaveBeenCalledTimes(1);
+    });
+
+    it('naming a character does not fire at a caret where a mark that opts out of rules was just turned on', () => {
+        const trigger = vi.fn<(api: EditorControlApi) => void>();
+        const editor = editorWith(
+            [
+                ...defaultPlugins,
+                verbatimPlugin,
+                definePlugin({ id: 'trigger', hotkeys: { '@': { label: 'Trigger', run: trigger } } }),
+            ],
+            [paragraph(text('hi '))],
+        );
+        editor.caretAfter('hi ');
+
+        expect(press(editor.view, 'q', mod)).toBe(true);
+        editor.type('@');
+
+        expect(trigger).not.toHaveBeenCalled();
+        expect(editor.stored()).toEqual([paragraph(text('hi '), text('@', { verbatim: true }))]);
     });
 });
 
@@ -652,7 +750,10 @@ describe('typing rewrites when a composition ends', () => {
 describe('a character hotkey during IME composition', () => {
     it('does not fire: the composition owns the character', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>();
-        const editor = editorWith([definePlugin({ id: 'mention', hotkeys: { '@': mention } })], empty());
+        const editor = editorWith(
+            [definePlugin({ id: 'mention', hotkeys: { '@': { label: 'Mention', run: mention } } })],
+            empty(),
+        );
         vi.spyOn(editor.view, 'composing', 'get').mockReturnValue(true);
 
         editor.type('@');
@@ -728,6 +829,22 @@ describe('Enter in a list over a range across items', () => {
         press(editor.view, 'Enter');
 
         expect(editor.stored()?.[0]?.type).toBe('bulletList');
+    });
+});
+
+describe('trimming punctuation off a typed address', () => {
+    it('strips closing quotes, brackets and stops one by one', () => {
+        expect(trimTrailingPunctuation('https://a.com/x"),.', TOKEN_TRIM)).toBe('https://a.com/x');
+        expect(trimTrailingPunctuation('https://a.com/Foo_(bar)).', TOKEN_TRIM)).toBe('https://a.com/Foo_(bar)');
+    });
+
+    it('finishes quickly on a long run of full stops', () => {
+        const run = '.'.repeat(5000);
+        const started = performance.now();
+
+        expect(trimTrailingPunctuation(`https://a.com/x${run}a`, TOKEN_TRIM)).toBe(`https://a.com/x${run}a`);
+        expect(trimTrailingPunctuation(`https://a.com/x${run}`, TOKEN_TRIM)).toBe('https://a.com/x');
+        expect(performance.now() - started).toBeLessThan(1000);
     });
 });
 

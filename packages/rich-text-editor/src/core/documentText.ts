@@ -4,10 +4,10 @@
 // anything at all, and its words without formatting. No DOM, no engine, so
 // both run on a server beside the stored value.
 
+import { buildContentRegistry, type ContentRegistry } from './contentRegistry';
 import { type RteBlockNode, type RteDocumentOf, type RteInlineNode } from './document';
 import { type HtmlSpec } from './htmlSpec';
 import { type RteContent, type RtePlugin } from './plugin';
-import { buildPluginRegistry, type PluginRegistry } from './registry';
 
 type AnyNode = RteBlockNode | RteInlineNode;
 
@@ -48,7 +48,7 @@ const specText = (spec: HtmlSpec): string => {
 };
 
 /** A text block's runs as one line; an inline no plugin defines has no text to give. */
-const inlineText = (inlines: readonly RteInlineNode[], registry: PluginRegistry): string =>
+const inlineText = (inlines: readonly RteInlineNode[], registry: ContentRegistry): string =>
     inlines
         .map((inline) => {
             if (inline.text !== undefined) {
@@ -64,7 +64,7 @@ const inlineText = (inlines: readonly RteInlineNode[], registry: PluginRegistry)
  * Whether a block holds other blocks, by its declared `content`; for a block
  * no plugin defines, by whether any child has children of its own.
  */
-const holdsBlocks = (block: RteBlockNode, registry: PluginRegistry): boolean => {
+const holdsBlocks = (block: RteBlockNode, registry: ContentRegistry): boolean => {
     const definition = registry.blocks.get(block.type);
     if (definition) {
         return typeof definition.content === 'object';
@@ -73,7 +73,7 @@ const holdsBlocks = (block: RteBlockNode, registry: PluginRegistry): boolean => 
 };
 
 /** One line per text block, lists flattened; a void block (a column break) adds none. */
-const blockLines = (blocks: readonly RteBlockNode[], registry: PluginRegistry): string[] =>
+const blockLines = (blocks: readonly RteBlockNode[], registry: ContentRegistry): string[] =>
     blocks.flatMap((block) => {
         if (block.children === undefined) {
             return [];
@@ -100,4 +100,4 @@ export type ToPlainTextOptions = {
  * form of its own.
  */
 export const toPlainText = (doc: RteDocumentOf, { plugins = [] }: ToPlainTextOptions = {}): string =>
-    blockLines(doc.blocks, buildPluginRegistry(plugins)).join('\n');
+    blockLines(doc.blocks, buildContentRegistry(plugins)).join('\n');
