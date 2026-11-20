@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
 import { RichTextEditor, RichTextRenderer, type RteDocument } from '../../index';
 
+import { scan } from './axeScan';
 import { EditorWithMentions, RendererWithMentions } from './editorWithMentions';
+
+import type AxeBuilder from '@axe-core/playwright';
 
 // Driven through the package's public API in a real browser: keys go in as
 // the browser sends them, so what the engine does with them is what a user gets.
@@ -152,18 +154,6 @@ const everyPluginDocument: RteDocument = {
         ...document.blocks,
     ],
 };
-
-// Page-level rules about the bare test page (no main landmark, no h1), not about the component.
-const PAGE_LEVEL_RULES = ['landmark-one-main', 'page-has-heading-one', 'region'];
-
-// WCAG 2.2 AA, the editor's bar: axe's defaults leave out its rules, `target-size` among them.
-const WCAG_22_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
-
-// Fondue's text field draws its placeholder under a transparent input, which axe cannot see through (5.7:1, measured by hand).
-const FIELD_PLACEHOLDER = '[data-test-id="fondue-text-input"] div[aria-hidden="true"]';
-
-const scan = (page: Page): AxeBuilder =>
-    new AxeBuilder({ page }).withTags(WCAG_22_AA).disableRules(PAGE_LEVEL_RULES).exclude(FIELD_PLACEHOLDER);
 
 const COLOR_CONTRAST = 'color-contrast';
 

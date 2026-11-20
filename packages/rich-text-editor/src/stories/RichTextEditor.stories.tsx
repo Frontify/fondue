@@ -62,8 +62,8 @@ const HINT = 'tw-col-span-full tw-m-0 tw-body-small tw-text-secondary';
  */
 const SURFACE = 'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-surface tw-p-medium';
 
-/** The field box around an editor: the surface, with a stronger border on hover and while the caret is inside, as Fondue's Textarea does. */
-const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-line-strong`;
+/** The field box around an editor, with Fondue Textarea's hover and focus looks. */
+const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-line-strong has-[[data-keyboard-focus=true]]:tw-ring-focus`;
 
 const buttonClasses = (active: boolean): string =>
     [
@@ -168,6 +168,39 @@ export const Placeholder: Story = {
                         onChange={setDoc}
                         plugins={defaultPlugins}
                         placeholder="Write something…"
+                    />
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/** How many paragraphs the long document of `MaxRows` holds. */
+const MAX_ROWS_PARAGRAPH_COUNT = 20;
+
+/** How many lines of body text `MaxRows` shows before the content scrolls. */
+const MAX_ROWS_STORY_ROWS = 8;
+
+/** `maxRows` caps the content at that many lines; past it the content scrolls below the toolbar. */
+export const MaxRows: Story = {
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: Array.from({ length: MAX_ROWS_PARAGRAPH_COUNT }, (_, index) => ({
+                type: 'paragraph' as const,
+                children: [{ text: `Paragraph ${index + 1}: scroll the content, the toolbar stays where it is.` }],
+            })),
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <div className={FRAME}>
+                    <RichTextEditor
+                        value={doc}
+                        onChange={setDoc}
+                        plugins={defaultPlugins}
+                        maxRows={MAX_ROWS_STORY_ROWS}
                     />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>

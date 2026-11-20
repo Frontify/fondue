@@ -8,9 +8,8 @@ import { type EditorStateStore } from './useEditorHandle';
 
 /**
  * A virtual element at the selection for the flyout's anchor, re-rendering the
- * caller on every editor state change. A new one whenever the box moves, so the
- * flyout repositions; while the page scrolls the flyout reads the box live.
- * `contextElement` tells the flyout which scrolling containers to follow.
+ * caller on every editor state change and content scroll. A new one whenever the
+ * box moves, so the flyout repositions.
  */
 export const useSelectionAnchor = ({
     handle,
@@ -22,6 +21,12 @@ export const useSelectionAnchor = ({
     editableRef: RefObject<HTMLElement | null>;
 }): RefObject<{ getBoundingClientRect(): DOMRect; contextElement?: Element }> => {
     useSyncExternalStore(editorState.subscribe, editorState.getVersion, editorState.getVersion);
+    // `contextElement` covers the scrollers above the mount; under `maxRows` the editable below it scrolls too.
+    useSyncExternalStore(
+        (onScroll) => subscribeToScroll(editableRef.current, onScroll),
+        () => scrollTopOf(editableRef.current),
+        () => 0,
+    );
     const { left, top, width, height } = handle.selectionRect();
     const box = `${left},${top},${width},${height}`;
 
@@ -39,4 +44,14 @@ export const useSelectionAnchor = ({
         // eslint-disable-next-line @eslint-react/exhaustive-deps
         [handle, editableRef, box],
     );
+};
+
+const editableOf = (mount: HTMLElement | null): Element | null => mount?.querySelector('[contenteditable]') ?? null;
+
+const scrollTopOf = (mount: HTMLElement | null): number => editableOf(mount)?.scrollTop ?? 0;
+
+const subscribeToScroll = (mount: HTMLElement | null, onScroll: () => void): (() => void) => {
+    const editable = editableOf(mount);
+    editable?.addEventListener('scroll', onScroll, { passive: true });
+    return () => editable?.removeEventListener('scroll', onScroll);
 };

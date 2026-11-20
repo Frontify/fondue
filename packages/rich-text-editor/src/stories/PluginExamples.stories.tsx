@@ -109,8 +109,8 @@ const LIST = 'tw-m-0 tw-body-small';
  */
 const SURFACE = 'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-surface tw-p-medium';
 
-/** The field box around an editor: the surface, with a stronger border on hover and while the caret is inside, as Fondue's Textarea does. */
-const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-line-strong`;
+/** The field box around an editor, with Fondue Textarea's hover and focus looks. */
+const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-line-strong has-[[data-keyboard-focus=true]]:tw-ring-focus`;
 
 const toolbarButtonClasses = (active: boolean | 'mixed'): string =>
     [
