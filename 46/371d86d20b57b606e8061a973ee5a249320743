@@ -1,0 +1,65 @@
+packages/rich-text-editor/src/plugins/CheckList/CheckList.spec.ts
+  s_53de767222940a::t_d2359f87751f0d 23-32
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_53de767222940a::t_d2359f87751f0d 5,7-9,13,15,17-25,35-37,39-41,60-61,65,67-68,161,289,292-321
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.spec.tsx
+  s_53de767222940a::t_d2359f87751f0d 313-331
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.ts
+  s_53de767222940a::t_d2359f87751f0d 1-20,23-26,28-41,45-53,55-70,72-86,91-92,94-276
+  s_53de767222940a::t_3ee362c5ef97a3 21-22,27,42-44,54,71,87-90,93
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.ts
+  s_53de767222940a::t_d2359f87751f0d 3,126-127
+packages/rich-text-editor/src/__tests__/goldens/check-list.json
+  s_53de767222940a::t_d2359f87751f0d 108-121
+packages/rich-text-editor/src/editor/richTextEditor.module.scss
+  s_53de767222940a::t_d2359f87751f0d 42-48
+  s_53de767222940a::t_a28634bd726946 41
+packages/rich-text-editor/src/plugins/CheckList/CheckList.tsx
+  s_53de767222940a::t_d2359f87751f0d 10,17,20,29-63,66,68-82,92,94,96,98,130,133,139,141,149-155,169,173,175,181,207,211-213
+.github/actions/setup/action.yaml
+  s_53de767222940a::t_d2359f87751f0d 23
+packages/rich-text-editor/src/__tests__/formatRegression.spec.tsx
+  s_53de767222940a::t_d2359f87751f0d 345
+packages/rich-text-editor/src/__tests__/htmlParity.spec.tsx
+  s_53de767222940a::t_d2359f87751f0d 78-82
+packages/rich-text-editor/src/core/plugin.ts
+  s_53de767222940a::t_3ee362c5ef97a3 612-613
+  s_53de767222940a::t_d2359f87751f0d 605,607,609-611
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_53de767222940a::t_d2359f87751f0d 313
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_53de767222940a::t_d2359f87751f0d 122-139,145-214
+  s_53de767222940a::t_3ee362c5ef97a3 19
+  s_53de767222940a::t_a4a7f313acbb19 215-216
+.changeset/rte-editing-extras.md
+  s_53de767222940a::t_d2359f87751f0d 1-4
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.spec.tsx
+  s_53de767222940a::t_3ee362c5ef97a3 216
+  s_53de767222940a::t_d2359f87751f0d 5-7,9,217-498
+.github/workflows/pull-request-security-audit.yaml
+  s_53de767222940a::t_d2359f87751f0d 24
+packages/rich-text-editor/src/editor/engines/prosemirror/ruleContext.ts
+  s_53de767222940a::t_d2359f87751f0d 1-64
+packages/rich-text-editor/package.json
+  s_53de767222940a::t_d2359f87751f0d 61,68
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_53de767222940a::t_d2359f87751f0d 570-581,1253-1308
+pnpm-lock.yaml
+  s_53de767222940a::t_132cdc881f46df 750-752,771-773,9007-9009,19117-19122
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "46371d86d20b57b606e8061a973ee5a249320743",
+  "prompts": {},
+  "sessions": {
+    "s_53de767222940a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f9b7337-8455-4b7f-ac95-dde194f54be3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

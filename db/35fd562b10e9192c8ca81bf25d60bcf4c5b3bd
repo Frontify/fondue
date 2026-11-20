@@ -1,0 +1,19 @@
+.changeset/fix-rte-stories-focus-ring.md
+  s_22765b2b214913::t_53f0fdcb95a35b 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "db35fd562b10e9192c8ca81bf25d60bcf4c5b3bd",
+  "prompts": {},
+  "sessions": {
+    "s_22765b2b214913": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "64a3bb8c-4115-444f-9ef4-e800dc5182f4",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
