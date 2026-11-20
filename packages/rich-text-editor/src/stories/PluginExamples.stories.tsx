@@ -34,6 +34,7 @@ import {
     checkListPlugin,
     codePlugin,
     columnBreakPlugin,
+    defaultContent,
     defaultPlugins,
     emojiPlugin,
     fontColorPlugin,
@@ -970,7 +971,7 @@ export const BlurOnBreak: Story = {
             italicPlugin(),
             blurOnBreakPlugin({
                 onBreak: () => {
-                    const text = toPlainText(docRef.current);
+                    const text = toPlainText(docRef.current, { plugins: defaultContent });
                     if (text.trim() === '') {
                         return;
                     }
