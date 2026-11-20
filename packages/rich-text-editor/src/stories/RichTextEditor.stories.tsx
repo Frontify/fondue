@@ -2,7 +2,7 @@
 
 import { ThemeProvider } from '@frontify/fondue-components';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
+import { type CSSProperties, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
 // Stories import only the package public API. The plugins have their own story
 // file (`PluginExamples.stories.tsx`); this one is about the editor itself — the props
@@ -64,6 +64,19 @@ const SURFACE = 'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-s
 
 /** The field box around an editor: the surface, with a stronger border on hover and while the caret is inside, as Fondue's Textarea does. */
 const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-line-strong`;
+
+/** Inline, so it wins over FRAME's hover and focus borders. */
+const ERROR_FRAME_STYLE: CSSProperties = { borderColor: 'var(--color-error-default)' };
+
+const FIELD = 'tw-flex tw-flex-col tw-gap-2 tw-max-w-xl tw-p-4 tw-font-primary';
+const FIELD_LABEL = 'tw-body-small tw-text-primary';
+const FIELD_ERROR = 'tw-m-0 tw-body-small';
+const FIELD_ERROR_STYLE: CSSProperties = { color: 'var(--color-error-default)' };
+
+const REQUIRED_LABEL_ID = 'required-story-label';
+const INVALID_LABEL_ID = 'invalid-story-label';
+const INVALID_ERROR_ID = 'invalid-story-error';
+const INVALID_ERROR_TEXT = 'Enter a description.';
 
 const buttonClasses = (active: boolean): string =>
     [
@@ -171,6 +184,67 @@ export const Placeholder: Story = {
                     />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/** The editor sets `aria-required`; the host's label draws the asterisk. */
+export const Required: Story = {
+    args: { required: true },
+    argTypes: { required: { control: 'boolean' } },
+    render: (args) => {
+        let asterisk: ReactNode = null;
+        if (args.required) {
+            asterisk = <span aria-hidden="true"> *</span>;
+        }
+
+        return (
+            <div className={FIELD}>
+                <span id={REQUIRED_LABEL_ID} className={FIELD_LABEL}>
+                    Description
+                    {asterisk}
+                </span>
+                <div className={FRAME}>
+                    <RichTextEditor
+                        plugins={defaultPlugins}
+                        aria-labelledby={REQUIRED_LABEL_ID}
+                        required={args.required}
+                    />
+                </div>
+            </div>
+        );
+    },
+};
+
+/** The editor sets `aria-invalid` and `aria-errormessage`; the host draws the red border and the message. */
+export const Invalid: Story = {
+    args: { status: 'error' },
+    argTypes: { status: { control: 'inline-radio', options: ['neutral', 'error'] } },
+    render: (args) => {
+        const isInvalid = args.status === 'error';
+        let frameStyle: CSSProperties = {};
+        if (isInvalid) {
+            frameStyle = ERROR_FRAME_STYLE;
+        }
+
+        return (
+            <div className={FIELD}>
+                <span id={INVALID_LABEL_ID} className={FIELD_LABEL}>
+                    Description
+                </span>
+                <div className={FRAME} style={frameStyle}>
+                    <RichTextEditor
+                        plugins={defaultPlugins}
+                        aria-labelledby={INVALID_LABEL_ID}
+                        aria-describedby={INVALID_ERROR_ID}
+                        aria-errormessage={INVALID_ERROR_ID}
+                        status={args.status}
+                    />
+                </div>
+                <p id={INVALID_ERROR_ID} className={FIELD_ERROR} style={FIELD_ERROR_STYLE} hidden={!isInvalid}>
+                    {INVALID_ERROR_TEXT}
+                </p>
             </div>
         );
     },

@@ -2,6 +2,8 @@
 
 import { Notice } from '@frontify/fondue-components';
 import {
+    type AriaAttributes,
+    type AriaRole,
     type CSSProperties,
     type KeyboardEvent,
     type MouseEvent,
@@ -41,6 +43,13 @@ import { useMouseDrag } from './hooks/useMouseDrag';
 import { DEFAULT_LABELS, type RichTextEditorLabels } from './labels';
 import styles from './richTextEditor.module.scss';
 import { warnNewerVersion } from './warnings';
+
+type EditorStatus = 'neutral' | 'error';
+
+type EditorAriaProps = Pick<
+    AriaAttributes,
+    'aria-label' | 'aria-labelledby' | 'aria-describedby' | 'aria-errormessage'
+>;
 
 /**
  * `TBlock` is the document's block union. It defaults to the structural
@@ -112,14 +121,18 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     /** Shown while the document is empty, and given to assistive technology as the field's placeholder. */
     placeholder?: string;
     /**
-     * The editor's accessible name, when no visible label names it ("Comment",
-     * "Description"). Without this or `aria-labelledby` it is called `labels.editor`.
+     * Sets `aria-required` on the editable element. The host's label draws the asterisk.
+     *
+     * @default false
      */
-    'aria-label'?: string;
-    /** The id of a visible element naming the editor — its label. Preferred over `aria-label`. */
-    'aria-labelledby'?: string;
-    /** The id of an element describing the editor further — help text, an error. */
-    'aria-describedby'?: string;
+    required?: boolean;
+    /**
+     * `'error'` sets `aria-invalid`, and `aria-errormessage` when given, on the
+     * editable element. The host draws the error border.
+     *
+     * @default 'neutral'
+     */
+    status?: EditorStatus;
     /**
      * The words the editor's own UI says (its default name, the toolbar's
      * name, the "Turn into" and `/` menus, the message and button shown when
@@ -150,7 +163,7 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * @default 'fondue-rich-text-editor'
      */
     'data-test-id'?: string;
-};
+} & EditorAriaProps;
 
 /** Whether the editor was brought back by Try again, and whether the pressed button had focus. */
 type RetryFocus = 'fresh' | 'focused' | 'unfocused';
@@ -302,10 +315,13 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     readonly: readonlyProp = false,
     showEditor = true,
     placeholder = '',
+    required = false,
+    status = 'neutral',
+    onBlur,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
     'aria-describedby': ariaDescribedBy,
-    onBlur,
+    'aria-errormessage': ariaErrorMessage,
     dataTestId,
 }: ShellProps<TBlock>): ReactNode => {
     // A document from a newer format may hold what this editor would drop on save, so it is only shown.
@@ -328,14 +344,29 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
             editableAttributes({
                 id: editableId,
                 className,
-                hostLabels,
-                isNamed,
                 placeholder,
                 defaultLabel: labels.editor,
+                isNamed,
+                required,
+                status,
+                ariaLabel,
+                ariaLabelledBy,
+                ariaDescribedBy,
+                ariaErrorMessage,
             }),
-        // `hostLabels` is rebuilt every render; the props it is built from are the deps.
-        // eslint-disable-next-line @eslint-react/exhaustive-deps
-        [editableId, className, ariaLabel, ariaLabelledBy, ariaDescribedBy, placeholder, labels.editor],
+        [
+            editableId,
+            className,
+            placeholder,
+            labels.editor,
+            isNamed,
+            required,
+            status,
+            ariaLabel,
+            ariaLabelledBy,
+            ariaDescribedBy,
+            ariaErrorMessage,
+        ],
     );
 
     const { containerRef, handle, editorState, viewPortals } = useEditorHandle({
@@ -605,30 +636,70 @@ const hostLabelsOf = ({
     isNamed: ariaLabel !== undefined || ariaLabelledBy !== undefined,
 });
 
+const TEXTBOX_ROLE: AriaRole = 'textbox';
+
+type EditableAriaAttributes = Pick<
+    AriaAttributes,
+    keyof EditorAriaProps | 'aria-multiline' | 'aria-placeholder' | 'aria-required' | 'aria-invalid'
+>;
+
+type EditableAttributes = { id: string; class: string; role: AriaRole } & {
+    [Name in keyof EditableAriaAttributes]?: Extract<EditableAriaAttributes[Name], string>;
+};
+
+type EditableAttributesOptions = {
+    id: string;
+    className: string;
+    placeholder: string;
+    defaultLabel: string;
+    isNamed: boolean;
+    required: boolean;
+    status: EditorStatus;
+    ariaLabel: string | undefined;
+    ariaLabelledBy: string | undefined;
+    ariaDescribedBy: string | undefined;
+    ariaErrorMessage: string | undefined;
+};
+
+const isInvalidStatus = (status: EditorStatus): boolean => {
+    switch (status) {
+        case 'neutral':
+            return false;
+        case 'error':
+            return true;
+    }
+};
+
 /** The attributes of the editable element: a textbox, named by the host or else by `defaultLabel`. */
 const editableAttributes = ({
     id,
     className,
-    hostLabels,
-    isNamed,
     placeholder,
     defaultLabel,
-}: {
-    id: string;
-    className: string;
-    hostLabels: Record<string, string>;
-    isNamed: boolean;
-    placeholder: string;
-    defaultLabel: string;
-}): Record<string, string> => ({
-    id,
-    class: className,
-    role: 'textbox',
-    'aria-multiline': 'true',
-    ...(isNamed ? {} : { 'aria-label': defaultLabel }),
-    ...hostLabels,
-    ...(placeholder === '' ? {} : { 'aria-placeholder': placeholder }),
-});
+    isNamed,
+    required,
+    status,
+    ariaLabel,
+    ariaLabelledBy,
+    ariaDescribedBy,
+    ariaErrorMessage,
+}: EditableAttributesOptions): EditableAttributes => {
+    const isInvalid = isInvalidStatus(status);
+
+    return {
+        id,
+        class: className,
+        role: TEXTBOX_ROLE,
+        'aria-multiline': 'true',
+        'aria-placeholder': placeholder === '' ? undefined : placeholder,
+        'aria-required': required ? 'true' : undefined,
+        'aria-invalid': isInvalid ? 'true' : undefined,
+        'aria-label': isNamed ? ariaLabel : defaultLabel,
+        'aria-labelledby': ariaLabelledBy,
+        'aria-describedby': ariaDescribedBy,
+        'aria-errormessage': isInvalid ? ariaErrorMessage : undefined,
+    };
+};
 
 /**
  * The host's labels over the English defaults, kept the same object while the

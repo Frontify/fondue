@@ -372,6 +372,31 @@ test.describe('accessibility', () => {
         expect(await violationsOf(page)).toEqual([]);
     });
 
+    test('a labelled, required, invalid editor has no axe violations', async ({ mount, page }) => {
+        await mount(
+            <div>
+                <label id="summary-label" htmlFor="summary">
+                    Summary
+                </label>
+                <RichTextEditor
+                    id="summary"
+                    aria-labelledby="summary-label"
+                    aria-describedby="summary-error"
+                    aria-errormessage="summary-error"
+                    required
+                    status="error"
+                />
+                <p id="summary-error">Summary is required.</p>
+            </div>,
+        );
+        const editable = page.getByRole('textbox', { name: 'Summary' });
+
+        await expect(editable).toHaveAttribute('aria-required', 'true');
+        await expect(editable).toHaveAttribute('aria-invalid', 'true');
+        await expect(editable).toHaveAccessibleDescription('Summary is required.');
+        expect(await violationsOf(page)).toEqual([]);
+    });
+
     test('the readonly editor has no axe violations', async ({ mount, page }) => {
         await mount(<EditorWithMentions value={everyPluginDocument} readonly />);
         await expect(page.getByText('@jane')).toBeVisible();

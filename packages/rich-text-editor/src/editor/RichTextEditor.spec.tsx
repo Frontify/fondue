@@ -568,6 +568,70 @@ describe('the editable element', () => {
         expect(editable.getAttribute('aria-placeholder')).toBe('Say something');
     });
 
+    it('marks the editable element required only when the host says so', () => {
+        const required = mount(() => <RichTextEditor plugins={defaultPlugins} required />);
+        required.ready();
+        expect(editableIn(required.container).getAttribute('aria-required')).toBe('true');
+
+        const optional = mount(() => <RichTextEditor plugins={defaultPlugins} />);
+        optional.ready();
+        expect(editableIn(optional.container).hasAttribute('aria-required')).toBe(false);
+    });
+
+    it('marks the editable element invalid and points at the error text while the status is error', () => {
+        const { container, ready } = mount(() => (
+            <RichTextEditor plugins={defaultPlugins} status="error" aria-errormessage="field-error" />
+        ));
+        ready();
+
+        const editable = editableIn(container);
+        expect(editable.getAttribute('aria-invalid')).toBe('true');
+        expect(editable.getAttribute('aria-errormessage')).toBe('field-error');
+    });
+
+    it('marks nothing invalid while the status is neutral, even with an error message id', () => {
+        const { container, ready } = mount(() => (
+            <RichTextEditor plugins={defaultPlugins} aria-errormessage="field-error" />
+        ));
+        ready();
+
+        const editable = editableIn(container);
+        expect(editable.hasAttribute('aria-invalid')).toBe(false);
+        expect(editable.hasAttribute('aria-errormessage')).toBe(false);
+    });
+
+    it('drops the invalid marks when the status goes from error to neutral, without a remount', () => {
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor plugins={defaultPlugins} status="error" aria-errormessage="field-error" />
+        ));
+        ready();
+        const editable = editableIn(container);
+
+        rerender(<RichTextEditor plugins={defaultPlugins} status="neutral" aria-errormessage="field-error" />);
+
+        expect(editableIn(container)).toBe(editable);
+        expect(editable.hasAttribute('aria-invalid')).toBe(false);
+        expect(editable.hasAttribute('aria-errormessage')).toBe(false);
+    });
+
+    it('puts neither required nor invalid marks on the readonly view', () => {
+        const { container } = mount(() => (
+            <RichTextEditor
+                value={paragraph('for reading')}
+                plugins={defaultPlugins}
+                aria-label="Comment"
+                aria-errormessage="field-error"
+                readonly
+                required
+                status="error"
+            />
+        ));
+
+        expect(container.querySelector('[aria-required]')).toBeNull();
+        expect(container.querySelector('[aria-invalid]')).toBeNull();
+        expect(container.querySelector('[aria-errormessage]')).toBeNull();
+    });
+
     it('does not re-render the editor around the text for an edit', () => {
         let commits = 0;
         // No toolbar, which follows the editor state by design.
