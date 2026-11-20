@@ -120,16 +120,6 @@ export const LinkEditor = ({
         appearance = value.appearance;
     }
 
-    let newTabNote: string | undefined;
-    if (value.openInNewTab === true) {
-        newTabNote = translate('RichTextEditor_linkOpensInNewTab');
-    }
-
-    let panelName = translate('RichTextEditor_link');
-    if (isOpen) {
-        panelName = translate('RichTextEditor_linkEdit');
-    }
-
     return (
         <Flyout.Root
             open={open}
@@ -147,7 +137,9 @@ export const LinkEditor = ({
                     className={linkClassName(appearance)}
                     // ARIA 1.3 global attribute that the lint rule's table does not know yet.
                     // oxlint-disable-next-line jsx-a11y/role-supports-aria-props
-                    aria-description={newTabNote}
+                    aria-description={
+                        value.openInNewTab === true ? translate('RichTextEditor_linkOpensInNewTab') : undefined
+                    }
                     // A click places the caret; it must neither follow the link nor toggle the flyout.
                     onClick={(event) => event.preventDefault()}
                 >
@@ -159,7 +151,7 @@ export const LinkEditor = ({
                 side="bottom"
                 align="start"
                 padding="compact"
-                aria-label={panelName}
+                aria-label={isOpen ? translate('RichTextEditor_linkEdit') : translate('RichTextEditor_link')}
                 onEscapeKeyDown={() => {
                     escapedRef.current = true;
                 }}
