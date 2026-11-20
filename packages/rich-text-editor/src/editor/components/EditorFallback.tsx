@@ -11,6 +11,14 @@ import styles from '../richTextEditor.module.scss';
 
 import { EditorErrorBoundary } from './EditorErrorBoundary';
 
+/** The attributes that make a named editor a group carrying the host's labels where it is not a field. */
+export type GroupAttributes = {
+    role?: 'group';
+    'aria-label'?: string;
+    'aria-labelledby'?: string;
+    'aria-describedby'?: string;
+};
+
 type EditorFallbackProps = {
     id?: string;
     /** The host's document; one it passes after the crash is shown instead. */
@@ -26,7 +34,7 @@ type EditorFallbackProps = {
     /** Whether focus was in what this replaces: the editor, or a fallback whose Retry was pressed. */
     focusWasWithin: () => boolean;
     /** The host's name for the editor as a group, so the message and Retry say which editor failed. */
-    groupAttributes: Record<string, string>;
+    groupAttributes: GroupAttributes;
     /** Told when the read-only view throws too, as a crash of its own. */
     onCatch?: (error: Error) => void;
     /** The test id of the editor's root element. */
