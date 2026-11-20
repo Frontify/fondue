@@ -2,6 +2,7 @@
 
 import { Notice } from '@frontify/fondue-components';
 import {
+    type AriaAttributes,
     type CSSProperties,
     type KeyboardEvent,
     type MouseEvent,
@@ -123,6 +124,8 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     'aria-labelledby'?: string;
     /** The id of an element describing the editor further — help text, an error. */
     'aria-describedby'?: string;
+    /** The id of the host's error text, applied only while `status` is `'error'`. */
+    'aria-errormessage'?: AriaAttributes['aria-errormessage'];
     /**
      * Mark the field as required for assistive technology (`aria-required` on
      * the editable element). The editor draws no asterisk; the host's label does.
@@ -138,8 +141,6 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * @default 'neutral'
      */
     status?: EditorStatus;
-    /** The id of the host's error text, applied only while `status` is `'error'`. */
-    'aria-errormessage'?: string;
     /**
      * The words the editor's own UI says (its default name, the toolbar's
      * name, the "Turn into" and `/` menus, the message and button shown when
@@ -325,9 +326,9 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
     'aria-describedby': ariaDescribedBy,
+    'aria-errormessage': ariaErrorMessage,
     required = false,
     status = 'neutral',
-    'aria-errormessage': ariaErrorMessage,
     onBlur,
     dataTestId,
 }: ShellProps<TBlock>): ReactNode => {
@@ -351,27 +352,28 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
             editableAttributes({
                 id: editableId,
                 className,
-                hostLabels,
                 isNamed,
+                ariaLabel,
+                ariaLabelledBy,
+                ariaDescribedBy,
+                ariaErrorMessage,
                 placeholder,
                 defaultLabel: labels.editor,
                 required,
                 status,
-                ariaErrorMessage,
             }),
-        // `hostLabels` is rebuilt every render; the props it is built from are the deps.
-        // eslint-disable-next-line @eslint-react/exhaustive-deps
         [
             editableId,
             className,
+            isNamed,
             ariaLabel,
             ariaLabelledBy,
             ariaDescribedBy,
+            ariaErrorMessage,
             placeholder,
             labels.editor,
             required,
             status,
-            ariaErrorMessage,
         ],
     );
 
@@ -642,59 +644,84 @@ const hostLabelsOf = ({
     isNamed: ariaLabel !== undefined || ariaLabelledBy !== undefined,
 });
 
-/** What `status` tells assistive technology: nothing while neutral, invalid, and where the error text is, in error. */
-const statusAttributesOf = (status: EditorStatus, ariaErrorMessage: string | undefined): Record<string, string> => {
-    switch (status) {
-        case 'neutral':
-            return {};
-        case 'error':
-            if (ariaErrorMessage === undefined) {
-                return { 'aria-invalid': 'true' };
-            }
-            return { 'aria-invalid': 'true', 'aria-errormessage': ariaErrorMessage };
-    }
+const TEXTBOX_ROLE = 'textbox';
+
+/** The attributes of the editable element. */
+type EditableAttributes = {
+    id: string;
+    class: string;
+    role: typeof TEXTBOX_ROLE;
+    'aria-multiline': 'true';
+    'aria-label'?: string;
+    'aria-labelledby'?: string;
+    'aria-describedby'?: string;
+    'aria-errormessage'?: string;
+    'aria-placeholder'?: string;
+    'aria-required'?: 'true';
+    'aria-invalid'?: 'true';
 };
 
 type EditableAttributesOptions = {
     id: string;
     className: string;
-    hostLabels: Record<string, string>;
     isNamed: boolean;
+    ariaLabel: string | undefined;
+    ariaLabelledBy: string | undefined;
+    ariaDescribedBy: string | undefined;
+    ariaErrorMessage: string | undefined;
     placeholder: string;
     defaultLabel: string;
     required: boolean;
     status: EditorStatus;
-    ariaErrorMessage: string | undefined;
 };
 
 /** The attributes of the editable element: a textbox, named by the host or else by `defaultLabel`. */
 const editableAttributes = ({
     id,
     className,
-    hostLabels,
     isNamed,
+    ariaLabel,
+    ariaLabelledBy,
+    ariaDescribedBy,
+    ariaErrorMessage,
     placeholder,
     defaultLabel,
     required,
     status,
-    ariaErrorMessage,
-}: EditableAttributesOptions): Record<string, string> => {
-    const requiredAttributes: Record<string, string> = {};
+}: EditableAttributesOptions): EditableAttributes => {
+    const attributes: EditableAttributes = { id, class: className, role: TEXTBOX_ROLE, 'aria-multiline': 'true' };
+
+    if (!isNamed) {
+        attributes['aria-label'] = defaultLabel;
+    }
+    if (ariaLabel !== undefined) {
+        attributes['aria-label'] = ariaLabel;
+    }
+    if (ariaLabelledBy !== undefined) {
+        attributes['aria-labelledby'] = ariaLabelledBy;
+    }
+    if (ariaDescribedBy !== undefined) {
+        attributes['aria-describedby'] = ariaDescribedBy;
+    }
+    if (placeholder !== '') {
+        attributes['aria-placeholder'] = placeholder;
+    }
     if (required) {
-        requiredAttributes['aria-required'] = 'true';
+        attributes['aria-required'] = 'true';
     }
 
-    return {
-        id,
-        class: className,
-        role: 'textbox',
-        'aria-multiline': 'true',
-        ...(isNamed ? {} : { 'aria-label': defaultLabel }),
-        ...hostLabels,
-        ...(placeholder === '' ? {} : { 'aria-placeholder': placeholder }),
-        ...requiredAttributes,
-        ...statusAttributesOf(status, ariaErrorMessage),
-    };
+    switch (status) {
+        case 'neutral':
+            break;
+        case 'error':
+            attributes['aria-invalid'] = 'true';
+            if (ariaErrorMessage !== undefined) {
+                attributes['aria-errormessage'] = ariaErrorMessage;
+            }
+            break;
+    }
+
+    return attributes;
 };
 
 /**

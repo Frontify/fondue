@@ -2,7 +2,7 @@
 
 import { ThemeProvider } from '@frontify/fondue-components';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
+import { type CSSProperties, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
 // Stories import only the package public API. The plugins have their own story
 // file (`PluginExamples.stories.tsx`); this one is about the editor itself — the props
@@ -68,11 +68,16 @@ const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-lin
 /** The red border a host puts on its field box while the field is invalid; inline, so it wins over FRAME's hover and focus borders. */
 const ERROR_FRAME_STYLE: CSSProperties = { borderColor: 'var(--color-error-default)' };
 
+/** A host's form field: its label, the field box and the message under it. */
+const FIELD = 'tw-flex tw-flex-col tw-gap-2 tw-max-w-xl';
+const FIELD_LABEL = 'tw-body-small tw-text-primary';
+const FIELD_ERROR = 'tw-m-0 tw-body-small';
+const FIELD_ERROR_STYLE: CSSProperties = { color: 'var(--color-error-default)' };
+
 const REQUIRED_LABEL_ID = 'required-story-label';
-const REQUIRED_ERROR_ID = 'required-story-error';
-const REQUIRED_ERROR_TEXT = 'Description is required.';
-const REQUIRED_ERROR_CLASS = 'tw-m-0 tw-body-small';
-const REQUIRED_ERROR_TEXT_STYLE: CSSProperties = { color: 'var(--color-error-default)' };
+const INVALID_LABEL_ID = 'invalid-story-label';
+const INVALID_ERROR_ID = 'invalid-story-error';
+const INVALID_ERROR_TEXT = 'Enter a description.';
 
 const buttonClasses = (active: boolean): string =>
     [
@@ -186,22 +191,45 @@ export const Placeholder: Story = {
 };
 
 /**
- * `required` and `status` mark the field for assistive technology only
- * (`aria-required`, `aria-invalid`, and `aria-errormessage` while in error).
- * The host draws the field and its error look: the asterisk, the red border
- * and the message, all from the same `status`.
+ * `required` sets `aria-required` on the editable element. The editor draws no
+ * asterisk: the host's label does.
  */
-export const RequiredAndInvalid: Story = {
-    args: { required: true, status: 'error' },
-    argTypes: {
-        required: { control: 'boolean' },
-        status: { control: 'inline-radio', options: ['neutral', 'error'] },
-    },
+export const Required: Story = {
+    args: { required: true },
+    argTypes: { required: { control: 'boolean' } },
     render: (args) => {
-        const [doc, setDoc] = useState<RteDocument>({
-            version: 1,
-            blocks: [{ type: 'paragraph', children: [{ text: '' }] }],
-        });
+        let asterisk: ReactNode = null;
+        if (args.required) {
+            asterisk = <span aria-hidden="true"> *</span>;
+        }
+
+        return (
+            <div className={FIELD}>
+                <span id={REQUIRED_LABEL_ID} className={FIELD_LABEL}>
+                    Description
+                    {asterisk}
+                </span>
+                <div className={FRAME}>
+                    <RichTextEditor
+                        plugins={defaultPlugins}
+                        aria-labelledby={REQUIRED_LABEL_ID}
+                        required={args.required}
+                    />
+                </div>
+            </div>
+        );
+    },
+};
+
+/**
+ * `status: 'error'` sets `aria-invalid` on the editable element, and
+ * `aria-errormessage` points at the host's error text. The editor draws no
+ * border: the host draws the red border and the message from the same `status`.
+ */
+export const Invalid: Story = {
+    args: { status: 'error' },
+    argTypes: { status: { control: 'inline-radio', options: ['neutral', 'error'] } },
+    render: (args) => {
         const isInvalid = args.status === 'error';
         let frameStyle: CSSProperties = {};
         if (isInvalid) {
@@ -209,34 +237,22 @@ export const RequiredAndInvalid: Story = {
         }
 
         return (
-            <div className={LAYOUT}>
-                <div className="tw-flex tw-flex-col tw-gap-2">
-                    <span id={REQUIRED_LABEL_ID} className="tw-body-small tw-text-primary">
-                        Description
-                        {args.required ? <span aria-hidden="true"> *</span> : null}
-                    </span>
-                    <div className={FRAME} style={frameStyle}>
-                        <RichTextEditor
-                            value={doc}
-                            onChange={setDoc}
-                            plugins={defaultPlugins}
-                            aria-labelledby={REQUIRED_LABEL_ID}
-                            aria-describedby={REQUIRED_ERROR_ID}
-                            aria-errormessage={REQUIRED_ERROR_ID}
-                            required={args.required}
-                            status={args.status}
-                        />
-                    </div>
-                    <p
-                        id={REQUIRED_ERROR_ID}
-                        className={REQUIRED_ERROR_CLASS}
-                        style={REQUIRED_ERROR_TEXT_STYLE}
-                        hidden={!isInvalid}
-                    >
-                        {REQUIRED_ERROR_TEXT}
-                    </p>
+            <div className={FIELD}>
+                <span id={INVALID_LABEL_ID} className={FIELD_LABEL}>
+                    Description
+                </span>
+                <div className={FRAME} style={frameStyle}>
+                    <RichTextEditor
+                        plugins={defaultPlugins}
+                        aria-labelledby={INVALID_LABEL_ID}
+                        aria-describedby={INVALID_ERROR_ID}
+                        aria-errormessage={INVALID_ERROR_ID}
+                        status={args.status}
+                    />
                 </div>
-                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+                <p id={INVALID_ERROR_ID} className={FIELD_ERROR} style={FIELD_ERROR_STYLE} hidden={!isInvalid}>
+                    {INVALID_ERROR_TEXT}
+                </p>
             </div>
         );
     },
