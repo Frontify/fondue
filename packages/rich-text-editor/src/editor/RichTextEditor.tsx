@@ -37,6 +37,7 @@ import { Toolbar, type ToolbarPlacement } from './components/Toolbar';
 import { commandsOf, turnIntoCommands } from './helpers/blockCommands';
 import { useEditorHandle } from './hooks/useEditorHandle';
 import { useFocusWithin } from './hooks/useFocusWithin';
+import { useKeyboardFocus } from './hooks/useKeyboardFocus';
 import { useMouseDrag } from './hooks/useMouseDrag';
 import { DEFAULT_LABELS, type RichTextEditorLabels } from './labels';
 import styles from './richTextEditor.module.scss';
@@ -104,11 +105,21 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * from a newer format version.
      *
      * The editor draws no box either way — no border, background or inset;
-     * a host that wants a field wraps the editor in one.
+     * a host that wants a field wraps the editor in one. A host box shows
+     * Fondue's input focus as Fondue's Textarea does: it draws the focus ring
+     * while it `:has([data-keyboard-focus='true'])`, which the editor sets while
+     * its text has focus that came by keyboard and not by a click, and a
+     * `--color-line-strong` border on `:focus-within`.
      *
      * @default true
      */
     showEditor?: boolean;
+    /**
+     * The most lines of body text the content shows before it scrolls inside
+     * the editor. The toolbar stays above the content, not scrolled. Unset, the
+     * content grows with the text.
+     */
+    maxRows?: number;
     /** Shown while the document is empty, and given to assistive technology as the field's placeholder. */
     placeholder?: string;
     /**
@@ -301,6 +312,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     toolbarPlacement = 'top',
     readonly: readonlyProp = false,
     showEditor = true,
+    maxRows,
     placeholder = '',
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
@@ -376,6 +388,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     }, [handle]);
 
     const { focusWithin, focusProps } = useFocusWithin();
+    const keyboardFocusProps = useKeyboardFocus();
     // Blur as the host hears it: focus leaving the whole editor — text,
     // toolbar and the flyouts they portal out — not just the editable element.
     const hadFocusRef = useRef(false);
@@ -484,6 +497,12 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
         readonlyViewTabIndex = FOCUSABLE_BY_SCRIPT_ONLY;
     }
 
+    let bodyStyle: CSSProperties | undefined;
+    if (maxRows !== undefined) {
+        // A custom property is not in `CSSProperties`.
+        bodyStyle = { [MAX_ROWS_PROPERTY]: String(maxRows) } as CSSProperties;
+    }
+
     return (
         // Not a control: it hears the keys, clicks and focus moving among the
         // controls inside it.
@@ -505,6 +524,8 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
                 // To take a pressed Retry's focus.
                 tabIndex={readonlyViewTabIndex}
                 className={styles.body}
+                data-max-rows={maxRows !== undefined}
+                style={bodyStyle}
             >
                 {toolbarFloats ? null : toolbar}
                 {/* A host that shows it read-only anyway offered no editing to explain. */}
@@ -519,7 +540,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
                     // The renderer adds the document and plugin classes itself.
                     <RegistryRenderer value={document} registry={registry} className={styles.content} />
                 ) : (
-                    <div ref={containerRef} className={styles.mount} />
+                    <div ref={containerRef} className={styles.mount} {...keyboardFocusProps} />
                 )}
             </div>
             {toolbarFloats && toolbar !== null && handle !== null && focusWithin && !isDragging ? (
@@ -557,6 +578,9 @@ const isToolbarHotkey = (event: KeyboardEvent): boolean => matchesHotkey(EDITOR_
 const FOCUSABLE_BY_SCRIPT_ONLY = -1;
 
 const GROUP_ROLE = 'group';
+
+/** The custom property the stylesheet turns into the content's maximum height. */
+const MAX_ROWS_PROPERTY = '--max-rows';
 
 /**
  * What a named editor shows where it is not a field (the readonly view, the

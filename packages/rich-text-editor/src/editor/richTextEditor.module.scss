@@ -10,6 +10,9 @@
 // 4px shorter than the regular Button, as the design draws it.
 $separator-size: 2rem;
 
+// How far a focus outline inside the content reaches past its element: the table's 2px offset plus its border width.
+$focus-outline-reach: calc(2px + var(--border-width-default));
+
 /**
  * Wraps the toolbar, the content and the floating bar so the editor has one
  * element to watch focus and keys on. `display: contents` keeps it out of layout.
@@ -26,6 +29,21 @@ $separator-size: 2rem;
  */
 .body {
     isolation: isolate;
+}
+
+/**
+ * With `maxRows`, the content scrolls inside the editor past that many lines of
+ * body text; the toolbar is outside it, so it stays in view. `.content` is the
+ * class of both the editable element and the readonly view, and `lh` there is the
+ * document's line height.
+ */
+.body[data-max-rows='true'] .content {
+    // The padding keeps a focus outline at the content's edge from being clipped by the scroll; the margin takes the space back, so the text stays put.
+    box-sizing: content-box;
+    padding: $focus-outline-reach;
+    margin: calc(-1 * #{$focus-outline-reach});
+    max-block-size: calc(var(--max-rows) * 1lh);
+    overflow-y: auto;
 }
 
 /** Why the content cannot be edited, kept off its first line like the toolbar. */
