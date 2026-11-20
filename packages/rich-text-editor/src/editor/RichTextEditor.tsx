@@ -108,8 +108,8 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * a host that wants a field wraps the editor in one. A host box shows
      * Fondue's input focus as Fondue's Textarea does: it draws the focus ring
      * while it `:has([data-keyboard-focus='true'])`, which the editor sets while
-     * its text has focus that came by keyboard and not by a click, and a
-     * `--color-line-strong` border on `:focus-within`.
+     * its text has focus and the last input was a key rather than a pointer
+     * press, and a `--color-line-strong` border on `:focus-within`.
      *
      * @default true
      */
@@ -388,7 +388,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     }, [handle]);
 
     const { focusWithin, focusProps } = useFocusWithin();
-    const keyboardFocusProps = useKeyboardFocus();
+    useKeyboardFocus({ elementRef: containerRef, isMounted: !readOnly });
     // Blur as the host hears it: focus leaving the whole editor — text,
     // toolbar and the flyouts they portal out — not just the editable element.
     const hadFocusRef = useRef(false);
@@ -540,7 +540,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
                     // The renderer adds the document and plugin classes itself.
                     <RegistryRenderer value={document} registry={registry} className={styles.content} />
                 ) : (
-                    <div ref={containerRef} className={styles.mount} {...keyboardFocusProps} />
+                    <div ref={containerRef} className={styles.mount} />
                 )}
             </div>
             {toolbarFloats && toolbar !== null && handle !== null && focusWithin && !isDragging ? (

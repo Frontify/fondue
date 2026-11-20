@@ -4,14 +4,17 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator, type Page } from '@playwright/test';
 
 import { scan } from './axeScan';
-import { MaxRowsFrame, MaxRowsTableFrame } from './MaxRowsFrame';
-import { BEFORE_BUTTON, HOST_TEST_ID, MAX_ROWS } from './maxRowsValues';
+import { MaxRowsFrame, MaxRowsLinkFrame, MaxRowsTableFrame } from './MaxRowsFrame';
+import { BEFORE_BUTTON, HOST_TEST_ID, LINK_TEXT, MAX_ROWS } from './maxRowsValues';
 
 // `maxRows` scrolls the content inside the editor; the keyboard focus mark tells a host box when to draw the ring.
 
 const TYPED_LINES = 12;
 const KEYBOARD_FOCUS = 'data-keyboard-focus';
 const TOOLBAR_HOTKEY = 'Alt+F10';
+
+/** Clear of the toolbar's bottom edge, inside the gap that separates it from the text. */
+const GAP_BELOW_TOOLBAR = 3;
 
 // The editable's parent is the editor's mount, which carries the mark.
 const MOUNT_OF_EDITABLE = '..';
@@ -152,6 +155,50 @@ test.describe('the keyboard focus mark', () => {
         await expect(editable).toBeFocused();
         await expect(mark).toHaveAttribute(KEYBOARD_FOCUS, 'false');
         await expect(host).toHaveCSS('box-shadow', 'none');
+    });
+
+    test('is not set when the gap between the toolbar and the text is clicked', async ({ mount, page }) => {
+        await mount(<MaxRowsFrame />);
+        const editable = page.getByRole('textbox');
+        const mark = editable.locator(MOUNT_OF_EDITABLE);
+        const host = page.getByTestId(HOST_TEST_ID);
+        const toolbarBox = await page.getByRole('toolbar').boundingBox();
+        expect(toolbarBox).not.toBeNull();
+
+        await page.mouse.click(
+            (toolbarBox?.x ?? 0) + GAP_BELOW_TOOLBAR,
+            (toolbarBox?.y ?? 0) + (toolbarBox?.height ?? 0) + GAP_BELOW_TOOLBAR,
+        );
+
+        await expect(editable).toBeFocused();
+        await expect(mark).toHaveAttribute(KEYBOARD_FOCUS, 'false');
+        await expect(host).toHaveCSS('box-shadow', 'none');
+    });
+
+    test('is not set when a link in the text is clicked', async ({ mount, page }) => {
+        await mount(<MaxRowsLinkFrame />);
+        const editable = page.getByRole('textbox');
+        const mark = editable.locator(MOUNT_OF_EDITABLE);
+        const host = page.getByTestId(HOST_TEST_ID);
+
+        await editable.getByRole('link', { name: LINK_TEXT }).click();
+
+        await expect(mark).toHaveAttribute(KEYBOARD_FOCUS, 'false');
+        await expect(host).toHaveCSS('box-shadow', 'none');
+    });
+
+    test('is set again when Escape from the toolbar puts the caret back in the text', async ({ mount, page }) => {
+        await mount(<MaxRowsFrame />);
+        const editable = page.getByRole('textbox');
+        const mark = editable.locator(MOUNT_OF_EDITABLE);
+
+        await tabIntoEditable(page, editable);
+        await page.keyboard.press(TOOLBAR_HOTKEY);
+        await expect(mark).toHaveAttribute(KEYBOARD_FOCUS, 'false');
+        await page.keyboard.press('Escape');
+
+        await expect(editable).toBeFocused();
+        await expect(mark).toHaveAttribute(KEYBOARD_FOCUS, 'true');
     });
 
     test('goes when the text is clicked after Tab', async ({ mount, page }) => {

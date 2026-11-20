@@ -6,7 +6,7 @@ import { RichTextEditor } from '../../index';
 import { tablePlugin, textStylePlugin } from '../../plugins';
 
 import styles from './MaxRowsFrame.module.scss';
-import { BEFORE_BUTTON, HOST_TEST_ID, LONG_DOCUMENT, MAX_ROWS } from './maxRowsValues';
+import { BEFORE_BUTTON, HOST_TEST_ID, LINK_DOCUMENT, LONG_DOCUMENT, MAX_ROWS } from './maxRowsValues';
 import { TABLE_DOCUMENT } from './tableCellValues';
 
 const TABLE_PLUGINS = [textStylePlugin(), tablePlugin()];
@@ -31,6 +31,16 @@ export const MaxRowsTableFrame = () => (
         <button type="button">{BEFORE_BUTTON}</button>
         <div data-test-id={HOST_TEST_ID} className={styles.host}>
             <RichTextEditor value={TABLE_AND_LONG_DOCUMENT} plugins={TABLE_PLUGINS} maxRows={MAX_ROWS} readonly />
+        </div>
+    </>
+);
+
+/** The same host box around an editor whose text holds a link. */
+export const MaxRowsLinkFrame = () => (
+    <>
+        <button type="button">{BEFORE_BUTTON}</button>
+        <div data-test-id={HOST_TEST_ID} className={styles.host}>
+            <RichTextEditor value={LINK_DOCUMENT} maxRows={MAX_ROWS} />
         </div>
     </>
 );

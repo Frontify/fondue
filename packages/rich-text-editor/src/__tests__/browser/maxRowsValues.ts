@@ -18,3 +18,16 @@ export const LONG_DOCUMENT: RteDocument = {
 export const BEFORE_BUTTON = 'Before the editor';
 
 export const HOST_TEST_ID = 'host';
+
+export const LINK_TEXT = 'a link';
+
+/** A paragraph holding a link, for a click that lands on a plugin's view inside the text. */
+export const LINK_DOCUMENT: RteDocument = {
+    version: 1,
+    blocks: [
+        {
+            type: 'paragraph',
+            children: [{ text: 'Text with ' }, { text: LINK_TEXT, link: { href: 'https://example.com' } }],
+        },
+    ],
+};
