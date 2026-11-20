@@ -231,7 +231,6 @@ export type RteToolbarEntry = RteToolbarEntryBase &
               /**
                * Custom UI in place of the button. It runs inside a component of its own, so
                * it may use hooks (always the same ones), and re-renders only when its props change.
-               * Return `null` to show nothing: the control then takes no place and gets no divider.
                */
               render: (props: ToolbarItemProps) => ReactNode;
               /**

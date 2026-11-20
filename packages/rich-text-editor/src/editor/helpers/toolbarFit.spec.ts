@@ -41,25 +41,6 @@ describe('fittingSlotCount', () => {
         expect(spaced(171)).toBe(3);
     });
 
-    it('adds no gap for a group whose slots all have no width', () => {
-        const withEmpty = (available: number): number =>
-            fittingSlotCount({ groups: [[30], [0, 0], [30]], gap: 8, itemGap: 4, more: 24, available });
-        // 30 + 8 + 30 = 68, the empty group adds nothing.
-        expect(withEmpty(68)).toBe(4);
-        expect(withEmpty(67)).toBe(3);
-    });
-
-    it('gives a group the gap before its first slot with width, whatever empty slots lead it', () => {
-        const leadingEmpty = (available: number): number =>
-            fittingSlotCount({ groups: [[30], [0, 30, 30]], gap: 8, itemGap: 4, more: 0, available });
-        // 30 + 8 + 30 + 4 + 30 = 102.
-        expect(leadingEmpty(102)).toBe(4);
-        expect(leadingEmpty(101)).toBe(3);
-        // The empty slot leads the toolbar: no gap before the first slot with width.
-        expect(fittingSlotCount({ groups: [[0, 30], [30]], gap: 8, itemGap: 4, more: 0, available: 68 })).toBe(3);
-        expect(fittingSlotCount({ groups: [[0, 30], [30]], gap: 8, itemGap: 4, more: 0, available: 67 })).toBe(2);
-    });
-
     it('shows nothing but More when not even the first slot fits', () => {
         expect(fit(40)).toBe(0);
     });

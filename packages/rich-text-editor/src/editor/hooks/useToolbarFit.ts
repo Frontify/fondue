@@ -81,13 +81,9 @@ export const useToolbarFit = ({
             if (more !== null) {
                 moreWidthRef.current = more.getBoundingClientRect().width;
             }
-            // A separator the stylesheet hides measures 0; the first one drawn has the divider's width.
-            for (const separator of toolbar.querySelectorAll(`[${SEPARATOR_ATTRIBUTE}]`)) {
-                const { width } = separator.getBoundingClientRect();
-                if (width > 0) {
-                    separatorWidthRef.current = width;
-                    break;
-                }
+            const separator = toolbar.querySelector(`[${SEPARATOR_ATTRIBUTE}]`);
+            if (separator !== null) {
+                separatorWidthRef.current = separator.getBoundingClientRect().width;
             }
             const metrics = rowMetricsOf(toolbar);
             const next = fittingSlotCount({

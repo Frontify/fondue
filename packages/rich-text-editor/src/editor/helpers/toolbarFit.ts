@@ -14,30 +14,22 @@ export type FittingSlotCountParams = {
     available: number;
 };
 
-const gapBefore = (firstInGroup: boolean, drawnBefore: number, gap: number, itemGap: number): number => {
-    if (drawnBefore === 0) {
+const gapBefore = (indexInGroup: number, slotsBefore: number, gap: number, itemGap: number): number => {
+    if (slotsBefore === 0) {
         return 0;
     }
-    if (firstInGroup) {
+    if (indexInGroup === 0) {
         return gap;
     }
     return itemGap;
 };
 
-/** Each slot's width plus the gap before it, in drawing order; a slot of no width takes no space and no gap. */
+/** Each slot's width plus the gap before it, in drawing order. */
 const slotAdvances = (groups: readonly (readonly number[])[], gap: number, itemGap: number): number[] => {
     const advances: number[] = [];
-    let drawnBefore = 0;
     for (const group of groups) {
-        let drawnInGroup = 0;
-        for (const width of group) {
-            if (width === 0) {
-                advances.push(0);
-                continue;
-            }
-            advances.push(width + gapBefore(drawnInGroup === 0, drawnBefore, gap, itemGap));
-            drawnInGroup += 1;
-            drawnBefore += 1;
+        for (const [index, width] of group.entries()) {
+            advances.push(width + gapBefore(index, advances.length, gap, itemGap));
         }
     }
     return advances;
@@ -60,9 +52,7 @@ const leadingCount = (advances: readonly number[], limit: number): number => {
 /**
  * How many leading slots of a one-row toolbar fit in its width. Groups sit
  * `gap` apart and their slots `itemGap` apart; when not every slot fits, More
- * and the gap before it are reserved at the row's end. A slot of width 0 takes
- * no space and no gap, and does not count as a slot before the next one, so a
- * group of such slots adds nothing.
+ * and the gap before it are reserved at the row's end.
  */
 export const fittingSlotCount = ({ groups, gap, itemGap, more, available }: FittingSlotCountParams): number => {
     const advances = slotAdvances(groups, gap, itemGap);

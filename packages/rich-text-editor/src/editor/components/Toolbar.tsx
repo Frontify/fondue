@@ -80,8 +80,6 @@ type ToolbarProps = {
  *
  * The top row is one line: the plugins' controls that do not fit move behind a
  * More button at its end.
- *
- * A control that draws nothing takes no place; the stylesheet shows a divider only between sections that draw.
  */
 export const Toolbar = ({
     items: allItems,
