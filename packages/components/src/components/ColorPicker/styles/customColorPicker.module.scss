@@ -18,7 +18,16 @@
 
     @container (min-width: 19.5rem) {
         grid-template-columns: 100px 1fr 100px;
+        // The hex error follows its field in the DOM; dense lets the opacity field fill the row it leaves.
+        grid-auto-flow: row dense;
     }
+}
+
+/** Under the hex field on narrow pickers, under the whole row on wide ones. */
+.valueError {
+    grid-column: 1 / -1;
+    color: var(--color-error-default);
+    font-size: var(--typography-font-size-small);
 }
 
 .colorFormatInput,
