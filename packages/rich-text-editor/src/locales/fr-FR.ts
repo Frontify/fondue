@@ -85,6 +85,7 @@ export const frFR: RichTextStrings = {
     RichTextEditor_tableDelete: 'Supprimer le tableau',
     RichTextEditor_tableDeleteColumn: 'Supprimer la colonne',
     RichTextEditor_tableDeleteRow: 'Supprimer la ligne',
+    RichTextEditor_tableInsert: 'Insérer un tableau',
     RichTextEditor_tableInsertColumnLeft: 'Insérer une colonne à gauche',
     RichTextEditor_tableInsertColumnRight: 'Insérer une colonne à droite',
     RichTextEditor_tableInsertRowAbove: 'Insérer une ligne au-dessus',

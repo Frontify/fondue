@@ -83,6 +83,7 @@ export const plPL: RichTextStrings = {
     RichTextEditor_tableDelete: 'Usuń tabelę',
     RichTextEditor_tableDeleteColumn: 'Usuń kolumnę',
     RichTextEditor_tableDeleteRow: 'Usuń wiersz',
+    RichTextEditor_tableInsert: 'Wstaw tabelę',
     RichTextEditor_tableInsertColumnLeft: 'Wstaw kolumnę po lewej',
     RichTextEditor_tableInsertColumnRight: 'Wstaw kolumnę po prawej',
     RichTextEditor_tableInsertRowAbove: 'Wstaw wiersz powyżej',

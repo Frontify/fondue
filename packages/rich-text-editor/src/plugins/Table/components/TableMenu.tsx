@@ -11,6 +11,7 @@ import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 import { useTranslate } from '#/ui/translation';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
+import { isInTable } from '../helpers/isInTable';
 
 type MenuItem = { id: string; label: RichTextStringKey; run: () => void; isAvailable?: boolean };
 
@@ -75,7 +76,7 @@ export const TableMenu = ({ api, selection, label }: TableMenuProps): ReactNode 
     const translate = useTranslate();
     const { returnToText, contentProps } = useFocusAfterClose(api);
     // `shape()` answers for any grid; this keeps the menu to tables.
-    if (!selection.blocks.some((block) => block.type === 'table')) {
+    if (!isInTable(selection)) {
         return null;
     }
     const shape = api.grid.shape();

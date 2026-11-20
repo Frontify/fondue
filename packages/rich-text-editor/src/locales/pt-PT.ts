@@ -85,6 +85,7 @@ export const ptPT: RichTextStrings = {
     RichTextEditor_tableDelete: 'Eliminar tabela',
     RichTextEditor_tableDeleteColumn: 'Eliminar coluna',
     RichTextEditor_tableDeleteRow: 'Eliminar linha',
+    RichTextEditor_tableInsert: 'Inserir tabela',
     RichTextEditor_tableInsertColumnLeft: 'Inserir coluna à esquerda',
     RichTextEditor_tableInsertColumnRight: 'Inserir coluna à direita',
     RichTextEditor_tableInsertRowAbove: 'Inserir linha acima',

@@ -86,6 +86,7 @@ export const enUS = {
     RichTextEditor_tableDelete: 'Delete table',
     RichTextEditor_tableDeleteColumn: 'Delete column',
     RichTextEditor_tableDeleteRow: 'Delete row',
+    RichTextEditor_tableInsert: 'Insert table',
     RichTextEditor_tableInsertColumnLeft: 'Insert column left',
     RichTextEditor_tableInsertColumnRight: 'Insert column right',
     RichTextEditor_tableInsertRowAbove: 'Insert row above',

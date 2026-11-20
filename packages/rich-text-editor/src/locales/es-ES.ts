@@ -85,6 +85,7 @@ export const esES: RichTextStrings = {
     RichTextEditor_tableDelete: 'Eliminar tabla',
     RichTextEditor_tableDeleteColumn: 'Eliminar columna',
     RichTextEditor_tableDeleteRow: 'Eliminar fila',
+    RichTextEditor_tableInsert: 'Insertar tabla',
     RichTextEditor_tableInsertColumnLeft: 'Insertar columna a la izquierda',
     RichTextEditor_tableInsertColumnRight: 'Insertar columna a la derecha',
     RichTextEditor_tableInsertRowAbove: 'Insertar fila arriba',

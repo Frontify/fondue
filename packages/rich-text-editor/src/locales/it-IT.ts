@@ -85,6 +85,7 @@ export const itIT: RichTextStrings = {
     RichTextEditor_tableDelete: 'Elimina tabella',
     RichTextEditor_tableDeleteColumn: 'Elimina colonna',
     RichTextEditor_tableDeleteRow: 'Elimina riga',
+    RichTextEditor_tableInsert: 'Inserisci tabella',
     RichTextEditor_tableInsertColumnLeft: 'Inserisci colonna a sinistra',
     RichTextEditor_tableInsertColumnRight: 'Inserisci colonna a destra',
     RichTextEditor_tableInsertRowAbove: 'Inserisci riga sopra',

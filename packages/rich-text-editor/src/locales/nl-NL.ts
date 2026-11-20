@@ -84,6 +84,7 @@ export const nlNL: RichTextStrings = {
     RichTextEditor_tableDelete: 'Tabel verwijderen',
     RichTextEditor_tableDeleteColumn: 'Kolom verwijderen',
     RichTextEditor_tableDeleteRow: 'Rij verwijderen',
+    RichTextEditor_tableInsert: 'Tabel invoegen',
     RichTextEditor_tableInsertColumnLeft: 'Kolom links invoegen',
     RichTextEditor_tableInsertColumnRight: 'Kolom rechts invoegen',
     RichTextEditor_tableInsertRowAbove: 'Rij boven invoegen',

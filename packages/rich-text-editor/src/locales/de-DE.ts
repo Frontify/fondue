@@ -85,6 +85,7 @@ export const deDE: RichTextStrings = {
     RichTextEditor_tableDelete: 'Tabelle löschen',
     RichTextEditor_tableDeleteColumn: 'Spalte löschen',
     RichTextEditor_tableDeleteRow: 'Zeile löschen',
+    RichTextEditor_tableInsert: 'Tabelle einfügen',
     RichTextEditor_tableInsertColumnLeft: 'Spalte links einfügen',
     RichTextEditor_tableInsertColumnRight: 'Spalte rechts einfügen',
     RichTextEditor_tableInsertRowAbove: 'Zeile oberhalb einfügen',
