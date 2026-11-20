@@ -16,7 +16,7 @@ import {
     type ToolbarItemProps,
 } from '../core';
 import { RichTextRenderer, serializeToHtml } from '../index';
-import { EDITOR_STRINGS, ENGLISH } from '../locales/en-US';
+import { enUS, ENGLISH } from '../locales/en-US';
 import {
     blurOnBreakPlugin,
     type BlurOnBreakPluginOptions,
@@ -94,7 +94,7 @@ const clickToolbarButton = ({ plugin, api, name }: ClickToolbarButtonParams): vo
     // The entries read `api`, `label` and `selection`; the rest is what any entry is handed.
     const props: ToolbarItemProps = {
         api,
-        label: resolveLabel(entry.label, labelContextOf(ENGLISH, translatorFor(EDITOR_STRINGS))),
+        label: resolveLabel(entry.label, labelContextOf(ENGLISH, translatorFor(enUS))),
         selection: api.selection.get(),
         selectedNode: null,
         isActive: false,

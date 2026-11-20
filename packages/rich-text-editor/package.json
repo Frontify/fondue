@@ -28,15 +28,7 @@
             "types": "./dist/plugins.d.ts",
             "import": "./dist/plugins.es.js"
         },
-        "./styles": "./dist/style.css",
-        "./locales": {
-            "types": "./dist/locales/index.d.ts",
-            "import": "./dist/locales/index.js"
-        },
-        "./locales/*": {
-            "types": "./dist/locales/*.d.ts",
-            "import": "./dist/locales/*.js"
-        }
+        "./styles": "./dist/style.css"
     },
     "files": [
         "dist"
@@ -45,7 +37,7 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "vite build && vite build --config locales.vite.config.ts",
+        "build": "vite build",
         "build:storybook": "storybook build",
         "format": "oxfmt",
         "format:check": "oxfmt --check",

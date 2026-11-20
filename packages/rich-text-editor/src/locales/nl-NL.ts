@@ -1,10 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { nlNL as fondueNlNL } from '@frontify/fondue-components/locales/nl-NL';
+import { type RichTextStrings } from './types';
 
-import { type RichTextLocale, type RichTextStrings } from './types';
-
-const EDITOR_STRINGS: RichTextStrings = {
+export const nlNL: RichTextStrings = {
     RichTextEditor_alignCenter: 'Centreren',
     RichTextEditor_alignJustify: 'Uitvullen',
     RichTextEditor_alignLeft: 'Links uitlijnen',
@@ -103,9 +101,4 @@ const EDITOR_STRINGS: RichTextStrings = {
     RichTextEditor_turnIntoCurrent: 'Omzetten naar: ${type}',
     RichTextEditor_underline: 'Onderstrepen',
     RichTextEditor_undo: 'Ongedaan maken',
-};
-
-export const nlNL: RichTextLocale = {
-    ...fondueNlNL,
-    translationStrings: { ...fondueNlNL.translationStrings, ...EDITOR_STRINGS },
 };

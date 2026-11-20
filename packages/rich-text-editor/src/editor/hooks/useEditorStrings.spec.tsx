@@ -3,7 +3,8 @@
 // @vitest-environment happy-dom
 
 import { ThemeProvider } from '@frontify/fondue-components';
-import { deCH as componentsOnlyDeCH } from '@frontify/fondue-components/locales/de-CH';
+import { deCH as fondueDeCH } from '@frontify/fondue-components/locales/de-CH';
+import { enUS as fondueEnUS } from '@frontify/fondue-components/locales/en-US';
 import { act, type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -19,6 +20,7 @@ declare global {
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 const ENGLISH_EDITOR_NAME = 'Rich text editor';
+const UNKNOWN_LANG = 'ja-JP';
 
 const teardown: (() => void)[] = [];
 
@@ -54,27 +56,27 @@ describe('useEditorStrings', () => {
         expect(warn).not.toHaveBeenCalled();
     });
 
-    it("takes the language and the strings from the ThemeProvider's locale", () => {
+    it("speaks the language of the ThemeProvider's locale", () => {
         const container = mount(
-            <ThemeProvider locale={deCH}>
+            <ThemeProvider locale={fondueDeCH}>
                 <Shown />
             </ThemeProvider>,
         );
 
-        expect(container.textContent).toBe(`de-CH ${deCH.translationStrings.RichTextEditor_editor}`);
+        expect(container.textContent).toBe(`de-CH ${deCH.RichTextEditor_editor}`);
     });
 
-    it('shows English, and warns, for a locale that holds only the components strings', () => {
+    it('shows English, and warns, for a language it does not speak', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         teardown.push(() => warn.mockRestore());
 
         const container = mount(
-            <ThemeProvider locale={componentsOnlyDeCH}>
+            <ThemeProvider locale={{ ...fondueEnUS, lang: UNKNOWN_LANG }}>
                 <Shown />
             </ThemeProvider>,
         );
 
         expect(container.textContent).toBe(`en-US ${ENGLISH_EDITOR_NAME}`);
-        expect(warn).toHaveBeenCalledWith(expect.stringContaining('de-CH'));
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining(UNKNOWN_LANG));
     });
 });

@@ -18,14 +18,14 @@ export const warnNewerVersion = (version: number): void => {
     );
 };
 
-/** Dev-only warning, once per language, for a `ThemeProvider` locale that holds no editor strings, so the editor shows English. */
-export const warnMissingEditorStrings = (lang: string): void => {
+/** Dev-only warning, once per language, for a `ThemeProvider` locale in a language the editor does not speak, so it shows English. */
+export const warnUnknownLanguage = (lang: string): void => {
     if (process.env.NODE_ENV === 'production' || warnedLanguages.has(lang)) {
         return;
     }
     warnedLanguages.add(lang);
     console.warn(
-        `[RichTextEditor] The ThemeProvider locale "${lang}" holds no editor strings, so the editor is shown in English. Pass the locale from @frontify/fondue/locales instead.`,
+        `[RichTextEditor] The editor does not speak the ThemeProvider locale's language "${lang}", so it is shown in English.`,
     );
 };
 

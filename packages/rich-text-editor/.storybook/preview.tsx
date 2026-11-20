@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ThemeProvider } from '@frontify/fondue-components';
+import * as locales from '@frontify/fondue-components/locales';
 import { type Decorator, type Preview, type StoryContext } from '@storybook/react-vite';
 import { type ComponentType } from 'react';
 // The app owns the stylesheets of the libraries it brings: the editor's own
@@ -9,9 +10,6 @@ import { type ComponentType } from 'react';
 import '@frontify/fondue-tokens/styles';
 import '@frontify/fondue-components/styles';
 
-import * as locales from '../src/locales';
-import { ENGLISH } from '../src/locales/en-US';
-
 import './styles.css';
 
 type Globals = {
@@ -19,7 +17,9 @@ type Globals = {
     lang?: string;
 };
 
-/** The shipped locales, by language tag, each holding the components' strings and the editor's. */
+const ENGLISH = 'en-US';
+
+/** The components' locales by language tag; the editor speaks the same languages. */
 const LOCALES = new Map(Object.values(locales).map((locale) => [locale.lang ?? ENGLISH, locale]));
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {

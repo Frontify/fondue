@@ -1,62 +1,51 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type LocaleConfig, useFondueTheme } from '@frontify/fondue-components';
+import { useFondueTheme } from '@frontify/fondue-components';
 import { useEffect, useMemo } from 'react';
 
-import { EDITOR_STRINGS, ENGLISH } from '#/locales/en-US';
+import { STRINGS_BY_LANG } from '#/locales';
+import { ENGLISH, enUS } from '#/locales/en-US';
 import { type RichTextStrings } from '#/locales/types';
 
-import { warnMissingEditorStrings } from '../warnings';
-
-const EDITOR_KEYS = Object.keys(EDITOR_STRINGS);
+import { warnUnknownLanguage } from '../warnings';
 
 /** The language the editor shows, and its strings in it. */
 export type EditorStrings = { lang: string; strings: RichTextStrings };
 
-/** What a `ThemeProvider` locale holds for the editor. */
-type ThemeStrings =
-    | { kind: 'translated'; lang: string; strings: RichTextStrings }
-    | { kind: 'english' }
-    | { kind: 'missing'; lang: string };
+/** Whether the editor speaks the `ThemeProvider` locale's language. */
+type ThemeLanguage = { kind: 'known'; lang: string; strings: RichTextStrings } | { kind: 'unknown'; lang: string };
 
-const holdsEditorStrings = (strings: Record<string, unknown>): strings is RichTextStrings =>
-    EDITOR_KEYS.every((key) => typeof strings[key] === 'string');
-
-/** A components-only locale says nothing about the editor: right for English, a host mistake for any other language. */
-export const themeStringsOf = ({ lang = ENGLISH, translationStrings }: LocaleConfig): ThemeStrings => {
-    if (holdsEditorStrings(translationStrings)) {
-        return { kind: 'translated', lang, strings: translationStrings };
-    }
-    if (lang === ENGLISH) {
-        return { kind: 'english' };
+const themeLanguageOf = (lang: string): ThemeLanguage => {
+    const strings = STRINGS_BY_LANG.get(lang);
+    if (strings === undefined) {
+        return { kind: 'unknown', lang };
     }
 
-    return { kind: 'missing', lang };
+    return { kind: 'known', lang, strings };
 };
 
-const editorStringsOf = (theme: ThemeStrings): EditorStrings => {
-    switch (theme.kind) {
-        case 'translated':
-            return { lang: theme.lang, strings: theme.strings };
-        case 'english':
-        case 'missing':
-            return { lang: ENGLISH, strings: EDITOR_STRINGS };
+const editorStringsOf = (language: ThemeLanguage): EditorStrings => {
+    switch (language.kind) {
+        case 'known':
+            return { lang: language.lang, strings: language.strings };
+        case 'unknown':
+            return { lang: ENGLISH, strings: enUS };
     }
 };
 
 /**
- * The editor's strings from the `ThemeProvider`'s `locale`, as the components
- * take theirs. A locale without them shows English, with a warning unless it is English.
+ * The editor's strings in the language of the `ThemeProvider`'s `locale`.
+ * A language the editor does not speak shows English, with a warning.
  */
 export const useEditorStrings = (): EditorStrings => {
-    const { locale } = useFondueTheme();
-    const theme = useMemo(() => themeStringsOf(locale), [locale]);
+    const { lang = ENGLISH } = useFondueTheme().locale;
+    const language = useMemo(() => themeLanguageOf(lang), [lang]);
 
     useEffect(() => {
-        if (theme.kind === 'missing') {
-            warnMissingEditorStrings(theme.lang);
+        if (language.kind === 'unknown') {
+            warnUnknownLanguage(language.lang);
         }
-    }, [theme]);
+    }, [language]);
 
-    return useMemo(() => editorStringsOf(theme), [theme]);
+    return useMemo(() => editorStringsOf(language), [language]);
 };

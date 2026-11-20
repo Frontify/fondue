@@ -237,8 +237,7 @@ export default defineConfig({
                             NO_SERVER_RENDER,
                             {
                                 group: ['#/**', '../**', 'react', 'react/**'],
-                                message:
-                                    'A locale is data a host imports on its own (`./locales`), so it imports no other layer.',
+                                message: 'The strings are data every layer reads, so they import no other layer.',
                             },
                         ],
                     },

@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { buildPluginRegistry, type RtePlugin, type RteShortcutOwner } from '#/core';
-import { EDITOR_STRINGS, ENGLISH } from '#/locales/en-US';
+import { enUS, ENGLISH } from '#/locales/en-US';
 import { labelContextOf, resolveLabel, translatorFor } from '#/ui/translation';
 
 /** The reference is documentation, written in English like the rest of Fondue's. */
-const ENGLISH_LABELS = labelContextOf(ENGLISH, translatorFor(EDITOR_STRINGS));
+const ENGLISH_LABELS = labelContextOf(ENGLISH, translatorFor(enUS));
 
 /** Each key is written as in a plugin's `hotkeys` (`Mod-b`). */
 export type KeyboardRow = {

@@ -31,22 +31,19 @@ A host that sets its own text looks passes the same `look` to both sides:
 ## Language
 
 The editor and its shipped plugins speak the 11 languages of `@frontify/fondue-components`.
-Each locale holds the components' strings and the editor's, so the host passes one object to
-`ThemeProvider`, as it does for the components alone. The wording is fixed: a host chooses the
-language, not the words.
+The editor takes its language from the `lang` of the `ThemeProvider`'s `locale`, so the host
+passes the same locale it passes for the components. The editor holds its own strings for each
+language. The wording is fixed: a host chooses the language, not the words.
 
 ```tsx
-import { deCH } from '@frontify/fondue/locales/de-CH';
+import { deCH } from '@frontify/fondue/components/locales/de-CH';
 
 <ThemeProvider locale={deCH}>
     <RichTextEditor />
 </ThemeProvider>
 ```
 
-`@frontify/fondue/components/locales` serves the same objects. Without `@frontify/fondue`, they
-come from `@frontify/fondue-rich-text-editor/locales`. A `ThemeProvider` locale with only the
-components' strings, as `@frontify/fondue-components/locales` has, shows the editor in English,
-with a warning in development.
+A language outside the 11 shows the editor in English, with a warning in development.
 
 ## Writing a plugin
 

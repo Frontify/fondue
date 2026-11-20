@@ -3,7 +3,7 @@
 import { createContext, useContext } from 'react';
 
 import { type RteLabel, type RteLabelContext } from '#/core';
-import { EDITOR_STRINGS } from '#/locales/en-US';
+import { enUS } from '#/locales/en-US';
 import { type RichTextStringKey, type RichTextStrings } from '#/locales/types';
 
 /** The values of a string's `${name}` variables, by name. */
@@ -27,7 +27,7 @@ export const translatorFor =
         });
 
 /** The editor's translator; English outside an editor, so a plugin's UI also renders on its own. */
-export const TranslationContext = createContext<Translate>(translatorFor(EDITOR_STRINGS));
+export const TranslationContext = createContext<Translate>(translatorFor(enUS));
 TranslationContext.displayName = 'TranslationContext';
 
 /**

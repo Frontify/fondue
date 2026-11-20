@@ -3,6 +3,7 @@
 // @vitest-environment happy-dom
 
 import { Dialog, ThemeProvider } from '@frontify/fondue-components';
+import { deDE as fondueDeDE } from '@frontify/fondue-components/locales/de-DE';
 import { act, Profiler, type ReactNode, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
@@ -341,14 +342,12 @@ describe('a document from a newer format version', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         teardown.push(() => warn.mockRestore());
         const { container } = mount(() => (
-            <ThemeProvider locale={deDE}>
+            <ThemeProvider locale={fondueDeDE}>
                 <RichTextEditor value={newer} plugins={defaultPlugins} />
             </ThemeProvider>
         ));
 
-        expect(container.querySelector('[role="status"]')?.textContent).toBe(
-            deDE.translationStrings.RichTextEditor_newerVersion,
-        );
+        expect(container.querySelector('[role="status"]')?.textContent).toBe(deDE.RichTextEditor_newerVersion);
     });
 
     it('shows no notice when the host already shows it read-only', () => {
@@ -737,7 +736,7 @@ describe('the toolbar', () => {
             ],
         });
         const { container, ready } = mount(() => (
-            <ThemeProvider locale={deDE}>
+            <ThemeProvider locale={fondueDeDE}>
                 <RichTextEditor plugins={[hostPlugin]} toolbarPlacement="top" />
             </ThemeProvider>
         ));
@@ -2194,18 +2193,16 @@ describe('an editor that crashes', () => {
     it('says its crash texts in the language of its locale', () => {
         silenceReact();
         const { container } = mount(() => (
-            <ThemeProvider locale={deDE}>
+            <ThemeProvider locale={fondueDeDE}>
                 <RichTextEditor value={paragraph('still here')} plugins={[throwingPlugin()]} />
             </ThemeProvider>
         ));
 
         const button = [...container.querySelectorAll('button')].find(
-            (candidate) => candidate.textContent === deDE.translationStrings.RichTextEditor_retry,
+            (candidate) => candidate.textContent === deDE.RichTextEditor_retry,
         );
         const messageId = button?.getAttribute('aria-describedby') ?? '';
-        expect(window.document.getElementById(messageId)?.textContent).toBe(
-            deDE.translationStrings.RichTextEditor_editorFailed,
-        );
+        expect(window.document.getElementById(messageId)?.textContent).toBe(deDE.RichTextEditor_editorFailed);
     });
 
     it('names the fallback by a visible label, and only when the host named the editor', () => {

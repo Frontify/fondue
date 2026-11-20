@@ -12,8 +12,8 @@ import { defaultPlugins } from './index';
 
 describe('the shipped plugins', () => {
     it("name every toolbar entry and block command in the editor's language, never in fixed text", () => {
-        const context = labelContextOf(frFR.lang ?? '', translatorFor(frFR.translationStrings));
-        const french = new Set(Object.values(frFR.translationStrings));
+        const context = labelContextOf('fr-FR', translatorFor(frFR));
+        const french = new Set(Object.values(frFR));
         const labels = [...defaultPlugins, columnBreakPlugin(), tablePlugin()].flatMap((plugin) => [
             ...(plugin.toolbar ?? []).map((entry) => entry.label),
             ...(plugin.commands ?? []).map((command) => command.label),

@@ -6,11 +6,9 @@ import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
-// Each of the editor's locales is the components' locale for its language plus the editor's strings,
-// so one import per language serves all of Fondue through `ThemeProvider`'s `locale`.
-const fondueLocalesDir = dirname(fileURLToPath(import.meta.resolve('@frontify/fondue-rich-text-editor/locales')));
+const componentsLocalesDir = dirname(fileURLToPath(import.meta.resolve('@frontify/fondue-components/locales')));
 const outDir = resolve(here, '../dist/packages/locales');
 
 rmSync(outDir, { recursive: true, force: true });
 mkdirSync(outDir, { recursive: true });
-cpSync(fondueLocalesDir, outDir, { recursive: true });
+cpSync(componentsLocalesDir, outDir, { recursive: true });

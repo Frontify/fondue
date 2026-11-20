@@ -3,6 +3,7 @@
 // @vitest-environment happy-dom
 
 import { ThemeProvider } from '@frontify/fondue-components';
+import { deDE as fondueDeDE } from '@frontify/fondue-components/locales/de-DE';
 import { act, type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -181,9 +182,9 @@ describe('the floating bar', () => {
     });
 
     it('says everything in the language of its locale', () => {
-        const translate = translatorFor(deDE.translationStrings);
+        const translate = translatorFor(deDE);
         const editor = mount((onChange) => (
-            <ThemeProvider locale={deDE}>
+            <ThemeProvider locale={fondueDeDE}>
                 <RichTextEditor plugins={defaultPlugins} toolbarPlacement="floating" onChange={onChange} />
             </ThemeProvider>
         ));
@@ -415,9 +416,9 @@ describe('the / menu', () => {
     });
 
     it('says everything in the language of its locale', () => {
-        const translate = translatorFor(deDE.translationStrings);
+        const translate = translatorFor(deDE);
         const { editable } = mount(() => (
-            <ThemeProvider locale={deDE}>
+            <ThemeProvider locale={fondueDeDE}>
                 <RichTextEditor plugins={plugins} />
             </ThemeProvider>
         ));

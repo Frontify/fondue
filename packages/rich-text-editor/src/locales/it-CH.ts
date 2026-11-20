@@ -1,10 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { itCH as fondueItCH } from '@frontify/fondue-components/locales/it-CH';
+import { type RichTextStrings } from './types';
 
-import { type RichTextLocale, type RichTextStrings } from './types';
-
-const EDITOR_STRINGS: RichTextStrings = {
+export const itCH: RichTextStrings = {
     RichTextEditor_alignCenter: 'Centra',
     RichTextEditor_alignJustify: 'Giustifica',
     RichTextEditor_alignLeft: 'Allinea a sinistra',
@@ -104,9 +102,4 @@ const EDITOR_STRINGS: RichTextStrings = {
     RichTextEditor_turnIntoCurrent: 'Trasforma in: ${type}',
     RichTextEditor_underline: 'Sottolineato',
     RichTextEditor_undo: 'Annulla',
-};
-
-export const itCH: RichTextLocale = {
-    ...fondueItCH,
-    translationStrings: { ...fondueItCH.translationStrings, ...EDITOR_STRINGS },
 };

@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { EDITOR_STRINGS } from '../en-US';
+import { enUS } from '../en-US';
 
 const SOURCE_ROOT = fileURLToPath(new URL('../..', import.meta.url));
 /** The folders that hold strings or tests of them, not the code that shows them. */
@@ -47,6 +47,6 @@ describe('the editor strings', () => {
             }
         }
 
-        expect(Object.keys(EDITOR_STRINGS).filter((key) => !used.has(key))).toEqual([]);
+        expect(Object.keys(enUS).filter((key) => !used.has(key))).toEqual([]);
     });
 });

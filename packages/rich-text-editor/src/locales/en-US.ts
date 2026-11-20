@@ -1,14 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { enUS as fondueEnUS } from '@frontify/fondue-components/locales/en-US';
-
-import { type RichTextLocale } from './types';
-
-/** The language every other locale translates from, and the one shown when a locale holds no editor strings. */
+/** The language every other locale translates from, and the one shown for a language the editor does not speak. */
 export const ENGLISH = 'en-US';
 
 /** The editor's own strings in English: the keys and wording every other locale translates. */
-export const EDITOR_STRINGS = {
+export const enUS = {
     RichTextEditor_alignCenter: 'Align center',
     RichTextEditor_alignJustify: 'Justify',
     RichTextEditor_alignLeft: 'Align left',
@@ -107,9 +103,4 @@ export const EDITOR_STRINGS = {
     RichTextEditor_turnIntoCurrent: 'Turn into: ${type}',
     RichTextEditor_underline: 'Underline',
     RichTextEditor_undo: 'Undo',
-};
-
-export const enUS: RichTextLocale = {
-    ...fondueEnUS,
-    translationStrings: { ...fondueEnUS.translationStrings, ...EDITOR_STRINGS },
 };
