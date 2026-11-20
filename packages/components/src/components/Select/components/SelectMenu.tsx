@@ -6,6 +6,7 @@ import { type UseComboboxPropGetters, type UseSelectPropGetters } from 'downshif
 import { isValidElement, type ForwardedRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
 import { ThemeProvider, useFondueTheme } from '#/components/ThemeProvider/ThemeProvider';
+import { type CommonAriaProps } from '#/helpers/aria';
 
 import styles from '../styles/select.module.scss';
 import { getSelectOptionValue, recursiveMap } from '../utils';
@@ -81,7 +82,7 @@ export type SelectMenuProps = {
      * @internal
      * The list's accessible name, the trigger's own `aria-label`. Without it downshift labels the list by a label element only a labelled Select renders.
      */
-    'aria-label'?: string;
+    'aria-label'?: CommonAriaProps['aria-label'];
 };
 
 export const SelectMenu = ({
