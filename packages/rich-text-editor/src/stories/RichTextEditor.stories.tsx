@@ -65,6 +65,15 @@ const SURFACE = 'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-s
 /** The field box around an editor: the surface, with a stronger border on hover and while the caret is inside, as Fondue's Textarea does. */
 const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-line-strong`;
 
+/** The red border a host puts on its field box while the field is invalid; inline, so it wins over FRAME's hover and focus borders. */
+const ERROR_FRAME_STYLE: CSSProperties = { borderColor: 'var(--color-error-default)' };
+
+const REQUIRED_LABEL_ID = 'required-story-label';
+const REQUIRED_ERROR_ID = 'required-story-error';
+const REQUIRED_ERROR_TEXT = 'Description is required.';
+const REQUIRED_ERROR_CLASS = 'tw-m-0 tw-body-small';
+const REQUIRED_ERROR_TEXT_STYLE: CSSProperties = { color: 'var(--color-error-default)' };
+
 const buttonClasses = (active: boolean): string =>
     [
         'tw-body-small tw-rounded tw-border tw-border-solid tw-border-line-strong tw-px-2 tw-py-1 tw-text-secondary tw-cursor-pointer',
@@ -169,6 +178,63 @@ export const Placeholder: Story = {
                         plugins={defaultPlugins}
                         placeholder="Write something…"
                     />
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/**
+ * `required` and `status` mark the field for assistive technology only
+ * (`aria-required`, `aria-invalid`, and `aria-errormessage` while in error).
+ * The host draws the field and its error look: the asterisk, the red border
+ * and the message, all from the same `status`.
+ */
+export const RequiredAndInvalid: Story = {
+    args: { required: true, status: 'error' },
+    argTypes: {
+        required: { control: 'boolean' },
+        status: { control: 'inline-radio', options: ['neutral', 'error'] },
+    },
+    render: (args) => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: '' }] }],
+        });
+        const isInvalid = args.status === 'error';
+        let frameStyle: CSSProperties = {};
+        if (isInvalid) {
+            frameStyle = ERROR_FRAME_STYLE;
+        }
+
+        return (
+            <div className={LAYOUT}>
+                <div className="tw-flex tw-flex-col tw-gap-2">
+                    <span id={REQUIRED_LABEL_ID} className="tw-body-small tw-text-primary">
+                        Description
+                        {args.required ? <span aria-hidden="true"> *</span> : null}
+                    </span>
+                    <div className={FRAME} style={frameStyle}>
+                        <RichTextEditor
+                            value={doc}
+                            onChange={setDoc}
+                            plugins={defaultPlugins}
+                            aria-labelledby={REQUIRED_LABEL_ID}
+                            aria-describedby={REQUIRED_ERROR_ID}
+                            aria-errormessage={REQUIRED_ERROR_ID}
+                            required={args.required}
+                            status={args.status}
+                        />
+                    </div>
+                    <p
+                        id={REQUIRED_ERROR_ID}
+                        className={REQUIRED_ERROR_CLASS}
+                        style={REQUIRED_ERROR_TEXT_STYLE}
+                        hidden={!isInvalid}
+                    >
+                        {REQUIRED_ERROR_TEXT}
+                    </p>
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>

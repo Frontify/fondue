@@ -42,6 +42,9 @@ import { DEFAULT_LABELS, type RichTextEditorLabels } from './labels';
 import styles from './richTextEditor.module.scss';
 import { warnNewerVersion } from './warnings';
 
+/** The states of the field the editor acts on: `'error'` marks it invalid. */
+type EditorStatus = 'neutral' | 'error';
+
 /**
  * `TBlock` is the document's block union. It defaults to the structural
  * skeleton here; the package root re-exports the component with the official
@@ -120,6 +123,23 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     'aria-labelledby'?: string;
     /** The id of an element describing the editor further — help text, an error. */
     'aria-describedby'?: string;
+    /**
+     * Mark the field as required for assistive technology (`aria-required` on
+     * the editable element). The editor draws no asterisk; the host's label does.
+     *
+     * @default false
+     */
+    required?: boolean;
+    /**
+     * `'error'` marks the editable element invalid for assistive technology.
+     * The editor draws no border; the host draws the field's error look from
+     * the same value.
+     *
+     * @default 'neutral'
+     */
+    status?: EditorStatus;
+    /** The id of the host's error text, applied only while `status` is `'error'`. */
+    'aria-errormessage'?: string;
     /**
      * The words the editor's own UI says (its default name, the toolbar's
      * name, the "Turn into" and `/` menus, the message and button shown when
@@ -305,6 +325,9 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
     'aria-describedby': ariaDescribedBy,
+    required = false,
+    status = 'neutral',
+    'aria-errormessage': ariaErrorMessage,
     onBlur,
     dataTestId,
 }: ShellProps<TBlock>): ReactNode => {
@@ -332,10 +355,24 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
                 isNamed,
                 placeholder,
                 defaultLabel: labels.editor,
+                required,
+                status,
+                ariaErrorMessage,
             }),
         // `hostLabels` is rebuilt every render; the props it is built from are the deps.
         // eslint-disable-next-line @eslint-react/exhaustive-deps
-        [editableId, className, ariaLabel, ariaLabelledBy, ariaDescribedBy, placeholder, labels.editor],
+        [
+            editableId,
+            className,
+            ariaLabel,
+            ariaLabelledBy,
+            ariaDescribedBy,
+            placeholder,
+            labels.editor,
+            required,
+            status,
+            ariaErrorMessage,
+        ],
     );
 
     const { containerRef, handle, editorState, viewPortals } = useEditorHandle({
@@ -605,6 +642,31 @@ const hostLabelsOf = ({
     isNamed: ariaLabel !== undefined || ariaLabelledBy !== undefined,
 });
 
+/** What `status` tells assistive technology: nothing while neutral, invalid, and where the error text is, in error. */
+const statusAttributesOf = (status: EditorStatus, ariaErrorMessage: string | undefined): Record<string, string> => {
+    switch (status) {
+        case 'neutral':
+            return {};
+        case 'error':
+            if (ariaErrorMessage === undefined) {
+                return { 'aria-invalid': 'true' };
+            }
+            return { 'aria-invalid': 'true', 'aria-errormessage': ariaErrorMessage };
+    }
+};
+
+type EditableAttributesOptions = {
+    id: string;
+    className: string;
+    hostLabels: Record<string, string>;
+    isNamed: boolean;
+    placeholder: string;
+    defaultLabel: string;
+    required: boolean;
+    status: EditorStatus;
+    ariaErrorMessage: string | undefined;
+};
+
 /** The attributes of the editable element: a textbox, named by the host or else by `defaultLabel`. */
 const editableAttributes = ({
     id,
@@ -613,22 +675,27 @@ const editableAttributes = ({
     isNamed,
     placeholder,
     defaultLabel,
-}: {
-    id: string;
-    className: string;
-    hostLabels: Record<string, string>;
-    isNamed: boolean;
-    placeholder: string;
-    defaultLabel: string;
-}): Record<string, string> => ({
-    id,
-    class: className,
-    role: 'textbox',
-    'aria-multiline': 'true',
-    ...(isNamed ? {} : { 'aria-label': defaultLabel }),
-    ...hostLabels,
-    ...(placeholder === '' ? {} : { 'aria-placeholder': placeholder }),
-});
+    required,
+    status,
+    ariaErrorMessage,
+}: EditableAttributesOptions): Record<string, string> => {
+    const requiredAttributes: Record<string, string> = {};
+    if (required) {
+        requiredAttributes['aria-required'] = 'true';
+    }
+
+    return {
+        id,
+        class: className,
+        role: 'textbox',
+        'aria-multiline': 'true',
+        ...(isNamed ? {} : { 'aria-label': defaultLabel }),
+        ...hostLabels,
+        ...(placeholder === '' ? {} : { 'aria-placeholder': placeholder }),
+        ...requiredAttributes,
+        ...statusAttributesOf(status, ariaErrorMessage),
+    };
+};
 
 /**
  * The host's labels over the English defaults, kept the same object while the
