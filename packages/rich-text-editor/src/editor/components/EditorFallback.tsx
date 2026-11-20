@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button } from '@frontify/fondue-components';
-import { type ReactNode, useEffect, useId, useRef, useState } from 'react';
+import { type AriaAttributes, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
 import { type PluginRegistry, type RteDocumentOf } from '#/core';
 import { RegistryRenderer } from '#/renderer';
@@ -12,11 +12,8 @@ import styles from '../richTextEditor.module.scss';
 import { EditorErrorBoundary } from './EditorErrorBoundary';
 
 /** The attributes that make a named editor a group carrying the host's labels where it is not a field. */
-export type GroupAttributes = {
+export type GroupAttributes = Pick<AriaAttributes, 'aria-label' | 'aria-labelledby' | 'aria-describedby'> & {
     role?: 'group';
-    'aria-label'?: string;
-    'aria-labelledby'?: string;
-    'aria-describedby'?: string;
 };
 
 type EditorFallbackProps = {
