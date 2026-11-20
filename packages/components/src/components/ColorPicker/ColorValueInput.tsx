@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ForwardedRef, forwardRef, useEffect, useState } from 'react';
+import { type ForwardedRef, forwardRef, useEffect, useId, useState } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -58,6 +58,13 @@ const showsColor = (hex: string, color: RgbaColor): boolean => {
     return typedColor.red === color.red && typedColor.green === color.green && typedColor.blue === color.blue;
 };
 
+const describedByWhenInvalid = (valid: boolean, id: string): string | undefined => {
+    if (valid) {
+        return undefined;
+    }
+    return id;
+};
+
 export const ColorValueInput = (
     {
         currentColor = DEFAULT_COLOR,
@@ -70,6 +77,8 @@ export const ColorValueInput = (
 ) => {
     const { t } = useTranslation();
     const [hexColorValue, setHexColorValue] = useState<string>(() => rgbColorToHex(currentColor));
+    const hexErrorId = useId();
+    const hexIsValid = isValidHexColor(hexColorValue);
 
     useEffect(() => {
         // A typed `abc` must not be rewritten to `aabbcc` while the colour round-trips through the parent.
@@ -102,7 +111,7 @@ export const ColorValueInput = (
                     className={styles.valueInput}
                     type="text"
                     value={hexColorValue}
-                    status={isValidHexColor(hexColorValue) ? 'neutral' : 'error'}
+                    status={hexIsValid ? 'neutral' : 'error'}
                     onChange={(event) => {
                         const inputValue = event.target.value.startsWith('#')
                             ? event.target.value.slice(1)
@@ -117,6 +126,8 @@ export const ColorValueInput = (
                         }
                     }}
                     aria-label={t('ColorPicker_hexValue')}
+                    aria-describedby={describedByWhenInvalid(hexIsValid, hexErrorId)}
+                    aria-errormessage={hexErrorId}
                 >
                     <TextInput.Slot name="left">
                         <span className={styles.inputDecorator}>#</span>
@@ -200,6 +211,11 @@ export const ColorValueInput = (
                     </TextInput.Slot>
                 </TextInput.Root>
             </div>
+            {currentFormat === 'HEX' && !hexIsValid ? (
+                <span id={hexErrorId} className={styles.valueError}>
+                    {t('ColorPicker_hexInvalid')}
+                </span>
+            ) : null}
         </div>
     );
 };

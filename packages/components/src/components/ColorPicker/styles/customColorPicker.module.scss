@@ -21,6 +21,12 @@
     }
 }
 
+.valueError {
+    grid-column: 1 / -1;
+    color: var(--color-error-default);
+    font-size: var(--typography-font-size-small);
+}
+
 .colorFormatInput,
 .colorAlphaInput {
     width: 100%;

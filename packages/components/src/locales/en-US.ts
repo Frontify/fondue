@@ -10,6 +10,7 @@ const translations = {
     Card_select: 'Select',
     ColorPicker_blueChannel: 'Blue Color Channel',
     ColorPicker_greenChannel: 'Green Color Channel',
+    ColorPicker_hexInvalid: 'Not a valid hex code. Use 3 or 6 characters (0–9, A–F), like 1A2B3C.',
     ColorPicker_hexValue: 'Hex color value',
     ColorPicker_opacity: 'Color Opacity',
     ColorPicker_redChannel: 'Red Color Channel',

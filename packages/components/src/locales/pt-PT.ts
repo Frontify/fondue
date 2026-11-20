@@ -12,6 +12,7 @@ const translations = {
     Card_select: 'Selecionar',
     ColorPicker_blueChannel: 'Canal de cor azul',
     ColorPicker_greenChannel: 'Canal de cor verde',
+    ColorPicker_hexInvalid: 'Código hexadecimal inválido. Use 3 ou 6 caracteres (0–9, A–F), como 1A2B3C.',
     ColorPicker_hexValue: 'Valor de cor hexadecimal',
     ColorPicker_opacity: 'Opacidade da cor',
     ColorPicker_redChannel: 'Canal de cor vermelho',

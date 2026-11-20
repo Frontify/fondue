@@ -12,6 +12,7 @@ const translations = {
     Card_select: 'Selecteren',
     ColorPicker_blueChannel: 'Blauw kleurkanaal',
     ColorPicker_greenChannel: 'Groen kleurkanaal',
+    ColorPicker_hexInvalid: 'Geen geldige hexcode. Gebruik 3 of 6 tekens (0–9, A–F), zoals 1A2B3C.',
     ColorPicker_hexValue: 'Hex-kleurwaarde',
     ColorPicker_opacity: 'Kleurdekking',
     ColorPicker_redChannel: 'Rood kleurkanaal',
