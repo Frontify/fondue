@@ -2,6 +2,8 @@
 
 import { forwardRef, type ComponentProps, type ForwardedRef, type MouseEventHandler, type ReactNode } from 'react';
 
+import { Button } from '../Button/Button';
+
 import styles from './styles/card.module.scss';
 
 /**
@@ -45,24 +47,23 @@ export const CardActionButton = (
     {
         'data-test-id': dataTestId = 'fondue-card-action-button',
         'aria-label': ariaLabel,
-        onClick,
         children,
         ...rest
     }: CardActionButtonProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
-        <button
+        <Button
             ref={ref}
-            className={styles.actionButton}
             data-test-id={dataTestId}
             aria-label={ariaLabel}
-            type="button"
-            onClick={onClick}
+            emphasis="default"
+            size="small"
+            aspect="square"
             {...rest}
         >
             {children}
-        </button>
+        </Button>
     );
 };
 CardActionButton.displayName = 'Card.ActionButton';

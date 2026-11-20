@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { forwardRef, type ForwardedRef, type MouseEvent, type ReactNode } from 'react';
+import { forwardRef, type AriaAttributes, type ForwardedRef, type MouseEvent, type ReactNode } from 'react';
 
-import { type CommonGlobalProps } from '#/helpers/aria';
+import { type CommonAriaProps, type CommonGlobalProps } from '#/helpers/aria';
 
 import styles from './styles/button.module.scss';
 
@@ -18,7 +18,9 @@ type ButtonEmphasis = 'default' | 'weak' | 'strong';
 
 type ButtonAspect = 'default' | 'square';
 
-export type ButtonProps = CommonGlobalProps & {
+type ButtonAriaProps = CommonAriaProps & Pick<AriaAttributes, 'aria-pressed' | 'aria-checked'>;
+
+export type ButtonProps = CommonGlobalProps & ButtonAriaProps & {
     /**
      * @default "button"
      */
@@ -58,8 +60,6 @@ export type ButtonProps = CommonGlobalProps & {
     children?: ReactNode;
     onPress?: (event?: MouseEvent<HTMLButtonElement>) => void;
     form?: string;
-    'aria-label'?: string;
-    'aria-describedby'?: string;
     'data-test-id'?: string;
     className?: string;
     tabIndex?: number;
