@@ -23,7 +23,6 @@ export const MentionEditor = ({
     value,
     setValue,
     isFocused,
-    editing,
     remove,
     api,
     items,
@@ -54,5 +53,5 @@ export const MentionEditor = ({
             />
         );
     }
-    return <MentionLink value={value} display={mentionDisplay(value, { href, trigger })} placesCaret={editing} />;
+    return <MentionLink value={value} display={mentionDisplay(value, { href, trigger })} placesCaret />;
 };

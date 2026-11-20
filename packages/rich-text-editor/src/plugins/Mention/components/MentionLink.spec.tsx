@@ -76,7 +76,7 @@ describe('a click on a linked mention', () => {
         return event;
     };
 
-    const mountEditor = (editing: boolean): HTMLElement =>
+    const mountEditor = (): HTMLElement =>
         mount(
             <MentionEditor
                 value={JANE}
@@ -84,7 +84,6 @@ describe('a click on a linked mention', () => {
                 isFocused={false}
                 isSelected={false}
                 isOpen={false}
-                editing={editing}
                 setOpen={() => {}}
                 remove={() => {}}
                 // The click never reaches the editor's commands.
@@ -95,12 +94,8 @@ describe('a click on a linked mention', () => {
             />,
         );
 
-    it('places the caret, leaving the link unfollowed, while the editor takes edits', () => {
-        expect(click(mountEditor(true)).defaultPrevented).toBe(true);
-    });
-
-    it('follows the link when the editor is read-only', () => {
-        expect(click(mountEditor(false)).defaultPrevented).toBe(false);
+    it('places the caret in the editor, leaving the link unfollowed', () => {
+        expect(click(mountEditor()).defaultPrevented).toBe(true);
     });
 
     it('follows the link in the reading view', () => {
