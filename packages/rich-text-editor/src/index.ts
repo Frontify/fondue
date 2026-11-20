@@ -46,8 +46,6 @@ import {
 /** `TBlock` widens the document when a plugin adds blocks: `RichTextEditorProps<RteBlock | CalloutBlock>`. */
 export type RichTextEditorProps<TBlock extends RteBlockNode = RteBlock> = EditorShellProps<TBlock>;
 
-export { type FocusPosition };
-
 /**
  * The editor. Uses `defaultPlugins` when given no `plugins`.
  *

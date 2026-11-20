@@ -7,7 +7,14 @@ import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 // Stories import only the package public API. The plugins have their own story
 // file (`PluginExamples.stories.tsx`); this one is about the editor itself — the props
 // that are its own rather than a plugin's.
-import { definePlugin, RichTextEditor, RichTextRenderer, type RteDocument, type RtePlugin } from '../index';
+import {
+    definePlugin,
+    RichTextEditor,
+    type RichTextEditorProps,
+    RichTextRenderer,
+    type RteDocument,
+    type RtePlugin,
+} from '../index';
 import {
     boldPlugin,
     bulletListContent,
@@ -685,15 +692,7 @@ export const PlainText: Story = {
  * comment box — inline formatting and mentions, no block types.
  */
 export const CommentBox: Story = {
-    args: { autoFocus: 'end' },
-    argTypes: {
-        autoFocus: {
-            control: 'select',
-            options: ['start', 'end', 'none'],
-            mapping: { start: 'start', end: 'end', none: undefined },
-        },
-    },
-    render: ({ autoFocus }) => {
+    render: () => {
         const [doc, setDoc] = useState<RteDocument>({
             version: 1,
             blocks: [
@@ -712,11 +711,8 @@ export const CommentBox: Story = {
             <div className={LAYOUT}>
                 <div className={FRAME}>
                     <RichTextEditor
-                        // autoFocus is read once on mount, so a changed control remounts the editor.
-                        key={autoFocus ?? 'none'}
                         value={doc}
                         onChange={setDoc}
-                        autoFocus={autoFocus}
                         plugins={[
                             boldPlugin(),
                             italicPlugin(),
@@ -727,6 +723,61 @@ export const CommentBox: Story = {
                             }),
                         ]}
                     />
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+type EditCommentStoryArgs = Pick<RichTextEditorProps, 'autoFocus'>;
+
+/**
+ * The editor opens on Edit with the caret after the text, so the person keeps typing.
+ */
+export const EditComment: StoryObj<EditCommentStoryArgs> = {
+    args: { autoFocus: 'end' },
+    argTypes: { autoFocus: { control: 'select', options: ['start', 'end'] } },
+    // The meta's editor props are not this story's args, so Controls lists only the caret position.
+    parameters: { controls: { include: ['autoFocus'] } },
+    render: ({ autoFocus }) => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'Press Edit and keep typing from here.' }] }],
+        });
+        const [editing, setEditing] = useState(false);
+        const plugins = [
+            boldPlugin(),
+            italicPlugin(),
+            linkPlugin(),
+            mentionPlugin({
+                items: MENTIONABLE,
+                href: profileHref,
+            }),
+        ];
+
+        let comment = <RichTextRenderer value={doc} plugins={plugins} />;
+        let toggle = (
+            <button type="button" className={buttonClasses(false)} onClick={() => setEditing(true)}>
+                Edit
+            </button>
+        );
+        if (editing) {
+            comment = <RichTextEditor value={doc} onChange={setDoc} autoFocus={autoFocus} plugins={plugins} />;
+            toggle = (
+                <button type="button" className={buttonClasses(false)} onClick={() => setEditing(false)}>
+                    Done
+                </button>
+            );
+        }
+
+        return (
+            <div className={LAYOUT}>
+                <div className="tw-flex tw-flex-col tw-items-start tw-gap-2">
+                    <div className="tw-w-full">
+                        <div className={FRAME}>{comment}</div>
+                    </div>
+                    {toggle}
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>

@@ -27,7 +27,6 @@ import {
     boldPlugin,
     checkListPlugin,
     defaultPlugins,
-    italicPlugin,
     linkPlugin,
     mentionPlugin,
     textStylePlugin,
@@ -1494,14 +1493,18 @@ describe('the toolbar from the keyboard', () => {
     });
 });
 
+const FIRST_FIXTURE_PLUGIN = definePlugin({ id: 'first' });
+const SECOND_FIXTURE_PLUGIN = definePlugin({ id: 'second' });
+const FIXTURE_PLUGINS = [FIRST_FIXTURE_PLUGIN];
+
 /** A host that swaps the plugin set as it mounts, which replaces the engine before the focus request is spent. */
 const PluginsChangeOnMount = (): ReactNode => {
-    const [plugins, setPlugins] = useState<readonly RtePlugin[]>(() => [boldPlugin()]);
+    const [plugins, setPlugins] = useState<readonly RtePlugin[]>(() => [FIRST_FIXTURE_PLUGIN]);
 
     useEffect(() => {
         // Intentional: the update has to land in the editor's first commit, which only a mount effect does.
         // eslint-disable-next-line @eslint-react/set-state-in-effect
-        setPlugins([boldPlugin(), italicPlugin()]);
+        setPlugins([FIRST_FIXTURE_PLUGIN, SECOND_FIXTURE_PLUGIN]);
     }, []);
 
     return <RichTextEditor value={paragraph('current')} plugins={plugins} autoFocus="end" />;
@@ -1524,7 +1527,7 @@ const ReadonlyOnMount = ({ editable }: ReadonlyOnMountProps): ReactNode => {
     return (
         <RichTextEditor
             value={paragraph('current')}
-            plugins={defaultPlugins}
+            plugins={FIXTURE_PLUGINS}
             autoFocus="end"
             readonly={readonlyOnMount && !editable}
         />
@@ -1534,7 +1537,7 @@ const ReadonlyOnMount = ({ editable }: ReadonlyOnMountProps): ReactNode => {
 describe('autoFocus', () => {
     it('focuses the text with the caret at its end when it mounts', () => {
         const { container, ready } = mount(() => (
-            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} autoFocus="end" />
+            <RichTextEditor value={paragraph('current')} plugins={FIXTURE_PLUGINS} autoFocus="end" />
         ));
         ready();
 
@@ -1567,7 +1570,7 @@ describe('autoFocus', () => {
 
     it('puts the caret before the first character at start', () => {
         const { container, ready } = mount(() => (
-            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} autoFocus="start" />
+            <RichTextEditor value={paragraph('current')} plugins={FIXTURE_PLUGINS} autoFocus="start" />
         ));
         ready();
 
@@ -1579,7 +1582,7 @@ describe('autoFocus', () => {
 
     it('takes no focus when left out', () => {
         const { container, ready } = mount(() => (
-            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} />
+            <RichTextEditor value={paragraph('current')} plugins={FIXTURE_PLUGINS} />
         ));
         ready();
 
@@ -1588,7 +1591,7 @@ describe('autoFocus', () => {
 
     it('takes no focus while readonly', () => {
         const { container } = mount(() => (
-            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} autoFocus="end" readonly />
+            <RichTextEditor value={paragraph('current')} plugins={FIXTURE_PLUGINS} autoFocus="end" readonly />
         ));
 
         expect(container.contains(window.document.activeElement)).toBe(false);
@@ -1596,10 +1599,10 @@ describe('autoFocus', () => {
 
     it('does not claim focus when editing is turned on later', () => {
         const { container, rerender, ready } = mount(() => (
-            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} autoFocus="end" readonly />
+            <RichTextEditor value={paragraph('current')} plugins={FIXTURE_PLUGINS} autoFocus="end" readonly />
         ));
 
-        rerender(<RichTextEditor value={paragraph('current')} plugins={defaultPlugins} autoFocus="end" />);
+        rerender(<RichTextEditor value={paragraph('current')} plugins={FIXTURE_PLUGINS} autoFocus="end" />);
         ready();
 
         expect(container.contains(window.document.activeElement)).toBe(false);

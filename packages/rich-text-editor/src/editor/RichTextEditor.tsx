@@ -111,12 +111,10 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      */
     showEditor?: boolean;
     /**
-     * Put the caret at the start or end of the text when the editor first
-     * mounts: for a reply box, or an Edit button that opens the editor with
-     * existing content. Left out, the editor takes no focus on mount. Ignored
-     * while `readonly`, and when editing is turned on later. The position
-     * applies to the document the editor mounts with; a later `value` with
-     * different content puts the caret at its end, as any new document does.
+     * Puts the caret at the start or end of the text when the editor first mounts. Use it only when the editor
+     * appears because the person asked for it (a Reply or Edit button), never on page load. Left out, no focus.
+     * Ignored while `readonly` and when editing is turned on later.
+     * A later `value` with different content moves the caret to its end.
      */
     autoFocus?: FocusPosition;
     /** Shown while the document is empty, and given to assistive technology as the field's placeholder. */
@@ -604,7 +602,7 @@ const groupAttributesOf = (hostLabels: Record<string, string>, isNamed: boolean)
 type MountFocusTargetParams = {
     retryFocus: RetryFocus;
     readOnly: boolean;
-    autoFocus: FocusPosition | undefined;
+    autoFocus: EditorShellProps['autoFocus'];
 };
 
 /** What the first render of a shell focuses, given how the editor came to be mounted. */
