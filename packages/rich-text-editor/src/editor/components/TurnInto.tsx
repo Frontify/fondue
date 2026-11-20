@@ -82,15 +82,16 @@ export const TurnInto = ({
                 {availableCommands(commands, selection).map((command) => {
                     const isActive = command === active;
                     const { icon: Icon } = command;
+                    let itemName = command.label;
+                    if (isActive) {
+                        itemName = translate('RichTextEditor_currentCommand', { command: command.label });
+                    }
+
                     return (
                         <Dropdown.Item
                             key={command.id}
                             textValue={command.label}
-                            aria-label={
-                                isActive
-                                    ? translate('RichTextEditor_currentCommand', { command: command.label })
-                                    : command.label
-                            }
+                            aria-label={itemName}
                             onSelect={() => {
                                 returnToText();
                                 // Idempotent: picking what the block already is changes nothing

@@ -9,7 +9,7 @@ import {
 } from '@frontify/fondue-icons';
 
 import { defineContent, definePlugin, type StyleMap, type ToolbarItemProps } from '#/core';
-import { type RichTextStringKey } from '#/locales/types';
+import { type PlainStringKey } from '#/locales/types';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 import { translatedLabel, useTranslate } from '#/ui/translation';
@@ -49,7 +49,7 @@ export const alignContent = defineContent({
     },
 });
 
-type AlignmentChoice = { value: NonNullable<AlignAttribute['align']>; icon: FondueIcon; title: RichTextStringKey };
+type AlignmentChoice = { value: NonNullable<AlignAttribute['align']>; icon: FondueIcon; title: PlainStringKey };
 
 const ALIGNMENTS: readonly AlignmentChoice[] = [
     { value: 'left', icon: IconTextAlignmentLeft, title: 'RichTextEditor_alignLeft' },

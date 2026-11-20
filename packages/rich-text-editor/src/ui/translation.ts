@@ -4,27 +4,40 @@ import { createContext, useContext } from 'react';
 
 import { type RteLabel, type RteLabelContext } from '#/core';
 import { enUS } from '#/locales/en-US';
-import { type RichTextStringKey, type RichTextStrings } from '#/locales/types';
+import {
+    type PlainStringKey,
+    type RichTextStringKey,
+    type RichTextStrings,
+    type VariableNamesOf,
+} from '#/locales/types';
 
-/** The values of a string's `${name}` variables, by name. */
-export type TranslationVariables = Readonly<Record<string, string>>;
+/** The values of the variables the string under `Key` needs, by name; nothing for a string with none. */
+type TranslationArguments<Key extends RichTextStringKey> = [VariableNamesOf<Key>] extends [never]
+    ? []
+    : [variables: { readonly [Name in VariableNamesOf<Key>]: string }];
 
 /** The shown string for `key`, its variables filled in. */
-export type Translate = (key: RichTextStringKey, variables?: TranslationVariables) => string;
+export type Translate = <Key extends RichTextStringKey>(key: Key, ...variables: TranslationArguments<Key>) => string;
+
+/** A translated string's variables, read by the names found in its text. */
+type FoundVariables = Readonly<Partial<Record<string, string>>>;
 
 const VARIABLE = /\$\{(\w+)\}/g;
 
 export const translatorFor =
     (strings: RichTextStrings): Translate =>
-    (key, variables = {}) =>
-        strings[key].replaceAll(VARIABLE, (_placeholder, name: string) => {
-            const value = variables[name];
+    (key, ...variables) => {
+        const values: FoundVariables = variables[0] ?? {};
+
+        return strings[key].replaceAll(VARIABLE, (_placeholder, name: string) => {
+            const value = values[name];
             if (value === undefined) {
                 throw new Error(`The string "${key}" needs a value for \${${name}}.`);
             }
 
             return value;
         });
+    };
 
 /** The editor's translator; English outside an editor, so a plugin's UI also renders on its own. */
 export const TranslationContext = createContext<Translate>(translatorFor(enUS));
@@ -55,7 +68,7 @@ const isEditorLabelContext = (context: RteLabelContext): context is EditorLabelC
  * toolbar: [{ label: translatedLabel('RichTextEditor_bold'), icon: IconTextFormatBold }]
  */
 export const translatedLabel =
-    (key: RichTextStringKey): RteLabel =>
+    (key: PlainStringKey): Exclude<RteLabel, string> =>
     (context) => {
         if (!isEditorLabelContext(context)) {
             throw new Error(`The label "${key}" can only be read by the editor.`);

@@ -32,6 +32,19 @@
     gap: var(--spacing-x-small);
 }
 
+/** Read by screen readers, not shown: the swatches already say what they are. */
+.visuallyHidden {
+    position: absolute;
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
 /** One swatch: big enough to hit (24px), its colour its whole face. */
 .preset {
     box-sizing: border-box;

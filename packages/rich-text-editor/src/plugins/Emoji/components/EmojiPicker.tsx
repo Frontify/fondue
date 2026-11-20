@@ -66,7 +66,10 @@ export const EmojiPicker = ({
                             {translate('RichTextEditor_noResults')}
                         </div>
                     ) : (
-                        <fieldset aria-label={translate('RichTextEditor_searchResults')} className={styles.grid}>
+                        <fieldset className={styles.grid}>
+                            <legend className={styles.visuallyHidden}>
+                                {translate('RichTextEditor_searchResults')}
+                            </legend>
                             {matches.map((item) => (
                                 <EmojiButton key={item.emoji} item={item} onPick={onPick} />
                             ))}

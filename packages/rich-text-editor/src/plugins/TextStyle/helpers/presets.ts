@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { PARAGRAPH, type ParseRule, type RteInlineNode, type RteInputRule } from '#/core';
-import { type RichTextStringKey } from '#/locales/types';
+import { type PlainStringKey } from '#/locales/types';
 
 import styles from '../textStyle.module.scss';
 
@@ -39,7 +39,7 @@ export type TextStyleName =
 
 type Preset = {
     name: TextStyleName;
-    label: RichTextStringKey;
+    label: PlainStringKey;
     tag: 'h1' | 'h2' | 'h3' | 'h4' | 'p';
     className: string | undefined;
 };
@@ -66,7 +66,7 @@ export const FIRST_PRESET: TextStyleName = PRESETS[0].name;
 
 export const findPreset = (name: string): Preset | undefined => PRESETS.find((preset) => preset.name === name);
 
-export const labelOf = (option: TextStyleOption): RichTextStringKey =>
+export const labelOf = (option: TextStyleOption): PlainStringKey =>
     findPreset(option)?.label ?? 'RichTextEditor_paragraph';
 
 /** The presets an editor was configured with, in the order they were given. */

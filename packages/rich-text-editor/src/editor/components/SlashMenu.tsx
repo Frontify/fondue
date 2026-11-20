@@ -7,7 +7,7 @@ import { Anchor as FlyoutAnchor } from '@radix-ui/react-popover';
 import { type ReactNode, type RefObject, useEffect, useId, useRef, useState } from 'react';
 
 import { PARAGRAPH, type RteBlockCommand } from '#/core';
-import { type RichTextStringKey } from '#/locales/types';
+import { type PlainStringKey } from '#/locales/types';
 import { MENU_ICON_SIZE } from '#/ui/toolbarIconSize';
 import { type Translate, useTranslate } from '#/ui/translation';
 
@@ -21,7 +21,7 @@ import styles from './slashMenu.module.scss';
 /** The character that opens the menu. */
 const TRIGGER = '/';
 
-type CommandGroup = { group: RteBlockCommand['group']; label: RichTextStringKey };
+type CommandGroup = { group: RteBlockCommand['group']; label: PlainStringKey };
 
 /** The groups in list order, each headed by the string under that key. */
 const GROUPS: readonly CommandGroup[] = [

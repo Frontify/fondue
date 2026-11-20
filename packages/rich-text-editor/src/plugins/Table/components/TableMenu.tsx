@@ -5,7 +5,7 @@ import { IconTable } from '@frontify/fondue-icons';
 import { type ReactNode } from 'react';
 
 import { type EditorControlApi, type RteSelectionSnapshot } from '#/core';
-import { type RichTextStringKey } from '#/locales/types';
+import { type PlainStringKey } from '#/locales/types';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 import { useTranslate } from '#/ui/translation';
@@ -13,7 +13,7 @@ import { useTranslate } from '#/ui/translation';
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
 import { isInTable } from '../helpers/isInTable';
 
-type MenuItem = { id: string; label: RichTextStringKey; run: () => void; isAvailable?: boolean };
+type MenuItem = { id: string; label: PlainStringKey; run: () => void; isAvailable?: boolean };
 
 type TableMenuProps = {
     api: EditorControlApi;
@@ -29,47 +29,67 @@ type Shape = NonNullable<ReturnType<EditorControlApi['grid']['shape']>>;
  * and merges or splits nothing it cannot, so those items are left out then.
  * Each header toggle is named by what choosing it does.
  */
-const menuItems = (api: EditorControlApi, shape: Shape): MenuItem[] => [
-    { id: 'column-left', label: 'RichTextEditor_tableInsertColumnLeft', run: () => api.grid.add('column', 'before') },
-    { id: 'column-right', label: 'RichTextEditor_tableInsertColumnRight', run: () => api.grid.add('column', 'after') },
-    { id: 'row-above', label: 'RichTextEditor_tableInsertRowAbove', run: () => api.grid.add('row', 'before') },
-    { id: 'row-below', label: 'RichTextEditor_tableInsertRowBelow', run: () => api.grid.add('row', 'after') },
-    {
-        id: 'delete-column',
-        label: 'RichTextEditor_tableDeleteColumn',
-        run: () => api.grid.removeSelected('column'),
-        isAvailable: shape.selectedColumns < shape.columns,
-    },
-    {
-        id: 'delete-row',
-        label: 'RichTextEditor_tableDeleteRow',
-        run: () => api.grid.removeSelected('row'),
-        isAvailable: shape.selectedRows < shape.rows,
-    },
-    {
-        id: 'merge-cells',
-        label: 'RichTextEditor_tableMergeCells',
-        run: () => api.grid.mergeSlots(),
-        isAvailable: api.grid.canMergeSlots(),
-    },
-    {
-        id: 'split-cell',
-        label: 'RichTextEditor_tableSplitCell',
-        run: () => api.grid.splitSlot(),
-        isAvailable: api.grid.canSplitSlot(),
-    },
-    {
-        id: 'header-row',
-        label: shape.headerRow ? 'RichTextEditor_tableRemoveHeaderRow' : 'RichTextEditor_tableAddHeaderRow',
-        run: () => api.grid.toggleHeader('row'),
-    },
-    {
-        id: 'header-column',
-        label: shape.headerColumn ? 'RichTextEditor_tableRemoveHeaderColumn' : 'RichTextEditor_tableAddHeaderColumn',
-        run: () => api.grid.toggleHeader('column'),
-    },
-    { id: 'delete-table', label: 'RichTextEditor_tableDelete', run: () => api.grid.removeGrid() },
-];
+const menuItems = (api: EditorControlApi, shape: Shape): MenuItem[] => {
+    let headerRowLabel: PlainStringKey = 'RichTextEditor_tableAddHeaderRow';
+    if (shape.headerRow) {
+        headerRowLabel = 'RichTextEditor_tableRemoveHeaderRow';
+    }
+
+    let headerColumnLabel: PlainStringKey = 'RichTextEditor_tableAddHeaderColumn';
+    if (shape.headerColumn) {
+        headerColumnLabel = 'RichTextEditor_tableRemoveHeaderColumn';
+    }
+
+    return [
+        {
+            id: 'column-left',
+            label: 'RichTextEditor_tableInsertColumnLeft',
+            run: () => api.grid.add('column', 'before'),
+        },
+        {
+            id: 'column-right',
+            label: 'RichTextEditor_tableInsertColumnRight',
+            run: () => api.grid.add('column', 'after'),
+        },
+        { id: 'row-above', label: 'RichTextEditor_tableInsertRowAbove', run: () => api.grid.add('row', 'before') },
+        { id: 'row-below', label: 'RichTextEditor_tableInsertRowBelow', run: () => api.grid.add('row', 'after') },
+        {
+            id: 'delete-column',
+            label: 'RichTextEditor_tableDeleteColumn',
+            run: () => api.grid.removeSelected('column'),
+            isAvailable: shape.selectedColumns < shape.columns,
+        },
+        {
+            id: 'delete-row',
+            label: 'RichTextEditor_tableDeleteRow',
+            run: () => api.grid.removeSelected('row'),
+            isAvailable: shape.selectedRows < shape.rows,
+        },
+        {
+            id: 'merge-cells',
+            label: 'RichTextEditor_tableMergeCells',
+            run: () => api.grid.mergeSlots(),
+            isAvailable: api.grid.canMergeSlots(),
+        },
+        {
+            id: 'split-cell',
+            label: 'RichTextEditor_tableSplitCell',
+            run: () => api.grid.splitSlot(),
+            isAvailable: api.grid.canSplitSlot(),
+        },
+        {
+            id: 'header-row',
+            label: headerRowLabel,
+            run: () => api.grid.toggleHeader('row'),
+        },
+        {
+            id: 'header-column',
+            label: headerColumnLabel,
+            run: () => api.grid.toggleHeader('column'),
+        },
+        { id: 'delete-table', label: 'RichTextEditor_tableDelete', run: () => api.grid.removeGrid() },
+    ];
+};
 
 /** Shown only while the selection is in a table. */
 export const TableMenu = ({ api, selection, label }: TableMenuProps): ReactNode => {

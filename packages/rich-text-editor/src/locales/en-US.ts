@@ -104,4 +104,4 @@ export const enUS = {
     RichTextEditor_turnIntoCurrent: 'Turn into: ${type}',
     RichTextEditor_underline: 'Underline',
     RichTextEditor_undo: 'Undo',
-};
+} as const;

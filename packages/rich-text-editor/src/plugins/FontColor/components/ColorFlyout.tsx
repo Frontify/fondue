@@ -5,7 +5,7 @@ import { IconDroplet } from '@frontify/fondue-icons';
 import { type ComponentProps, type ReactNode, useId, useRef, useState } from 'react';
 
 import { type EditorControlApi, type RteSelectionSnapshot, type ToolbarItemProps } from '#/core';
-import { type RichTextStringKey } from '#/locales/types';
+import { type PlainStringKey } from '#/locales/types';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 import { useTranslate } from '#/ui/translation';
@@ -35,7 +35,7 @@ const encodePickerColor = (color: PickerColor): string =>
 const HEX_FIELD_SELECTOR = 'input[type="text"]';
 
 /** One-click colours. Fondue has no text palette, so these are our own, each at least 4.5:1 on white. */
-type ColorPreset = { name: RichTextStringKey; color: string };
+type ColorPreset = { name: PlainStringKey; color: string };
 
 const PRESETS: readonly ColorPreset[] = [
     { name: 'RichTextEditor_colorGray', color: '#5f6368' },
@@ -174,7 +174,8 @@ export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProp
                     <span id={titleId}>{label}</span>
                 </Flyout.Header>
                 <Flyout.Body>
-                    <fieldset className={styles.presets} aria-label={translate('RichTextEditor_suggestedColors')}>
+                    <fieldset className={styles.presets}>
+                        <legend className={styles.visuallyHidden}>{translate('RichTextEditor_suggestedColors')}</legend>
                         {PRESETS.map(({ name, color }) => (
                             <button
                                 key={color}

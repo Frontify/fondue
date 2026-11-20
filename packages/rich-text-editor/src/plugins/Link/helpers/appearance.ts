@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { lookProperties, type TextLook } from '#/core';
-import { type RichTextStringKey } from '#/locales/types';
+import { type PlainStringKey } from '#/locales/types';
 
 import styles from '../link.module.scss';
 
 import { ALL_LINK_APPEARANCES, type ButtonLink, type LinkAppearance, type LinkValue } from './value';
 
-type AppearanceEntry = { label: RichTextStringKey; className: string | undefined };
+type AppearanceEntry = { label: PlainStringKey; className: string | undefined };
 
 /** What an appearance shows in the link form and the class that draws it. Every rule per appearance reads this table. */
 export const APPEARANCES = {

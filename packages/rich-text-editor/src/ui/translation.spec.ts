@@ -17,8 +17,10 @@ describe('translatorFor', () => {
         expect(translate('RichTextEditor_results', { count: '3' })).toBe('Résultats : 3');
     });
 
-    it('throws for a variable it was not given', () => {
-        expect(() => translatorFor(enUS)('RichTextEditor_results')).toThrow('${count}');
+    it('throws for a variable a translation has but the English string does not', () => {
+        const mistranslated = { ...enUS, RichTextEditor_bold: '${weight}' };
+
+        expect(() => translatorFor(mistranslated)('RichTextEditor_bold')).toThrow('${weight}');
     });
 });
 
@@ -42,6 +44,6 @@ describe('translatedLabel', () => {
     it('throws when something other than the editor reads it', () => {
         const label = translatedLabel('RichTextEditor_quote');
 
-        expect(() => resolveLabel(label, { lang: LANG } as never)).toThrow('RichTextEditor_quote');
+        expect(() => label({ lang: LANG })).toThrow('RichTextEditor_quote');
     });
 });

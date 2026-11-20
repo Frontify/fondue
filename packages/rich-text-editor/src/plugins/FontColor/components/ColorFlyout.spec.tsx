@@ -233,6 +233,12 @@ describe('the colour flyout', () => {
         expect(document.getElementById(titleId)?.textContent).toBe('Text colour');
     });
 
+    it('names the suggested colours with the legend of their group', () => {
+        mount({}, false);
+
+        expect(document.querySelector('fieldset > legend:first-child')?.textContent).toBe('Suggested colors');
+    });
+
     it('applies nothing for a typed value the hex field does not take', () => {
         for (const hex of ['ff00', 'ff000080']) {
             const { toggle, set } = mount({}, false);

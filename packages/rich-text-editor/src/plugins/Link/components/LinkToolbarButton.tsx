@@ -66,6 +66,11 @@ export const LinkToolbarButton = ({
         setCreating(false);
     };
 
+    let buttonName = translate('RichTextEditor_linkAdd');
+    if (inLink) {
+        buttonName = translate('RichTextEditor_linkEdit');
+    }
+
     return (
         <Flyout.Root
             open={creating}
@@ -80,11 +85,7 @@ export const LinkToolbarButton = ({
             }}
         >
             <Flyout.Trigger>
-                <ToolbarButton
-                    title={inLink ? translate('RichTextEditor_linkEdit') : translate('RichTextEditor_linkAdd')}
-                    shortcut={shortcut}
-                    active={inLink}
-                >
+                <ToolbarButton title={buttonName} shortcut={shortcut} active={inLink}>
                     <IconLink size={TOOLBAR_ICON_SIZE} />
                 </ToolbarButton>
             </Flyout.Trigger>
