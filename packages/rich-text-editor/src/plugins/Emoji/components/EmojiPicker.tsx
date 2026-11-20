@@ -1,11 +1,44 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TextInput } from '@frontify/fondue-components';
-import { type ReactNode, type Ref, useMemo, useState } from 'react';
+import { type ReactNode, type Ref, useEffect, useMemo, useState } from 'react';
 
 import styles from '../emoji.module.scss';
 import { byCategory, searchEmojis } from '../helpers/search';
 import { type EmojiItem } from '../types';
+
+/** How long typing must pause before the count is announced, so a burst of keys is announced once. */
+const ANNOUNCE_DELAY_MS = 300;
+
+const NO_MATCHES = 'No matches';
+
+const useSettledQuery = (query: string): string => {
+    const [settled, setSettled] = useState(query);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setSettled(query), ANNOUNCE_DELAY_MS);
+        return () => clearTimeout(timer);
+    }, [query]);
+
+    return settled;
+};
+
+const resultCount = (count: number): string => {
+    if (count === 1) {
+        return '1 result';
+    }
+    return `${count} results`;
+};
+
+const statusOf = (query: string, count: number): string => {
+    if (query.trim() === '') {
+        return '';
+    }
+    if (count === 0) {
+        return NO_MATCHES;
+    }
+    return resultCount(count);
+};
 
 /** One emoji to click: the glyph, named for screen readers and on hover with its shortcode. */
 const EmojiButton = ({ item, onPick }: { item: EmojiItem; onPick: (item: EmojiItem) => void }): ReactNode => (
@@ -38,6 +71,8 @@ export const EmojiPicker = ({
     const sections = useMemo(() => byCategory(emojis), [emojis]);
     const matches = useMemo(() => searchEmojis(emojis, query), [emojis, query]);
     const searching = query.trim() !== '';
+    const settledQuery = useSettledQuery(query);
+    const settledMatches = useMemo(() => searchEmojis(emojis, settledQuery), [emojis, settledQuery]);
 
     return (
         <div className={styles.picker}>
@@ -56,12 +91,13 @@ export const EmojiPicker = ({
                     }
                 }}
             />
+            <span role="status" className={styles.visuallyHidden}>
+                {statusOf(settledQuery, settledMatches.length)}
+            </span>
             <div className={styles.sections}>
                 {searching ? (
                     matches.length === 0 ? (
-                        <div className={styles.empty} role="status">
-                            No matches
-                        </div>
+                        <div className={styles.empty}>{NO_MATCHES}</div>
                     ) : (
                         <div role="group" aria-label="Search results" className={styles.grid}>
                             {matches.map((item) => (
