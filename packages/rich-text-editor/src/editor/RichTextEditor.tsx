@@ -3,6 +3,7 @@
 import { Notice } from '@frontify/fondue-components';
 import {
     type AriaAttributes,
+    type AriaRole,
     type CSSProperties,
     type KeyboardEvent,
     type MouseEvent,
@@ -116,17 +117,6 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     /** Shown while the document is empty, and given to assistive technology as the field's placeholder. */
     placeholder?: string;
     /**
-     * The editor's accessible name, when no visible label names it ("Comment",
-     * "Description"). Without this or `aria-labelledby` it is called `labels.editor`.
-     */
-    'aria-label'?: string;
-    /** The id of a visible element naming the editor — its label. Preferred over `aria-label`. */
-    'aria-labelledby'?: string;
-    /** The id of an element describing the editor further — help text, an error. */
-    'aria-describedby'?: string;
-    /** The id of the host's error text, applied only while `status` is `'error'`. */
-    'aria-errormessage'?: AriaAttributes['aria-errormessage'];
-    /**
      * Mark the field as required for assistive technology (`aria-required` on
      * the editable element). The editor draws no asterisk; the host's label does.
      *
@@ -141,6 +131,17 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * @default 'neutral'
      */
     status?: EditorStatus;
+    /**
+     * The editor's accessible name, when no visible label names it ("Comment",
+     * "Description"). Without this or `aria-labelledby` it is called `labels.editor`.
+     */
+    'aria-label'?: string;
+    /** The id of a visible element naming the editor — its label. Preferred over `aria-label`. */
+    'aria-labelledby'?: string;
+    /** The id of an element describing the editor further — help text, an error. */
+    'aria-describedby'?: string;
+    /** The id of the host's error text, applied only while `status` is `'error'`. */
+    'aria-errormessage'?: AriaAttributes['aria-errormessage'];
     /**
      * The words the editor's own UI says (its default name, the toolbar's
      * name, the "Turn into" and `/` menus, the message and button shown when
@@ -323,13 +324,13 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     readonly: readonlyProp = false,
     showEditor = true,
     placeholder = '',
+    required = false,
+    status = 'neutral',
+    onBlur,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
     'aria-describedby': ariaDescribedBy,
     'aria-errormessage': ariaErrorMessage,
-    required = false,
-    status = 'neutral',
-    onBlur,
     dataTestId,
 }: ShellProps<TBlock>): ReactNode => {
     // A document from a newer format may hold what this editor would drop on save, so it is only shown.
@@ -352,28 +353,28 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
             editableAttributes({
                 id: editableId,
                 className,
+                placeholder,
+                defaultLabel: labels.editor,
                 isNamed,
+                required,
+                status,
                 ariaLabel,
                 ariaLabelledBy,
                 ariaDescribedBy,
                 ariaErrorMessage,
-                placeholder,
-                defaultLabel: labels.editor,
-                required,
-                status,
             }),
         [
             editableId,
             className,
+            placeholder,
+            labels.editor,
             isNamed,
+            required,
+            status,
             ariaLabel,
             ariaLabelledBy,
             ariaDescribedBy,
             ariaErrorMessage,
-            placeholder,
-            labels.editor,
-            required,
-            status,
         ],
     );
 
@@ -644,84 +645,77 @@ const hostLabelsOf = ({
     isNamed: ariaLabel !== undefined || ariaLabelledBy !== undefined,
 });
 
-const TEXTBOX_ROLE = 'textbox';
+const TEXTBOX_ROLE: AriaRole = 'textbox';
 
-/** The attributes of the editable element. */
-type EditableAttributes = {
-    id: string;
-    class: string;
-    role: typeof TEXTBOX_ROLE;
-    'aria-multiline': 'true';
-    'aria-label'?: string;
-    'aria-labelledby'?: string;
-    'aria-describedby'?: string;
-    'aria-errormessage'?: string;
-    'aria-placeholder'?: string;
-    'aria-required'?: 'true';
-    'aria-invalid'?: 'true';
+/** The ARIA attributes the editor sets on its editable element. */
+type EditableAriaName =
+    | 'aria-multiline'
+    | 'aria-placeholder'
+    | 'aria-required'
+    | 'aria-invalid'
+    | 'aria-label'
+    | 'aria-labelledby'
+    | 'aria-describedby'
+    | 'aria-errormessage';
+
+/** The attributes of the editable element, in their DOM string form. One left `undefined` is not set. */
+type EditableAttributes = { id: string; class: string; role: AriaRole } & {
+    [Name in EditableAriaName]?: Extract<AriaAttributes[Name], string>;
 };
 
 type EditableAttributesOptions = {
     id: string;
     className: string;
+    placeholder: string;
+    defaultLabel: string;
     isNamed: boolean;
+    required: boolean;
+    status: EditorStatus;
     ariaLabel: string | undefined;
     ariaLabelledBy: string | undefined;
     ariaDescribedBy: string | undefined;
     ariaErrorMessage: string | undefined;
-    placeholder: string;
-    defaultLabel: string;
-    required: boolean;
-    status: EditorStatus;
+};
+
+/** Whether `status` marks the field invalid. */
+const isInvalidStatus = (status: EditorStatus): boolean => {
+    switch (status) {
+        case 'neutral':
+            return false;
+        case 'error':
+            return true;
+    }
 };
 
 /** The attributes of the editable element: a textbox, named by the host or else by `defaultLabel`. */
 const editableAttributes = ({
     id,
     className,
+    placeholder,
+    defaultLabel,
     isNamed,
+    required,
+    status,
     ariaLabel,
     ariaLabelledBy,
     ariaDescribedBy,
     ariaErrorMessage,
-    placeholder,
-    defaultLabel,
-    required,
-    status,
 }: EditableAttributesOptions): EditableAttributes => {
-    const attributes: EditableAttributes = { id, class: className, role: TEXTBOX_ROLE, 'aria-multiline': 'true' };
+    const isInvalid = isInvalidStatus(status);
 
-    if (!isNamed) {
-        attributes['aria-label'] = defaultLabel;
-    }
-    if (ariaLabel !== undefined) {
-        attributes['aria-label'] = ariaLabel;
-    }
-    if (ariaLabelledBy !== undefined) {
-        attributes['aria-labelledby'] = ariaLabelledBy;
-    }
-    if (ariaDescribedBy !== undefined) {
-        attributes['aria-describedby'] = ariaDescribedBy;
-    }
-    if (placeholder !== '') {
-        attributes['aria-placeholder'] = placeholder;
-    }
-    if (required) {
-        attributes['aria-required'] = 'true';
-    }
-
-    switch (status) {
-        case 'neutral':
-            break;
-        case 'error':
-            attributes['aria-invalid'] = 'true';
-            if (ariaErrorMessage !== undefined) {
-                attributes['aria-errormessage'] = ariaErrorMessage;
-            }
-            break;
-    }
-
-    return attributes;
+    return {
+        id,
+        class: className,
+        role: TEXTBOX_ROLE,
+        'aria-multiline': 'true',
+        'aria-placeholder': placeholder === '' ? undefined : placeholder,
+        'aria-required': required ? 'true' : undefined,
+        'aria-invalid': isInvalid ? 'true' : undefined,
+        'aria-label': isNamed ? ariaLabel : defaultLabel,
+        'aria-labelledby': ariaLabelledBy,
+        'aria-describedby': ariaDescribedBy,
+        'aria-errormessage': isInvalid ? ariaErrorMessage : undefined,
+    };
 };
 
 /**

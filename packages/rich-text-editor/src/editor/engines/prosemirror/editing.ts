@@ -4,7 +4,7 @@ import { dropCursor } from 'prosemirror-dropcursor';
 import { EditorState, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { type MountedDocument, type MountDocument, type MountOptions } from '#/editor/port';
+import { type ElementAttributes, type MountedDocument, type MountDocument, type MountOptions } from '#/editor/port';
 
 import {
     clipboardParser,
@@ -46,11 +46,22 @@ export const mountEditorForTests = (options: MountOptions): { mounted: MountedDo
  */
 const EDITABLE_ATTRIBUTE = 'data-rte-editable';
 
-/** The editable element's attributes: the host's, then the marker. */
-const editableAttributes = (attributes: Readonly<Record<string, string>>): Record<string, string> => ({
-    ...attributes,
-    [EDITABLE_ATTRIBUTE]: '',
-});
+/**
+ * The editable element's attributes as ProseMirror takes them: the host's that
+ * are set, then the marker. ProseMirror would write an `undefined` value out as
+ * the text "undefined".
+ */
+const editableAttributes = (attributes: ElementAttributes): Record<string, string> => {
+    const present: Record<string, string> = {};
+    for (const [name, value] of Object.entries(attributes)) {
+        if (value !== undefined) {
+            present[name] = value;
+        }
+    }
+
+    present[EDITABLE_ATTRIBUTE] = '';
+    return present;
+};
 
 /**
  * Assembly order matters because of one cycle: the view's constructor paints
