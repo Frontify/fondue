@@ -6,6 +6,7 @@ import {
     type BlockDefinition,
     type EditorControlApi,
     type EditProps,
+    type FocusPosition,
     type HtmlSpec,
     type InlineDefinition,
     isEmpty,
@@ -135,11 +136,13 @@ type MarkDef<TValue> = MarkDefinition<TValue>;
 type InlineDef<TValue> = InlineDefinition<TValue>;
 type EditComponentProps<TValue, TCurrent> = EditProps<TValue, TCurrent>;
 type Html = HtmlSpec;
+type Position = FocusPosition;
 
 // oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
 export declare namespace RtePlugin {
     export type EditorControlApi = ControlApi;
     export type SelectionSnapshot = RteSelectionSnapshot;
+    export type FocusPosition = Position;
     export type ToolbarItemProps = ToolbarProps;
     export type EditProps<TValue, TCurrent = TValue> = EditComponentProps<TValue, TCurrent>;
     export type BlockNode = RteBlockNode;
