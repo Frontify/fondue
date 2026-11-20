@@ -6,7 +6,7 @@ import { Dropdown } from '#/index';
 
 import { Flyout } from '../../Flyout/Flyout';
 import { INDENT_STEP_PX } from '../constants';
-import { Tree } from '../Tree';
+import { Tree, type TreeChangeState } from '../Tree';
 
 import { ControlledExpansionHarness } from './testutils/ControlledExpansionHarness';
 import { RowDialogHarness } from './testutils/RowDialogHarness';
@@ -1835,4 +1835,64 @@ test.describe('TreeRoot accepts predicate', () => {
         );
         await expect(component.getByRole('treeitem', { name: /Row/ })).toBeVisible();
     });
+});
+
+test.describe('TreeRoot drop level by text direction', () => {
+    const HARNESS_WIDTH_PX = 400;
+    const EDGE_INSET_PX = 4;
+    const LOWER_HALF_Y_RATIO = 0.75;
+    const initial: TreeChangeState = [
+        { id: 'x', name: 'X', isFolder: false },
+        {
+            id: 'a',
+            name: 'A',
+            isFolder: true,
+            isExpanded: true,
+            children: [
+                { id: 'a1', name: 'a1', isFolder: false },
+                { id: 'a2', name: 'a2', isFolder: false },
+            ],
+        },
+    ];
+    const topology = (state: TreeChangeState) =>
+        state.map((node) => {
+            if (node.children) {
+                return `${node.id}[${node.children.map((child) => child.id).join(',')}]`;
+            }
+            return node.id;
+        });
+
+    // Dropping on the lower half of the last child in a group: the strip one indent wide at the
+    // row's inline start outdents to the parent level, the rest of the row keeps the child level.
+    for (const dir of ['ltr', 'rtl'] as const) {
+        for (const edge of ['start', 'end'] as const) {
+            let expected = ['a[a1,a2,x]'];
+            if (edge === 'start') {
+                expected = ['a[a1,a2]', 'x'];
+            }
+            test(`${dir}: dropping near the inline ${edge} of the last child gives ${expected.join(' ')}`, async ({
+                mount,
+            }) => {
+                const states: string[][] = [];
+                const component = await mount(
+                    <div dir={dir} style={{ width: HARNESS_WIDTH_PX }}>
+                        <TestHarness reorderable initial={initial} onChange={(state) => states.push(topology(state))} />
+                    </div>,
+                );
+                const source = component.getByRole('treeitem', { name: 'X' });
+                const target = component.getByRole('treeitem', { name: 'a2' });
+                const box = await target.boundingBox();
+                if (!box) {
+                    throw new Error('a2 row has no box');
+                }
+                const atPhysicalLeft = (dir === 'ltr') === (edge === 'start');
+                let x = box.width - EDGE_INSET_PX;
+                if (atPhysicalLeft) {
+                    x = EDGE_INSET_PX;
+                }
+                await source.dragTo(target, { targetPosition: { x, y: box.height * LOWER_HALF_Y_RATIO } });
+                await expect.poll(() => states[states.length - 1]).toEqual(expected);
+            });
+        }
+    }
 });
