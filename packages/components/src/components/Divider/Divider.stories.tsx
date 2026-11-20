@@ -12,7 +12,7 @@ const meta: Meta<typeof Divider> = {
     args: {
         color: 'default',
         variant: 'solid',
-        padding: 'medium',
+        padding: 'small',
         direction: 'horizontal',
     },
     parameters: {

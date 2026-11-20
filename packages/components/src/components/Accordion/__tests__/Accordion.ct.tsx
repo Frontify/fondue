@@ -11,6 +11,19 @@ const ACCORDION_ITEM_ID = '[data-test-id=fondue-accordion-item]';
 const ACCORDION_ITEM_TRIGGER_ID = '[data-test-id="fondue-accordion-header"]';
 
 test.describe('Accordion Component', () => {
+    test('disabled item uses the disabled color', async ({ mount }) => {
+        const component = await mount(
+            <Accordion.Root>
+                <Accordion.Item value="1" disabled>
+                    <Accordion.Header>Section</Accordion.Header>
+                    <Accordion.Content>Body</Accordion.Content>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+
+        await expect(component.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('color', 'rgb(191, 191, 184)');
+    });
+
     test('should render 3 items', async ({ mount }) => {
         const component = await mount(
             <Accordion.Root>

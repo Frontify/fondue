@@ -18,7 +18,7 @@ export type DividerProps = {
     variant?: DividerStyle;
     /**
      * The padding of the divider
-     * @default "medium"
+     * @default "small"
      */
     padding?: DividerPadding;
     /**
@@ -51,7 +51,7 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
         {
             'data-test-id': dataTestId = 'fondue-divider',
             direction = 'horizontal',
-            padding = 'medium',
+            padding = 'small',
             className = '',
             variant = 'solid',
             color = 'default',

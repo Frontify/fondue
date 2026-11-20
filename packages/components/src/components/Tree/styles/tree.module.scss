@@ -107,6 +107,7 @@
         .handle {
             color: var(--color-disabled-default);
             cursor: default;
+            visibility: hidden;
         }
     }
 }
@@ -129,17 +130,12 @@
     height: var(--tree-handle-size);
     color: var(--color-secondary-default);
     cursor: grab;
-    visibility: hidden;
+    visibility: visible;
 }
 
 /* The checkbox occupies the leading space in multi-select, so the handle takes its own column. */
 [data-multi-select='true'] > .handle {
     position: static;
-}
-
-.row:hover .handle,
-.row:focus-within .handle {
-    visibility: visible;
 }
 
 .chevron {

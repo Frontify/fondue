@@ -124,9 +124,30 @@ test('no resize handle when not resizable', async ({ mount }) => {
     await expect(wrapper.getByTestId(`${TEXTAREA_TEST_ID}-resize-handle`)).toHaveCount(0);
 });
 
-test('no resize handle when disabled', async ({ mount }) => {
+test('shows the resize handle when disabled', async ({ mount }) => {
     const wrapper = await mount(<Textarea data-test-id={TEXTAREA_TEST_ID} resizable disabled />);
-    await expect(wrapper.getByTestId(`${TEXTAREA_TEST_ID}-resize-handle`)).toHaveCount(0);
+    await expect(wrapper.getByTestId(`${TEXTAREA_TEST_ID}-resize-handle`)).toBeVisible();
+});
+
+test('disabled resize handle does not change the height', async ({ mount, page }) => {
+    const wrapper = await mount(<Textarea data-test-id={TEXTAREA_TEST_ID} resizable disabled />);
+    const textarea = wrapper.getByTestId(TEXTAREA_TEST_ID).locator('textarea');
+    const handle = wrapper.getByTestId(`${TEXTAREA_TEST_ID}-resize-handle`);
+
+    const startBox = await textarea.boundingBox();
+    const startHeight = startBox?.height ?? 0;
+    const handleBox = await handle.boundingBox();
+    if (!handleBox) {
+        throw new Error('resize handle not found');
+    }
+
+    await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2 + 80, { steps: 5 });
+    await page.mouse.up();
+
+    const endBox = await textarea.boundingBox();
+    expect(endBox?.height ?? 0).toBe(startHeight);
 });
 
 test('dragging the resize handle changes the textarea height', async ({ mount, page }) => {

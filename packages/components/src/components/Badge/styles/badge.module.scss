@@ -13,7 +13,7 @@
             @include focusStyle.focus-outline;
         }
 
-        &:is(button):hover,
+        &:hover,
         &:has(.inner:hover) {
             background-color: var(--color-#{$color}-hover);
             color: var(--color-#{$color}-on-#{$color});
@@ -23,7 +23,7 @@
             background-color: var(--color-container-#{$weakColor}-default);
             color: var(--color-container-#{$weakColor}-on-#{$weakColor}-container);
 
-            &:is(button):hover,
+            &:hover,
             &:has(.inner:hover) {
                 background-color: var(--color-container-#{$weakColor}-hover);
                 color: var(--color-container-#{$weakColor}-on-#{$weakColor}-container);
@@ -140,7 +140,7 @@
             border-color: CanvasText;
         }
 
-        &:is(button):hover,
+        &:hover,
         &:has(.inner:hover) {
             background-color: Highlight !important;
             color: HighlightText !important;
