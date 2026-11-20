@@ -31,14 +31,9 @@ $focus-outline-reach: calc(2px + var(--border-width-default));
     isolation: isolate;
 }
 
-/**
- * With `maxRows`, the content scrolls inside the editor past that many lines of
- * body text; the toolbar is outside it, so it stays in view. `.content` is the
- * class of both the editable element and the readonly view, and `lh` there is the
- * document's line height.
- */
+/** With `maxRows`, the content scrolls below the toolbar; `lh` here is the document's line height. */
 .body[data-max-rows='true'] .content {
-    // The padding keeps a focus outline at the content's edge from being clipped by the scroll; the margin takes the space back, so the text stays put.
+    // Room for a focus outline at the edge, taken back by the margin.
     box-sizing: content-box;
     padding: $focus-outline-reach;
     margin: calc(-1 * #{$focus-outline-reach});

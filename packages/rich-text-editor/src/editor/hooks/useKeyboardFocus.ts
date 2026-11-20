@@ -13,25 +13,14 @@ type UseKeyboardFocusParams = {
 type InputModality = 'keyboard' | 'pointer';
 
 /**
- * Marks the element `data-keyboard-focus="true"` while focus inside it came
- * after a key rather than a pointer press, the heuristic `:focus-visible` and
- * react-aria's `useFocusVisible` use: a host box draws its focus ring from it,
- * as Fondue's Textarea does. Focus before any input counts as keyboard focus,
- * as it does for `:focus-visible`.
- *
- * Native listeners, not React props: React events follow the React tree, so
- * they would miss a press on a plugin's view portalled into the text, a click
- * beside the text that the editor turns into focus, and focus a flyout's button
- * hands back to the text. Focus moving to another element inside keeps the mark.
- * The attribute is written on the element, so nothing re-renders.
- *
- * A layout effect, because layout effects run before every passive effect, so
- * focus a passive effect gives the element on mount (the editor's Retry) is not missed.
+ * Sets `data-keyboard-focus="true"` on the element while it holds focus that
+ * followed a key, not a pointer press (the `:focus-visible` rule), so a host box
+ * can draw its focus ring.
  */
 export const useKeyboardFocus = ({ elementRef, isMounted }: UseKeyboardFocusParams): void => {
-    // Kept across the effect running again, so a toggle does not forget the last input.
     const modalityRef = useRef<InputModality>('keyboard');
 
+    // Before passive effects, so focus the editor gives on mount (Retry) is heard.
     useLayoutEffect(() => {
         const element = elementRef.current;
         if (!isMounted || element === null) {

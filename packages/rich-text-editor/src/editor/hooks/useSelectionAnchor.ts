@@ -8,11 +8,8 @@ import { type EditorStateStore } from './useEditorHandle';
 
 /**
  * A virtual element at the selection for the flyout's anchor, re-rendering the
- * caller on every editor state change. A new one whenever the box moves, so the
- * flyout repositions. While the page scrolls the flyout follows through
- * `contextElement`, which names the scrolling containers above the mount; the
- * editable itself scrolls under `maxRows` and sits below it, so its own scroll
- * re-renders the caller, which reads the moved box.
+ * caller on every editor state change and content scroll. A new one whenever the
+ * box moves, so the flyout repositions.
  */
 export const useSelectionAnchor = ({
     handle,
@@ -24,6 +21,7 @@ export const useSelectionAnchor = ({
     editableRef: RefObject<HTMLElement | null>;
 }): RefObject<{ getBoundingClientRect(): DOMRect; contextElement?: Element }> => {
     useSyncExternalStore(editorState.subscribe, editorState.getVersion, editorState.getVersion);
+    // `contextElement` covers the scrollers above the mount; under `maxRows` the editable below it scrolls too.
     useSyncExternalStore(
         (onScroll) => subscribeToScroll(editableRef.current, onScroll),
         () => scrollTopOf(editableRef.current),

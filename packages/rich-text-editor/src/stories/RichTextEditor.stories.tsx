@@ -62,12 +62,7 @@ const HINT = 'tw-col-span-full tw-m-0 tw-body-small tw-text-secondary';
  */
 const SURFACE = 'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-surface tw-p-medium';
 
-/**
- * The field box around an editor: the surface, with a stronger border on hover
- * and while the caret is inside, and Fondue's focus ring on keyboard focus
- * (the editor sets `data-keyboard-focus` then, not on a click), as Fondue's
- * Textarea does.
- */
+/** The field box around an editor, with Fondue Textarea's hover and focus looks. */
 const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-line-strong has-[[data-keyboard-focus=true]]:tw-ring-focus`;
 
 const buttonClasses = (active: boolean): string =>
@@ -187,11 +182,7 @@ const MAX_ROWS_PARAGRAPH_COUNT = 20;
 /** How many lines of body text `MaxRows` shows before the content scrolls. */
 const MAX_ROWS_STORY_ROWS = 8;
 
-/**
- * `maxRows` caps the content at that many lines of body text; past it the
- * content scrolls inside the editor while the toolbar stays above it. Unset,
- * the content grows with the text.
- */
+/** `maxRows` caps the content at that many lines; past it the content scrolls below the toolbar. */
 export const MaxRows: Story = {
     render: () => {
         const [doc, setDoc] = useState<RteDocument>({

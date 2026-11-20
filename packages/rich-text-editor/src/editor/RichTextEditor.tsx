@@ -105,11 +105,8 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * from a newer format version.
      *
      * The editor draws no box either way — no border, background or inset;
-     * a host that wants a field wraps the editor in one. A host box shows
-     * Fondue's input focus as Fondue's Textarea does: it draws the focus ring
-     * while it `:has([data-keyboard-focus='true'])`, which the editor sets while
-     * its text has focus and the last input was a key rather than a pointer
-     * press, and a `--color-line-strong` border on `:focus-within`.
+     * a host that wants a field wraps the editor in one, and draws the focus
+     * ring while it `:has([data-keyboard-focus='true'])`.
      *
      * @default true
      */
