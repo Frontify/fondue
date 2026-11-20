@@ -145,7 +145,7 @@ $separator-size: 2rem;
     // The readonly view is read, not typed into: no caret cursor there.
     cursor: default;
 
-    &[contenteditable='true'] {
+    &.editable {
         cursor: text;
     }
 
@@ -156,15 +156,8 @@ $separator-size: 2rem;
         }
     }
 
-    /**
-     * Drawn on the empty block so it starts where typing will; the float and
-     * zero height keep it out of the caret's way. The `/ ''` alternative hides
-     * it from assistive technology (the field has `aria-placeholder`); the
-     * first declaration is the fallback for browsers without that syntax.
-     */
+    /** The float and zero height keep it out of the caret's way; the engine sets the text. */
     .placeholder::before {
-        content: attr(data-placeholder);
-        content: attr(data-placeholder) / '';
         float: left;
         height: 0;
         color: var(--color-secondary-default);
