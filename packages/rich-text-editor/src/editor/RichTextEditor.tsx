@@ -500,8 +500,8 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
             {/* Its mousedown is for the text inside: a drag starting, or a click beside it. */}
             {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
-                onMouseDown={readOnly ? undefined : onFrameMouseDown}
                 id={readonlyViewId}
+                onMouseDown={readOnly ? undefined : onFrameMouseDown}
                 // No default name: the readonly view reads as text.
                 {...readonlyViewAttributes}
                 ref={readonlyViewRef}
