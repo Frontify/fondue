@@ -1,0 +1,88 @@
+packages/rich-text-editor/README.md
+  s_74e6843cef7ce4::t_0f5118e2664f02 12-13
+packages/rich-text-editor/oxlint.config.ts
+  s_74e6843cef7ce4::t_42166b7b5c0d7c 371-372
+  s_74e6843cef7ce4::t_c715baada700e3 294-297
+packages/rich-text-editor/src/__tests__/entryPoints.spec.ts
+  s_74e6843cef7ce4::t_b2ca7049195a6d 1-12,27-53
+  s_74e6843cef7ce4::t_9a6c41d1b26bdb 13-26
+packages/rich-text-editor/lint-fixtures/src/stories/Fixture.stories.tsx
+  s_74e6843cef7ce4::t_c715baada700e3 15,20
+packages/rich-text-editor/src/index.ts
+  s_74e6843cef7ce4::t_ef68e7ab0b1066 39
+packages/rich-text-editor/src/plugins/index.ts
+  s_74e6843cef7ce4::t_7b0cac621d6b28 9,12-32,34-43
+  s_74e6843cef7ce4::t_10de66cbfedd76 11
+packages/rich-text-editor/src/plugins/defaultPlugins.ts
+  s_74e6843cef7ce4::t_10de66cbfedd76 1-53
+packages/rich-text-editor/lint-fixtures/src/editor/RichTextEditor.spec.tsx
+  s_74e6843cef7ce4::t_c715baada700e3 6,12
+packages/rich-text-editor/src/__tests__/rendererBundle.spec.ts
+  s_74e6843cef7ce4::t_01dba0eceba21d 49-50,59
+.changeset/rte-plugins-entry.md
+  s_74e6843cef7ce4::t_7b5ed215074a65 1-5
+packages/rich-text-editor/package.json
+  s_74e6843cef7ce4::t_c3dab48c3c6e9f 27-30
+packages/rich-text-editor/src/__tests__/browser/HostLooksPair.tsx
+  s_74e6843cef7ce4::t_065857892b35f1 5,15
+packages/rich-text-editor/src/__tests__/browser/HostNoHeadingsPair.tsx
+  s_74e6843cef7ce4::t_282d709d0c23b8 5,14
+packages/rich-text-editor/src/__tests__/browser/HostResetPair.tsx
+  s_74e6843cef7ce4::t_d93c9aac8a08bf 5
+packages/rich-text-editor/src/__tests__/browser/HostStylingPair.tsx
+  s_74e6843cef7ce4::t_06bcdbe9f0de72 5-6
+packages/rich-text-editor/src/__tests__/browser/HostStylingSections.tsx
+  s_74e6843cef7ce4::t_74470c01c1fe0b 5-6
+packages/rich-text-editor/src/__tests__/browser/editorWithMentions.tsx
+  s_74e6843cef7ce4::t_d6e85bd835248b 5-6
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_74e6843cef7ce4::t_4223a18b56b122 6
+packages/rich-text-editor/src/__tests__/browser/hostStylingValues.ts
+  s_74e6843cef7ce4::t_1f014407ea1f47 5-6
+packages/rich-text-editor/src/__tests__/documentText.spec.ts
+  s_74e6843cef7ce4::t_a9498a97846f2d 5-6
+packages/rich-text-editor/src/__tests__/formatRegression.spec.tsx
+  s_74e6843cef7ce4::t_cce1093843a1d5 11-12
+packages/rich-text-editor/src/__tests__/htmlParity.spec.tsx
+  s_74e6843cef7ce4::t_0bee07cdf13d92 20
+packages/rich-text-editor/src/__tests__/paste/vendorPaste.spec.tsx
+  s_74e6843cef7ce4::t_567d57f280e438 15-16
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_74e6843cef7ce4::t_5532083dc6c481 17,26
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_74e6843cef7ce4::t_b918165837cdf3 19
+packages/rich-text-editor/src/__tests__/serializeToHtml.spec.tsx
+  s_74e6843cef7ce4::t_df40a4698ea42e 5-6
+packages/rich-text-editor/src/__tests__/serverRendering.node.spec.tsx
+  s_74e6843cef7ce4::t_73d6d1933862db 10-11
+packages/rich-text-editor/src/__tests__/serverRendering.spec.tsx
+  s_74e6843cef7ce4::t_13ec7ccdc7f13d 7-8
+packages/rich-text-editor/src/__tests__/typeDerivation.spec.ts
+  s_74e6843cef7ce4::t_89ed54d250fc80 9-10
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_74e6843cef7ce4::t_14c365c24235ce 25-33
+packages/rich-text-editor/src/editor/floatingBar.spec.tsx
+  s_74e6843cef7ce4::t_0753bb88ef8851 9-10
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_74e6843cef7ce4::t_112618dc33df00 14-24,51
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_74e6843cef7ce4::t_be590ababa0ff4 10,25
+packages/rich-text-editor/vite.config.ts
+  s_74e6843cef7ce4::t_a5ddaf4951b562 109
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "12127be7491523f9e168f6510c697b684e25b545",
+  "prompts": {},
+  "sessions": {
+    "s_74e6843cef7ce4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1a128949-3567-4552-a492-c7c578c34180",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,87 @@
+packages/rich-text-editor/src/renderer/toHtmlString.ts
+  s_53de767222940a::t_3079b00451c31a 49-54
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.spec.tsx
+  s_53de767222940a::t_875f3906705df9 1-95
+packages/rich-text-editor/src/plugins/defaultContent.ts
+  s_53de767222940a::t_cf485b8fad3524 38
+packages/rich-text-editor/src/plugins/Link/helpers/policy.spec.ts
+  s_53de767222940a::t_5ab5663c55c58b 1-76,78-98
+  s_53de767222940a::t_24ccdaf4f61d5d 77
+packages/rich-text-editor/src/plugins/Link/index.ts
+  s_53de767222940a::t_cf485b8fad3524 3-4
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_53de767222940a::t_f366244fd77062 8,31-32,97,139
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_53de767222940a::t_cf485b8fad3524 619
+packages/rich-text-editor/src/core/plugin.ts
+  s_53de767222940a::t_4cf8ae6e046e87 401-402,404-409
+packages/rich-text-editor/src/plugins/Link/components/LinkToolbarButton.tsx
+  s_53de767222940a::t_f366244fd77062 12,28-29,81
+packages/rich-text-editor/src/core/documentText.ts
+  s_53de767222940a::t_3079b00451c31a 46-53
+packages/rich-text-editor/src/core/htmlSpec.ts
+  s_53de767222940a::t_3079b00451c31a 34-35,40
+packages/rich-text-editor/src/plugins/defaultContent.spec.ts
+  s_53de767222940a::t_ea4c964ad58621 42-48
+  s_53de767222940a::t_2a27bebcb10d72 5
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_53de767222940a::t_5b951705ddcd48 1182-1200
+  s_53de767222940a::t_cf485b8fad3524 749,1174
+packages/rich-text-editor/src/plugins/Link/Link.spec.ts
+  s_53de767222940a::t_9aac8330792035 33-34,36-39
+  s_53de767222940a::t_cb0eeb16c414af 21-32,40
+  s_53de767222940a::t_cf485b8fad3524 7
+  s_53de767222940a::t_944efde7ed4137 35
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_53de767222940a::t_137f6296fe3f16 14,270-318
+  s_53de767222940a::t_4665e88c29fcd8 319
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_53de767222940a::t_4cf8ae6e046e87 260-263,265
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.tsx
+  s_53de767222940a::t_f366244fd77062 7,12-13,21,27,49-57
+packages/rich-text-editor/src/plugins/Link/helpers/policy.ts
+  s_53de767222940a::t_3c97fe56a5d8bd 1-58,60-61,63-74,78-91
+  s_53de767222940a::t_cd627555374f0c 59,62
+  s_53de767222940a::t_0ad4052bd49fc8 75-77
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_53de767222940a::t_c59aa0cef17869 3,99
+  s_53de767222940a::t_1f781d46926a20 5,10,19-20,27-30,32-42,44-67,69-82,84-87,100-140,142-143,145-146
+  s_53de767222940a::t_f366244fd77062 98
+packages/rich-text-editor/src/editor/engines/prosemirror/htmlSpecToDom.ts
+  s_53de767222940a::t_747e9b79cb8bbb 21,24,26
+  s_53de767222940a::t_3079b00451c31a 22-23
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_53de767222940a::t_cf485b8fad3524 413
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.spec.tsx
+  s_53de767222940a::t_c59aa0cef17869 7
+  s_53de767222940a::t_3834ec2cb0bb0d 101-119
+  s_53de767222940a::t_d4c8f4b001d3ac 120
+packages/rich-text-editor/src/renderer/toReact.ts
+  s_53de767222940a::t_3079b00451c31a 58-63
+packages/rich-text-editor/src/plugins/index.ts
+  s_53de767222940a::t_c59aa0cef17869 65
+  s_53de767222940a::t_cf485b8fad3524 51
+packages/rich-text-editor/src/editor/engines/prosemirror/paste.spec.tsx
+  s_53de767222940a::t_3834ec2cb0bb0d 186-202,204,206-215
+  s_53de767222940a::t_01bb71c3bcf562 203,205
+  s_53de767222940a::t_c59aa0cef17869 8
+  s_53de767222940a::t_997bf18c413223 216
+packages/rich-text-editor/src/index.ts
+  s_53de767222940a::t_fc47d79f75452e 126
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dc2d9f3a9c8cb2da6c9e0c403891ae0489d2edde",
+  "prompts": {},
+  "sessions": {
+    "s_53de767222940a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f9b7337-8455-4b7f-ac95-dde194f54be3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

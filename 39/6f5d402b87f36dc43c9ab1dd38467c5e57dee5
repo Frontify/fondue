@@ -1,0 +1,23 @@
+.changeset/tailwind-reset-utilities.md
+  s_fb33cc49f2a29b::t_12026e240a42d3 1-5
+packages/tokens/dist/tailwind/tailwind.config.js
+  s_fb33cc49f2a29b::t_aff8aa1edb41fe 4
+packages/tokens/src/styleDictionary/tailwind/buildTheme.ts
+  s_fb33cc49f2a29b::t_b1cd72a3d3a858 78-84,92,96-102,109
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "396f5d402b87f36dc43c9ab1dd38467c5e57dee5",
+  "prompts": {},
+  "sessions": {
+    "s_fb33cc49f2a29b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e3b1f935-e144-4513-97d6-bb88aaf16511",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

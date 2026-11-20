@@ -1,0 +1,23 @@
+packages/rich-text-editor/src/core/index.ts
+  s_eecb278abe0cf5::t_bf297233f06368 47
+packages/rich-text-editor/src/core/vocabulary.ts
+  s_eecb278abe0cf5::t_bf297233f06368 22-30
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_eecb278abe0cf5::t_bf297233f06368 18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7f5f67696ccb8cafafd1a3415dff6eed5fea3ec0",
+  "prompts": {},
+  "sessions": {
+    "s_eecb278abe0cf5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "02ff1c4d-dc17-4323-8121-0c1783040630",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

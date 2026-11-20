@@ -1,0 +1,63 @@
+packages/rich-text-editor/src/core/hotkeys.ts
+  s_743396444745a0::t_60ec40208c38a8 1-88
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.ts
+  s_743396444745a0::t_2a537fe312ecc9 8,24,26,33-40,42-43,53-57,93-95
+  s_743396444745a0::t_0fcb478241ddc5 96
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_743396444745a0::t_50b3db0bbbab92 7
+  s_743396444745a0::t_4849ba5b3fef2a 239
+packages/rich-text-editor/src/editor/linkFlows.spec.tsx
+  s_743396444745a0::t_cda8f9845afa86 45-46,48
+packages/rich-text-editor/src/plugins/shared/helpers/href.ts
+  s_743396444745a0::t_53a26cae93c75a 3-4
+  s_743396444745a0::t_7d1c7d00ed04f4 38-44
+  s_743396444745a0::t_e5eac30419ca89 37
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.spec.tsx
+  s_743396444745a0::t_1deec4dcdcc3a5 208
+  s_743396444745a0::t_c9c17d737c24cd 185-207,209-210
+packages/rich-text-editor/src/core/index.ts
+  s_743396444745a0::t_2c10c2dcf57762 25
+  s_743396444745a0::t_5f64bf54520d5e 55
+packages/rich-text-editor/src/ui/ToolbarButton/ToolbarButton.tsx
+  s_743396444745a0::t_b29b80e2e739f0 35-40
+  s_db1d4607d5e58e::t_16daabf8fcc1f5 34
+packages/rich-text-editor/src/core/plugin.ts
+  s_743396444745a0::t_802d6364b65fea 579-593,617-621
+  s_743396444745a0::t_948d7c23841dd0 578
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_743396444745a0::t_198b84cc2b6a8c 6
+  s_743396444745a0::t_0468df5bdfaddb 191
+  s_743396444745a0::t_227ead8299fcd3 40,42
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_743396444745a0::t_b512f4e76e3331 702-706
+  s_743396444745a0::t_8541a94b5b5a2a 719
+  s_743396444745a0::t_ca9228bf6546ae 720
+  s_743396444745a0::t_1e9cca7d20d81b 15
+  s_743396444745a0::t_772133615b53da 709-712
+packages/rich-text-editor/src/core/hotkeys.spec.ts
+  s_743396444745a0::t_f4c5f4c4e936ff 1-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f681a80e708d9cc84b4cf9c2dd4982ea07b9c911",
+  "prompts": {},
+  "sessions": {
+    "s_743396444745a0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "10709e34-13a4-4961-b961-1b8389df4dc9",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_db1d4607d5e58e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1084a074-7586-420c-8797-a9dbcd3c7659",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

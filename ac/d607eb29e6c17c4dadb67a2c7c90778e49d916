@@ -1,0 +1,41 @@
+packages/rich-text-editor/src/plugins/ColumnBreak/ColumnBreak.ts
+  s_db1d4607d5e58e::t_dd7f1af598e3df 5,9-10,52-55
+.changeset/rte-structure-spacing.md
+  s_db1d4607d5e58e::t_dd7f1af598e3df 5
+packages/rich-text-editor/src/renderer/inlineLooks.spec.ts
+  s_db1d4607d5e58e::t_620fbd8d7af3a5 94-102,106
+  s_db1d4607d5e58e::t_b371cec768e8f2 140,179-181,184,189
+packages/rich-text-editor/src/core/fondueTokens.ts
+  s_db1d4607d5e58e::t_dd7f1af598e3df 20
+packages/rich-text-editor/src/__tests__/browser/documentSpacingValues.ts
+  s_db1d4607d5e58e::t_ba3f1e0d51dadb 126-139
+packages/rich-text-editor/src/__tests__/browser/ownMarginsPlugin.tsx
+  s_db1d4607d5e58e::t_dd7f1af598e3df 6-7,27-31
+packages/rich-text-editor/src/renderer/inlineLooks.ts
+  s_db1d4607d5e58e::t_dd7f1af598e3df 67-68,74-75,77,227-233
+  s_db1d4607d5e58e::t_6783ff2f45c1da 234
+packages/rich-text-editor/src/__tests__/browser/documentSpacing.ct.tsx
+  s_db1d4607d5e58e::t_ba3f1e0d51dadb 12-14,220-235
+  s_db1d4607d5e58e::t_6ba78c67cb956a 236
+packages/rich-text-editor/src/__tests__/browser/hostStylingPlugins.ts
+  s_db1d4607d5e58e::t_ba3f1e0d51dadb 6,30-31,40,56-57
+  s_db1d4607d5e58e::t_b7eb067c011113 58
+packages/rich-text-editor/src/core/plugin.ts
+  s_db1d4607d5e58e::t_dd7f1af598e3df 311-317
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "acd607eb29e6c17c4dadb67a2c7c90778e49d916",
+  "prompts": {},
+  "sessions": {
+    "s_db1d4607d5e58e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1084a074-7586-420c-8797-a9dbcd3c7659",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

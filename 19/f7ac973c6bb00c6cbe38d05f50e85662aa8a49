@@ -1,0 +1,19 @@
+.changeset/rte-toolbar-plain-fondue.md
+  s_fbb25712f31c42::t_efcc1d384553b4 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "19f7ac973c6bb00c6cbe38d05f50e85662aa8a49",
+  "prompts": {},
+  "sessions": {
+    "s_fbb25712f31c42": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ca0f46f3-dec9-4c28-882a-09bced11282a",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,59 @@
+packages/rich-text-editor/src/core/plugin.ts
+  s_6513c7c173ff96::t_353dad77053fc9 278-283
+packages/rich-text-editor/src/core/look.ts
+  s_6513c7c173ff96::t_08cf1343923817 73
+  s_6513c7c173ff96::t_a52618a37df260 23
+  s_6513c7c173ff96::t_3a3996e0c3b6ac 38
+  s_6513c7c173ff96::t_5da510142d88b8 47-57
+packages/rich-text-editor/src/core/documentContract.ts
+  s_6513c7c173ff96::t_b15e031b959895 1-24
+packages/rich-text-editor/src/core/registry.ts
+  s_6513c7c173ff96::t_e6d581a826c815 630-632,639-646
+  s_6513c7c173ff96::t_4ae3595f8a5e40 10
+packages/rich-text-editor/src/__tests__/lookStylesheets.spec.ts
+  s_6513c7c173ff96::t_06c60fa4a06079 1-56,60-68,72-89
+  s_6513c7c173ff96::t_cd2cf9549a2083 57-59,69-71
+packages/rich-text-editor/src/renderer/RichTextRenderer.tsx
+  s_6513c7c173ff96::t_eee6111f8a392a 51-55
+  s_6513c7c173ff96::t_3cf101abacc009 7
+  s_6513c7c173ff96::t_c57bd07821e157 60
+packages/rich-text-editor/src/renderer/document.module.scss
+  s_6513c7c173ff96::t_3d652fb4652b56 59-60,62
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_6513c7c173ff96::t_af7f9950d0c9b3 54-55
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_6513c7c173ff96::t_e075928773bd19 601
+  s_6513c7c173ff96::t_4f2520a6bacad0 20
+packages/rich-text-editor/src/core/index.ts
+  s_6513c7c173ff96::t_d439ae73a1a2fe 24-25
+packages/rich-text-editor/src/__tests__/documentContract.spec.ts
+  s_6513c7c173ff96::t_dcef3b18a134dd 1-15,18-42
+  s_6513c7c173ff96::t_902c944b5fe57f 16-17
+packages/rich-text-editor/src/core/registry.spec.ts
+  s_6513c7c173ff96::t_129eba97f83249 16
+  s_6513c7c173ff96::t_af1d6745b446d6 6
+  s_6513c7c173ff96::t_fd214bd651c010 603-627
+packages/rich-text-editor/src/plugins/TextStyle/textStyle.module.scss
+  s_6513c7c173ff96::t_5908caea9eef93 3
+packages/rich-text-editor/src/styles/_look.scss
+  s_6513c7c173ff96::t_5908caea9eef93 1-52
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_6513c7c173ff96::t_2eb35432c874e1 6
+  s_6513c7c173ff96::t_831b2a7c8475f2 76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a36fd7af5aa021a85d6cbbb2acc5da5d67981f03",
+  "prompts": {},
+  "sessions": {
+    "s_6513c7c173ff96": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aece77c5-31e1-41b8-8f8c-d0099f17ec8b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
