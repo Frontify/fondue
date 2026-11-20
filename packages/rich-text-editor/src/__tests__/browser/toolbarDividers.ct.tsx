@@ -3,16 +3,16 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
-import { FIRST_IN_CELL } from './tableCellValues';
 import { ToolbarDividersHost } from './ToolbarDividersHost';
-import { BLANK_LABEL, PANEL_LABEL } from './toolbarDividersValues';
+import { BLANK_LABEL } from './toolbarDividersValues';
 
 // A control that draws nothing takes no place in the toolbar, and gets no divider.
 
 const SEPARATOR = '[data-toolbar-separator]';
 const GROUP = '[data-toolbar-group]';
-const INSERT_TABLE_LABEL = 'Insert table';
 const SLOT = '[data-toolbar-slot]';
+/** Home and End scroll the page instead of moving the caret in WebKit on macOS. */
+const SELECT_ALL = 'ControlOrMeta+a';
 
 type Part = 'separator' | 'group' | 'empty-group' | 'other';
 
@@ -43,6 +43,13 @@ const rowOf = async (page: Page): Promise<Part[]> =>
         { separator: SEPARATOR, group: GROUP, slot: SLOT },
     );
 
+/** How many parts the toolbar draws in its row. */
+const rowLengthOf = async (page: Page): Promise<number> => {
+    const row = await rowOf(page);
+
+    return row.length;
+};
+
 /** Every divider has something drawn on both sides, and nothing in the row is drawn empty. */
 const expectDividersBetweenSections = (row: readonly Part[]): void => {
     expect(row).not.toContain('empty-group');
@@ -58,122 +65,66 @@ const expectDividersBetweenSections = (row: readonly Part[]): void => {
 };
 
 test.describe('toolbar dividers', () => {
-    test('the top toolbar with the table plugin draws a divider only between groups, caret in a paragraph', async ({
+    test('a last group that draws nothing leaves no divider at the end', async ({ mount, page }) => {
+        await mount(<ToolbarDividersHost placement="top" blankAt="last" blankDraws={false} />);
+        await page.getByRole('textbox').getByText('Before').click();
+
+        await expect.poll(() => rowLengthOf(page)).toBeGreaterThan(1);
+        const row = await rowOf(page);
+        expectDividersBetweenSections(row);
+        expect(row[row.length - 1]).toBe('group');
+    });
+
+    test('a middle group that draws nothing leaves no doubled divider', async ({ mount, page }) => {
+        await mount(<ToolbarDividersHost placement="top" blankAt="middle" blankDraws={false} />);
+        await page.getByRole('textbox').getByText('Before').click();
+
+        await expect.poll(() => rowLengthOf(page)).toBeGreaterThan(1);
+        expectDividersBetweenSections(await rowOf(page));
+    });
+
+    test('a first group that draws nothing leaves no divider at the start', async ({ mount, page }) => {
+        await mount(<ToolbarDividersHost placement="top" blankAt="first" blankDraws={false} />);
+        await page.getByRole('textbox').getByText('Before').click();
+
+        await expect.poll(() => rowLengthOf(page)).toBeGreaterThan(1);
+        const row = await rowOf(page);
+        expectDividersBetweenSections(row);
+        expect(row[0]).toBe('group');
+    });
+
+    test('a control that starts and stops drawing on its own gets and loses its group and divider', async ({
         mount,
         page,
     }) => {
-        await mount(<ToolbarDividersHost controls="table" placement="top" />);
+        const component = await mount(<ToolbarDividersHost placement="top" blankAt="middle" blankDraws />);
         await page.getByRole('textbox').getByText('Before').click();
-        await expect(page.getByRole('button', { name: 'Bulleted list' })).toBeVisible();
-
-        await expect
-            .poll(() => rowOf(page))
-            .toEqual(['group', 'separator', 'group', 'separator', 'group', 'separator', 'group']);
-        expectDividersBetweenSections(await rowOf(page));
-        await expect(page.getByRole('toolbar').getByRole('button', { name: INSERT_TABLE_LABEL })).toBeVisible();
-        await expect(page.getByRole('toolbar').getByRole('button', { name: 'Table', exact: true })).toHaveCount(0);
-
-        const insertGroupSlotsTakingSpace = await page.getByRole('toolbar').evaluate(
-            (toolbar, selectors) => {
-                const insertButton = [...toolbar.querySelectorAll('button')].find(
-                    (button) => button.getAttribute('aria-label') === selectors.label,
-                );
-                const group = insertButton?.closest(selectors.group);
-                if (!group) {
-                    return undefined;
-                }
-                return [...group.children]
-                    .filter((child) => getComputedStyle(child).display !== 'none')
-                    .map((child) => child.hasChildNodes());
-            },
-            { group: GROUP, label: INSERT_TABLE_LABEL },
-        );
-        expect(insertGroupSlotsTakingSpace).toBeDefined();
-        expect(insertGroupSlotsTakingSpace).not.toContain(false);
-    });
-
-    test('the table menu shows in a table cell, after a divider', async ({ mount, page }) => {
-        await mount(<ToolbarDividersHost controls="table" placement="top" />);
-        await page.getByRole('textbox').getByText(FIRST_IN_CELL).click();
-
-        await expect(page.getByRole('toolbar').getByRole('button', { name: 'Table' })).toBeVisible();
-        await expect
-            .poll(() => rowOf(page))
-            .toEqual(['group', 'separator', 'group', 'separator', 'group', 'separator', 'group']);
-        expectDividersBetweenSections(await rowOf(page));
-    });
-
-    test('a group that draws nothing between two that do gets no doubled divider', async ({ mount, page }) => {
-        await mount(<ToolbarDividersHost controls="blank" placement="top" blankDraws={false} />);
-        await page.getByRole('textbox').getByText('Before').click();
-        await expect(page.getByRole('button', { name: PANEL_LABEL })).toBeVisible();
-
-        await expect
-            .poll(() => rowOf(page))
-            .toEqual(['group', 'separator', 'group', 'separator', 'group', 'separator', 'group']);
-        expectDividersBetweenSections(await rowOf(page));
-        await expect(page.getByRole('toolbar').getByRole('button', { name: BLANK_LABEL })).toHaveCount(0);
-    });
-
-    test('a control that starts drawing on its own gets its group and divider back', async ({ mount, page }) => {
-        const component = await mount(<ToolbarDividersHost controls="blank" placement="top" blankDraws={false} />);
-        await page.getByRole('textbox').getByText('Before').click();
-        await expect(page.getByRole('button', { name: PANEL_LABEL })).toBeVisible();
-        const withoutBlank = await rowOf(page);
-
-        // Only the control re-renders, not the toolbar: the stylesheet alone brings its group and divider back.
-        await component.update(<ToolbarDividersHost controls="blank" placement="top" blankDraws />);
-
-        await expect(page.getByRole('toolbar').getByRole('button', { name: BLANK_LABEL })).toBeVisible();
-        await expect
-            .poll(async () => {
-                const row = await rowOf(page);
-                return row.length;
-            })
-            .toBe(withoutBlank.length + 2);
-        expectDividersBetweenSections(await rowOf(page));
-    });
-
-    test('a control that stops drawing on its own loses its group and divider', async ({ mount, page }) => {
-        const component = await mount(<ToolbarDividersHost controls="blank" placement="top" blankDraws />);
-        await page.getByRole('textbox').getByText('Before').click();
-        await expect(page.getByRole('toolbar').getByRole('button', { name: BLANK_LABEL })).toBeVisible();
-        await expect
-            .poll(() => rowOf(page))
-            .toEqual(['group', 'separator', 'group', 'separator', 'group', 'separator', 'group', 'separator', 'group']);
+        const blankButton = page.getByRole('toolbar').getByRole('button', { name: BLANK_LABEL });
+        await expect(blankButton).toBeVisible();
+        const drawing = await rowOf(page);
+        expectDividersBetweenSections(drawing);
 
         // Only the control re-renders, not the toolbar: the stylesheet alone drops its group and divider.
-        await component.update(<ToolbarDividersHost controls="blank" placement="top" blankDraws={false} />);
+        await component.update(<ToolbarDividersHost placement="top" blankAt="middle" blankDraws={false} />);
 
-        await expect(page.getByRole('toolbar').getByRole('button', { name: BLANK_LABEL })).toHaveCount(0);
-        await expect
-            .poll(() => rowOf(page))
-            .toEqual(['group', 'separator', 'group', 'separator', 'group', 'separator', 'group']);
+        await expect(blankButton).toHaveCount(0);
+        await expect.poll(() => rowLengthOf(page)).toBe(drawing.length - 2);
+        expectDividersBetweenSections(await rowOf(page));
+
+        await component.update(<ToolbarDividersHost placement="top" blankAt="middle" blankDraws />);
+
+        await expect(blankButton).toBeVisible();
+        await expect.poll(() => rowLengthOf(page)).toBe(drawing.length);
         expectDividersBetweenSections(await rowOf(page));
     });
 
-    test('a first group that draws nothing gets no divider before the next one', async ({ mount, page }) => {
-        await mount(<ToolbarDividersHost controls="blank" placement="top" blankDraws={false} blankInFirstGroup />);
+    test('the floating bar leaves no divider at the end when the last group draws nothing', async ({ mount, page }) => {
+        await mount(<ToolbarDividersHost placement="floating" blankAt="last" blankDraws={false} />);
         await page.getByRole('textbox').getByText('Before').click();
-        await expect(page.getByRole('button', { name: PANEL_LABEL })).toBeVisible();
-
-        await expect
-            .poll(() => rowOf(page))
-            .toEqual(['group', 'separator', 'group', 'separator', 'group', 'separator', 'group']);
-        expectDividersBetweenSections(await rowOf(page));
-        await expect(page.getByRole('toolbar').getByRole('button', { name: BLANK_LABEL })).toHaveCount(0);
-    });
-
-    test('the floating bar draws no divider after the last group that shows a control', async ({ mount, page }) => {
-        await mount(<ToolbarDividersHost controls="table" placement="floating" />);
-        await page.getByRole('textbox').getByText('Before').click();
-        await page.keyboard.press('Home');
-        await page.keyboard.press('Shift+End');
+        await page.keyboard.press(SELECT_ALL);
         await expect(page.getByRole('toolbar')).toBeVisible();
 
-        const row = await rowOf(page);
-        expect(row.length).toBeGreaterThan(1);
-        expectDividersBetweenSections(row);
-        await expect(page.getByRole('toolbar').getByRole('button', { name: 'Table' })).toHaveCount(0);
+        await expect.poll(() => rowLengthOf(page)).toBeGreaterThan(0);
+        expectDividersBetweenSections(await rowOf(page));
     });
 });

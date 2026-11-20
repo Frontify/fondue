@@ -12,14 +12,12 @@ import {
     italicPlugin,
     linkPlugin,
     numberedListPlugin,
-    tablePlugin,
     underlinePlugin,
 } from '../../plugins';
 
-import { TABLE_DOCUMENT } from './tableCellValues';
-import { BLANK_LABEL, PANEL_LABEL, TEXT_ONLY_DOCUMENT } from './toolbarDividersValues';
+import { BLANK_LABEL, type BlankAt, PANEL_LABEL, PARAGRAPH_DOCUMENT } from './toolbarDividersValues';
 
-/** A group drawn after the table's own, so the table's group sits between two others. */
+/** A group drawn after the blank control's, so a blank group in the middle sits between two others. */
 const panelPlugin = () =>
     definePlugin({
         id: 'panel',
@@ -68,55 +66,39 @@ const FORMATTING_PLUGINS = [
     numberedListPlugin(),
 ];
 
-const TABLE_PLUGINS = [...FORMATTING_PLUGINS, tablePlugin()];
+/** The blank control in the toolbar's first group, before the formatting groups. */
+const BLANK_FIRST_PLUGINS = [...FORMATTING_PLUGINS, blankPlugin(RTE_TOOLBAR_GROUPS[0]), panelPlugin()];
 
 /** The blank control in a group between the formatting groups and the panel. */
-const BLANK_PLUGINS = [...FORMATTING_PLUGINS, blankPlugin('insert'), panelPlugin()];
+const BLANK_MIDDLE_PLUGINS = [...FORMATTING_PLUGINS, blankPlugin('insert'), panelPlugin()];
 
-/** The blank control in the first group of the toolbar, before the formatting groups. */
-const BLANK_FIRST_GROUP_PLUGINS = [...FORMATTING_PLUGINS, blankPlugin(RTE_TOOLBAR_GROUPS[0]), panelPlugin()];
+/** The blank control in the last group of the toolbar. */
+const BLANK_LAST_PLUGINS = [...FORMATTING_PLUGINS, blankPlugin('insert')];
 
-type ToolbarDividersHostBaseProps = {
+type ToolbarDividersHostProps = {
     placement: NonNullable<RichTextEditorProps['toolbarPlacement']>;
-};
-
-type TableHostProps = ToolbarDividersHostBaseProps & {
-    controls: 'table';
-};
-
-type BlankHostProps = ToolbarDividersHostBaseProps & {
-    controls: 'blank';
+    blankAt: BlankAt;
     /** Whether the blank control draws a button or nothing. */
     blankDraws: boolean;
-    /**
-     * Puts the blank control in the toolbar's first group instead of a middle one.
-     * @default false
-     */
-    blankInFirstGroup?: boolean;
 };
 
-type ToolbarDividersHostProps = TableHostProps | BlankHostProps;
-
-/**
- * The editor over a paragraph, with either the formatting plugins and the table over a table document,
- * or the formatting plugins and a control the host can make draw nothing.
- */
-export const ToolbarDividersHost = (props: ToolbarDividersHostProps): ReactNode => {
-    switch (props.controls) {
-        case 'table': {
-            return <RichTextEditor value={TABLE_DOCUMENT} plugins={TABLE_PLUGINS} toolbarPlacement={props.placement} />;
+const pluginsFor = (blankAt: BlankAt) => {
+    switch (blankAt) {
+        case 'first': {
+            return BLANK_FIRST_PLUGINS;
         }
-        case 'blank': {
-            let plugins = BLANK_PLUGINS;
-            if (props.blankInFirstGroup) {
-                plugins = BLANK_FIRST_GROUP_PLUGINS;
-            }
-
-            return (
-                <BlankDrawsContext.Provider value={props.blankDraws}>
-                    <RichTextEditor value={TEXT_ONLY_DOCUMENT} plugins={plugins} toolbarPlacement={props.placement} />
-                </BlankDrawsContext.Provider>
-            );
+        case 'middle': {
+            return BLANK_MIDDLE_PLUGINS;
+        }
+        case 'last': {
+            return BLANK_LAST_PLUGINS;
         }
     }
 };
+
+/** The editor over a paragraph, with the formatting plugins and a control the host can make draw nothing. */
+export const ToolbarDividersHost = ({ placement, blankAt, blankDraws }: ToolbarDividersHostProps): ReactNode => (
+    <BlankDrawsContext.Provider value={blankDraws}>
+        <RichTextEditor value={PARAGRAPH_DOCUMENT} plugins={pluginsFor(blankAt)} toolbarPlacement={placement} />
+    </BlankDrawsContext.Provider>
+);
