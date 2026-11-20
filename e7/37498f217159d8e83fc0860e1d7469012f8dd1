@@ -1,0 +1,25 @@
+packages/components/src/components/Label/Label.tsx
+  s_ff6baad91706d8::t_4e38e64ee8eac6 34-36,66,69-73,77-82
+packages/components/src/components/Label/__tests__/Label.ct.tsx
+  s_ff6baad91706d8::t_4e38e64ee8eac6 108-137
+packages/components/src/components/Label/Label.metadata.json
+  s_ff6baad91706d8::t_4e38e64ee8eac6 4
+.changeset/label-focus-textbox.md
+  s_ff6baad91706d8::t_4e38e64ee8eac6 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e737498f217159d8e83fc0860e1d7469012f8dd1",
+  "prompts": {},
+  "sessions": {
+    "s_ff6baad91706d8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3d354e17-7869-46fe-8c6e-4f647c631f57",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
