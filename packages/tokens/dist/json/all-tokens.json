@@ -371,6 +371,68 @@
           ]
         }
       },
+      "subtle": {
+        "active": {
+          "name": "color-container-subtle-active",
+          "type": "color",
+          "value": "var(--color-container-subtle-active)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "subtle",
+            "active"
+          ]
+        },
+        "default": {
+          "name": "color-container-subtle-default",
+          "type": "color",
+          "value": "var(--color-container-subtle-default)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "subtle",
+            "default"
+          ]
+        },
+        "hover": {
+          "name": "color-container-subtle-hover",
+          "type": "color",
+          "value": "var(--color-container-subtle-hover)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "subtle",
+            "hover"
+          ]
+        },
+        "on-subtle-container": {
+          "name": "color-container-subtle-on-subtle-container",
+          "type": "color",
+          "value": "var(--color-container-subtle-on-subtle-container)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "subtle",
+            "on-subtle-container"
+          ]
+        },
+        "on-subtle-container-variant": {
+          "name": "color-container-subtle-on-subtle-container-variant",
+          "type": "color",
+          "value": "var(--color-container-subtle-on-subtle-container-variant)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "subtle",
+            "on-subtle-container-variant"
+          ]
+        }
+      },
       "success": {
         "active": {
           "name": "color-container-success-active",
