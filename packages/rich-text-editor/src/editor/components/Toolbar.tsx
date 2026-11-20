@@ -3,6 +3,7 @@
 import { Divider } from '@frontify/fondue-components';
 import {
     Fragment,
+    memo,
     type MutableRefObject,
     type ReactNode,
     useCallback,
@@ -66,6 +67,8 @@ type ToolbarProps = {
      * the first render after it was asked for.
      */
     focusRequestRef: MutableRefObject<boolean>;
+    /** Counts the editor's focus requests: a new one renders the memoized toolbar, which then reads `focusRequestRef`. */
+    focusRequests: number;
 };
 
 /**
@@ -81,7 +84,7 @@ type ToolbarProps = {
  * The top row is one line: the plugins' controls that do not fit move behind a
  * More button at its end.
  */
-export const Toolbar = ({
+const ToolbarView = ({
     items: allItems,
     commands = [],
     api,
@@ -172,6 +175,9 @@ export const Toolbar = ({
         </div>
     );
 };
+
+/** Skips a host re-render that hands the editor the same props. */
+export const Toolbar = memo(ToolbarView);
 
 type ToolbarSection = { key: string; node: ReactNode };
 

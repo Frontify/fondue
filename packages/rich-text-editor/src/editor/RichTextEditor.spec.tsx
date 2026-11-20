@@ -530,6 +530,32 @@ describe('a page of editors', () => {
         expect(container.textContent).toContain('edited');
         expect(onChange).not.toHaveBeenCalled();
     });
+
+    it('does not redraw its toolbar when the host re-renders with the same props', () => {
+        let draws = 0;
+        const Counted = (): ReactNode => {
+            draws += 1;
+            return <span>counted</span>;
+        };
+        const plugins = [
+            ...defaultPlugins,
+            definePlugin({ id: 'counted', toolbar: [{ label: 'Counted', render: Counted }] }),
+        ];
+        const value = paragraph('editor');
+        const onChange = vi.fn<(doc: RteDocument) => void>();
+        const editor = (): ReactNode => (
+            <RichTextEditor value={value} onChange={onChange} plugins={plugins} toolbarPlacement="top" />
+        );
+
+        const { rerender, ready } = mount(editor);
+        ready();
+        const drawsBefore = draws;
+
+        rerender(editor());
+
+        expect(drawsBefore).toBeGreaterThan(0);
+        expect(draws).toBe(drawsBefore);
+    });
 });
 
 describe('the editable element', () => {
