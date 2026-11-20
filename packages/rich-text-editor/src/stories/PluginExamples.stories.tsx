@@ -1049,10 +1049,11 @@ const tableHeader = (text: string) => ({
 });
 
 /**
- * A table: type / and pick Table to insert one with a header row. Tab and
- * Shift+Tab move between cells, Tab in the last cell adds a row, and dragging
- * across cells selects them. A stored merged cell keeps its span. The readonly
- * view below draws the same document.
+ * A table: the Insert table button in the toolbar, or / and Table, inserts one
+ * with a header row; the Table button takes the button's place while the caret
+ * is in a table. Tab and Shift+Tab move between cells, Tab in the last cell
+ * adds a row, and dragging across cells selects them. A stored merged cell
+ * keeps its span. The readonly view below draws the same document.
  */
 export const Table: Story = {
     render: () => {
@@ -1085,9 +1086,10 @@ export const Table: Story = {
         return (
             <div className={LAYOUT}>
                 <p className={HINT}>
-                    Type / on the empty line for Table. Tab moves between cells. With the caret in a table, the Table
-                    button in the toolbar adds and deletes rows and columns and toggles the headers. Drag across cells
-                    and choose Merge cells to merge them; Split cell takes a merged cell apart.
+                    The Insert table button in the toolbar, or / on an empty line and Table, inserts a table. Tab moves
+                    between cells. With the caret in a table, the Table button takes the place of Insert table and adds
+                    and deletes rows and columns and toggles the headers. Drag across cells and choose Merge cells to
+                    merge them; Split cell takes a merged cell apart.
                 </p>
                 <div className="tw-flex tw-flex-col tw-gap-4">
                     <div className={FRAME}>
