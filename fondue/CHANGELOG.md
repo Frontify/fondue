@@ -1,5 +1,15 @@
 # @frontify/fondue
 
+## 14.0.0-rc.2
+
+### Patch Changes
+
+- Updated dependencies [[`a541057`](https://github.com/Frontify/fondue/commit/a541057c61d9e9803a21c9d4b89041a7f547af99), [`e737498`](https://github.com/Frontify/fondue/commit/e737498f217159d8e83fc0860e1d7469012f8dd1), [`7e8cab8`](https://github.com/Frontify/fondue/commit/7e8cab85503ef706b46ede4c1b72e344736d097c), [`ff01a22`](https://github.com/Frontify/fondue/commit/ff01a2248dcecf7ab0ebfe8b57aa6452076807c7), [`a6217b1`](https://github.com/Frontify/fondue/commit/a6217b17481a20eaf530aee759fe4bcfc21ad42a), [`a6693d1`](https://github.com/Frontify/fondue/commit/a6693d18439060546fed779248e303b26942af1b), [`c818a03`](https://github.com/Frontify/fondue/commit/c818a0336a7b15407302f682552e9a4cf45967f4), [`a0fe11f`](https://github.com/Frontify/fondue/commit/a0fe11fdda122bceef518d3f76cc7c930b1328b0)]:
+  - @frontify/fondue-components@37.0.0-rc.2
+  - @frontify/fondue-rich-text-editor@0.1.0-rc.2
+  - @frontify/fondue-sdk@1.0.0-rc.2
+  - @frontify/fondue-tokens@6.0.0-rc.0
+
 ## 14.0.0-rc.1
 
 ### Patch Changes

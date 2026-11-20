@@ -1,5 +1,13 @@
 # @frontify/fondue-components
 
+## 37.0.0-rc.2
+
+### Patch Changes
+
+- [#3099](https://github.com/Frontify/fondue/pull/3099) [`a541057`](https://github.com/Frontify/fondue/commit/a541057c61d9e9803a21c9d4b89041a7f547af99) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(ColorPicker): explain an invalid hex value below the field and link it to the input
+
+- [#3093](https://github.com/Frontify/fondue/pull/3093) [`e737498`](https://github.com/Frontify/fondue/commit/e737498f217159d8e83fc0860e1d7469012f8dd1) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Label): focus a `contenteditable` `role="textbox"` target when the label is clicked
+
 ## 37.0.0-rc.1
 
 ### Patch Changes

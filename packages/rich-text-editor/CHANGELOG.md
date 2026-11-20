@@ -1,5 +1,23 @@
 # @frontify/fondue-rich-text-editor
 
+## 0.1.0-rc.2
+
+### Minor Changes
+
+- [#3091](https://github.com/Frontify/fondue/pull/3091) [`7e8cab8`](https://github.com/Frontify/fondue/commit/7e8cab85503ef706b46ede4c1b72e344736d097c) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(RichTextEditor): add `id`, set on the editable element (on the read-only view's root while read-only or showing its crash message), and `data-test-id`, set on the editor's root and defaulting to `fondue-rich-text-editor`.
+
+- [#3034](https://github.com/Frontify/fondue/pull/3034) [`a6217b1`](https://github.com/Frontify/fondue/commit/a6217b17481a20eaf530aee759fe4bcfc21ad42a) Thanks [@jcosta33](https://github.com/jcosta33)! - refactor(RichTextEditor): the document spaces its blocks as a layout stack, whatever their tags, so a block from a new plugin gets the gap between blocks. A block that holds blocks spaces them itself with the `stack` mixin; list and to-do items keep theirs tight, and table cells use the document gap. Margins a block's look hands over through `--rte-own-margin-top` and `--rte-own-margin-bottom` still replace the gap.
+
+- [#3097](https://github.com/Frontify/fondue/pull/3097) [`a6693d1`](https://github.com/Frontify/fondue/commit/a6693d18439060546fed779248e303b26942af1b) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(RichTextEditor): tablePlugin adds an "Insert table" button to the toolbar; the button and the `/` entry are left out inside a table
+
+- [#3067](https://github.com/Frontify/fondue/pull/3067) [`c818a03`](https://github.com/Frontify/fondue/commit/c818a0336a7b15407302f682552e9a4cf45967f4) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(RichTextEditor)!: `textStyleContent` is now a function taking `{ look }`, so the renderer can draw the host's text looks without the text style plugin. Replace `textStyleContent` with `textStyleContent()`.
+
+### Patch Changes
+
+- [#3094](https://github.com/Frontify/fondue/pull/3094) [`ff01a22`](https://github.com/Frontify/fondue/commit/ff01a2248dcecf7ab0ebfe8b57aa6452076807c7) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(RichTextEditor): read tables in stored HTML and pastes as tables when the table plugin is mounted
+
+- [#3096](https://github.com/Frontify/fondue/pull/3096) [`a0fe11f`](https://github.com/Frontify/fondue/commit/a0fe11fdda122bceef518d3f76cc7c930b1328b0) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(RichTextEditor): find the editors in the table paste browser test by data-test-id
+
 ## 0.1.0-rc.1
 
 ### Minor Changes

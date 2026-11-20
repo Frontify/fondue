@@ -1,5 +1,13 @@
 # @frontify/fondue-sdk
 
+## 1.0.0-rc.2
+
+### Patch Changes
+
+- Updated dependencies [[`a541057`](https://github.com/Frontify/fondue/commit/a541057c61d9e9803a21c9d4b89041a7f547af99), [`e737498`](https://github.com/Frontify/fondue/commit/e737498f217159d8e83fc0860e1d7469012f8dd1)]:
+    - @frontify/fondue-components@37.0.0-rc.2
+    - @frontify/fondue-tokens@6.0.0-rc.0
+
 ## 1.0.0-rc.1
 
 ### Patch Changes
