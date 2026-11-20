@@ -257,14 +257,14 @@ describe('the destination field', () => {
             finish([BRAND, LOGOS]);
             await Promise.resolve();
         });
-        expect(status()).toBe('2 results');
+        expect(status()).toBe('Results: 2');
 
         await type('ab');
         await act(async () => {
             finish([BRAND]);
             await Promise.resolve();
         });
-        expect(status()).toBe('1 result');
+        expect(status()).toBe('Results: 1');
 
         await type('abc');
         await act(async () => {
@@ -306,6 +306,6 @@ describe('the destination field', () => {
         await type('a');
 
         expect(pages().map((page) => page.textContent)).toEqual(['Brand guidelineshttps://frontify.com/brand']);
-        expect(status()).toBe('1 result');
+        expect(status()).toBe('Results: 1');
     });
 });

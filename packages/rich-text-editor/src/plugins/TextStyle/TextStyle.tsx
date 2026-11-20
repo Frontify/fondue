@@ -17,6 +17,7 @@ import {
     type RteToolbarEntry,
     type TextLook,
 } from '#/core';
+import { translatedLabel } from '#/ui/translation';
 
 import { withoutBoldWeight } from '../shared/helpers/declaredStyle';
 
@@ -183,7 +184,7 @@ export const textStylePlugin = ({
         }
         return {
             id: preset.tag === 'p' ? preset.name : `heading-${level}`,
-            label: preset.label,
+            label: translatedLabel(preset.label),
             icon,
             keywords: level === undefined ? [] : (HEADING_KEYWORDS[level] ?? []),
             group: 'turnInto',
@@ -195,7 +196,10 @@ export const textStylePlugin = ({
     // A paragraph alone is nothing to choose, so the picker needs at least one real style.
     const toolbar: RteToolbarEntry[] = [];
     if (offered.length > 0) {
-        toolbar.push({ label: 'Text style', render: (props) => <TextStyleSelect {...props} options={options} /> });
+        toolbar.push({
+            label: translatedLabel('RichTextEditor_textStyle'),
+            render: (props) => <TextStyleSelect {...props} options={options} />,
+        });
     }
 
     // Offering every style is exactly `textStyleContent`, so the default plugin and `defaultContent` share one object.

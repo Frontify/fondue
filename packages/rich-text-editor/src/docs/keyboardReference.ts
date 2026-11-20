@@ -1,6 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { buildPluginRegistry, type RtePlugin, type RteShortcutOwner } from '#/core';
+import { enUS, ENGLISH } from '#/locales/en-US';
+import { labelContextOf, resolveLabel, translatorFor } from '#/ui/translation';
+
+/** The reference is documentation, written in English like the rest of Fondue's. */
+const ENGLISH_LABELS = labelContextOf(ENGLISH, translatorFor(enUS));
 
 /** Each key is written as in a plugin's `hotkeys` (`Mod-b`). */
 export type KeyboardRow = {
@@ -42,7 +47,7 @@ export const keyboardReference = (plugins: readonly RtePlugin[]): readonly Keybo
     for (const { owner, key, label } of buildPluginRegistry(plugins).shortcuts) {
         const ownerKey = ownerKeyOf(owner);
         const group = groups.get(ownerKey) ?? { owner, rows: [] };
-        groups.set(ownerKey, { owner, rows: addRow(group.rows, key, label) });
+        groups.set(ownerKey, { owner, rows: addRow(group.rows, key, resolveLabel(label, ENGLISH_LABELS)) });
     }
     return [...groups.values()];
 };

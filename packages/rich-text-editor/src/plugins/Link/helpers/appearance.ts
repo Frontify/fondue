@@ -1,17 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { lookProperties, type TextLook } from '#/core';
+import { type RichTextStringKey } from '#/locales/types';
 
 import styles from '../link.module.scss';
 
 import { ALL_LINK_APPEARANCES, type ButtonLink, type LinkAppearance, type LinkValue } from './value';
 
+type AppearanceEntry = { label: RichTextStringKey; className: string | undefined };
+
 /** What an appearance shows in the link form and the class that draws it. Every rule per appearance reads this table. */
 export const APPEARANCES = {
-    primary: { label: 'Primary button', className: styles.buttonPrimary },
-    secondary: { label: 'Secondary button', className: styles.buttonSecondary },
-    tertiary: { label: 'Tertiary button', className: styles.buttonTertiary },
-} as const satisfies Record<LinkAppearance, { label: string; className: string | undefined }>;
+    primary: { label: 'RichTextEditor_linkButtonPrimary', className: styles.buttonPrimary },
+    secondary: { label: 'RichTextEditor_linkButtonSecondary', className: styles.buttonSecondary },
+    tertiary: { label: 'RichTextEditor_linkButtonTertiary', className: styles.buttonTertiary },
+} as const satisfies Record<LinkAppearance, AppearanceEntry>;
 
 /** The appearances an editor offers when it is given none. */
 export const NO_APPEARANCES: readonly LinkAppearance[] = [];

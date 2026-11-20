@@ -16,6 +16,7 @@ import {
     type ToolbarItemProps,
 } from '../core';
 import { RichTextRenderer, serializeToHtml } from '../index';
+import { enUS, ENGLISH } from '../locales/en-US';
 import {
     blurOnBreakPlugin,
     type BlurOnBreakPluginOptions,
@@ -28,6 +29,7 @@ import {
     textStylePlugin,
 } from '../plugins';
 import { searchIn } from '../plugins/Mention/Mention';
+import { labelContextOf, resolveLabel, translatorFor } from '../ui/translation';
 
 /**
  * The plugin definitions that hold behaviour of their own — what they declare,
@@ -92,7 +94,7 @@ const clickToolbarButton = ({ plugin, api, name }: ClickToolbarButtonParams): vo
     // The entries read `api`, `label` and `selection`; the rest is what any entry is handed.
     const props: ToolbarItemProps = {
         api,
-        label: entry.label,
+        label: resolveLabel(entry.label, labelContextOf(ENGLISH, translatorFor(enUS))),
         selection: api.selection.get(),
         selectedNode: null,
         isActive: false,

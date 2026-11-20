@@ -3,9 +3,10 @@
 import { TextInput } from '@frontify/fondue-components';
 import { type KeyboardEvent, type ReactNode, type RefObject, useId, useRef, useState } from 'react';
 
+import { type Translate, useTranslate } from '#/ui/translation';
+
 import { isCompositionKey } from '../../shared/helpers/keys';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
-import { NO_RESULTS, RESULTS_LABEL, resultCount, SEARCH_FAILED, SEARCHING } from '../helpers/strings';
 import { type DestinationSearch, useDestinationSearch } from '../hooks/useDestinationSearch';
 import linkStyles from '../link.module.scss';
 
@@ -13,19 +14,19 @@ import styles from './linkForm.module.scss';
 
 const URL_PLACEHOLDER = 'example.com';
 
-const describeStatus = (search: DestinationSearch): string => {
+const describeStatus = (search: DestinationSearch, translate: Translate): string => {
     switch (search.status) {
         case 'idle':
             return '';
         case 'searching':
-            return SEARCHING;
+            return translate('RichTextEditor_searching');
         case 'failed':
-            return SEARCH_FAILED;
+            return translate('RichTextEditor_searchFailed');
         case 'done':
             if (search.results.length === 0) {
-                return NO_RESULTS;
+                return translate('RichTextEditor_noResults');
             }
-            return resultCount(search.results.length);
+            return translate('RichTextEditor_results', { count: String(search.results.length) });
     }
 };
 
@@ -64,12 +65,14 @@ const buttonAfterArrow = (
 type PageButtonProps = {
     destination: LinkDestination;
     onPick: (destination: LinkDestination) => void;
+    /** The arrow keys, which move focus to the next or previous page. */
+    onKeyDown: (event: KeyboardEvent<HTMLButtonElement>) => void;
 };
 
 /**
  * Named by the page, with its address as the description, so a screen reader does not run the two together.
  */
-const PageButton = ({ destination, onPick }: PageButtonProps): ReactNode => {
+const PageButton = ({ destination, onPick, onKeyDown }: PageButtonProps): ReactNode => {
     const labelId = useId();
     const hrefId = useId();
     return (
@@ -79,6 +82,7 @@ const PageButton = ({ destination, onPick }: PageButtonProps): ReactNode => {
             aria-labelledby={labelId}
             aria-describedby={hrefId}
             onClick={() => onPick(destination)}
+            onKeyDown={onKeyDown}
         >
             <span id={labelId}>{destination.label}</span>
             <span id={hrefId} className={styles.optionHref}>
@@ -117,6 +121,7 @@ export const DestinationField = ({
     onPick,
     onEnter,
 }: DestinationFieldProps): ReactNode => {
+    const translate = useTranslate();
     // Only what the author types is searched: a stored or picked address is not a query.
     const [query, setQuery] = useState('');
     const destinationSearch = useDestinationSearch(search, query);
@@ -145,7 +150,7 @@ export const DestinationField = ({
         }
     };
 
-    const onListKeyDown = (event: KeyboardEvent<HTMLUListElement>): void => {
+    const onPageKeyDown = (event: KeyboardEvent<HTMLButtonElement>): void => {
         if (!isArrowKey(event.key)) {
             return;
         }
@@ -176,18 +181,16 @@ export const DestinationField = ({
                 onKeyDown={onFieldKeyDown}
             />
             {found.length === 0 ? null : (
-                // The arrow keys move focus between the buttons; each button is the control.
-                // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-                <ul ref={listRef} aria-label={RESULTS_LABEL} className={styles.results} onKeyDown={onListKeyDown}>
+                <ul ref={listRef} aria-label={translate('RichTextEditor_linkPages')} className={styles.results}>
                     {found.map((destination) => (
                         <li key={destination.id}>
-                            <PageButton destination={destination} onPick={pick} />
+                            <PageButton destination={destination} onPick={pick} onKeyDown={onPageKeyDown} />
                         </li>
                     ))}
                 </ul>
             )}
             {search === undefined ? null : (
-                <output className={linkStyles.visuallyHidden}>{describeStatus(destinationSearch)}</output>
+                <output className={linkStyles.visuallyHidden}>{describeStatus(destinationSearch, translate)}</output>
             )}
         </>
     );

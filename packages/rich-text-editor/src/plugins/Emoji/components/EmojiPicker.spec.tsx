@@ -85,7 +85,7 @@ describe('the emoji picker', () => {
         type('zz');
 
         expect(buttons()).toEqual([]);
-        expect(container.textContent).toContain('No matches');
+        expect(container.textContent).toContain('No results');
     });
 
     it('picks an emoji on a click', () => {

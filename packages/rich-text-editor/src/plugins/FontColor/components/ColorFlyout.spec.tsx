@@ -169,7 +169,7 @@ describe('the colour flyout', () => {
     });
 
     it.each<[string, string]>([
-        ['Grey', '#5f6368'],
+        ['Gray', '#5f6368'],
         ['Red', '#c5221f'],
         ['Orange', '#b45309'],
         ['Green', '#188038'],

@@ -67,7 +67,7 @@ const show = (selection: RteSelectionSnapshot, grid: ReturnType<typeof fakeGrid>
     const root = createRoot(container);
     const api = { grid, focus: () => {} } as unknown as EditorControlApi;
     act(() => {
-        root.render(<TableMenu api={api} selection={selection} />);
+        root.render(<TableMenu api={api} selection={selection} label="Table" />);
     });
     teardown.push(() => {
         act(() => root.unmount());

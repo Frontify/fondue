@@ -15,7 +15,7 @@ const command = (label: string, keywords: string[] = [], group: RteBlockCommand[
 });
 
 const commands = [
-    TEXT_COMMAND,
+    { ...TEXT_COMMAND, label: 'Text' },
     command('Heading 1', ['h1', 'title']),
     command('Heading 2', ['h2']),
     command('Bulleted list', ['ul']),
