@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button } from '@frontify/fondue-components';
-import { type ReactNode, useEffect, useId, useRef, useState } from 'react';
+import { type AriaAttributes, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
 import { type PluginRegistry, type RteDocumentOf } from '#/core';
 import { RegistryRenderer } from '#/renderer';
@@ -10,6 +10,11 @@ import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
 
 import { EditorErrorBoundary } from './EditorErrorBoundary';
+
+/** The attributes that make a named editor a group carrying the host's labels where it is not a field. */
+export type GroupAttributes = Pick<AriaAttributes, 'aria-label' | 'aria-labelledby' | 'aria-describedby'> & {
+    role?: 'group';
+};
 
 type EditorFallbackProps = {
     id?: string;
@@ -26,7 +31,7 @@ type EditorFallbackProps = {
     /** Whether focus was in what this replaces: the editor, or a fallback whose Retry was pressed. */
     focusWasWithin: () => boolean;
     /** The host's name for the editor as a group, so the message and Retry say which editor failed. */
-    groupAttributes: Record<string, string>;
+    groupAttributes: GroupAttributes;
     /** Told when the read-only view throws too, as a crash of its own. */
     onCatch?: (error: Error) => void;
     /** The test id of the editor's root element. */
