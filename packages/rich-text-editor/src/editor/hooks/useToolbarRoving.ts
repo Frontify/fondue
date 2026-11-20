@@ -101,16 +101,25 @@ export const useToolbarRoving = ({ toolbarRef, focusRequestRef, onEscape }: UseT
         if (!event.currentTarget.contains(target)) {
             return;
         }
-        // A layer that took Escape (an open tooltip) prevented it, and the first
-        // Escape is its alone; so is a control's own open menu's.
-        if (event.key === 'Escape' && !event.defaultPrevented && !hasOpenPopup(target)) {
+        // A layer that took the key (an open tooltip, Escape) prevented it; the key is its alone.
+        if (event.defaultPrevented) {
+            return;
+        }
+
+        // The toolbar's keys still lose their default, or WebKit would move the text's selection and focus the text.
+        if (hasOpenPopup(target)) {
+            if (NAVIGATION_KEYS.has(event.key)) {
+                event.preventDefault();
+            }
+            return;
+        }
+
+        if (event.key === 'Escape') {
             event.preventDefault();
             onEscape();
             return;
         }
-        if (event.defaultPrevented) {
-            return;
-        }
+
         if (keepsArrowKeys(target)) {
             return;
         }
@@ -135,11 +144,6 @@ export const useToolbarRoving = ({ toolbarRef, focusRequestRef, onEscape }: UseT
             return;
         }
         event.preventDefault();
-        // The open popup keeps the key, but not its default: WebKit would move the text's selection and focus the text.
-        if (hasOpenPopup(target)) {
-            return;
-        }
-
         moveTo(stops, next);
     };
 
@@ -200,6 +204,9 @@ const controlsIn = (toolbar: HTMLElement): HTMLElement[] =>
     [...toolbar.querySelectorAll<HTMLElement>(CONTROLS)].filter(
         (control) => !control.matches(DISABLED) && control.closest(HIDDEN_SUBTREE) === null,
     );
+
+/** The keys that move between the toolbar's controls. */
+const NAVIGATION_KEYS = new Set(['ArrowRight', 'ArrowLeft', 'Home', 'End']);
 
 /** A control whose own popup is open: its keys are the popup's. */
 const hasOpenPopup = (target: HTMLElement): boolean => target.getAttribute('aria-expanded') === 'true';
