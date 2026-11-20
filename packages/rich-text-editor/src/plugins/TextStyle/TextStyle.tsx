@@ -17,6 +17,7 @@ import {
     type RteToolbarEntry,
     type TextLook,
 } from '#/core';
+import { enUS } from '#/locales/en-US';
 import { translatedLabel } from '#/ui/translation';
 
 import { withoutBoldWeight } from '../shared/helpers/declaredStyle';
@@ -161,15 +162,16 @@ export const textStylePlugin = ({
 
     // The shortcuts other editors use: `Mod-Alt-0` for a paragraph, `Mod-Alt-1`
     // to `Mod-Alt-4` for the headings — each only when this editor offers it.
+    // Their labels feed only the keyboard reference, which is written in English.
     const hotkeys: Record<string, RteHotkey> = {};
     if (options.includes(PARAGRAPH)) {
-        hotkeys['Mod-Alt-0'] = { label: labelOf(PARAGRAPH), run: (api) => api.blocks.setType(PARAGRAPH) };
+        hotkeys['Mod-Alt-0'] = { label: enUS[labelOf(PARAGRAPH)], run: (api) => api.blocks.setType(PARAGRAPH) };
     }
     for (const preset of offered) {
         const level = HEADING_LEVEL[preset.tag];
         if (level !== undefined) {
             hotkeys[`Mod-Alt-${level}`] = {
-                label: preset.label,
+                label: enUS[preset.label],
                 run: (api) => api.blocks.setType('textStyle', { style: preset.name }),
             };
         }
