@@ -1,14 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button, Tooltip } from '@frontify/fondue-components';
-import {
-    type ButtonHTMLAttributes,
-    type ComponentProps,
-    forwardRef,
-    type MouseEvent,
-    type ReactNode,
-    useState,
-} from 'react';
+import { type ButtonHTMLAttributes, type ComponentProps, forwardRef, type ReactNode, useState } from 'react';
+
+import { ariaKeyShortcut, readableShortcut } from '../shortcut';
 
 import styles from './toolbarButton.module.scss';
 
@@ -29,43 +24,30 @@ type ToolbarButtonProps = {
      */
     shortcut?: string;
     // Other props reach the button so it works as a `Flyout.Trigger`, whose injected handlers and `aria-expanded` must hit the DOM.
-} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'title' | 'children'>;
+} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'title' | 'children' | 'className'>;
+
+type ToolbarButtonEmphasis = ComponentProps<typeof Button>['emphasis'];
 
 /**
- * The platform names of Apple systems, where `Mod` is the Command key
+ * Weak while off, default while on: pressed or partly pressed as a toggle, or checked as a radio
  */
-const APPLE_PLATFORM = /Mac|iPhone|iPad/;
-
-const isApple = (): boolean => typeof navigator !== 'undefined' && APPLE_PLATFORM.test(navigator.platform);
-
-/**
- * `Mod-Shift-x` as `aria-keyshortcuts` spells it: `Meta+Shift+X` on Apple systems, `Control+Shift+X` elsewhere
- */
-export const ariaKeyShortcut = (shortcut: string, apple = isApple()): string =>
-    shortcut
-        .split('-')
-        .map((part) => (part === 'Mod' ? (apple ? 'Meta' : 'Control') : part.length === 1 ? part.toUpperCase() : part))
-        .join('+');
-
-const APPLE_SYMBOLS: Record<string, string> = { Mod: '⌘', Shift: '⇧', Alt: '⌥', Ctrl: '⌃' };
-
-/**
- * `Mod-Shift-x` as people read it: `⌘⇧X` on Apple systems, `Ctrl+Shift+X` elsewhere
- */
-export const readableShortcut = (shortcut: string, apple = isApple()): string => {
-    const parts = shortcut.split('-').map((part) => (part.length === 1 ? part.toUpperCase() : part));
-    return apple
-        ? parts.map((part) => APPLE_SYMBOLS[part] ?? part).join('')
-        : parts.map((part) => (part === 'Mod' ? 'Ctrl' : part)).join('+');
+const emphasisOf = (
+    active: ToolbarButtonProps['active'],
+    checked: ToolbarButtonProps['aria-checked'],
+): ToolbarButtonEmphasis => {
+    if (active === true || active === 'mixed' || checked === true || checked === 'true') {
+        return 'default';
+    }
+    return 'weak';
 };
 
 /**
- * The toolbar button the built-in plugins share: Fondue's small square
- * low-emphasis `Button` with a pressed state for toggles and a tooltip naming
- * it. Not editor API. Takes a ref so a flyout can anchor to it.
+ * The toolbar button the built-in plugins share: Fondue's square `Button`
+ * with `aria-pressed` for toggles and a tooltip naming it. Not editor API.
+ * Takes a ref so a flyout can anchor to it.
  */
 export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(function ToolbarButton(
-    { children, active, disabled, onClick, title, shortcut, className, ...rest },
+    { children, active, disabled, onClick, title, shortcut, ...rest },
     ref,
 ): ReactNode {
     // Fondue's Button spreads undeclared props onto the <button>, so these still reach the DOM.
@@ -73,11 +55,6 @@ export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(f
         ...rest,
         'aria-pressed': active,
         'aria-keyshortcuts': shortcut === undefined ? undefined : ariaKeyShortcut(shortcut),
-        onMouseDown: (event: MouseEvent<HTMLButtonElement>) => {
-            // Keep the selection in the editor; runs before the flyout trigger's own handler.
-            event.preventDefault();
-            rest.onMouseDown?.(event);
-        },
     } as ComponentProps<typeof Button>;
 
     const [tooltipOpen, setTooltipOpen] = useState(false);
@@ -102,11 +79,8 @@ export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(f
                     {...domProps}
                     ref={ref}
                     type="button"
-                    size="small"
                     aspect="square"
-                    // Both states are the ghost button; "on" is drawn by our stylesheet.
-                    emphasis="weak"
-                    className={[styles.button, className].filter(Boolean).join(' ')}
+                    emphasis={emphasisOf(active, rest['aria-checked'])}
                     disabled={disabled}
                     aria-label={title}
                     onPress={onClick}

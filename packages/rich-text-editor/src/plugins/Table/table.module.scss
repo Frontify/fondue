@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../../styles/stack.module.scss';
+
 /**
  * A table wider than the content scrolls inside this wrapper, so the page
  * never scrolls sideways.
  */
 .scroll {
     max-width: 100%;
-    margin-block: var(--rte-block-gap, var(--spacing-x-small));
     overflow-x: auto;
 
     &:focus-visible {
@@ -23,6 +24,8 @@
 
 .cell,
 .header {
+    @include stack.stack(var(--spacing-x-small));
+
     min-width: 6rem;
     padding: var(--spacing-xx-small) var(--spacing-x-small);
     border: var(--border-width-default) solid var(--color-line-mid);

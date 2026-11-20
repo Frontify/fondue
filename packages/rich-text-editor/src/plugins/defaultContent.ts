@@ -22,7 +22,7 @@ import { underlineContent } from './Underline/Underline';
 
 /**
  * The content of every `defaultPlugins` entry, in the same order, which the renderer reads when given no `plugins`.
- * Text takes Fondue's look; for the host's looks, add `textStyleContent({ presets })` after these.
+ * Text takes Fondue's look; for the host's looks, add `textStyleContent({ look })` and `linkContent({ look: { text } })` after these.
  */
 export const defaultContent: readonly RteContent[] = Object.freeze([
     textStyleContent(),
@@ -34,10 +34,10 @@ export const defaultContent: readonly RteContent[] = Object.freeze([
     subscriptContent,
     superscriptContent,
     fontColorContent,
-    linkContent,
+    linkContent(),
     alignContent,
-    bulletListContent,
-    numberedListContent,
+    bulletListContent(),
+    numberedListContent(),
     checkListContent,
     quoteContent,
     softBreakContent,

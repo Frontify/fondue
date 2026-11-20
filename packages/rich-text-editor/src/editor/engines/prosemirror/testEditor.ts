@@ -5,7 +5,17 @@ import { type Selection, TextSelection } from 'prosemirror-state';
 import { CellSelection } from 'prosemirror-tables';
 import { vi } from 'vitest';
 
-import { buildPluginRegistry, type RteBlockNode, type RteDocumentOf, type RtePlugin } from '#/core';
+import {
+    buildPluginRegistry,
+    defineContent,
+    defineMark,
+    definePlugin,
+    type PasteHandler,
+    type RteBlockNode,
+    type RteDocumentOf,
+    type RteMarkPatternTrim,
+    type RtePlugin,
+} from '#/core';
 import { type MountedDocument, type MountOptions } from '#/editor/port';
 import { defaultPlugins } from '#/plugins';
 
@@ -155,3 +165,63 @@ export const text = (value: string, marks: Record<string, unknown> = {}): Record
     text: value,
     ...marks,
 });
+
+const TOKEN_PATTERN = /tok:[^\s]+/;
+
+export const TOKEN_TRIM: RteMarkPatternTrim = {
+    punctuation: /[.,;:!?"'”’]+/,
+    pairs: { ')': '(', ']': '[', '}': '{', '>': '<' },
+};
+
+export type TokenValue = { id: string };
+
+export const token = (value: string, id = value): Record<string, unknown> => text(value, { token: { id } });
+
+export type TokenPluginOptions = {
+    /** Leave out for a rule that trims nothing. */
+    trim?: RteMarkPatternTrim;
+    pattern?: RegExp;
+    /** Tokens the rule refuses, which stay as typed. */
+    refuses?: (value: string) => boolean;
+    onPaste?: PasteHandler;
+};
+
+/** Stands in for a shipped feature, so engine specs go through the contract alone. */
+export const tokenPlugin = ({
+    trim,
+    pattern = TOKEN_PATTERN,
+    refuses = () => false,
+    onPaste,
+}: TokenPluginOptions = {}): RtePlugin =>
+    definePlugin({
+        id: 'token',
+        content: defineContent({
+            marks: {
+                token: defineMark<TokenValue>({
+                    inclusive: false,
+                    toHtml: ({ id }) => ({ tag: 'a', attrs: { 'data-token': id }, children: true }),
+                    parse: [
+                        {
+                            tag: 'a[data-token]',
+                            value: (element) => ({ id: element.dataset.token ?? '' }),
+                        },
+                    ],
+                }),
+            },
+        }),
+        inputRules: [
+            {
+                kind: 'markPattern',
+                pattern,
+                mark: 'token',
+                trim,
+                value: (value) => {
+                    if (refuses(value)) {
+                        return null;
+                    }
+                    return { id: value };
+                },
+            },
+        ],
+        onPaste,
+    });

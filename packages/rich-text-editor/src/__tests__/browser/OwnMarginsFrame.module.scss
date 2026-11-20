@@ -1,0 +1,7 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../styles/stack.module.scss';
+
+.frame {
+    @include stack.stack(var(--spacing-x-small));
+}

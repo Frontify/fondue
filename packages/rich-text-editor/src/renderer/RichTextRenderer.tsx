@@ -3,8 +3,8 @@
 import { memo, type ReactNode, useMemo } from 'react';
 
 import {
-    buildPluginRegistry,
-    type PluginRegistry,
+    buildContentRegistry,
+    type ContentRegistry,
     type RteBlockNode,
     type RteContent,
     type RteDocumentOf,
@@ -31,13 +31,13 @@ export type RendererProps<TBlock extends RteBlockNode = RteBlockNode> = {
 
 type RegistryRendererProps = {
     value: RteDocumentOf;
-    registry: PluginRegistry;
+    registry: ContentRegistry;
     className?: string;
 };
 
 type BlockProps = {
     block: RteBlockNode;
-    registry: PluginRegistry;
+    registry: ContentRegistry;
 };
 
 /** One top-level block, memoized on the block itself: the editor keeps the same object for untouched blocks, so an edit redraws only its block. */
@@ -61,6 +61,6 @@ export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlockNode>({
     plugins = [],
     className,
 }: RendererProps<TBlock>): ReactNode => {
-    const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
+    const registry = useMemo(() => buildContentRegistry(plugins), [plugins]);
     return <RegistryRenderer value={value} registry={registry} className={className} />;
 };
