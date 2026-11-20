@@ -2,7 +2,7 @@
 
 // @vitest-environment happy-dom
 
-import { act, type ReactNode, useRef } from 'react';
+import { act, type ReactNode, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -41,10 +41,22 @@ const find = (container: Element, testId: string): HTMLElement => {
     return found;
 };
 
+type MountKeyboardFocusOptions = {
+    /** Focuses a button inside from a passive effect declared before the hook, as the editor's Retry does. */
+    focusInsideOnMount: boolean;
+};
+
 /** Mounts the hook on an element with two buttons inside and one outside it. */
-const mountKeyboardFocus = (): MountedKeyboardFocus => {
+const mountKeyboardFocus = (
+    { focusInsideOnMount }: MountKeyboardFocusOptions = { focusInsideOnMount: false },
+): MountedKeyboardFocus => {
     const Probe = (): ReactNode => {
         const elementRef = useRef<HTMLDivElement>(null);
+        useEffect(() => {
+            if (focusInsideOnMount) {
+                elementRef.current?.querySelector('button')?.focus();
+            }
+        }, []);
         useKeyboardFocus({ elementRef, isMounted: true });
         return (
             <>
@@ -105,6 +117,12 @@ describe('the keyboard focus mark', () => {
 
         press(outside, 'keydown');
         focus(inside);
+
+        expect(isKeyboardFocused()).toBe(true);
+    });
+
+    it('is on for focus a passive effect gives the element on mount', () => {
+        const { isKeyboardFocused } = mountKeyboardFocus({ focusInsideOnMount: true });
 
         expect(isKeyboardFocused()).toBe(true);
     });

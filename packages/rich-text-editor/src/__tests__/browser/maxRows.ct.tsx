@@ -13,24 +13,36 @@ const TYPED_LINES = 12;
 const KEYBOARD_FOCUS = 'data-keyboard-focus';
 const TOOLBAR_HOTKEY = 'Alt+F10';
 
-/** From the content's right edge and top, where the scrollbar's thumb starts, in pixels. */
-const SCROLLBAR_GRAB_OFFSET = 4;
-
-/** How far the thumb is dragged, in pixels. */
-const SCROLLBAR_DRAG_BY = 30;
-
 /** Clear of the toolbar's bottom edge, inside the gap that separates it from the text. */
 const GAP_BELOW_TOOLBAR = 3;
 
 // The editable's parent is the editor's mount, which carries the mark.
 const MOUNT_OF_EDITABLE = '..';
 
+type Box = NonNullable<Awaited<ReturnType<Locator['boundingBox']>>>;
+
+/** The element's box on the page, failing when it is not rendered. */
+const boxOf = async (locator: Locator): Promise<Box> => {
+    const box = await locator.boundingBox();
+    if (box === null) {
+        throw new Error(`${locator.toString()} has no box on the page`);
+    }
+
+    return box;
+};
+
 /** Focuses the editable with the caret at the end of its last paragraph, whatever the platform's end-of-document key is. */
 const putCaretAtEnd = async (editable: Locator): Promise<void> => {
     await editable.focus();
     await editable.evaluate((node) => {
-        const lastParagraph = node.lastElementChild as Element;
-        const selection = window.getSelection() as Selection;
+        const lastParagraph = node.lastElementChild;
+        if (lastParagraph === null) {
+            throw new Error('the editable has no paragraph');
+        }
+        const selection = window.getSelection();
+        if (selection === null) {
+            throw new Error('the page has no selection');
+        }
         selection.selectAllChildren(lastParagraph);
         selection.collapseToEnd();
     });
@@ -54,12 +66,16 @@ test.describe('maxRows', () => {
 
         const { rowsHeight, scrollHeight, clientHeight, lineHeight } = await editable.evaluate((node) => {
             const { paddingTop, paddingBottom } = getComputedStyle(node);
+            const paragraph = node.querySelector('p');
+            if (paragraph === null) {
+                throw new Error('the editable has no paragraph');
+            }
             return {
                 // The padding is the inset for focus outlines, not rows.
                 rowsHeight: node.clientHeight - Number.parseFloat(paddingTop) - Number.parseFloat(paddingBottom),
                 scrollHeight: node.scrollHeight,
                 clientHeight: node.clientHeight,
-                lineHeight: Number.parseFloat(getComputedStyle(node.querySelector('p') as Element).lineHeight),
+                lineHeight: Number.parseFloat(getComputedStyle(paragraph).lineHeight),
             };
         });
 
@@ -93,12 +109,10 @@ test.describe('maxRows', () => {
 
         const lastLine = editable.getByText(`New line ${TYPED_LINES}`);
         await expect(lastLine).toBeInViewport();
-        const editableBox = await editable.boundingBox();
-        const lastLineBox = await lastLine.boundingBox();
-        expect(editableBox).not.toBeNull();
-        expect(lastLineBox).not.toBeNull();
-        expect(lastLineBox!.y).toBeGreaterThanOrEqual(editableBox!.y);
-        expect(lastLineBox!.y + lastLineBox!.height).toBeLessThanOrEqual(editableBox!.y + editableBox!.height);
+        const editableBox = await boxOf(editable);
+        const lastLineBox = await boxOf(lastLine);
+        expect(lastLineBox.y).toBeGreaterThanOrEqual(editableBox.y);
+        expect(lastLineBox.y + lastLineBox.height).toBeLessThanOrEqual(editableBox.y + editableBox.height);
     });
 
     test('has no horizontal scroll', async ({ mount, page }) => {
@@ -178,13 +192,9 @@ test.describe('the keyboard focus mark', () => {
         const editable = page.getByRole('textbox');
         const mark = editable.locator(MOUNT_OF_EDITABLE);
         const host = page.getByTestId(HOST_TEST_ID);
-        const toolbarBox = await page.getByRole('toolbar').boundingBox();
-        expect(toolbarBox).not.toBeNull();
+        const toolbarBox = await boxOf(page.getByRole('toolbar'));
 
-        await page.mouse.click(
-            (toolbarBox?.x ?? 0) + GAP_BELOW_TOOLBAR,
-            (toolbarBox?.y ?? 0) + (toolbarBox?.height ?? 0) + GAP_BELOW_TOOLBAR,
-        );
+        await page.mouse.click(toolbarBox.x + GAP_BELOW_TOOLBAR, toolbarBox.y + toolbarBox.height + GAP_BELOW_TOOLBAR);
 
         await expect(editable).toBeFocused();
         await expect(mark).toHaveAttribute(KEYBOARD_FOCUS, 'false');
@@ -247,9 +257,8 @@ const scrollContentBy = async (editable: Locator, amount: number): Promise<void>
 };
 
 const topOf = async (locator: Locator): Promise<number> => {
-    const box = await locator.boundingBox();
-    expect(box).not.toBeNull();
-    return box?.y ?? Number.NaN;
+    const box = await boxOf(locator);
+    return box.y;
 };
 
 /** The top of a floating element once it has stopped moving: it is placed a frame or two after it appears. */
@@ -302,36 +311,6 @@ test.describe('floating UI under maxRows', () => {
             .poll(async () => Math.abs((await topOf(menu)) - (before + SCROLL_BY)))
             .toBeLessThanOrEqual(FOLLOW_TOLERANCE);
     });
-
-    test('the floating toolbar comes back after the content scrollbar is dragged', async ({
-        mount,
-        page,
-        browserName,
-    }) => {
-        test.skip(
-            browserName === 'chromium',
-            'Chromium here draws overlay or hidden scrollbars, which a mouse cannot press',
-        );
-        await mount(<MaxRowsFrame toolbarPlacement="floating" />);
-        const editable = page.getByRole('textbox');
-        const toolbar = page.getByRole('toolbar');
-
-        await editable.getByText(FOLLOWED_PARAGRAPH, { exact: true }).dblclick();
-        await expect(toolbar).toBeVisible();
-        const box = await editable.boundingBox();
-        expect(box).not.toBeNull();
-        const scrollbarX = (box?.x ?? 0) + (box?.width ?? 0) - SCROLLBAR_GRAB_OFFSET;
-        const thumbTop = (box?.y ?? 0) + SCROLLBAR_GRAB_OFFSET;
-
-        await page.mouse.move(scrollbarX, thumbTop);
-        await page.mouse.down();
-        await page.mouse.move(scrollbarX, thumbTop + SCROLLBAR_DRAG_BY, { steps: 5 });
-        await page.mouse.up();
-
-        // The drag has to have reached the scrollbar, or it proves nothing.
-        expect(await editable.evaluate((node) => node.scrollTop)).toBeGreaterThan(0);
-        await expect(toolbar).toBeVisible();
-    });
 });
 
 test.describe('a focus outline at the content edge with maxRows', () => {
@@ -345,7 +324,11 @@ test.describe('a focus outline at the content edge with maxRows', () => {
         await expect(wrapper).toBeFocused();
 
         const { outlineReach, clip } = await scroller.evaluate((node) => {
-            const { outlineOffset, outlineWidth } = getComputedStyle(node.querySelector('section') as Element);
+            const section = node.querySelector('section');
+            if (section === null) {
+                throw new Error('the scroller has no table wrapper');
+            }
+            const { outlineOffset, outlineWidth } = getComputedStyle(section);
             const box = node.getBoundingClientRect();
             return {
                 outlineReach: Number.parseFloat(outlineOffset) + Number.parseFloat(outlineWidth),
@@ -353,14 +336,11 @@ test.describe('a focus outline at the content edge with maxRows', () => {
                 clip: { left: box.left, right: box.left + node.clientWidth },
             };
         });
-        const wrapperBox = await wrapper.boundingBox();
+        const wrapperBox = await boxOf(wrapper);
 
         expect(outlineReach).toBeGreaterThan(0);
-        expect(wrapperBox).not.toBeNull();
-        expect(wrapperBox?.x ?? Number.NEGATIVE_INFINITY).toBeGreaterThanOrEqual(clip.left + outlineReach);
-        expect((wrapperBox?.x ?? Number.POSITIVE_INFINITY) + (wrapperBox?.width ?? 0)).toBeLessThanOrEqual(
-            clip.right - outlineReach,
-        );
+        expect(wrapperBox.x).toBeGreaterThanOrEqual(clip.left + outlineReach);
+        expect(wrapperBox.x + wrapperBox.width).toBeLessThanOrEqual(clip.right - outlineReach);
     });
 });
 

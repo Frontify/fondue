@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RefObject, useEffect } from 'react';
+import { type RefObject, useLayoutEffect, useRef } from 'react';
 
 type UseKeyboardFocusParams = {
     /** The element whose focus is marked. */
@@ -24,28 +24,33 @@ type InputModality = 'keyboard' | 'pointer';
  * beside the text that the editor turns into focus, and focus a flyout's button
  * hands back to the text. Focus moving to another element inside keeps the mark.
  * The attribute is written on the element, so nothing re-renders.
+ *
+ * A layout effect, because layout effects run before every passive effect, so
+ * focus a passive effect gives the element on mount (the editor's Retry) is not missed.
  */
 export const useKeyboardFocus = ({ elementRef, isMounted }: UseKeyboardFocusParams): void => {
-    useEffect(() => {
+    // Kept across the effect running again, so a toggle does not forget the last input.
+    const modalityRef = useRef<InputModality>('keyboard');
+
+    useLayoutEffect(() => {
         const element = elementRef.current;
         if (!isMounted || element === null) {
             return;
         }
 
         const { ownerDocument } = element;
-        let modality: InputModality = 'keyboard';
 
         const onKeyDown = (): void => {
-            modality = 'keyboard';
+            modalityRef.current = 'keyboard';
         };
         const onPointerDown = (): void => {
-            modality = 'pointer';
+            modalityRef.current = 'pointer';
             if (element.contains(ownerDocument.activeElement)) {
                 element.dataset.keyboardFocus = 'false';
             }
         };
         const onFocusIn = (): void => {
-            element.dataset.keyboardFocus = String(modality === 'keyboard');
+            element.dataset.keyboardFocus = String(modalityRef.current === 'keyboard');
         };
         const onFocusOut = (event: FocusEvent): void => {
             if (event.relatedTarget instanceof Node && element.contains(event.relatedTarget)) {

@@ -497,10 +497,9 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
         readonlyViewTabIndex = FOCUSABLE_BY_SCRIPT_ONLY;
     }
 
-    let bodyStyle: CSSProperties | undefined;
+    let bodyStyle: MaxRowsStyle | undefined;
     if (maxRows !== undefined) {
-        // A custom property is not in `CSSProperties`.
-        bodyStyle = { [MAX_ROWS_PROPERTY]: String(maxRows) } as CSSProperties;
+        bodyStyle = { [MAX_ROWS_PROPERTY]: String(maxRows) };
     }
 
     return (
@@ -581,6 +580,9 @@ const GROUP_ROLE = 'group';
 
 /** The custom property the stylesheet turns into the content's maximum height. */
 const MAX_ROWS_PROPERTY = '--max-rows';
+
+/** The body's style: `CSSProperties` has no custom properties, so the one key is added. */
+type MaxRowsStyle = CSSProperties & Record<typeof MAX_ROWS_PROPERTY, string>;
 
 /**
  * What a named editor shows where it is not a field (the readonly view, the
