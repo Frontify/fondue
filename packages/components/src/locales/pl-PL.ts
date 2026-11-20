@@ -12,7 +12,8 @@ const translations = {
     Card_select: 'Wybierz',
     ColorPicker_blueChannel: 'Niebieski kanał koloru',
     ColorPicker_greenChannel: 'Zielony kanał koloru',
-    ColorPicker_hexInvalid: 'Nieprawidłowy kod szesnastkowy. Użyj 3 lub 6 znaków (0–9, A–F), na przykład 1A2B3C.',
+    ColorPicker_hexInvalid:
+        'Nieprawidłowy kod szesnastkowy. Użyj 3 lub 6 znaków od 0 do 9 i od A do F, na przykład 1A2B3C.',
     ColorPicker_hexValue: 'Wartość koloru szesnastkowego',
     ColorPicker_opacity: 'Przezroczystość koloru',
     ColorPicker_redChannel: 'Czerwony kanał koloru',

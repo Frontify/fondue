@@ -15,7 +15,7 @@ const COLOR_PICKER_VALUE_INPUT_GREEN_TEST_ID = 'color-picker-value-input-green';
 const COLOR_PICKER_VALUE_INPUT_BLUE_TEST_ID = 'color-picker-value-input-blue';
 const COLOR_PICKER_VALUE_INPUT_ALPHA_TEST_ID = 'color-picker-value-input-alpha';
 const COLOR_PICKER_VALUE_INPUT_HEX_TEST_ID = 'color-picker-value-input-hex';
-const HEX_INVALID_MESSAGE = 'Not a valid hex code. Use 3 or 6 characters (0–9, A–F), like 1A2B3C.';
+const HEX_INVALID_MESSAGE = 'Not a valid hex code. Use 3 or 6 characters from 0 to 9 and A to F, like 1A2B3C.';
 const SAMPLE_COLOR_INPUT_VALUE = {
     red: 255,
     green: 170,

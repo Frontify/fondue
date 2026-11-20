@@ -12,7 +12,8 @@ const translations = {
     Card_select: 'Auswählen',
     ColorPicker_blueChannel: 'Blauer Farbkanal',
     ColorPicker_greenChannel: 'Grüner Farbkanal',
-    ColorPicker_hexInvalid: 'Kein gültiger Hex-Code. Verwenden Sie 3 oder 6 Zeichen (0–9, A–F), zum Beispiel 1A2B3C.',
+    ColorPicker_hexInvalid:
+        'Kein gültiger Hex-Code. Verwenden Sie 3 oder 6 Zeichen von 0 bis 9 und A bis F, zum Beispiel 1A2B3C.',
     ColorPicker_hexValue: 'Hex-Farbwert',
     ColorPicker_opacity: 'Deckkraft',
     ColorPicker_redChannel: 'Roter Farbkanal',

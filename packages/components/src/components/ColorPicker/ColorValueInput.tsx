@@ -106,33 +106,40 @@ export const ColorValueInput = (
                 </Select>
             </div>
             {currentFormat === 'HEX' ? (
-                <TextInput.Root
-                    data-test-id="color-picker-value-input-hex"
-                    className={styles.valueInput}
-                    type="text"
-                    value={hexColorValue}
-                    status={hexIsValid ? 'neutral' : 'error'}
-                    onChange={(event) => {
-                        const inputValue = event.target.value.startsWith('#')
-                            ? event.target.value.slice(1)
-                            : event.target.value;
+                <>
+                    <TextInput.Root
+                        data-test-id="color-picker-value-input-hex"
+                        className={styles.valueInput}
+                        type="text"
+                        value={hexColorValue}
+                        status={hexIsValid ? 'neutral' : 'error'}
+                        onChange={(event) => {
+                            const inputValue = event.target.value.startsWith('#')
+                                ? event.target.value.slice(1)
+                                : event.target.value;
 
-                        setHexColorValue(inputValue);
-                        if (isValidHexColor(inputValue)) {
-                            onColorChange({
-                                ...hexColorToRgba(inputValue),
-                                alpha: currentColor.alpha,
-                            });
-                        }
-                    }}
-                    aria-label={t('ColorPicker_hexValue')}
-                    aria-describedby={describedByWhenInvalid(hexIsValid, hexErrorId)}
-                    aria-errormessage={hexErrorId}
-                >
-                    <TextInput.Slot name="left">
-                        <span className={styles.inputDecorator}>#</span>
-                    </TextInput.Slot>
-                </TextInput.Root>
+                            setHexColorValue(inputValue);
+                            if (isValidHexColor(inputValue)) {
+                                onColorChange({
+                                    ...hexColorToRgba(inputValue),
+                                    alpha: currentColor.alpha,
+                                });
+                            }
+                        }}
+                        aria-label={t('ColorPicker_hexValue')}
+                        aria-describedby={describedByWhenInvalid(hexIsValid, hexErrorId)}
+                        aria-errormessage={hexErrorId}
+                    >
+                        <TextInput.Slot name="left">
+                            <span className={styles.inputDecorator}>#</span>
+                        </TextInput.Slot>
+                    </TextInput.Root>
+                    {hexIsValid ? null : (
+                        <span id={hexErrorId} className={styles.valueError}>
+                            {t('ColorPicker_hexInvalid')}
+                        </span>
+                    )}
+                </>
             ) : (
                 <div className={styles.colorChannelInputGroup}>
                     <TextInput.Root
@@ -211,11 +218,6 @@ export const ColorValueInput = (
                     </TextInput.Slot>
                 </TextInput.Root>
             </div>
-            {currentFormat === 'HEX' && !hexIsValid ? (
-                <span id={hexErrorId} className={styles.valueError}>
-                    {t('ColorPicker_hexInvalid')}
-                </span>
-            ) : null}
         </div>
     );
 };
