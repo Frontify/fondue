@@ -63,9 +63,9 @@ export type RichTextRendererProps<TBlock extends RteBlockNode = RteBlock> = Rend
  *
  * @experimental The API and document format can change in any release until 1.0.
  */
-export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlock>(
+export const RichTextRenderer: <TBlock extends RteBlockNode = RteBlock>(
     props: RichTextRendererProps<TBlock>,
-): ReactNode => createElement(Renderer as (next: RichTextRendererProps<TBlock>) => ReactNode, props);
+) => ReactNode = Renderer;
 
 /**
  * The document as an HTML string, the same markup the editor copies to the
