@@ -20,9 +20,8 @@ export type RendererProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * The plugins, or only their content, whose markup draws the document. A node
      * shows its `render.component`, else its `toHtml`. A node whose plugin is
      * missing is skipped (a block keeps its content), with a warning in development.
-     * @default defaultContent
      */
-    plugins?: readonly (RtePlugin | RteContent)[];
+    plugins: readonly (RtePlugin | RteContent)[];
     /**
      * A class for the element the document sits in, beside the document's own
      */
@@ -58,7 +57,7 @@ export const RegistryRenderer = ({ value, registry, className }: RegistryRendere
 /** A stored document as React, with no editing engine: readonly display, client or server. */
 export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlockNode>({
     value,
-    plugins = [],
+    plugins,
     className,
 }: RendererProps<TBlock>): ReactNode => {
     const registry = useMemo(() => buildContentRegistry(plugins), [plugins]);
