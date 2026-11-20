@@ -9,6 +9,7 @@ import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
+import { isInTable } from '../helpers/isInTable';
 
 /** Until the editor's locale files exist, like every shipped plugin. */
 const TEXT = {
@@ -88,7 +89,7 @@ const menuItems = (api: EditorControlApi, shape: Shape): MenuItem[] => [
 export const TableMenu = ({ api, selection }: TableMenuProps): ReactNode => {
     const { returnToText, contentProps } = useFocusAfterClose(api);
     // `shape()` answers for any grid; this keeps the menu to tables.
-    if (!selection.blocks.some((block) => block.type === 'table')) {
+    if (!isInTable(selection)) {
         return null;
     }
     const shape = api.grid.shape();
