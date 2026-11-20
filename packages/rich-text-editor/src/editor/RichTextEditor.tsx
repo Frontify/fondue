@@ -48,6 +48,16 @@ import { warnNewerVersion } from './warnings';
 type EditorStatus = 'neutral' | 'error';
 
 /**
+ * The ARIA props the editor puts on its editable element. Without `aria-label`
+ * or `aria-labelledby` the editor is called `labels.editor`;
+ * `aria-errormessage` applies only while `status` is `'error'`.
+ */
+type EditorAriaProps = Pick<
+    AriaAttributes,
+    'aria-label' | 'aria-labelledby' | 'aria-describedby' | 'aria-errormessage'
+>;
+
+/**
  * `TBlock` is the document's block union. It defaults to the structural
  * skeleton here; the package root re-exports the component with the official
  * `RteBlock` union as default. Consumer plugins widen it:
@@ -132,17 +142,6 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      */
     status?: EditorStatus;
     /**
-     * The editor's accessible name, when no visible label names it ("Comment",
-     * "Description"). Without this or `aria-labelledby` it is called `labels.editor`.
-     */
-    'aria-label'?: string;
-    /** The id of a visible element naming the editor — its label. Preferred over `aria-label`. */
-    'aria-labelledby'?: string;
-    /** The id of an element describing the editor further — help text, an error. */
-    'aria-describedby'?: string;
-    /** The id of the host's error text, applied only while `status` is `'error'`. */
-    'aria-errormessage'?: AriaAttributes['aria-errormessage'];
-    /**
      * The words the editor's own UI says (its default name, the toolbar's
      * name, the "Turn into" and `/` menus, the message and button shown when
      * it crashes) for a host that translates them. Each one left out stays English.
@@ -172,7 +171,7 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * @default 'fondue-rich-text-editor'
      */
     'data-test-id'?: string;
-};
+} & EditorAriaProps;
 
 /** Whether the editor was brought back by Try again, and whether the pressed button had focus. */
 type RetryFocus = 'fresh' | 'focused' | 'unfocused';
@@ -647,20 +646,15 @@ const hostLabelsOf = ({
 
 const TEXTBOX_ROLE: AriaRole = 'textbox';
 
-/** The ARIA attributes the editor sets on its editable element. */
-type EditableAriaName =
-    | 'aria-multiline'
-    | 'aria-placeholder'
-    | 'aria-required'
-    | 'aria-invalid'
-    | 'aria-label'
-    | 'aria-labelledby'
-    | 'aria-describedby'
-    | 'aria-errormessage';
+/** The ARIA attributes the editor sets on its editable element: the host's, then its own. */
+type EditableAriaAttributes = Pick<
+    AriaAttributes,
+    keyof EditorAriaProps | 'aria-multiline' | 'aria-placeholder' | 'aria-required' | 'aria-invalid'
+>;
 
 /** The attributes of the editable element, in their DOM string form. One left `undefined` is not set. */
 type EditableAttributes = { id: string; class: string; role: AriaRole } & {
-    [Name in EditableAriaName]?: Extract<AriaAttributes[Name], string>;
+    [Name in keyof EditableAriaAttributes]?: Extract<EditableAriaAttributes[Name], string>;
 };
 
 type EditableAttributesOptions = {
