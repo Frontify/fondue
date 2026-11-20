@@ -24,11 +24,13 @@ import {
     type RteSelectionSnapshot,
 } from '#/core';
 
+import { setChangedAttributes } from './attributes';
 import { keepCarriedAttrs } from './carriedAttrs';
 import { type Dispatch } from './dispatch';
 import { blockToEngine, markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
 import { createGridApi, gridOfSelection, textOfSelectedSlots } from './grid';
 import { createListApi, liftOutOfLists } from './lists';
+import { APPENDED_TRANSACTION } from './transactionMeta';
 import { warnUnknownType } from './warnings';
 
 /**
@@ -414,13 +416,7 @@ const createBlockApi = (
         view.state.doc.nodesBetween(from, to, (node, pos) => {
             if (node.isTextblock) {
                 // Undeclared attributes are ignored, so mixed selections are safe.
-                // Unchanged blocks are skipped so a no-op adds no undo step.
-                const changes = Object.entries(attributes).some(
-                    ([name, value]) => name in node.attrs && (node.attrs[name] ?? null) !== (value ?? null),
-                );
-                if (changes) {
-                    transaction.setNodeMarkup(pos, undefined, { ...node.attrs, ...attributes });
-                }
+                setChangedAttributes(transaction, { pos, node }, attributes);
             }
         });
         if (transaction.docChanged) {
@@ -502,9 +498,6 @@ const createHistoryApi = (getView: () => EditorView): EditorControlApi['history'
 /** The commands of one synchronous turn: none changed the document yet, or the first change the rest join. */
 type TurnState = { kind: 'idle' } | { kind: 'joined'; first: Transaction };
 
-/** prosemirror-history joins a transaction carrying this meta into the undo step of the one it names. */
-const APPENDED_TRANSACTION_META = 'appendedTransaction';
-
 /** Which type's editing UI is open, and how to redraw the views that show it. */
 export type OpenEditors = { type: string | null; repaint: () => void };
 
@@ -565,7 +558,7 @@ export const createControlApi = (
                 break;
             }
             case 'joined': {
-                transaction.setMeta(APPENDED_TRANSACTION_META, turnState.first);
+                transaction.setMeta(APPENDED_TRANSACTION, turnState.first);
                 break;
             }
         }
