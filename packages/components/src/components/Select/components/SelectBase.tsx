@@ -161,6 +161,12 @@ const SelectBaseInput = (
         [getItemByValue, showStringValue],
     );
 
+    let defaultHighlightedIndex: number | undefined;
+    const selectedIndex = items.findIndex((item) => item.value === selectedItemValues[0]);
+    if (!multiple && selectedIndex !== -1) {
+        defaultHighlightedIndex = selectedIndex;
+    }
+
     const { getToggleButtonProps, getMenuProps, getItemProps, reset, isOpen, highlightedIndex } = useSelect<{
         value: string;
         label: string;
@@ -168,6 +174,7 @@ const SelectBaseInput = (
     }>({
         items,
         selectedItem: null,
+        defaultHighlightedIndex,
         toggleButtonId: id,
         labelId: 'aria-labelledby' in props ? props['aria-labelledby'] : undefined,
         onIsOpenChange: ({ isOpen }) => {
@@ -177,33 +184,45 @@ const SelectBaseInput = (
         onHighlightedIndexChange: () => {
             setHasInteractedSinceOpening(true);
         },
-        onSelectedItemChange: ({ selectedItem }) => {
+        onSelectedItemChange: ({ selectedItem, type }) => {
+            // A blur on the option already chosen is no pick
+            if (type === useSelect.stateChangeTypes.ToggleButtonBlur && selectedItem?.value === selectedItemValues[0]) {
+                return;
+            }
+
             onItemSelect(selectedItem?.value);
         },
         itemToString: (item) => (item ? item.label : ''),
-        ...(multiple
-            ? {
-                  stateReducer: (state, actionAndChanges) => {
-                      const { changes, type } = actionAndChanges;
-                      switch (type) {
-                          case useSelect.stateChangeTypes.ToggleButtonKeyDownEnter:
-                          case useSelect.stateChangeTypes.ToggleButtonKeyDownSpaceButton:
-                          case useSelect.stateChangeTypes.ItemClick:
-                              return {
-                                  ...changes,
-                                  isOpen: true,
-                                  highlightedIndex: state.highlightedIndex,
-                              };
-                          case useSelect.stateChangeTypes.ToggleButtonBlur:
-                              return {
-                                  ...changes,
-                                  selectedItem: state.selectedItem,
-                              };
-                      }
-                      return changes;
-                  },
-              }
-            : {}),
+        stateReducer: (state, actionAndChanges) => {
+            const { changes, type } = actionAndChanges;
+
+            if (!multiple) {
+                // A closed list highlights nothing, so a later blur cannot commit a stale option
+                if (changes.isOpen) {
+                    return changes;
+                }
+
+                return { ...changes, highlightedIndex: -1 };
+            }
+
+            switch (type) {
+                case useSelect.stateChangeTypes.ToggleButtonKeyDownEnter:
+                case useSelect.stateChangeTypes.ToggleButtonKeyDownSpaceButton:
+                case useSelect.stateChangeTypes.ItemClick:
+                    return {
+                        ...changes,
+                        isOpen: true,
+                        highlightedIndex: state.highlightedIndex,
+                    };
+                case useSelect.stateChangeTypes.ToggleButtonBlur:
+                    return {
+                        ...changes,
+                        selectedItem: state.selectedItem,
+                    };
+            }
+
+            return changes;
+        },
     });
 
     const hasError = status === 'error';
@@ -289,6 +308,7 @@ const SelectBaseInput = (
                 hasInteractedSinceOpening={hasInteractedSinceOpening}
                 viewportCollisionPadding={viewportCollisionPadding}
                 onEscapeKeyDown={onEscapeKeyDown}
+                aria-label={props['aria-label']}
             >
                 {menuSlots}
             </SelectMenu>
