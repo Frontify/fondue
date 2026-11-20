@@ -10,8 +10,6 @@ import { type EmojiItem } from '../types';
 /** How long typing must pause before the count is announced, so a burst of keys is announced once. */
 const ANNOUNCE_DELAY_MS = 300;
 
-const NO_MATCHES = 'No matches';
-
 const useSettledQuery = (query: string): string => {
     const [settled, setSettled] = useState(query);
 
@@ -35,7 +33,7 @@ const statusOf = (query: string, count: number): string => {
         return '';
     }
     if (count === 0) {
-        return NO_MATCHES;
+        return 'No matches';
     }
     return resultCount(count);
 };
@@ -91,13 +89,11 @@ export const EmojiPicker = ({
                     }
                 }}
             />
-            <span role="status" className={styles.visuallyHidden}>
-                {statusOf(settledQuery, settledMatches.length)}
-            </span>
+            <output className={styles.visuallyHidden}>{statusOf(settledQuery, settledMatches.length)}</output>
             <div className={styles.sections}>
                 {searching ? (
                     matches.length === 0 ? (
-                        <div className={styles.empty}>{NO_MATCHES}</div>
+                        <div className={styles.empty}>No matches</div>
                     ) : (
                         <div role="group" aria-label="Search results" className={styles.grid}>
                             {matches.map((item) => (

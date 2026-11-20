@@ -92,7 +92,7 @@ describe('the emoji picker', () => {
         vi.useFakeTimers();
         teardown.push(() => vi.useRealTimers());
         const { container, type } = mountPicker();
-        const status = (): string => container.querySelector('[role="status"]')?.textContent ?? '';
+        const status = (): string => container.querySelector('output')?.textContent ?? '';
 
         type('s');
         type('sm');
