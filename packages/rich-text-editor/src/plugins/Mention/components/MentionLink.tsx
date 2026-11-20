@@ -8,23 +8,23 @@ import { type MentionDisplay, mentionAttributes } from '../helpers/display';
 import styles from '../mention.module.scss';
 import { type MentionValue } from '../types';
 
-/** In the editor a click places the caret; the link is followed only when reading. */
-const placeCaretInEditor = (event: MouseEvent<HTMLAnchorElement>): void => {
-    if (event.currentTarget.closest('[contenteditable="true"]') !== null) {
-        event.preventDefault();
-    }
-};
-
 type MentionLinkProps = {
     value: MentionValue;
     display: MentionDisplay;
+    placesCaret: boolean;
 };
 
 /**
  * A finished mention: the shown username linking to the person, name on hover. Carries the same attributes as
  * `toHtml`.
  */
-export const MentionLink = ({ value, display }: MentionLinkProps): ReactNode => {
+export const MentionLink = ({ value, display, placesCaret }: MentionLinkProps): ReactNode => {
+    const followLinkOnlyWhenReading = (event: MouseEvent<HTMLAnchorElement>): void => {
+        if (placesCaret) {
+            event.preventDefault();
+        }
+    };
+
     const attributes = {
         title: display.title,
         ...mentionAttributes(value),
@@ -40,7 +40,7 @@ export const MentionLink = ({ value, display }: MentionLinkProps): ReactNode => 
     let element = <span {...attributes}>{name}</span>;
     if (display.href !== undefined) {
         element = (
-            <a href={display.href} {...attributes} onClick={placeCaretInEditor}>
+            <a href={display.href} {...attributes} onClick={followLinkOnlyWhenReading}>
                 {name}
             </a>
         );
