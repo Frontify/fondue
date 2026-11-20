@@ -2,7 +2,9 @@
 
 // Mounted by maxRows.ct.tsx: a button before the editor to Tab in from, and a host box around it.
 
-import { RichTextEditor } from '../../index';
+import { useState } from 'react';
+
+import { RichTextEditor, type RichTextEditorProps, type RteDocument } from '../../index';
 import { tablePlugin, textStylePlugin } from '../../plugins';
 
 import styles from './MaxRowsFrame.module.scss';
@@ -16,14 +18,25 @@ const TABLE_AND_LONG_DOCUMENT = {
     blocks: [...TABLE_DOCUMENT.blocks, ...LONG_DOCUMENT.blocks],
 };
 
-export const MaxRowsFrame = () => (
-    <>
-        <button type="button">{BEFORE_BUTTON}</button>
-        <div data-test-id={HOST_TEST_ID} className={styles.host}>
-            <RichTextEditor value={LONG_DOCUMENT} maxRows={MAX_ROWS} />
-        </div>
-    </>
-);
+type MaxRowsFrameProps = Pick<RichTextEditorProps, 'toolbarPlacement'>;
+
+export const MaxRowsFrame = ({ toolbarPlacement }: MaxRowsFrameProps) => {
+    const [document, setDocument] = useState<RteDocument>(LONG_DOCUMENT);
+
+    return (
+        <>
+            <button type="button">{BEFORE_BUTTON}</button>
+            <div data-test-id={HOST_TEST_ID} className={styles.host}>
+                <RichTextEditor
+                    value={document}
+                    onChange={setDocument}
+                    maxRows={MAX_ROWS}
+                    toolbarPlacement={toolbarPlacement}
+                />
+            </div>
+        </>
+    );
+};
 
 /** The same host box around a read-only editor holding a table: only the read-only table wrapper is a tab stop, and takes a focus outline. */
 export const MaxRowsTableFrame = () => (

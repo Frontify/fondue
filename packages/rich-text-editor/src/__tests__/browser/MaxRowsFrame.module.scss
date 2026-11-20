@@ -15,3 +15,12 @@
         border-color: var(--color-line-strong);
     }
 }
+
+// A classic scrollbar with a width: overlay and hidden ones leave nothing for a test to press.
+.host *::-webkit-scrollbar {
+    width: 15px;
+}
+
+.host *::-webkit-scrollbar-thumb {
+    background-color: var(--color-line-strong);
+}

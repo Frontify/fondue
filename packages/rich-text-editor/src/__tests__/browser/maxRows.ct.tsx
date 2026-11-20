@@ -13,11 +13,28 @@ const TYPED_LINES = 12;
 const KEYBOARD_FOCUS = 'data-keyboard-focus';
 const TOOLBAR_HOTKEY = 'Alt+F10';
 
+/** From the content's right edge and top, where the scrollbar's thumb starts, in pixels. */
+const SCROLLBAR_GRAB_OFFSET = 4;
+
+/** How far the thumb is dragged, in pixels. */
+const SCROLLBAR_DRAG_BY = 30;
+
 /** Clear of the toolbar's bottom edge, inside the gap that separates it from the text. */
 const GAP_BELOW_TOOLBAR = 3;
 
 // The editable's parent is the editor's mount, which carries the mark.
 const MOUNT_OF_EDITABLE = '..';
+
+/** Focuses the editable with the caret at the end of its last paragraph, whatever the platform's end-of-document key is. */
+const putCaretAtEnd = async (editable: Locator): Promise<void> => {
+    await editable.focus();
+    await editable.evaluate((node) => {
+        const lastParagraph = node.lastElementChild as Element;
+        const selection = window.getSelection() as Selection;
+        selection.selectAllChildren(lastParagraph);
+        selection.collapseToEnd();
+    });
+};
 
 /** Sub-pixel rounding of the line height, in pixels. */
 const ROUNDING_TOLERANCE = 1;
@@ -68,8 +85,7 @@ test.describe('maxRows', () => {
         await mount(<MaxRowsFrame />);
         const editable = page.getByRole('textbox');
 
-        await editable.click();
-        await page.keyboard.press('ControlOrMeta+End');
+        await putCaretAtEnd(editable);
         for (let line = 1; line <= TYPED_LINES; line++) {
             await page.keyboard.press('Enter');
             await page.keyboard.type(`New line ${line}`);
@@ -210,6 +226,111 @@ test.describe('the keyboard focus mark', () => {
         await editable.getByText('Paragraph 2', { exact: true }).click();
 
         await expect(mark).toHaveAttribute(KEYBOARD_FOCUS, 'false');
+    });
+});
+
+/** How far the floating UI may lag the text it follows, in pixels. */
+const FOLLOW_TOLERANCE = 3;
+
+/** How far the content is scrolled, in pixels: enough to see, less than the room above the selection. */
+const SCROLL_BY = 40;
+
+/** The paragraph the selection and the caret are put in: inside the first rows, with room above it for the floating UI. */
+const FOLLOWED_PARAGRAPH = 'Paragraph 5';
+
+/** Scrolls the content and waits for the frame after, which is when the page lays the new position out. */
+const scrollContentBy = async (editable: Locator, amount: number): Promise<void> => {
+    await editable.evaluate(async (node, by) => {
+        node.scrollTop += by;
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+    }, amount);
+};
+
+const topOf = async (locator: Locator): Promise<number> => {
+    const box = await locator.boundingBox();
+    expect(box).not.toBeNull();
+    return box?.y ?? Number.NaN;
+};
+
+/** The top of a floating element once it has stopped moving: it is placed a frame or two after it appears. */
+const settledTopOf = async (page: Page, locator: Locator): Promise<number> => {
+    let previous = Number.NaN;
+    let current = await topOf(locator);
+    while (current !== previous) {
+        previous = current;
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+        current = await topOf(locator);
+    }
+    return current;
+};
+
+test.describe('floating UI under maxRows', () => {
+    test('the floating toolbar follows the selection while the content scrolls', async ({ mount, page }) => {
+        await mount(<MaxRowsFrame toolbarPlacement="floating" />);
+        const editable = page.getByRole('textbox');
+        const toolbar = page.getByRole('toolbar');
+
+        await editable.getByText(FOLLOWED_PARAGRAPH, { exact: true }).dblclick();
+        await expect(toolbar).toBeVisible();
+        const before = await settledTopOf(page, toolbar);
+
+        await scrollContentBy(editable, SCROLL_BY);
+
+        await expect
+            .poll(async () => Math.abs((await topOf(toolbar)) - (before - SCROLL_BY)))
+            .toBeLessThanOrEqual(FOLLOW_TOLERANCE);
+    });
+
+    test('the slash menu follows the caret while the content scrolls', async ({ mount, page }) => {
+        await mount(<MaxRowsFrame />);
+        const editable = page.getByRole('textbox');
+
+        await putCaretAtEnd(editable);
+        await page.keyboard.press('Enter');
+        await page.keyboard.type('/');
+        const menu = page.getByRole('listbox');
+        await expect(menu).toBeVisible();
+        await expect(menu).toBeInViewport();
+        const before = await settledTopOf(page, menu);
+
+        // Up: the caret is at the bottom of the content, so there is room to scroll back.
+        await scrollContentBy(editable, -SCROLL_BY);
+
+        await expect
+            .poll(async () => Math.abs((await topOf(menu)) - (before + SCROLL_BY)))
+            .toBeLessThanOrEqual(FOLLOW_TOLERANCE);
+    });
+
+    test('the floating toolbar comes back after the content scrollbar is dragged', async ({
+        mount,
+        page,
+        browserName,
+    }) => {
+        test.skip(
+            browserName === 'chromium',
+            'Chromium here draws overlay or hidden scrollbars, which a mouse cannot press',
+        );
+        await mount(<MaxRowsFrame toolbarPlacement="floating" />);
+        const editable = page.getByRole('textbox');
+        const toolbar = page.getByRole('toolbar');
+
+        await editable.getByText(FOLLOWED_PARAGRAPH, { exact: true }).dblclick();
+        await expect(toolbar).toBeVisible();
+        const box = await editable.boundingBox();
+        expect(box).not.toBeNull();
+        const scrollbarX = (box?.x ?? 0) + (box?.width ?? 0) - SCROLLBAR_GRAB_OFFSET;
+        const thumbTop = (box?.y ?? 0) + SCROLLBAR_GRAB_OFFSET;
+
+        await page.mouse.move(scrollbarX, thumbTop);
+        await page.mouse.down();
+        await page.mouse.move(scrollbarX, thumbTop + SCROLLBAR_DRAG_BY, { steps: 5 });
+        await page.mouse.up();
+
+        // The drag has to have reached the scrollbar, or it proves nothing.
+        expect(await editable.evaluate((node) => node.scrollTop)).toBeGreaterThan(0);
+        await expect(toolbar).toBeVisible();
     });
 });
 
