@@ -2,7 +2,7 @@
 
 // Mounted by toolbarDividers.ct.tsx.
 
-import { type ReactNode } from 'react';
+import { createContext, type ReactNode, useContext } from 'react';
 
 import { definePlugin, RichTextEditor, type RichTextEditorProps } from '../../index';
 import {
@@ -16,9 +16,9 @@ import {
 } from '../../plugins';
 
 import { TABLE_DOCUMENT } from './tableCellValues';
-import { PANEL_LABEL, TEXT_ONLY_DOCUMENT } from './toolbarDividersValues';
+import { BLANK_LABEL, PANEL_LABEL, TEXT_ONLY_DOCUMENT } from './toolbarDividersValues';
 
-// A group drawn after the table's own, so the table's group sits between two others.
+/** A group drawn after the table's own, so the table's group sits between two others. */
 const panelPlugin = () =>
     definePlugin({
         id: 'panel',
@@ -28,47 +28,90 @@ const panelPlugin = () =>
         ],
     });
 
-const PLUGINS = [
+const BlankDrawsContext = createContext(false);
+BlankDrawsContext.displayName = 'BlankDrawsContext';
+
+const BlankControl = (): ReactNode => {
+    const draws = useContext(BlankDrawsContext);
+    if (!draws) {
+        return null;
+    }
+
+    return <button type="button">{BLANK_LABEL}</button>;
+};
+
+/** A control the host can make draw nothing, in a group between the formatting groups and the panel. */
+const blankPlugin = () =>
+    definePlugin({
+        id: 'blank',
+        toolbarGroup: 'insert',
+        toolbar: [{ label: BLANK_LABEL, render: () => <BlankControl />, floating: 'inline' }],
+    });
+
+const FORMATTING_PLUGINS = [
     boldPlugin(),
     italicPlugin(),
     underlinePlugin(),
     linkPlugin(),
     bulletListPlugin(),
     numberedListPlugin(),
-    tablePlugin(),
 ];
 
-const PLUGINS_WITH_PANEL = [...PLUGINS, panelPlugin()];
+const TABLE_PLUGINS = [...FORMATTING_PLUGINS, tablePlugin()];
 
-type ToolbarDividersHostProps = {
+const TABLE_PLUGINS_WITH_PANEL = [...TABLE_PLUGINS, panelPlugin()];
+
+const BLANK_PLUGINS = [...FORMATTING_PLUGINS, blankPlugin(), panelPlugin()];
+
+type ToolbarDividersHostBaseProps = {
     placement: NonNullable<RichTextEditorProps['toolbarPlacement']>;
-    /** Adds a group after the table's, which draws something wherever the table's does not. */
-    withPanel?: boolean;
-    /** Shows a document with no table instead, as a host pushing a new value would. */
-    withoutTable?: boolean;
     /** The width of the editor in pixels, so the toolbar can be made to overflow. */
     width?: number;
 };
 
-/** The editor with the formatting plugins and the table, over a paragraph and a table. */
-export const ToolbarDividersHost = ({
-    placement,
-    withPanel = false,
-    withoutTable = false,
-    width,
-}: ToolbarDividersHostProps): ReactNode => {
-    let plugins = PLUGINS;
-    if (withPanel) {
-        plugins = PLUGINS_WITH_PANEL;
-    }
-    let value = TABLE_DOCUMENT;
-    if (withoutTable) {
-        value = TEXT_ONLY_DOCUMENT;
-    }
+type TableHostProps = ToolbarDividersHostBaseProps & {
+    controls: 'table';
+    /** Adds a group after the table's, which draws something wherever the table's does not. */
+    withPanel?: boolean;
+};
 
-    return (
-        <div style={{ width }}>
-            <RichTextEditor value={value} plugins={plugins} toolbarPlacement={placement} />
-        </div>
-    );
+type BlankHostProps = ToolbarDividersHostBaseProps & {
+    controls: 'blank';
+    /** Whether the blank control draws a button or nothing. */
+    blankDraws: boolean;
+};
+
+type ToolbarDividersHostProps = TableHostProps | BlankHostProps;
+
+/**
+ * The editor over a paragraph, with either the formatting plugins and the table over a table document,
+ * or the formatting plugins and a control the host can make draw nothing.
+ */
+export const ToolbarDividersHost = (props: ToolbarDividersHostProps): ReactNode => {
+    switch (props.controls) {
+        case 'table': {
+            let plugins = TABLE_PLUGINS;
+            if (props.withPanel) {
+                plugins = TABLE_PLUGINS_WITH_PANEL;
+            }
+
+            return (
+                <div style={{ width: props.width }}>
+                    <RichTextEditor value={TABLE_DOCUMENT} plugins={plugins} toolbarPlacement={props.placement} />
+                </div>
+            );
+        }
+        case 'blank':
+            return (
+                <BlankDrawsContext.Provider value={props.blankDraws}>
+                    <div style={{ width: props.width }}>
+                        <RichTextEditor
+                            value={TEXT_ONLY_DOCUMENT}
+                            plugins={BLANK_PLUGINS}
+                            toolbarPlacement={props.placement}
+                        />
+                    </div>
+                </BlankDrawsContext.Provider>
+            );
+    }
 };

@@ -3,6 +3,7 @@
 import { Divider } from '@frontify/fondue-components';
 import {
     Fragment,
+    type HTMLAttributes,
     type MutableRefObject,
     type ReactNode,
     useCallback,
@@ -239,20 +240,6 @@ const layoutOf = (groups: SlotGroup<ToolbarEntry>[], fit: ToolbarFit): ToolbarLa
     }
 };
 
-type ToolbarSlotProps = {
-    item: ToolbarEntry;
-    itemProps: ToolbarItemProps;
-    /** Set when the control drew nothing: the slot stays mounted and takes no place. */
-    hidden: boolean;
-};
-
-/** An element per slot, so the row can measure what each plugin drew. */
-const ToolbarSlot = ({ item, itemProps, hidden }: ToolbarSlotProps): ReactNode => (
-    <div className={styles.slot} hidden={hidden} {...{ [SLOT_ATTRIBUTE]: item.key }}>
-        <ToolbarItemSlot item={item} itemProps={itemProps} />
-    </div>
-);
-
 type ToolbarItemSlotProps = {
     item: ToolbarEntry;
     itemProps: ToolbarItemProps;
@@ -282,3 +269,12 @@ const ToolbarItemSlot = ({ item, itemProps }: ToolbarItemSlotProps): ReactNode =
         }
     }
 };
+
+type ToolbarSlotProps = ToolbarItemSlotProps & Required<Pick<HTMLAttributes<HTMLDivElement>, 'hidden'>>;
+
+/** An element per slot, so the row can measure what each plugin drew; `hidden` is set when the control drew nothing. */
+const ToolbarSlot = ({ item, itemProps, hidden }: ToolbarSlotProps): ReactNode => (
+    <div className={styles.slot} hidden={hidden} {...{ [SLOT_ATTRIBUTE]: item.key }}>
+        <ToolbarItemSlot item={item} itemProps={itemProps} />
+    </div>
+);

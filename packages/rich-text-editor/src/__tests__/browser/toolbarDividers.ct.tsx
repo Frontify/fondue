@@ -5,7 +5,7 @@ import { type Page } from '@playwright/test';
 
 import { FIRST_IN_CELL } from './tableCellValues';
 import { ToolbarDividersHost } from './ToolbarDividersHost';
-import { PANEL_LABEL } from './toolbarDividersValues';
+import { BLANK_LABEL, PANEL_LABEL } from './toolbarDividersValues';
 
 // A control that draws nothing takes no place in the toolbar, and gets no divider.
 
@@ -60,7 +60,7 @@ const expectDividersBetweenSections = (row: readonly Part[]): void => {
 
 test.describe('toolbar dividers', () => {
     test('the top toolbar draws no divider after the last group that shows a control', async ({ mount, page }) => {
-        await mount(<ToolbarDividersHost placement="top" />);
+        await mount(<ToolbarDividersHost controls="table" placement="top" />);
         await page.getByRole('textbox').getByText('Before').click();
         await expect(page.getByRole('button', { name: 'Bulleted list' })).toBeVisible();
 
@@ -70,7 +70,7 @@ test.describe('toolbar dividers', () => {
     });
 
     test('the table menu shows in a table cell, after a divider', async ({ mount, page }) => {
-        await mount(<ToolbarDividersHost placement="top" />);
+        await mount(<ToolbarDividersHost controls="table" placement="top" />);
         await page.getByRole('textbox').getByText(FIRST_IN_CELL).click();
 
         await expect(page.getByRole('toolbar').getByRole('button', { name: 'Table' })).toBeVisible();
@@ -81,7 +81,7 @@ test.describe('toolbar dividers', () => {
     });
 
     test('a group that draws nothing between two that do gets no doubled divider', async ({ mount, page }) => {
-        await mount(<ToolbarDividersHost placement="top" withPanel />);
+        await mount(<ToolbarDividersHost controls="blank" placement="top" blankDraws={false} />);
         await page.getByRole('textbox').getByText('Before').click();
         await expect(page.getByRole('button', { name: PANEL_LABEL })).toBeVisible();
 
@@ -89,10 +89,11 @@ test.describe('toolbar dividers', () => {
             .poll(() => rowOf(page))
             .toEqual(['group', 'separator', 'group', 'separator', 'group', 'separator', 'group']);
         expectDividersBetweenSections(await rowOf(page));
+        await expect(page.getByRole('toolbar').getByRole('button', { name: BLANK_LABEL })).toHaveCount(0);
     });
 
     test('the group comes back between its neighbours when the caret enters a table', async ({ mount, page }) => {
-        await mount(<ToolbarDividersHost placement="top" withPanel />);
+        await mount(<ToolbarDividersHost controls="table" placement="top" withPanel />);
         await page.getByRole('textbox').getByText('Before').click();
         await expect(page.getByRole('button', { name: PANEL_LABEL })).toBeVisible();
         const withoutTable = await rowOf(page);
@@ -109,25 +110,29 @@ test.describe('toolbar dividers', () => {
         expectDividersBetweenSections(await rowOf(page));
     });
 
-    test('a control behind More keeps focus when the table control stops drawing', async ({ mount, page }) => {
+    test('a control behind More keeps focus when another control stops drawing', async ({ mount, page }) => {
         // So narrow that every control is behind More.
-        const component = await mount(<ToolbarDividersHost placement="top" width={NARROW_WIDTH} />);
-        await page.getByRole('textbox').getByText(FIRST_IN_CELL).click();
+        const component = await mount(
+            <ToolbarDividersHost controls="blank" placement="top" width={NARROW_WIDTH} blankDraws />,
+        );
+        await page.getByRole('textbox').getByText('Before').click();
         await page.keyboard.press('Alt+F10');
         await page.keyboard.press('Enter');
         const panel = page.getByRole('toolbar', { name: 'More' });
         const bold = panel.getByRole('button', { name: 'Bold' });
         await bold.focus();
-        await expect(panel.getByRole('button', { name: 'Table' })).toBeVisible();
+        await expect(panel.getByRole('button', { name: BLANK_LABEL })).toBeVisible();
 
-        await component.update(<ToolbarDividersHost placement="top" width={NARROW_WIDTH} withoutTable />);
+        await component.update(
+            <ToolbarDividersHost controls="blank" placement="top" width={NARROW_WIDTH} blankDraws={false} />,
+        );
 
-        await expect(panel.getByRole('button', { name: 'Table' })).toHaveCount(0);
+        await expect(panel.getByRole('button', { name: BLANK_LABEL })).toHaveCount(0);
         await expect(bold).toBeFocused();
     });
 
     test('the floating bar draws no divider after the last group that shows a control', async ({ mount, page }) => {
-        await mount(<ToolbarDividersHost placement="floating" />);
+        await mount(<ToolbarDividersHost controls="table" placement="floating" />);
         await page.getByRole('textbox').getByText('Before').click();
         await page.keyboard.press('Home');
         await page.keyboard.press('Shift+End');
