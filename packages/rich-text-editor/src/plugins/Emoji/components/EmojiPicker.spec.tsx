@@ -88,6 +88,34 @@ describe('the emoji picker', () => {
         expect(container.textContent).toContain('No matches');
     });
 
+    it('announces the result count once typing pauses', () => {
+        vi.useFakeTimers();
+        teardown.push(() => vi.useRealTimers());
+        const { container, type } = mountPicker();
+        const status = (): string => container.querySelector('output')?.textContent ?? '';
+
+        type('s');
+        type('sm');
+        expect(status()).toBe('');
+
+        act(() => {
+            vi.advanceTimersByTime(300);
+        });
+        expect(status()).toBe('2 results');
+
+        type('dog');
+        act(() => {
+            vi.advanceTimersByTime(300);
+        });
+        expect(status()).toBe('1 result');
+
+        type('zz');
+        act(() => {
+            vi.advanceTimersByTime(300);
+        });
+        expect(status()).toBe('No matches');
+    });
+
     it('picks an emoji on a click', () => {
         const { container, onPick } = mountPicker();
 
