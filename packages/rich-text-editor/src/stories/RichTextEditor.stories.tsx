@@ -69,7 +69,7 @@ const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-lin
 const ERROR_FRAME_STYLE: CSSProperties = { borderColor: 'var(--color-error-default)' };
 
 /** A host's form field: its label, the field box and the message under it. */
-const FIELD = 'tw-flex tw-flex-col tw-gap-2 tw-max-w-xl';
+const FIELD = 'tw-flex tw-flex-col tw-gap-2 tw-max-w-xl tw-p-4 tw-font-primary';
 const FIELD_LABEL = 'tw-body-small tw-text-primary';
 const FIELD_ERROR = 'tw-m-0 tw-body-small';
 const FIELD_ERROR_STYLE: CSSProperties = { color: 'var(--color-error-default)' };
