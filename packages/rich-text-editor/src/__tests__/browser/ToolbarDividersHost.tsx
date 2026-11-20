@@ -4,6 +4,7 @@
 
 import { createContext, type ReactNode, useContext } from 'react';
 
+import { RTE_TOOLBAR_GROUPS, type RteToolbarGroup } from '../../core';
 import { definePlugin, RichTextEditor, type RichTextEditorProps } from '../../index';
 import {
     boldPlugin,
@@ -40,11 +41,11 @@ const BlankControl = (): ReactNode => {
     return <button type="button">{BLANK_LABEL}</button>;
 };
 
-/** A control the host can make draw nothing, in a group between the formatting groups and the panel. */
-const blankPlugin = () =>
+/** A control the host can make draw nothing, in the given group. */
+const blankPlugin = (toolbarGroup: RteToolbarGroup) =>
     definePlugin({
         id: 'blank',
-        toolbarGroup: 'insert',
+        toolbarGroup,
         toolbar: [{ label: BLANK_LABEL, render: () => <BlankControl />, floating: 'inline' }],
     });
 
@@ -61,12 +62,14 @@ const TABLE_PLUGINS = [...FORMATTING_PLUGINS, tablePlugin()];
 
 const TABLE_PLUGINS_WITH_PANEL = [...TABLE_PLUGINS, panelPlugin()];
 
-const BLANK_PLUGINS = [...FORMATTING_PLUGINS, blankPlugin(), panelPlugin()];
+/** The blank control in a group between the formatting groups and the panel. */
+const BLANK_PLUGINS = [...FORMATTING_PLUGINS, blankPlugin('insert'), panelPlugin()];
+
+/** The blank control in the first group of the toolbar, before the formatting groups. */
+const BLANK_FIRST_GROUP_PLUGINS = [...FORMATTING_PLUGINS, blankPlugin(RTE_TOOLBAR_GROUPS[0]), panelPlugin()];
 
 type ToolbarDividersHostBaseProps = {
     placement: NonNullable<RichTextEditorProps['toolbarPlacement']>;
-    /** The width of the editor in pixels, so the toolbar can be made to overflow. */
-    width?: number;
 };
 
 type TableHostProps = ToolbarDividersHostBaseProps & {
@@ -79,6 +82,11 @@ type BlankHostProps = ToolbarDividersHostBaseProps & {
     controls: 'blank';
     /** Whether the blank control draws a button or nothing. */
     blankDraws: boolean;
+    /**
+     * Puts the blank control in the toolbar's first group instead of a middle one.
+     * @default false
+     */
+    blankInFirstGroup?: boolean;
 };
 
 type ToolbarDividersHostProps = TableHostProps | BlankHostProps;
@@ -95,23 +103,19 @@ export const ToolbarDividersHost = (props: ToolbarDividersHostProps): ReactNode 
                 plugins = TABLE_PLUGINS_WITH_PANEL;
             }
 
-            return (
-                <div style={{ width: props.width }}>
-                    <RichTextEditor value={TABLE_DOCUMENT} plugins={plugins} toolbarPlacement={props.placement} />
-                </div>
-            );
+            return <RichTextEditor value={TABLE_DOCUMENT} plugins={plugins} toolbarPlacement={props.placement} />;
         }
-        case 'blank':
+        case 'blank': {
+            let plugins = BLANK_PLUGINS;
+            if (props.blankInFirstGroup) {
+                plugins = BLANK_FIRST_GROUP_PLUGINS;
+            }
+
             return (
                 <BlankDrawsContext.Provider value={props.blankDraws}>
-                    <div style={{ width: props.width }}>
-                        <RichTextEditor
-                            value={TEXT_ONLY_DOCUMENT}
-                            plugins={BLANK_PLUGINS}
-                            toolbarPlacement={props.placement}
-                        />
-                    </div>
+                    <RichTextEditor value={TEXT_ONLY_DOCUMENT} plugins={plugins} toolbarPlacement={props.placement} />
                 </BlankDrawsContext.Provider>
             );
+        }
     }
 };

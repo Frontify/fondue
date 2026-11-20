@@ -3,7 +3,6 @@
 import { Divider } from '@frontify/fondue-components';
 import {
     Fragment,
-    type HTMLAttributes,
     type MutableRefObject,
     type ReactNode,
     useCallback,
@@ -28,7 +27,6 @@ import { type GroupSplit, type SlotGroup, splitGroups } from '../helpers/toolbar
 import { toolbarItemProps } from '../helpers/toolbarItem';
 import { GROUP_ATTRIBUTE, SEPARATOR_ATTRIBUTE, SLOT_ATTRIBUTE } from '../helpers/toolbarMarkers';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
-import { useEmptySlots } from '../hooks/useEmptySlots';
 import { type ToolbarFit, useToolbarFit } from '../hooks/useToolbarFit';
 import { useToolbarRoving } from '../hooks/useToolbarRoving';
 import { type RichTextEditorLabels } from '../labels';
@@ -83,7 +81,7 @@ type ToolbarProps = {
  * The top row is one line: the plugins' controls that do not fit move behind a
  * More button at its end.
  *
- * A control that draws nothing is hidden in place and gets no divider.
+ * A control that draws nothing takes no place; the stylesheet shows a divider only between sections that draw.
  */
 export const Toolbar = ({
     items: allItems,
@@ -105,28 +103,20 @@ export const Toolbar = ({
     const turnInto = floating ? turnIntoCommands(commands) : [];
     // The built-in Text alone is nothing to turn into.
     const showTurnInto = turnInto.length > 1;
-    const emptySlots = useEmptySlots({ toolbarRef, panel });
     const groups = groupsOf(items);
     // Before the roving focus, whose layout effect then honours a refocus the refit asked for.
     const fit = useToolbarFit({ toolbarRef, panel, groups, fits: !floating, focusRequestRef });
     const roving = useToolbarRoving({ toolbarRef, focusRequestRef, onEscape: () => api.focus() });
     const { row, overflow, more } = layoutOf(groups, fit);
 
-    const drawGroups = (shown: readonly SlotGroup<ToolbarEntry>[]): ReactNode =>
-        shown.map((group) => (
-            <div
-                key={group.key}
-                className={styles.group}
-                hidden={!groupDraws(group, emptySlots)}
-                {...{ [GROUP_ATTRIBUTE]: '' }}
-            >
+    const drawGroups = (drawn: readonly SlotGroup<ToolbarEntry>[]): ReactNode =>
+        drawn.map((group) => (
+            <div key={group.key} className={styles.group} {...{ [GROUP_ATTRIBUTE]: '' }}>
                 {group.items.map((item) => (
-                    <ToolbarSlot
-                        key={item.key}
-                        item={item}
-                        itemProps={toolbarItemProps(item, api, selection)}
-                        hidden={emptySlots.has(item.key)}
-                    />
+                    // An element per slot, so the row can measure what each plugin drew.
+                    <div key={item.key} className={styles.slot} {...{ [SLOT_ATTRIBUTE]: item.key }}>
+                        <ToolbarItemSlot item={item} itemProps={toolbarItemProps(item, api, selection)} />
+                    </div>
                 ))}
             </div>
         ));
@@ -148,25 +138,20 @@ export const Toolbar = ({
         sections.push({
             key: 'turn-into',
             node: <TurnInto api={api} commands={turnInto} selection={selection} labels={labels} />,
-            draws: true,
         });
     }
     for (const group of row) {
-        sections.push({ key: group.key, node: drawGroups([group]), draws: groupDraws(group, emptySlots) });
+        sections.push({ key: group.key, node: drawGroups([group]) });
     }
     if (moreNode !== null) {
-        sections.push({ key: 'more', node: moreNode, draws: true });
+        sections.push({ key: 'more', node: moreNode });
     }
     const rowChildren: ReactNode[] = [];
-    let drawingSectionBefore = false;
-    for (const section of sections) {
-        if (section.draws && drawingSectionBefore) {
+    for (const [index, section] of sections.entries()) {
+        if (index > 0) {
             rowChildren.push(<ToolbarSeparator key={`separator-${section.key}`} />);
         }
         rowChildren.push(<Fragment key={section.key}>{section.node}</Fragment>);
-        if (section.draws) {
-            drawingSectionBefore = true;
-        }
     }
 
     return (
@@ -190,18 +175,7 @@ export const Toolbar = ({
     );
 };
 
-/** `draws` is false for a section that shows nothing: it stays in the row, hidden, and gets no divider. */
-type ToolbarSection = { key: string; node: ReactNode; draws: boolean };
-
-/** Whether any control of the group drew something. */
-const groupDraws = (group: SlotGroup<ToolbarEntry>, emptySlots: ReadonlySet<string>): boolean => {
-    for (const item of group.items) {
-        if (!emptySlots.has(item.key)) {
-            return true;
-        }
-    }
-    return false;
-};
+type ToolbarSection = { key: string; node: ReactNode };
 
 /** The line between two sections of the row; a toolbar separator for assistive technology. */
 const ToolbarSeparator = (): ReactNode => (
@@ -269,12 +243,3 @@ const ToolbarItemSlot = ({ item, itemProps }: ToolbarItemSlotProps): ReactNode =
         }
     }
 };
-
-type ToolbarSlotProps = ToolbarItemSlotProps & Required<Pick<HTMLAttributes<HTMLDivElement>, 'hidden'>>;
-
-/** An element per slot, so the row can measure what each plugin drew; `hidden` is set when the control drew nothing. */
-const ToolbarSlot = ({ item, itemProps, hidden }: ToolbarSlotProps): ReactNode => (
-    <div className={styles.slot} hidden={hidden} {...{ [SLOT_ATTRIBUTE]: item.key }}>
-        <ToolbarItemSlot item={item} itemProps={itemProps} />
-    </div>
-);

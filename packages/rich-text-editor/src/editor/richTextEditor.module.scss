@@ -59,6 +59,12 @@ $separator-size: 2rem;
         background-color: var(--color-surface-default);
     }
 
+    /** A divider shows only between two sections that draw: one before it and one right after it. */
+    > :is(.group:has(> .slot:not(:empty)), :not(.group, .separator))
+        ~ .separator:is(:has(+ .group > .slot:not(:empty)), :has(+ :not(.group, .separator))) {
+        display: flex;
+    }
+
     @media print {
         display: none;
     }
@@ -71,9 +77,9 @@ $separator-size: 2rem;
     gap: var(--spacing-xx-small);
 }
 
-/** The divider between two groups of the row. */
+/** The divider between two groups of the row; hidden until the toolbar rule shows it. */
 .separator {
-    display: flex;
+    display: none;
     flex: none;
     block-size: $separator-size;
 }
@@ -85,9 +91,9 @@ $separator-size: 2rem;
     align-items: center;
 }
 
-/** A control that draws nothing, or a group of them, takes no place; its slot stays mounted to see when it draws again. */
-.group[hidden],
-.slot[hidden] {
+/** A control that draws nothing, or a group of only such controls, takes no place. */
+.slot:empty,
+.group:not(:has(> .slot:not(:empty))) {
     display: none;
 }
 

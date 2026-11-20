@@ -13,17 +13,15 @@ const SEPARATOR = '[data-toolbar-separator]';
 const GROUP = '[data-toolbar-group]';
 const SLOT = '[data-toolbar-slot]';
 
-const NARROW_WIDTH = 60;
-
 type Part = 'separator' | 'group' | 'empty-group' | 'other';
 
-/** What the toolbar draws in its row, in order; a hidden group takes no place and is left out. */
+/** What the toolbar draws in its row, in order; a part the stylesheet hides (`display: none`) takes no place and is left out. */
 const rowOf = async (page: Page): Promise<Part[]> =>
     page.getByRole('toolbar').evaluate(
         (toolbar, selectors) => {
             const parts: Part[] = [];
             for (const child of toolbar.children) {
-                if (child instanceof HTMLElement && child.hidden) {
+                if (getComputedStyle(child).display === 'none') {
                     continue;
                 }
                 if (child.matches(selectors.separator)) {
@@ -110,25 +108,34 @@ test.describe('toolbar dividers', () => {
         expectDividersBetweenSections(await rowOf(page));
     });
 
-    test('a control behind More keeps focus when another control stops drawing', async ({ mount, page }) => {
-        // So narrow that every control is behind More.
-        const component = await mount(
-            <ToolbarDividersHost controls="blank" placement="top" width={NARROW_WIDTH} blankDraws />,
-        );
+    test('a control that stops drawing on its own loses its group and divider', async ({ mount, page }) => {
+        const component = await mount(<ToolbarDividersHost controls="blank" placement="top" blankDraws />);
         await page.getByRole('textbox').getByText('Before').click();
-        await page.keyboard.press('Alt+F10');
-        await page.keyboard.press('Enter');
-        const panel = page.getByRole('toolbar', { name: 'More' });
-        const bold = panel.getByRole('button', { name: 'Bold' });
-        await bold.focus();
-        await expect(panel.getByRole('button', { name: BLANK_LABEL })).toBeVisible();
+        await expect(page.getByRole('toolbar').getByRole('button', { name: BLANK_LABEL })).toBeVisible();
+        await expect
+            .poll(() => rowOf(page))
+            .toEqual(['group', 'separator', 'group', 'separator', 'group', 'separator', 'group', 'separator', 'group']);
 
-        await component.update(
-            <ToolbarDividersHost controls="blank" placement="top" width={NARROW_WIDTH} blankDraws={false} />,
-        );
+        // Only the control re-renders, not the toolbar: the stylesheet alone drops its group and divider.
+        await component.update(<ToolbarDividersHost controls="blank" placement="top" blankDraws={false} />);
 
-        await expect(panel.getByRole('button', { name: BLANK_LABEL })).toHaveCount(0);
-        await expect(bold).toBeFocused();
+        await expect(page.getByRole('toolbar').getByRole('button', { name: BLANK_LABEL })).toHaveCount(0);
+        await expect
+            .poll(() => rowOf(page))
+            .toEqual(['group', 'separator', 'group', 'separator', 'group', 'separator', 'group']);
+        expectDividersBetweenSections(await rowOf(page));
+    });
+
+    test('a first group that draws nothing gets no divider before the next one', async ({ mount, page }) => {
+        await mount(<ToolbarDividersHost controls="blank" placement="top" blankDraws={false} blankInFirstGroup />);
+        await page.getByRole('textbox').getByText('Before').click();
+        await expect(page.getByRole('button', { name: PANEL_LABEL })).toBeVisible();
+
+        await expect
+            .poll(() => rowOf(page))
+            .toEqual(['group', 'separator', 'group', 'separator', 'group', 'separator', 'group']);
+        expectDividersBetweenSections(await rowOf(page));
+        await expect(page.getByRole('toolbar').getByRole('button', { name: BLANK_LABEL })).toHaveCount(0);
     });
 
     test('the floating bar draws no divider after the last group that shows a control', async ({ mount, page }) => {
