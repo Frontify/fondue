@@ -25,7 +25,11 @@ const panelPlugin = () =>
         id: 'panel',
         toolbarGroup: 'panels',
         toolbar: [
-            { label: PANEL_LABEL, render: () => <button type="button">{PANEL_LABEL}</button>, floating: 'inline' },
+            {
+                label: PANEL_LABEL,
+                render: () => <button type="button">{PANEL_LABEL}</button>,
+                floating: 'inline',
+            },
         ],
     });
 
@@ -46,7 +50,13 @@ const blankPlugin = (toolbarGroup: RteToolbarGroup) =>
     definePlugin({
         id: 'blank',
         toolbarGroup,
-        toolbar: [{ label: BLANK_LABEL, render: () => <BlankControl />, floating: 'inline' }],
+        toolbar: [
+            {
+                label: BLANK_LABEL,
+                render: () => <BlankControl />,
+                floating: 'inline',
+            },
+        ],
     });
 
 const FORMATTING_PLUGINS = [
@@ -60,8 +70,6 @@ const FORMATTING_PLUGINS = [
 
 const TABLE_PLUGINS = [...FORMATTING_PLUGINS, tablePlugin()];
 
-const TABLE_PLUGINS_WITH_PANEL = [...TABLE_PLUGINS, panelPlugin()];
-
 /** The blank control in a group between the formatting groups and the panel. */
 const BLANK_PLUGINS = [...FORMATTING_PLUGINS, blankPlugin('insert'), panelPlugin()];
 
@@ -74,8 +82,6 @@ type ToolbarDividersHostBaseProps = {
 
 type TableHostProps = ToolbarDividersHostBaseProps & {
     controls: 'table';
-    /** Adds a group after the table's, which draws something wherever the table's does not. */
-    withPanel?: boolean;
 };
 
 type BlankHostProps = ToolbarDividersHostBaseProps & {
@@ -98,12 +104,7 @@ type ToolbarDividersHostProps = TableHostProps | BlankHostProps;
 export const ToolbarDividersHost = (props: ToolbarDividersHostProps): ReactNode => {
     switch (props.controls) {
         case 'table': {
-            let plugins = TABLE_PLUGINS;
-            if (props.withPanel) {
-                plugins = TABLE_PLUGINS_WITH_PANEL;
-            }
-
-            return <RichTextEditor value={TABLE_DOCUMENT} plugins={plugins} toolbarPlacement={props.placement} />;
+            return <RichTextEditor value={TABLE_DOCUMENT} plugins={TABLE_PLUGINS} toolbarPlacement={props.placement} />;
         }
         case 'blank': {
             let plugins = BLANK_PLUGINS;

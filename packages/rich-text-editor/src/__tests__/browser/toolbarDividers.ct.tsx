@@ -11,6 +11,7 @@ import { BLANK_LABEL, PANEL_LABEL } from './toolbarDividersValues';
 
 const SEPARATOR = '[data-toolbar-separator]';
 const GROUP = '[data-toolbar-group]';
+const INSERT_TABLE_LABEL = 'Insert table';
 const SLOT = '[data-toolbar-slot]';
 
 type Part = 'separator' | 'group' | 'empty-group' | 'other';
@@ -57,14 +58,38 @@ const expectDividersBetweenSections = (row: readonly Part[]): void => {
 };
 
 test.describe('toolbar dividers', () => {
-    test('the top toolbar draws no divider after the last group that shows a control', async ({ mount, page }) => {
+    test('the top toolbar with the table plugin draws a divider only between groups, caret in a paragraph', async ({
+        mount,
+        page,
+    }) => {
         await mount(<ToolbarDividersHost controls="table" placement="top" />);
         await page.getByRole('textbox').getByText('Before').click();
         await expect(page.getByRole('button', { name: 'Bulleted list' })).toBeVisible();
 
-        await expect.poll(() => rowOf(page)).toEqual(['group', 'separator', 'group', 'separator', 'group']);
+        await expect
+            .poll(() => rowOf(page))
+            .toEqual(['group', 'separator', 'group', 'separator', 'group', 'separator', 'group']);
         expectDividersBetweenSections(await rowOf(page));
-        await expect(page.getByRole('toolbar').getByRole('button', { name: 'Table' })).toHaveCount(0);
+        await expect(page.getByRole('toolbar').getByRole('button', { name: INSERT_TABLE_LABEL })).toBeVisible();
+        await expect(page.getByRole('toolbar').getByRole('button', { name: 'Table', exact: true })).toHaveCount(0);
+
+        const insertGroupSlotsTakingSpace = await page.getByRole('toolbar').evaluate(
+            (toolbar, selectors) => {
+                const insertButton = [...toolbar.querySelectorAll('button')].find(
+                    (button) => button.getAttribute('aria-label') === selectors.label,
+                );
+                const group = insertButton?.closest(selectors.group);
+                if (!group) {
+                    return undefined;
+                }
+                return [...group.children]
+                    .filter((child) => getComputedStyle(child).display !== 'none')
+                    .map((child) => child.hasChildNodes());
+            },
+            { group: GROUP, label: INSERT_TABLE_LABEL },
+        );
+        expect(insertGroupSlotsTakingSpace).toBeDefined();
+        expect(insertGroupSlotsTakingSpace).not.toContain(false);
     });
 
     test('the table menu shows in a table cell, after a divider', async ({ mount, page }) => {
@@ -90,21 +115,22 @@ test.describe('toolbar dividers', () => {
         await expect(page.getByRole('toolbar').getByRole('button', { name: BLANK_LABEL })).toHaveCount(0);
     });
 
-    test('the group comes back between its neighbours when the caret enters a table', async ({ mount, page }) => {
-        await mount(<ToolbarDividersHost controls="table" placement="top" withPanel />);
+    test('a control that starts drawing on its own gets its group and divider back', async ({ mount, page }) => {
+        const component = await mount(<ToolbarDividersHost controls="blank" placement="top" blankDraws={false} />);
         await page.getByRole('textbox').getByText('Before').click();
         await expect(page.getByRole('button', { name: PANEL_LABEL })).toBeVisible();
-        const withoutTable = await rowOf(page);
+        const withoutBlank = await rowOf(page);
 
-        await page.getByRole('textbox').getByText(FIRST_IN_CELL).click();
+        // Only the control re-renders, not the toolbar: the stylesheet alone brings its group and divider back.
+        await component.update(<ToolbarDividersHost controls="blank" placement="top" blankDraws />);
 
-        await expect(page.getByRole('toolbar').getByRole('button', { name: 'Table' })).toBeVisible();
+        await expect(page.getByRole('toolbar').getByRole('button', { name: BLANK_LABEL })).toBeVisible();
         await expect
             .poll(async () => {
                 const row = await rowOf(page);
                 return row.length;
             })
-            .toBe(withoutTable.length + 2);
+            .toBe(withoutBlank.length + 2);
         expectDividersBetweenSections(await rowOf(page));
     });
 
