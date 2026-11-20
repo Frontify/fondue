@@ -29,9 +29,10 @@ export type ToolbarRoving = {
 /**
  * The toolbar pattern's keyboard model over whatever controls a toolbar holds:
  * the toolbar is one tab stop, the arrow keys (and Home/End) move between its
- * controls, Escape is `onEscape`'s. The controls are whatever the plugins
- * render, so the stops are found in the DOM and their `tabIndex` set there
- * after every render. Spread the handlers onto the toolbar element.
+ * controls, unless a control's own popup is open; Escape is `onEscape`'s. The
+ * controls are whatever the plugins render, so the stops are found in the DOM
+ * and their `tabIndex` set there after every render. Spread the handlers onto
+ * the toolbar element.
  */
 export const useToolbarRoving = ({ toolbarRef, focusRequestRef, onEscape }: UseToolbarRovingParams): ToolbarRoving => {
     // The stop the toolbar is entered at: the control used last. Kept by element
@@ -102,7 +103,7 @@ export const useToolbarRoving = ({ toolbarRef, focusRequestRef, onEscape }: UseT
         }
         // A layer that took Escape (an open tooltip) prevented it, and the first
         // Escape is its alone; so is a control's own open menu's.
-        if (event.key === 'Escape' && !event.defaultPrevented && target.getAttribute('aria-expanded') !== 'true') {
+        if (event.key === 'Escape' && !event.defaultPrevented && !hasOpenPopup(target)) {
             event.preventDefault();
             onEscape();
             return;
@@ -134,6 +135,11 @@ export const useToolbarRoving = ({ toolbarRef, focusRequestRef, onEscape }: UseT
             return;
         }
         event.preventDefault();
+        // The open popup keeps the key, but not its default: WebKit would move the text's selection and focus the text.
+        if (hasOpenPopup(target)) {
+            return;
+        }
+
         moveTo(stops, next);
     };
 
@@ -194,6 +200,9 @@ const controlsIn = (toolbar: HTMLElement): HTMLElement[] =>
     [...toolbar.querySelectorAll<HTMLElement>(CONTROLS)].filter(
         (control) => !control.matches(DISABLED) && control.closest(HIDDEN_SUBTREE) === null,
     );
+
+/** A control whose own popup is open: its keys are the popup's. */
+const hasOpenPopup = (target: HTMLElement): boolean => target.getAttribute('aria-expanded') === 'true';
 
 /** A text field keeps the arrow keys for its own caret. */
 const keepsArrowKeys = (target: HTMLElement): boolean =>

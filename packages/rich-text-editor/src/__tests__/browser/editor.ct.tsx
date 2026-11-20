@@ -2,7 +2,7 @@
 
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/experimental-ct-react';
-import { type Page } from '@playwright/test';
+import { type Locator, type Page } from '@playwright/test';
 
 import { RichTextEditor, RichTextRenderer, type RteDocument } from '../../index';
 
@@ -401,14 +401,13 @@ test.describe('accessibility', () => {
         expect(await violationsOf(page)).toEqual(symbolicHeadings);
     });
 
-    test("the text style menu has only Fondue Select's known axe violation", async ({ mount, page }) => {
+    test('the text style menu has no axe violations', async ({ mount, page }) => {
         await mount(<RichTextEditor />);
         await page.getByRole('textbox').click();
         await page.getByRole('combobox', { name: 'Text style' }).click();
         await expect(page.getByRole('option', { name: 'Heading 1' })).toBeVisible();
 
-        // Known (FP-792): Fondue's Select opens its list in a dialog without a name; its target is a generated id.
-        expect(await violationsOf(page)).toEqual([{ rule: 'aria-dialog-name', target: expect.any(String) }]);
+        expect(await violationsOf(page)).toEqual([]);
     });
 
     test('the text colour flyout has no axe violations', async ({ mount, page }) => {
@@ -475,5 +474,112 @@ test.describe('accessibility', () => {
         await expect(page.getByRole('dialog', { name: 'Emoji' })).toBeVisible();
 
         expect(await violationsOf(page)).toEqual([]);
+    });
+});
+
+const headingThreeDocument: RteDocument = {
+    version: 1,
+    blocks: [
+        { type: 'textStyle', style: 'heading3', children: [{ text: 'A heading' }] },
+        { type: 'paragraph', children: [{ text: 'A paragraph' }] },
+    ],
+};
+
+const openTextStyleList = async (page: Page): Promise<Locator> => {
+    await page.getByRole('textbox').locator('h3').click();
+    const combobox = page.getByRole('combobox', { name: 'Text style' });
+    await combobox.focus();
+    await page.keyboard.press('Enter');
+    await expect(combobox).toHaveAttribute('aria-expanded', 'true');
+    return combobox;
+};
+
+test.describe('text style list', () => {
+    test('keeps the list open and the style unchanged on ArrowRight and ArrowLeft', async ({ mount, page }) => {
+        await mount(<RichTextEditor value={headingThreeDocument} />);
+        const combobox = await openTextStyleList(page);
+        await page.keyboard.press('ArrowDown');
+
+        await page.keyboard.press('ArrowRight');
+        await page.keyboard.press('ArrowLeft');
+
+        await expect(combobox).toBeFocused();
+        await expect(combobox).toHaveAttribute('aria-expanded', 'true');
+        await expect(page.getByRole('listbox')).toBeVisible();
+        await expect(page.getByRole('textbox').locator('h3')).toHaveText('A heading');
+    });
+
+    test('highlights the selected option when the list opens', async ({ mount, page }) => {
+        await mount(<RichTextEditor value={headingThreeDocument} />);
+        const combobox = await openTextStyleList(page);
+
+        const selected = page.getByRole('option', { name: 'Heading 3' });
+        const selectedId = await selected.getAttribute('id');
+        expect(selectedId).toBeTruthy();
+        await expect(combobox).toHaveAttribute('aria-activedescendant', selectedId ?? '');
+    });
+
+    test('moves to the option after the selected one on the first ArrowDown', async ({ mount, page }) => {
+        await mount(<RichTextEditor value={headingThreeDocument} />);
+        const combobox = await openTextStyleList(page);
+
+        await page.keyboard.press('ArrowDown');
+
+        const next = page.getByRole('option', { name: 'Heading 4' });
+        const nextId = await next.getAttribute('id');
+        expect(nextId).toBeTruthy();
+        await expect(combobox).toHaveAttribute('aria-activedescendant', nextId ?? '');
+    });
+
+    test('applies the shown style to every block the selection spans', async ({ mount, page }) => {
+        await mount(<RichTextEditor value={headingThreeDocument} />);
+        await page.getByRole('textbox').locator('h3').click();
+        await page.keyboard.press('Home');
+        await page.keyboard.press('Shift+ArrowDown');
+        await page.keyboard.press('Shift+End');
+        const combobox = page.getByRole('combobox', { name: 'Text style' });
+        await expect(combobox).toContainText('Heading 3');
+
+        await combobox.focus();
+        await page.keyboard.press('Enter');
+        await expect(combobox).toHaveAttribute('aria-expanded', 'true');
+        await page.keyboard.press('Enter');
+
+        await expect(page.getByRole('textbox').locator('h3')).toHaveCount(2);
+    });
+
+    test('has no dialog around the list', async ({ mount, page }) => {
+        await mount(<RichTextEditor value={headingThreeDocument} />);
+        await openTextStyleList(page);
+
+        await expect(page.getByRole('dialog')).toHaveCount(0);
+    });
+
+    test('names the list "Text style"', async ({ mount, page }) => {
+        await mount(<RichTextEditor value={headingThreeDocument} />);
+        await openTextStyleList(page);
+
+        await expect(page.getByRole('listbox', { name: 'Text style' })).toBeVisible();
+    });
+
+    test('applies the highlighted option on Enter', async ({ mount, page }) => {
+        await mount(<RichTextEditor value={headingThreeDocument} />);
+        await openTextStyleList(page);
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        await expect(page.getByRole('textbox').locator('h4')).toHaveText('A heading');
+    });
+
+    test('closes on Escape, keeps focus on the combobox and leaves the style unchanged', async ({ mount, page }) => {
+        await mount(<RichTextEditor value={headingThreeDocument} />);
+        const combobox = await openTextStyleList(page);
+        await page.keyboard.press('ArrowDown');
+
+        await page.keyboard.press('Escape');
+
+        await expect(combobox).toHaveAttribute('aria-expanded', 'false');
+        await expect(combobox).toBeFocused();
+        await expect(page.getByRole('textbox').locator('h3')).toHaveText('A heading');
     });
 });
