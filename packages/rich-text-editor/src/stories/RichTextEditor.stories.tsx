@@ -65,10 +65,9 @@ const SURFACE = 'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-s
 /** The field box around an editor: the surface, with a stronger border on hover and while the caret is inside, as Fondue's Textarea does. */
 const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-line-strong`;
 
-/** The red border a host puts on its field box while the field is invalid; inline, so it wins over FRAME's hover and focus borders. */
+/** Inline, so it wins over FRAME's hover and focus borders. */
 const ERROR_FRAME_STYLE: CSSProperties = { borderColor: 'var(--color-error-default)' };
 
-/** A host's form field: its label, the field box and the message under it. */
 const FIELD = 'tw-flex tw-flex-col tw-gap-2 tw-max-w-xl tw-p-4 tw-font-primary';
 const FIELD_LABEL = 'tw-body-small tw-text-primary';
 const FIELD_ERROR = 'tw-m-0 tw-body-small';
@@ -190,10 +189,7 @@ export const Placeholder: Story = {
     },
 };
 
-/**
- * `required` sets `aria-required` on the editable element. The editor draws no
- * asterisk: the host's label does.
- */
+/** The editor sets `aria-required`; the host's label draws the asterisk. */
 export const Required: Story = {
     args: { required: true },
     argTypes: { required: { control: 'boolean' } },
@@ -221,11 +217,7 @@ export const Required: Story = {
     },
 };
 
-/**
- * `status: 'error'` sets `aria-invalid` on the editable element, and
- * `aria-errormessage` points at the host's error text. The editor draws no
- * border: the host draws the red border and the message from the same `status`.
- */
+/** The editor sets `aria-invalid` and `aria-errormessage`; the host draws the red border and the message. */
 export const Invalid: Story = {
     args: { status: 'error' },
     argTypes: { status: { control: 'inline-radio', options: ['neutral', 'error'] } },

@@ -46,11 +46,7 @@ export const mountEditorForTests = (options: MountOptions): { mounted: MountedDo
  */
 const EDITABLE_ATTRIBUTE = 'data-rte-editable';
 
-/**
- * The editable element's attributes as ProseMirror takes them: the host's that
- * are set, then the marker. ProseMirror would write an `undefined` value out as
- * the text "undefined".
- */
+/** ProseMirror writes an `undefined` value as the text "undefined", so unset attributes stay out. */
 const editableAttributes = (attributes: ElementAttributes): Record<string, string> => {
     const present: Record<string, string> = {};
     for (const [name, value] of Object.entries(attributes)) {

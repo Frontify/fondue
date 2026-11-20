@@ -44,14 +44,8 @@ import { DEFAULT_LABELS, type RichTextEditorLabels } from './labels';
 import styles from './richTextEditor.module.scss';
 import { warnNewerVersion } from './warnings';
 
-/** The states of the field the editor acts on: `'error'` marks it invalid. */
 type EditorStatus = 'neutral' | 'error';
 
-/**
- * The ARIA props the editor puts on its editable element. Without `aria-label`
- * or `aria-labelledby` the editor is called `labels.editor`;
- * `aria-errormessage` applies only while `status` is `'error'`.
- */
 type EditorAriaProps = Pick<
     AriaAttributes,
     'aria-label' | 'aria-labelledby' | 'aria-describedby' | 'aria-errormessage'
@@ -127,16 +121,14 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     /** Shown while the document is empty, and given to assistive technology as the field's placeholder. */
     placeholder?: string;
     /**
-     * Mark the field as required for assistive technology (`aria-required` on
-     * the editable element). The editor draws no asterisk; the host's label does.
+     * Sets `aria-required` on the editable element. The host's label draws the asterisk.
      *
      * @default false
      */
     required?: boolean;
     /**
-     * `'error'` marks the editable element invalid for assistive technology.
-     * The editor draws no border; the host draws the field's error look from
-     * the same value.
+     * `'error'` sets `aria-invalid`, and `aria-errormessage` when given, on the
+     * editable element. The host draws the error border.
      *
      * @default 'neutral'
      */
@@ -646,13 +638,11 @@ const hostLabelsOf = ({
 
 const TEXTBOX_ROLE: AriaRole = 'textbox';
 
-/** The ARIA attributes the editor sets on its editable element: the host's, then its own. */
 type EditableAriaAttributes = Pick<
     AriaAttributes,
     keyof EditorAriaProps | 'aria-multiline' | 'aria-placeholder' | 'aria-required' | 'aria-invalid'
 >;
 
-/** The attributes of the editable element, in their DOM string form. One left `undefined` is not set. */
 type EditableAttributes = { id: string; class: string; role: AriaRole } & {
     [Name in keyof EditableAriaAttributes]?: Extract<EditableAriaAttributes[Name], string>;
 };
@@ -671,7 +661,6 @@ type EditableAttributesOptions = {
     ariaErrorMessage: string | undefined;
 };
 
-/** Whether `status` marks the field invalid. */
 const isInvalidStatus = (status: EditorStatus): boolean => {
     switch (status) {
         case 'neutral':

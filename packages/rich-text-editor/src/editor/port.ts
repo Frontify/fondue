@@ -25,7 +25,7 @@ export type ParseHtmlDocumentOptions = {
     document: Document;
 };
 
-/** HTML attributes by name, as the DOM takes them. One left `undefined` is not set. */
+/** An `undefined` value leaves the attribute unset. */
 export type ElementAttributes = Readonly<Record<string, string | undefined>>;
 
 export type MountOptions = {
