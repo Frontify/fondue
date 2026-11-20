@@ -589,6 +589,46 @@ describe('the editable element', () => {
     });
 });
 
+describe("the host's id and test id", () => {
+    it('puts the id on the editable element and points the toolbar at it', () => {
+        const { container, ready } = mount(() => (
+            <RichTextEditor plugins={defaultPlugins} toolbarPlacement="top" id="description" />
+        ));
+        ready();
+
+        const editable = window.document.getElementById('description');
+        expect(editable?.getAttribute('role')).toBe('textbox');
+        expect(container.querySelector('[role="toolbar"]')?.getAttribute('aria-controls')).toBe('description');
+    });
+
+    it('still gives the editable element an id of its own without one', () => {
+        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
+        ready();
+
+        expect(editableIn(container).id).not.toBe('');
+    });
+
+    it('puts the test id on the root, `fondue-rich-text-editor` unless the host gives one', () => {
+        const { container } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
+        const custom = mount(() => <RichTextEditor plugins={defaultPlugins} data-test-id="comment-editor" />);
+
+        expect(container.firstElementChild?.getAttribute('data-test-id')).toBe('fondue-rich-text-editor');
+        expect(custom.container.firstElementChild?.getAttribute('data-test-id')).toBe('comment-editor');
+    });
+
+    it('puts the id on the readonly view, which is not editable, and keeps the test id', () => {
+        const { container } = mount(() => (
+            <RichTextEditor value={paragraph('for reading')} plugins={defaultPlugins} readonly id="description" />
+        ));
+
+        const view = window.document.getElementById('description');
+        expect(view?.textContent).toContain('for reading');
+        expect(view?.hasAttribute('contenteditable')).toBe(false);
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+        expect(container.firstElementChild?.getAttribute('data-test-id')).toBe('fondue-rich-text-editor');
+    });
+});
+
 describe('the toolbar', () => {
     /** A control with state of its own, the way a flyout keeps whether it is open. */
     const ClickCounter = (): ReactNode => {
@@ -1795,6 +1835,22 @@ describe('an editor that crashes', () => {
         expect(onChange).not.toHaveBeenCalled();
         // Unnamed by the host, it reads as text, as the readonly view does.
         expect(container.querySelector('[role="group"]')).toBeNull();
+    });
+
+    it("puts the host's id and test id on the fallback's root", () => {
+        silenceReact();
+        const { container } = mount(() => (
+            <RichTextEditor
+                value={paragraph('still here')}
+                plugins={[throwingPlugin()]}
+                id="comment"
+                data-test-id="comment-editor"
+            />
+        ));
+
+        expect(container.querySelector('[role="alert"]')).not.toBeNull();
+        expect(container.firstElementChild?.getAttribute('data-test-id')).toBe('comment-editor');
+        expect(container.firstElementChild?.id).toBe('comment');
     });
 
     it('shows the fallback again when Retry meets the same failure, and reports it again', () => {

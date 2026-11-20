@@ -105,3 +105,33 @@ test('focus the input linked to the label when pressing space', async ({ mount }
     await label.press('Space');
     await expect(input).toBeFocused();
 });
+
+test('focus a contenteditable textbox linked to the label on click', async ({ mount }) => {
+    const component = await mount(
+        <div>
+            <Label htmlFor="editable-id">{LABEL_TEXT}</Label>
+            <div id="editable-id" role="textbox" contentEditable aria-multiline="true" data-test-id="editable" />
+        </div>,
+    );
+
+    const label = component.getByTestId(LABEL_TEST_ID);
+    const editable = component.getByTestId('editable');
+
+    await label.click();
+    await expect(editable).toBeFocused();
+});
+
+test('not focus a non-editable textbox linked to the label on click', async ({ mount }) => {
+    const component = await mount(
+        <div>
+            <Label htmlFor="readonly-id">{LABEL_TEXT}</Label>
+            <div id="readonly-id" role="textbox" tabIndex={0} data-test-id="readonly" />
+        </div>,
+    );
+
+    const label = component.getByTestId(LABEL_TEST_ID);
+    const readonly = component.getByTestId('readonly');
+
+    await label.click();
+    await expect(readonly).not.toBeFocused();
+});

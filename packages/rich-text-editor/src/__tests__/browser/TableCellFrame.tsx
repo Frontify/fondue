@@ -12,10 +12,10 @@ const PLUGINS = [textStylePlugin(), tablePlugin()];
 /** The renderer and the editor side by side, drawing the same table. */
 export const TableCellFrame = () => (
     <>
-        <div data-testid="renderer">
+        <div data-test-id="renderer">
             <RichTextRenderer value={TABLE_DOCUMENT} plugins={PLUGINS} />
         </div>
-        <div data-testid="editor">
+        <div data-test-id="editor">
             <RichTextEditor value={TABLE_DOCUMENT} plugins={PLUGINS} />
         </div>
     </>

@@ -12,6 +12,7 @@ import styles from '../richTextEditor.module.scss';
 import { EditorErrorBoundary } from './EditorErrorBoundary';
 
 type EditorFallbackProps = {
+    id?: string;
     /** The host's document; one it passes after the crash is shown instead. */
     value: RteDocumentOf | undefined;
     /** What the editor showed, read now: it reported edits after the fallback was built. */
@@ -28,6 +29,8 @@ type EditorFallbackProps = {
     groupAttributes: Record<string, string>;
     /** Told when the read-only view throws too, as a crash of its own. */
     onCatch?: (error: Error) => void;
+    /** The test id of the editor's root element. */
+    dataTestId: string;
 };
 
 /**
@@ -37,6 +40,7 @@ type EditorFallbackProps = {
  * so it shows only once the host passes another.
  */
 export const EditorFallback = ({
+    id,
     value,
     shownDocument,
     onShown,
@@ -46,6 +50,7 @@ export const EditorFallback = ({
     focusWasWithin,
     groupAttributes,
     onCatch,
+    dataTestId,
 }: EditorFallbackProps): ReactNode => {
     const retryRef = useRef<HTMLButtonElement | null>(null);
     const messageId = useId();
@@ -73,7 +78,7 @@ export const EditorFallback = ({
         onShown(document);
     }, [onShown, document]);
     return (
-        <div className={styles.root} {...groupAttributes}>
+        <div id={id} className={styles.root} data-test-id={dataTestId} {...groupAttributes}>
             {/* A plugin whose readonly view throws too leaves just the message and Retry. */}
             <EditorErrorBoundary fallback={null} resetKey={document} onCatch={onCatch}>
                 <RegistryRenderer value={document} registry={registry} className={styles.content} />

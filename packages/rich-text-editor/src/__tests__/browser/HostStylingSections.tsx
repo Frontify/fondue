@@ -14,10 +14,10 @@ type HostStylingSectionsProps = {
 /** Two sections that define the same variable differently, each with its own renderer. */
 export const HostStylingSections = ({ look }: HostStylingSectionsProps) => (
     <>
-        <div data-testid="section-a" style={SECTION_A}>
+        <div data-test-id="section-a" style={SECTION_A}>
             <RichTextRenderer value={ALL_LOOKS_DOCUMENT} plugins={[textStylePlugin({ look })]} />
         </div>
-        <div data-testid="section-b" style={SECTION_B}>
+        <div data-test-id="section-b" style={SECTION_B}>
             <RichTextRenderer value={ALL_LOOKS_DOCUMENT} plugins={[textStylePlugin({ look })]} />
         </div>
     </>

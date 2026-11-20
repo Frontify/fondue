@@ -1,18 +1,36 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Schema } from 'prosemirror-model';
+
 const LINE_BREAK = /\r?\n/;
 /** What stands between a table row's cells once the row is one line. */
 const CELL_SEPARATOR = ' ';
 
+/** The selectors of every parse rule the schema's blocks declare. */
+const readTags = (schema: Schema): string[] => {
+    const tags: string[] = [];
+    for (const nodeType of Object.values(schema.nodes)) {
+        for (const rule of nodeType.spec.parseDOM ?? []) {
+            if (rule.tag !== undefined) {
+                tags.push(rule.tag);
+            }
+        }
+    }
+    return tags;
+};
+
 /**
- * Keeps text from running together in structure no plugin reads, for paste and
- * for stored HTML alike. Table cells are not blocks to the engine
+ * Keeps text from running together in a table or `<pre>` no registered block
+ * reads, for paste and for stored HTML alike; the engine reads the rest by the
+ * schema's own rules. Table cells are not blocks to the engine
  * (`<td>a</td><td>b</td>` would read as `ab`), so each row becomes a block with
  * cells joined by a space. A `<pre>`'s newlines collapse as whitespace, so each
  * line becomes a block.
  */
-export const keepUnreadStructureApart = (dom: HTMLElement): void => {
+export const keepUnreadStructureApart = (dom: HTMLElement, schema: Schema): void => {
     const document = dom.ownerDocument;
+    const tags = readTags(schema);
+    const isRead = (element: Element): boolean => tags.some((tag) => element.matches(tag));
     const lineBlock = (text: string): HTMLElement => {
         const block = document.createElement('div');
         block.textContent = text;
@@ -22,6 +40,10 @@ export const keepUnreadStructureApart = (dom: HTMLElement): void => {
     // one), so an outer cell reads a nested table as the lines it became; and
     // `rows` and `cells` are the table's own, so no cell is read twice.
     for (const table of [...dom.querySelectorAll('table')].reverse()) {
+        if (isRead(table)) {
+            continue;
+        }
+
         const rows: HTMLElement[] = [];
         for (const row of table.rows) {
             const texts: string[] = [];
@@ -36,6 +58,10 @@ export const keepUnreadStructureApart = (dom: HTMLElement): void => {
         table.replaceWith(...rows);
     }
     for (const pre of dom.querySelectorAll('pre')) {
+        if (isRead(pre)) {
+            continue;
+        }
+
         pre.replaceWith(...pre.textContent.split(LINE_BREAK).map(lineBlock));
     }
 };

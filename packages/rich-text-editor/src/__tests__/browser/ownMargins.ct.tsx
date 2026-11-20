@@ -11,7 +11,7 @@ import { FRAME_MARGIN } from './ownMarginsValues';
 const SURFACES = ['renderer', 'editor'];
 
 /** A host stylesheet's reset, an attribute and a tag per rule, which rank as `.prose p` does. */
-const HOST_MARGIN_RESET = '[data-testid] p, [data-testid] blockquote { margin: 0; }';
+const HOST_MARGIN_RESET = '[data-test-id] p, [data-test-id] blockquote { margin: 0; }';
 
 for (const surface of SURFACES) {
     test.describe(`the margins a block hands to the document in the ${surface}`, () => {
