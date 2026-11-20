@@ -58,10 +58,9 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      */
     id?: string;
     /**
-     * The document to show. One handed back from `onChange` changes nothing;
-     * any other replaces only what differs, keeping the caret and the user's
-     * undo history. Never mutate a document once passed; to reject an edit,
-     * pass a copy of the last accepted one.
+     * The document to show: one handed back from `onChange` changes nothing,
+     * any other is applied as a change that keeps the caret and undo history.
+     * Never mutate a document once passed.
      */
     value?: RteDocumentOf<TBlock>;
     /**

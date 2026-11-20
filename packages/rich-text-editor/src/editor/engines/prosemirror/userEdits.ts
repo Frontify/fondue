@@ -13,11 +13,7 @@ import {
 } from 'prosemirror-transform';
 import { type EditorView } from 'prosemirror-view';
 
-/** Transaction meta prosemirror-history reads: `false` keeps the change out of the undo history. */
-const ADD_TO_HISTORY = 'addToHistory';
-
-/** Transaction meta prosemirror-state sets on a transaction a plugin appended, holding the one it follows. */
-const APPENDED_TRANSACTION = 'appendedTransaction';
+import { ADD_TO_HISTORY, APPENDED_TRANSACTION } from './transactionMeta';
 
 type ContentEdit = { kind: 'content'; from: number; to: number };
 
@@ -44,6 +40,7 @@ const editsOf = (step: Step, side: Side): Edit[] => {
         // The engine document carries no attributes of its own; its root keys live outside it.
         return [];
     }
+
     const edits: Edit[] = [];
     // oxlint-disable-next-line unicorn/no-array-for-each -- StepMap.forEach is ProseMirror's only way to read a step's ranges.
     step.getMap().forEach((oldStart, oldEnd, newStart, newEnd) => {
@@ -53,6 +50,7 @@ const editsOf = (step: Step, side: Side): Edit[] => {
             edits.push({ kind: 'content', from: newStart, to: newEnd });
         }
     });
+
     return edits;
 };
 
@@ -120,6 +118,7 @@ const withEdit = (edits: readonly Edit[], added: Edit): Edit[] => {
         case 'content': {
             let { from, to } = added;
             const kept: Edit[] = [];
+
             for (const edit of edits) {
                 if (edit.kind !== 'content' || edit.to < from || edit.from > to) {
                     kept.push(edit);
@@ -128,7 +127,9 @@ const withEdit = (edits: readonly Edit[], added: Edit): Edit[] => {
                 from = Math.min(from, edit.from);
                 to = Math.max(to, edit.to);
             }
+
             kept.push({ kind: 'content', from, to });
+
             return kept;
         }
         case 'attribute': {
@@ -147,7 +148,9 @@ const isUndoable = (transaction: Transaction): boolean => {
     if (transaction.getMeta(ADD_TO_HISTORY) === false) {
         return false;
     }
+
     const appendedTo: unknown = transaction.getMeta(APPENDED_TRANSACTION);
+
     return !(isTransaction(appendedTo) && appendedTo.getMeta(ADD_TO_HISTORY) === false);
 };
 
@@ -156,6 +159,7 @@ const mapOf = (transaction: Transaction, index: number): StepMap => {
     if (map === undefined) {
         throw new Error('A transaction step has no map.');
     }
+
     return map;
 };
 
@@ -164,6 +168,7 @@ const editsIn = (state: EditorState): readonly Edit[] => {
     if (edits === undefined) {
         throw new Error('The editor state has no user edits plugin.');
     }
+
     return edits;
 };
 
@@ -181,16 +186,20 @@ export const userEditsPlugin = (): Plugin<readonly Edit[]> =>
                 if (isUndoable(transaction)) {
                     mapping = 'widen';
                 }
+
                 let next = edits;
+
                 for (const [index, step] of transaction.steps.entries()) {
                     const map = mapOf(transaction, index);
                     next = next.map((edit) => mapEdit(map, edit, mapping));
+
                     if (mapping === 'widen') {
                         for (const edit of editsOf(step, 'after')) {
                             next = withEdit(next, edit);
                         }
                     }
                 }
+
                 return next;
             },
         },
@@ -203,14 +212,17 @@ export const userEditsPlugin = (): Plugin<readonly Edit[]> =>
  */
 const rewritesUserEdits = (state: EditorState, transaction: Transaction): boolean => {
     let edits = editsIn(state);
+
     for (const [index, step] of transaction.steps.entries()) {
         const hostEdits = editsOf(step, 'before');
         if (hostEdits.some((host) => edits.some((user) => overlaps(host, user)))) {
             return true;
         }
+
         const map = mapOf(transaction, index);
         edits = edits.map((edit) => mapEdit(map, edit, 'keep'));
     }
+
     return false;
 };
 
@@ -225,10 +237,12 @@ export const dispatchOutsideHistory = (view: EditorView, transaction: Transactio
     const forgetsHistory = rewritesUserEdits(view.state, transaction);
     transaction.setMeta(ADD_TO_HISTORY, false);
     view.dispatch(transaction);
+
     if (forgetsHistory) {
         // A fresh state is the only way to empty the undo history.
         const { doc, selection, plugins } = view.state;
         view.updateState(EditorState.create({ doc, selection, plugins }));
     }
+
     return forgetsHistory;
 };

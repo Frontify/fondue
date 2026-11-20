@@ -16,7 +16,7 @@ import {
     pastedWithoutExtras,
 } from './clipboard';
 import { createControlApi, type OpenEditors } from './controlApi';
-import { rootExtrasOf, toEngineDocument, toRteDocument, withoutDrafts } from './documentConversion';
+import { rootExtrasOf, toEngineDocument, toRteDocument } from './documentConversion';
 import { copiedExtrasPlugin } from './extraAttributes';
 import { createHostRecord, hostDocAction, recordAgreed, recordEcho, recordHandOver, recordReport } from './hostRecord';
 import { keystrokePipeline } from './keystrokes';
@@ -97,6 +97,8 @@ const mount = (
     const schema = buildSchema(registry);
     let currentPlaceholder = placeholder;
     let record = createHostRecord(initialDoc);
+    // The order each document was reported in, which tells an echo from a reset.
+    const reported = new WeakMap<RteDocumentOf, number>();
     // The document's own undeclared keys: only the host changes them, so they live here, not in the engine document.
     let rootExtras = rootExtrasOf(initialDoc);
 
@@ -164,12 +166,15 @@ const mount = (
         dispatchTransaction(transaction) {
             editorView.updateState(editorView.state.apply(transaction));
             repaintViews();
+
             // Host-originated changes are not reported back to the host.
             if (transaction.docChanged && transaction.getMeta(HOST_DOC) !== true) {
                 const emitted = toRteDocument(editorView.state.doc, rootExtras);
-                record = recordReport(record, emitted);
+                record = recordReport(record);
+                reported.set(emitted, record.reportCount);
                 onDocChange(emitted);
             }
+
             onStateChange();
         },
     });
@@ -182,18 +187,17 @@ const mount = (
     const applyDoc = (doc: RteDocumentOf): void => {
         record = recordHandOver(record);
         rootExtras = rootExtrasOf(doc);
-        const next = toEngineDocument(doc, schema);
-        // A draft in the editor is in no document the host holds, so an echo must leave it and the caret alone.
-        if (!withoutDrafts(next).eq(withoutDrafts(editorView.state.doc))) {
-            const transaction = editorView.state.tr;
-            syncDocument(transaction, next);
-            if (transaction.docChanged) {
-                transaction.setMeta(HOST_DOC, true);
-                if (dispatchOutsideHistory(editorView, transaction)) {
-                    onStateChange();
-                }
+
+        const transaction = editorView.state.tr;
+        syncDocument(transaction, toEngineDocument(doc, schema));
+
+        if (transaction.docChanged) {
+            transaction.setMeta(HOST_DOC, true);
+            if (dispatchOutsideHistory(editorView, transaction)) {
+                onStateChange();
             }
         }
+
         record = recordAgreed(record, doc);
         onDocApplied(doc);
     };
@@ -202,13 +206,10 @@ const mount = (
         if (held.kind === 'none') {
             return;
         }
-        if (editorView.composing) {
-            held = { ...held, frame: frames.request(retryHeld) };
-            return;
-        }
+
         const { doc } = held;
         held = { kind: 'none' };
-        applyDoc(doc);
+        setDoc(doc);
     };
 
     const hold = (doc: RteDocumentOf): void => {
@@ -216,6 +217,7 @@ const mount = (
             held = { ...held, doc };
             return;
         }
+
         held = { kind: 'waiting', doc, frame: frames.request(retryHeld) };
     };
 
@@ -228,7 +230,13 @@ const mount = (
     };
 
     const setDoc = (doc: RteDocumentOf): void => {
-        const action = hostDocAction(record, doc, editorView.composing);
+        const action = hostDocAction({
+            record,
+            doc,
+            reportedSeq: reported.get(doc),
+            composing: editorView.composing,
+        });
+
         switch (action.kind) {
             case 'ignore':
                 release();

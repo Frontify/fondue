@@ -17,6 +17,7 @@ export const setChangedAttributes = (
         if (wanted === undefined) {
             wanted = null;
         }
+
         if (name in node.attrs && node.attrs[name] !== wanted) {
             transaction.setNodeAttribute(pos, name, wanted);
         }

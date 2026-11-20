@@ -575,8 +575,9 @@ export const CrashFallback: Story = {
 /**
  * The document is controlled from outside: the buttons replace the editor
  * content through the `value` prop. A literal passed straight to `setDoc`
- * needs no annotation, and one kept in a variable takes `RteDocument`. Save keeps the document as it stands, and
- * Cancel hands the saved one back, the way a host discards an edit.
+ * needs no annotation, and one kept in a variable takes `RteDocument`. Save
+ * keeps the document as it stands, and Cancel hands the saved one back, the
+ * way a host discards an edit.
  */
 export const ControlledValue: Story = {
     render: () => {

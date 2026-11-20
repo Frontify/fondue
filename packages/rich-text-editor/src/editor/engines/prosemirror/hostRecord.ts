@@ -6,8 +6,7 @@ import { type RteDocumentOf } from '#/core';
 export type HostRecord = {
     /** The last document the host handed over that the editor still holds unedited. */
     agreed: RteDocumentOf | null;
-    /** The order each reported document was reported in. */
-    reported: WeakMap<RteDocumentOf, number>;
+    /** How many documents the editor has reported, so the newest one's order. */
     reportCount: number;
     /** Reports at or below this are older than what the host holds; one above it handed back is an echo. */
     hostSeq: number;
@@ -17,33 +16,41 @@ export type HostDocAction = { kind: 'ignore' } | { kind: 'echo'; seq: number } |
 
 export const createHostRecord = (initialDoc: RteDocumentOf): HostRecord => ({
     agreed: initialDoc,
-    reported: new WeakMap(),
     reportCount: 0,
     hostSeq: 0,
 });
 
-export const hostDocAction = (record: Readonly<HostRecord>, doc: RteDocumentOf, composing: boolean): HostDocAction => {
+export type HostDocActionParams = {
+    record: Readonly<HostRecord>;
+    doc: RteDocumentOf;
+    /** The order `doc` was reported in, when the editor reported it. */
+    reportedSeq: number | undefined;
+    composing: boolean;
+};
+
+export const hostDocAction = ({ record, doc, reportedSeq, composing }: HostDocActionParams): HostDocAction => {
     if (doc === record.agreed) {
         return { kind: 'ignore' };
     }
-    const seq = record.reported.get(doc);
-    if (seq !== undefined && seq > record.hostSeq) {
-        return { kind: 'echo', seq };
+
+    if (reportedSeq !== undefined && reportedSeq > record.hostSeq) {
+        return { kind: 'echo', seq: reportedSeq };
     }
+
     // Replacing text mid-composition breaks the word being composed, so the change waits for it to end.
     if (composing) {
         return { kind: 'wait' };
     }
+
     return { kind: 'apply' };
 };
 
-/** The editor reported `emitted` to the host, so it no longer holds an unedited host document. */
-export const recordReport = (record: HostRecord, emitted: RteDocumentOf): HostRecord => {
-    const reportCount = record.reportCount + 1;
-    // Records share one registry of reports, which only ever grows.
-    record.reported.set(emitted, reportCount);
-    return { ...record, reportCount, agreed: null };
-};
+/** The editor reported a document to the host, so it no longer holds an unedited host document. */
+export const recordReport = (record: HostRecord): HostRecord => ({
+    ...record,
+    reportCount: record.reportCount + 1,
+    agreed: null,
+});
 
 export const recordEcho = (record: HostRecord, seq: number): HostRecord => ({ ...record, hostSeq: seq });
 

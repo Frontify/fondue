@@ -21,6 +21,7 @@ import {
     type RteDocumentOf,
     type RtePlugin,
 } from '#/core';
+import { type MountOptions } from '#/editor/port';
 
 import { toEngineDocument } from './documentConversion';
 import { type FrameScheduler, mountEditorForTests } from './editing';
@@ -28,6 +29,14 @@ import { type BlockInput, destroyEditors, editorWith } from './testEditor';
 
 // Checked independently of the source: the character the spec expects for an inline atom in text.
 const INLINE_ATOM_STAND_IN = '￼';
+
+const COMPOSITION_START = 'compositionstart';
+const COMPOSITION_END = 'compositionend';
+
+const LONG_DOCUMENT_LENGTH = 600;
+
+/** Far fewer comparisons than the square of the long document's length. */
+const LONG_DOCUMENT_COMPARISON_BUDGET = 50_000;
 
 /**
  * The controlled-`value` protocol: a host hands back the document it was given,
@@ -158,7 +167,7 @@ const paragraph = (text: string): RteDocumentOf => ({
 
 const mounted: { destroy(): void }[] = [];
 
-type MountTestOptions = { placeholder?: string; attributes?: Record<string, string>; frames?: FrameScheduler };
+type MountTestOptions = Partial<Pick<MountOptions, 'placeholder' | 'attributes'>> & { frames?: FrameScheduler };
 
 const mount = (initialDoc: RteDocumentOf, { placeholder = '', attributes = {}, frames }: MountTestOptions = {}) => {
     const container = window.document.createElement('div');
@@ -183,10 +192,15 @@ const mount = (initialDoc: RteDocumentOf, { placeholder = '', attributes = {}, f
     mounted.push(live);
     const handle = { ...live.handle, setDoc: live.setDoc };
 
-    const stored = (): RteDocumentOf | null => {
-        const { calls } = onDocChange.mock;
-        return calls.length === 0 ? null : (calls[calls.length - 1]?.[0] ?? null);
+    const stored = (): RteDocumentOf => {
+        const { lastCall } = onDocChange.mock;
+        if (lastCall === undefined) {
+            throw new Error('The editor has reported no document.');
+        }
+
+        return lastCall[0];
     };
+
     return { handle, onDocChange, stored, live, view, container };
 };
 
@@ -194,6 +208,7 @@ afterEach(() => {
     for (const live of mounted.splice(0)) {
         live.destroy();
     }
+
     destroyEditors();
     window.document.body.replaceChildren();
 });
@@ -223,8 +238,8 @@ describe('a document set by the host', () => {
 
         const held = stored();
         onDocChange.mockClear();
-        handle.setDoc(held as RteDocumentOf);
-        handle.setDoc(structuredClone(held) as RteDocumentOf);
+        handle.setDoc(held);
+        handle.setDoc(structuredClone(held));
 
         expect(onDocChange).not.toHaveBeenCalled();
     });
@@ -276,6 +291,7 @@ describe('a document set by the host', () => {
                 ['xyb́', 'zć'],
                 ['hi \u{1F469}‍\u{1F467}', 'yo \u{1F468}‍\u{1F467}'],
             ];
+
             for (const [before, after] of changes) {
                 const { handle, view } = mount(paragraphs(before));
                 placeCaret(view, 2);
@@ -311,7 +327,11 @@ describe('a document set by the host', () => {
             handle.setDoc(withTag('u'));
 
             const { selection } = view.state;
-            expect(selection instanceof NodeSelection && selection.node.attrs.value).toEqual({ name: 'u' });
+            if (!(selection instanceof NodeSelection)) {
+                throw new TypeError('The selection is no longer on the inline element.');
+            }
+
+            expect(selection.node.attrs.value).toEqual({ name: 'u' });
         });
 
         it('applies a change that turns an inline element into text', () => {
@@ -335,8 +355,16 @@ describe('a document set by the host', () => {
     });
 
     describe('with keys on the document itself that no plugin declares', () => {
-        const withMeta = (meta?: string): RteDocumentOf =>
-            ({ ...paragraph('same'), ...(meta === undefined ? {} : { meta }) }) as RteDocumentOf;
+        type DocumentWithMeta = RteDocumentOf & { meta?: string };
+
+        const withMeta = (meta?: string): DocumentWithMeta => {
+            const doc: DocumentWithMeta = paragraph('same');
+            if (meta !== undefined) {
+                doc.meta = meta;
+            }
+
+            return doc;
+        };
 
         it('takes the new ones from the host, and reports them with the next edit', () => {
             const { handle, onDocChange, stored } = mount(withMeta('a'));
@@ -380,9 +408,11 @@ describe('a document set by the host', () => {
         it('takes them along with new content', () => {
             const { handle } = mount(withMeta('a'));
 
-            handle.setDoc({ ...paragraph('other'), meta: 'b' } as RteDocumentOf);
+            const other: DocumentWithMeta = { ...paragraph('other'), meta: 'b' };
 
-            expect(handle.document()).toEqual({ ...paragraph('other'), meta: 'b' });
+            handle.setDoc(other);
+
+            expect(handle.document()).toEqual(other);
         });
     });
 
@@ -423,6 +453,7 @@ describe('a document set by the host', () => {
         if (!bold) {
             throw new Error('no bold mark');
         }
+
         view.dispatch(view.state.tr.addMark(7, 12, bold.create()));
         const fromHost: RteDocumentOf = {
             version: 1,
@@ -474,9 +505,9 @@ describe('a document set by the host', () => {
     it('applies a reset to a document the editor reported before, and edits that after', () => {
         const { handle, view, stored } = mount(emptyDocument());
         handle.api.insertText('a');
-        const docA = stored() as RteDocumentOf;
+        const docA = stored();
         handle.api.insertText('b');
-        const docB = stored() as RteDocumentOf;
+        const docB = stored();
 
         handle.setDoc(docB);
         handle.setDoc(docA);
@@ -489,10 +520,10 @@ describe('a document set by the host', () => {
     it('applies a document the editor reported before when the host restores it after its own reset', () => {
         const { handle, view, stored } = mount(emptyDocument());
         handle.api.insertText('a');
-        const docA = stored() as RteDocumentOf;
+        const docA = stored();
         handle.setDoc(docA);
         handle.api.insertText('b');
-        const docB = stored() as RteDocumentOf;
+        const docB = stored();
 
         handle.setDoc(paragraph('from the host'));
         handle.setDoc(docB);
@@ -503,10 +534,10 @@ describe('a document set by the host', () => {
     it('applies an earlier reported document after the host hands back a copy of the latest', () => {
         const { handle, view, stored } = mount(emptyDocument());
         handle.api.insertText('a');
-        const docA = stored() as RteDocumentOf;
+        const docA = stored();
         handle.api.insertText('b');
 
-        handle.setDoc(structuredClone(stored()) as RteDocumentOf);
+        handle.setDoc(structuredClone(stored()));
         handle.setDoc(docA);
 
         expect(view.state.doc.textContent).toBe('a');
@@ -515,12 +546,12 @@ describe('a document set by the host', () => {
     it('treats what the editor reports after a reset as newer than it', () => {
         const { handle, view, stored } = mount(emptyDocument());
         handle.api.insertText('a');
-        const docA = stored() as RteDocumentOf;
+        const docA = stored();
         handle.api.insertText('b');
-        handle.setDoc(stored() as RteDocumentOf);
+        handle.setDoc(stored());
         handle.setDoc(docA);
         handle.api.insertText('c');
-        const docC = stored() as RteDocumentOf;
+        const docC = stored();
         handle.api.insertText('d');
 
         handle.setDoc(docC);
@@ -543,8 +574,10 @@ describe('a document set by the host that changes the blocks around the caret', 
             if (node.isTextblock && node.textContent === needle) {
                 position = at + 1 + offset;
             }
+
             return position === -1;
         });
+
         view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, position)));
     };
 
@@ -582,18 +615,18 @@ describe('a document set by the host that changes the blocks around the caret', 
     });
 
     it('leaves the caret alone in a long document when the host inserts a block far from it', () => {
-        const texts = Array.from({ length: 600 }, (_, index) => `block ${index}`);
+        const texts = Array.from({ length: LONG_DOCUMENT_LENGTH }, (_, index) => `block ${index}`);
         const { view, editor } = editorWith([], texts.map(text));
         caretIn(view, 'block 599', 1);
 
         editor.setDoc(blocksOf(...texts.slice(0, 300).map(text), text('new'), ...texts.slice(300).map(text)));
 
-        expect(view.state.doc.childCount).toBe(601);
+        expect(view.state.doc.childCount).toBe(LONG_DOCUMENT_LENGTH + 1);
         expect(caretAt(view)).toEqual({ block: 'block 599', offset: 1 });
     });
 
     it('leaves the caret and undo alone mid-document when the host changes both ends of a long one', () => {
-        const texts = Array.from({ length: 600 }, (_, index) => `block ${index}`);
+        const texts = Array.from({ length: LONG_DOCUMENT_LENGTH }, (_, index) => `block ${index}`);
         const { view, editor } = editorWith([], texts.map(text));
         caretIn(view, 'block 300', 1);
         view.dispatch(view.state.tr.insertText('X'));
@@ -614,7 +647,7 @@ describe('a document set by the host that changes the blocks around the caret', 
     });
 
     it('keeps the caret in its block when the host changes every block of a long document, in a few steps', () => {
-        const texts = Array.from({ length: 600 }, (_, index) => `block ${index}`);
+        const texts = Array.from({ length: LONG_DOCUMENT_LENGTH }, (_, index) => `block ${index}`);
         const { view, editor } = editorWith([], texts.map(text));
         caretIn(view, 'block 300', 3);
         const dispatch = vi.spyOn(view, 'dispatch');
@@ -629,17 +662,19 @@ describe('a document set by the host that changes the blocks around the caret', 
     it('replaces a long document with a longer one without comparing every block with every other', () => {
         const { view, editor } = editorWith(
             [],
-            Array.from({ length: 600 }, (_, index) => text(`old ${index}`)),
+            Array.from({ length: LONG_DOCUMENT_LENGTH }, (_, index) => text(`old ${index}`)),
         );
         const compare = vi.spyOn(PmNode.prototype, 'eq');
 
-        editor.setDoc(blocksOf(...Array.from({ length: 601 }, (_, index) => text(`new ${index}`))));
+        editor.setDoc(
+            blocksOf(...Array.from({ length: LONG_DOCUMENT_LENGTH + 1 }, (_, index) => text(`new ${index}`))),
+        );
 
         const compared = compare.mock.calls.length;
         compare.mockRestore();
 
-        expect(view.state.doc.childCount).toBe(601);
-        expect(compared).toBeLessThan(50_000);
+        expect(view.state.doc.childCount).toBe(LONG_DOCUMENT_LENGTH + 1);
+        expect(compared).toBeLessThan(LONG_DOCUMENT_COMPARISON_BUDGET);
     });
 
     it('keeps a host restyle when the user undoes their own change to the same block', () => {
@@ -661,6 +696,7 @@ describe('a document set by the host that changes the blocks around the caret', 
             if (tone !== undefined) {
                 block.tone = tone;
             }
+
             return block;
         };
         const { view, editor, api } = editorWith([styledPlugin, tonePlugin], [styledBlock('large')]);
@@ -680,6 +716,7 @@ describe('a document set by the host that changes the blocks around the caret', 
             if (tone !== undefined) {
                 block.tone = tone;
             }
+
             return block;
         };
         const { view, editor, api } = editorWith([styledPlugin, tonePlugin], [styledBlock()]);
@@ -722,10 +759,11 @@ describe('a document set by the host that changes the blocks around the caret', 
 
 describe('a document set by the host while text is being composed', () => {
     const composing = (view: EditorView, value: boolean): void => {
-        let phase = 'compositionend';
+        let phase = COMPOSITION_END;
         if (value) {
-            phase = 'compositionstart';
+            phase = COMPOSITION_START;
         }
+
         view.dom.dispatchEvent(new CompositionEvent(phase, { bubbles: true }));
     };
     const manualFrames = () => {
@@ -735,6 +773,7 @@ describe('a document set by the host while text is being composed', () => {
             request: (callback) => {
                 last += 1;
                 callbacks.set(last, callback);
+
                 return last;
             },
             cancel: (frame) => {
@@ -744,10 +783,12 @@ describe('a document set by the host while text is being composed', () => {
         const runFrame = (): void => {
             const due = [...callbacks.values()];
             callbacks.clear();
+
             for (const callback of due) {
                 callback();
             }
         };
+
         return { scheduler, runFrame, pending: () => callbacks.size };
     };
 
@@ -772,7 +813,7 @@ describe('a document set by the host while text is being composed', () => {
         const frames = manualFrames();
         const { handle, view, stored } = mount(paragraph('typing'), { frames: frames.scheduler });
         handle.api.insertText('!');
-        const reported = stored() as RteDocumentOf;
+        const reported = stored();
         composing(view, true);
 
         handle.setDoc(paragraph('reset'));
@@ -787,7 +828,7 @@ describe('a document set by the host while text is being composed', () => {
         const frames = manualFrames();
         const { handle, view, stored } = mount(paragraph('typing'), { frames: frames.scheduler });
         handle.api.insertText('a');
-        const restored = stored() as RteDocumentOf;
+        const restored = stored();
         composing(view, true);
         handle.api.insertText('b');
 
@@ -821,15 +862,20 @@ describe('a document set by the host while the editor holds more than it reporte
         if (!tag) {
             throw new Error('no tag node');
         }
+
         view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, 2)));
         view.dispatch(view.state.tr.replaceSelectionWith(tag.create({ value: null }), false));
+
         return editor;
     };
     const drafts = (view: EditorView): number => {
         let count = 0;
         view.state.doc.descendants((node) => {
-            count += node.type.name === 'tag' && node.attrs.value === null ? 1 : 0;
+            if (node.type.name === 'tag' && node.attrs.value === null) {
+                count += 1;
+            }
         });
+
         return count;
     };
 
@@ -846,6 +892,7 @@ describe('a document set by the host while the editor holds more than it reporte
         if (!tag) {
             throw new Error('no tag node');
         }
+
         view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, 2)));
         view.dispatch(view.state.tr.replaceSelectionWith(tag.create({ value: null }), false));
 
@@ -859,7 +906,7 @@ describe('a document set by the host while the editor holds more than it reporte
         const { handle, view, stored } = withDraft();
         const caret = view.state.selection.from;
 
-        handle.setDoc(structuredClone(stored()) as RteDocumentOf);
+        handle.setDoc(structuredClone(stored()));
 
         expect(drafts(view)).toBe(1);
         expect(view.state.selection.from).toBe(caret);
@@ -868,10 +915,12 @@ describe('a document set by the host while the editor holds more than it reporte
     it('is ignored when it is one the editor reported before, arriving late and in order', () => {
         const { handle, view, stored, onDocChange } = mount(emptyDocument());
         const reported: RteDocumentOf[] = [];
+
         for (const letter of ['a', 'b', 'c']) {
             handle.api.insertText(letter);
-            reported.push(stored() as RteDocumentOf);
+            reported.push(stored());
         }
+
         const caret = view.state.selection.from;
         onDocChange.mockClear();
 
@@ -887,7 +936,7 @@ describe('a document set by the host while the editor holds more than it reporte
     it('lets typing continue after a late echo', () => {
         const { handle, view, stored } = mount(emptyDocument());
         handle.api.insertText('a');
-        const docA = stored() as RteDocumentOf;
+        const docA = stored();
         handle.api.insertText('b');
 
         handle.setDoc(docA);
@@ -958,107 +1007,162 @@ describe('the editable element', () => {
 });
 
 describe('a document set by the host, over generated documents', () => {
-    type Json = Record<string, unknown>;
     type Random = () => number;
+
+    /** A generated node: a block, a text run or a marker, one shape so a change can restyle a node in place. */
+    type GeneratedNode = {
+        type?: string;
+        text?: string;
+        style?: string;
+        checked?: boolean;
+        toggleA?: true;
+        toggleB?: true;
+        toggleC?: true;
+        valued?: { ref: string };
+        children?: GeneratedNode[];
+    };
+
+    type GeneratedDocument = { version: 1; blocks: GeneratedNode[] };
+
+    const MARK_PROBABILITY = 0.25;
+    const MARKER_PROBABILITY = 0.15;
+    const STYLED_BLOCK_PROBABILITY = 0.3;
+    const LIST_BLOCK_PROBABILITY = 0.4;
+    const NESTED_LIST_PROBABILITY = 0.4;
+    const EVEN_ODDS = 0.5;
+
+    const MAX_LIST_DEPTH = 3;
+    const FRESH_DOCUMENT_EVERY = 5;
+    const SECOND_CHANGE_EVERY = 3;
+    const SEED_COUNT = 200;
 
     /** mulberry32: a small seeded generator, so a failing seed reproduces. */
     const seeded = (seed: number): Random => {
         let state = seed;
+
         return () => {
             state = (state + 0x6d2b79f5) | 0;
             let t = Math.imul(state ^ (state >>> 15), 1 | state);
             t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+
             return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
         };
     };
     const below = (random: Random, count: number): number => Math.floor(random() * count);
-    const pick = <T,>(random: Random, items: readonly T[]): T => items[below(random, items.length)] as T;
-
-    const TEXTS = ['a', 'ab', 'cde', 'hello ', 'foo bar', '\u{1F600}', 'a\u{1F600}b', 'x\u{1F468}\u200D\u{1F469}y'];
-    const MARKS: readonly [string, unknown][] = [
-        ['toggleA', true],
-        ['toggleB', true],
-        ['toggleC', true],
-        ['valued', { ref: 'https://example.com' }],
-    ];
-
-    const run = (random: Random): Json => {
-        const result: Json = { text: pick(random, TEXTS) };
-        for (const [name, value] of MARKS) {
-            if (random() < 0.25) {
-                result[name] = value;
-            }
+    const pick = <T,>(random: Random, items: readonly T[]): T => {
+        const item = items[below(random, items.length)];
+        if (item === undefined) {
+            throw new Error('Nothing to pick from.');
         }
+
+        return item;
+    };
+
+    /** The generated tree holds plugin attributes the open document type cannot name, so it is cast once here. */
+    const toDocument = (generated: GeneratedDocument): RteDocumentOf => generated as RteDocumentOf;
+
+    const TEXTS = ['a', 'ab', 'cde', 'hello ', 'foo bar', '\u{1F600}', 'a\u{1F600}b', 'x\u{1F468}‍\u{1F469}y'];
+
+    const run = (random: Random): GeneratedNode => {
+        const result: GeneratedNode = { text: pick(random, TEXTS) };
+
+        if (random() < MARK_PROBABILITY) {
+            result.toggleA = true;
+        }
+
+        if (random() < MARK_PROBABILITY) {
+            result.toggleB = true;
+        }
+
+        if (random() < MARK_PROBABILITY) {
+            result.toggleC = true;
+        }
+
+        if (random() < MARK_PROBABILITY) {
+            result.valued = { ref: 'https://example.com' };
+        }
+
         return result;
     };
-    const runs = (random: Random): Json[] =>
-        Array.from({ length: below(random, 4) }, (): Json => {
-            if (random() < 0.15) {
+    const runs = (random: Random): GeneratedNode[] =>
+        Array.from({ length: below(random, 4) }, (): GeneratedNode => {
+            if (random() < MARKER_PROBABILITY) {
                 return { type: 'marker' };
             }
+
             return run(random);
         });
-    const textBlock = (random: Random): Json => {
-        if (random() < 0.3) {
+    const textBlock = (random: Random): GeneratedNode => {
+        if (random() < STYLED_BLOCK_PROBABILITY) {
             return {
                 type: 'styled',
                 style: pick(random, ['large', 'small']),
                 children: runs(random),
             };
         }
+
         return { type: PARAGRAPH, children: runs(random) };
     };
-    const item = (random: Random, type: string, depth: number): Json => {
-        const children: Json[] = [{ type: PARAGRAPH, children: runs(random) }];
-        if (depth < 3 && random() < 0.4) {
+    const item = (random: Random, type: string, depth: number): GeneratedNode => {
+        const children: GeneratedNode[] = [{ type: PARAGRAPH, children: runs(random) }];
+
+        if (depth < MAX_LIST_DEPTH && random() < NESTED_LIST_PROBABILITY) {
             children.push(list(random, depth + 1));
         }
-        const result: Json = { type, children };
+
+        const result: GeneratedNode = { type, children };
+
         if (type === 'checkEntry') {
-            result.checked = random() < 0.5;
+            result.checked = random() < EVEN_ODDS;
         }
+
         return result;
     };
-    const list = (random: Random, depth: number): Json => {
+    const list = (random: Random, depth: number): GeneratedNode => {
         const type = pick(random, ['list', 'orderedList', 'checkableList']);
         let itemType = 'listEntry';
         if (type === 'checkableList') {
             itemType = 'checkEntry';
         }
+
         return {
             type,
             children: Array.from({ length: 1 + below(random, 3) }, () => item(random, itemType, depth)),
         };
     };
-    const block = (random: Random): Json => {
-        if (random() < 0.4) {
+    const block = (random: Random): GeneratedNode => {
+        if (random() < LIST_BLOCK_PROBABILITY) {
             return list(random, 1);
         }
+
         return textBlock(random);
     };
-    const generate = (random: Random): RteDocumentOf => ({
+    const generate = (random: Random): GeneratedDocument => ({
         version: 1,
-        blocks: Array.from({ length: 1 + below(random, 4) }, () => block(random)) as RteDocumentOf['blocks'],
+        blocks: Array.from({ length: 1 + below(random, 4) }, () => block(random)),
     });
 
-    const textBlocks = (blocks: Json[]): Json[] =>
+    const textBlocks = (blocks: GeneratedNode[]): GeneratedNode[] =>
         blocks.flatMap((member) => {
-            const children = (member.children ?? []) as Json[];
             if (member.type === PARAGRAPH || member.type === 'styled') {
                 return [member];
             }
-            return textBlocks(children);
+
+            return textBlocks(member.children ?? []);
         });
 
     /** A small change: one run's text or mark, one block inserted or removed, or one text block restyled. */
-    const mutate = (random: Random, doc: RteDocumentOf): RteDocumentOf => {
+    const mutate = (random: Random, doc: GeneratedDocument): GeneratedDocument => {
         const copy = structuredClone(doc);
-        const roots = copy.blocks as unknown as Json[];
+        const roots = copy.blocks;
         const operation = below(random, 4);
+
         // Only top-level text blocks: a list item holds paragraphs, never styled blocks.
         const restylable = roots.filter((member) => member.type === PARAGRAPH || member.type === 'styled');
+
         if (operation === 3 && restylable.length > 0) {
             const target = pick(random, restylable);
+
             if (target.type === PARAGRAPH) {
                 target.type = 'styled';
                 target.style = 'small';
@@ -1066,48 +1170,61 @@ describe('a document set by the host, over generated documents', () => {
                 target.type = PARAGRAPH;
                 delete target.style;
             }
+
             return copy;
         }
-        const withRuns = textBlocks(roots).filter((member) => (member.children as Json[]).length > 0);
+
+        const withRuns = textBlocks(roots).filter((member) => (member.children ?? []).length > 0);
+
         if (operation === 0 && withRuns.length > 0) {
-            const target = pick(random, pick(random, withRuns).children as Json[]);
-            if (random() < 0.5) {
+            const target = pick(random, pick(random, withRuns).children ?? []);
+
+            if (random() < EVEN_ODDS) {
                 target.text = pick(random, TEXTS);
             } else {
                 let toggleA: true | undefined;
-                if (random() < 0.5) {
+                if (random() < EVEN_ODDS) {
                     toggleA = true;
                 }
+
                 target.toggleA = toggleA;
             }
+
             return copy;
         }
+
         const lists = [{ blocks: roots, make: block }];
-        const collect = (members: Json[]) => {
+        const collect = (members: GeneratedNode[]) => {
             for (const member of members) {
-                const children = (member.children ?? []) as Json[];
+                const children = member.children ?? [];
+
                 if (member.type === 'list' || member.type === 'orderedList' || member.type === 'checkableList') {
                     let itemType = 'listEntry';
                     if (member.type === 'checkableList') {
                         itemType = 'checkEntry';
                     }
+
                     lists.push({
                         blocks: children,
-                        make: (r: Random) => item(r, itemType, 3),
+                        make: (r: Random) => item(r, itemType, MAX_LIST_DEPTH),
                     });
                 }
-                if (children.some((child) => 'children' in child)) {
+
+                if (children.some((child) => child.children !== undefined)) {
                     collect(children);
                 }
             }
         };
         collect(roots);
+
         const target = pick(random, lists);
+
         if (operation === 1 && target.blocks.length > 1) {
             target.blocks.splice(below(random, target.blocks.length), 1);
         } else {
             target.blocks.splice(below(random, target.blocks.length + 1), 0, target.make(random));
         }
+
         return copy;
     };
 
@@ -1119,44 +1236,53 @@ describe('a document set by the host, over generated documents', () => {
         view.state.doc.descendants((node, position) => {
             if (node.isTextblock) {
                 const text = node.textBetween(0, node.content.size, undefined, INLINE_ATOM_STAND_IN);
+
                 for (const { index } of graphemes.segment(text)) {
                     places.push(position + 1 + index);
                 }
+
                 places.push(position + 1 + node.content.size);
             }
+
             return true;
         });
+
         return pick(random, places);
     };
 
-    const seeds = Array.from({ length: 200 }, (_, index) => index + 1);
+    const seeds = Array.from({ length: SEED_COUNT }, (_, index) => index + 1);
 
     it.each(seeds)('lands on exactly the new document, the caret on a character boundary (seed %i)', (seed) => {
         const random = seeded(seed);
         const before = generate(random);
-        let after: RteDocumentOf;
-        if (seed % 5 === 0) {
+        let after: GeneratedDocument;
+        if (seed % FRESH_DOCUMENT_EVERY === 0) {
             after = generate(random);
         } else {
             after = mutate(random, before);
         }
-        const changesTwice = seed % 3 === 0;
+
+        const changesTwice = seed % SECOND_CHANGE_EVERY === 0;
+
         if (changesTwice) {
             after = mutate(random, after);
         }
+
         const editor = editorWith(
             [styledPlugin, toggleMarksPlugin, valuedMarkPlugin, voidInlinePlugin, listsPlugin, checkablePlugin],
-            before.blocks,
+            toDocument(before).blocks,
         );
         const { view, onDocChange } = editor;
         view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, caretPosition(random, view))));
 
-        editor.editor.setDoc(after);
+        editor.editor.setDoc(toDocument(after));
 
-        expect(view.state.doc.eq(toEngineDocument(after, view.state.schema))).toBe(true);
+        expect(view.state.doc.eq(toEngineDocument(toDocument(after), view.state.schema))).toBe(true);
         expect(onDocChange).not.toHaveBeenCalled();
+
         const { $head } = view.state.selection;
         expect($head.parent.isTextblock).toBe(true);
+
         const text = $head.parent.textBetween(0, $head.parent.content.size, undefined, INLINE_ATOM_STAND_IN);
         const character = graphemes.segment(text).containing($head.parentOffset);
         expect(character?.index ?? text.length).toBe($head.parentOffset);
