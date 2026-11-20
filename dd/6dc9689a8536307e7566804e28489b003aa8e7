@@ -1,0 +1,54 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/testEditor.ts
+  s_22527a1a684ccf::t_0fcac1698f4355 88
+packages/rich-text-editor/src/core/commands.ts
+  s_22527a1a684ccf::t_0fcac1698f4355 101,117-118
+packages/rich-text-editor/src/editor/hooks/useEditorHandle.ts
+  s_22527a1a684ccf::t_0fcac1698f4355 179-180
+packages/rich-text-editor/src/plugins/BlurOnBreak/BlurOnBreak.tsx
+  s_22527a1a684ccf::t_b2b19670abd294 3,5,38,40-43
+  s_22527a1a684ccf::t_0fcac1698f4355 11,30,32-33
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_22527a1a684ccf::t_0fcac1698f4355 302,316
+packages/rich-text-editor/src/core/registry.ts
+  s_22527a1a684ccf::t_0fcac1698f4355 551
+packages/rich-text-editor/src/plugins/Align/Align.spec.ts
+  s_22527a1a684ccf::t_0fcac1698f4355 5,7
+packages/rich-text-editor/src/editor/helpers/toolbarItem.spec.ts
+  s_22527a1a684ccf::t_0fcac1698f4355 90
+packages/rich-text-editor/src/plugins/Align/Align.tsx
+  s_22527a1a684ccf::t_0fcac1698f4355 11,50,58-60,62,75-76,78-82
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_22527a1a684ccf::t_0fcac1698f4355 27,292,348-349,365,441-442,457-466,468,471,473-474,479
+packages/rich-text-editor/src/editor/linkFlows.spec.tsx
+  s_22527a1a684ccf::t_0fcac1698f4355 328
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_22527a1a684ccf::t_0fcac1698f4355 322,334,344,353,436,498
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.ts
+  s_22527a1a684ccf::t_0fcac1698f4355 108
+packages/rich-text-editor/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_22527a1a684ccf::t_0fcac1698f4355 16-20,23-27
+.changeset/feat-rte-shortcuts-submit.md
+  s_22527a1a684ccf::t_0fcac1698f4355 5
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_22527a1a684ccf::t_0fcac1698f4355 863,877-881,891
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_22527a1a684ccf::t_0fcac1698f4355 482,1128,1131-1132,1135-1137,1140-1142,1155,1158,1165,1168,1183-1184,1189-1190,1196,1200-1202
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_22527a1a684ccf::t_0fcac1698f4355 49,77,205
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dd6dc9689a8536307e7566804e28489b003aa8e7",
+  "prompts": {},
+  "sessions": {
+    "s_22527a1a684ccf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2a5abef-0d60-4dfb-93a0-af8f62c61098",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

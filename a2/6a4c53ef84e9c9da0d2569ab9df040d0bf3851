@@ -1,0 +1,55 @@
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_53de767222940a::t_9687a5b69c140b 749,751-756,791
+  s_53de767222940a::t_1ec72e978f4a46 792,796,798
+  s_53de767222940a::t_222108f6d535f6 750
+packages/rich-text-editor/src/editor/linkFlows.spec.tsx
+  s_53de767222940a::t_d1ee1511d4de2e 143,149-152,154
+  s_53de767222940a::t_331eada85b11bb 1-4,6-34,36-96,103-142,144-148,153,155-216,218-229,231,239-246,248-256,258-266,268-269,271-277,279-282
+  s_53de767222940a::t_1a21c10154616b 5,35,217
+  s_53de767222940a::t_d09687ae288aa7 97-102,230,232-238,247,257,267,270,278
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.spec.tsx
+  s_53de767222940a::t_d09687ae288aa7 60-62
+  s_53de767222940a::t_3fcb49c8dacba6 26,32-40,58-59,63-65,114-140,142-149,151-193
+  s_53de767222940a::t_3792ed61767d04 68-71,141,150
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.tsx
+  s_53de767222940a::t_63b37c4bc7ed77 15-18,22,29-30,32-33,40,44,49,52-55,71-76,80-83,92-104
+packages/rich-text-editor/src/plugins/shared/ToolbarButton/ToolbarButton.tsx
+  s_53de767222940a::t_60c83666405317 6-7
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_53de767222940a::t_1cb859617ad195 598-649
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_53de767222940a::t_bff8e7990b6053 359
+  s_53de767222940a::t_63b37c4bc7ed77 353
+  s_53de767222940a::t_4b48f644fee9f3 345,347-352,354-358
+packages/rich-text-editor/src/plugins/shared/helpers/platform.ts
+  s_53de767222940a::t_60c83666405317 1-4
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_53de767222940a::t_63b37c4bc7ed77 113
+packages/rich-text-editor/src/plugins/Link/components/LinkToolbarButton.tsx
+  s_53de767222940a::t_d09687ae288aa7 56
+  s_53de767222940a::t_63b37c4bc7ed77 75,77-83
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_53de767222940a::t_d936033fe691dc 32
+  s_53de767222940a::t_63b37c4bc7ed77 15-17,29-31,33-41,145-152,202
+  s_53de767222940a::t_f4066d2787f2cf 18-20,27
+  s_53de767222940a::t_c7b88bd66865f5 22-25
+  s_53de767222940a::t_60c83666405317 8,21,26,28
+packages/rich-text-editor/src/core/commands.ts
+  s_53de767222940a::t_4b48f644fee9f3 92-96
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a26a4c53ef84e9c9da0d2569ab9df040d0bf3851",
+  "prompts": {},
+  "sessions": {
+    "s_53de767222940a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f9b7337-8455-4b7f-ac95-dde194f54be3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

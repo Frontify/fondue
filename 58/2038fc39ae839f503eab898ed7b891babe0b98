@@ -1,0 +1,40 @@
+packages/rich-text-editor/src/plugins/List/List.spec.ts
+  s_e6323a12c95901::t_46a3c8fd8d35e5 8
+  s_e6323a12c95901::t_2b30909a2908f9 15,29,41
+packages/rich-text-editor/src/__tests__/browser/HostLooksPair.tsx
+  s_e6323a12c95901::t_2b30909a2908f9 42,44-45,53,55-56
+  s_e6323a12c95901::t_063380a159180c 33-34
+packages/rich-text-editor/src/plugins/List/List.ts
+  s_e6323a12c95901::t_2b30909a2908f9 134,157,181,186,229,239
+  s_e6323a12c95901::t_46a3c8fd8d35e5 162-172,191,193,195-196,199-201,213,222,226-227,232,236-237,242
+packages/rich-text-editor/src/plugins/index.ts
+  s_e6323a12c95901::t_2b30909a2908f9 44,47-48
+packages/rich-text-editor/src/__tests__/lookStylesheets.spec.ts
+  s_e6323a12c95901::t_2b30909a2908f9 122,125
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_e6323a12c95901::t_2b30909a2908f9 14,26,938,946-947,956-957,1228-1229
+  s_e6323a12c95901::t_063380a159180c 925,931,937,939-941
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_e6323a12c95901::t_063380a159180c 605,610,612,618,680-681
+  s_e6323a12c95901::t_2b30909a2908f9 7,10,639-640
+.changeset/rte-list-marker-looks.md
+  s_e6323a12c95901::t_2b30909a2908f9 5
+packages/rich-text-editor/src/plugins/List/index.ts
+  s_e6323a12c95901::t_2b30909a2908f9 9,13,15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "582038fc39ae839f503eab898ed7b891babe0b98",
+  "prompts": {},
+  "sessions": {
+    "s_e6323a12c95901": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0fd384bd-8f91-4d82-a7d6-b17e5092da7d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

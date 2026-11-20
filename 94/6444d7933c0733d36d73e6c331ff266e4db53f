@@ -1,0 +1,36 @@
+packages/rich-text-editor/src/plugins/Align/Align.tsx
+  s_d9c0469efce250::t_103c54299d1286 166
+  s_d9c0469efce250::t_194852edc6fee7 175-178
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_d9c0469efce250::t_8800b0868368f2 849-863
+  s_d9c0469efce250::t_af9362876ca7c3 5
+  s_d9c0469efce250::t_f05fec269dedac 796-805
+  s_d9c0469efce250::t_44ff7be8dccc8d 13
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_d9c0469efce250::t_c11627c97ffd7a 804-813
+packages/rich-text-editor/src/core/commands.ts
+  s_d9c0469efce250::t_93f72b96c41030 131-136
+packages/rich-text-editor/src/editor/helpers/toolbarItem.spec.ts
+  s_d9c0469efce250::t_84e51285101c19 92
+.changeset/feat-rte-shortcuts-submit.md
+  s_d9c0469efce250::t_90bdc7eae9181e 5
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_d9c0469efce250::t_633b7e6429142a 362-363
+  s_d9c0469efce250::t_c69c460a34eecb 379-380,384
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "946444d7933c0733d36d73e6c331ff266e4db53f",
+  "prompts": {},
+  "sessions": {
+    "s_d9c0469efce250": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "548bafad-28bd-4e36-949b-abe6993012cf",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
