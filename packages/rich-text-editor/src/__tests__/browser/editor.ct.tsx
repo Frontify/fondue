@@ -252,6 +252,51 @@ test.describe('editor', () => {
     });
 });
 
+test.describe("the host's id and test id", () => {
+    test('finds the editor by its default test id', async ({ mount, page }) => {
+        await mount(<RichTextEditor />);
+
+        await expect(page.getByTestId('fondue-rich-text-editor')).toBeVisible();
+    });
+
+    test("finds the editor by the host's test id", async ({ mount, page }) => {
+        await mount(<RichTextEditor data-test-id="comment-editor" />);
+
+        await expect(page.getByTestId('comment-editor')).toBeVisible();
+    });
+
+    test('names the editable element through a label and takes focus by its id', async ({ mount, page }) => {
+        await mount(
+            <div>
+                <label id="description-label" htmlFor="description">
+                    Description
+                </label>
+                <RichTextEditor id="description" aria-labelledby="description-label" />
+            </div>,
+        );
+        const editable = page.getByRole('textbox', { name: 'Description' });
+
+        await expect(editable).toHaveAttribute('id', 'description');
+        await page.locator('#description').focus();
+
+        await expect(editable).toBeFocused();
+    });
+
+    test('puts the id on the readonly view and the test id on the root', async ({ mount, page }) => {
+        await mount(
+            <RichTextEditor
+                value={{ version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'for reading' }] }] }}
+                id="reading"
+                data-test-id="reading-editor"
+                readonly
+            />,
+        );
+
+        await expect(page.getByTestId('reading-editor')).toBeVisible();
+        await expect(page.locator('#reading')).toContainText('for reading');
+    });
+});
+
 const SELECT_ALL = 'ControlOrMeta+a';
 
 /** Types `text` into the editor and selects it, which the toolbar needs for a link or a colour. */

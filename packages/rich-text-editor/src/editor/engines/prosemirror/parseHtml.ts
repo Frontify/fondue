@@ -62,7 +62,8 @@ const dropBlockEndBreaks = (root: HTMLElement): void => {
 export const parseHtmlDocument: ParseHtmlDocument = ({ html, registry, document }) => {
     const { body } = document.implementation.createHTMLDocument('');
     body.innerHTML = html;
-    keepUnreadStructureApart(body);
+    const schema = buildSchema(registry);
+    keepUnreadStructureApart(body, schema);
     dropBlockEndBreaks(body);
-    return toRteDocument(PmDOMParser.fromSchema(buildSchema(registry)).parse(body));
+    return toRteDocument(PmDOMParser.fromSchema(schema).parse(body));
 };

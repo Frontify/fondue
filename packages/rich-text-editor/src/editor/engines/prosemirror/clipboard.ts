@@ -95,17 +95,17 @@ export const clipboardSerializer = (schema: Schema): DOMSerializer => {
 export { keepOfficeListStyles } from './pasteOffice';
 
 /** Cleans what Word, Outlook and Google Docs write besides content, then reads the rest as any HTML. */
-const tidyPasted = (dom: HTMLElement): void => {
+const tidyPasted = (dom: HTMLElement, schema: Schema): void => {
     tidyOffice(dom);
     tidyGoogleDocs(dom);
-    keepUnreadStructureApart(dom);
+    keepUnreadStructureApart(dom, schema);
 };
 
 class PasteParser extends PmDOMParser {
     parseSlice(...args: Parameters<PmDOMParser['parseSlice']>): Slice {
         const [dom] = args;
         if (dom instanceof HTMLElement) {
-            tidyPasted(dom);
+            tidyPasted(dom, this.schema);
         }
         return super.parseSlice(...args);
     }

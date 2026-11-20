@@ -50,10 +50,10 @@ const PLUGINS = [framePlugin, unlistedTagPlugin];
 /** The renderer and the editor side by side, drawing the same document. */
 export const OwnMarginsFrame = () => (
     <>
-        <div data-testid="renderer">
+        <div data-test-id="renderer">
             <RichTextRenderer value={FRAME_DOCUMENT} plugins={PLUGINS} />
         </div>
-        <div data-testid="editor">
+        <div data-test-id="editor">
             <RichTextEditor value={FRAME_DOCUMENT} plugins={PLUGINS} />
         </div>
     </>
