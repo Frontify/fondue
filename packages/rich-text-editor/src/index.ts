@@ -78,10 +78,10 @@ export const RichTextRenderer: <TBlock extends RteBlockNode = RteBlock>(
  *     { plugins: [boldContent], wrap: false },
  * );
  */
-export const serializeToHtml = <TBlock extends RteBlockNode = RteBlock>(
+export const serializeToHtml: <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,
     options: SerializeToHtmlOptions,
-): string => serialize(doc, options);
+) => string = serialize;
 
 /**
  * HTML as a document, read by the same rules as a paste into the editor, but
@@ -96,7 +96,7 @@ export const serializeToHtml = <TBlock extends RteBlockNode = RteBlock>(
  * @example
  * const value = parseHtml(storedHtml, { plugins: [...defaultContent, mentionContent()] });
  */
-export const parseHtml = (html: string, options: ParseHtmlOptions): RteDocument<RteBlockNode> => parse(html, options);
+export const parseHtml: (html: string, options: ParseHtmlOptions) => RteDocument<RteBlockNode> = parse;
 
 // --- Document format ---
 
@@ -108,10 +108,10 @@ export { isEmpty };
  * The document's text, one line per text block. Inlines read as their plugin's
  * markup (a mention as `@jane`). The host passes the plugins whose content the document uses.
  */
-export const toPlainText = <TBlock extends RteBlockNode = RteBlock>(
+export const toPlainText: <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,
     options: ToPlainTextOptions,
-): string => plainText(doc, options);
+) => string = plainText;
 
 // --- Plugin authoring ---
 
