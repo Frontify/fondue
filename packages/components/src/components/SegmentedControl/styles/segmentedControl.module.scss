@@ -50,7 +50,6 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
 
         .itemLabel {
             padding-inline: sizeToken.get(2);
-            gap: sizeToken.get(1);
             font-size: var(--typography-font-size-x-small);
             line-height: var(--typography-line-height-tight);
 
@@ -58,6 +57,11 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
                 width: sizeToken.get(3);
                 height: sizeToken.get(3);
             }
+        }
+
+        .itemLabelActive,
+        .itemLabelInactive {
+            gap: sizeToken.get(1);
         }
     }
 }

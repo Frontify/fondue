@@ -269,4 +269,5 @@ test('small size is 24px with 12px text and 8px padding', async ({ mount }) => {
     await expect(root).toHaveCSS('height', '24px');
     await expect(label).toHaveCSS('font-size', '12px');
     await expect(label).toHaveCSS('padding-inline-start', '8px');
+    await expect(label.locator('span').nth(1)).toHaveCSS('gap', '4px');
 });
