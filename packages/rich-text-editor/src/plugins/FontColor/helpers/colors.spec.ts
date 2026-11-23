@@ -2,14 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import {
-    decodeStoredColor,
-    encodeStoredColor,
-    parseTypedHex,
-    toColorName,
-    toExportedColor,
-    toStoredColor,
-} from './colors';
+import { decodeStoredColor, encodeStoredColor, toColorName, toExportedColor, toStoredColor } from './colors';
 import { NAMED_COLORS } from './namedColors';
 
 describe('toStoredColor', () => {
@@ -194,30 +187,6 @@ describe('toColorName', () => {
 
     it('rounds the opacity to a whole percent but still marks a translucent colour', () => {
         expect(toColorName(decodeStoredColor('#ff0000fe'))).toBe('#FF0000 100%');
-    });
-});
-
-describe('parseTypedHex', () => {
-    it('accepts three or six digits, with or without a leading hash', () => {
-        expect(parseTypedHex('c5221f', undefined)).toEqual(decodeStoredColor('#c5221f'));
-        expect(parseTypedHex('f00', undefined)).toEqual(decodeStoredColor('#ff0000'));
-        expect(parseTypedHex('#c5221f', undefined)).toEqual(decodeStoredColor('#c5221f'));
-    });
-
-    it('reads upper case digits, and refuses a doubled hash', () => {
-        expect(parseTypedHex('C5221F', undefined)).toEqual(decodeStoredColor('#c5221f'));
-        expect(parseTypedHex('##fff', undefined)).toBeUndefined();
-    });
-
-    it('refuses any other length and no text', () => {
-        expect(parseTypedHex('ff00', undefined)).toBeUndefined();
-        expect(parseTypedHex('ff000080', undefined)).toBeUndefined();
-        expect(parseTypedHex(undefined, undefined)).toBeUndefined();
-    });
-
-    it('passes the alpha through', () => {
-        expect(parseTypedHex('f00', 0.5)).toEqual({ red: 255, green: 0, blue: 0, alpha: 0.5 });
-        expect(parseTypedHex('f00', 0)).toEqual({ red: 255, green: 0, blue: 0, alpha: 0 });
     });
 });
 

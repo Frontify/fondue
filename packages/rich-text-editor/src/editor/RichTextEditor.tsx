@@ -336,7 +336,10 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     const generatedId = useId();
     const editableId = id ?? generatedId;
     const { hostLabels, isNamed } = hostLabelsOf({ ariaLabel, ariaLabelledBy, ariaDescribedBy });
-    const className = [documentStyles.document, styles.content, ...registry.contentClassNames].join(' ');
+    // Read-only renders without the engine, so this editor always takes edits.
+    const className = [documentStyles.document, styles.content, styles.editable, ...registry.contentClassNames].join(
+        ' ',
+    );
     const attributes = useMemo(
         () =>
             editableAttributes({
