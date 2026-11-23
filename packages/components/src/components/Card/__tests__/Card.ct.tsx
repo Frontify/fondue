@@ -90,6 +90,66 @@ test('should not render the card border when not selected', async ({ mount }) =>
     expect(boxShadow).toBe('none');
 });
 
+const readCheckboxGeometry = (checkbox: Locator) =>
+    checkbox.evaluate((element: Element) => {
+        const box = element.getBoundingClientRect();
+        const icon = element.querySelector('svg')?.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return {
+            box: { x: box.x, y: box.y, width: box.width, height: box.height },
+            icon: icon ? { x: icon.x, y: icon.y } : null,
+            borderWidths: [
+                style.borderTopWidth,
+                style.borderRightWidth,
+                style.borderBottomWidth,
+                style.borderLeftWidth,
+            ],
+        };
+    });
+
+const selectableCard = (selected: boolean) => (
+    <RouterProvider navigate={() => {}} useHref={(path) => path}>
+        <Card.Root data-test-id={CARD_TEST_ID} href="/page" onSelect={() => {}} selected={selected} aria-label="Card">
+            <Card.Banner>
+                <Card.BannerImage src={TRANSPARENT_GIF} />
+            </Card.Banner>
+            <Card.Title>Card title</Card.Title>
+        </Card.Root>
+    </RouterProvider>
+);
+
+test('should keep the checkbox and its check mark in place when the card gets selected', async ({ mount, page }) => {
+    const component = await mount(selectableCard(false));
+    const card = page.getByTestId(CARD_TEST_ID);
+    const checkbox = card.getByRole('button', { name: 'Select' });
+    const expectedBorderWidth = await resolveToken(card, 'width', '--border-width-default');
+    await card.hover();
+
+    const unselected = await readCheckboxGeometry(checkbox);
+
+    await component.update(selectableCard(true));
+    await expect(card).toHaveAttribute('data-selected', 'true');
+    const selected = await readCheckboxGeometry(card.getByRole('button', { name: 'Deselect' }));
+
+    expect(unselected.borderWidths).toEqual(Array(4).fill(expectedBorderWidth));
+    expect(selected).toEqual(unselected);
+});
+
+test('should colour the selected checkbox border like its fill', async ({ mount, page }) => {
+    await mount(selectableCard(true));
+    const checkbox = page.getByTestId(CARD_TEST_ID).getByRole('button', { name: 'Deselect' });
+    const expectedColor = await resolveToken(checkbox, 'color', '--color-primary-default');
+
+    await expect
+        .poll(() =>
+            checkbox.evaluate((element) => {
+                const style = getComputedStyle(element);
+                return { borderColor: style.borderTopColor, backgroundColor: style.backgroundColor };
+            }),
+        )
+        .toEqual({ borderColor: expectedColor, backgroundColor: expectedColor });
+});
+
 test('should apply inner padding to a padded banner image', async ({ mount }) => {
     const wrapper = await mount(
         <Card.Root data-test-id={CARD_TEST_ID}>
