@@ -47,7 +47,7 @@ export const createHostSync = ({
 }: HostSyncOptions): HostSync => {
     let record = createHostRecord(initialDoc);
     // The order each document was reported in, which tells an echo from a reset.
-    const reported = new WeakMap<RteDocumentOf, number>();
+    const reportOrders = new WeakMap<RteDocumentOf, number>();
     // The document's own undeclared keys: only the host changes them, so they live here, not in the engine document.
     let rootExtras = rootExtrasOf(initialDoc);
     let pendingFrame: number | null = null;
@@ -84,15 +84,15 @@ export const createHostSync = ({
         const action = hostDocAction({
             record,
             doc,
-            reportedSeq: reported.get(doc),
+            reportOrder: reportOrders.get(doc),
             composing: view().composing,
         });
 
         switch (action.kind) {
-            case 'ignore':
+            case 'unchanged':
                 return;
             case 'echo':
-                record = recordEcho(record, action.seq);
+                record = recordEcho(record, action.order);
                 return;
             case 'wait':
                 // Held or not, the host now holds a document of its own, so what it hands back after this is a reset.
@@ -111,7 +111,7 @@ export const createHostSync = ({
     const report = (): RteDocumentOf => {
         const emitted = toRteDocument(view().state.doc, rootExtras);
         record = recordReport(record);
-        reported.set(emitted, record.reportCount);
+        reportOrders.set(emitted, record.reportCount);
 
         return emitted;
     };

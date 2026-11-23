@@ -8,33 +8,40 @@ export type HostRecord = {
     agreed: RteDocumentOf | null;
     /** How many documents the editor has reported, so the newest one's order. */
     reportCount: number;
-    /** Reports at or below this are older than what the host holds; one above it handed back is an echo. */
-    hostSeq: number;
+    /**
+     * The newest report order the host has overtaken. A reported document
+     * handed back at or below it is a reset, one above it is an echo.
+     */
+    supersededThrough: number;
 };
 
-export type HostDocAction = { kind: 'ignore' } | { kind: 'echo'; seq: number } | { kind: 'wait' } | { kind: 'apply' };
+export type HostDocAction =
+    | { kind: 'unchanged' }
+    | { kind: 'echo'; order: number }
+    | { kind: 'wait' }
+    | { kind: 'apply' };
 
 export const createHostRecord = (initialDoc: RteDocumentOf): HostRecord => ({
     agreed: initialDoc,
     reportCount: 0,
-    hostSeq: 0,
+    supersededThrough: 0,
 });
 
 export type HostDocActionParams = {
     record: Readonly<HostRecord>;
     doc: RteDocumentOf;
     /** The order `doc` was reported in, when the editor reported it. */
-    reportedSeq: number | undefined;
+    reportOrder: number | undefined;
     composing: boolean;
 };
 
-export const hostDocAction = ({ record, doc, reportedSeq, composing }: HostDocActionParams): HostDocAction => {
+export const hostDocAction = ({ record, doc, reportOrder, composing }: HostDocActionParams): HostDocAction => {
     if (doc === record.agreed) {
-        return { kind: 'ignore' };
+        return { kind: 'unchanged' };
     }
 
-    if (reportedSeq !== undefined && reportedSeq > record.hostSeq) {
-        return { kind: 'echo', seq: reportedSeq };
+    if (reportOrder !== undefined && reportOrder > record.supersededThrough) {
+        return { kind: 'echo', order: reportOrder };
     }
 
     // Replacing text mid-composition breaks the word being composed, so the change waits for it to end.
@@ -52,10 +59,13 @@ export const recordReport = (record: HostRecord): HostRecord => ({
     agreed: null,
 });
 
-export const recordEcho = (record: HostRecord, seq: number): HostRecord => ({ ...record, hostSeq: seq });
+export const recordEcho = (record: HostRecord, order: number): HostRecord => ({ ...record, supersededThrough: order });
 
 /** The host now holds a document of its own, newer than everything reported so far. */
-export const recordHandOver = (record: HostRecord): HostRecord => ({ ...record, hostSeq: record.reportCount });
+export const recordHandOver = (record: HostRecord): HostRecord => ({
+    ...record,
+    supersededThrough: record.reportCount,
+});
 
 /** The editor holds `doc`, handed over by the host, unedited. */
 export const recordAgreed = (record: HostRecord, doc: RteDocumentOf): HostRecord => ({ ...record, agreed: doc });
