@@ -76,7 +76,7 @@ const mount = ({
     let currentPlaceholder = placeholder;
     let record = createHostRecord(initialDoc);
     // The order each document was reported in, which tells an echo from a reset.
-    const reported = new WeakMap<RteDocumentOf, number>();
+    const reportOrders = new WeakMap<RteDocumentOf, number>();
     // The document's own undeclared keys: only the host changes them, so they live here, not in the engine document.
     let rootExtras = rootExtrasOf(initialDoc);
 
@@ -147,7 +147,7 @@ const mount = ({
             if (transaction.docChanged && transaction.getMeta(HOST_DOC) !== true) {
                 const emitted = toRteDocument(editorView.state.doc, rootExtras);
                 record = recordReport(record);
-                reported.set(emitted, record.reportCount);
+                reportOrders.set(emitted, record.reportCount);
                 onDocChange(emitted);
             }
             onStateChange();
@@ -180,13 +180,13 @@ const mount = ({
     };
 
     const setDoc = (doc: RteDocumentOf): void => {
-        const action = hostDocAction({ record, doc, reportedSeq: reported.get(doc) });
+        const action = hostDocAction({ record, doc, reportOrder: reportOrders.get(doc) });
 
         switch (action.kind) {
-            case 'ignore':
+            case 'unchanged':
                 return;
             case 'echo':
-                record = recordEcho(record, action.seq);
+                record = recordEcho(record, action.order);
                 return;
             case 'apply':
                 record = recordHandOver(record);
