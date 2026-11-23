@@ -1,0 +1,31 @@
+packages/rich-text-editor/src/plugins/Emoji/emoji.module.scss
+  s_672ff591c7ef75::t_61b1f8a2f215ab 127-131
+packages/rich-text-editor/src/__tests__/browser/editor.ct.tsx
+  s_672ff591c7ef75::t_61b1f8a2f215ab 372-373
+packages/rich-text-editor/src/locales/index.ts
+  s_672ff591c7ef75::t_61b1f8a2f215ab 3-13
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.tsx
+  s_672ff591c7ef75::t_61b1f8a2f215ab 177,189
+packages/rich-text-editor/locales.vite.config.ts
+  s_672ff591c7ef75::t_61b1f8a2f215ab 12,15
+packages/rich-text-editor/src/plugins/FontColor/components/colorFlyout.module.scss
+  s_672ff591c7ef75::t_61b1f8a2f215ab 25-29
+packages/rich-text-editor/src/plugins/Emoji/components/EmojiPicker.tsx
+  s_672ff591c7ef75::t_61b1f8a2f215ab 69,73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "55209d4dfe7e9f6ca8a582a8831819e0e270ec62",
+  "prompts": {},
+  "sessions": {
+    "s_672ff591c7ef75": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c4374249-f1eb-4204-a892-68101bfd3f20",
+        "model": "unknown"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

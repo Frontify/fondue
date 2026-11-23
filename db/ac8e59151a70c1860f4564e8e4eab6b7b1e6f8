@@ -1,0 +1,35 @@
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_c56bde808bb5f7::t_b39a5edc1e7f07 19,97
+packages/rich-text-editor/src/docs/keyboardReference.ts
+  s_c56bde808bb5f7::t_b39a5edc1e7f07 4,8
+packages/rich-text-editor/src/editor/hooks/useEditorStrings.ts
+  s_c56bde808bb5f7::t_b39a5edc1e7f07 6
+packages/rich-text-editor/src/locales/__tests__/keysInUse.spec.ts
+  s_c56bde808bb5f7::t_347575e345dd33 1-52
+packages/rich-text-editor/.storybook/preview.tsx
+  s_c56bde808bb5f7::t_b39a5edc1e7f07 13
+packages/rich-text-editor/oxlint.config.ts
+  s_c56bde808bb5f7::t_b39a5edc1e7f07 60,184-194,197-200
+  s_c56bde808bb5f7::t_01203fb328345c 195-196
+  s_c56bde808bb5f7::t_620d219ac936f5 201-202
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_c56bde808bb5f7::t_b39a5edc1e7f07 199,209
+packages/rich-text-editor/src/locales/en-US.ts
+  s_c56bde808bb5f7::t_657715fd755d99 7-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dbac8e59151a70c1860f4564e8e4eab6b7b1e6f8",
+  "prompts": {},
+  "sessions": {
+    "s_c56bde808bb5f7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "67ddf8bd-870f-4212-974e-54afa59d04ad",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
