@@ -1,0 +1,99 @@
+packages/rich-text-editor/src/__tests__/browser/HostNoHeadingsPair.tsx
+  s_e6323a12c95901::t_bb1c379156da93 24
+packages/rich-text-editor/src/plugins/index.ts
+  s_e6323a12c95901::t_fed7dc2a1535fd 50-51
+packages/rich-text-editor/src/__tests__/browser/hostStylingValues.ts
+  s_e6323a12c95901::t_6e4988c934d3e4 183
+  s_e6323a12c95901::t_c3b0c23a68a2cb 117-182,184-194
+  s_e6323a12c95901::t_adcb4dd9df4cbd 112-116,195-200
+packages/rich-text-editor/src/core/index.ts
+  s_e6323a12c95901::t_a29aebd159c886 25
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_e6323a12c95901::t_e94d7ccc85f66e 1121-1128,1209
+  s_e6323a12c95901::t_4c9b7f49b8c097 856-860
+  s_e6323a12c95901::t_0bbe08ddb5d4d6 12,22-23
+  s_e6323a12c95901::t_6c2e4b1b12f002 880-884
+  s_e6323a12c95901::t_eadf2834bd82c2 922-934,937-938
+  s_e6323a12c95901::t_c9ed0b4e0d52b3 959-1011
+  s_e6323a12c95901::t_48db252bdf6961 855,879
+packages/rich-text-editor/src/plugins/TextStyle/textStyle.module.scss
+  s_e6323a12c95901::t_824ea075bd64fc 124-125
+packages/rich-text-editor/src/index.ts
+  s_e6323a12c95901::t_e0c01cc1330446 139-144
+  s_9209af244cd592::t_82e154b0f4c4f4 138
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_e6323a12c95901::t_ee70beb2f1f166 782-788
+  s_e6323a12c95901::t_bb1c379156da93 496,531,679-680
+packages/rich-text-editor/src/core/look.spec.ts
+  s_e6323a12c95901::t_2040ad80deaa3d 21-23
+  s_e6323a12c95901::t_ee70beb2f1f166 5,10,17-20,25-27,31-32,37-39
+  s_e6323a12c95901::t_a38dd4be13f205 9,11
+packages/rich-text-editor/src/plugins/List/List.ts
+  s_e6323a12c95901::t_c6a0fbc5fc2da2 263-280,285,287-288,290,292,297,303,305-306,308,310,315
+  s_e6323a12c95901::t_48db252bdf6961 164-165
+  s_e6323a12c95901::t_40b3ea51fcddcc 10,14
+  s_e6323a12c95901::t_a38dd4be13f205 48,50-52,61,63-65,120-122,124,126-128,147-149,154-156,256,258-260
+  s_e6323a12c95901::t_ee70beb2f1f166 49,62,125,185,190,196-198,203,206,219,257,284,286,289,291,293-296,302,304,307,309,311-314
+  s_e6323a12c95901::t_4a4a2964e6a948 195,201-202,216,222
+  s_e6323a12c95901::t_3eeb42ade2193d 158-163,166-184,186-189,191-194,199-200,204-205,207-210,212,215,217-218,220-221,223,228
+  s_e6323a12c95901::t_1d4d6920ea1195 211,213-214
+  s_e6323a12c95901::t_277ffe2303c951 157
+packages/rich-text-editor/src/__tests__/browser/HostLooksPair.tsx
+  s_e6323a12c95901::t_bd52cd341a6f7f 6,12-14,30-31,39,41-42,49
+packages/rich-text-editor/src/plugins/List/index.ts
+  s_e6323a12c95901::t_9104219420013b 9-10,12,14-15
+.changeset/rte-list-marker-looks.md
+  s_e6323a12c95901::t_952424d39a593d 1-5
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_e6323a12c95901::t_16a6af8ccd6e98 21
+  s_e6323a12c95901::t_221c9c5ca2b78e 581-586
+  s_e6323a12c95901::t_1a38d0087858b3 6-13
+  s_e6323a12c95901::t_48db252bdf6961 548-549,552,554,602,646-647
+  s_e6323a12c95901::t_de7a9bbb21eff7 547,550-551,553,555-580,587-601,603-645,648-686
+  s_e6323a12c95901::t_e6272924a717f1 27-28
+packages/rich-text-editor/src/plugins/List/list.module.scss
+  s_e6323a12c95901::t_ee70beb2f1f166 33,35-36,65,68
+  s_e6323a12c95901::t_5dffbd84013d8c 67
+  s_e6323a12c95901::t_d684a80e1ef4ad 3-9,13,16-20,22-32,37-39,41,43,46,49,60-64,66,69-70,74,76,82,85
+  s_e6323a12c95901::t_f0b9d609aa37f1 21,34
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_e6323a12c95901::t_bb1c379156da93 149,158
+packages/rich-text-editor/src/__tests__/lookStylesheets.spec.ts
+  s_e6323a12c95901::t_a38dd4be13f205 46-48,108-118,123-128
+  s_e6323a12c95901::t_e90f76d4967b8c 101,103-106,119,121-122,129-130,132-133,135-136
+  s_e6323a12c95901::t_ee70beb2f1f166 10,102,107,120,131
+  s_e6323a12c95901::t_a97834f36fc4ae 134
+packages/rich-text-editor/src/core/look.ts
+  s_e6323a12c95901::t_546d6d2cbde14c 60,63,65-66,69-71
+  s_e6323a12c95901::t_81d565d46bf1d6 64,67
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_e6323a12c95901::t_a29aebd159c886 10,102
+packages/rich-text-editor/src/plugins/List/List.spec.ts
+  s_e6323a12c95901::t_f4f221e87090d1 1-2,4,6,9-12,14,16-18,24-26,31-32,36-38,40,42-44
+  s_e6323a12c95901::t_ee70beb2f1f166 3,5,7-8,13,15,19-23,27,29,33-35,39,41
+  s_e6323a12c95901::t_a38dd4be13f205 28,30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "67b45b9d25fef7a9b7314de0ac1040187a27da6c",
+  "prompts": {},
+  "sessions": {
+    "s_9209af244cd592": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2937942f-4fd4-4ace-942d-ce576d430ce1",
+        "model": "unknown"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_e6323a12c95901": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0fd384bd-8f91-4d82-a7d6-b17e5092da7d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

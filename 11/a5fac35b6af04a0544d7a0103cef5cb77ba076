@@ -1,0 +1,19 @@
+.changeset/rte-list-marker-looks.md
+  s_e6323a12c95901::t_f379ac6348b26a 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "11a5fac35b6af04a0544d7a0103cef5cb77ba076",
+  "prompts": {},
+  "sessions": {
+    "s_e6323a12c95901": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0fd384bd-8f91-4d82-a7d6-b17e5092da7d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

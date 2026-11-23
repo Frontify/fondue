@@ -1,0 +1,138 @@
+package.json
+  s_be5af688b9a432::t_93c3d58fc39f6f 19,22,33
+packages/charts/package.json
+  s_be5af688b9a432::t_93c3d58fc39f6f 4
+packages/rich-text-editor/src/core/registry.ts
+  s_be5af688b9a432::t_82ac29231fc1d5 399,410-436,618
+packages/rich-text-editor/src/core/index.ts
+  s_be5af688b9a432::t_82ac29231fc1d5 30,39,41,58,75-83
+packages/rich-text-editor/src/plugins/Strikethrough/Strikethrough.ts
+  s_be5af688b9a432::t_82ac29231fc1d5 7,26-27
+packages/rich-text-editor/src/editor/engines/prosemirror/paste.spec.tsx
+  s_be5af688b9a432::t_82ac29231fc1d5 7,73-219
+  s_be5af688b9a432::t_835734688111f4 220-221
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_be5af688b9a432::t_82ac29231fc1d5 3,5,25-31,64-65
+  s_be5af688b9a432::t_9f01fd63ead17e 66
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_be5af688b9a432::t_e286408484242d 67
+  s_be5af688b9a432::t_82ac29231fc1d5 4,19-20,52-56
+packages/rich-text-editor/src/plugins/Typography/Typography.spec.ts
+  s_be5af688b9a432::t_82ac29231fc1d5 11,20,26-41
+.changeset/pre.json
+  s_be5af688b9a432::t_93c3d58fc39f6f 3,5-13,29
+packages/rich-text-editor/src/__tests__/formatRegression.spec.tsx
+  s_be5af688b9a432::t_82ac29231fc1d5 34
+packages/icons/CHANGELOG.md
+  s_be5af688b9a432::t_93c3d58fc39f6f 3-11,29-33
+  s_be5af688b9a432::t_ed238475958d10 34
+packages/rich-text-editor/src/plugins/Typography/Typography.ts
+  s_be5af688b9a432::t_82ac29231fc1d5 3,5,7-11,13-65,67-80,83-90,93-120,124-130,153,155-158,160-163,166-173,175-208,210-229
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.spec.tsx
+  s_be5af688b9a432::t_82ac29231fc1d5 14,18,20,131-168
+  s_be5af688b9a432::t_f5e65e2fcae645 169
+packages/rich-text-editor/src/index.ts
+  s_be5af688b9a432::t_82ac29231fc1d5 7,13,15,30,164-167,184-188
+  s_be5af688b9a432::t_e286408484242d 146
+fondue/package.json
+  s_be5af688b9a432::t_93c3d58fc39f6f 4
+packages/rich-text-editor/src/plugins/Bold/Bold.ts
+  s_be5af688b9a432::t_82ac29231fc1d5 7,32-33,40,46-47
+packages/components/package.json
+  s_be5af688b9a432::t_93c3d58fc39f6f 3
+packages/rich-text-editor/src/core/plugin.ts
+  s_be5af688b9a432::t_82ac29231fc1d5 158-167,276-277,308,335-336,341-342,345,374-397,409-454,591,607-612,614-630
+.changeset/v14-release-candidate.md
+  s_be5af688b9a432::t_93c3d58fc39f6f 1-12
+fondue/CHANGELOG.md
+  s_be5af688b9a432::t_93c3d58fc39f6f 3-17,76-92
+  s_be5af688b9a432::t_16b8d1f2add1ce 93
+.changeset/feat-rte-paste-marks.md
+  s_be5af688b9a432::t_93c3d58fc39f6f 1-5
+packages/components/CHANGELOG.md
+  s_be5af688b9a432::t_93c3d58fc39f6f 3-8,54-78
+  s_be5af688b9a432::t_2cb4e4e5a5e9a0 79
+packages/rich-text-editor/src/plugins/Code/Code.ts
+  s_be5af688b9a432::t_82ac29231fc1d5 27-28
+packages/rich-text-editor/src/core/registry.spec.ts
+  s_be5af688b9a432::t_82ac29231fc1d5 65-82
+packages/charts/CHANGELOG.md
+  s_be5af688b9a432::t_93c3d58fc39f6f 3-8
+packages/rich-text-editor/src/plugins/Superscript/Superscript.ts
+  s_be5af688b9a432::t_82ac29231fc1d5 7-8,24-32
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_be5af688b9a432::t_82ac29231fc1d5 47,691-712
+  s_be5af688b9a432::t_e8ee315f7d3d07 713-721
+packages/rich-text-editor/src/editor/engines/prosemirror/textRules.spec.tsx
+  s_be5af688b9a432::t_82ac29231fc1d5 8-15,36-52,70-99,112-135,139,145-157,170-280,287,291-302,306-551
+packages/rich-text-editor/src/plugins/Subscript/Subscript.ts
+  s_be5af688b9a432::t_82ac29231fc1d5 7-8,24-32
+.changeset/feat-rte-typing-rules.md
+  s_be5af688b9a432::t_93c3d58fc39f6f 1-5
+packages/rich-text-editor/src/plugins/Underline/Underline.ts
+  s_be5af688b9a432::t_82ac29231fc1d5 7,26-27
+packages/rich-text-editor/src/plugins/Italic/Italic.ts
+  s_be5af688b9a432::t_82ac29231fc1d5 7,26,30-31
+README.md
+  s_be5af688b9a432::t_058a1cab6733a6 1,3,5-7,9,11,13,19-23,25,27-32,34,36,38,40-49,51-69,71
+packages/icons/package.json
+  s_be5af688b9a432::t_3d193cd2f83348 4
+packages/rich-text-editor/CHANGELOG.md
+  s_be5af688b9a432::t_0705107999f0d6 3-8
+packages/rich-text-editor/package.json
+  s_be5af688b9a432::t_ee67b7c4c9a214 4
+packages/rich-text-editor/src/__tests__/paste/fixtures/google-docs-runs.document.json
+  s_be5af688b9a432::t_aafe42d609c99c 19-20,43-44,52-63
+packages/rich-text-editor/src/core/vocabulary.ts
+  s_be5af688b9a432::t_f4aeb34e6db4e3 35-46
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.spec.tsx
+  s_be5af688b9a432::t_a89a595f974251 82,87
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.ts
+  s_be5af688b9a432::t_63fbab8a61c2f3 8,65,69,141
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_be5af688b9a432::t_feb3d87c0f6e9f 16-22,445-448,453-461
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_be5af688b9a432::t_da68d69dd6cec9 43-44,67-102,248,253-334
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_be5af688b9a432::t_f6e44ce13d11aa 7,14,19,32-33,134-135,137,143,241-255,269-273,280-282,290-296,364-438,441-482
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteRules.ts
+  s_be5af688b9a432::t_58b64b0dbeff6f 3-7,9-18,32-35,44-57,59-178
+packages/rich-text-editor/src/editor/engines/prosemirror/ruleContext.ts
+  s_be5af688b9a432::t_bfa5f8aa3ba62e 40-49,59-70
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.ts
+  s_be5af688b9a432::t_ad64bd04417134 25-32,137-152,156-157,209,211
+packages/rich-text-editor/src/plugins/FontColor/FontColor.spec.ts
+  s_be5af688b9a432::t_4e5470d30fcea5 7-8,16-18
+packages/rich-text-editor/src/plugins/Typography/index.ts
+  s_be5af688b9a432::t_49b4df23bf2875 3
+packages/rich-text-editor/src/plugins/shared/helpers/declaredStyle.ts
+  s_be5af688b9a432::t_01dd718a2affc8 3-4,25-70,72-100,102-130
+packages/rte/CHANGELOG.md
+  s_be5af688b9a432::t_e07a7595687bcd 3-14
+packages/rte/package.json
+  s_be5af688b9a432::t_7810cbe3e9ea66 4
+packages/sdk/CHANGELOG.md
+  s_be5af688b9a432::t_adcd74d3debdaa 3-13,48-58
+packages/sdk/package.json
+  s_be5af688b9a432::t_511fd8cc38ba67 4
+packages/tokens/CHANGELOG.md
+  s_be5af688b9a432::t_5252eb83c862b4 3-8
+packages/tokens/package.json
+  s_be5af688b9a432::t_6f0a13750a12c1 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "40a26425fa056b9ea61fef2fd22773d8e16fca2f",
+  "prompts": {},
+  "sessions": {
+    "s_be5af688b9a432": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0dcd0245-e19d-48cb-aebc-74746cda6895",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

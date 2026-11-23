@@ -1,0 +1,53 @@
+.changeset/rte-paragraph-quote-link-looks.md
+  s_22527a1a684ccf::t_c4ba60ad94caa7 5
+.changeset/rte-text-style-content-looks.md
+  s_22527a1a684ccf::t_1f55ceac3a4710 5
+.changeset/rte-text-style-looks.md
+  s_22527a1a684ccf::t_7e13c69bf53082 5
+packages/rich-text-editor/README.md
+  s_22527a1a684ccf::t_f331979eb307c8 24,27-28
+packages/rich-text-editor/src/__tests__/browser/HostLooksPair.tsx
+  s_22527a1a684ccf::t_6290fc0c8a2974 37,47
+packages/rich-text-editor/src/__tests__/browser/HostNoHeadingsPair.tsx
+  s_22527a1a684ccf::t_db7cc79d73d841 32
+packages/rich-text-editor/src/__tests__/browser/HostStylingPair.tsx
+  s_22527a1a684ccf::t_aae882ab3ff8df 11,20,23,26
+packages/rich-text-editor/src/__tests__/browser/HostStylingSections.tsx
+  s_22527a1a684ccf::t_5cddb631e948f7 11,15,18,21
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_22527a1a684ccf::t_461b3eeee6563e 25,228,239,265,273,281,293
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_22527a1a684ccf::t_52f93077a88de0 189,192,203
+packages/rich-text-editor/src/__tests__/typeDerivation.spec.ts
+  s_22527a1a684ccf::t_2fecde7787071a 158,161,164
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.spec.ts
+  s_22527a1a684ccf::t_39b1355d983b75 11,18,33,48,52,63,69,82,84,88
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_22527a1a684ccf::t_b49e3305dd62be 47,57,101,103-105,127,130,132-133,136,160,202,204
+packages/rich-text-editor/src/plugins/TextStyle/index.ts
+  s_22527a1a684ccf::t_cc783a18876d3e 11
+packages/rich-text-editor/src/plugins/TextStyle/textStyle.module.scss
+  s_22527a1a684ccf::t_b6eb3cc73ec8b0 117
+packages/rich-text-editor/src/plugins/defaultContent.ts
+  s_22527a1a684ccf::t_f719ef4a29a584 25
+packages/rich-text-editor/src/plugins/index.ts
+  s_22527a1a684ccf::t_06e9575181c1d9 50
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_22527a1a684ccf::t_53733d65f35af3 29,877,909,918,988,1040-1041,1046,1050,1061,1066-1067,1091,1094,1100,1108,1114,1118-1119,1121-1123,1125-1126,1131-1132,1136
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "712bb491fbbbb53c30b1efb60f23d72311f04b7c",
+  "prompts": {},
+  "sessions": {
+    "s_22527a1a684ccf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2a5abef-0d60-4dfb-93a0-af8f62c61098",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
