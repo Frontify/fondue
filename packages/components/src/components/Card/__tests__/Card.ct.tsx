@@ -468,62 +468,57 @@ const actionsCard = (actionsVisibility: 'always' | 'hover', selected = false) =>
     </RouterProvider>
 );
 
-const readActions = (card: Locator) =>
+const ACTIONS_TEST_ID = 'fondue-card-actions';
+
+const readWidths = (card: Locator) =>
     card.evaluate((element) => {
         const actions = element.querySelector('[data-test-id="fondue-card-actions"]') as HTMLElement;
         const title = element.querySelector('[data-test-id="fondue-card-title"]') as HTMLElement;
-        return {
-            actionsWidth: actions.getBoundingClientRect().width,
-            actionsOpacity: getComputedStyle(actions).opacity,
-            titleWidth: title.getBoundingClientRect().width,
-        };
+        return { actions: actions.getBoundingClientRect().width, title: title.getBoundingClientRect().width };
     });
-
-const areActionsRevealed = async (card: Locator) => {
-    const { actionsWidth, actionsOpacity } = await readActions(card);
-    return actionsWidth > 0 && actionsOpacity === '1';
-};
 
 test('should show the actions without hover by default', async ({ mount, page }) => {
     await mount(actionsCard('always'));
-    const card = page.getByTestId(CARD_TEST_ID);
+    const actions = page.getByTestId(ACTIONS_TEST_ID);
 
-    const { actionsWidth, actionsOpacity } = await readActions(card);
-
-    expect(actionsWidth).toBeGreaterThan(0);
-    expect(actionsOpacity).toBe('1');
+    await expect(actions).toHaveCSS('opacity', '1');
+    await expect(actions).not.toHaveCSS('width', '0px');
 });
 
 test('should hide hover-only actions without taking space and give the title the width', async ({ mount, page }) => {
     const component = await mount(actionsCard('always'));
     const card = page.getByTestId(CARD_TEST_ID);
-    const always = await readActions(card);
+    const actions = page.getByTestId(ACTIONS_TEST_ID);
+    const always = await readWidths(card);
 
     await component.update(actionsCard('hover'));
-    await expect(card).toHaveAttribute('data-actions-visibility', 'hover');
-    await expect.poll(() => readActions(card)).toMatchObject({ actionsWidth: 0, actionsOpacity: '0' });
 
-    const hidden = await readActions(card);
-    expect(hidden.titleWidth).toBe(always.titleWidth + always.actionsWidth);
+    await expect(actions).toHaveCSS('width', '0px');
+    await expect(actions).toHaveCSS('opacity', '0');
+    const hidden = await readWidths(card);
+    expect(hidden.title).toBe(always.title + always.actions);
 });
 
 test('should keep hover-only actions hidden on a selected card', async ({ mount, page }) => {
     await mount(actionsCard('hover', true));
-    const card = page.getByTestId(CARD_TEST_ID);
-    await expect(card).toHaveAttribute('data-selected', 'true');
+    const actions = page.getByTestId(ACTIONS_TEST_ID);
+    await expect(page.getByTestId(CARD_TEST_ID)).toHaveAttribute('data-selected', 'true');
 
-    await expect.poll(() => readActions(card)).toMatchObject({ actionsWidth: 0, actionsOpacity: '0' });
+    await expect(actions).toHaveCSS('width', '0px');
+    await expect(actions).toHaveCSS('opacity', '0');
 });
 
 test('should reveal hover-only actions on hover and hide them on leave', async ({ mount, page }) => {
     await mount(actionsCard('hover', true));
-    const card = page.getByTestId(CARD_TEST_ID);
+    const actions = page.getByTestId(ACTIONS_TEST_ID);
 
-    await card.hover();
-    await expect.poll(() => areActionsRevealed(card)).toBe(true);
+    await page.getByTestId(CARD_TEST_ID).hover();
+    await expect(actions).toHaveCSS('opacity', '1');
+    await expect(actions).not.toHaveCSS('width', '0px');
 
     await page.mouse.move(0, 0);
-    await expect.poll(() => readActions(card)).toMatchObject({ actionsWidth: 0, actionsOpacity: '0' });
+    await expect(actions).toHaveCSS('width', '0px');
+    await expect(actions).toHaveCSS('opacity', '0');
 });
 
 test('should reveal hover-only actions when they get keyboard focus', async ({ mount, page }) => {
@@ -537,23 +532,25 @@ test('should reveal hover-only actions when they get keyboard focus', async ({ m
             </Card.Action>
         </Card.Root>,
     );
-    const card = page.getByTestId(CARD_TEST_ID);
-    await expect.poll(() => readActions(card)).toMatchObject({ actionsWidth: 0, actionsOpacity: '0' });
+    const actions = page.getByTestId(ACTIONS_TEST_ID);
+    await expect(actions).toHaveCSS('width', '0px');
 
     await page.keyboard.press('Tab');
 
-    await expect(card.getByRole('button', { name: 'Settings' })).toBeFocused();
-    await expect.poll(() => areActionsRevealed(card)).toBe(true);
+    await expect(actions.getByRole('button', { name: 'Settings' })).toBeFocused();
+    await expect(actions).toHaveCSS('opacity', '1');
+    await expect(actions).not.toHaveCSS('width', '0px');
 });
 
 test('should keep hover-only actions visible while their menu is open', async ({ mount, page }) => {
     await mount(actionsCard('hover'));
-    const card = page.getByTestId(CARD_TEST_ID);
+    const actions = page.getByTestId(ACTIONS_TEST_ID);
 
-    await card.hover();
-    await card.getByRole('button', { name: 'More actions' }).click();
+    await page.getByTestId(CARD_TEST_ID).hover();
+    await actions.getByRole('button', { name: 'More actions' }).click();
     await expect(page.getByRole('menu')).toBeVisible();
     await page.mouse.move(0, 0);
 
-    await expect.poll(() => areActionsRevealed(card)).toBe(true);
+    await expect(actions).toHaveCSS('opacity', '1');
+    await expect(actions).not.toHaveCSS('width', '0px');
 });
