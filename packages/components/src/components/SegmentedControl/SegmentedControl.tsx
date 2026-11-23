@@ -34,6 +34,11 @@ export type SegmentedControlRootProps<TValue extends string = string> = {
      * @default true
      */
     hugWidth?: boolean;
+    /**
+     * The size of the segmented control.
+     * @default 'medium'
+     */
+    size?: 'small' | 'medium';
     'data-test-id'?: string;
 } & OptionalCommonAriaAttrs;
 
@@ -44,6 +49,7 @@ export const SegmentedControlRoot = <TValue extends string = string>(
         defaultValue,
         onValueChange,
         hugWidth = true,
+        size = 'medium',
         ...rootProps
     }: SegmentedControlRootProps<TValue>,
     ref: ForwardedRef<HTMLDivElement>,
@@ -68,6 +74,7 @@ export const SegmentedControlRoot = <TValue extends string = string>(
             type="single"
             asChild={false}
             data-hug-width={hugWidth}
+            data-size={size}
             aria-disabled={rootProps.disabled}
         >
             {children}
