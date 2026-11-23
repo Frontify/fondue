@@ -1,0 +1,88 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.spec.tsx
+  s_d486ecb43c5b4c::t_33ab40cb27386c 75,81,87
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_d486ecb43c5b4c::t_33ab40cb27386c 20,601
+packages/rich-text-editor/src/core/documentContract.ts
+  s_d486ecb43c5b4c::t_33ab40cb27386c 1-24
+packages/rich-text-editor/src/core/registry.spec.ts
+  s_d486ecb43c5b4c::t_33ab40cb27386c 6,8,17-18,605-721
+packages/rich-text-editor/src/renderer/document.module.scss
+  s_d486ecb43c5b4c::t_33ab40cb27386c 59,62
+packages/rich-text-editor/src/index.ts
+  s_d486ecb43c5b4c::t_33ab40cb27386c 65,102
+packages/rich-text-editor/src/plugins/Link/link.module.scss
+  s_d486ecb43c5b4c::t_33ab40cb27386c 3
+packages/rich-text-editor/src/__tests__/serverRendering.spec.tsx
+  s_d486ecb43c5b4c::t_33ab40cb27386c 28
+packages/rich-text-editor/src/styles/look.module.scss
+  s_d486ecb43c5b4c::t_33ab40cb27386c 1-52
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_d486ecb43c5b4c::t_5ef1d835e3b409 493-498,515-523,547-548,562-563
+  s_d486ecb43c5b4c::t_33ab40cb27386c 6,85
+packages/rich-text-editor/src/plugins/Mention/Mention.tsx
+  s_d486ecb43c5b4c::t_33ab40cb27386c 13-14,18-19
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_d486ecb43c5b4c::t_33ab40cb27386c 57-58
+packages/rich-text-editor/src/plugins/Quote/quote.module.scss
+  s_d486ecb43c5b4c::t_33ab40cb27386c 3
+packages/rich-text-editor/src/__tests__/documentContract.spec.ts
+  s_d486ecb43c5b4c::t_33ab40cb27386c 1-42
+packages/rich-text-editor/src/core/look.ts
+  s_d486ecb43c5b4c::t_33ab40cb27386c 23-24,38,58-68,82
+packages/rich-text-editor/src/plugins/Paragraph/Paragraph.ts
+  s_d486ecb43c5b4c::t_8d5b4149b35a86 3
+  s_d486ecb43c5b4c::t_a173e853a569da 24
+  s_d486ecb43c5b4c::t_33ab40cb27386c 20-21
+packages/rich-text-editor/src/__tests__/serializeToHtml.node.spec.tsx
+  s_d486ecb43c5b4c::t_33ab40cb27386c 71
+packages/rich-text-editor/oxlint.config.ts
+  s_d486ecb43c5b4c::t_33ab40cb27386c 10-16
+packages/rich-text-editor/src/plugins/Quote/Quote.spec.ts
+  s_d486ecb43c5b4c::t_33ab40cb27386c 31-37
+packages/rich-text-editor/src/plugins/Quote/Quote.ts
+  s_d486ecb43c5b4c::t_33ab40cb27386c 39
+packages/rich-text-editor/src/core/index.ts
+  s_d486ecb43c5b4c::t_8d5b4149b35a86 71
+  s_d486ecb43c5b4c::t_33ab40cb27386c 24
+  s_d486ecb43c5b4c::t_fc1aab5a6d1c11 25
+packages/rich-text-editor/src/core/plugin.ts
+  s_d486ecb43c5b4c::t_33ab40cb27386c 14-15,17-18,43-47,55-59,123-125,282-291
+  s_d486ecb43c5b4c::t_fc1aab5a6d1c11 42
+packages/rich-text-editor/src/core/registry.ts
+  s_d486ecb43c5b4c::t_33ab40cb27386c 4-5,10,15,438-440,531-581,591,621,651-652,696-698,705-720
+packages/rich-text-editor/src/renderer/RichTextRenderer.tsx
+  s_d486ecb43c5b4c::t_33ab40cb27386c 7,51-55,60
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_d486ecb43c5b4c::t_33ab40cb27386c 183
+packages/rich-text-editor/src/__tests__/lookStylesheets.spec.ts
+  s_d486ecb43c5b4c::t_33ab40cb27386c 1-89
+packages/rich-text-editor/src/core/vocabulary.ts
+  s_d486ecb43c5b4c::t_33ab40cb27386c 15
+packages/rich-text-editor/src/plugins/TextStyle/textStyle.module.scss
+  s_d486ecb43c5b4c::t_33ab40cb27386c 3
+packages/rich-text-editor/src/plugins/Paragraph/paragraph.module.scss
+  s_d486ecb43c5b4c::t_33ab40cb27386c 3,5-9
+packages/rich-text-editor/src/plugins/SoftBreak/SoftBreak.tsx
+  s_d486ecb43c5b4c::t_33ab40cb27386c 11
+packages/rich-text-editor/src/plugins/Paragraph/Paragraph.spec.ts
+  s_d486ecb43c5b4c::t_33ab40cb27386c 5,24-28
+  s_d486ecb43c5b4c::t_3c2d42edaa2e5f 29-30
+packages/rich-text-editor/src/__tests__/htmlParity.spec.tsx
+  s_d486ecb43c5b4c::t_33ab40cb27386c 163
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "742609195a406e12e361114b09a9e4895d75374b",
+  "prompts": {},
+  "sessions": {
+    "s_d486ecb43c5b4c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a225ea0e-d11a-48c2-ac8f-86dd67c3a603",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

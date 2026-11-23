@@ -1,0 +1,42 @@
+packages/rich-text-editor/src/editor/linkFlows.spec.tsx
+  s_53de767222940a::t_c9c154f57cec77 228
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_53de767222940a::t_5d504cd9dded7d 768
+  s_53de767222940a::t_c799e7338f8837 12,769-783
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.spec.tsx
+  s_53de767222940a::t_4a98f53acc212d 66-71
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_53de767222940a::t_af8884752ca90d 230,235,238-239,242
+packages/rich-text-editor/src/index.ts
+  s_53de767222940a::t_a79a599e6622d7 12,14
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.spec.tsx
+  s_53de767222940a::t_1c4369ec455c83 97,112
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.tsx
+  s_53de767222940a::t_fe99905fe9d58e 98-114,120,189,191
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_53de767222940a::t_5cad566e5bf4b3 36
+packages/rich-text-editor/src/plugins/Mention/helpers/display.spec.ts
+  s_53de767222940a::t_3d992326a5b59c 45,51,58-61
+packages/rich-text-editor/src/plugins/Mention/helpers/display.ts
+  s_53de767222940a::t_d3f2d107fbaff9 18-19
+packages/rich-text-editor/src/plugins/shared/helpers/text.spec.ts
+  s_53de767222940a::t_f80680c4d65c52 13
+packages/rich-text-editor/src/plugins/shared/helpers/text.ts
+  s_53de767222940a::t_c8902791102833 3-21,24-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "980d574d17e317874cc510de19a1a3e4c3a15cf2",
+  "prompts": {},
+  "sessions": {
+    "s_53de767222940a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f9b7337-8455-4b7f-ac95-dde194f54be3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

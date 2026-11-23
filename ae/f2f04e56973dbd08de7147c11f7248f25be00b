@@ -1,0 +1,53 @@
+packages/rich-text-editor/src/plugins/Code/Code.ts
+  s_3da29b36b0ad36::t_09e59a7b240187 1-14
+packages/rich-text-editor/src/plugins/Code/content.ts
+  s_3da29b36b0ad36::t_49a1fd1ed8e374 3,12-13
+packages/rich-text-editor/src/plugins/Code/index.ts
+  s_3da29b36b0ad36::t_b9474f951e8162 3-4
+packages/rich-text-editor/src/plugins/Italic/Italic.ts
+  s_3da29b36b0ad36::t_c7eb44c22f2423 1-15
+packages/rich-text-editor/src/plugins/Italic/content.ts
+  s_3da29b36b0ad36::t_3523b01bb5deb5 3,12-13,16
+packages/rich-text-editor/src/plugins/Italic/index.ts
+  s_3da29b36b0ad36::t_d1984f56c74f66 3-4
+packages/rich-text-editor/src/plugins/Strikethrough/Strikethrough.ts
+  s_3da29b36b0ad36::t_7b02db670e1101 1-14
+packages/rich-text-editor/src/plugins/Strikethrough/content.ts
+  s_3da29b36b0ad36::t_6824a0bbc95192 3,12-13,16
+packages/rich-text-editor/src/plugins/Strikethrough/index.ts
+  s_3da29b36b0ad36::t_f6fbafd02f05bf 3-4
+packages/rich-text-editor/src/plugins/Subscript/Subscript.ts
+  s_3da29b36b0ad36::t_afa3669e4f270b 1-13
+packages/rich-text-editor/src/plugins/Subscript/content.ts
+  s_3da29b36b0ad36::t_719549e763a119 3,10-11,13
+packages/rich-text-editor/src/plugins/Subscript/index.ts
+  s_3da29b36b0ad36::t_ddfbe79971fa3f 3-4
+packages/rich-text-editor/src/plugins/Superscript/Superscript.ts
+  s_3da29b36b0ad36::t_ab7c0ffe74f925 1-13
+packages/rich-text-editor/src/plugins/Superscript/content.ts
+  s_3da29b36b0ad36::t_b3045eb7710128 3,10-11,13
+packages/rich-text-editor/src/plugins/Superscript/index.ts
+  s_3da29b36b0ad36::t_529f5a79c99aae 3-4
+packages/rich-text-editor/src/plugins/Underline/Underline.ts
+  s_3da29b36b0ad36::t_09c6a880bea4ce 1-13
+packages/rich-text-editor/src/plugins/Underline/content.ts
+  s_3da29b36b0ad36::t_06642e1c57f75f 3,12-13,16
+packages/rich-text-editor/src/plugins/Underline/index.ts
+  s_3da29b36b0ad36::t_c8050c54aff082 3-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "aef2f04e56973dbd08de7147c11f7248f25be00b",
+  "prompts": {},
+  "sessions": {
+    "s_3da29b36b0ad36": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52275dbb-cfd4-472c-b295-02ca60ef0ab1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.ts
+  s_51bd06030e91be::t_aec0ebbc4d04e9 4,120-122
+.changeset/rte-editing-bugs.md
+  s_51bd06030e91be::t_16e64ef64750d1 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5549dd14217833b6bc8799e0ef35feb2c2e845d2",
+  "prompts": {},
+  "sessions": {
+    "s_51bd06030e91be": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "eb0772d6-96fd-4eae-b444-c935c7d03cb9",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

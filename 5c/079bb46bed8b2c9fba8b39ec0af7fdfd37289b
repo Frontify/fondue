@@ -1,0 +1,14 @@
+.changeset/better-things-learn.md
+  h_72595612499821 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "5c079bb46bed8b2c9fba8b39ec0af7fdfd37289b",
+  "prompts": {},
+  "humans": {
+    "h_72595612499821": {
+      "author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  }
+}

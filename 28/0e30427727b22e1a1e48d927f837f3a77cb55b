@@ -1,0 +1,19 @@
+.github/workflows/generate-tokens.yaml
+  s_d406e6ae5c041a::t_ccb1a092881c11 64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "280e30427727b22e1a1e48d927f837f3a77cb55b",
+  "prompts": {},
+  "sessions": {
+    "s_d406e6ae5c041a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "18bd9915-0725-45e9-a689-a94f3e4381cd",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

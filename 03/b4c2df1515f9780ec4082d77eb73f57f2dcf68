@@ -1,0 +1,19 @@
+.changeset/rte-paragraph-quote-link-looks.md
+  s_4f19be4f9c18ea::t_54b069910d444a 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "03b4c2df1515f9780ec4082d77eb73f57f2dcf68",
+  "prompts": {},
+  "sessions": {
+    "s_4f19be4f9c18ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "04c3454c-59f8-4646-ba20-fb4be4dd6490",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
