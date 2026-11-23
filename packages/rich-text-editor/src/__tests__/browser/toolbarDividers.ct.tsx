@@ -6,13 +6,13 @@ import { type Page } from '@playwright/test';
 import { ToolbarDividersHost } from './ToolbarDividersHost';
 import { BLANK_LABEL } from './toolbarDividersValues';
 
-// A control that draws nothing takes no place in the toolbar, and gets no divider.
-
 const SEPARATOR = '[data-toolbar-separator]';
 const GROUP = '[data-toolbar-group]';
 const SLOT = '[data-toolbar-slot]';
 /** Home and End scroll the page instead of moving the caret in WebKit on macOS. */
 const SELECT_ALL = 'ControlOrMeta+a';
+/** A group and the divider before it. */
+const GROUP_WITH_DIVIDER = 2;
 
 type Part = 'separator' | 'group' | 'empty-group' | 'other';
 
@@ -25,6 +25,7 @@ const rowOf = async (page: Page): Promise<Part[]> =>
                 if (getComputedStyle(child).display === 'none') {
                     continue;
                 }
+
                 if (child.matches(selectors.separator)) {
                     parts.push('separator');
                 } else if (child.matches(selectors.group)) {
@@ -38,6 +39,7 @@ const rowOf = async (page: Page): Promise<Part[]> =>
                     parts.push('other');
                 }
             }
+
             return parts;
         },
         { separator: SEPARATOR, group: GROUP, slot: SLOT },
@@ -64,11 +66,13 @@ const expectDividersBetweenSections = (row: readonly Part[]): void => {
     expect(row).not.toContain('empty-group');
     expect(row[0]).not.toBe('separator');
     expect(row[row.length - 1]).not.toBe('separator');
+
     for (const [index, part] of row.entries()) {
         if (part === 'separator') {
             expect(row[index + 1]).not.toBe('separator');
         }
     }
+
     const separators = row.filter((part) => part === 'separator').length;
     expect(separators).toBe(row.length - separators - 1);
 };
@@ -126,7 +130,7 @@ test.describe('toolbar dividers', () => {
         await component.update(<ToolbarDividersHost placement="top" blankAt="middle" blankDraws={false} />);
 
         await expect(blankButton).toHaveCount(0);
-        await expect.poll(() => rowLengthOf(page)).toBe(drawing.length - 2);
+        await expect.poll(() => rowLengthOf(page)).toBe(drawing.length - GROUP_WITH_DIVIDER);
         expectDividersBetweenSections(await rowOf(page));
 
         await component.update(<ToolbarDividersHost placement="top" blankAt="middle" blankDraws />);

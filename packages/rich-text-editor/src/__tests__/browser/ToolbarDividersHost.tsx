@@ -4,28 +4,40 @@
 
 import { createContext, type ReactNode, useContext } from 'react';
 
-import { RTE_TOOLBAR_GROUPS, type RteToolbarGroup } from '../../core';
+import { RTE_TOOLBAR_GROUPS, type RtePlugin, type RteToolbarGroup } from '../../core';
 import { definePlugin, RichTextEditor, type RichTextEditorProps } from '../../index';
+
 import {
-    boldPlugin,
-    bulletListPlugin,
-    italicPlugin,
-    linkPlugin,
-    numberedListPlugin,
-    underlinePlugin,
-} from '../../plugins';
+    BLANK_LABEL,
+    type BlankAt,
+    LISTS_FILLER_LABEL,
+    MARKS_FILLER_LABEL,
+    PANEL_FILLER_LABEL,
+    PARAGRAPH_DOCUMENT,
+} from './toolbarDividersValues';
 
-import { BLANK_LABEL, type BlankAt, PANEL_LABEL, PARAGRAPH_DOCUMENT } from './toolbarDividersValues';
+/** The group the blank control takes to sit first, before every group that draws. */
+const FIRST_GROUP = RTE_TOOLBAR_GROUPS[0];
+const MARKS_GROUP = 'marks';
+const LISTS_GROUP = 'lists';
+const INSERT_GROUP = 'insert';
+const LAST_GROUP = 'panels';
 
-/** A group drawn after the blank control's, so a blank group in the middle sits between two others. */
-const panelPlugin = () =>
+type FillerPluginOptions = {
+    id: string;
+    toolbarGroup: RteToolbarGroup;
+    label: string;
+};
+
+/** A control that always draws a button, in the given group. */
+const fillerPlugin = ({ id, toolbarGroup, label }: FillerPluginOptions): RtePlugin =>
     definePlugin({
-        id: 'panel',
-        toolbarGroup: 'panels',
+        id,
+        toolbarGroup,
         toolbar: [
             {
-                label: PANEL_LABEL,
-                render: () => <button type="button">{PANEL_LABEL}</button>,
+                label,
+                render: () => <button type="button">{label}</button>,
                 floating: 'inline',
             },
         ],
@@ -44,7 +56,7 @@ const BlankControl = (): ReactNode => {
 };
 
 /** A control the host can make draw nothing, in the given group. */
-const blankPlugin = (toolbarGroup: RteToolbarGroup) =>
+const blankPlugin = (toolbarGroup: RteToolbarGroup): RtePlugin =>
     definePlugin({
         id: 'blank',
         toolbarGroup,
@@ -57,26 +69,21 @@ const blankPlugin = (toolbarGroup: RteToolbarGroup) =>
         ],
     });
 
-const FORMATTING_PLUGINS = [
-    boldPlugin(),
-    italicPlugin(),
-    underlinePlugin(),
-    linkPlugin(),
-    bulletListPlugin(),
-    numberedListPlugin(),
-];
+const MARKS_FILLER = fillerPlugin({ id: 'marks-filler', toolbarGroup: MARKS_GROUP, label: MARKS_FILLER_LABEL });
+const LISTS_FILLER = fillerPlugin({ id: 'lists-filler', toolbarGroup: LISTS_GROUP, label: LISTS_FILLER_LABEL });
+const PANEL_FILLER = fillerPlugin({ id: 'panel-filler', toolbarGroup: LAST_GROUP, label: PANEL_FILLER_LABEL });
 
-/** The blank control in the toolbar's first group, before the formatting groups. */
-const BLANK_FIRST_PLUGINS = [...FORMATTING_PLUGINS, blankPlugin(RTE_TOOLBAR_GROUPS[0]), panelPlugin()];
+/** The blank control in the toolbar's first group, before the groups that draw. */
+const BLANK_FIRST_PLUGINS = [blankPlugin(FIRST_GROUP), MARKS_FILLER, LISTS_FILLER];
 
-/** The blank control in a group between the formatting groups and the panel. */
-const BLANK_MIDDLE_PLUGINS = [...FORMATTING_PLUGINS, blankPlugin('insert'), panelPlugin()];
+/** The blank control in a group between the groups that draw. */
+const BLANK_MIDDLE_PLUGINS = [MARKS_FILLER, blankPlugin(INSERT_GROUP), PANEL_FILLER];
 
 /** The blank control in the last group of the toolbar. */
-const BLANK_LAST_PLUGINS = [...FORMATTING_PLUGINS, blankPlugin('insert')];
+const BLANK_LAST_PLUGINS = [MARKS_FILLER, LISTS_FILLER, blankPlugin(LAST_GROUP)];
 
-/** The blank control in the lists group, beside the list plugins that draw. */
-const BLANK_BESIDE_PLUGINS = [...FORMATTING_PLUGINS, blankPlugin('lists')];
+/** The blank control in the lists group, beside a control that draws. */
+const BLANK_BESIDE_PLUGINS = [MARKS_FILLER, LISTS_FILLER, blankPlugin(LISTS_GROUP)];
 
 type ToolbarDividersHostProps = {
     placement: NonNullable<RichTextEditorProps['toolbarPlacement']>;
@@ -85,7 +92,7 @@ type ToolbarDividersHostProps = {
     blankDraws: boolean;
 };
 
-const pluginsFor = (blankAt: BlankAt) => {
+const pluginsFor = (blankAt: BlankAt): readonly RtePlugin[] => {
     switch (blankAt) {
         case 'first': {
             return BLANK_FIRST_PLUGINS;
@@ -102,7 +109,7 @@ const pluginsFor = (blankAt: BlankAt) => {
     }
 };
 
-/** The editor over a paragraph, with the formatting plugins and a control the host can make draw nothing. */
+/** The editor over a paragraph, with controls that draw and a control the host can make draw nothing. */
 export const ToolbarDividersHost = ({ placement, blankAt, blankDraws }: ToolbarDividersHostProps): ReactNode => (
     <BlankDrawsContext.Provider value={blankDraws}>
         <RichTextEditor value={PARAGRAPH_DOCUMENT} plugins={pluginsFor(blankAt)} toolbarPlacement={placement} />
