@@ -3,6 +3,7 @@
 import { IconSpeechBubbleQuote } from '@frontify/fondue-icons';
 
 import { defineBlock, defineContent, definePlugin, type RteInlineNode } from '#/core';
+import { translatedLabel } from '#/ui/translation';
 
 import styles from './quote.module.scss';
 
@@ -34,6 +35,12 @@ export const quotePlugin = () =>
     definePlugin({
         content: quoteContent,
         toolbarGroup: 'text',
-        toolbar: [{ label: 'Quote', icon: IconSpeechBubbleQuote, menu: { keywords: ['blockquote', 'citation'] } }],
+        toolbar: [
+            {
+                label: translatedLabel('RichTextEditor_quote'),
+                icon: IconSpeechBubbleQuote,
+                menu: { keywords: ['blockquote', 'citation'] },
+            },
+        ],
         inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
     });

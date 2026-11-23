@@ -3,7 +3,6 @@
 import { MENTION_KINDS, type MentionHref, type MentionKind, type MentionValue } from '../types';
 
 import { safeMentionHref } from './mention';
-import { MENTION_STRINGS } from './strings';
 import { withoutControlCharacters } from './text';
 
 /**
@@ -41,16 +40,24 @@ export const mentionAttributes = (mention: MentionValue) => ({
 
 const storedText = (field: unknown): string => withoutControlCharacters(storedString(field));
 
+/**
+ * Names a mention the document stores without one. They belong to the content, whose
+ * language the renderer does not know, so they stay English.
+ */
+const UNKNOWN_PERSON = 'Unknown person';
+const UNKNOWN_GROUP = 'Unknown group';
+const UNKNOWN_MENTION = 'Unknown mention';
+
 /** Shown in place of a stored username that is empty or not text. */
 const unknownLabel = (kind: MentionKind | undefined): string => {
     switch (kind) {
         case undefined:
         case 'user':
-            return MENTION_STRINGS.unknownPerson;
+            return UNKNOWN_PERSON;
         case 'group':
-            return MENTION_STRINGS.unknownGroup;
+            return UNKNOWN_GROUP;
         case 'all':
-            return MENTION_STRINGS.unknownMention;
+            return UNKNOWN_MENTION;
     }
 };
 

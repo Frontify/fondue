@@ -28,6 +28,23 @@ A host that sets its own text looks passes the same `look` to both sides:
 <RichTextRenderer plugins={[textStyleContent({ look }), boldContent]} value={doc} />
 ```
 
+## Language
+
+The editor and its shipped plugins speak the 11 languages of `@frontify/fondue-components`.
+The editor takes its language from the `lang` of the `ThemeProvider`'s `locale`, so the host
+passes the same locale it passes for the components. The editor holds its own strings for each
+language. The wording is fixed: a host chooses the language, not the words.
+
+```tsx
+import { deCH } from '@frontify/fondue/components/locales/de-CH';
+
+<ThemeProvider locale={deCH}>
+    <RichTextEditor />
+</ThemeProvider>
+```
+
+A language outside the 11 shows the editor in English, with a warning in development.
+
 ## Writing a plugin
 
 A feature has two parts. Its content (`defineContent`) says what exists: blocks, marks and
@@ -54,6 +71,10 @@ export const highlightPlugin = () =>
 <RichTextRenderer plugins={[...defaultContent, highlightContent]} value={doc} />
 ```
 
+Your plugin's `label` is its own text in the host's language, or a function the editor calls with
+its language (`({ lang }) => …`), so the label follows a change of language. Any other text
+your plugin shows is its own too.
+
 `@frontify/fondue-components`, `@frontify/fondue-icons` and `@frontify/fondue-tokens` are peer dependencies:
 the host installs them beside this package and loads `@frontify/fondue-tokens/styles` and
 `@frontify/fondue-components/styles`.
@@ -65,8 +86,9 @@ Layers import inward only; `oxlint.config.ts` enforces it.
 ```
 src/
 ├── core/            The contract: document types, RtePlugin, the registry. Imports nothing else.
-├── plugins/         One folder per feature (Bold, Link, List, …). Each imports only core, ui and plugins/shared.
-├── ui/              Controls the shell and the plugins both draw with (ToolbarButton). Imports at most core.
+├── plugins/         One folder per feature (Bold, Link, List, …). Each imports only core, ui, locales and plugins/shared.
+├── ui/              Controls the shell and the plugins both draw with (ToolbarButton), and the translator. Imports at most core and locales.
+├── locales/         The strings of the editor and its shipped plugins, one file per language. Imports nothing.
 ├── renderer/        Readonly view and HTML export, both from each feature's content (`toHtml`).
 ├── editor/          The editing shell.
 │   ├── RichTextEditor.tsx   The component a host mounts.

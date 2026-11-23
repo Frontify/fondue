@@ -53,5 +53,5 @@ export const MentionEditor = ({
             />
         );
     }
-    return <MentionLink value={value} display={mentionDisplay(value, { href, trigger })} />;
+    return <MentionLink value={value} display={mentionDisplay(value, { href, trigger })} placesCaret />;
 };

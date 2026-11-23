@@ -75,6 +75,8 @@ export {
     type RteHotkey,
     type RteIcon,
     type RteInputRule,
+    type RteLabel,
+    type RteLabelContext,
     type RteMarkPatternTrim,
     type RtePlugin,
     type RtePluginDefinition,

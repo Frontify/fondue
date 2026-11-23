@@ -3,27 +3,19 @@
 import { Button, Checkbox, Label, Select, TextInput } from '@frontify/fondue-components';
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
+import { useTranslate } from '#/ui/translation';
+
 import { toHref } from '../../shared/helpers/href';
 import { isCompositionKey } from '../../shared/helpers/keys';
 import { APPEARANCES, isButtonLink, isLinkAppearance, NO_APPEARANCES } from '../helpers/appearance';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
-import { TEXT_LABEL } from '../helpers/strings';
 import { type LinkAppearance, type LinkValue } from '../helpers/value';
 
 import { DestinationField } from './DestinationField';
 import styles from './linkForm.module.scss';
 
-const UNREADABLE = 'Enter a web address (example.com), an email address, or a phone number (tel:…).';
-const MISSING_ADDRESS = 'Enter where the link goes.';
-const LINK_TO_LABEL = 'Link to';
-const STYLE_LABEL = 'Style';
-const NO_STYLE_LABEL = 'No style';
 // The Select's value for no appearance; it cannot clash with an appearance's name.
 const NO_STYLE_VALUE = 'none';
-const NEW_TAB_LABEL = 'Open in new tab';
-const REMOVE_LABEL = 'Remove link';
-const CANCEL_LABEL = 'Cancel';
-const SAVE_LABEL = 'Save';
 
 /**
  * A `create` form has a Text field and saves the text too. An `edit` form leaves the text to the editor.
@@ -78,6 +70,7 @@ const resolveMode = (props: LinkTargetFormProps): FormMode => {
  * the field.
  */
 export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
+    const translate = useTranslate();
     const { initial, search, appearances = NO_APPEARANCES, onCancel, onRemove } = props;
     const { textField, onSave } = resolveMode(props);
     // A stored link without a string target opens the form empty rather than uncontrolled.
@@ -127,9 +120,9 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
         const href = toHref(typed);
         if (href === null) {
             if (typed.trim() === '') {
-                setError(MISSING_ADDRESS);
+                setError(translate('RichTextEditor_linkEmpty'));
             } else {
-                setError(UNREADABLE);
+                setError(translate('RichTextEditor_linkInvalid'));
             }
             urlFieldRef.current?.focus();
             return;
@@ -177,7 +170,7 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
         <div className={styles.fields}>
             {textField === null ? null : (
                 <div className={styles.field}>
-                    <Label htmlFor={textId}>{TEXT_LABEL}</Label>
+                    <Label htmlFor={textId}>{translate('RichTextEditor_text')}</Label>
                     <TextInput
                         id={textId}
                         ref={textFieldRef}
@@ -189,7 +182,7 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
                 </div>
             )}
             <div className={styles.field}>
-                <Label htmlFor={urlId}>{LINK_TO_LABEL}</Label>
+                <Label htmlFor={urlId}>{translate('RichTextEditor_linkTo')}</Label>
                 <DestinationField
                     id={urlId}
                     inputRef={urlFieldRef}
@@ -212,7 +205,7 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
             {styleOptions.length === 0 ? null : (
                 <div className={styles.field}>
                     <Label id={styleLabelId} htmlFor={styleId}>
-                        {STYLE_LABEL}
+                        {translate('RichTextEditor_linkStyle')}
                     </Label>
                     {/* A combobox is not a labelable element, so `htmlFor` alone does not name it. */}
                     <Select
@@ -221,12 +214,12 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
                         value={appearance ?? NO_STYLE_VALUE}
                         onSelect={chooseStyle}
                     >
-                        <Select.Item value={NO_STYLE_VALUE} label={NO_STYLE_LABEL}>
-                            {NO_STYLE_LABEL}
+                        <Select.Item value={NO_STYLE_VALUE} label={translate('RichTextEditor_linkNoStyle')}>
+                            {translate('RichTextEditor_linkNoStyle')}
                         </Select.Item>
                         {styleOptions.map((option) => (
-                            <Select.Item key={option} value={option} label={APPEARANCES[option].label}>
-                                {APPEARANCES[option].label}
+                            <Select.Item key={option} value={option} label={translate(APPEARANCES[option].label)}>
+                                {translate(APPEARANCES[option].label)}
                             </Select.Item>
                         ))}
                     </Select>
@@ -238,19 +231,19 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
                     value={openInNewTab}
                     onChange={() => setOpenInNewTab((previous) => !previous)}
                 />
-                <Label htmlFor={newTabId}>{NEW_TAB_LABEL}</Label>
+                <Label htmlFor={newTabId}>{translate('RichTextEditor_linkOpenInNewTab')}</Label>
             </div>
             <div className={styles.formActions}>
                 {onRemove ? (
                     <Button size="small" emphasis="weak" onPress={onRemove}>
-                        {REMOVE_LABEL}
+                        {translate('RichTextEditor_linkRemove')}
                     </Button>
                 ) : null}
                 <Button size="small" emphasis="weak" onPress={onCancel}>
-                    {CANCEL_LABEL}
+                    {translate('RichTextEditor_cancel')}
                 </Button>
                 <Button size="small" onPress={save}>
-                    {SAVE_LABEL}
+                    {translate('RichTextEditor_save')}
                 </Button>
             </div>
         </div>

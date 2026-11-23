@@ -18,6 +18,7 @@ import {
     type RteEditView,
     type RteIcon,
     type RteInputRule,
+    type RteLabel,
     type RtePlugin,
     type RteToolbarEntry,
     type RteToolbarGroup,
@@ -52,7 +53,7 @@ export type ToolbarEntry = {
     floating: 'inline' | 'hidden';
     /** The plugin's `toolbarGroup`; none puts it in the last group. */
     group: RteToolbarGroup | undefined;
-    label: string;
+    label: RteLabel;
     shortcut?: string;
 } & (
     | {
@@ -81,7 +82,7 @@ export type RteShortcut = {
      * In `Mod-b` style
      */
     key: string;
-    label: string;
+    label: RteLabel;
 };
 
 export type PluginRegistry = ContentRegistry & {
@@ -256,13 +257,16 @@ const assertKnownModifiers = (keys: string): void => {
     parseHotkey(keys);
 };
 
+/** What a `label` may be: text, or a function of the editor's language. */
+const LABEL_KINDS: ReadonlySet<string> = new Set(['string', 'function']);
+
 const NOTHING_TO_TOGGLE = 'nothing to toggle: name a mark, list, text block, void block or inline with `toggles`.';
 
 /**
- * Throws unless the label is a non-empty string: an untyped caller can leave it out.
+ * Throws unless the label is a non-empty string or a function: an untyped caller can leave it out.
  */
 const assertLabelled = (plugin: RtePlugin, label: unknown, subject: string): void => {
-    if (typeof label !== 'string' || label === '') {
+    if (label === '' || !LABEL_KINDS.has(typeof label)) {
         throw new Error(`Plugin "${plugin.id}" has ${subject} with no \`label\`.`);
     }
 };

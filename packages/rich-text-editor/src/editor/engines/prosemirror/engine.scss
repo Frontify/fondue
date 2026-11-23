@@ -82,3 +82,9 @@
     color: var(--color-secondary-default);
     border: var(--border-width-default) dashed var(--color-line-mid);
 }
+
+/** `/ ''` hides the text from assistive technology, which reads `aria-placeholder`; the first line is the fallback without that syntax. */
+[data-rte-editable] [data-placeholder]::before {
+    content: attr(data-placeholder);
+    content: attr(data-placeholder) / '';
+}

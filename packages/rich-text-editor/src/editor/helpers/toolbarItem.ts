@@ -13,10 +13,13 @@ import {
     type ToolbarItemProps,
 } from '#/core';
 
+/** A toolbar entry as the toolbar draws it: its label already resolved for the shown language. */
+export type ShownToolbarEntry = ToolbarEntry & { label: string };
+
 /**
  * The part of a registry toolbar entry its `render` props come from
  */
-type ToolbarItemSource = Pick<ToolbarEntry, 'own' | 'label' | 'shortcut'>;
+type ToolbarItemSource = Pick<ShownToolbarEntry, 'own' | 'label' | 'shortcut'>;
 
 /**
  * The props a toolbar entry's `render` is handed, for what the entry acts on

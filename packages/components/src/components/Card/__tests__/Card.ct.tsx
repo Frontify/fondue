@@ -3,6 +3,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator } from '@playwright/test';
 
+import { Dropdown } from '../../Dropdown/Dropdown';
 import { RouterProvider } from '../../RouterProvider/RouterProvider';
 import { Card } from '../Card';
 
@@ -88,6 +89,60 @@ test('should not render the card border when not selected', async ({ mount }) =>
     const { boxShadow } = await readBorder(card);
 
     expect(boxShadow).toBe('none');
+});
+
+const readCheckboxGeometry = (checkbox: Locator) =>
+    checkbox.evaluate((element: Element) => {
+        const box = element.getBoundingClientRect();
+        const icon = element.querySelector('svg')?.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return {
+            box: { x: box.x, y: box.y, width: box.width, height: box.height },
+            icon: icon ? { x: icon.x, y: icon.y } : null,
+            borderWidths: [
+                style.borderTopWidth,
+                style.borderRightWidth,
+                style.borderBottomWidth,
+                style.borderLeftWidth,
+            ],
+        };
+    });
+
+const selectableCard = (selected: boolean) => (
+    <RouterProvider navigate={() => {}} useHref={(path) => path}>
+        <Card.Root data-test-id={CARD_TEST_ID} href="/page" onSelect={() => {}} selected={selected} aria-label="Card">
+            <Card.Banner>
+                <Card.BannerImage src={TRANSPARENT_GIF} />
+            </Card.Banner>
+            <Card.Title>Card title</Card.Title>
+        </Card.Root>
+    </RouterProvider>
+);
+
+test('should keep the checkbox and its check mark in place when the card gets selected', async ({ mount, page }) => {
+    const component = await mount(selectableCard(false));
+    const card = page.getByTestId(CARD_TEST_ID);
+    const checkbox = card.getByRole('button', { name: 'Select' });
+    const expectedBorderWidth = await resolveToken(card, 'width', '--border-width-default');
+    await card.hover();
+
+    const unselected = await readCheckboxGeometry(checkbox);
+
+    await component.update(selectableCard(true));
+    await expect(card).toHaveAttribute('data-selected', 'true');
+    const selected = await readCheckboxGeometry(card.getByRole('button', { name: 'Deselect' }));
+
+    expect(unselected.borderWidths).toEqual(Array(4).fill(expectedBorderWidth));
+    expect(selected).toEqual(unselected);
+});
+
+test('should colour the selected checkbox border like its fill', async ({ mount, page }) => {
+    await mount(selectableCard(true));
+    const checkbox = page.getByTestId(CARD_TEST_ID).getByRole('button', { name: 'Deselect' });
+    const expectedColor = await resolveToken(checkbox, 'color', '--color-primary-default');
+
+    await expect(checkbox).toHaveCSS('background-color', expectedColor);
+    await expect(checkbox).toHaveCSS('border-top-color', expectedColor);
 });
 
 test('should apply inner padding to a padded banner image', async ({ mount }) => {
@@ -429,4 +484,127 @@ test('should draw a bottom border under the banner description', async ({ mount 
     const boxShadow = await description.evaluate((element) => getComputedStyle(element).boxShadow);
 
     expect(boxShadow).toBe(`${lineColor} 0px -1px 0px 0px inset`);
+});
+
+const LONG_TITLE = 'A very long asset title that needs every pixel of the card footer to show';
+
+const actionsCard = (actionsVisibility: 'always' | 'hover', selected = false) => (
+    <RouterProvider navigate={() => {}} useHref={(path) => path}>
+        <div style={{ width: 280 }}>
+            <Card.Root
+                data-test-id={CARD_TEST_ID}
+                href="/page"
+                onSelect={() => {}}
+                selected={selected}
+                aria-label="Card"
+                actionsVisibility={actionsVisibility}
+            >
+                <Card.Title>{LONG_TITLE}</Card.Title>
+                <Card.Action>
+                    <Card.ActionButton aria-label="Settings">
+                        <svg width="16" height="16" />
+                    </Card.ActionButton>
+                </Card.Action>
+                <Card.Action>
+                    <Dropdown.Root>
+                        <Dropdown.Trigger>
+                            <Card.ActionButton aria-label="More actions">
+                                <svg width="16" height="16" />
+                            </Card.ActionButton>
+                        </Dropdown.Trigger>
+                        <Dropdown.Content>
+                            <Dropdown.Item onSelect={() => {}}>Edit</Dropdown.Item>
+                        </Dropdown.Content>
+                    </Dropdown.Root>
+                </Card.Action>
+            </Card.Root>
+        </div>
+    </RouterProvider>
+);
+
+const ACTIONS_TEST_ID = 'fondue-card-actions';
+
+const readWidths = (card: Locator) =>
+    card.evaluate((element) => {
+        const actions = element.querySelector('[data-test-id="fondue-card-actions"]') as HTMLElement;
+        const title = element.querySelector('[data-test-id="fondue-card-title"]') as HTMLElement;
+        return { actions: actions.getBoundingClientRect().width, title: title.getBoundingClientRect().width };
+    });
+
+test('should show the actions without hover by default', async ({ mount, page }) => {
+    await mount(actionsCard('always'));
+    const actions = page.getByTestId(ACTIONS_TEST_ID);
+
+    await expect(actions).toHaveCSS('opacity', '1');
+    await expect(actions).not.toHaveCSS('width', '0px');
+});
+
+test('should hide hover-only actions without taking space and give the title the width', async ({ mount, page }) => {
+    const component = await mount(actionsCard('always'));
+    const card = page.getByTestId(CARD_TEST_ID);
+    const actions = page.getByTestId(ACTIONS_TEST_ID);
+    const always = await readWidths(card);
+
+    await component.update(actionsCard('hover'));
+
+    await expect(actions).toHaveCSS('width', '0px');
+    await expect(actions).toHaveCSS('opacity', '0');
+    const hidden = await readWidths(card);
+    expect(hidden.title).toBe(always.title + always.actions);
+});
+
+test('should keep hover-only actions hidden on a selected card', async ({ mount, page }) => {
+    await mount(actionsCard('hover', true));
+    const actions = page.getByTestId(ACTIONS_TEST_ID);
+    await expect(page.getByTestId(CARD_TEST_ID)).toHaveAttribute('data-selected', 'true');
+
+    await expect(actions).toHaveCSS('width', '0px');
+    await expect(actions).toHaveCSS('opacity', '0');
+});
+
+test('should reveal hover-only actions on hover and hide them on leave', async ({ mount, page }) => {
+    await mount(actionsCard('hover', true));
+    const actions = page.getByTestId(ACTIONS_TEST_ID);
+
+    await page.getByTestId(CARD_TEST_ID).hover();
+    await expect(actions).toHaveCSS('opacity', '1');
+    await expect(actions).not.toHaveCSS('width', '0px');
+
+    await page.mouse.move(0, 0);
+    await expect(actions).toHaveCSS('width', '0px');
+    await expect(actions).toHaveCSS('opacity', '0');
+});
+
+test('should reveal hover-only actions when they get keyboard focus', async ({ mount, page }) => {
+    await mount(
+        <Card.Root data-test-id={CARD_TEST_ID} actionsVisibility="hover">
+            <Card.Title>{LONG_TITLE}</Card.Title>
+            <Card.Action>
+                <Card.ActionButton aria-label="Settings">
+                    <svg width="16" height="16" />
+                </Card.ActionButton>
+            </Card.Action>
+        </Card.Root>,
+    );
+    const actions = page.getByTestId(ACTIONS_TEST_ID);
+    await expect(actions).toHaveCSS('width', '0px');
+
+    await page.keyboard.press('Tab');
+
+    await expect(actions.getByRole('button', { name: 'Settings' })).toBeFocused();
+    await expect(actions).toHaveCSS('opacity', '1');
+    await expect(actions).not.toHaveCSS('width', '0px');
+});
+
+test('should keep hover-only actions visible while their menu is open', async ({ mount, page }) => {
+    await mount(actionsCard('hover'));
+    const actions = page.getByTestId(ACTIONS_TEST_ID);
+
+    await page.getByTestId(CARD_TEST_ID).hover();
+    await actions.getByRole('button', { name: 'More actions' }).click();
+    await expect(page.getByRole('menu')).toBeVisible();
+    await page.mouse.move(0, 0);
+
+    await expect(actions).toHaveCSS('opacity', '1');
+    await expect(actions).not.toHaveCSS('width', '0px');
 });

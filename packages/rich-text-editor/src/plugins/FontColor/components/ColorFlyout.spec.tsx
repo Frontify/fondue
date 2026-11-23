@@ -169,7 +169,7 @@ describe('the colour flyout', () => {
     });
 
     it.each<[string, string]>([
-        ['Grey', '#5f6368'],
+        ['Gray', '#5f6368'],
         ['Red', '#c5221f'],
         ['Orange', '#b45309'],
         ['Green', '#188038'],
@@ -233,6 +233,12 @@ describe('the colour flyout', () => {
         expect(document.getElementById(titleId)?.textContent).toBe('Text colour');
     });
 
+    it('names the suggested colours with the legend of their group', () => {
+        mount({}, false);
+
+        expect(document.querySelector('fieldset > legend:first-child')?.textContent).toBe('Suggested colors');
+    });
+
     it('applies nothing for a typed value the hex field does not take', () => {
         for (const hex of ['ff00', 'ff000080']) {
             const { toggle, set } = mount({}, false);
@@ -288,7 +294,7 @@ describe('the colour flyout', () => {
         expect(trigger?.querySelector<HTMLElement>('span[aria-hidden]')?.style.background).toBe('transparent');
     });
 
-    it('applies nothing on Enter outside the hex field', () => {
+    it('saves on Enter in any field of the picker, as a form does', () => {
         const { set } = mount({}, false);
         typeHex('c5221f');
         const alpha = document.querySelector<HTMLInputElement>('[data-test-id="color-picker-value-input-alpha"] input');
@@ -297,11 +303,11 @@ describe('the colour flyout', () => {
             alpha?.dispatchEvent(enter);
         });
 
-        expect(set).not.toHaveBeenCalled();
-        expect(enter.defaultPrevented).toBe(false);
+        expect(set.mock.calls).toEqual([['fontColor', { color: '#c5221f' }]]);
+        expect(enter.defaultPrevented).toBe(true);
     });
 
-    it('prevents the default on Enter in the hex field, not on another key', () => {
+    it('prevents the default on Enter in a field, not on another key', () => {
         mount({}, false);
         const field = typeHex('c5221f');
         const enter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
@@ -351,9 +357,29 @@ describe('the colour flyout', () => {
         ['half-coloured', { fontColor: { coverage: 'some' } }, 'mixed'],
     ])('colours %s text white, the colour the picker shows before a choice', (_, marks, isActive) => {
         const { set } = mount(marks, isActive);
+        // Typed over the white the field shows, as a person would: clearing it first.
+        typeHex('');
         typeHexAndPressEnter('ffffff');
 
         expect(set.mock.calls).toEqual([['fontColor', { color: '#ffffff' }]]);
+    });
+
+    it('changes nothing on Save after only switching the format on uncoloured text', () => {
+        const { set } = mount({}, false);
+        const formatToggle = document.querySelector<HTMLElement>(
+            '[data-test-id="color-picker-value-input"] [role="combobox"]',
+        );
+        act(() => formatToggle?.click());
+        const rgba = [...document.querySelectorAll<HTMLElement>('[role="option"]')].find(
+            (option) => option.textContent === 'RGBA',
+        );
+        if (rgba === undefined) {
+            throw new Error('no RGBA option');
+        }
+        act(() => rgba.click());
+        press('Save');
+
+        expect(set).not.toHaveBeenCalled();
     });
 
     it('changes nothing on Save with an unfinished hex value on uncoloured text', () => {
@@ -366,6 +392,7 @@ describe('the colour flyout', () => {
 
     it('colours uncoloured text white on Save', () => {
         const { set } = mount({}, false);
+        typeHex('');
         typeHex('ffffff');
         press('Save');
 

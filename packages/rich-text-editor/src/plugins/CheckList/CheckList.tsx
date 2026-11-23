@@ -4,6 +4,7 @@ import { IconListCheck } from '@frontify/fondue-icons';
 import { type CSSProperties, type ReactNode, useId } from 'react';
 
 import { ANY_LIST, defineBlock, defineContent, definePlugin, PARAGRAPH, type RteBlockNode } from '#/core';
+import { translatedLabel } from '#/ui/translation';
 
 import styles from './checkList.module.scss';
 
@@ -184,7 +185,7 @@ export const checkListPlugin = () =>
         toolbar: [
             {
                 toggles: 'checkList',
-                label: 'To-do list',
+                label: translatedLabel('RichTextEditor_todoList'),
                 icon: IconListCheck,
                 menu: { keywords: ['todo', 'task', 'checkbox', 'checklist'] },
             },
