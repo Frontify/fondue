@@ -1,0 +1,87 @@
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.tsx
+  s_ea2f21f7c5681f::t_0696d1d137982f 9,118,124,126,128,209,213-214,226,232,235,434,443
+.changeset/feat-rte-shortcuts-submit.md
+  s_ea2f21f7c5681f::t_0696d1d137982f 5
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_ea2f21f7c5681f::t_0696d1d137982f 538,881
+packages/rich-text-editor/src/plugins/BlurOnBreak/index.ts
+  s_ea2f21f7c5681f::t_0696d1d137982f 3
+packages/rich-text-editor/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_ea2f21f7c5681f::t_9206fa55ba9603 9,47-54,56
+  s_ea2f21f7c5681f::t_0696d1d137982f 10,14,32,36,45-46,55,57,61-66
+packages/rich-text-editor/src/index.ts
+  s_ea2f21f7c5681f::t_0696d1d137982f 149
+packages/rich-text-editor/src/plugins/Link/components/LinkToolbarButton.tsx
+  s_ea2f21f7c5681f::t_0696d1d137982f 38
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_ea2f21f7c5681f::t_0696d1d137982f 11,21,26,28,47,61,63,238,240
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.tsx
+  s_ea2f21f7c5681f::t_0696d1d137982f 10,74,112,151
+packages/rich-text-editor/src/plugins/Link/helpers/strings.ts
+  s_ea2f21f7c5681f::t_0696d1d137982f 1-47
+packages/rich-text-editor/src/plugins/Mention/components/MentionEditor.tsx
+  s_ea2f21f7c5681f::t_0696d1d137982f 58
+packages/rich-text-editor/src/plugins/Link/helpers/policy.spec.ts
+  s_ea2f21f7c5681f::t_0696d1d137982f 5,78,81-83,86-87,93,97,103-104
+.changeset/docs-rte-keyboard-reference.md
+  s_ea2f21f7c5681f::t_1fc0aaeaf67888 5
+packages/rich-text-editor/src/plugins/BlurOnBreak/BlurOnBreak.tsx
+  s_ea2f21f7c5681f::t_9206fa55ba9603 5,7,72,75
+  s_ea2f21f7c5681f::t_0696d1d137982f 6,10,22,35,40,56,58,62,64
+packages/rich-text-editor/src/plugins/Link/helpers/policy.ts
+  s_ea2f21f7c5681f::t_0696d1d137982f 5,92,96,105,107,113,116,119
+packages/rich-text-editor/src/plugins/Mention/helpers/display.spec.ts
+  s_ea2f21f7c5681f::t_0696d1d137982f 93
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.spec.tsx
+  s_ea2f21f7c5681f::t_0696d1d137982f 40-43,45,443-445,448-449,451,453
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_ea2f21f7c5681f::t_1fc0aaeaf67888 360,413
+  s_ea2f21f7c5681f::t_0696d1d137982f 316-317,319,321,336,402,437
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.spec.tsx
+  s_ea2f21f7c5681f::t_0696d1d137982f 30,37
+packages/rich-text-editor/src/plugins/ResetFormatting/index.ts
+  s_ea2f21f7c5681f::t_0696d1d137982f 3
+packages/rich-text-editor/src/plugins/Align/Align.tsx
+  s_ea2f21f7c5681f::t_0696d1d137982f 103,105,109,117,134,144,150,156,162,168,174-180
+  s_ea2f21f7c5681f::t_6cc522bccbbc13 76,131
+  s_ea2f21f7c5681f::t_d8e8a832a78018 63-75,145-149,151-155,157-161,163-167,169
+  s_ea2f21f7c5681f::t_99a980a7a82df3 170
+packages/rich-text-editor/src/plugins/index.ts
+  s_ea2f21f7c5681f::t_0696d1d137982f 49,54
+.changeset/feat-rte-mention-names.md
+  s_ea2f21f7c5681f::t_0696d1d137982f 5
+packages/rich-text-editor/src/plugins/Mention/helpers/display.ts
+  s_ea2f21f7c5681f::t_0696d1d137982f 15,77,81,83,85,92,94,147,163,165,171
+packages/rich-text-editor/src/plugins/Mention/helpers/strings.ts
+  s_ea2f21f7c5681f::t_0696d1d137982f 1-28
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_ea2f21f7c5681f::t_0696d1d137982f 15,17,29,95,103,118,124,129,132,136-137,142,158,176,231,233,239,243
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.spec.tsx
+  s_ea2f21f7c5681f::t_0696d1d137982f 44
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_ea2f21f7c5681f::t_0696d1d137982f 1118,1676
+packages/rich-text-editor/src/plugins/Mention/Mention.tsx
+  s_ea2f21f7c5681f::t_0696d1d137982f 44,52,90,98,132,135
+packages/rich-text-editor/src/plugins/Link/index.ts
+  s_ea2f21f7c5681f::t_0696d1d137982f 3
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.tsx
+  s_ea2f21f7c5681f::t_0696d1d137982f 9,17,22,24,27,29,184,193
+packages/rich-text-editor/src/plugins/Align/index.ts
+  s_ea2f21f7c5681f::t_0696d1d137982f 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9c27effc111620731ef7b8c92dd2a6abf9943e04",
+  "prompts": {},
+  "sessions": {
+    "s_ea2f21f7c5681f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d419d63e-7548-4781-aa3e-b5ac225be4e2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

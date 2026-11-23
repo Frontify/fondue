@@ -1,0 +1,141 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_ea2f21f7c5681f::t_dc007d331589eb 486
+  s_ea2f21f7c5681f::t_ca2c4330d9f583 413,469,483,525-530,536-537,542,545-546,548-549,555,558-559,561-565
+  s_ea2f21f7c5681f::t_3bb243b2b5a06c 5,19,400-402,404-409,522-523,570,573-574
+packages/rich-text-editor/src/docs/keyboardReference.spec.ts
+  s_ea2f21f7c5681f::t_7f1492c7af797c 5-7,43-44
+packages/rich-text-editor/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_ea2f21f7c5681f::t_21555464fc0f6f 10,12,18,24,30-43,58,60,64,76-78,84,91,95
+  s_ea2f21f7c5681f::t_ba0ae6acdbca88 101
+packages/rich-text-editor/src/plugins/BlurOnBreak/BlurOnBreak.tsx
+  s_ea2f21f7c5681f::t_21555464fc0f6f 49-50,52-56,59,63-64,81,83-88,91-94,102-103,105
+  s_ea2f21f7c5681f::t_58cafc8897f529 5-27,38,42,44,46
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_ea2f21f7c5681f::t_a257bcc636a7ea 455-456
+  s_ea2f21f7c5681f::t_7f1492c7af797c 387
+  s_ea2f21f7c5681f::t_19f1f04598df0a 16,19-20,29-30,49-56,58,78-94,99,104-135,329,351-353,357,361-365,380-386,388-454,457-501
+.changeset/feat-rte-link-flows.md
+  s_4f19be4f9c18ea::t_4c69098bfad931 5
+.changeset/feat-rte-mention-names.md
+  s_4f19be4f9c18ea::t_9f93a689333127 5
+.changeset/feat-rte-shortcuts-submit.md
+  s_4f19be4f9c18ea::t_4043f000353de0 5
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_4f19be4f9c18ea::t_5c4555de694550 294-302
+packages/rich-text-editor/src/core/commands.ts
+  s_4f19be4f9c18ea::t_918469e255ec67 30,106,134,189,203
+packages/rich-text-editor/src/core/plugin.ts
+  s_4f19be4f9c18ea::t_bd720005d33f78 89,341
+packages/rich-text-editor/src/core/registry.ts
+  s_4f19be4f9c18ea::t_a1ec816cc913d0 492
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_4f19be4f9c18ea::t_ed43d02fd116a0 2030,2035-2048,2052-2053,2055-2056,2061,2891-2937
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.spec.tsx
+  s_4f19be4f9c18ea::t_129d02e352b412 10-21,114-115,117-121,123-125,127,131,135-136,138,141-142,144,147-153,155,158-159,161,164-167,169,171,174-175,177,180-181,183,186-187,190-191,193
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_4f19be4f9c18ea::t_a183c2cc691fcb 21-22,61,63-64,67,284,288,444,455,467,479,482,491,502,514,517,527,529,531,534,544,546,554,559,570,647,661-662,718,733,743,745,751,771,806,1060,1063,1071,1073,1076-1078,1081,1083,1091,1104,1106,1177,1187,1195,1213,1241,1255,1270,1285-1286,1290-1292,1296,1307
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_4f19be4f9c18ea::t_18627e049d0e67 206,562-567,570-580
+packages/rich-text-editor/src/editor/engines/prosemirror/lists.ts
+  s_4f19be4f9c18ea::t_74fdb6c3d8874a 231-236
+packages/rich-text-editor/src/editor/engines/prosemirror/paste.spec.tsx
+  s_4f19be4f9c18ea::t_3b59475df1b541 9,11,284-286,288,290,292,294-319,321,323,326-329,331,334,336,339-340,343,345,348-349,352,354,357-358,361,363,366,368,372,375,383,386
+packages/rich-text-editor/src/editor/engines/prosemirror/testEditor.ts
+  s_4f19be4f9c18ea::t_01f24cd375fb6d 7-17,164-233
+packages/rich-text-editor/src/editor/engines/prosemirror/testFixtures.ts
+  s_4f19be4f9c18ea::t_0f47d805a126a4 1-110
+packages/rich-text-editor/src/editor/hooks/useEditorHandle.ts
+  s_4f19be4f9c18ea::t_cfb23713e1e03b 147
+packages/rich-text-editor/src/index.ts
+  s_4f19be4f9c18ea::t_cd3adc0197dfaf 150-151,155,157,164,167-168,173
+packages/rich-text-editor/src/plugins/Align/Align.tsx
+  s_ea2f21f7c5681f::t_76a1cc81b195d6 47,63-65,69,73-78,81,83,89,95,101,107,113,119,125,131,137,140-150,152-157,167,171,173,177,180,185,187,194,201,204,218,226,230,233,235,239,241,245,247,251,253
+packages/rich-text-editor/src/plugins/Align/index.ts
+  s_4f19be4f9c18ea::t_3ee0a9cda848fc 3
+packages/rich-text-editor/src/plugins/BlurOnBreak/index.ts
+  s_4f19be4f9c18ea::t_c5f35b16b99ca9 3
+packages/rich-text-editor/src/plugins/Link/Link.spec.ts
+  s_4f19be4f9c18ea::t_1b0d7943cc0548 3,5-7,49-219
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_4f19be4f9c18ea::t_a5597827c32a03 8,12,14,16,29-40,106,114,124-125,131,137,145,148,153-154,159,172,176,196,251,253,259-261,264-268
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.spec.tsx
+  s_4f19be4f9c18ea::t_0867b90fe3253d 10,39,46,58,352-380
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.tsx
+  s_4f19be4f9c18ea::t_be08a17c4e53e0 8,17,22,24,27,29,46,62,209,234-236
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_4f19be4f9c18ea::t_0d5dd6ee29b93f 9-10,24,29,31,44,51,65,67,74,96,218,245,247-249
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.spec.tsx
+  s_4f19be4f9c18ea::t_006d9a64a2bd90 9,31,38-45,152-157
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.tsx
+  s_4f19be4f9c18ea::t_f5161016f6bf4e 9,30,76,114,153,174
+packages/rich-text-editor/src/plugins/Link/components/LinkToolbarButton.tsx
+  s_4f19be4f9c18ea::t_5ad43d2cd679a9 13,39,55,106
+packages/rich-text-editor/src/plugins/Link/helpers/address.ts
+  s_4f19be4f9c18ea::t_e399338db4674e 1-11
+packages/rich-text-editor/src/plugins/Link/helpers/labels.ts
+  s_4f19be4f9c18ea::t_064822546c5f8b 1-75
+packages/rich-text-editor/src/plugins/Link/helpers/newTab.ts
+  s_4f19be4f9c18ea::t_23c6f6af3d56c9 19,21,24,26
+packages/rich-text-editor/src/plugins/Link/helpers/policy.spec.ts
+  s_4f19be4f9c18ea::t_eb118d4f932011 5-8,81,84-86,89-90,96,100,105-116,118-119
+packages/rich-text-editor/src/plugins/Link/helpers/policy.ts
+  s_4f19be4f9c18ea::t_0728f551ca9b31 5-6,97,101,110,112,118,121,124
+packages/rich-text-editor/src/plugins/Link/index.ts
+  s_4f19be4f9c18ea::t_c7ffa478cff8ee 3,5
+packages/rich-text-editor/src/plugins/Mention/Mention.spec.ts
+  s_4f19be4f9c18ea::t_c9b25a10543139 143-162
+packages/rich-text-editor/src/plugins/Mention/Mention.tsx
+  s_4f19be4f9c18ea::t_12615f15be287e 7,9,30-33,54,56,63,102-105,113-117,142-146,156,159-166
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.spec.tsx
+  s_4f19be4f9c18ea::t_c2ad10269a2960 14,44-47,57,320,322,334-335,441-482
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.tsx
+  s_4f19be4f9c18ea::t_0829229e7c67f9 15,17,137,143,145,147,178,194,206,210,219,227,230,298-310,322,328,382-383,427,436,445
+packages/rich-text-editor/src/plugins/Mention/components/MentionEditor.tsx
+  s_4f19be4f9c18ea::t_b64d0371230ea8 11,18,35,41,62
+packages/rich-text-editor/src/plugins/Mention/components/MentionLink.spec.tsx
+  s_4f19be4f9c18ea::t_9494e3a363b484 55-65
+packages/rich-text-editor/src/plugins/Mention/components/MentionLink.tsx
+  s_4f19be4f9c18ea::t_ab5c7e1b268215 7,63
+packages/rich-text-editor/src/plugins/Mention/components/pickerLabels.ts
+  s_4f19be4f9c18ea::t_023fb8ea2d13a2 1-68
+packages/rich-text-editor/src/plugins/Mention/helpers/display.spec.ts
+  s_4f19be4f9c18ea::t_9f0aec5f496e66 8,40,52,58,89-109
+packages/rich-text-editor/src/plugins/Mention/helpers/display.ts
+  s_4f19be4f9c18ea::t_d3a7529b6cab08 15,23,28,34,90,94,96,98,108-113,115,175,189-194,199
+packages/rich-text-editor/src/plugins/Mention/helpers/labels.ts
+  s_4f19be4f9c18ea::t_ecd680ede69b95 1-35
+packages/rich-text-editor/src/plugins/Mention/index.ts
+  s_4f19be4f9c18ea::t_5f3af49155bfd6 4-5
+packages/rich-text-editor/src/plugins/ResetFormatting/index.ts
+  s_4f19be4f9c18ea::t_728cbb5dde6fa8 3-7
+packages/rich-text-editor/src/plugins/shared/helpers/href.ts
+  s_4f19be4f9c18ea::t_ee31fc1d83e1da 43-44,60,86,103
+packages/rich-text-editor/src/plugins/shared/helpers/text.spec.ts
+  s_4f19be4f9c18ea::t_81a9c0ab23a2ac 7-9,15-24
+packages/rich-text-editor/src/plugins/shared/helpers/text.ts
+  s_4f19be4f9c18ea::t_34d3ae8b6aaec4 4-8,17,23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e02cc155056e762cdbe2e16432a67afd84eee4db",
+  "prompts": {},
+  "sessions": {
+    "s_4f19be4f9c18ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "04c3454c-59f8-4646-ba20-fb4be4dd6490",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_ea2f21f7c5681f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d419d63e-7548-4781-aa3e-b5ac225be4e2",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

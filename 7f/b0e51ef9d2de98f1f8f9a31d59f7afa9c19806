@@ -1,0 +1,22 @@
+packages/components/src/components/SegmentedControl/styles/segmentedControl.module.scss
+  s_1a41a1a882a563::t_05c082043b8e50 61-64
+  s_1a41a1a882a563::t_85ec5b0eb873ae 65
+packages/components/src/components/SegmentedControl/__tests__/SegmentedControl.ct.tsx
+  s_1a41a1a882a563::t_d6b697dc4c55d5 272
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7fb0e51ef9d2de98f1f8f9a31d59f7afa9c19806",
+  "prompts": {},
+  "sessions": {
+    "s_1a41a1a882a563": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "0035fcef-10cb-42de-861a-e75a198f6e48",
+        "model": "grok-4.7"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+.changeset/config.json
+  s_7de1dc9df28918::t_38be2411effe85 9
+.github/workflows/changeset-check.yaml
+  s_7de1dc9df28918::t_cb37414e2769d1 6,25
+.github/workflows/continuous-deployment.yaml
+  s_7de1dc9df28918::t_70f2b30898ced1 6
+package.json
+  s_7de1dc9df28918::t_2c030feae53d79 24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "089d08a4ee5874c555fcde0b252e63e2ba834312",
+  "prompts": {},
+  "sessions": {
+    "s_7de1dc9df28918": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6d4eb5e8-8e19-4271-8cc8-cdbb36c7cb6e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
