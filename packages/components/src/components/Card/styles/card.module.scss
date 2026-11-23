@@ -203,7 +203,10 @@
     overflow: hidden;
     background-color: var(--color-surface-dim);
     pointer-events: none;
-    @include transitions.transition-colors;
+    // border-radius eases with the root's hover tint so the corners never square off ahead of it.
+    @include transitions.transition(
+        (color, background-color, border-color, text-decoration-color, outline-color, fill, stroke, border-radius)
+    );
 
     &::after {
         @include border-overlay($z-index: 1);
