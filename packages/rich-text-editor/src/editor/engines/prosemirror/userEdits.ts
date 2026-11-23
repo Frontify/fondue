@@ -5,7 +5,6 @@ import {
     AddMarkStep,
     AddNodeMarkStep,
     AttrStep,
-    DocAttrStep,
     RemoveMarkStep,
     RemoveNodeMarkStep,
     type Step,
@@ -35,10 +34,6 @@ const editsOf = (step: Step, side: Side): Edit[] => {
     }
     if (step instanceof AddNodeMarkStep || step instanceof RemoveNodeMarkStep) {
         return [{ kind: 'content', from: step.pos, to: step.pos + 1 }];
-    }
-    if (step instanceof DocAttrStep) {
-        // The engine document carries no attributes of its own; its root keys live outside it.
-        return [];
     }
 
     const edits: Edit[] = [];

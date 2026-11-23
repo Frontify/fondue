@@ -18,8 +18,6 @@ export type FrameScheduler = {
     cancel: (frame: number) => void;
 };
 
-type Held = { kind: 'none' } | { kind: 'waiting'; doc: RteDocumentOf; frame: number };
-
 export type HostSyncOptions = {
     view: () => EditorView;
     schema: Schema;
@@ -52,7 +50,7 @@ export const createHostSync = ({
     const reported = new WeakMap<RteDocumentOf, number>();
     // The document's own undeclared keys: only the host changes them, so they live here, not in the engine document.
     let rootExtras = rootExtrasOf(initialDoc);
-    let held: Held = { kind: 'none' };
+    let pendingFrame: number | null = null;
 
     const applyDoc = (doc: RteDocumentOf): void => {
         record = recordHandOver(record);
@@ -72,34 +70,17 @@ export const createHostSync = ({
         onDocApplied(doc);
     };
 
-    const retryHeld = (): void => {
-        if (held.kind === 'none') {
-            return;
-        }
-
-        const { doc } = held;
-        held = { kind: 'none' };
-        setDoc(doc);
-    };
-
-    const hold = (doc: RteDocumentOf): void => {
-        if (held.kind === 'waiting') {
-            held = { ...held, doc };
-            return;
-        }
-
-        held = { kind: 'waiting', doc, frame: frames.request(retryHeld) };
-    };
-
     // The newest document the host hands over wins, so one still held is dropped whatever this one is.
     const release = (): void => {
-        if (held.kind === 'waiting') {
-            frames.cancel(held.frame);
-            held = { kind: 'none' };
+        if (pendingFrame !== null) {
+            frames.cancel(pendingFrame);
+            pendingFrame = null;
         }
     };
 
     const setDoc = (doc: RteDocumentOf): void => {
+        release();
+
         const action = hostDocAction({
             record,
             doc,
@@ -109,19 +90,19 @@ export const createHostSync = ({
 
         switch (action.kind) {
             case 'ignore':
-                release();
                 return;
             case 'echo':
-                release();
                 record = recordEcho(record, action.seq);
                 return;
             case 'wait':
                 // Held or not, the host now holds a document of its own, so what it hands back after this is a reset.
                 record = recordHandOver(record);
-                hold(doc);
+                pendingFrame = frames.request(() => {
+                    pendingFrame = null;
+                    setDoc(doc);
+                });
                 return;
             case 'apply':
-                release();
                 applyDoc(doc);
                 return;
         }
