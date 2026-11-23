@@ -10,16 +10,17 @@ every block, mark and inline comes from a plugin.
 
 ```tsx
 import { RichTextEditor, RichTextRenderer } from '@frontify/fondue-rich-text-editor';
-import { defaultPlugins } from '@frontify/fondue-rich-text-editor/plugins';
+import { defaultContent, defaultPlugins } from '@frontify/fondue-rich-text-editor/plugins';
 import '@frontify/fondue-rich-text-editor/styles';
 
 <RichTextEditor plugins={defaultPlugins} value={doc} onChange={setDoc} />
-<RichTextRenderer value={doc} />
+<RichTextRenderer plugins={defaultContent} value={doc} />
 ```
 
 The renderer needs no editing code, so it reads only each feature's content, not its plugin.
-With no `plugins` it uses `defaultContent`. Pass your own content, or your plugins, when the
-document holds more than the defaults.
+The renderer, `serializeToHtml`, `parseHtml` and `toPlainText` need `plugins`, so a read-only view
+bundles only what it passes. Pass `defaultContent` for every shipped plugin, or your own content or
+plugins. The editor falls back to `defaultPlugins`.
 
 A host that sets its own text looks passes the same `look` to both sides:
 

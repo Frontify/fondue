@@ -14,6 +14,7 @@ const CONTENT_CODE = new RegExp(`^src/(${OWN_LAYERS}|plugins/(${SHARED_PLUGIN_CO
 const MENTION_READ_VIEW = 'src/plugins/Mention/components/MentionLink.tsx';
 const RENDERER_ENTRY = `export { RichTextRenderer, serializeToHtml, toPlainText } from './src/index.ts';
 export { columnBreakContent } from './src/plugins/index.ts';`;
+const DEFAULT_CONTENT_FILE = 'src/plugins/defaultContent.ts';
 const EDITING_ONLY_CORE = /^src\/core\/(registry|hotkeys)\.ts$/;
 
 const bundleInputs = async (exportLine: string): Promise<string[]> => {
@@ -61,6 +62,16 @@ it(
         const inputs = await bundleInputs(RENDERER_ENTRY);
 
         expect(inputs.filter((path) => EDITING_ONLY_CORE.test(path))).toEqual([]);
+    },
+);
+
+it(
+    'bundles the renderer without defaultContent, so a view ships only the plugins it passes',
+    { timeout: 30_000 },
+    async () => {
+        const inputs = await bundleInputs(`export { RichTextRenderer } from './src/index.ts';`);
+
+        expect(inputs).not.toContain(DEFAULT_CONTENT_FILE);
     },
 );
 
