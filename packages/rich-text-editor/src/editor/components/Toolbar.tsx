@@ -3,9 +3,10 @@
 import { Divider } from '@frontify/fondue-components';
 import {
     Fragment,
-    type MutableRefObject,
+    memo,
     type ReactNode,
     useCallback,
+    useLayoutEffect,
     useRef,
     useState,
     useSyncExternalStore,
@@ -60,12 +61,10 @@ type ToolbarProps = {
     labels: RichTextEditorLabels;
     /** The id of the editable element the controls act on. */
     controls: string;
-    /**
-     * Set by the editor when the toolbar should take focus (Alt+F10): read
-     * and cleared once the toolbar has rendered, which for a floating bar is
-     * the first render after it was asked for.
-     */
-    focusRequestRef: MutableRefObject<boolean>;
+    /** The editor asks the toolbar to take focus (Alt+F10); a floating bar takes it on the render it appears in. */
+    focusPending: boolean;
+    /** The toolbar has taken up the editor's focus request, so the editor can clear it. */
+    onFocusTaken: () => void;
 };
 
 /**
@@ -81,7 +80,7 @@ type ToolbarProps = {
  * The top row is one line: the plugins' controls that do not fit move behind a
  * More button at its end.
  */
-export const Toolbar = ({
+const ToolbarView = ({
     items: allItems,
     commands = [],
     api,
@@ -89,12 +88,15 @@ export const Toolbar = ({
     placement,
     labels,
     controls,
-    focusRequestRef,
+    focusPending,
+    onFocusTaken,
 }: ToolbarProps): ReactNode => {
     const getSelection = useCallback(() => api.selection.get(), [api]);
     const selection = useSyncExternalStore(editorState.subscribe, getSelection, getSelection);
     const toolbarRef = useRef<HTMLDivElement | null>(null);
     const [panel, setPanel] = useState<HTMLElement | null>(null);
+    // Read and cleared by the roving focus after every render: set by the editor's request or by a refit.
+    const focusRequestRef = useRef(false);
 
     const floating = placement === 'floating';
     const items = floating ? allItems.filter((item) => item.floating === 'inline') : allItems;
@@ -104,6 +106,13 @@ export const Toolbar = ({
     const groups = groupsOf(items);
     // Before the roving focus, whose layout effect then honours a refocus the refit asked for.
     const fit = useToolbarFit({ toolbarRef, panel, groups, fits: !floating, focusRequestRef });
+    // Before the roving focus, whose layout effect then takes the focus the editor asked for.
+    useLayoutEffect(() => {
+        if (focusPending) {
+            focusRequestRef.current = true;
+            onFocusTaken();
+        }
+    }, [focusPending, onFocusTaken]);
     const roving = useToolbarRoving({ toolbarRef, focusRequestRef, onEscape: () => api.focus() });
     const { row, overflow, more } = layoutOf(groups, fit);
 
@@ -172,6 +181,9 @@ export const Toolbar = ({
         </div>
     );
 };
+
+/** Skips a host re-render that hands the editor the same props. */
+export const Toolbar = memo(ToolbarView);
 
 type ToolbarSection = { key: string; node: ReactNode };
 

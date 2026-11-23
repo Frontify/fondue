@@ -405,10 +405,10 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
         // Only the switch is the event; focus is read when it happens.
         // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [newerVersion]);
-    // Alt+F10 asks the toolbar to take focus; it reads and clears the request
-    // once it has rendered, which for a floating bar may be its first render.
-    const focusRequestRef = useRef(false);
-    const [, renderForFocusRequest] = useReducer((count: number) => count + 1, 0);
+    // Alt+F10 asks the toolbar to take focus; the toolbar clears the request once
+    // it has taken focus, which for a floating bar may be on its first render.
+    const [toolbarFocusPending, setToolbarFocusPending] = useState(false);
+    const onToolbarFocusTaken = useCallback((): void => setToolbarFocusPending(false), []);
     // A selection being dragged out with the mouse is not finished yet; the
     // floating bar waits for the button to come up rather than chasing the pointer.
     const { isDragging, startDragging } = useMouseDrag();
@@ -442,8 +442,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
         // The floating bar only exists over selected text.
         if (isToolbarHotkey(event) && hasToolbar && !(toolbarFloats && handle.api.selection.get().isCollapsed)) {
             event.preventDefault();
-            focusRequestRef.current = true;
-            renderForFocusRequest();
+            setToolbarFocusPending(true);
         }
     };
 
@@ -472,7 +471,8 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
             placement={toolbarPlacement}
             labels={labels}
             controls={editableId}
-            focusRequestRef={focusRequestRef}
+            focusPending={toolbarFocusPending}
+            onFocusTaken={onToolbarFocusTaken}
         />
     ) : null;
 
