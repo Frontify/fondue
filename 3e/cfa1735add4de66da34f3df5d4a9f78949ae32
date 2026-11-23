@@ -1,0 +1,24 @@
+packages/rich-text-editor/src/plugins/BlurOnBreak/BlurOnBreak.tsx
+  s_53de767222940a::t_21abb036e5106a 3
+  s_53de767222940a::t_118509f3941d31 22-34,38,40,45
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_53de767222940a::t_a0f40dc2145bc7 344
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_53de767222940a::t_815ba456527786 337,483,618,700
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3ecfa1735add4de66da34f3df5d4a9f78949ae32",
+  "prompts": {},
+  "sessions": {
+    "s_53de767222940a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f9b7337-8455-4b7f-ac95-dde194f54be3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
