@@ -1132,12 +1132,17 @@ describe('focus', () => {
         },
     );
 
-    it.each(['start', 'end'] as const)('selects the only block of a void-only document at %s', (position) => {
-        const editor = editorWith(plugins, [{ type: 'divider' }]);
+    it.each([
+        ['start', 0],
+        ['end', 1],
+    ] as const)('selects the first or last block of a void-only document at %s', (position, from) => {
+        const editor = editorWith(plugins, [{ type: 'divider' }, { type: 'divider' }]);
 
         editor.api.focus(position);
 
-        expect(editor.view.state.selection).toBeInstanceOf(NodeSelection);
+        const { selection } = editor.view.state;
+        expect(selection).toBeInstanceOf(NodeSelection);
+        expect(selection.from).toBe(from);
         expect(window.document.activeElement).toBe(editor.view.dom);
     });
 });

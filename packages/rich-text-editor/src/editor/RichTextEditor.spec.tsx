@@ -1657,6 +1657,27 @@ describe('autoFocus', () => {
 
         expect(container.contains(window.document.activeElement)).toBe(false);
     });
+
+    it('spends the focus on the first mount, so a remounted engine leaves it where it went', () => {
+        const outside = window.document.createElement('input');
+        window.document.body.append(outside);
+        teardown.push(() => outside.remove());
+        const { rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={FIXTURE_PLUGINS} autoFocus="end" />
+        ));
+        ready();
+        act(() => outside.focus());
+
+        rerender(
+            <RichTextEditor
+                value={paragraph('current')}
+                plugins={[FIRST_FIXTURE_PLUGIN, SECOND_FIXTURE_PLUGIN]}
+                autoFocus="end"
+            />,
+        );
+
+        expect(window.document.activeElement).toBe(outside);
+    });
 });
 
 describe('focus within', () => {
@@ -2135,6 +2156,25 @@ describe('an editor that crashes', () => {
         expect(editableIn(container).parentElement?.closest('[tabindex]')).toBeNull();
         // Typing goes on after the text, not before it.
         const caret = window.getSelection();
+        expect(caret?.isCollapsed).toBe(true);
+        expect(caret?.anchorNode?.textContent).toBe('text');
+        expect(caret?.anchorOffset).toBe('text'.length);
+    });
+
+    it('puts the caret after the text when Retry was pressed without taking focus', () => {
+        silenceReact();
+        const state = { broken: true };
+        const flaky = flakyPlugin(state);
+        const { container, ready } = mount(() => <RichTextEditor value={paragraph('text')} plugins={[flaky]} />);
+
+        state.broken = false;
+        act(() => {
+            retryButton(container).click();
+        });
+        ready();
+
+        const caret = window.getSelection();
+        expect(window.document.activeElement).toBe(editableIn(container));
         expect(caret?.isCollapsed).toBe(true);
         expect(caret?.anchorNode?.textContent).toBe('text');
         expect(caret?.anchorOffset).toBe('text'.length);
