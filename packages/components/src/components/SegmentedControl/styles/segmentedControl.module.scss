@@ -90,9 +90,9 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
     align-items: center;
     justify-content: center;
     border-radius: inherit;
-    padding-inline: clamp(0rem, 2vw, sizeToken.get(4));
+    padding-inline: sizeToken.get(4);
     gap: sizeToken.get(2);
-    color: var(--color-container-secondary-on-secondary-container);
+    color: var(--color-secondary-default);
     min-width: 0;
 
     font-size: var(--typography-font-size-medium);
@@ -152,7 +152,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
 
     // Color the label based on the disabled state
     .item:disabled & {
-        color: var(--color-container-disabled-on-disabled);
+        color: var(--color-container-disabled-on-disabled-container);
     }
     .item[aria-checked='true'] & {
         opacity: 0;

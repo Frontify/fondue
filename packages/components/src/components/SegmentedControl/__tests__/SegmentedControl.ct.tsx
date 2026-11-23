@@ -236,3 +236,28 @@ test('should work with enum values', async ({ mount }) => {
     // Check the UI updates correctly
     await expect(component.getByRole('radio').locator('nth=1')).toHaveAttribute('aria-checked', 'true');
 });
+
+test('keeps 16px item padding on a narrow viewport', async ({ mount, page }) => {
+    await page.setViewportSize({ width: 400, height: 800 });
+    const component = await mount(
+        <SegmentedControl.Root data-test-id={SEGMENTED_CONTROL_TEST_ID} defaultValue="first">
+            <SegmentedControl.Item value="first">First</SegmentedControl.Item>
+            <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
+        </SegmentedControl.Root>,
+    );
+    const label = component.getByRole('radio', { name: 'Second' }).locator('span').nth(1);
+
+    await expect(label).toHaveCSS('padding-inline-start', '16px');
+});
+
+test('inactive item uses the secondary color', async ({ mount }) => {
+    const component = await mount(
+        <SegmentedControl.Root data-test-id={SEGMENTED_CONTROL_TEST_ID} defaultValue="first">
+            <SegmentedControl.Item value="first">First</SegmentedControl.Item>
+            <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
+        </SegmentedControl.Root>,
+    );
+    const label = component.getByRole('radio', { name: 'Second' }).locator('span').nth(1);
+
+    await expect(label).toHaveCSS('color', 'rgb(103, 103, 99)');
+});
