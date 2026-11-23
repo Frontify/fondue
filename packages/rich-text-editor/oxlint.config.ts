@@ -70,10 +70,16 @@ const noSiblingPlugin = (up: string) => ({
         'A plugin may not import another plugin, nor reach out of src/plugins/ by a relative path (use #/core). What several plugins are built out of belongs in src/plugins/shared/.',
 });
 
-/** The shell reaches the engine only through `useEditorHandle`; `up` is the relative path to `src/editor/`. */
+/** The shell reaches the engine only through `useEditorHandle` and `parseHtml`; `up` is the relative path to `src/editor/`. */
 const noEngineFromShell = (up: string) => ({
     group: ['#/editor/engines', '#/editor/engines/**', `${up}/engines`, `${up}/engines/**`],
-    message: 'Only useEditorHandle wires an adapter in. Everything else uses the editor port.',
+    message: 'Only useEditorHandle and parseHtml wire an adapter in. Everything else uses the editor port.',
+});
+
+/** A shell file that wires the engine in reaches it through its barrel only; `up` as for `noEngineFromShell`. */
+const engineBarrelOnly = (up: string) => ({
+    group: [...noEngineFromShell(up).group, '!#/editor/engines/prosemirror'],
+    message: 'Wire the engine in through #/editor/engines/prosemirror, never a file inside it.',
 });
 
 const SHELL_OUTER_LAYERS = {
@@ -264,6 +270,7 @@ export default defineConfig({
         },
         {
             files: ['src/editor/*.{ts,tsx}'],
+            excludeFiles: ['src/editor/parseHtml.ts'],
             rules: {
                 'no-restricted-imports': [
                     'error',
@@ -291,7 +298,10 @@ export default defineConfig({
                             NO_ENGINE,
                             noEngineFromShell('.'),
                             SHELL_OUTER_LAYERS,
-                            { ...noRelativeEscape('..', SHELL_ESCAPE_MESSAGE), group: ['../**', '!../index'] },
+                            {
+                                ...noRelativeEscape('..', SHELL_ESCAPE_MESSAGE),
+                                group: ['../**', '!../index', '!../plugins'],
+                            },
                         ],
                     },
                 ],
@@ -333,6 +343,24 @@ export default defineConfig({
             },
         },
         {
+            // The shell file that reads HTML with the engine's parse rules, with no editor mounted.
+            files: ['src/editor/parseHtml.ts'],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    {
+                        patterns: [
+                            NO_SERVER_RENDER,
+                            NO_ENGINE,
+                            engineBarrelOnly('.'),
+                            SHELL_OUTER_LAYERS,
+                            noRelativeEscape('..', SHELL_ESCAPE_MESSAGE),
+                        ],
+                    },
+                ],
+            },
+        },
+        {
             files: [`${ENGINE}/**/*.{ts,tsx}`],
             excludeFiles: [`${ENGINE}/grid.ts`],
             rules: {
@@ -365,8 +393,8 @@ export default defineConfig({
                             NO_SERVER_RENDER,
                             NO_ENGINE,
                             {
-                                group: ['#/**', './**', '../**', '!../index'],
-                                message: 'Stories may only import the package public API (../index).',
+                                group: ['#/**', './**', '../**', '!../index', '!../plugins'],
+                                message: 'Stories may only import the package public API (../index, ../plugins).',
                             },
                         ],
                     },

@@ -2,7 +2,7 @@
 
 import { BODY_FONT_FAMILY } from '@theme/consts';
 
-export const FONT_SIZE = '--body-size-large';
+export const FONT_SIZE = '--typography-font-size-large';
 
 export const LABEL_TITLE_STYLE = {
     fontSize: `var(${FONT_SIZE})`,

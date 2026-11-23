@@ -26,6 +26,7 @@ const config: StorybookConfig = {
         '../../packages/components/src/**/*.stories.@(ts|tsx)',
         '../../packages/charts/src/**/*.stories.@(ts|tsx)',
         '../../packages/rich-text-editor/src/**/*.stories.@(ts|tsx)',
+        '../../packages/rich-text-editor/src/**/*.mdx',
     ],
     addons: [
         '@storybook/addon-links',

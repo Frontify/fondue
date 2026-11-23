@@ -204,17 +204,7 @@ const MoreButton = forwardRef<HTMLButtonElement, MoreButtonProps>(function MoreB
     // Fondue's Button spreads undeclared props onto the <button>, so the marker still reaches the DOM.
     const marker = { [MORE_ATTRIBUTE]: '' } as ComponentProps<typeof Button>;
     return (
-        <Button
-            {...marker}
-            {...rest}
-            ref={ref}
-            type="button"
-            size="small"
-            aspect="square"
-            emphasis="weak"
-            className={styles.more}
-            aria-label={label}
-        >
+        <Button {...marker} {...rest} ref={ref} type="button" aspect="square" emphasis="weak" aria-label={label}>
             <IconDotsHorizontal size={20} />
         </Button>
     );

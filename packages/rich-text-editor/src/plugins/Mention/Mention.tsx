@@ -4,7 +4,7 @@ import { defineContent, defineInline, definePlugin, type RtePlugin } from '#/cor
 
 import { MentionEditor } from './components/MentionEditor';
 import { MentionLink } from './components/MentionLink';
-import { safeMentionHref } from './helpers/mention';
+import { mentionAttributes, mentionDisplay } from './helpers/display';
 import styles from './mention.module.scss';
 import { type MentionHref, type MentionItem, type MentionItems, type MentionValue } from './types';
 
@@ -42,18 +42,16 @@ export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = 
                 // Portable markup for the clipboard: a plain link (or text, with
                 // nowhere to link to), no tooltip.
                 toHtml: (mention) => {
-                    const target = safeMentionHref(href, mention);
+                    const shown = mentionDisplay(mention, { href, trigger });
                     return {
-                        tag: target === undefined ? 'span' : 'a',
+                        tag: shown.href === undefined ? 'span' : 'a',
                         attrs: {
-                            href: target,
-                            title: mention.name,
-                            'data-mention-id': mention.id,
-                            'data-mention-username': mention.username,
-                            'data-mention-kind': mention.kind,
+                            href: shown.href,
+                            title: shown.title,
+                            ...mentionAttributes(mention),
                             class: styles.mention ?? '',
                         },
-                        children: `${trigger}${mention.username}`,
+                        children: [{ tag: 'bdi', children: shown.label }],
                     };
                 },
 
@@ -63,7 +61,11 @@ export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = 
 
                 render: {
                     component: ({ value }) => (
-                        <MentionLink value={value} href={safeMentionHref(href, value)} trigger={trigger} />
+                        <MentionLink
+                            value={value}
+                            display={mentionDisplay(value, { href, trigger })}
+                            placesCaret={false}
+                        />
                     ),
                 },
             }),
@@ -106,10 +108,12 @@ export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
 
     return definePlugin({
         content: mentionContent({ href, trigger }),
-        edit: { mention: (props) => <MentionEditor {...props} items={items} trigger={trigger} href={href} /> },
+        edit: {
+            mention: (props) => <MentionEditor {...props} items={items} trigger={trigger} href={href} />,
+        },
         hotkeys: {
             // Inserts an empty mention that the `edit` view takes over.
-            [trigger]: (api) => api.insert('mention'),
+            [trigger]: { label: 'Mention someone', run: (api) => api.insert('mention') },
         },
     });
 };

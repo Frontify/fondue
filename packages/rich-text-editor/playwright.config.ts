@@ -18,6 +18,7 @@ export default defineConfig({
     testMatch: '**/*.ct.{ts,tsx}',
     use: {
         trace: 'on-first-retry',
+        testIdAttribute: 'data-test-id',
         ctPort: 3101,
         ctViteConfig: {
             plugins: [tsConfigPaths()],

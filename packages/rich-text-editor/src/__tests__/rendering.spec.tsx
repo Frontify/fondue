@@ -7,19 +7,16 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
-    columnBreakPlugin,
-    defaultContent,
-    defaultPlugins,
     defineContent,
     defineMark,
     definePlugin,
+    RichTextRenderer,
     type RteDocument,
     type RteDocumentWith,
-    RichTextRenderer,
     type RtePlugin,
     serializeToHtml,
-    textStyleContent,
 } from '../index';
+import { columnBreakPlugin, defaultContent, defaultPlugins, linkPlugin, textStyleContent } from '../plugins';
 
 // The readonly view and export draw the same tree, so they are tested side by
 // side: the renderer as React in the test DOM, export as the string it returns.
@@ -189,10 +186,10 @@ describe('the element a document sits in', () => {
 
 describe('host looks given only as content', () => {
     const doc = paragraph([{ text: 'Hello' }]);
-    const presets = { body: { fontSize: '17px' }, heading1: { color: 'red' } };
+    const look = { body: { fontSize: '17px' }, heading1: { color: 'red' } };
 
     it('reach the readonly view and export without the text style plugin', () => {
-        const plugins = [textStyleContent({ presets })];
+        const plugins = [textStyleContent({ look })];
         const view = rendered(<RichTextRenderer value={doc} plugins={plugins} />).firstElementChild;
         const exportRoot = exported(serializeToHtml(doc, { plugins })).firstElementChild;
 
@@ -203,7 +200,7 @@ describe('host looks given only as content', () => {
     });
 
     it('reach the readonly view when added after the default content', () => {
-        const plugins = [...defaultContent, textStyleContent({ presets })];
+        const plugins = [...defaultContent, textStyleContent({ look })];
         const view = rendered(<RichTextRenderer value={doc} plugins={plugins} />).firstElementChild;
 
         expect((view as HTMLElement | null)?.style.getPropertyValue('--rte-body-font-size')).toBe('17px');
@@ -291,5 +288,36 @@ describe('a list holding a block no plugin defines among its items', () => {
             expect(container.querySelector('ol > li a')?.getAttribute('href')).toBe('https://example.com');
         }
         warn.mockRestore();
+    });
+});
+
+describe('a link in a reading view and in export', () => {
+    it('opens a new tab with its target and rel, and adds no text of its own', () => {
+        const doc = paragraph([{ text: 'new', link: { href: 'https://example.com', openInNewTab: true } }]);
+
+        for (const container of [
+            rendered(<RichTextRenderer value={doc} />),
+            exported(serializeToHtml(doc, { plugins: defaultPlugins })),
+        ]) {
+            const anchor = container.querySelector('a');
+            expect(anchor?.textContent).toBe('new');
+            expect(anchor?.getAttribute('target')).toBe('_blank');
+            expect(anchor?.getAttribute('rel')).toBe('noopener noreferrer');
+        }
+    });
+
+    it('keeps a focused link in the reading view focused when its parent renders again with a new link plugin', () => {
+        const doc = paragraph([{ text: 'docs', link: { href: 'https://example.com' } }]);
+        const container = window.document.createElement('div');
+        window.document.body.append(container);
+        const root = createRoot(container);
+        act(() => root.render(<RichTextRenderer value={doc} plugins={[linkPlugin()]} />));
+        container.querySelector('a')?.focus();
+
+        act(() => root.render(<RichTextRenderer value={doc} plugins={[linkPlugin()]} />));
+
+        expect(window.document.activeElement).toBe(container.querySelector('a'));
+        act(() => root.unmount());
+        container.remove();
     });
 });

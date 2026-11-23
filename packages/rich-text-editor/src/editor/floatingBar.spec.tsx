@@ -6,7 +6,8 @@ import { act, type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { columnBreakPlugin, defaultPlugins, definePlugin, RichTextEditor, type RteDocument } from '../index';
+import { definePlugin, RichTextEditor, type RteDocument } from '../index';
+import { columnBreakPlugin, defaultPlugins } from '../plugins';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -79,6 +80,21 @@ const selectText = (editable: HTMLElement): void => {
     act(() => {
         if (text) {
             window.getSelection()?.setBaseAndExtent(text, 0, text, text.textContent?.length ?? 0);
+        }
+        window.document.dispatchEvent(new Event('selectionchange'));
+    });
+};
+
+const selectFirstToLastText = (editable: HTMLElement): void => {
+    const walker = window.document.createTreeWalker(editable, NodeFilter.SHOW_TEXT);
+    const first = walker.nextNode();
+    let last = first;
+    for (let next = walker.nextNode(); next; next = walker.nextNode()) {
+        last = next;
+    }
+    act(() => {
+        if (first && last) {
+            window.getSelection()?.setBaseAndExtent(first, 0, last, last.textContent?.length ?? 0);
         }
         window.document.dispatchEvent(new Event('selectionchange'));
     });
@@ -246,6 +262,19 @@ describe('the floating bar', () => {
         });
     });
 
+    it('turns a range across two lists and the text between them into plain text', () => {
+        const { bar, editable, stored } = open('<ul><li>one</li></ul><p>between</p><ol><li>two</li></ol>');
+        selectFirstToLastText(editable);
+
+        turnInto(bar, 'Text');
+
+        expect(stored()?.blocks).toEqual([
+            { type: 'paragraph', children: [{ text: 'one' }] },
+            { type: 'paragraph', children: [{ text: 'between' }] },
+            { type: 'paragraph', children: [{ text: 'two' }] },
+        ]);
+    });
+
     it('does nothing when the entry chosen is the one the block already is', () => {
         const { bar, stored } = open('<ul><li>one</li></ul>');
         const before = stored();
@@ -309,6 +338,19 @@ describe('the / menu', () => {
         expect(window.document.querySelector('[contenteditable]')?.getAttribute('aria-activedescendant')).toBe(
             active?.id,
         );
+    });
+
+    it("clears the text's pointers to the list once the list closes", () => {
+        const { editable } = start();
+        act(() => editable.focus());
+        type(editable, '/');
+        expect(editable.getAttribute('aria-controls')).toBeTruthy();
+
+        press(editable, 'Escape');
+
+        expect(listbox()).toBeNull();
+        expect(editable.hasAttribute('aria-controls')).toBe(false);
+        expect(editable.hasAttribute('aria-activedescendant')).toBe(false);
     });
 
     it('narrows to what is typed after the slash', () => {

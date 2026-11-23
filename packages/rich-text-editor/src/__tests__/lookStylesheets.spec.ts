@@ -7,6 +7,9 @@ import { describe, expect, it } from 'vitest';
 
 import { OWN_MARGIN_VARIABLES } from '../core/documentContract';
 import { LOOK_PROPERTIES, lookVariableName } from '../core/look';
+import { BUTTON_HOVER_LOOK_FIELDS, BUTTON_LOOK_FIELDS } from '../plugins/Link/helpers/appearance';
+import { ALL_LINK_APPEARANCES, type LinkAppearance } from '../plugins/Link/helpers/value';
+import { bulletListPlugin, numberedListPlugin } from '../plugins/List/List';
 import { ALL_TEXT_STYLES, findPreset } from '../plugins/TextStyle/helpers/presets';
 
 // The look is spelled twice: in core (what a host sets) and in the stylesheets (what they read).
@@ -14,6 +17,11 @@ import { ALL_TEXT_STYLES, findPreset } from '../plugins/TextStyle/helpers/preset
 
 const STYLES_DIRECTORY = fileURLToPath(new URL('../styles/', import.meta.url));
 const TEXT_STYLE_STYLESHEET = fileURLToPath(new URL('../plugins/TextStyle/textStyle.module.scss', import.meta.url));
+
+/** The characters of a selector that a regular expression reads as more than themselves. */
+const SELECTOR_PUNCTUATION = /[.:]/g;
+
+const LINK_STYLESHEET = fileURLToPath(new URL('../plugins/Link/link.module.scss', import.meta.url));
 
 /** `font-size: var(--rte-heading1-font-size, ...)`: a property and the host variable it reads first. */
 const LOOK_DECLARATION = /([a-z-]+):\s*var\((--[a-z0-9-]+),/g;
@@ -23,7 +31,6 @@ type LookDeclaration = { property: string; variable: string };
 const lookDeclarationsIn = (css: string): LookDeclaration[] =>
     [...css.matchAll(LOOK_DECLARATION)].map(([, property = '', variable = '']) => ({ property, variable }));
 
-/** The margins a look hands to the document as custom properties, which alone writes margins. */
 const HANDED_OVER_PROPERTIES: Record<string, string> = {
     'margin-top': OWN_MARGIN_VARIABLES.top,
     'margin-bottom': OWN_MARGIN_VARIABLES.bottom,
@@ -94,4 +101,93 @@ describe('the text style stylesheet', () => {
             expect(lookDeclarationsIn(ruleBodyOf(css, name))).toEqual(declarationsCoreNames(name, CORE_PROPERTIES));
         });
     }
+});
+
+// A button link reads its own variables, which the link plugin compiles from the tables in `appearance.ts`.
+describe('the link stylesheet', () => {
+    const css = compile(LINK_STYLESHEET).css;
+
+    const BUTTON_CLASSES: Record<LinkAppearance, string> = {
+        primary: 'buttonPrimary',
+        secondary: 'buttonSecondary',
+        tertiary: 'buttonTertiary',
+    };
+
+    /** The body of the rule with exactly this selector list, which a button writes for its link states. */
+    const ruleBodyForSelector = (selector: string): string => {
+        const escaped = selector.replaceAll(SELECTOR_PUNCTUATION, String.raw`\$&`);
+        const body = new RegExp(`${escaped}\\s*\\{([^}]*)\\}`).exec(css)?.[1];
+
+        if (body === undefined) {
+            throw new Error(`No rule for ${selector} in the compiled stylesheet`);
+        }
+
+        return body;
+    };
+
+    const declarationsOf = (kind: string, fields: Record<string, string>): LookDeclaration[] =>
+        Object.values(fields).map((property) => ({
+            property,
+            variable: lookVariableName(kind, property),
+        }));
+
+    for (const appearance of ALL_LINK_APPEARANCES) {
+        const className = BUTTON_CLASSES[appearance];
+
+        it(`reads the ${appearance} button look from the variables the link plugin sets`, () => {
+            const selector = `.${className}, .${className}:link, .${className}:visited`;
+
+            expect(lookDeclarationsIn(ruleBodyForSelector(selector))).toEqual(
+                declarationsOf(`button-${appearance}`, BUTTON_LOOK_FIELDS),
+            );
+        });
+
+        it(`reads the ${appearance} button hover look from the variables the link plugin sets`, () => {
+            expect(lookDeclarationsIn(ruleBodyForSelector(`.${className}:hover`))).toEqual(
+                declarationsOf(`button-${appearance}-hover`, BUTTON_HOVER_LOOK_FIELDS),
+            );
+        });
+    }
+});
+
+const LIST_STYLESHEET = fileURLToPath(new URL('../plugins/List/list.module.scss', import.meta.url));
+
+/** A list level's variable, such as `--rte-bullet-list2-color`. */
+const LIST_LEVEL_VARIABLE = /--rte-(?:bullet|numbered)-list\d+-[a-z]+/g;
+
+const SAMPLE_VALUE = 'sample';
+const BULLET_LOOK = {
+    marker: SAMPLE_VALUE,
+    color: SAMPLE_VALUE,
+    size: SAMPLE_VALUE,
+    indent: SAMPLE_VALUE,
+};
+const NUMBERED_LOOK = {
+    marker: SAMPLE_VALUE,
+    color: SAMPLE_VALUE,
+    indent: SAMPLE_VALUE,
+};
+
+describe('the list stylesheet', () => {
+    const css = compile(LIST_STYLESHEET).css;
+    const written = Object.keys({
+        ...bulletListPlugin({
+            look: [BULLET_LOOK, BULLET_LOOK, BULLET_LOOK],
+        }).content?.contentProperties,
+        ...numberedListPlugin({
+            look: [NUMBERED_LOOK, NUMBERED_LOOK, NUMBERED_LOOK],
+        }).content?.contentProperties,
+    });
+
+    it('falls back to the body look for the marker colour and size', () => {
+        for (const property of [LOOK_PROPERTIES.color, LOOK_PROPERTIES.fontSize]) {
+            expect(css).toContain(`var(${lookVariableName('body', property)},`);
+        }
+    });
+
+    it('reads every variable the list plugins write for a level, and no other', () => {
+        const read = new Set(css.match(LIST_LEVEL_VARIABLE));
+
+        expect(read).toEqual(new Set(written));
+    });
 });

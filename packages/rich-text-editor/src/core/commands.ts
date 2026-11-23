@@ -10,6 +10,20 @@
  */
 export type RteMarkState = { coverage: 'all'; value: Record<string, unknown> } | { coverage: 'some' };
 
+/**
+ * How `insertText` is undone. `'together'`: the text and its marks in one step. `'marksFirst'`: the marks in a step
+ * of their own, so the first undo keeps the text, as undoing an autolink does.
+ */
+export type InsertTextUndo = 'together' | 'marksFirst';
+
+export type InsertTextOptions = {
+    /**
+     * How the insert is undone.
+     * @default 'together'
+     */
+    undo?: InsertTextUndo;
+};
+
 /** What is selected, as one value that plugin UI renders itself from. Read it in a toolbar render function, which runs on every state change. */
 export type RteSelectionSnapshot = {
     /**
@@ -49,6 +63,24 @@ export type RteSelectionSnapshot = {
 };
 
 /**
+ * What a caret clears: the marks it would type with (`'typing'`) or its whole text block (`'block'`). A range is cleared either way.
+ */
+export type ClearMarksScope = 'typing' | 'block';
+
+export type ClearMarksOptions = {
+    /**
+     * How much a caret clears.
+     * @default 'typing'
+     */
+    scope?: ClearMarksScope;
+    /**
+     * Leave on the marks that declare `survivesClear`.
+     * @default false
+     */
+    keepSurviving?: boolean;
+};
+
+/**
  * The API plugins are handed in their toolbar controls, hotkeys and `edit` views,
  * to drive the editor whatever the engine. Read with `selection.get()`; act with
  * one command per act, keyed by the type it acts on.
@@ -75,8 +107,10 @@ export type EditorControlApi = {
          * mark, as one undo step: how a colour is removed.
          */
         remove(type: string): void;
-        /** Strip every mark from the selection — the formatting half of "reset formatting". */
-        removeAll(): void;
+        /**
+         * Strip every mark from the selection, except those that declare `survivesClear` when `keepSurviving` is set.
+         */
+        removeAll(options?: ClearMarksOptions): void;
         /**
          * The whole run of a mark around the selection (its value and text), or
          * null. Unlike the snapshot's `marks` it is about the run, not the
@@ -88,7 +122,8 @@ export type EditorControlApi = {
     blocks: {
         /**
          * Turn every text block the selection touches into this type, with `value` as its attributes.
-         * A block inside a list is first taken out of its list, so the result stands on its own.
+         * A block inside a list is first taken out of its list, so the result stands on its own, whichever lists
+         * the selection spans.
          */
         setType(type: string, value?: Record<string, unknown>): void;
         /** Set attributes on every block the selection touches — how alignment is applied. */
@@ -107,7 +142,9 @@ export type EditorControlApi = {
         indent(): boolean;
         /** Lift the current list item out one level, leaving the list entirely at the top. */
         outdent(): boolean;
-        /** Split the current list item in two — Enter inside a list. Returns false outside one. */
+        /**
+         * Split the current list item in two or, in an empty item, leave the list (outdent) — Enter inside a list. Returns false outside one.
+         */
         split(): boolean;
         /** Replace every list the selection touches with the blocks its items held, even when the selection merely contains lists. */
         unwrapAll(): boolean;
@@ -170,8 +207,12 @@ export type EditorControlApi = {
      * place for text.
      */
     insert(type: string, value?: Record<string, unknown>): void;
-    /** Insert plain text at the selection, carrying the marks typing there would. */
-    insertText(text: string): void;
+    /**
+     * Insert plain text at the selection, carrying the marks typing there would plus `marks`. Unknown mark types
+     * are ignored.
+     * @param marks - Marks to add, by type to value, as in `marks.toggle`.
+     */
+    insertText(text: string, marks?: Record<string, Record<string, unknown>>, options?: InsertTextOptions): void;
 
     /** The text around the caret, within its block. */
     text: {
@@ -211,3 +252,17 @@ export const UNDO_HOTKEY = 'Mod-z';
 
 /** The key that makes the last undone change again. */
 export const REDO_HOTKEY = 'Mod-Shift-z';
+
+/** Written as in a plugin's `hotkeys` (`Mod-b`). */
+export type EditorShortcut = {
+    key: string;
+    label: string;
+};
+
+/** The editor's own keys: the engine binds undo and redo from these, the shell matches `focusToolbar`. */
+export const EDITOR_SHORTCUTS = {
+    undo: { key: UNDO_HOTKEY, label: 'Undo' },
+    redo: { key: 'Mod-y', label: 'Redo' },
+    redoWithShift: { key: REDO_HOTKEY, label: 'Redo' },
+    focusToolbar: { key: 'Alt-F10', label: 'Move focus to the toolbar' },
+} satisfies Record<string, EditorShortcut>;

@@ -335,6 +335,9 @@ importers:
         specifier: ^9.14.0
         version: 9.14.0(react@18.3.1)
     devDependencies:
+      '@axe-core/playwright':
+        specifier: ^4.14.0
+        version: 4.14.0(playwright-core@1.61.1)
       '@babel/core':
         specifier: ^7.29.7
         version: 7.29.7(supports-color@8.1.1)
@@ -622,6 +625,9 @@ importers:
       '@storybook/addon-a11y':
         specifier: ^10.6.5
         version: 10.6.6(storybook@10.6.6(@types/react@18.3.31)(prettier@3.9.10)(react@18.3.1))
+      '@storybook/addon-docs':
+        specifier: ^10.6.5
+        version: 10.6.6(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(storybook@10.6.6(@types/react@18.3.31)(prettier@3.9.10)(react@18.3.1))
       '@storybook/react-vite':
         specifier: ^10.6.5
         version: 10.6.6(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.68.2)(storybook@10.6.6(@types/react@18.3.31)(prettier@3.9.10)(react@18.3.1))(typescript@5.9.3)(vite@6.4.6(@types/node@24.19.2)(jiti@2.7.0)(sass@1.108.1)(tsx@4.23.15)(yaml@2.9.0))

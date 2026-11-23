@@ -14,6 +14,17 @@ import { type EditorControlApi, type PluginRegistry, type RteDocumentOf } from '
 /** What an engine adapter implements: put an editable document in a container. */
 export type MountDocument = (options: MountOptions) => MountedDocument;
 
+/** What an engine adapter implements to read HTML into a document, by the rules it reads a paste with. */
+export type ParseHtmlDocument = (options: ParseHtmlDocumentOptions) => RteDocumentOf;
+
+export type ParseHtmlDocumentOptions = {
+    html: string;
+    /** The plugins whose parse rules read the HTML, already gathered. */
+    registry: PluginRegistry;
+    /** Where the HTML's elements are built; only its DOM implementation is used, never its page. */
+    document: Document;
+};
+
 export type MountOptions = {
     container: HTMLElement;
     initialDoc: RteDocumentOf;
@@ -45,9 +56,16 @@ export type MountedDocument = {
     destroy(): void;
 };
 
+export type EditableAriaAttribute = 'aria-controls' | 'aria-activedescendant';
+
+/** `null` removes an attribute; an absent name leaves it alone. */
+export type EditableAttributes = Readonly<Partial<Record<EditableAriaAttribute, string | null>>>;
+
 /** What a live editor offers the shell: the commands, and where the selection is on screen. */
 export type EditorHandle = {
     api: EditorControlApi;
+    /** For state that changes while the editor is mounted, such as the `/` menu's active option. */
+    setEditableAttributes(attributes: EditableAttributes): void;
     /**
      * The box around the selected text, or around the caret when nothing is
      * selected. For the editor's own chrome (the floating toolbar, the `/`
