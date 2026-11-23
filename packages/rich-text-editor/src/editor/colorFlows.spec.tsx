@@ -27,7 +27,7 @@ afterEach(() => {
 
 const RED = '#ff0000';
 const BLUE = '#0000ff';
-const COLOR_CONTROL = 'button[aria-label^="Text colour"]';
+const COLOR_CONTROL = 'button[aria-label^="Text color"]';
 
 /** Red text followed directly by blue text. */
 const RED_THEN_BLUE: RteDocument = {
@@ -83,6 +83,6 @@ describe('the colour control', () => {
         act(() => container.querySelector<HTMLButtonElement>(COLOR_CONTROL)?.click());
         act(() => window.document.querySelector<HTMLButtonElement>('button[aria-label="Purple"]')?.click());
 
-        expect(container.querySelector(COLOR_CONTROL)?.getAttribute('aria-label')).toBe('Text colour: #8430CE');
+        expect(container.querySelector(COLOR_CONTROL)?.getAttribute('aria-label')).toBe('Text color: #8430CE');
     });
 });

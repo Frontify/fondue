@@ -12,6 +12,7 @@ import {
     type RteHotkey,
     type TextLook,
 } from '#/core';
+import { translatedLabel } from '#/ui/translation';
 
 import { withoutDecorationLine } from '../shared/helpers/declaredStyle';
 import { isLinkablePaste, isSafeHref, LINKABLE_ADDRESS, toHref } from '../shared/helpers/href';
@@ -297,7 +298,7 @@ export const linkPlugin = ({ search, kinds = DEFAULT_LINK_KINDS, look }: LinkPlu
         toolbarGroup: 'link',
         toolbar: [
             {
-                label: 'Link',
+                label: translatedLabel('RichTextEditor_link'),
                 shortcut: HOTKEY,
                 render: (props) => <LinkToolbarButton {...props} search={search} appearances={appearances} />,
             },
