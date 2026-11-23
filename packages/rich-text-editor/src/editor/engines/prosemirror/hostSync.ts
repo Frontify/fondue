@@ -19,10 +19,11 @@ export type FrameScheduler = {
 };
 
 export type HostSyncOptions = {
-    view: () => EditorView;
+    getView: () => EditorView;
     schema: Schema;
     initialDoc: RteDocumentOf;
     frames: FrameScheduler;
+    onDocChange: MountOptions['onDocChange'];
     onDocApplied: MountOptions['onDocApplied'];
     onStateChange: MountOptions['onStateChange'];
 };
@@ -30,18 +31,19 @@ export type HostSyncOptions = {
 export type HostSync = {
     /** Takes a document the host hands over: applies it, holds it while text is composed, or ignores an echo. */
     setDoc: (doc: RteDocumentOf) => void;
-    /** Builds the document for an edit the user made and records it as reported. */
-    report: () => RteDocumentOf;
+    /** Builds the document for an edit the user made, records it as reported and hands it to the host. */
+    report: () => void;
     document: () => RteDocumentOf;
     destroy: () => void;
 };
 
 /** The value protocol between the host and the view: what was reported, what the host handed back, and when to apply it. */
 export const createHostSync = ({
-    view,
+    getView,
     schema,
     initialDoc,
     frames,
+    onDocChange,
     onDocApplied,
     onStateChange,
 }: HostSyncOptions): HostSync => {
@@ -50,18 +52,19 @@ export const createHostSync = ({
     const reportOrders = new WeakMap<RteDocumentOf, number>();
     // The document's own undeclared keys: only the host changes them, so they live here, not in the engine document.
     let rootExtras = rootExtrasOf(initialDoc);
-    let pendingFrame: number | null = null;
+    let heldDocFrame: number | null = null;
 
     const applyDoc = (doc: RteDocumentOf): void => {
         record = recordHandOver(record);
         rootExtras = rootExtrasOf(doc);
 
-        const transaction = view().state.tr;
+        const view = getView();
+        const transaction = view.state.tr;
         syncDocument(transaction, toEngineDocument(doc, schema));
 
         if (transaction.docChanged) {
             transaction.setMeta(HOST_DOC, true);
-            if (dispatchOutsideHistory(view(), transaction)) {
+            if (dispatchOutsideHistory(view, transaction)) {
                 onStateChange();
             }
         }
@@ -70,22 +73,22 @@ export const createHostSync = ({
         onDocApplied(doc);
     };
 
-    // The newest document the host hands over wins, so one still held is dropped whatever this one is.
-    const release = (): void => {
-        if (pendingFrame !== null) {
-            frames.cancel(pendingFrame);
-            pendingFrame = null;
+    const dropHeldDoc = (): void => {
+        if (heldDocFrame !== null) {
+            frames.cancel(heldDocFrame);
+            heldDocFrame = null;
         }
     };
 
     const setDoc = (doc: RteDocumentOf): void => {
-        release();
+        // The newest document the host hands over wins, so one still held is dropped whatever this one is.
+        dropHeldDoc();
 
         const action = hostDocAction({
             record,
             doc,
             reportOrder: reportOrders.get(doc),
-            composing: view().composing,
+            composing: getView().composing,
         });
 
         switch (action.kind) {
@@ -97,8 +100,8 @@ export const createHostSync = ({
             case 'wait':
                 // Held or not, the host now holds a document of its own, so what it hands back after this is a reset.
                 record = recordHandOver(record);
-                pendingFrame = frames.request(() => {
-                    pendingFrame = null;
+                heldDocFrame = frames.request(() => {
+                    heldDocFrame = null;
                     setDoc(doc);
                 });
                 return;
@@ -108,18 +111,17 @@ export const createHostSync = ({
         }
     };
 
-    const report = (): RteDocumentOf => {
-        const emitted = toRteDocument(view().state.doc, rootExtras);
+    const report = (): void => {
+        const emitted = toRteDocument(getView().state.doc, rootExtras);
         record = recordReport(record);
         reportOrders.set(emitted, record.reportCount);
-
-        return emitted;
+        onDocChange(emitted);
     };
 
     return {
         setDoc,
         report,
-        document: () => toRteDocument(view().state.doc, rootExtras),
-        destroy: release,
+        document: () => toRteDocument(getView().state.doc, rootExtras),
+        destroy: dropHeldDoc,
     };
 };

@@ -111,7 +111,15 @@ const mount = (
         return view;
     };
     const api = createControlApi(getView, schema, registry, openEditors);
-    const hostSync = createHostSync({ view: getView, schema, initialDoc, frames, onDocApplied, onStateChange });
+    const hostSync = createHostSync({
+        getView,
+        schema,
+        initialDoc,
+        frames,
+        onDocChange,
+        onDocApplied,
+        onStateChange,
+    });
 
     // 3. The view: node/mark views, clipboard, the initial state, and the
     //    transaction loop that feeds the host.
@@ -155,7 +163,7 @@ const mount = (
 
             // Host-originated changes are not reported back to the host.
             if (transaction.docChanged && transaction.getMeta(HOST_DOC) !== true) {
-                onDocChange(hostSync.report());
+                hostSync.report();
             }
 
             onStateChange();
