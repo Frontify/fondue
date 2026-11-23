@@ -62,7 +62,7 @@
 }
 
 @mixin selection-mark-selected {
-    border: none;
+    border: var(--border-width-default) solid var(--color-primary-default);
     background-color: var(--color-primary-default);
     color: var(--color-primary-on-primary);
 }
