@@ -1,8 +1,6 @@
 # AGENTS.md
 
-Context for AI agents that change the rich text editor. Read [`README.md`](./README.md) first: it explains content and plugins and where each layer lives. The repo rules in [`../../AGENTS.md`](../../AGENTS.md) also apply.
-
-`CLAUDE.md` and `GEMINI.md` are links to this file. Edit `AGENTS.md` only.
+Read [`README.md`](./README.md) first: it explains content and plugins and where each layer lives. The repo rules in [`../../AGENTS.md`](../../AGENTS.md) also apply.
 
 ## Rules
 
