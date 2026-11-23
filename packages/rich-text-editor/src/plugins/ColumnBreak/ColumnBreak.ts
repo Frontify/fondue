@@ -3,6 +3,7 @@
 import { IconTextColumnBreak } from '@frontify/fondue-icons';
 
 import { defineBlock, defineContent, definePlugin } from '#/core';
+import { translatedLabel } from '#/ui/translation';
 
 import styles from './columnBreak.module.scss';
 
@@ -63,6 +64,10 @@ export const columnBreakPlugin = (options: ColumnBreakPluginOptions = {}) =>
         content: columnBreakContent(options),
         toolbarGroup: 'insert',
         toolbar: [
-            { label: 'Column break', icon: IconTextColumnBreak, menu: { keywords: ['columns', 'break', 'split'] } },
+            {
+                label: translatedLabel('RichTextEditor_columnBreak'),
+                icon: IconTextColumnBreak,
+                menu: { keywords: ['columns', 'break', 'split'] },
+            },
         ],
     });

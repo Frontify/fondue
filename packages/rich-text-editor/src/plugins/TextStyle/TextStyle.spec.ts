@@ -67,6 +67,14 @@ describe('the text style plugin looks', () => {
     });
 });
 
+describe('the text style hotkeys', () => {
+    it('name each style in English words for the keyboard reference', () => {
+        const labels = Object.values(textStylePlugin().hotkeys ?? {}).map(({ label }) => label);
+
+        expect(labels).toEqual(['Paragraph', 'Heading 1', 'Heading 2', 'Heading 3', 'Heading 4']);
+    });
+});
+
 describe('the text style content', () => {
     it('hands out one shared content when given no looks', () => {
         expect(textStyleContent()).toBe(textStyleContent({}));

@@ -12,6 +12,8 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 
+import { useTranslate } from '#/ui/translation';
+
 import { useAnchoredPosition } from '../../shared/hooks/useAnchoredPosition';
 import styles from '../emoji.module.scss';
 import { findByShortcode, searchEmojis, SHORTCODE_CHARACTERS } from '../helpers/search';
@@ -59,6 +61,7 @@ export const EmojiDraft = ({
     /** Give up and leave nothing behind, not even the `:`. */
     onRemove: () => void;
 }): ReactNode => {
+    const translate = useTranslate();
     const listId = useId();
     const draftRef = useRef<HTMLSpanElement | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -141,7 +144,12 @@ export const EmojiDraft = ({
         event.preventDefault();
     };
 
-    const status = !open ? '' : noMatches ? 'No matches' : `${matches.length} emoji`;
+    let status = '';
+    if (open && noMatches) {
+        status = translate('RichTextEditor_noResults');
+    } else if (open) {
+        status = translate('RichTextEditor_results', { count: String(matches.length) });
+    }
 
     return (
         <span ref={draftRef} className={styles.draft}>
@@ -154,7 +162,7 @@ export const EmojiDraft = ({
                 aria-controls={open && position !== null && !noMatches ? listId : undefined}
                 aria-autocomplete="list"
                 aria-activedescendant={open && active ? optionId(activeIndex) : undefined}
-                aria-label="Emoji shortcode"
+                aria-label={translate('RichTextEditor_emojiShortcode')}
                 value={query}
                 size={Math.max(query.length, 1)}
                 onChange={onChange}
@@ -169,9 +177,14 @@ export const EmojiDraft = ({
                 ? createPortal(
                       <div className={styles.popup} style={{ left: position.left, top: position.top }}>
                           {noMatches ? (
-                              <div className={styles.empty}>No matches</div>
+                              <div className={styles.empty}>{translate('RichTextEditor_noResults')}</div>
                           ) : (
-                              <ul id={listId} role="listbox" aria-label="Emoji" className={styles.list}>
+                              <ul
+                                  id={listId}
+                                  role="listbox"
+                                  aria-label={translate('RichTextEditor_emoji')}
+                                  className={styles.list}
+                              >
                                   {matches.map((item, index) => (
                                       // The keyboard drives the list from the input; the mouse picks here.
                                       // oxlint-disable-next-line jsx-a11y/click-events-have-key-events

@@ -4,11 +4,26 @@
 
 import { describe, expect, it, vi } from 'vitest';
 
-import { type EditorControlApi } from '#/core';
+import { type EditorControlApi, type RteSelectionSnapshot } from '#/core';
 
 import { tableContent, tablePlugin } from './Table';
 
 const { blocks = {} } = tableContent;
+
+const snapshotIn = (blockTypes: string[]): RteSelectionSnapshot => {
+    const selectionBlocks = blockTypes.map((type) => ({ type }));
+
+    return {
+        kind: 'text',
+        grid: null,
+        isCollapsed: true,
+        text: '',
+        block: selectionBlocks[0] ?? null,
+        blocks: selectionBlocks,
+        marks: {},
+        history: { canUndo: false, canRedo: false },
+    };
+};
 
 /** The value a block's first parse rule reads off this markup. */
 const parsedValue = (type: 'tableCell' | 'tableHeader', html: string): unknown => {
@@ -81,5 +96,12 @@ describe('the Table command', () => {
             ['tableCell', 'tableCell', 'tableCell'],
             ['tableCell', 'tableCell', 'tableCell'],
         ]);
+    });
+
+    it('is left out inside a table, where it cannot go in a cell', () => {
+        const command = tablePlugin().commands?.find(({ id }) => id === 'table');
+
+        expect(command?.isAvailable?.(snapshotIn(['paragraph', 'tableCell', 'tableRow', 'table']))).toBe(false);
+        expect(command?.isAvailable?.(snapshotIn(['paragraph']))).toBe(true);
     });
 });

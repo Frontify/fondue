@@ -19,6 +19,41 @@ test('should render with default value', async ({ mount }) => {
     await expect(component.getByRole('radio').locator('nth=1')).toHaveAttribute('aria-checked', 'true');
 });
 
+test('defaults to the medium size', async ({ mount }) => {
+    const component = await mount(
+        <SegmentedControl.Root data-test-id={SEGMENTED_CONTROL_TEST_ID} defaultValue="first" aria-label="Size">
+            <SegmentedControl.Item value="first">First</SegmentedControl.Item>
+            <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
+        </SegmentedControl.Root>,
+    );
+    const root = component.getByTestId(SEGMENTED_CONTROL_TEST_ID);
+
+    await expect(root).toHaveAttribute('data-size', 'medium');
+    await expect(root).toHaveCSS('height', '36px');
+});
+
+test('small size is 24px with 12px text and 8px padding', async ({ mount }) => {
+    const component = await mount(
+        <SegmentedControl.Root
+            data-test-id={SEGMENTED_CONTROL_TEST_ID}
+            defaultValue="first"
+            size="small"
+            aria-label="Size"
+        >
+            <SegmentedControl.Item value="first">First</SegmentedControl.Item>
+            <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
+        </SegmentedControl.Root>,
+    );
+    const root = component.getByTestId(SEGMENTED_CONTROL_TEST_ID);
+    const label = component.getByRole('radio', { name: 'Second' }).locator('span').nth(1);
+
+    await expect(root).toHaveAttribute('data-size', 'small');
+    await expect(root).toHaveCSS('height', '24px');
+    await expect(label).toHaveCSS('font-size', '12px');
+    await expect(label).toHaveCSS('padding-inline-start', '8px');
+    await expect(label.locator('span').nth(1)).toHaveCSS('gap', '4px');
+});
+
 test('should render with custom value', async ({ mount }) => {
     const component = await mount(
         <SegmentedControl.Root data-test-id={SEGMENTED_CONTROL_TEST_ID} defaultValue="first" value="second">

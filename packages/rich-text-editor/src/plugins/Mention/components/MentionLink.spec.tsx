@@ -6,10 +6,13 @@ import { act, type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it } from 'vitest';
 
+import { type EditorControlApi } from '#/core';
+
 import { mentionDisplay } from '../helpers/display';
 import { mentionContent } from '../Mention';
 import { type MentionValue } from '../types';
 
+import { MentionEditor } from './MentionEditor';
 import { MentionLink } from './MentionLink';
 
 declare global {
@@ -41,7 +44,9 @@ const mount = (node: ReactNode): HTMLElement => {
 
 describe('a mention with nowhere to link to', () => {
     it('is text with its name isolated, and no tab stop', () => {
-        const container = mount(<MentionLink value={JANE} display={mentionDisplay(JANE, { trigger: '@' })} />);
+        const container = mount(
+            <MentionLink value={JANE} display={mentionDisplay(JANE, { trigger: '@' })} placesCaret={false} />,
+        );
         const mention = container.querySelector('span[data-mention-id]');
 
         expect(mention?.textContent).toBe('@jane');
@@ -60,12 +65,56 @@ describe('a mention with nowhere to link to', () => {
     });
 });
 
+describe('a click on a linked mention', () => {
+    const href = (mention: MentionValue): string => `/people/${mention.id}`;
+
+    const click = (container: HTMLElement): MouseEvent => {
+        const event = new MouseEvent('click', { bubbles: true, cancelable: true });
+        act(() => {
+            container.querySelector('a')?.dispatchEvent(event);
+        });
+        return event;
+    };
+
+    const mountEditor = (): HTMLElement =>
+        mount(
+            <MentionEditor
+                value={JANE}
+                setValue={() => {}}
+                isFocused={false}
+                isSelected={false}
+                isOpen={false}
+                setOpen={() => {}}
+                remove={() => {}}
+                // The click never reaches the editor's commands.
+                api={{} as EditorControlApi}
+                items={() => []}
+                trigger="@"
+                href={href}
+            />,
+        );
+
+    it('places the caret in the editor, leaving the link unfollowed', () => {
+        expect(click(mountEditor()).defaultPrevented).toBe(true);
+    });
+
+    it('follows the link in the reading view', () => {
+        const Component = mentionContent({ href }).inlines?.mention?.render?.component;
+        if (!Component) {
+            throw new Error('no reading view');
+        }
+        const container = mount(<Component value={JANE} />);
+
+        expect(click(container).defaultPrevented).toBe(false);
+    });
+});
+
 describe('a mention stored with a field of the wrong type', () => {
     it('is drawn without throwing, named by its kind and with no kind attribute', () => {
         // Stored documents are not validated, so a field can be missing or the wrong type.
         const wrongType = { id: 'x', username: 7, name: 'X', kind: 7 } as unknown as MentionValue;
         const display = mentionDisplay(wrongType, { trigger: '@' });
-        const container = mount(<MentionLink value={wrongType} display={display} />);
+        const container = mount(<MentionLink value={wrongType} display={display} placesCaret={false} />);
 
         expect(container.querySelector('[data-mention-id]')?.textContent).toBe('Unknown person');
         expect(container.querySelector('[data-mention-kind]')).toBeNull();

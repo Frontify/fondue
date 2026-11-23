@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/experimental-ct-react';
 import * as sinon from 'sinon';
 
@@ -14,6 +15,7 @@ const COLOR_PICKER_VALUE_INPUT_GREEN_TEST_ID = 'color-picker-value-input-green';
 const COLOR_PICKER_VALUE_INPUT_BLUE_TEST_ID = 'color-picker-value-input-blue';
 const COLOR_PICKER_VALUE_INPUT_ALPHA_TEST_ID = 'color-picker-value-input-alpha';
 const COLOR_PICKER_VALUE_INPUT_HEX_TEST_ID = 'color-picker-value-input-hex';
+const HEX_INVALID_MESSAGE = 'Not a valid hex code. Use 3 or 6 characters from 0 to 9 and A to F, like 1A2B3C.';
 const SAMPLE_COLOR_INPUT_VALUE = {
     red: 255,
     green: 170,
@@ -473,6 +475,62 @@ test('should strip leading # when typing hex value', async ({ mount }) => {
     const hexInput = component.getByTestId(COLOR_PICKER_VALUE_INPUT_HEX_TEST_ID).locator('input');
     await hexInput.fill('#abc123');
     await expect(hexInput).toHaveValue('abc123');
+});
+
+test('should explain an invalid hex value and link it to the input', async ({ mount, page }) => {
+    const component = await mount(
+        <ColorPicker.Root
+            currentColor={SAMPLE_COLOR_INPUT_VALUE}
+            defaultFormat="HEX"
+            data-test-id={COLOR_PICKER_TEST_ID}
+        >
+            <ColorPicker.Values data-test-id={COLOR_PICKER_VALUE_INPUT_TEST_ID} />
+        </ColorPicker.Root>,
+    );
+    await expect(component).toBeVisible();
+    const hexInput = component.getByTestId(COLOR_PICKER_VALUE_INPUT_HEX_TEST_ID).locator('input');
+    await hexInput.fill('zzz');
+    await expect(hexInput).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByText(HEX_INVALID_MESSAGE)).toBeVisible();
+    await expect(hexInput).toHaveAccessibleDescription(HEX_INVALID_MESSAGE);
+});
+
+test('should not explain a valid hex value', async ({ mount, page }) => {
+    const component = await mount(
+        <ColorPicker.Root
+            currentColor={SAMPLE_COLOR_INPUT_VALUE}
+            defaultFormat="HEX"
+            data-test-id={COLOR_PICKER_TEST_ID}
+        >
+            <ColorPicker.Values data-test-id={COLOR_PICKER_VALUE_INPUT_TEST_ID} />
+        </ColorPicker.Root>,
+    );
+    await expect(component).toBeVisible();
+    const hexInput = component.getByTestId(COLOR_PICKER_VALUE_INPUT_HEX_TEST_ID).locator('input');
+    await hexInput.fill('abc');
+    await expect(hexInput).toHaveAttribute('aria-invalid', 'false');
+    await expect(page.getByText(HEX_INVALID_MESSAGE)).toHaveCount(0);
+    await expect(hexInput).not.toHaveAttribute('aria-describedby');
+});
+
+test('should have no accessibility violations with an invalid hex value', async ({ mount, page }) => {
+    const component = await mount(
+        <ColorPicker.Root
+            currentColor={SAMPLE_COLOR_INPUT_VALUE}
+            defaultFormat="HEX"
+            data-test-id={COLOR_PICKER_TEST_ID}
+        >
+            <ColorPicker.Values data-test-id={COLOR_PICKER_VALUE_INPUT_TEST_ID} />
+        </ColorPicker.Root>,
+    );
+    await expect(component).toBeVisible();
+    const hexInput = component.getByTestId(COLOR_PICKER_VALUE_INPUT_HEX_TEST_ID).locator('input');
+    await hexInput.fill('zzz');
+    await expect(hexInput).toHaveAttribute('aria-invalid', 'true');
+    const results = await new AxeBuilder({ page })
+        .include(`[data-test-id="${COLOR_PICKER_VALUE_INPUT_TEST_ID}"]`)
+        .analyze();
+    expect(results.violations).toEqual([]);
 });
 
 test('should strip leading # when pasting hex value', async ({ mount, page }) => {
