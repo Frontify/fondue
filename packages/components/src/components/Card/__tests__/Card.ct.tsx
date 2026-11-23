@@ -140,14 +140,8 @@ test('should colour the selected checkbox border like its fill', async ({ mount,
     const checkbox = page.getByTestId(CARD_TEST_ID).getByRole('button', { name: 'Deselect' });
     const expectedColor = await resolveToken(checkbox, 'color', '--color-primary-default');
 
-    await expect
-        .poll(() =>
-            checkbox.evaluate((element) => {
-                const style = getComputedStyle(element);
-                return { borderColor: style.borderTopColor, backgroundColor: style.backgroundColor };
-            }),
-        )
-        .toEqual({ borderColor: expectedColor, backgroundColor: expectedColor });
+    await expect(checkbox).toHaveCSS('background-color', expectedColor);
+    await expect(checkbox).toHaveCSS('border-top-color', expectedColor);
 });
 
 test('should apply inner padding to a padded banner image', async ({ mount }) => {
