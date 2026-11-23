@@ -38,7 +38,7 @@ import {
 } from '#/ui/translation';
 
 import { EditorErrorBoundary } from './components/EditorErrorBoundary';
-import { EditorFallback } from './components/EditorFallback';
+import { EditorFallback, type GroupAttributes } from './components/EditorFallback';
 import { FloatingToolbar } from './components/FloatingToolbar';
 import { SlashMenu } from './components/SlashMenu';
 import { Toolbar, type ToolbarPlacement } from './components/Toolbar';
@@ -501,9 +501,11 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
 
     // The readonly view is not a field, but a host's name for the editor still
     // applies, so a labelled editor keeps its name when it turns readonly.
-    let readonlyViewAttributes: Record<string, string> = {};
+    let readonlyViewAttributes: GroupAttributes = {};
+    let readonlyViewId: string | undefined;
     if (readOnly) {
-        readonlyViewAttributes = { ...groupAttributesOf(hostLabels, isNamed), id: editableId };
+        readonlyViewAttributes = groupAttributesOf(hostLabels, isNamed);
+        readonlyViewId = editableId;
     }
     let readonlyViewTabIndex: number | undefined;
     if (mountFocus === 'view') {
@@ -529,6 +531,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
             {/* Its mousedown is for the text inside: a drag starting, or a click beside it. */}
             {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
+                id={readonlyViewId}
                 onMouseDown={readOnly ? undefined : onFrameMouseDown}
                 // No default name: the readonly view reads as text.
                 {...readonlyViewAttributes}
@@ -595,7 +598,7 @@ type MaxRowsStyle = CSSProperties & Record<typeof MAX_ROWS_PROPERTY, string>;
  * What a named editor shows where it is not a field (the readonly view, the
  * crash fallback): a group carrying the host's labels. Nothing when unnamed.
  */
-const groupAttributesOf = (hostLabels: Record<string, string>, isNamed: boolean): Record<string, string> => {
+const groupAttributesOf = (hostLabels: HostLabels, isNamed: boolean): GroupAttributes => {
     if (!isNamed) {
         return {};
     }
@@ -620,23 +623,37 @@ const mountFocusTarget = (retryFocus: RetryFocus, readOnly: boolean): MountFocus
     }
 };
 
-/** What the host named and described the editor with, and whether it gave a name. */
-const hostLabelsOf = ({
-    ariaLabel,
-    ariaLabelledBy,
-    ariaDescribedBy,
-}: {
+/** The names and description the host gave the editor. */
+type HostLabels = Omit<GroupAttributes, 'role'>;
+
+type HostLabelsOfOptions = {
     ariaLabel: string | undefined;
     ariaLabelledBy: string | undefined;
     ariaDescribedBy: string | undefined;
-}): { hostLabels: Record<string, string>; isNamed: boolean } => ({
-    hostLabels: {
-        ...(ariaLabel === undefined ? {} : { 'aria-label': ariaLabel }),
-        ...(ariaLabelledBy === undefined ? {} : { 'aria-labelledby': ariaLabelledBy }),
-        ...(ariaDescribedBy === undefined ? {} : { 'aria-describedby': ariaDescribedBy }),
-    },
-    isNamed: ariaLabel !== undefined || ariaLabelledBy !== undefined,
-});
+};
+
+type HostNaming = {
+    hostLabels: HostLabels;
+    /** Whether the host gave a name, by `aria-label` or `aria-labelledby`. */
+    isNamed: boolean;
+};
+
+/** What the host named and described the editor with, and whether it gave a name. */
+const hostLabelsOf = ({ ariaLabel, ariaLabelledBy, ariaDescribedBy }: HostLabelsOfOptions): HostNaming => {
+    const hostLabels: HostLabels = {};
+
+    if (ariaLabel !== undefined) {
+        hostLabels['aria-label'] = ariaLabel;
+    }
+    if (ariaLabelledBy !== undefined) {
+        hostLabels['aria-labelledby'] = ariaLabelledBy;
+    }
+    if (ariaDescribedBy !== undefined) {
+        hostLabels['aria-describedby'] = ariaDescribedBy;
+    }
+
+    return { hostLabels, isNamed: ariaLabel !== undefined || ariaLabelledBy !== undefined };
+};
 
 /** The attributes of the editable element: a textbox, named by the host or else by `defaultLabel`. */
 const editableAttributes = ({
