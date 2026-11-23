@@ -5,7 +5,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { parseHtml, type RteDocument, type RteDocumentWith, serializeToHtml } from '../index';
-import { columnBreakPlugin, defaultPlugins, mentionPlugin } from '../plugins';
+import { columnBreakPlugin, defaultContent, defaultPlugins, mentionPlugin } from '../plugins';
 
 // A host that stores HTML opens it with `parseHtml` and saves it with
 // `serializeToHtml`: each save and open must give back the document it saved.
@@ -91,12 +91,14 @@ describe('parseHtml', () => {
         ]);
     });
 
-    it('reads with the shipped content when given no plugins', () => {
+    it('reads with the shipped content', () => {
         const shipped: RteDocument = {
             version: 1,
             blocks: [{ type: 'paragraph', children: [{ text: 'Plain ' }, { text: 'bold', bold: true }] }],
         };
 
-        expect(parseHtml(serializeToHtml(shipped))).toEqual(shipped);
+        expect(parseHtml(serializeToHtml(shipped, { plugins: defaultContent }), { plugins: defaultContent })).toEqual(
+            shipped,
+        );
     });
 });

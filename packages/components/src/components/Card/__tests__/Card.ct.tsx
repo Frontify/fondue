@@ -608,3 +608,126 @@ test('should keep hover-only actions visible while their menu is open', async ({
     await expect(actions).toHaveCSS('opacity', '1');
     await expect(actions).not.toHaveCSS('width', '0px');
 });
+
+const bannerCard = (
+    <RouterProvider navigate={() => {}} useHref={(path) => path}>
+        <Card.Root data-test-id={CARD_TEST_ID} href="/page" aria-label="Card">
+            <Card.Banner>
+                <Card.BannerImage src={TRANSPARENT_GIF} />
+            </Card.Banner>
+            <Card.Title>Card title</Card.Title>
+        </Card.Root>
+    </RouterProvider>
+);
+
+const readTransitionTiming = (card: Locator) =>
+    card.evaluate((root) => {
+        const timingOf = (style: CSSStyleDeclaration, property: string) => {
+            const properties = style.transitionProperty.split(', ');
+            const index = properties.indexOf(property);
+            if (index === -1) {
+                return null;
+            }
+            const durations = style.transitionDuration.split(', ');
+            const easings = style.transitionTimingFunction.split(/, (?![^(]*\))/);
+            return {
+                duration: durations[index % durations.length],
+                easing: easings[index % easings.length],
+            };
+        };
+        const banner = root.querySelector('[data-test-id="fondue-card-banner"]') as Element;
+        return {
+            hoverTint: timingOf(getComputedStyle(root, '::before'), 'opacity'),
+            bannerRadius: timingOf(getComputedStyle(banner), 'border-radius'),
+            bannerBorder: timingOf(getComputedStyle(banner, '::after'), 'box-shadow'),
+        };
+    });
+
+const freezeAtBannerRadiusMidpoint = (card: Locator) =>
+    card.evaluate((root: HTMLElement) => {
+        const state = window as unknown as { bannerMidpoint?: { radius: string; overlayRadius: string } };
+        delete state.bannerMidpoint;
+        const banner = root.querySelector('[data-test-id="fondue-card-banner"]') as HTMLElement;
+        const onRun = (event: TransitionEvent) => {
+            if (event.target !== banner || event.pseudoElement || event.propertyName !== 'border-bottom-left-radius') {
+                return;
+            }
+            root.removeEventListener('transitionrun', onRun);
+            for (const animation of root.getAnimations({ subtree: true })) {
+                animation.pause();
+                animation.currentTime = 75;
+            }
+            state.bannerMidpoint = {
+                radius: getComputedStyle(banner).borderBottomLeftRadius,
+                overlayRadius: getComputedStyle(banner, '::after').borderBottomLeftRadius,
+            };
+        };
+        root.addEventListener('transitionrun', onRun);
+    });
+
+const readBannerMidpoint = (card: Locator) =>
+    card.evaluate(
+        () => (window as unknown as { bannerMidpoint?: { radius: string; overlayRadius: string } }).bannerMidpoint,
+    );
+
+test('should ease the banner corners and border with the hover tint', async ({ mount, page }) => {
+    await mount(bannerCard);
+    const card = page.getByTestId(CARD_TEST_ID);
+
+    const { hoverTint, bannerRadius, bannerBorder } = await readTransitionTiming(card);
+
+    expect(hoverTint).toEqual({ duration: '0.15s', easing: 'cubic-bezier(0.4, 0, 0.2, 1)' });
+    expect(bannerRadius).toEqual(hoverTint);
+    expect(bannerBorder).toEqual(hoverTint);
+});
+
+test('should round the banner corners partway through the hover transition in both directions', async ({
+    mount,
+    page,
+}) => {
+    await mount(bannerCard);
+    const card = page.getByTestId(CARD_TEST_ID);
+    const banner = card.getByTestId('fondue-card-banner');
+    const roundedRadius = await resolveToken(card, 'width', '--border-radius-large');
+    const rounded = Number.parseFloat(roundedRadius);
+    await expect(banner).toHaveCSS('border-bottom-left-radius', roundedRadius);
+
+    await freezeAtBannerRadiusMidpoint(card);
+    await card.hover();
+    await expect.poll(() => readBannerMidpoint(card)).toBeDefined();
+    const hoverIn = await readBannerMidpoint(card);
+
+    await card.evaluate((root) => {
+        for (const animation of root.getAnimations({ subtree: true })) {
+            animation.finish();
+        }
+    });
+    await expect(banner).toHaveCSS('border-bottom-left-radius', '0px');
+
+    await freezeAtBannerRadiusMidpoint(card);
+    await page.mouse.move(0, 0);
+    await expect.poll(() => readBannerMidpoint(card)).toBeDefined();
+    const hoverOut = await readBannerMidpoint(card);
+
+    for (const midpoint of [hoverIn, hoverOut]) {
+        const radius = Number.parseFloat(midpoint?.radius ?? '');
+        expect(radius).toBeGreaterThan(0);
+        expect(radius).toBeLessThan(rounded);
+        expect(midpoint?.overlayRadius).toBe(midpoint?.radius);
+    }
+});
+
+test('should square the banner corners without a transition when reduced motion is preferred', async ({
+    mount,
+    page,
+}) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await mount(bannerCard);
+    const card = page.getByTestId(CARD_TEST_ID);
+
+    const { bannerRadius } = await readTransitionTiming(card);
+    expect(bannerRadius?.duration).toBe('0s');
+
+    await card.hover();
+    await expect(card.getByTestId('fondue-card-banner')).toHaveCSS('border-bottom-left-radius', '0px');
+});

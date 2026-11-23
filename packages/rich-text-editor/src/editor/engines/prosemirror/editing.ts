@@ -5,7 +5,7 @@ import { EditorState, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { type RteDocumentOf } from '#/core';
-import { type MountedDocument, type MountDocument, type MountOptions } from '#/editor/port';
+import { type ElementAttributes, type MountedDocument, type MountDocument, type MountOptions } from '#/editor/port';
 
 import {
     clipboardParser,
@@ -48,11 +48,18 @@ export const mountEditorForTests = (options: MountOptions): { mounted: MountedDo
  */
 const EDITABLE_ATTRIBUTE = 'data-rte-editable';
 
-/** The editable element's attributes: the host's, then the marker. */
-const editableAttributes = (attributes: Readonly<Record<string, string>>): Record<string, string> => ({
-    ...attributes,
-    [EDITABLE_ATTRIBUTE]: '',
-});
+/** ProseMirror writes an `undefined` value as the text "undefined", so unset attributes stay out. */
+const editableAttributes = (attributes: ElementAttributes): Record<string, string> => {
+    const present: Record<string, string> = {};
+    for (const [name, value] of Object.entries(attributes)) {
+        if (value !== undefined) {
+            present[name] = value;
+        }
+    }
+
+    present[EDITABLE_ATTRIBUTE] = '';
+    return present;
+};
 
 /**
  * Assembly order matters because of one cycle: the view's constructor paints
