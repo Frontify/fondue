@@ -46,6 +46,9 @@ const OUTER_LAYERS = [
 /** The shared UI, which only the editor shell and the plugins may import. */
 const UI_LAYER = ['#/ui', '#/ui/**'];
 
+/** The interface strings, which only the editor shell, the shared UI and the plugins show. */
+const LOCALES_LAYER = ['#/locales', '#/locales/**'];
+
 /** Bans relative imports that climb `up` (`..`, `../..`, …) or further. */
 const noRelativeEscape = (up: string, message: string) => ({
     group: [`${up}/**`],
@@ -54,7 +57,7 @@ const noRelativeEscape = (up: string, message: string) => ({
 
 const CORE_ONLY = {
     group: OUTER_LAYERS,
-    message: 'Plugins may only import the core surface (#/core) and the shared UI (#/ui).',
+    message: 'Plugins may only import the core surface (#/core), the shared UI (#/ui) and the strings (#/locales).',
 };
 
 /**
@@ -105,6 +108,7 @@ const engineRing = (allowPluginBarrel: boolean) => ({
         ...(allowPluginBarrel ? [] : ['#/plugins']),
         '#/plugins/**',
         ...UI_LAYER,
+        ...LOCALES_LAYER,
         '#/index',
         '#/documentFormat',
         '../**',
@@ -188,6 +192,25 @@ export default defineConfig({
             },
         },
         {
+            files: ['src/ui/**/*.{ts,tsx}'],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    {
+                        patterns: [
+                            NO_ENGINE,
+                            NO_SERVER_RENDER,
+                            {
+                                group: OUTER_LAYERS,
+                                message:
+                                    'The shared UI may import the core (#/core) and the strings (#/locales), nothing further out.',
+                            },
+                        ],
+                    },
+                ],
+            },
+        },
+        {
             files: ['src/core/**/*.{ts,tsx}'],
             rules: {
                 'no-restricted-imports': [
@@ -199,8 +222,26 @@ export default defineConfig({
                                 message: 'The core may use React types, never an engine or a renderer.',
                             },
                             {
-                                group: [...OUTER_LAYERS, ...UI_LAYER, '../**'],
+                                group: [...OUTER_LAYERS, ...UI_LAYER, ...LOCALES_LAYER, '../**'],
                                 message: 'The core imports from no other layer — it is what the other layers import.',
+                            },
+                        ],
+                    },
+                ],
+            },
+        },
+        {
+            files: ['src/locales/*.ts'],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    {
+                        patterns: [
+                            NO_ENGINE,
+                            NO_SERVER_RENDER,
+                            {
+                                group: ['#/**', '../**', 'react', 'react/**'],
+                                message: 'The strings are data every layer reads, so they import no other layer.',
                             },
                         ],
                     },
@@ -226,6 +267,7 @@ export default defineConfig({
                                     '#/plugins',
                                     '#/plugins/**',
                                     ...UI_LAYER,
+                                    ...LOCALES_LAYER,
                                     '#/index',
                                     '#/documentFormat',
                                     '../**',

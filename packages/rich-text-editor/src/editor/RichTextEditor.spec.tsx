@@ -2,13 +2,15 @@
 
 // @vitest-environment happy-dom
 
-import { Dialog } from '@frontify/fondue-components';
+import { Dialog, ThemeProvider } from '@frontify/fondue-components';
+import { deDE as fondueDeDE } from '@frontify/fondue-components/locales/de-DE';
 import { act, Profiler, type ReactNode, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type RteToolbarGroup } from '#/core';
+import { deDE } from '#/locales/de-DE';
 
 // Driven through the package's public API, the way a host does: the props are
 // the whole conversation between a host and a mounted editor.
@@ -336,14 +338,16 @@ describe('a document from a newer format version', () => {
         expect(container.querySelector('[role="status"]')).not.toBeNull();
     });
 
-    it('says so in the words the host gives', () => {
+    it('says so in the language of its locale', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         teardown.push(() => warn.mockRestore());
         const { container } = mount(() => (
-            <RichTextEditor value={newer} plugins={defaultPlugins} labels={{ newerVersion: 'Nur lesbar' }} />
+            <ThemeProvider locale={fondueDeDE}>
+                <RichTextEditor value={newer} plugins={defaultPlugins} />
+            </ThemeProvider>
         ));
 
-        expect(container.querySelector('[role="status"]')?.textContent).toBe('Nur lesbar');
+        expect(container.querySelector('[role="status"]')?.textContent).toBe(deDE.RichTextEditor_newerVersion);
     });
 
     it('shows no notice when the host already shows it read-only', () => {
@@ -529,6 +533,32 @@ describe('a page of editors', () => {
 
         expect(container.textContent).toContain('edited');
         expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it('does not redraw its toolbar when the host re-renders with the same props', () => {
+        let draws = 0;
+        const Counted = (): ReactNode => {
+            draws += 1;
+            return <span>counted</span>;
+        };
+        const plugins = [
+            ...defaultPlugins,
+            definePlugin({ id: 'counted', toolbar: [{ label: 'Counted', render: Counted }] }),
+        ];
+        const value = paragraph('editor');
+        const onChange = vi.fn<(doc: RteDocument) => void>();
+        const editor = (): ReactNode => (
+            <RichTextEditor value={value} onChange={onChange} plugins={plugins} toolbarPlacement="top" />
+        );
+
+        const { rerender, ready } = mount(editor);
+        ready();
+        const drawsBefore = draws;
+
+        rerender(editor());
+
+        expect(drawsBefore).toBeGreaterThan(0);
+        expect(draws).toBe(drawsBefore);
     });
 });
 
@@ -719,6 +749,26 @@ describe('the toolbar', () => {
         const group = container.querySelector('[data-testid="unknown-group"]')?.parentElement;
         expect(group).toBeTruthy();
         expect(group?.parentElement?.lastElementChild).toBe(group);
+    });
+
+    it("names a host plugin's control by its label function, called with the editor's language", () => {
+        const hostPlugin = definePlugin({
+            id: 'host-label',
+            toolbar: [
+                {
+                    label: ({ lang }) => `Host control ${lang}`,
+                    render: ({ label }) => <span data-testid="host-label">{label}</span>,
+                },
+            ],
+        });
+        const { container, ready } = mount(() => (
+            <ThemeProvider locale={fondueDeDE}>
+                <RichTextEditor plugins={[hostPlugin]} toolbarPlacement="top" />
+            </ThemeProvider>
+        ));
+        ready();
+
+        expect(container.querySelector('[data-testid="host-label"]')?.textContent).toBe('Host control de-DE');
     });
 
     describe('a press inside a toolbar slot', () => {
@@ -2282,21 +2332,19 @@ describe('an editor that crashes', () => {
         expect(message?.getAttribute('role')).toBe('alert');
     });
 
-    it('says what the host translated its crash texts to', () => {
+    it('says its crash texts in the language of its locale', () => {
         silenceReact();
         const { container } = mount(() => (
-            <RichTextEditor
-                value={paragraph('still here')}
-                plugins={[throwingPlugin()]}
-                labels={{ editorFailed: 'Der Editor ist ausgefallen.', retry: 'Erneut versuchen' }}
-            />
+            <ThemeProvider locale={fondueDeDE}>
+                <RichTextEditor value={paragraph('still here')} plugins={[throwingPlugin()]} />
+            </ThemeProvider>
         ));
 
         const button = [...container.querySelectorAll('button')].find(
-            (candidate) => candidate.textContent === 'Erneut versuchen',
+            (candidate) => candidate.textContent === deDE.RichTextEditor_retry,
         );
         const messageId = button?.getAttribute('aria-describedby') ?? '';
-        expect(window.document.getElementById(messageId)?.textContent).toBe('Der Editor ist ausgefallen.');
+        expect(window.document.getElementById(messageId)?.textContent).toBe(deDE.RichTextEditor_editorFailed);
     });
 
     it('names the fallback by a visible label, and only when the host named the editor', () => {

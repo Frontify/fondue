@@ -7,6 +7,7 @@ import { type ReactNode, useEffect, useId, useState } from 'react';
 import { type ToolbarItemProps } from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
+import { useTranslate } from '#/ui/translation';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
 import { type LinkSearch } from '../helpers/destination';
@@ -52,6 +53,7 @@ export const LinkToolbarButton = ({
     search,
     appearances,
 }: LinkToolbarButtonProps): ReactNode => {
+    const translate = useTranslate();
     const inLink = selectedNode !== null;
     const [creating, setCreating] = useState(false);
     const titleId = useId();
@@ -78,7 +80,11 @@ export const LinkToolbarButton = ({
             }}
         >
             <Flyout.Trigger>
-                <ToolbarButton title={inLink ? 'Edit link' : 'Add link'} shortcut={shortcut} active={inLink}>
+                <ToolbarButton
+                    title={inLink ? translate('RichTextEditor_linkEdit') : translate('RichTextEditor_linkAdd')}
+                    shortcut={shortcut}
+                    active={inLink}
+                >
                     <IconLink size={TOOLBAR_ICON_SIZE} />
                 </ToolbarButton>
             </Flyout.Trigger>
@@ -92,7 +98,7 @@ export const LinkToolbarButton = ({
                 onOpenAutoFocus={(event) => event.preventDefault()}
             >
                 <Flyout.Header>
-                    <span id={titleId}>Add link</span>
+                    <span id={titleId}>{translate('RichTextEditor_linkAdd')}</span>
                 </Flyout.Header>
                 <Flyout.Body>
                     <LinkTargetForm

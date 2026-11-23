@@ -434,8 +434,8 @@ test.describe('accessibility', () => {
     test('the text colour flyout has no axe violations', async ({ mount, page }) => {
         await mount(<RichTextEditor />);
         await typeAndSelect(page, 'Hello');
-        await page.getByRole('button', { name: 'Text colour' }).click();
-        await expect(page.getByRole('group', { name: 'Suggested colours' }).getByRole('button').first()).toBeVisible();
+        await page.getByRole('button', { name: 'Text color' }).click();
+        await expect(page.getByRole('group', { name: 'Suggested colors' }).getByRole('button').first()).toBeVisible();
 
         expect(await violationsOf(page)).toEqual([]);
     });

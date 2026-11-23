@@ -26,6 +26,7 @@ const meta: Meta<typeof SegmentedControlRoot> = {
     args: {
         defaultValue: 'first',
         disabled: false,
+        size: 'medium',
         onValueChange: action('onValueChange'),
     },
     decorators: (Story) => (
@@ -41,6 +42,19 @@ export const TextOnly: Story = {
         manifest: {
             canonical: true,
         },
+    },
+    render: (args) => (
+        <SegmentedControl.Root {...args}>
+            <SegmentedControl.Item value="first">First</SegmentedControl.Item>
+            <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
+            <SegmentedControl.Item value="third">Third</SegmentedControl.Item>
+        </SegmentedControl.Root>
+    ),
+};
+
+export const Small: Story = {
+    args: {
+        size: 'small',
     },
     render: (args) => (
         <SegmentedControl.Root {...args}>

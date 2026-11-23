@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { defineContent, defineMark, definePlugin } from '#/core';
+import { translatedLabel } from '#/ui/translation';
 
 import { declaredStyle } from '../shared/helpers/declaredStyle';
 
@@ -65,5 +66,5 @@ export const fontColorPlugin = () =>
         id: 'font-color',
         content: fontColorContent,
         toolbarGroup: 'color',
-        toolbar: [{ label: 'Text colour', render: ColorFlyout }],
+        toolbar: [{ label: translatedLabel('RichTextEditor_textColor'), render: ColorFlyout }],
     });
