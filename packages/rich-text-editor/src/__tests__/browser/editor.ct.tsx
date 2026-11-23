@@ -4,7 +4,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
-import { RichTextEditor, RichTextRenderer, type RteDocument } from '../../index';
+import { RichTextEditor, type RteDocument } from '../../index';
 
 import { EditorWithMentions, RendererWithMentions } from './editorWithMentions';
 
@@ -351,7 +351,7 @@ test.describe('accessibility', () => {
     for (const view of ['renderer', 'editor'] as const) {
         test(`inline code in muted text in the ${view} has no axe violations`, async ({ mount, page }) => {
             if (view === 'renderer') {
-                await mount(<RichTextRenderer value={mutedCode} />);
+                await mount(<RendererWithMentions value={mutedCode} />);
                 await expect(page.getByText('imageCaption code')).toBeVisible();
             } else {
                 await mount(<RichTextEditor value={mutedCode} />);
