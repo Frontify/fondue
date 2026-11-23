@@ -2,6 +2,8 @@
 
 import { Notice } from '@frontify/fondue-components';
 import {
+    type AriaAttributes,
+    type AriaRole,
     type CSSProperties,
     type KeyboardEvent,
     type MouseEvent,
@@ -38,7 +40,7 @@ import {
 } from '#/ui/translation';
 
 import { EditorErrorBoundary } from './components/EditorErrorBoundary';
-import { EditorFallback } from './components/EditorFallback';
+import { EditorFallback, type GroupAttributes } from './components/EditorFallback';
 import { FloatingToolbar } from './components/FloatingToolbar';
 import { SlashMenu } from './components/SlashMenu';
 import { Toolbar, type ToolbarPlacement } from './components/Toolbar';
@@ -46,9 +48,17 @@ import { commandsOf, turnIntoCommands } from './helpers/blockCommands';
 import { useEditorHandle } from './hooks/useEditorHandle';
 import { useEditorStrings } from './hooks/useEditorStrings';
 import { useFocusWithin } from './hooks/useFocusWithin';
+import { useKeyboardFocus } from './hooks/useKeyboardFocus';
 import { useMouseDrag } from './hooks/useMouseDrag';
 import styles from './richTextEditor.module.scss';
 import { warnNewerVersion } from './warnings';
+
+type EditorStatus = 'neutral' | 'error';
+
+type EditorAriaProps = Pick<
+    AriaAttributes,
+    'aria-label' | 'aria-labelledby' | 'aria-describedby' | 'aria-errormessage'
+>;
 
 /**
  * `TBlock` is the document's block union. It defaults to the structural
@@ -120,22 +130,33 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * from a newer format version.
      *
      * The editor draws no box either way — no border, background or inset;
-     * a host that wants a field wraps the editor in one.
+     * a host that wants a field wraps the editor in one, and draws the focus
+     * ring while it `:has([data-keyboard-focus='true'])`.
      *
      * @default true
      */
     showEditor?: boolean;
+    /**
+     * The most lines of body text the content shows before it scrolls inside
+     * the editor. The toolbar stays above the content, not scrolled. Unset, the
+     * content grows with the text.
+     */
+    maxRows?: number;
     /** Shown while the document is empty, and given to assistive technology as the field's placeholder. */
     placeholder?: string;
     /**
-     * The editor's accessible name, when no visible label names it ("Comment",
-     * "Description"). Without this or `aria-labelledby` it is called "Rich text editor", in the editor's language.
+     * Sets `aria-required` on the editable element. The host's label draws the asterisk.
+     *
+     * @default false
      */
-    'aria-label'?: string;
-    /** The id of a visible element naming the editor — its label. Preferred over `aria-label`. */
-    'aria-labelledby'?: string;
-    /** The id of an element describing the editor further — help text, an error. */
-    'aria-describedby'?: string;
+    required?: boolean;
+    /**
+     * `'error'` sets `aria-invalid`, and `aria-errormessage` when given, on the
+     * editable element. The host draws the error border.
+     *
+     * @default 'neutral'
+     */
+    status?: EditorStatus;
     /**
      * The editor lost focus, handed the document as it stands: the hook to
      * commit on instead of every keystroke. Fires once focus has left the
@@ -161,7 +182,7 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * @default 'fondue-rich-text-editor'
      */
     'data-test-id'?: string;
-};
+} & EditorAriaProps;
 
 /** Whether the editor was brought back by Try again, and whether the pressed button had focus. */
 type RetryFocus = 'fresh' | 'focused' | 'unfocused';
@@ -315,11 +336,15 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     toolbarPlacement = 'top',
     readonly: readonlyProp = false,
     showEditor = true,
+    maxRows,
     placeholder = '',
+    required = false,
+    status = 'neutral',
+    onBlur,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
     'aria-describedby': ariaDescribedBy,
-    onBlur,
+    'aria-errormessage': ariaErrorMessage,
     dataTestId,
 }: ShellProps<TBlock>): ReactNode => {
     // A document from a newer format may hold what this editor would drop on save, so it is only shown.
@@ -355,14 +380,29 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
             editableAttributes({
                 id: editableId,
                 className,
-                hostLabels,
-                isNamed,
                 placeholder,
                 defaultLabel: editorName,
+                isNamed,
+                required,
+                status,
+                ariaLabel,
+                ariaLabelledBy,
+                ariaDescribedBy,
+                ariaErrorMessage,
             }),
-        // `hostLabels` is rebuilt every render; the props it is built from are the deps.
-        // eslint-disable-next-line @eslint-react/exhaustive-deps
-        [editableId, className, ariaLabel, ariaLabelledBy, ariaDescribedBy, placeholder, editorName],
+        [
+            editableId,
+            className,
+            placeholder,
+            editorName,
+            isNamed,
+            required,
+            status,
+            ariaLabel,
+            ariaLabelledBy,
+            ariaDescribedBy,
+            ariaErrorMessage,
+        ],
     );
 
     const { containerRef, handle, editorState, viewPortals } = useEditorHandle({
@@ -403,6 +443,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     }, [handle]);
 
     const { focusWithin, focusProps } = useFocusWithin();
+    useKeyboardFocus({ elementRef: containerRef, isMounted: !readOnly });
     // Blur as the host hears it: focus leaving the whole editor — text,
     // toolbar and the flyouts they portal out — not just the editable element.
     const hadFocusRef = useRef(false);
@@ -501,13 +542,20 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
 
     // The readonly view is not a field, but a host's name for the editor still
     // applies, so a labelled editor keeps its name when it turns readonly.
-    let readonlyViewAttributes: Record<string, string> = {};
+    let readonlyViewAttributes: GroupAttributes = {};
+    let readonlyViewId: string | undefined;
     if (readOnly) {
-        readonlyViewAttributes = { ...groupAttributesOf(hostLabels, isNamed), id: editableId };
+        readonlyViewAttributes = groupAttributesOf(hostLabels, isNamed);
+        readonlyViewId = editableId;
     }
     let readonlyViewTabIndex: number | undefined;
     if (mountFocus === 'view') {
         readonlyViewTabIndex = FOCUSABLE_BY_SCRIPT_ONLY;
+    }
+
+    let bodyStyle: MaxRowsStyle | undefined;
+    if (maxRows !== undefined) {
+        bodyStyle = { [MAX_ROWS_PROPERTY]: String(maxRows) };
     }
 
     return (
@@ -524,6 +572,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
             {/* Its mousedown is for the text inside: a drag starting, or a click beside it. */}
             {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
+                id={readonlyViewId}
                 onMouseDown={readOnly ? undefined : onFrameMouseDown}
                 // No default name: the readonly view reads as text.
                 {...readonlyViewAttributes}
@@ -531,6 +580,8 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
                 // To take a pressed Retry's focus.
                 tabIndex={readonlyViewTabIndex}
                 className={styles.body}
+                data-max-rows={maxRows !== undefined}
+                style={bodyStyle}
             >
                 {toolbarFloats ? null : toolbar}
                 {/* A host that shows it read-only anyway offered no editing to explain. */}
@@ -578,11 +629,17 @@ const FOCUSABLE_BY_SCRIPT_ONLY = -1;
 
 const GROUP_ROLE = 'group';
 
+/** The custom property the stylesheet turns into the content's maximum height. */
+const MAX_ROWS_PROPERTY = '--max-rows';
+
+/** The body's style: `CSSProperties` has no custom properties, so the one key is added. */
+type MaxRowsStyle = CSSProperties & Record<typeof MAX_ROWS_PROPERTY, string>;
+
 /**
  * What a named editor shows where it is not a field (the readonly view, the
  * crash fallback): a group carrying the host's labels. Nothing when unnamed.
  */
-const groupAttributesOf = (hostLabels: Record<string, string>, isNamed: boolean): Record<string, string> => {
+const groupAttributesOf = (hostLabels: HostLabels, isNamed: boolean): GroupAttributes => {
     if (!isNamed) {
         return {};
     }
@@ -607,45 +664,99 @@ const mountFocusTarget = (retryFocus: RetryFocus, readOnly: boolean): MountFocus
     }
 };
 
-/** What the host named and described the editor with, and whether it gave a name. */
-const hostLabelsOf = ({
-    ariaLabel,
-    ariaLabelledBy,
-    ariaDescribedBy,
-}: {
+/** The names and description the host gave the editor. */
+type HostLabels = Omit<GroupAttributes, 'role'>;
+
+type HostLabelsOfOptions = {
     ariaLabel: string | undefined;
     ariaLabelledBy: string | undefined;
     ariaDescribedBy: string | undefined;
-}): { hostLabels: Record<string, string>; isNamed: boolean } => ({
-    hostLabels: {
-        ...(ariaLabel === undefined ? {} : { 'aria-label': ariaLabel }),
-        ...(ariaLabelledBy === undefined ? {} : { 'aria-labelledby': ariaLabelledBy }),
-        ...(ariaDescribedBy === undefined ? {} : { 'aria-describedby': ariaDescribedBy }),
-    },
-    isNamed: ariaLabel !== undefined || ariaLabelledBy !== undefined,
-});
+};
+
+type HostNaming = {
+    hostLabels: HostLabels;
+    /** Whether the host gave a name, by `aria-label` or `aria-labelledby`. */
+    isNamed: boolean;
+};
+
+/** What the host named and described the editor with, and whether it gave a name. */
+const hostLabelsOf = ({ ariaLabel, ariaLabelledBy, ariaDescribedBy }: HostLabelsOfOptions): HostNaming => {
+    const hostLabels: HostLabels = {};
+
+    if (ariaLabel !== undefined) {
+        hostLabels['aria-label'] = ariaLabel;
+    }
+    if (ariaLabelledBy !== undefined) {
+        hostLabels['aria-labelledby'] = ariaLabelledBy;
+    }
+    if (ariaDescribedBy !== undefined) {
+        hostLabels['aria-describedby'] = ariaDescribedBy;
+    }
+
+    return { hostLabels, isNamed: ariaLabel !== undefined || ariaLabelledBy !== undefined };
+};
+
+const TEXTBOX_ROLE: AriaRole = 'textbox';
+
+type EditableAriaAttributes = Pick<
+    AriaAttributes,
+    keyof EditorAriaProps | 'aria-multiline' | 'aria-placeholder' | 'aria-required' | 'aria-invalid'
+>;
+
+type EditableElementAttributes = { id: string; class: string; role: AriaRole } & {
+    [Name in keyof EditableAriaAttributes]?: Extract<EditableAriaAttributes[Name], string>;
+};
+
+type EditableElementAttributesOptions = {
+    id: string;
+    className: string;
+    placeholder: string;
+    defaultLabel: string;
+    isNamed: boolean;
+    required: boolean;
+    status: EditorStatus;
+    ariaLabel: string | undefined;
+    ariaLabelledBy: string | undefined;
+    ariaDescribedBy: string | undefined;
+    ariaErrorMessage: string | undefined;
+};
+
+const isInvalidStatus = (status: EditorStatus): boolean => {
+    switch (status) {
+        case 'neutral':
+            return false;
+        case 'error':
+            return true;
+    }
+};
 
 /** The attributes of the editable element: a textbox, named by the host or else by `defaultLabel`. */
 const editableAttributes = ({
     id,
     className,
-    hostLabels,
-    isNamed,
     placeholder,
     defaultLabel,
-}: {
-    id: string;
-    className: string;
-    hostLabels: Record<string, string>;
-    isNamed: boolean;
-    placeholder: string;
-    defaultLabel: string;
-}): Record<string, string> => ({
-    id,
-    class: className,
-    role: 'textbox',
-    'aria-multiline': 'true',
-    ...(isNamed ? {} : { 'aria-label': defaultLabel }),
-    ...hostLabels,
-    ...(placeholder === '' ? {} : { 'aria-placeholder': placeholder }),
-});
+    isNamed,
+    required,
+    status,
+    ariaLabel,
+    ariaLabelledBy,
+    ariaDescribedBy,
+    ariaErrorMessage,
+}: EditableElementAttributesOptions): EditableElementAttributes => {
+    const isInvalid = isInvalidStatus(status);
+
+    return {
+        id,
+        class: className,
+        role: TEXTBOX_ROLE,
+        'aria-multiline': 'true',
+        'aria-placeholder': placeholder === '' ? undefined : placeholder,
+        'aria-required': required ? 'true' : undefined,
+        'aria-invalid': isInvalid ? 'true' : undefined,
+        'aria-label': isNamed ? ariaLabel : defaultLabel,
+        'aria-labelledby': ariaLabelledBy,
+        'aria-describedby': ariaDescribedBy,
+        'aria-errormessage': isInvalid ? ariaErrorMessage : undefined,
+    };
+};
