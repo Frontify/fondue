@@ -197,6 +197,16 @@ const violationsOf = async (page: Page): Promise<Violation[]> => {
     return found;
 };
 
+const TALL_DOCUMENT_PARAGRAPHS = 100;
+
+const tallDocument: RteDocument = {
+    version: 1,
+    blocks: Array.from({ length: TALL_DOCUMENT_PARAGRAPHS }, (_, index) => ({
+        type: 'paragraph' as const,
+        children: [{ text: `Paragraph ${index + 1}` }],
+    })),
+};
+
 test.describe('editor', () => {
     test('mounts editable', async ({ mount }) => {
         const component = await mount(<RichTextEditor />);
@@ -259,6 +269,14 @@ test.describe('editor', () => {
         await page.keyboard.type(' more');
 
         await expect(editable.locator('li').last()).toHaveText('Second more');
+    });
+
+    test('scrolls the caret into view when autoFocus is "end"', async ({ mount }) => {
+        const component = await mount(<RichTextEditor value={tallDocument} autoFocus="end" />);
+        const editable = component.getByRole('textbox');
+
+        await expect(editable).toBeFocused();
+        await expect(editable.locator('p').last()).toBeInViewport();
     });
 
     test('types before the first text when autoFocus is "start"', async ({ mount, page }) => {

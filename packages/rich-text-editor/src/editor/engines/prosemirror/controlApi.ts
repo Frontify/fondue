@@ -684,8 +684,8 @@ export const createControlApi = (
                 return;
             }
 
-            dispatch(view.state.tr.setSelection(selectionAt(view.state.doc, position)).scrollIntoView());
             view.focus();
+            dispatch(view.state.tr.setSelection(selectionAt(view.state.doc, position)).scrollIntoView());
         },
         editors: {
             open(type) {

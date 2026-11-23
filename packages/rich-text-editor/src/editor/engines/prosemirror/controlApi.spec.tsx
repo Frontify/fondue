@@ -1131,6 +1131,15 @@ describe('focus', () => {
             expect(selection.$from.parent.type.name).toBe('paragraph');
         },
     );
+
+    it.each(['start', 'end'] as const)('selects the only block of a void-only document at %s', (position) => {
+        const editor = editorWith(plugins, [{ type: 'divider' }]);
+
+        editor.api.focus(position);
+
+        expect(editor.view.state.selection).toBeInstanceOf(NodeSelection);
+        expect(window.document.activeElement).toBe(editor.view.dom);
+    });
 });
 
 describe('insertText', () => {

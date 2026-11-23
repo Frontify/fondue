@@ -121,7 +121,7 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * Puts the caret before the first text or after the last when the editor first mounts, and scrolls to it.
      * Use it only when the person opened the editor (a Reply or Edit button), never on page load.
      * Left out, the editor takes no focus. Ignored while `readonly` and when editing turns on later.
-     * A later `value` with other content moves the caret to its end.
+     * A later `value` with other content moves the selection to the document's end.
      */
     autoFocus?: FocusPosition;
     /** Shown while the document is empty, and given to assistive technology as the field's placeholder. */

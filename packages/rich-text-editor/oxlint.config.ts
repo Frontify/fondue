@@ -131,10 +131,6 @@ export default defineConfig({
         typeAware: true,
     },
     ignorePatterns: ['dist/', 'storybook-static/', 'lint-fixtures/src/'],
-    rules: {
-        // A host sets the editor's `autoFocus` on purpose. DOM elements stay checked.
-        'jsx-a11y/no-autofocus': ['error', { ignoreNonDOM: true }],
-    },
     /**
      * A later override's `no-restricted-imports` replaces an earlier one for the
      * same file rather than adding to it. So every override repeats each shared
@@ -168,6 +164,13 @@ export default defineConfig({
                 'typescript/prefer-promise-reject-errors': 'warn',
                 'promise/always-return': 'warn',
                 'promise/catch-or-return': 'warn',
+            },
+        },
+        {
+            // Tests and stories set the editor's `autoFocus` as a host does. DOM elements stay checked.
+            files: ['src/**/*.spec.tsx', 'src/**/*.ct.tsx', 'src/stories/**/*.tsx'],
+            rules: {
+                'jsx-a11y/no-autofocus': ['error', { ignoreNonDOM: true }],
             },
         },
         {

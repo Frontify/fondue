@@ -30,16 +30,14 @@ const listFiles = (directory: string): string[] =>
         entry.isDirectory() ? listFiles(join(directory, entry.name)) : [join(directory, entry.name)],
     );
 
-const expectedViolations = (): string[] =>
+const expectedViolations = (marker: string): string[] =>
     listFiles(join(fixtureRoot, 'src')).flatMap((file) =>
         readFileSync(file, 'utf8')
             .split('\n')
-            .flatMap((line, index) =>
-                line.endsWith('// banned') ? [`${relative(packageRoot, file)}:${index + 1}`] : [],
-            ),
+            .flatMap((line, index) => (line.endsWith(marker) ? [`${relative(packageRoot, file)}:${index + 1}`] : [])),
     );
 
-const reportedViolations = (): string[] => {
+const reportedViolations = (code: string): string[] => {
     let output: string;
     try {
         output = execFileSync(
@@ -54,7 +52,7 @@ const reportedViolations = (): string[] => {
     const { diagnostics } = JSON.parse(output) as { diagnostics: Diagnostic[] };
 
     return diagnostics
-        .filter((diagnostic) => diagnostic.code === 'eslint(no-restricted-imports)')
+        .filter((diagnostic) => diagnostic.code === code)
         .flatMap((diagnostic) =>
             diagnostic.labels.map(
                 (label) => `${relative(packageRoot, resolve(packageRoot, diagnostic.filename))}:${label.span.line}`,
@@ -62,8 +60,18 @@ const reportedViolations = (): string[] => {
         );
 };
 
+describe('the autoFocus rule', () => {
+    it('lets tests and stories set a component autoFocus but bans it everywhere else', () => {
+        expect(reportedViolations('jsx-a11y(no-autofocus)').sort()).toEqual(
+            expectedViolations('// autofocus banned').sort(),
+        );
+    });
+});
+
 describe('the import rings', () => {
     it('reject exactly the imports the fixtures mark as banned', () => {
-        expect(reportedViolations().sort()).toEqual(expectedViolations().sort());
+        expect(reportedViolations('eslint(no-restricted-imports)').sort()).toEqual(
+            expectedViolations('// banned').sort(),
+        );
     });
 });

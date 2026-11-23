@@ -18,3 +18,12 @@ import { i2 } from '../plugins/Bold'; // banned
 import { i6 } from './helper'; // banned
 
 export const all = [i0, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12];
+
+export const fields = (
+    <>
+        <Editor autoFocus="end" />
+        <input
+            autoFocus // autofocus banned
+        />
+    </>
+);

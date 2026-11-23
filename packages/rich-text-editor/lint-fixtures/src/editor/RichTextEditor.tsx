@@ -19,3 +19,14 @@ import { i1 } from './hooks/useEditorHandle';
 import { i0 } from './port';
 
 export const all = [i0, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13];
+
+export const fields = (
+    <>
+        <input
+            autoFocus // autofocus banned
+        />
+        <Field
+            autoFocus // autofocus banned
+        />
+    </>
+);
