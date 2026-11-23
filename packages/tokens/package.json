@@ -65,11 +65,11 @@
         "@typescript/native-preview": "7.0.0-dev.20260707.2",
         "@vitejs/plugin-react": "^5.2.0",
         "oxfmt": "^0.74.0",
-        "oxlint": "^1.90.0",
+        "oxlint": "^1.94.0",
         "oxlint-tsgolint": "^0.23.0",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
-        "style-dictionary": "^5.7.1",
+        "style-dictionary": "^5.8.0",
         "tailwindcss": "^3.4.19",
         "tsx": "^4.23.15",
         "typescript": "^5.9.3"
