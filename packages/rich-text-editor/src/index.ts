@@ -12,6 +12,8 @@ import {
     type MarkDefinition,
     type PasteHandler,
     type RteBlockCommand,
+    type RteLabel,
+    type RteLabelContext,
     type RteBlockNode,
     type RteHotkey,
     type RteInlineNode,
@@ -149,6 +151,8 @@ export declare namespace RtePlugin {
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
     export type BlockCommand = RteBlockCommand;
+    export type Label = RteLabel;
+    export type LabelContext = RteLabelContext;
     export type PasteHandler = OnPaste;
     export type HtmlSpec = Html;
 }

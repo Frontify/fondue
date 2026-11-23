@@ -28,6 +28,14 @@ import {
 } from '#/core';
 import { RegistryRenderer } from '#/renderer';
 import documentStyles from '#/renderer/document.module.scss';
+import {
+    type EditorLabelContext,
+    labelContextOf,
+    resolveLabel,
+    translatorFor,
+    TranslationContext,
+    useTranslate,
+} from '#/ui/translation';
 
 import { EditorErrorBoundary } from './components/EditorErrorBoundary';
 import { EditorFallback } from './components/EditorFallback';
@@ -36,9 +44,9 @@ import { SlashMenu } from './components/SlashMenu';
 import { Toolbar, type ToolbarPlacement } from './components/Toolbar';
 import { commandsOf, turnIntoCommands } from './helpers/blockCommands';
 import { useEditorHandle } from './hooks/useEditorHandle';
+import { useEditorStrings } from './hooks/useEditorStrings';
 import { useFocusWithin } from './hooks/useFocusWithin';
 import { useMouseDrag } from './hooks/useMouseDrag';
-import { DEFAULT_LABELS, type RichTextEditorLabels } from './labels';
 import styles from './richTextEditor.module.scss';
 import { warnNewerVersion } from './warnings';
 
@@ -94,8 +102,7 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     /**
      * Show the content without allowing edits. The toolbar goes away with it.
      * A document from a newer format version is always shown this way, with no
-     * `onChange` or `onBlur`, and with a notice saying why (`labels.newerVersion`)
-     * unless this is set.
+     * `onChange` or `onBlur`, and with a notice saying why unless this is set.
      */
     readonly?: boolean;
     /**
@@ -113,19 +120,13 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     placeholder?: string;
     /**
      * The editor's accessible name, when no visible label names it ("Comment",
-     * "Description"). Without this or `aria-labelledby` it is called `labels.editor`.
+     * "Description"). Without this or `aria-labelledby` it is called "Rich text editor", in the editor's language.
      */
     'aria-label'?: string;
     /** The id of a visible element naming the editor — its label. Preferred over `aria-label`. */
     'aria-labelledby'?: string;
     /** The id of an element describing the editor further — help text, an error. */
     'aria-describedby'?: string;
-    /**
-     * The words the editor's own UI says (its default name, the toolbar's
-     * name, the "Turn into" and `/` menus, the message and button shown when
-     * it crashes) for a host that translates them. Each one left out stays English.
-     */
-    labels?: Partial<RichTextEditorLabels>;
     /**
      * The editor lost focus, handed the document as it stands: the hook to
      * commit on instead of every keystroke. Fires once focus has left the
@@ -161,7 +162,6 @@ type MountFocusTarget = 'none' | 'text' | 'view';
 export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     value,
     plugins = [],
-    labels: hostLabelOverrides,
     onError,
     'data-test-id': dataTestId = 'fondue-rich-text-editor',
     ...shellProps
@@ -174,8 +174,10 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     const ownDocumentRef = useRef<RteDocumentOf>(value ?? emptyDocument());
     const document = value ?? ownDocumentRef.current;
 
-    // Hosts usually pass an inline object; what it says is what matters.
-    const labels = useLabels(hostLabelOverrides);
+    // The language comes with the components' strings, in the `ThemeProvider`'s `locale`.
+    const { lang, strings } = useEditorStrings();
+    const translate = useMemo(() => translatorFor(strings), [strings]);
+    const labelContext = useMemo(() => labelContextOf(lang, translate), [lang, translate]);
     const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
 
     // A new key mounts the boundary and the shell afresh.
@@ -238,49 +240,51 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     }
 
     return (
-        <EditorErrorBoundary
-            key={attempt}
-            onCatch={onError}
-            fallback={
-                <EditorFallback
-                    value={value}
-                    shownDocument={shownDocument}
+        <TranslationContext.Provider value={translate}>
+            <EditorErrorBoundary
+                key={attempt}
+                onCatch={onError}
+                fallback={
+                    <EditorFallback
+                        value={value}
+                        shownDocument={shownDocument}
+                        onShown={onShown}
+                        registry={registry}
+                        onRetry={onRetry}
+                        focusWasWithin={focusWasWithin}
+                        groupAttributes={fallbackGroupAttributes}
+                        id={shellProps.id}
+                        dataTestId={dataTestId}
+                        onCatch={onFallbackCatch}
+                    />
+                }
+            >
+                <Shell
+                    {...shellProps}
+                    retryFocus={retryFocus}
+                    onFocusWithinChange={onFocusWithinChange}
+                    document={shellDocument}
                     onShown={onShown}
                     registry={registry}
-                    labels={labels}
-                    onRetry={onRetry}
-                    focusWasWithin={focusWasWithin}
-                    groupAttributes={fallbackGroupAttributes}
-                    id={shellProps.id}
+                    labelContext={labelContext}
                     dataTestId={dataTestId}
-                    onCatch={onFallbackCatch}
                 />
-            }
-        >
-            <Shell
-                {...shellProps}
-                retryFocus={retryFocus}
-                onFocusWithinChange={onFocusWithinChange}
-                document={shellDocument}
-                onShown={onShown}
-                registry={registry}
-                labels={labels}
-                dataTestId={dataTestId}
-            />
-        </EditorErrorBoundary>
+            </EditorErrorBoundary>
+        </TranslationContext.Provider>
     );
 };
 
 type ShellProps<TBlock extends RteBlockNode> = Omit<
     EditorShellProps<TBlock>,
-    'value' | 'plugins' | 'labels' | 'onError' | 'data-test-id'
+    'value' | 'plugins' | 'onError' | 'data-test-id'
 > & {
     /** The document to show: the host's `value`, else what the editor last reported. */
     document: RteDocumentOf;
     /** Told what the editor shows, for the fallback a crash puts in its place. */
     onShown: (document: RteDocumentOf) => void;
     registry: PluginRegistry;
-    labels: RichTextEditorLabels;
+    /** What a plugin's label function is called with: the shown language, and the translator. */
+    labelContext: EditorLabelContext;
     /** How the editor came to be mounted, which decides what takes focus once it has. */
     retryFocus: RetryFocus;
     /** Told when focus enters or leaves the editor, for the fallback a crash puts in its place. */
@@ -294,7 +298,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     document,
     onShown,
     registry,
-    labels,
+    labelContext,
     retryFocus,
     onFocusWithinChange,
     onChange,
@@ -317,7 +321,17 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
         }
     }, [newerVersion]);
 
-    const commands = useMemo(() => commandsOf(registry, labels.text), [registry, labels.text]);
+    const translate = useTranslate();
+    // A label function is called here, once per language, for every menu and toolbar.
+    const commands = useMemo(
+        () => commandsOf(registry).map((command) => ({ ...command, label: resolveLabel(command.label, labelContext) })),
+        [registry, labelContext],
+    );
+    const toolbarItems = useMemo(
+        () => registry.toolbarItems.map((item) => ({ ...item, label: resolveLabel(item.label, labelContext) })),
+        [registry, labelContext],
+    );
+    const editorName = translate('RichTextEditor_editor');
 
     const generatedId = useId();
     const editableId = id ?? generatedId;
@@ -334,11 +348,11 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
                 hostLabels,
                 isNamed,
                 placeholder,
-                defaultLabel: labels.editor,
+                defaultLabel: editorName,
             }),
         // `hostLabels` is rebuilt every render; the props it is built from are the deps.
         // eslint-disable-next-line @eslint-react/exhaustive-deps
-        [editableId, className, ariaLabel, ariaLabelledBy, ariaDescribedBy, placeholder, labels.editor],
+        [editableId, className, ariaLabel, ariaLabelledBy, ariaDescribedBy, placeholder, editorName],
     );
 
     const { containerRef, handle, editorState, viewPortals } = useEditorHandle({
@@ -405,10 +419,10 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
         // Only the switch is the event; focus is read when it happens.
         // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [newerVersion]);
-    // Alt+F10 asks the toolbar to take focus; it reads and clears the request
-    // once it has rendered, which for a floating bar may be its first render.
-    const focusRequestRef = useRef(false);
-    const [, renderForFocusRequest] = useReducer((count: number) => count + 1, 0);
+    // Alt+F10 asks the toolbar to take focus; the toolbar clears the request once
+    // it has taken focus, which for a floating bar may be on its first render.
+    const [toolbarFocusPending, setToolbarFocusPending] = useState(false);
+    const onToolbarFocusTaken = useCallback((): void => setToolbarFocusPending(false), []);
     // A selection being dragged out with the mouse is not finished yet; the
     // floating bar waits for the button to come up rather than chasing the pointer.
     const { isDragging, startDragging } = useMouseDrag();
@@ -417,8 +431,8 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     // The floating bar holds Turn into (more than the built-in Text) and the
     // inline items; with neither there is no bar to draw.
     const hasToolbarContent = toolbarFloats
-        ? turnIntoCommands(commands).length > 1 || registry.toolbarItems.some((item) => item.floating === 'inline')
-        : registry.toolbarItems.length > 0;
+        ? turnIntoCommands(commands).length > 1 || toolbarItems.some((item) => item.floating === 'inline')
+        : toolbarItems.length > 0;
     const hasToolbar = handle !== null && !readOnly && showEditor && hasToolbarContent;
 
     const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
@@ -442,8 +456,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
         // The floating bar only exists over selected text.
         if (isToolbarHotkey(event) && hasToolbar && !(toolbarFloats && handle.api.selection.get().isCollapsed)) {
             event.preventDefault();
-            focusRequestRef.current = true;
-            renderForFocusRequest();
+            setToolbarFocusPending(true);
         }
     };
 
@@ -465,14 +478,14 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     // subscribe to it themselves, so a keystroke re-renders them, not this.
     const toolbar = hasToolbar ? (
         <Toolbar
-            items={registry.toolbarItems}
+            items={toolbarItems}
             commands={commands}
             api={handle.api}
             editorState={editorState}
             placement={toolbarPlacement}
-            labels={labels}
             controls={editableId}
-            focusRequestRef={focusRequestRef}
+            focusPending={toolbarFocusPending}
+            onFocusTaken={onToolbarFocusTaken}
         />
     ) : null;
 
@@ -514,7 +527,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
                 {newerVersion === null || readonlyProp ? null : (
                     <div ref={noticeRef} tabIndex={-1} className={styles.notice}>
                         <Notice variant="warning" emphasis="weak">
-                            {labels.newerVersion}
+                            {translate('RichTextEditor_newerVersion')}
                         </Notice>
                     </div>
                 )}
@@ -530,7 +543,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
                     handle={handle}
                     editorState={editorState}
                     editableRef={containerRef}
-                    label={labels.toolbar}
+                    label={translate('RichTextEditor_toolbar')}
                 >
                     {toolbar}
                 </FloatingToolbar>
@@ -539,13 +552,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
             {viewPortals}
             {/* Only worth having when a plugin offers something beyond the built-in Text. */}
             {readOnly || !showEditor || handle === null || commands.length < 2 ? null : (
-                <SlashMenu
-                    handle={handle}
-                    editorState={editorState}
-                    editableRef={containerRef}
-                    commands={commands}
-                    labels={labels}
-                />
+                <SlashMenu handle={handle} editorState={editorState} editableRef={containerRef} commands={commands} />
             )}
         </div>
     );
@@ -632,17 +639,3 @@ const editableAttributes = ({
     ...hostLabels,
     ...(placeholder === '' ? {} : { 'aria-placeholder': placeholder }),
 });
-
-/**
- * The host's labels over the English defaults, kept the same object while the
- * host's say the same, however often it builds them anew.
- */
-const useLabels = (overrides: Partial<RichTextEditorLabels> | undefined): RichTextEditorLabels => {
-    const merged = { ...DEFAULT_LABELS, ...overrides };
-    const ref = useRef(merged);
-    const previous = ref.current;
-    if ((Object.keys(merged) as (keyof RichTextEditorLabels)[]).some((key) => merged[key] !== previous[key])) {
-        ref.current = merged;
-    }
-    return ref.current;
-};

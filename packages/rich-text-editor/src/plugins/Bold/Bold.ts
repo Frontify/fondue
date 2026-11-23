@@ -3,6 +3,7 @@
 import { IconTextFormatBold } from '@frontify/fondue-icons';
 
 import { defineContent, defineMark, definePlugin } from '#/core';
+import { translatedLabel } from '#/ui/translation';
 
 import { declaresNormalWeight, isBoldWeight, isNormalWeight, markWhen } from '../shared/helpers/declaredStyle';
 
@@ -43,7 +44,7 @@ export const boldPlugin = () =>
     definePlugin({
         content: boldContent,
         toolbarGroup: 'marks',
-        toolbar: [{ label: 'Bold', icon: IconTextFormatBold, shortcut: 'Mod-b' }],
+        toolbar: [{ label: translatedLabel('RichTextEditor_bold'), icon: IconTextFormatBold, shortcut: 'Mod-b' }],
         // Bounded by words, so `foo__bar__` and `self.__dict__` stay as typed.
         inputRules: [{ delimiter: '**' }, { delimiter: '__', wordBounded: true }],
     });

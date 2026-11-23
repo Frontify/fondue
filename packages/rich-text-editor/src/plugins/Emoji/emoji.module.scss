@@ -124,6 +124,11 @@
 }
 
 .grid {
+    // Also a <fieldset>, whose own border, padding and minimum width would show.
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
 }

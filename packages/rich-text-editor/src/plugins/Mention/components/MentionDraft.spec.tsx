@@ -46,7 +46,7 @@ const settle = async (): Promise<void> => {
 
 const retryOption = (): HTMLElement | undefined =>
     [...window.document.querySelectorAll<HTMLElement>('[role="option"]')].find(
-        (option) => option.textContent === 'Retry',
+        (option) => option.textContent === 'Try again',
     );
 
 const mountDraft = async (items: MentionItems = search) => {
@@ -105,7 +105,7 @@ describe('a mention being made', () => {
         expect(options.map((option) => option.id)).toEqual(options.map((_, index) => `${listbox?.id}-option-${index}`));
         expect(listbox?.querySelector('button')).toBeNull();
         expect(input.getAttribute('aria-activedescendant')).toBe(options[0]?.id);
-        expect(status()).toBe('3 people');
+        expect(status()).toBe('Results: 3');
     });
 
     it('says when nobody matches, and the arrows then do nothing', async () => {
@@ -115,8 +115,8 @@ describe('a mention being made', () => {
         press('ArrowDown');
         press('ArrowUp');
 
-        expect(status()).toBe('No matches');
-        expect(window.document.body.textContent).toContain('No matches');
+        expect(status()).toBe('No results');
+        expect(window.document.body.textContent).toContain('No results');
         // Expanded means the listbox of options is in the page, which it is not with no matches.
         expect(input.getAttribute('aria-expanded')).toBe('false');
         expect(input.hasAttribute('aria-controls')).toBe(false);
@@ -187,7 +187,7 @@ describe('a mention being searched for', () => {
                 await new Promise((resolve) => requestAnimationFrame(resolve));
             });
             expect(popup()).toContain('Searching');
-            expect(popup()).not.toContain('No matches');
+            expect(popup()).not.toContain('No results');
             expect(status()).toBe('');
         } finally {
             vi.useRealTimers();
@@ -273,8 +273,8 @@ describe('a mention being searched for', () => {
             await new Promise((resolve) => requestAnimationFrame(resolve));
         });
 
-        expect(status()).toBe('No matches');
-        expect(popup()).toContain('No matches');
+        expect(status()).toBe('No results');
+        expect(popup()).toContain('No results');
     });
 
     it('says the search failed, and asks again from the Retry button, keeping focus in the query', async () => {
@@ -291,7 +291,7 @@ describe('a mention being searched for', () => {
         expect(status()).toBe('Could not load people.');
         expect(reportError).toHaveBeenCalledWith(offline);
         expect(popup()).toContain('Could not load people.');
-        expect(popup()).not.toContain('No matches');
+        expect(popup()).not.toContain('No results');
         const retry = retryOption();
         expect(retry).toBeDefined();
         expect(container.contains(retry ?? null)).toBe(false);
@@ -357,7 +357,7 @@ describe('a mention being searched for', () => {
             seen.push(status());
         }
 
-        expect(seen).toEqual(['3 people', '3 people', '3 people', '3 people']);
+        expect(seen).toEqual(['Results: 3', 'Results: 3', 'Results: 3', 'Results: 3']);
     });
 
     it('keeps a space typed while a newer query is unanswered, after an earlier No matches', async () => {
@@ -399,7 +399,7 @@ describe('a mention being searched for', () => {
         expect(status()).toBe('');
         act(() => answers.get('j')?.([JANE]));
         await settle();
-        expect(status()).toBe('1 person');
+        expect(status()).toBe('Results: 1');
     });
 });
 
@@ -474,6 +474,6 @@ describe('the names of the picker', () => {
 
         await type('jane');
 
-        expect(status()).toBe('1 person');
+        expect(status()).toBe('Results: 1');
     });
 });
