@@ -46,6 +46,7 @@ import { commandsOf, turnIntoCommands } from './helpers/blockCommands';
 import { useEditorHandle } from './hooks/useEditorHandle';
 import { useEditorStrings } from './hooks/useEditorStrings';
 import { useFocusWithin } from './hooks/useFocusWithin';
+import { useKeyboardFocus } from './hooks/useKeyboardFocus';
 import { useMouseDrag } from './hooks/useMouseDrag';
 import styles from './richTextEditor.module.scss';
 import { warnNewerVersion } from './warnings';
@@ -111,11 +112,18 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * from a newer format version.
      *
      * The editor draws no box either way — no border, background or inset;
-     * a host that wants a field wraps the editor in one.
+     * a host that wants a field wraps the editor in one, and draws the focus
+     * ring while it `:has([data-keyboard-focus='true'])`.
      *
      * @default true
      */
     showEditor?: boolean;
+    /**
+     * The most lines of body text the content shows before it scrolls inside
+     * the editor. The toolbar stays above the content, not scrolled. Unset, the
+     * content grows with the text.
+     */
+    maxRows?: number;
     /** Shown while the document is empty, and given to assistive technology as the field's placeholder. */
     placeholder?: string;
     /**
@@ -305,6 +313,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     toolbarPlacement = 'top',
     readonly: readonlyProp = false,
     showEditor = true,
+    maxRows,
     placeholder = '',
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
@@ -393,6 +402,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     }, [handle]);
 
     const { focusWithin, focusProps } = useFocusWithin();
+    useKeyboardFocus({ elementRef: containerRef, isMounted: !readOnly });
     // Blur as the host hears it: focus leaving the whole editor — text,
     // toolbar and the flyouts they portal out — not just the editable element.
     const hadFocusRef = useRef(false);
@@ -500,6 +510,11 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
         readonlyViewTabIndex = FOCUSABLE_BY_SCRIPT_ONLY;
     }
 
+    let bodyStyle: MaxRowsStyle | undefined;
+    if (maxRows !== undefined) {
+        bodyStyle = { [MAX_ROWS_PROPERTY]: String(maxRows) };
+    }
+
     return (
         // Not a control: it hears the keys, clicks and focus moving among the
         // controls inside it.
@@ -521,6 +536,8 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
                 // To take a pressed Retry's focus.
                 tabIndex={readonlyViewTabIndex}
                 className={styles.body}
+                data-max-rows={maxRows !== undefined}
+                style={bodyStyle}
             >
                 {toolbarFloats ? null : toolbar}
                 {/* A host that shows it read-only anyway offered no editing to explain. */}
@@ -567,6 +584,12 @@ const isToolbarHotkey = (event: KeyboardEvent): boolean => matchesHotkey(EDITOR_
 const FOCUSABLE_BY_SCRIPT_ONLY = -1;
 
 const GROUP_ROLE = 'group';
+
+/** The custom property the stylesheet turns into the content's maximum height. */
+const MAX_ROWS_PROPERTY = '--max-rows';
+
+/** The body's style: `CSSProperties` has no custom properties, so the one key is added. */
+type MaxRowsStyle = CSSProperties & Record<typeof MAX_ROWS_PROPERTY, string>;
 
 /**
  * What a named editor shows where it is not a field (the readonly view, the
