@@ -537,7 +537,7 @@ const insertWhole = (view: EditorView, node: PmNode, dispatch: Dispatch): void =
     view.focus();
 };
 
-/** The first or last place for text, or the document's own edge when it has none (only void blocks). */
+/** The first or last place for text, or the document's edge when it has only void blocks. */
 const selectionAt = (doc: PmNode, position: FocusPosition): Selection => {
     switch (position) {
         case 'start': {

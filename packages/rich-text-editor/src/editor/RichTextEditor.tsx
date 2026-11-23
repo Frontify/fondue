@@ -118,10 +118,10 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      */
     showEditor?: boolean;
     /**
-     * Puts the caret at the start or end of the text when the editor first mounts. Use it only when the editor
-     * appears because the person asked for it (a Reply or Edit button), never on page load. Left out, no focus.
-     * Ignored while `readonly` and when editing is turned on later.
-     * A later `value` with different content moves the caret to its end.
+     * Puts the caret before the first text or after the last when the editor first mounts.
+     * Use it only when the person opened the editor (a Reply or Edit button), never on page load.
+     * Left out, the editor takes no focus. Ignored while `readonly` and when editing turns on later.
+     * A later `value` with other content moves the caret to its end.
      */
     autoFocus?: FocusPosition;
     /** Shown while the document is empty, and given to assistive technology as the field's placeholder. */
@@ -164,7 +164,7 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
 /** Whether the editor was brought back by Try again, and whether the pressed button had focus. */
 type RetryFocus = 'fresh' | 'focused' | 'unfocused';
 
-/** What a freshly mounted shell focuses: nothing, the text to edit with the caret at a position, or the readonly view. */
+/** What a new shell focuses: nothing, the text at a caret position, or the readonly view. */
 type MountFocusTarget = { kind: 'none' } | { kind: 'text'; position: FocusPosition } | { kind: 'view' };
 
 export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
@@ -399,7 +399,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
             return;
         }
 
-        // Turning editing off spends the request: it never claims focus when editing comes back.
+        // Turning editing off cancels the request, so editing that comes back takes no focus.
         if (readOnly) {
             focusPendingRef.current = false;
             return;
@@ -409,7 +409,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
             return;
         }
 
-        // The next handle, from the same commit, takes the focus.
+        // The newer handle from the same commit takes the focus.
         if (handle.isDestroyed()) {
             return;
         }

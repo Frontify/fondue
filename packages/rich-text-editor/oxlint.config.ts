@@ -132,7 +132,7 @@ export default defineConfig({
     },
     ignorePatterns: ['dist/', 'storybook-static/', 'lint-fixtures/src/'],
     rules: {
-        // The editor's own `autoFocus` prop is a host's deliberate choice; the rule still guards DOM elements.
+        // A host sets the editor's `autoFocus` on purpose. DOM elements stay checked.
         'jsx-a11y/no-autofocus': ['error', { ignoreNonDOM: true }],
     },
     /**

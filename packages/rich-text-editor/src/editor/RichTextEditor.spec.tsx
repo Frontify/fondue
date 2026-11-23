@@ -1547,12 +1547,12 @@ const FIRST_FIXTURE_PLUGIN = definePlugin({ id: 'first' });
 const SECOND_FIXTURE_PLUGIN = definePlugin({ id: 'second' });
 const FIXTURE_PLUGINS = [FIRST_FIXTURE_PLUGIN];
 
-/** A host that swaps the plugin set as it mounts, which replaces the engine before the focus request is spent. */
+/** A host that changes its plugins on mount, so the engine is replaced before it takes the focus. */
 const PluginsChangeOnMount = (): ReactNode => {
     const [plugins, setPlugins] = useState<readonly RtePlugin[]>(() => [FIRST_FIXTURE_PLUGIN]);
 
     useEffect(() => {
-        // Intentional: the update has to land in the editor's first commit, which only a mount effect does.
+        // Intentional: only a mount effect lands in the editor's first commit.
         // eslint-disable-next-line @eslint-react/set-state-in-effect
         setPlugins([FIRST_FIXTURE_PLUGIN, SECOND_FIXTURE_PLUGIN]);
     }, []);
@@ -1564,12 +1564,12 @@ type ReadonlyOnMountProps = {
     editable: boolean;
 };
 
-/** A host that turns readonly on as it mounts, which destroys the engine before the focus request is spent. */
+/** A host that turns on `readonly` on mount, so the engine is destroyed before it takes the focus. */
 const ReadonlyOnMount = ({ editable }: ReadonlyOnMountProps): ReactNode => {
     const [readonlyOnMount, setReadonlyOnMount] = useState(false);
 
     useEffect(() => {
-        // Intentional: the update has to land in the editor's first commit, which only a mount effect does.
+        // Intentional: only a mount effect lands in the editor's first commit.
         // eslint-disable-next-line @eslint-react/set-state-in-effect
         setReadonlyOnMount(true);
     }, []);

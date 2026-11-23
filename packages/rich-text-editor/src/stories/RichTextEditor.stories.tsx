@@ -732,9 +732,7 @@ export const CommentBox: Story = {
 
 type EditCommentStoryArgs = Pick<RichTextEditorProps, 'autoFocus'>;
 
-/**
- * The editor opens on Edit with the caret after the text, so the person keeps typing.
- */
+/** Edit opens the editor with the caret after the text, so the person keeps typing. */
 export const EditComment: StoryObj<EditCommentStoryArgs> = {
     args: { autoFocus: 'end' },
     argTypes: { autoFocus: { control: 'select', options: ['start', 'end'] } },
