@@ -24,7 +24,8 @@ import {
 import { type MountOptions } from '#/editor/port';
 
 import { toEngineDocument } from './documentConversion';
-import { type FrameScheduler, mountEditorForTests } from './editing';
+import { mountEditorForTests } from './editing';
+import { type FrameScheduler } from './hostSync';
 import { type BlockInput, destroyEditors, editorWith } from './testEditor';
 
 // Checked independently of the source: the character the spec expects for an inline atom in text.
