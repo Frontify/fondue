@@ -27,7 +27,7 @@ import {
 
 import { type PluginRegistry, type RteDocumentOf } from '#/core';
 import { mountDocument } from '#/editor/engines/prosemirror';
-import { type EditorHandle, type MountedDocument, type ViewPortals } from '#/editor/port';
+import { type EditorHandle, type ElementAttributes, type MountedDocument, type ViewPortals } from '#/editor/port';
 
 /**
  * The editor state as an external store, in the shape `useSyncExternalStore`
@@ -135,7 +135,7 @@ type UseEditorHandleOptions = {
     document: RteDocumentOf;
     placeholder: string;
     /** Further attributes for the editable element. Memoize them: a new object is applied to the editor. */
-    attributes: Readonly<Record<string, string>>;
+    attributes: ElementAttributes;
     placeholderClassName: string;
     onDocChange: (doc: RteDocumentOf) => void;
     /** The editor took on a document from the host: at mount, or through a new `document`. */
