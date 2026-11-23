@@ -498,6 +498,17 @@ $selection-mark-clearance: calc(var(--spacing-medium) + #{sizeToken.get(5)} + va
     align-self: stretch;
     gap: var(--spacing-xx-small);
     padding: var(--spacing-small);
+    @include transitions.transition-opacity;
+
+    // Collapsed rather than display:none so the buttons stay in the tab order.
+    @media (hover: hover) {
+        .root[data-actions-visibility='hover']:not(:hover, :has([data-state='open']), :has(:focus-visible)) > & {
+            width: 0;
+            padding-inline: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+    }
 }
 
 .action {
