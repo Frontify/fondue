@@ -40,6 +40,26 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
         background-color: var(--color-surface-default);
         border-color: var(--color-line-subtle);
     }
+
+    &[data-size='small'] {
+        height: sizeToken.get(6);
+
+        .item[data-icon-only='true'] {
+            width: calc(#{sizeToken.get(6)} - 2 * var(--border-width-default));
+        }
+
+        .itemLabel {
+            padding-inline: sizeToken.get(2);
+            gap: sizeToken.get(1);
+            font-size: var(--typography-font-size-x-small);
+            line-height: var(--typography-line-height-tight);
+
+            svg {
+                width: sizeToken.get(3);
+                height: sizeToken.get(3);
+            }
+        }
+    }
 }
 
 .item {
