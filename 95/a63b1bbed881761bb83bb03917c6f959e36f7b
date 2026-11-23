@@ -1,0 +1,21 @@
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_22765b2b214913::t_eccd203b053443 93-94
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_22765b2b214913::t_eccd203b053443 64-65
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "95a63b1bbed881761bb83bb03917c6f959e36f7b",
+  "prompts": {},
+  "sessions": {
+    "s_22765b2b214913": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "64a3bb8c-4115-444f-9ef4-e800dc5182f4",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

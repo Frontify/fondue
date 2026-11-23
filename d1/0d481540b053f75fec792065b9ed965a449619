@@ -1,0 +1,44 @@
+packages/rich-text-editor/src/plugins/Table/components/TableMenu.tsx
+  s_7f041dc586b94b::t_319e9ae33dba67 92
+  s_7f041dc586b94b::t_2935bba6af8790 12
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_7f041dc586b94b::t_15dc1a68100781 1089-1092
+  s_7f041dc586b94b::t_b084a4228d8f0e 1052-1056
+packages/rich-text-editor/src/__tests__/browser/TableInsertFrame.tsx
+  s_7f041dc586b94b::t_579b372216054c 6,10,12
+  s_7f041dc586b94b::t_29be9c51d7f52c 1-5,7-9,11,13
+packages/rich-text-editor/src/plugins/Table/Table.tsx
+  s_7f041dc586b94b::t_a2d0cd6cd899ab 6-18,21
+  s_7f041dc586b94b::t_2ffa265d737554 169-182,184-187
+  s_7f041dc586b94b::t_b61aa483f8801a 195
+  s_7f041dc586b94b::t_29c8dc299bace7 209-210
+  s_7f041dc586b94b::t_653544783d86f6 66
+packages/rich-text-editor/src/__tests__/browser/tableInsert.ct.tsx
+  s_7f041dc586b94b::t_0e838de125903b 14,71
+  s_7f041dc586b94b::t_579b372216054c 17,19,28,72
+  s_7f041dc586b94b::t_5d1cc9fe7b5d50 1-13,15-16,18,20-27,29-70,73-77
+packages/rich-text-editor/src/plugins/Table/helpers/isInTable.ts
+  s_7f041dc586b94b::t_60e212adceffd3 1-6
+packages/rich-text-editor/src/plugins/Table/Table.spec.ts
+  s_7f041dc586b94b::t_d3a9435fb7f461 100-106
+  s_7f041dc586b94b::t_f6a8302eae8934 13-27
+  s_7f041dc586b94b::t_691cbc5182e2c8 7
+.changeset/rte-table-toolbar-insert.md
+  s_7f041dc586b94b::t_ffca15267ebc1c 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d10d481540b053f75fec792065b9ed965a449619",
+  "prompts": {},
+  "sessions": {
+    "s_7f041dc586b94b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7a723df9-506c-46d2-be9e-02d615c0004b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,93 @@
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_db1d4607d5e58e::t_b81a4008daaeee 705,890-903,910-911,978-979
+packages/rich-text-editor/src/__tests__/browser/HostLooksPair.tsx
+  s_db1d4607d5e58e::t_ab66870b3b0de3 9,33-36,46-60
+  s_db1d4607d5e58e::t_6f9122b31cf55a 39-45
+  s_db1d4607d5e58e::t_b81a4008daaeee 6-8,10-19,24-27,38
+  s_db1d4607d5e58e::t_6d5298e80f21d2 22
+  s_db1d4607d5e58e::t_68edb20d2ece88 37
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_db1d4607d5e58e::t_b5b481cc57688e 103,105-106
+  s_db1d4607d5e58e::t_b81a4008daaeee 44-52,60-61,65,68-69,101-102,104,107-110,114,129,134-135,137-140,142-148,208
+packages/rich-text-editor/src/__tests__/typeDerivation.spec.ts
+  s_db1d4607d5e58e::t_b81a4008daaeee 15,164,167,170
+.changeset/rte-paragraph-quote-link-looks.md
+  s_db1d4607d5e58e::t_b81a4008daaeee 5
+packages/rich-text-editor/src/__tests__/serializeToHtml.node.spec.tsx
+  s_db1d4607d5e58e::t_b81a4008daaeee 107-111,113-114,161-174,210
+packages/rich-text-editor/src/index.ts
+  s_db1d4607d5e58e::t_b81a4008daaeee 146-152
+packages/rich-text-editor/src/plugins/Link/index.ts
+  s_db1d4607d5e58e::t_b81a4008daaeee 3
+packages/rich-text-editor/src/renderer/inlineLooks.spec.ts
+  s_db1d4607d5e58e::t_16979c2fb2e955 16,66-67,149,171,184,292
+  s_db1d4607d5e58e::t_b81a4008daaeee 25-27,129-131,136-137,142-143,148,241
+packages/rich-text-editor/src/core/plugin.ts
+  s_db1d4607d5e58e::t_b81a4008daaeee 39-41,43
+packages/rich-text-editor/src/renderer/document.module.scss
+  s_db1d4607d5e58e::t_aa20f6a424cc3e 3-4,67-69,74-75
+  s_db1d4607d5e58e::t_b81a4008daaeee 70-73,76-78
+  s_db1d4607d5e58e::t_4cf764b4db8f19 79
+packages/rich-text-editor/src/renderer/inlineLooks.ts
+  s_db1d4607d5e58e::t_b81a4008daaeee 163-175,178,182,264,273,275
+  s_db1d4607d5e58e::t_ad8ab0d4485fa4 194-196,198-199,202,217,224-225,234,246,276
+packages/rich-text-editor/src/core/registry.ts
+  s_db1d4607d5e58e::t_b81a4008daaeee 126,557-562,564,654
+packages/rich-text-editor/src/plugins/Quote/Quote.ts
+  s_db1d4607d5e58e::t_c2400b922de8a0 40-41
+  s_db1d4607d5e58e::t_b81a4008daaeee 30-36,38-39,42,47-52
+packages/rich-text-editor/src/core/look.spec.ts
+  s_db1d4607d5e58e::t_b81a4008daaeee 34-35,37-41,45,48-50
+packages/rich-text-editor/src/__tests__/browser/ownMarginsPlugin.tsx
+  s_db1d4607d5e58e::t_6f9122b31cf55a 51
+  s_db1d4607d5e58e::t_6d5298e80f21d2 3
+packages/rich-text-editor/src/plugins/index.ts
+  s_db1d4607d5e58e::t_b81a4008daaeee 48,53
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_db1d4607d5e58e::t_b81a4008daaeee 814,1325,2664
+packages/rich-text-editor/src/plugins/defaultContent.ts
+  s_db1d4607d5e58e::t_b81a4008daaeee 27,36,41
+packages/rich-text-editor/src/plugins/TextStyle/index.ts
+  s_db1d4607d5e58e::t_b81a4008daaeee 4,7,11
+packages/rich-text-editor/src/__tests__/browser/ExportedLooksPair.tsx
+  s_db1d4607d5e58e::t_6d5298e80f21d2 20,50
+  s_db1d4607d5e58e::t_b81a4008daaeee 6-8,10-17,33-38,48-49
+  s_db1d4607d5e58e::t_ab66870b3b0de3 9,44-47,51-65,69-70
+packages/rich-text-editor/src/renderer/serializeToHtml.ts
+  s_db1d4607d5e58e::t_b81a4008daaeee 3-10,16-18,71-75
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_db1d4607d5e58e::t_b81a4008daaeee 48-94,96-106,127-156
+packages/rich-text-editor/src/__tests__/browser/HostBodyContentPair.tsx
+  s_db1d4607d5e58e::t_b81a4008daaeee 1-43
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.spec.ts
+  s_db1d4607d5e58e::t_0d5cfdfba4902f 84,103
+  s_db1d4607d5e58e::t_b81a4008daaeee 32-66,78-79
+packages/rich-text-editor/src/plugins/ColumnBreak/ColumnBreak.ts
+  s_db1d4607d5e58e::t_0d5cfdfba4902f 53
+packages/rich-text-editor/src/plugins/Quote/index.ts
+  s_db1d4607d5e58e::t_b81a4008daaeee 3
+packages/rich-text-editor/src/core/look.ts
+  s_db1d4607d5e58e::t_b81a4008daaeee 80-82,102-103,105-106,109,111-114
+packages/rich-text-editor/src/plugins/Link/Link.spec.ts
+  s_db1d4607d5e58e::t_b81a4008daaeee 5,7
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_db1d4607d5e58e::t_b81a4008daaeee 9,292,430-440,579-581
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_db1d4607d5e58e::t_b81a4008daaeee 189,423,673
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "14f91c768577f4dbb1497e53f3b3633988909590",
+  "prompts": {},
+  "sessions": {
+    "s_db1d4607d5e58e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1084a074-7586-420c-8797-a9dbcd3c7659",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,46 @@
+packages/sdk/guides/development/upgrading/v14.md
+  s_1b43cde88f2ac4::t_19ab0f75b4cdaf 1-6,8-54,74-76,86-103,104-105,107-113,114-120
+  s_1b43cde88f2ac4::t_5d0e55c8c21661 55-73,77-85
+  s_1b43cde88f2ac4::t_473c0af8a70104 7,106
+.changeset/sdk-upgrading-v14-guide.md
+  s_1b43cde88f2ac4::t_fad94476c101b8 1-5
+storybook-docs/stories/Documentation/Development/Upgrading/v14.mdx
+  s_1b43cde88f2ac4::t_894cd580b237dc 1-10
+storybook-docs/scripts/generateGuideStories.mjs
+  s_1b43cde88f2ac4::t_720a39e12c847d 17-18,21-31
+  s_1b43cde88f2ac4::t_8acb27ff63a08b 41-43,46-50
+storybook-docs/stories/Documentation/Development/Upgrading/v13.mdx
+  s_1b43cde88f2ac4::t_894cd580b237dc 1-10
+packages/sdk/README.md
+  s_e303d90a4d1a69::t_7d26253a7170d6 72
+packages/sdk/guides/sdk/Examples.md
+  s_e303d90a4d1a69::t_31f451fb3fb299 235-236,254
+packages/sdk/skills/fondue/SKILL.md
+  s_e303d90a4d1a69::t_3ec41824b5a2e3 103
+storybook-docs/.storybook/preview.tsx
+  s_e303d90a4d1a69::t_5d14507da1948f 98
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "b73c9d43562cf5579b29ebaf941ee2fd8d717157",
+  "prompts": {},
+  "sessions": {
+    "s_1b43cde88f2ac4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "568582f3-c0d5-408b-b415-495a5088710c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_e303d90a4d1a69": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b95187bb-e9f1-45de-99f7-7bb025d6a241",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

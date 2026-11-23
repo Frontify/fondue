@@ -1,0 +1,32 @@
+packages/components/src/components/SegmentedControl/styles/segmentedControl.module.scss
+  s_1a41a1a882a563::t_bbd3e2933cd1eb 43-62
+packages/components/src/components/SegmentedControl/SegmentedControl.tsx
+  s_1a41a1a882a563::t_2d92537c64c2ea 37-41
+  s_1a41a1a882a563::t_d39db78e210d7d 77
+  s_1a41a1a882a563::t_374c1133dce37a 52
+.changeset/segmented-control-small-size.md
+  s_1a41a1a882a563::t_762544788c0c5d 1-5
+packages/components/src/components/SegmentedControl/SegmentedControl.stories.tsx
+  s_1a41a1a882a563::t_6bd0389a91a00f 29
+  s_1a41a1a882a563::t_d0a829e4caffe1 55-67
+packages/components/src/components/SegmentedControl/__tests__/SegmentedControl.ct.tsx
+  s_1a41a1a882a563::t_45037be7fc4b24 239-272
+packages/components/src/components/SegmentedControl/SegmentedControl.metadata.json
+  s_1a41a1a882a563::t_09d0252bd7537c 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dc4393874d8f2191df93b22b0f77b7518ac84a1b",
+  "prompts": {},
+  "sessions": {
+    "s_1a41a1a882a563": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "0035fcef-10cb-42de-861a-e75a198f6e48",
+        "model": "grok-4.7"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
