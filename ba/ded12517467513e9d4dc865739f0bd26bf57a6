@@ -1,0 +1,21 @@
+.changeset/rte-plugins-entry.md
+  s_74e6843cef7ce4::t_376e62d0e9a7df 5
+packages/rich-text-editor/src/plugins/index.ts
+  s_74e6843cef7ce4::t_cdc5fbf6fd04d5 9-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "baded12517467513e9d4dc865739f0bd26bf57a6",
+  "prompts": {},
+  "sessions": {
+    "s_74e6843cef7ce4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1a128949-3567-4552-a492-c7c578c34180",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

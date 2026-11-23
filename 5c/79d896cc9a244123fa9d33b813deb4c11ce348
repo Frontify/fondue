@@ -1,0 +1,66 @@
+packages/rich-text-editor/src/editor/port.ts
+  s_1d85cf4cd0f49c::t_0a4e92fdcec8e2 48-52,56-57
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.spec.tsx
+  s_1d85cf4cd0f49c::t_641f579364498c 359-360,364-376
+  s_1d85cf4cd0f49c::t_852236df6ef0ed 9,23,25-29,38,87,101,117,155,179,197,229,238,261,274,290,303,316,339,347,378,386,395,402,411
+  s_1d85cf4cd0f49c::t_5aeac0eff96cdb 289,298-299,302
+  s_1d85cf4cd0f49c::t_fe41cb4f16c09b 89-91,198,200-201,248-250,283,317,319-320,348,350-351
+  s_1d85cf4cd0f49c::t_7b73999b591aca 349,352-353,387
+  s_1d85cf4cd0f49c::t_c417bdc7b5f62d 45,361-363
+  s_1d85cf4cd0f49c::t_8f1ff5845579b7 282
+packages/rich-text-editor/src/plugins/Mention/components/MentionLink.spec.tsx
+  s_1d85cf4cd0f49c::t_00477bf5148bad 1-90
+packages/rich-text-editor/src/core/plugin.ts
+  s_1d85cf4cd0f49c::t_0a4e92fdcec8e2 512-513
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.tsx
+  s_1d85cf4cd0f49c::t_7d0c9ffe3d1a91 7,44-45,60,67,71,73-74,108,110-112,166,171,177-184
+  s_1d85cf4cd0f49c::t_c417bdc7b5f62d 148
+.changeset/rte-ui-engine-names.md
+  s_1d85cf4cd0f49c::t_0a4e92fdcec8e2 1-5
+packages/rich-text-editor/src/editor/engines/prosemirror/nodeViews.spec.tsx
+  s_1d85cf4cd0f49c::t_0a4e92fdcec8e2 107,109-113,417-424
+  s_1d85cf4cd0f49c::t_b7cae91e1db78e 425-427
+packages/rich-text-editor/src/plugins/Mention/components/MentionLink.tsx
+  s_1d85cf4cd0f49c::t_e870b1eccdb2e1 10-15,24-30,51
+packages/rich-text-editor/src/editor/engines/prosemirror/nodeViews.tsx
+  s_1d85cf4cd0f49c::t_0a4e92fdcec8e2 274
+packages/rich-text-editor/src/editor/engines/prosemirror/engine.scss
+  s_1d85cf4cd0f49c::t_0a4e92fdcec8e2 85-90
+packages/rich-text-editor/src/editor/richTextEditor.module.scss
+  s_1d85cf4cd0f49c::t_0a4e92fdcec8e2 173,184
+packages/rich-text-editor/src/plugins/Mention/components/MentionEditor.tsx
+  s_1d85cf4cd0f49c::t_e870b1eccdb2e1 25
+  s_1d85cf4cd0f49c::t_c417bdc7b5f62d 56
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.spec.tsx
+  s_1d85cf4cd0f49c::t_0a4e92fdcec8e2 313-326
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_1d85cf4cd0f49c::t_e870b1eccdb2e1 301-304
+packages/rich-text-editor/src/plugins/FontColor/helpers/colors.spec.ts
+  s_1d85cf4cd0f49c::t_c417bdc7b5f62d 5
+packages/rich-text-editor/src/editor/components/SlashMenu.tsx
+  s_1d85cf4cd0f49c::t_0a4e92fdcec8e2 16,23-24,231,233,235-236
+packages/rich-text-editor/src/plugins/Mention/Mention.tsx
+  s_1d85cf4cd0f49c::t_e870b1eccdb2e1 66-71
+.changeset/rte-font-color-picker-fields.md
+  s_1d85cf4cd0f49c::t_9517d1c9b6cefc 1-5
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.ts
+  s_1d85cf4cd0f49c::t_0a4e92fdcec8e2 187-195
+packages/rich-text-editor/src/editor/floatingBar.spec.tsx
+  s_1d85cf4cd0f49c::t_0a4e92fdcec8e2 314-326
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5c79d896cc9a244123fa9d33b813deb4c11ce348",
+  "prompts": {},
+  "sessions": {
+    "s_1d85cf4cd0f49c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "228bb293-31f9-44a8-bc1c-8d56de76d646",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

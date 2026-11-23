@@ -1,0 +1,23 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_5aa74dc91f3857::t_8a80087bb92f2d 67
+  s_5aa74dc91f3857::t_f6a66ad04ee6a1 198-229
+  s_5aa74dc91f3857::t_afc894b944b2cd 11,43-47
+  s_5aa74dc91f3857::t_5185eae7c38952 35-42,48-52
+  s_5aa74dc91f3857::t_69b55c95c3e5d5 239
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f53c2bb476d4a65c6d9c05fdb9b3a1c6d4b9d892",
+  "prompts": {},
+  "sessions": {
+    "s_5aa74dc91f3857": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "824fa50b-c81a-453f-94e7-5b8c4c1fd034",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

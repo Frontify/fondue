@@ -1,0 +1,47 @@
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_53de767222940a::t_9eca436290904d 78
+packages/rich-text-editor/src/plugins/Mention/Mention.spec.ts
+  s_53de767222940a::t_1631f753f59ba2 91
+packages/rich-text-editor/src/plugins/Mention/helpers/display.ts
+  s_53de767222940a::t_0e1202e68b5795 7-9,11-13,15-17,19-21,31,33-35,43-45,48-61,64-81,85-86,92-105,109-110
+packages/rich-text-editor/src/plugins/Mention/helpers/display.spec.ts
+  s_53de767222940a::t_076f0ecf4d716b 65,70
+  s_53de767222940a::t_b1c97bc6e1a856 31-35
+packages/rich-text-editor/src/plugins/Mention/Mention.tsx
+  s_53de767222940a::t_9dd8d7505b4c3e 65
+  s_53de767222940a::t_e514ef1000106c 86-89
+  s_53de767222940a::t_6b680827d75d69 7
+  s_53de767222940a::t_2e51ad8ca341b4 21-22
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.tsx
+  s_53de767222940a::t_2bb4bcceafbbab 89-91
+  s_53de767222940a::t_fb0e9f516e11c0 15-17
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_53de767222940a::t_0091524068ffee 156
+  s_53de767222940a::t_c48d2e153415ab 145-147
+packages/rich-text-editor/src/plugins/shared/helpers/text.ts
+  s_53de767222940a::t_638d11a619a2ad 23-25
+packages/rich-text-editor/src/plugins/Mention/components/MentionLink.tsx
+  s_53de767222940a::t_954d101afec6ca 39
+  s_53de767222940a::t_e885afe4b5c3fa 7
+  s_53de767222940a::t_ee0f331d6ccd25 31-34
+packages/rich-text-editor/src/plugins/Mention/components/MentionLink.spec.tsx
+  s_53de767222940a::t_8eee4757ddecba 21
+packages/rich-text-editor/src/plugins/Mention/types.ts
+  s_53de767222940a::t_af0ea8efce647c 31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d142288277cfee8e74bf03bc1b728ad122fddd10",
+  "prompts": {},
+  "sessions": {
+    "s_53de767222940a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f9b7337-8455-4b7f-ac95-dde194f54be3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
