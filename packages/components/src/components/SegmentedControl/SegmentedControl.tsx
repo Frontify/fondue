@@ -35,7 +35,7 @@ export type SegmentedControlRootProps<TValue extends string = string> = {
      */
     hugWidth?: boolean;
     /**
-     * Height of the control. Small is 24px. Medium is 36px.
+     * The size of the segmented control.
      * @default 'medium'
      */
     size?: 'small' | 'medium';
