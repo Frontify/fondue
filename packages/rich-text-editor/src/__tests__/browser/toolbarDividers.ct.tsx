@@ -43,6 +43,15 @@ const rowOf = async (page: Page): Promise<Part[]> =>
         { separator: SEPARATOR, group: GROUP, slot: SLOT },
     );
 
+/** Whether every slot the toolbar draws (not `display: none`) has something in it. */
+const everyDrawnSlotHasContent = async (page: Page): Promise<boolean> =>
+    page.getByRole('toolbar').evaluate((toolbar, slotSelector) => {
+        const slots = [...toolbar.querySelectorAll(slotSelector)];
+        const drawn = slots.filter((slot) => getComputedStyle(slot).display !== 'none');
+
+        return drawn.every((slot) => slot.hasChildNodes());
+    }, SLOT);
+
 /** How many parts the toolbar draws in its row. */
 const rowLengthOf = async (page: Page): Promise<number> => {
     const row = await rowOf(page);
@@ -91,6 +100,15 @@ test.describe('toolbar dividers', () => {
         const row = await rowOf(page);
         expectDividersBetweenSections(row);
         expect(row[0]).toBe('group');
+    });
+
+    test('an empty control beside ones that draw takes no place in its group', async ({ mount, page }) => {
+        await mount(<ToolbarDividersHost placement="top" blankAt="beside" blankDraws={false} />);
+        await page.getByRole('textbox').getByText('Before').click();
+
+        await expect.poll(() => rowLengthOf(page)).toBeGreaterThan(1);
+        expectDividersBetweenSections(await rowOf(page));
+        expect(await everyDrawnSlotHasContent(page)).toBe(true);
     });
 
     test('a control that starts and stops drawing on its own gets and loses its group and divider', async ({

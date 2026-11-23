@@ -75,6 +75,9 @@ const BLANK_MIDDLE_PLUGINS = [...FORMATTING_PLUGINS, blankPlugin('insert'), pane
 /** The blank control in the last group of the toolbar. */
 const BLANK_LAST_PLUGINS = [...FORMATTING_PLUGINS, blankPlugin('insert')];
 
+/** The blank control in the lists group, beside the list plugins that draw. */
+const BLANK_BESIDE_PLUGINS = [...FORMATTING_PLUGINS, blankPlugin('lists')];
+
 type ToolbarDividersHostProps = {
     placement: NonNullable<RichTextEditorProps['toolbarPlacement']>;
     blankAt: BlankAt;
@@ -92,6 +95,9 @@ const pluginsFor = (blankAt: BlankAt) => {
         }
         case 'last': {
             return BLANK_LAST_PLUGINS;
+        }
+        case 'beside': {
+            return BLANK_BESIDE_PLUGINS;
         }
     }
 };
