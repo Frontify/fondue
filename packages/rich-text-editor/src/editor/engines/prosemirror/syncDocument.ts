@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ArrayChange, diffArrays } from 'diff';
 import { Mark, type Node as PmNode } from 'prosemirror-model';
 import { type Transaction } from 'prosemirror-state';
 
 import { setChangedAttributes } from './attributes';
 import { withoutDrafts } from './documentConversion';
-import { at, matchStretch, type Same } from './sequenceDiff';
 
 const graphemes = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 
@@ -26,10 +26,51 @@ const graphemeRemainder = (textblock: PmNode, offset: number): number => {
 /** Past this many children, a stretch is replaced whole but for the child holding the caret: each child synced is a step. */
 const PAIR_LIMIT = 100;
 
+/** Past this many inserted and removed children, two stretches are not matched up: matching costs the square of it. */
+const MATCH_LIMIT = 100;
+
+/** `items[index]`, which the caller has already bounded: a miss is a bug in the diff, not a case to handle. */
+const at = <T>(items: readonly T[], index: number): T => {
+    const item = items[index];
+    if (item === undefined) {
+        throw new Error(`No item at index ${index} of ${items.length}.`);
+    }
+
+    return item;
+};
+
+/** Index pairs of the unchanged children in `changes`, offset by `head` into the children. */
+const equalPairs = (changes: readonly ArrayChange<PmNode>[], head: number): [number, number][] => {
+    const pairs: [number, number][] = [];
+    let oldIndex = head;
+    let newIndex = head;
+
+    for (const change of changes) {
+        if (change.added) {
+            newIndex += change.count;
+            continue;
+        }
+
+        if (change.removed) {
+            oldIndex += change.count;
+            continue;
+        }
+
+        for (let offset = 0; offset < change.count; offset++) {
+            pairs.push([oldIndex + offset, newIndex + offset]);
+        }
+
+        oldIndex += change.count;
+        newIndex += change.count;
+    }
+
+    return pairs;
+};
+
 /** Index pairs of equal children, in order. A draft (an inline still being made) does not make a child differ. */
 const equalChildren = (before: readonly PmNode[], after: readonly PmNode[]): [number, number][] => {
     const comparable = before.map(withoutDrafts);
-    const same: Same = (i, j) => at(comparable, i).eq(at(after, j));
+    const same = (i: number, j: number): boolean => at(comparable, i).eq(at(after, j));
 
     // The shared start and end match directly, so only the changed stretch between them goes through the diff.
     let head = 0;
@@ -51,11 +92,12 @@ const equalChildren = (before: readonly PmNode[], after: readonly PmNode[]): [nu
         pairs.push([index, index]);
     }
 
-    const stretch = matchStretch(before.length - tail - head, after.length - tail - head, (x, y) =>
-        same(head + x, head + y),
-    );
-    for (const [x, y] of stretch) {
-        pairs.push([head + x, head + y]);
+    const changes = diffArrays(comparable.slice(head, before.length - tail), after.slice(head, after.length - tail), {
+        comparator: (left, right) => left.eq(right),
+        maxEditLength: MATCH_LIMIT,
+    });
+    if (changes !== undefined) {
+        pairs.push(...equalPairs(changes, head));
     }
 
     for (let offset = tail; offset > 0; offset--) {
