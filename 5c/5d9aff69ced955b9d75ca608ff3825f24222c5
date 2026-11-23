@@ -1,0 +1,38 @@
+packages/components/scripts/buildManifest/extractProps.ts
+  s_0c78ff5c576d6d::t_b75b33f9a9f59f 75-86,88
+  s_0c78ff5c576d6d::t_be023a684b3b99 21-23,40-72,143
+.changeset/components-manifest-shared-parsing.md
+  s_0c78ff5c576d6d::t_040c5bfde1c6c9 1-4
+packages/components/scripts/buildManifest/__tests__/extractProps.spec.ts
+  s_0c78ff5c576d6d::t_0e11b4d600ce9f 9,102,104
+.github/workflows/continuous-deployment.yaml
+  s_a47920858a4287::t_6b6bc92d0e0352 149
+.github/workflows/generate-tokens.yaml
+  s_a47920858a4287::t_ed5ff84991f206 24
+.github/workflows/icon-generation.yaml
+  s_a47920858a4287::t_326b2bb25c28d6 22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "5c5d9aff69ced955b9d75ca608ff3825f24222c5",
+  "prompts": {},
+  "sessions": {
+    "s_0c78ff5c576d6d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "81a33e14-ea9e-4419-a91f-21fae0f9e44d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_a47920858a4287": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f399058b-9e6e-4398-8cd1-af0d57a5de5d",
+        "model": "unknown"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

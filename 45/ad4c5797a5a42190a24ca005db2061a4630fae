@@ -1,0 +1,19 @@
+git-ai-bug-report.md
+  s_619093e29711c0::t_b79f0aea8aad26 1-100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.11",
+  "base_commit_sha": "45ad4c5797a5a42190a24ca005db2061a4630fae",
+  "prompts": {},
+  "sessions": {
+    "s_619093e29711c0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "79c608df-cc50-4980-919a-b0fd0f655617",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
