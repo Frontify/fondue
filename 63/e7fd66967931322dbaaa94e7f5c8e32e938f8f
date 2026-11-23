@@ -1,0 +1,19 @@
+packages/rich-text-editor/src/plugins/Table/table.module.scss
+  s_85c4dfd5b783db::t_ea3c3751c9a820 26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "63e7fd66967931322dbaaa94e7f5c8e32e938f8f",
+  "prompts": {},
+  "sessions": {
+    "s_85c4dfd5b783db": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f35ec565-8bbd-4269-a2d2-faec2c893de0",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

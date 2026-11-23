@@ -1,0 +1,98 @@
+packages/rich-text-editor/src/core/look.spec.ts
+  s_6513c7c173ff96::t_326cd368b887ad 30-61
+  s_6513c7c173ff96::t_b5957e1dd8ac73 5
+.changeset/rte-inline-style-export.md
+  s_6513c7c173ff96::t_ea144c7f4c39da 1-4
+packages/rich-text-editor/src/plugins/TextStyle/helpers/presets.ts
+  s_6513c7c173ff96::t_540ff4a4631724 3
+  s_6513c7c173ff96::t_61aed8ec9ada64 138
+  s_6513c7c173ff96::t_92a6a3616f9a24 20-116
+  s_6513c7c173ff96::t_05ef580c39f2d5 7-9,17
+packages/rich-text-editor/src/core/look.ts
+  s_6513c7c173ff96::t_90c568bb4d85ea 86-88
+  s_6513c7c173ff96::t_835d18202b7061 43,81-85,89-93,112
+  s_6513c7c173ff96::t_0072602520432f 3
+  s_6513c7c173ff96::t_5a70d06095bcbc 44-53,69,74-80,94-111
+packages/rich-text-editor/src/plugins/Paragraph/Paragraph.ts
+  s_6513c7c173ff96::t_a76f4a3b2ab5c3 31-32
+  s_6513c7c173ff96::t_feba1dbd528876 3-11
+packages/rich-text-editor/src/renderer/inlineLooks.spec.ts
+  s_6513c7c173ff96::t_8440e972517459 78-79,87
+  s_6513c7c173ff96::t_a9394e5f9ff882 1-4,7-23,31-77,80-86,88-89
+  s_6513c7c173ff96::t_2c21ef3967e40c 5-6
+  s_6513c7c173ff96::t_48ba329c8f16c5 24-30
+packages/rich-text-editor/src/core/index.ts
+  s_6513c7c173ff96::t_28b2a8f7cb0f5c 69-76
+  s_6513c7c173ff96::t_90c568bb4d85ea 25
+packages/rich-text-editor/src/index.ts
+  s_6513c7c173ff96::t_2c247800c47bcf 78-79
+packages/rich-text-editor/src/renderer/inlineLooks.ts
+  s_6513c7c173ff96::t_bba0c9423b21de 17
+  s_6513c7c173ff96::t_a33386dbe9e805 1-16,18-61
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_6513c7c173ff96::t_0cc5ceaf031df0 4,11,17
+  s_6513c7c173ff96::t_e979289282c3e8 16
+  s_6513c7c173ff96::t_549ae4a68a6912 90
+  s_6513c7c173ff96::t_ab73ffa8cb37f6 91-92,95-96,104
+  s_6513c7c173ff96::t_c81a7a9ba0ed96 93-94
+packages/rich-text-editor/src/renderer/serializeToHtml.ts
+  s_6513c7c173ff96::t_fc315cec895815 6,30,35-38,46-47,51,54-60,63-64
+  s_6513c7c173ff96::t_15af7e32b7f872 31-34,61-62
+  h_2139c5e5c94509 14
+  s_6513c7c173ff96::t_15005293ec2b70 5,9-13
+  s_6513c7c173ff96::t_e8b13392a3d598 65-68
+packages/rich-text-editor/src/core/registry.ts
+  s_6513c7c173ff96::t_a29dcf7b1e9d84 559
+  s_6513c7c173ff96::t_e01d9640f131e6 457
+  s_6513c7c173ff96::t_0bd37766918b07 11,31,588-589
+  s_6513c7c173ff96::t_4df1d510d5d226 635
+  s_6513c7c173ff96::t_98b4004110d6eb 150-153
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_6513c7c173ff96::t_2690dd8556bda9 3-9,11-12
+  s_6513c7c173ff96::t_2558e07609b03a 105-108
+  s_6513c7c173ff96::t_c4d9c7cab2e2ff 32-34
+  s_6513c7c173ff96::t_9e2b23aa9b3506 101-104,109
+  s_6513c7c173ff96::t_e6aa7e9c51c9e4 10
+packages/rich-text-editor/src/plugins/Quote/Quote.ts
+  s_6513c7c173ff96::t_cc6135b47cd9b1 5-12,14-15
+  s_6513c7c173ff96::t_a0e6b569417571 50-53
+  s_6513c7c173ff96::t_281ffc4d4b77ed 13
+  s_6513c7c173ff96::t_4cb13e28d4455c 46-49,54
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_6513c7c173ff96::t_2bae60c2a7ba24 364,367-368,371,373-390,392,394-402,404,406-408
+  s_6513c7c173ff96::t_5348652218bc0c 365-366,369-370,372,391,393,403,405
+  s_6513c7c173ff96::t_98d7309ce4c383 8
+packages/rich-text-editor/src/core/plugin.ts
+  s_6513c7c173ff96::t_f4b36a4f326607 46-49
+packages/rich-text-editor/src/__tests__/browser/HostStylingFixtures.tsx
+  s_6513c7c173ff96::t_818aa7880f0acd 17
+  s_6513c7c173ff96::t_f670369b1e1a0b 173-174
+  s_6513c7c173ff96::t_e5204d619b8b39 157-166,175-188
+  s_6513c7c173ff96::t_7688c915ccad15 124,127,129
+  s_6513c7c173ff96::t_e5b0584894f50e 167-172
+packages/rich-text-editor/src/__tests__/serializeToHtml.node.spec.tsx
+  s_6513c7c173ff96::t_fb59529d473d29 83-87,89-154,161-167,169-170,172-182
+  s_6513c7c173ff96::t_4b65df0935fb54 155-160
+  s_6513c7c173ff96::t_789ce7c45d886c 17,88
+  s_6513c7c173ff96::t_40c95ac8c2dae0 18-22
+  s_6513c7c173ff96::t_2558e07609b03a 168,171
+packages/rich-text-editor/src/renderer/documentTree.ts
+  s_6513c7c173ff96::t_a3aeb00234f955 284-296
+  s_6513c7c173ff96::t_4052637cc75791 283
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ec955053a284510087dc83d59bcfe6e341c69f5c",
+  "prompts": {},
+  "sessions": {
+    "s_6513c7c173ff96": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aece77c5-31e1-41b8-8f8c-d0099f17ec8b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": null
+    }
+  }
+}
