@@ -1,0 +1,43 @@
+packages/rich-text-editor/src/plugins/Link/helpers/policy.spec.ts
+  s_935e1dd1b8f324::t_dffa0d2b712a21 5,78,81-83,86-87,93,97,103-104
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.spec.tsx
+  s_935e1dd1b8f324::t_dffa0d2b712a21 30
+  s_935e1dd1b8f324::t_4d0d526217fd1a 37
+packages/rich-text-editor/src/plugins/Link/components/LinkToolbarButton.tsx
+  s_935e1dd1b8f324::t_9bc20ca51b557d 38
+packages/rich-text-editor/src/plugins/Link/helpers/strings.ts
+  s_935e1dd1b8f324::t_613ccebef12b6a 3-47
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.spec.tsx
+  s_935e1dd1b8f324::t_dffa0d2b712a21 44
+packages/rich-text-editor/src/plugins/Link/index.ts
+  s_935e1dd1b8f324::t_9bc20ca51b557d 3
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_935e1dd1b8f324::t_4d0d526217fd1a 240
+  s_935e1dd1b8f324::t_9bc20ca51b557d 11,21,26,28,47,61,63,238
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.tsx
+  s_935e1dd1b8f324::t_9bc20ca51b557d 9,17,22,24,27,29,184,193
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_935e1dd1b8f324::t_9bc20ca51b557d 15,17,158,174,226,228
+  s_935e1dd1b8f324::t_4d0d526217fd1a 234,238
+  s_935e1dd1b8f324::t_2bbefc699ff967 29,95,103,118,124,129,132,136-137,142
+packages/rich-text-editor/src/plugins/Link/helpers/policy.ts
+  s_935e1dd1b8f324::t_9bc20ca51b557d 5,92,96,105,107,113,116,119
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.tsx
+  s_935e1dd1b8f324::t_9bc20ca51b557d 10,74,112,151
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3dedacb28c48bec26a1ee6c1b3fd8997452426f3",
+  "prompts": {},
+  "sessions": {
+    "s_935e1dd1b8f324": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f0756eda-73ab-4c3d-9113-74844b0ee617",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

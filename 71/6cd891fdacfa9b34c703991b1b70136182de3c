@@ -1,0 +1,19 @@
+.changeset/rte-inline-style-export.md
+  s_d486ecb43c5b4c::t_476b3f6e0fd53b 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "716cd891fdacfa9b34c703991b1b70136182de3c",
+  "prompts": {},
+  "sessions": {
+    "s_d486ecb43c5b4c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a225ea0e-d11a-48c2-ac8f-86dd67c3a603",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

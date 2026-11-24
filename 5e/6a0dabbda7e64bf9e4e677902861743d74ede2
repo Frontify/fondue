@@ -1,0 +1,155 @@
+packages/components/src/components/SegmentedControl/styles/segmentedControl.module.scss
+  s_1a41a1a882a563::t_bbd3e2933cd1eb 43-52,53-60,66
+  s_1a41a1a882a563::t_05c082043b8e50 61-64
+  s_1a41a1a882a563::t_85ec5b0eb873ae 65
+packages/components/src/components/SegmentedControl/SegmentedControl.tsx
+  s_1a41a1a882a563::t_2d92537c64c2ea 37,39-41
+  s_1a41a1a882a563::t_d39db78e210d7d 77
+  s_1a41a1a882a563::t_374c1133dce37a 52
+  s_1a41a1a882a563::t_74ed86426e8042 38
+.changeset/segmented-control-small-size.md
+  s_1a41a1a882a563::t_762544788c0c5d 1-4
+  s_1a41a1a882a563::t_f131034aff21ef 5
+packages/components/src/components/SegmentedControl/SegmentedControl.stories.tsx
+  s_1a41a1a882a563::t_6bd0389a91a00f 29
+  s_1a41a1a882a563::t_d0a829e4caffe1 55-67
+packages/components/src/components/SegmentedControl/__tests__/SegmentedControl.ct.tsx
+  s_1a41a1a882a563::t_515f153ca39133 22-56
+packages/components/src/components/SegmentedControl/SegmentedControl.metadata.json
+  s_1a41a1a882a563::t_46be28fac4a1d7 4
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.ts
+  s_17e6325854cf61::t_134eb92951d1ab 7,21,84-85,156,167,174,185,189,191-192,194-195,197-202
+  s_17e6325854cf61::t_ec2a1a2321d4f8 203-204
+  s_17e6325854cf61::t_f00a5f1854b467 157,190
+  s_17e6325854cf61::t_38bc6052627a83 86,193,196
+  s_17e6325854cf61::t_4872cfb0c3806b 8,51-62
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.spec.tsx
+  s_17e6325854cf61::t_4edd068daf7280 83-89,91
+  s_17e6325854cf61::t_2a3551baa82e68 127-128,300,309
+  s_17e6325854cf61::t_ebe493286a4823 216-272
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_17e6325854cf61::t_caeffbd3e0f951 78-82
+  s_17e6325854cf61::t_4872cfb0c3806b 5-6,43,51,56-62,129-130,135-140,144-153,155,180,334,336-338,342,380-386,388-400,441,540-541,543-544,551-555,570,578-579,627-632,637,662-676,678-712,716-726,734-757
+packages/rich-text-editor/src/editor/engines/prosemirror/hostRecord.ts
+  s_17e6325854cf61::t_f38fc8f6a8c284 1-10,16-17,19-22,24-29,31-32,34,36-37,40-51,53-54,59-61
+  s_17e6325854cf61::t_060da0e3430558 11-14
+  s_17e6325854cf61::t_f00a5f1854b467 55-58
+  s_17e6325854cf61::t_38bc6052627a83 15,18,23,30,33,35,38-39,52
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_17e6325854cf61::t_7ff045400caa48 684-687,704,712-713,730-733,737-742
+  s_17e6325854cf61::t_4872cfb0c3806b 5,65-79,192-279,281-284
+  s_17e6325854cf61::t_5e7e56e9f81bf5 280,285
+.changeset/rte-host-value-reset.md
+  s_17e6325854cf61::t_6d18b5f100257d 1-5
+packages/rich-text-editor/src/__tests__/browser/MaxRowsFrame.module.scss
+  s_17e6325854cf61::t_4872cfb0c3806b 1-17
+packages/rich-text-editor/src/editor/components/EditorFallback.tsx
+  s_17e6325854cf61::t_4872cfb0c3806b 4,14-18,33
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_17e6325854cf61::t_4872cfb0c3806b 601-664
+packages/rich-text-editor/src/plugins/defaultContent.ts
+  s_17e6325854cf61::t_4872cfb0c3806b 24-25
+.changeset/rte-max-rows-keyboard-focus.md
+  s_17e6325854cf61::t_4872cfb0c3806b 1-5
+packages/rich-text-editor/src/__tests__/documentText.spec.ts
+  s_17e6325854cf61::t_4872cfb0c3806b 6,27-28
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_17e6325854cf61::t_4872cfb0c3806b 107,126,149,216,244,279,299
+packages/rich-text-editor/src/__tests__/serializeToHtml.spec.tsx
+  s_17e6325854cf61::t_4872cfb0c3806b 6,64-68,112-114,118-126
+packages/rich-text-editor/src/renderer/serializeToHtml.ts
+  s_17e6325854cf61::t_4872cfb0c3806b 13,34
+packages/components/src/components/Card/styles/card.module.scss
+  s_17e6325854cf61::t_4872cfb0c3806b 206-209
+.changeset/rte-text-style-list-keys.md
+  s_17e6325854cf61::t_4872cfb0c3806b 1-5
+packages/rich-text-editor/src/__tests__/parseHtml.spec.tsx
+  s_17e6325854cf61::t_4872cfb0c3806b 8,94,100-102
+packages/rich-text-editor/src/core/documentText.spec.ts
+  s_17e6325854cf61::t_4872cfb0c3806b 97-101,105,119-121,138-142
+packages/rich-text-editor/src/editor/hooks/useSelectionAnchor.ts
+  s_17e6325854cf61::t_4872cfb0c3806b 11-12,24-29,48-56
+  s_17e6325854cf61::t_6d64fd56a0d48f 57
+packages/rich-text-editor/src/renderer/RichTextRenderer.tsx
+  s_17e6325854cf61::t_4872cfb0c3806b 24,60
+.changeset/rte-required-and-status.md
+  s_17e6325854cf61::t_4872cfb0c3806b 1-5
+packages/components/src/components/Select/components/SelectBase.tsx
+  s_17e6325854cf61::t_4872cfb0c3806b 164-169,177,187-192,196-225,311
+packages/components/src/components/Select/__tests__/Select.ct.tsx
+  s_17e6325854cf61::t_4872cfb0c3806b 529,575-691
+.changeset/select-list-names-and-selection.md
+  s_17e6325854cf61::t_4872cfb0c3806b 1-5
+packages/rich-text-editor/src/__tests__/browser/axeScan.ts
+  s_17e6325854cf61::t_4872cfb0c3806b 1-17
+packages/rich-text-editor/src/core/documentText.ts
+  s_17e6325854cf61::t_4872cfb0c3806b 91,101
+packages/rich-text-editor/src/editor/richTextEditor.module.scss
+  s_17e6325854cf61::t_4872cfb0c3806b 13-15,34-41
+  s_17e6325854cf61::t_e3a3dbdb9c436b 42-43
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_17e6325854cf61::t_4872cfb0c3806b 37,113-114,974
+packages/rich-text-editor/src/editor/hooks/useToolbarRoving.ts
+  s_17e6325854cf61::t_4872cfb0c3806b 32-35,104-105,108-119,122,208-212
+  s_17e6325854cf61::t_76800f265c71ae 213
+packages/rich-text-editor/src/__tests__/browser/maxRowsValues.ts
+  s_17e6325854cf61::t_4872cfb0c3806b 1-33
+packages/rich-text-editor/src/editor/port.ts
+  s_17e6325854cf61::t_4872cfb0c3806b 28-30,41,58
+.changeset/rte-renderer-requires-plugins.md
+  s_17e6325854cf61::t_4872cfb0c3806b 1-5
+packages/rich-text-editor/src/__tests__/browser/maxRows.ct.tsx
+  s_17e6325854cf61::t_4872cfb0c3806b 1-362
+packages/components/src/components/Card/__tests__/Card.ct.tsx
+  s_17e6325854cf61::t_4872cfb0c3806b 611-733
+packages/rich-text-editor/src/editor/hooks/useEditorHandle.ts
+  s_17e6325854cf61::t_4872cfb0c3806b 30,138
+packages/components/src/components/Select/components/ComboboxBase.tsx
+  s_17e6325854cf61::t_4872cfb0c3806b 432
+packages/rich-text-editor/src/index.ts
+  s_17e6325854cf61::t_4872cfb0c3806b 64,68,70,74-76,80,83,85-86,91-94,101,111,113,115-116
+packages/rich-text-editor/src/editor/hooks/useKeyboardFocus.ts
+  s_17e6325854cf61::t_4872cfb0c3806b 1-64
+packages/components/src/components/Select/components/SelectMenu.tsx
+  s_17e6325854cf61::t_4872cfb0c3806b 9,81-85,101,135-136,151
+packages/rich-text-editor/README.md
+  s_17e6325854cf61::t_4872cfb0c3806b 13,17,21-23
+packages/rich-text-editor/src/__tests__/browser/editor.ct.tsx
+  s_17e6325854cf61::t_4872cfb0c3806b 4,6,8,11-12,344,365-389,419,425,494-599
+  s_17e6325854cf61::t_588eda1fc71364 600
+packages/rich-text-editor/src/editor/hooks/useKeyboardFocus.spec.tsx
+  s_17e6325854cf61::t_4872cfb0c3806b 1-188
+.changeset/card-banner-corner-transition.md
+  s_17e6325854cf61::t_4872cfb0c3806b 1-5
+packages/rich-text-editor/src/editor/parseHtml.ts
+  s_17e6325854cf61::t_4872cfb0c3806b 10,28
+packages/rich-text-editor/src/__tests__/rendererBundle.spec.ts
+  s_17e6325854cf61::t_4872cfb0c3806b 17,68-74
+  s_17e6325854cf61::t_9deb37a92a4d95 75-77
+packages/rich-text-editor/src/__tests__/browser/MaxRowsFrame.tsx
+  s_17e6325854cf61::t_4872cfb0c3806b 1-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5e6a0dabbda7e64bf9e4e677902861743d74ede2",
+  "prompts": {},
+  "sessions": {
+    "s_17e6325854cf61": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5dd182d0-d7de-40a0-8dd8-b9746fb93e26",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_1a41a1a882a563": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "0035fcef-10cb-42de-861a-e75a198f6e48",
+        "model": "grok-4.7"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
