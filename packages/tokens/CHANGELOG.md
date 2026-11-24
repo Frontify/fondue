@@ -1,5 +1,11 @@
 # @frontify/fondue-tokens
 
+## 6.0.0-rc.1
+
+### Patch Changes
+
+- [#3049](https://github.com/Frontify/fondue/pull/3049) [`697f5ad`](https://github.com/Frontify/fondue/commit/697f5ad3ed29ebd9e8338039707a4de9888f7ac0) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - Updated Tokens from Figma
+
 ## 6.0.0-rc.0
 
 ### Patch Changes

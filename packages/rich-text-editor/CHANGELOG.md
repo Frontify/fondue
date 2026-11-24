@@ -1,5 +1,43 @@
 # @frontify/fondue-rich-text-editor
 
+## 0.1.0-rc.2
+
+### Minor Changes
+
+- [#3077](https://github.com/Frontify/fondue/pull/3077) [`fd30c44`](https://github.com/Frontify/fondue/commit/fd30c4450cfb77bfa0c063e28bb1e1cd6df8e78d) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(RichTextEditor)!: translate the editor and its shipped plugins into the 11 Fondue languages. The editor speaks the language of `ThemeProvider`'s `locale`. A plugin `label` can be a function of the editor's language. The `labels` prop is removed
+
+- [#3091](https://github.com/Frontify/fondue/pull/3091) [`7e8cab8`](https://github.com/Frontify/fondue/commit/7e8cab85503ef706b46ede4c1b72e344736d097c) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(RichTextEditor): add `id`, set on the editable element (on the read-only view's root while read-only or showing its crash message), and `data-test-id`, set on the editor's root and defaulting to `fondue-rich-text-editor`.
+
+- [#3103](https://github.com/Frontify/fondue/pull/3103) [`8d5be35`](https://github.com/Frontify/fondue/commit/8d5be35210180c9ba62519d93b052be122a4a98c) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(RichTextEditor): add `maxRows` to cap the content at that many lines of body text, scrolling inside the editor with the toolbar staying in view, and set `data-keyboard-focus` on the editable's container while its text has keyboard focus (not a click), so a host box can draw Fondue's focus ring as Fondue's Textarea does
+
+- [#3098](https://github.com/Frontify/fondue/pull/3098) [`c95ae86`](https://github.com/Frontify/fondue/commit/c95ae86188922942674fbc382981c39f81a6ccd3) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(RichTextEditor)!: `RichTextRenderer`, `serializeToHtml`, `parseHtml` and `toPlainText` require `plugins` and no longer fall back to `defaultContent`, so a read-only view bundles only the plugins it passes. Pass `defaultContent` from `@frontify/fondue-rich-text-editor/plugins` to keep every shipped plugin. The editor still defaults to `defaultPlugins`.
+
+- [#3102](https://github.com/Frontify/fondue/pull/3102) [`1ccf04f`](https://github.com/Frontify/fondue/commit/1ccf04f4f42846da6403f526c2e9aee2ab8d8239) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(RichTextEditor): add `required` and `status` (`'neutral' | 'error'`), set as `aria-required` and `aria-invalid` on the editable element, and `aria-errormessage`, applied while `status` is `'error'`. The editor draws no border; the host draws the field's error look.
+
+- [#3034](https://github.com/Frontify/fondue/pull/3034) [`a6217b1`](https://github.com/Frontify/fondue/commit/a6217b17481a20eaf530aee759fe4bcfc21ad42a) Thanks [@jcosta33](https://github.com/jcosta33)! - refactor(RichTextEditor): the document spaces its blocks as a layout stack, whatever their tags, so a block from a new plugin gets the gap between blocks. A block that holds blocks spaces them itself with the `stack` mixin; list and to-do items keep theirs tight, and table cells use the document gap. Margins a block's look hands over through `--rte-own-margin-top` and `--rte-own-margin-bottom` still replace the gap.
+
+- [#3097](https://github.com/Frontify/fondue/pull/3097) [`a6693d1`](https://github.com/Frontify/fondue/commit/a6693d18439060546fed779248e303b26942af1b) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(RichTextEditor): tablePlugin adds an "Insert table" button to the toolbar; the button and the `/` entry are left out inside a table
+
+- [#3067](https://github.com/Frontify/fondue/pull/3067) [`c818a03`](https://github.com/Frontify/fondue/commit/c818a0336a7b15407302f682552e9a4cf45967f4) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(RichTextEditor)!: `textStyleContent` is now a function taking `{ look }`, so the renderer can draw the host's text looks without the text style plugin. Replace `textStyleContent` with `textStyleContent()`.
+
+### Patch Changes
+
+- [#3100](https://github.com/Frontify/fondue/pull/3100) [`5af8952`](https://github.com/Frontify/fondue/commit/5af89527bc62b334a7b4d2a92dea9ab65b077faa) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(RichTextEditor): announce the number of emoji search results
+
+- [#2926](https://github.com/Frontify/fondue/pull/2926) [`66a61e2`](https://github.com/Frontify/fondue/commit/66a61e2dbe2ec6b11b8e55f2aeda4cf48c8b1007) Thanks [@renovate](https://github.com/apps/renovate)! - chore(deps): update dependency prosemirror-view to v1.42.9
+
+- [#3115](https://github.com/Frontify/fondue/pull/3115) [`487d311`](https://github.com/Frontify/fondue/commit/487d3112e14537e077895a744feacb2138b69032) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(RichTextEditor): keep the content free of a focus outline in Firefox when the host's stylesheet styles `:-moz-focusring`, as Tailwind's preflight does
+
+- [#3032](https://github.com/Frontify/fondue/pull/3032) [`c071e21`](https://github.com/Frontify/fondue/commit/c071e2108b19b31e49dea5c3950fb9d79d2c1901) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(RichTextEditor): in the font colour flyout, Enter in any colour field saves, and the flyout opens on the first suggested colour
+
+- [#3110](https://github.com/Frontify/fondue/pull/3110) [`5e6a0da`](https://github.com/Frontify/fondue/commit/5e6a0dabbda7e64bf9e4e677902861743d74ede2) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(RichTextEditor): show a value the editor reported earlier, so Cancel restores the saved document
+
+- [#3094](https://github.com/Frontify/fondue/pull/3094) [`ff01a22`](https://github.com/Frontify/fondue/commit/ff01a2248dcecf7ab0ebfe8b57aa6452076807c7) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(RichTextEditor): read tables in stored HTML and pastes as tables when the table plugin is mounted
+
+- [#3101](https://github.com/Frontify/fondue/pull/3101) [`3693a48`](https://github.com/Frontify/fondue/commit/3693a48b6d54182e4a857123588b1c5a3bfd429d) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(RichTextEditor): leave Left and Right to the open Text style list, so they no longer apply a style and move focus out of the toolbar
+
+- [#3096](https://github.com/Frontify/fondue/pull/3096) [`a0fe11f`](https://github.com/Frontify/fondue/commit/a0fe11fdda122bceef518d3f76cc7c930b1328b0) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(RichTextEditor): find the editors in the table paste browser test by data-test-id
+
 ## 0.1.0-rc.1
 
 ### Minor Changes

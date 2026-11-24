@@ -1,5 +1,43 @@
 # @frontify/fondue-components
 
+## 37.0.0-rc.2
+
+### Minor Changes
+
+- [#3108](https://github.com/Frontify/fondue/pull/3108) [`e90d1bf`](https://github.com/Frontify/fondue/commit/e90d1bf5928b85014c35b825a216651b4ecfb85f) Thanks [@mnoleto](https://github.com/mnoleto)! - feat(Card): add `actionsVisibility` to `Card.Root`. Set it to `hover` to hide the `Card.Action` children until the card is hovered, has keyboard focus or has an open menu, so the title gets the full width. The default `always` keeps the current behaviour.
+
+- [#3084](https://github.com/Frontify/fondue/pull/3084) [`4f5626d`](https://github.com/Frontify/fondue/commit/4f5626d9639b4a81558c0c92119cddf1af566791) Thanks [@mikeyrayvon](https://github.com/mikeyrayvon)! - feat(RadioList): add a `pill` variant. `RadioList.Root variant="pill"` renders each `RadioList.RadioButton` as a pill with its children inside and a checkmark when selected. `RadioList.RadioButton` now renders its children.
+
+  ```tsx
+  <RadioList.Root
+    variant="pill"
+    aria-label="Page size"
+    value={size}
+    onValueChange={setSize}
+  >
+    <RadioList.RadioButton id="a4" value="a4">
+      A4 <Badge size="small">12</Badge>
+    </RadioList.RadioButton>
+    <RadioList.RadioButton id="letter" value="letter">
+      Letter
+    </RadioList.RadioButton>
+  </RadioList.Root>
+  ```
+
+- [#3106](https://github.com/Frontify/fondue/pull/3106) [`2809824`](https://github.com/Frontify/fondue/commit/2809824f273f4cbd1c4d8b109429076aaf4a3723) Thanks [@jcosta33](https://github.com/jcosta33)! - feat: add a small size to Segmented Control
+
+### Patch Changes
+
+- [#3112](https://github.com/Frontify/fondue/pull/3112) [`ab677bc`](https://github.com/Frontify/fondue/commit/ab677bc458458f81ed256d1367334fa1d30e2798) Thanks [@mnoleto](https://github.com/mnoleto)! - fix(Card): ease the banner corners with the hover background, so they no longer snap to square before the card is tinted
+
+- [#3107](https://github.com/Frontify/fondue/pull/3107) [`13a5be5`](https://github.com/Frontify/fondue/commit/13a5be559ec82d81270617911daa77676a634aed) Thanks [@mnoleto](https://github.com/mnoleto)! - fix(Card): keep the selection checkbox border when a card is selected, so the box and its check mark no longer move
+
+- [#3099](https://github.com/Frontify/fondue/pull/3099) [`a541057`](https://github.com/Frontify/fondue/commit/a541057c61d9e9803a21c9d4b89041a7f547af99) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(ColorPicker): explain an invalid hex value below the field and link it to the input
+
+- [#3093](https://github.com/Frontify/fondue/pull/3093) [`e737498`](https://github.com/Frontify/fondue/commit/e737498f217159d8e83fc0860e1d7469012f8dd1) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Label): focus a `contenteditable` `role="textbox"` target when the label is clicked
+
+- [#3101](https://github.com/Frontify/fondue/pull/3101) [`3693a48`](https://github.com/Frontify/fondue/commit/3693a48b6d54182e4a857123588b1c5a3bfd429d) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Select): open the list on the selected option, name the list from the trigger's `aria-label`, and drop the unnamed dialog around it
+
 ## 37.0.0-rc.1
 
 ### Patch Changes
