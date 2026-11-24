@@ -123,4 +123,53 @@ describe('Tag component', () => {
             expect(ref.current).toBe(tag);
         });
     });
+
+    it('should name the dismiss button with the translated label and the tag name', () => {
+        const { getByRole } = render(
+            <Tag aria-label={TAG_TEXT} onDismiss={vi.fn()}>
+                {TAG_TEXT}
+            </Tag>,
+        );
+
+        expect(getByRole('button', { name: `Dismiss ${TAG_TEXT}` })).toBeInTheDocument();
+    });
+
+    it('should name the add button with the translated label and the tag name', () => {
+        const { getByRole } = render(
+            <Tag aria-label={TAG_TEXT} onAddClick={vi.fn()}>
+                {TAG_TEXT}
+            </Tag>,
+        );
+
+        expect(getByRole('button', { name: `Add ${TAG_TEXT}` })).toBeInTheDocument();
+    });
+
+    it('should not leave a trailing space in the dismiss button name when the tag has no label', () => {
+        const { getByRole } = render(<Tag onDismiss={vi.fn()}>{TAG_TEXT}</Tag>);
+
+        expect(getByRole('button', { name: 'Dismiss' })).toHaveAttribute('aria-label', 'Dismiss');
+    });
+
+    it('should use dismissLabel as the dismiss button name and still call onDismiss', async () => {
+        const dismissListener = vi.fn();
+        const { getByRole } = render(
+            <Tag aria-label={TAG_TEXT} dismissLabel={`Remove link to ${TAG_TEXT}`} onDismiss={dismissListener}>
+                {TAG_TEXT}
+            </Tag>,
+        );
+
+        await userEvent.click(getByRole('button', { name: `Remove link to ${TAG_TEXT}` }));
+
+        expect(dismissListener).toHaveBeenCalledOnce();
+    });
+
+    it('should use addLabel as the add button name', () => {
+        const { getByRole } = render(
+            <Tag aria-label={TAG_TEXT} addLabel={`Link ${TAG_TEXT}`} onAddClick={vi.fn()}>
+                {TAG_TEXT}
+            </Tag>,
+        );
+
+        expect(getByRole('button', { name: `Link ${TAG_TEXT}` })).toBeInTheDocument();
+    });
 });
