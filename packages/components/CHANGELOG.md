@@ -1,5 +1,13 @@
 # @frontify/fondue-components
 
+## 37.0.0-rc.3
+
+### Patch Changes
+
+- [#2959](https://github.com/Frontify/fondue/pull/2959) [`64301ce`](https://github.com/Frontify/fondue/commit/64301ceb88436477fe8bf8d1243b11a68ca2019b) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): rebuild the tree when reorderable or multiSelect changes after mount
+
+  The tree is rebuilt when either prop changes, so internal focus and rename drafts reset while selection and expansion stay as passed in.
+
 ## 37.0.0-rc.2
 
 ### Minor Changes
