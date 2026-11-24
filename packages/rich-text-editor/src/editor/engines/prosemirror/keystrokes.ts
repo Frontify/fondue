@@ -1,29 +1,68 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { baseKeymap, chainCommands, setBlockType } from 'prosemirror-commands';
-import { history, redo, undo } from 'prosemirror-history';
-import { InputRule, inputRules, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
+import {
+    baseKeymap,
+    chainCommands,
+    createParagraphNear,
+    liftEmptyBlock,
+    newlineInCode,
+    setBlockType,
+    splitBlock,
+} from 'prosemirror-commands';
+import { history, redo } from 'prosemirror-history';
+import { InputRule, inputRules, undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
-import { type MarkType as PmMarkType, type Schema } from 'prosemirror-model';
-import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, type Transaction } from 'prosemirror-state';
+import { type Mark as PmMark, type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
+import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, TextSelection } from 'prosemirror-state';
+import { canJoin, findWrapping } from 'prosemirror-transform';
 
-import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
+import {
+    EDITOR_SHORTCUTS,
+    type EditorControlApi,
+    type HotkeyHandler,
+    INLINE_PLACEHOLDER,
+    isApplePlatform,
+    type PluginRegistry,
+    type RteInputRule,
+    WORD_START_CONTEXT,
+} from '#/core';
 
-import { keepCarriedAttrs } from './controlApi';
-import { valueAttrsFor } from './documentConversion';
-import { listKeys } from './lists';
+import { autolinkOnEnter, markPatternRule } from './autolink';
+import { keepCarriedAttrs, withCarriedAttrs } from './carriedAttrs';
+import { undoStep } from './controlApi';
+import { EXTRA_ATTR } from './documentConversion';
+import { gridEditing, gridKeys, hasGrids, outsideGrids } from './grid';
+import { deleteEmptyBlockBesideList, listKeys } from './lists';
+import {
+    isInExcludedMark,
+    type RuleContext,
+    type RuleHandler,
+    type RuleOfKind,
+    ruleContext,
+    toInputRule,
+    touchesExcludedMark,
+    unlessRangeHasExcludedMark,
+    withoutStateFlags,
+} from './ruleContext';
 
 /**
  * What happens when a key is pressed, as one ordered list of ProseMirror plugins.
  * Order is precedence: the first plugin to handle a key wins, so keep the list
  * in `keystrokePipeline` matching the numbers used below.
  *
+ * 0. Every handler below steps aside for keys that enter text rather than
+ *    command the editor (an input method's, AltGr combinations).
  * 1. Undo / redo, and Backspace right after a typing rewrite (takes the rewrite back).
- * 2. Feature hotkeys (Mod-b, ...). Before the list keys so a feature can take a
+ * 2. Enter and Shift-Enter link the address before the caret once the key has acted;
+ *    Backspace right after takes the link back.
+ * 3. Feature hotkeys (Mod-b, ...). Before the list keys so a feature can take a
  *    key lists would claim (`blurOnBreak` takes Enter).
- * 3. List keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
- * 4. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`).
- * 5. Baseline keymap, plus Backspace resetting an emptied first heading.
+ * 4. Grid keys, then list keys; each only when a grid or a list exists. Grid
+ *    keys come first, so Tab in a list inside a slot moves to the next slot.
+ * 5. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`); held until a composition ends.
+ * 6. Enter keeping the attributes every text block carries, then the baseline
+ *    keymap, plus Backspace resetting an emptied first heading, and Backspace
+ *    or Delete removing an empty line beside a list instead of wrapping it into the list.
  *
  * Mark input rules build their own transaction instead of calling
  * `api.marks.toggle`, because the input-rule machinery owns undo grouping.
@@ -31,27 +70,79 @@ import { listKeys } from './lists';
 
 export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api: EditorControlApi): PmPlugin[] => {
     const hasLists = registry.itemTypeByList.size > 0;
+    const { excludedMarks } = ruleContext(registry, schema);
+    const hasGrid = hasGrids(registry);
+    const lists = listKeys(api, registry.itemTypeByList);
+    const outdent = lists['Shift-Tab'];
+    // Shift-Tab in a grid's first slot goes to the browser, even from a list.
+    if (hasGrid && outdent !== undefined) {
+        lists['Shift-Tab'] = outsideGrids(outdent);
+    }
 
     return [
         // 1
         history(),
         keymap({
-            'Mod-z': chainCommands(undoInputRule, undo),
-            'Mod-y': redo,
-            'Mod-Shift-z': redo,
+            [EDITOR_SHORTCUTS.undo.key]: undoStep,
+            [EDITOR_SHORTCUTS.redo.key]: redo,
+            [EDITOR_SHORTCUTS.redoWithShift.key]: redo,
             Backspace: undoInputRule,
         }),
         // 2
-        keymap(featureHotkeys(registry.hotkeys, api)),
-        characterHotkeys(registry.hotkeys, api),
+        ...autolinkOnEnter(registry, schema),
         // 3
-        ...(hasLists ? [keymap(listKeys(api, registry.itemTypeByList))] : []),
+        keymap(featureHotkeys(registry.hotkeys, api)),
+        characterHotkeys(registry.hotkeys, excludedMarks, api),
         // 4
-        ...typingRewrites(registry, schema),
+        ...(hasGrid ? [gridKeys(), ...gridEditing()] : []),
+        ...(hasLists ? [keymap(lists)] : []),
         // 5
-        keymap({ Backspace: resetEmptyFirstBlock }),
+        ...typingRewrites(registry, schema),
+        // 6
+        keymap({
+            Backspace: chainCommands(
+                resetEmptyFirstBlock,
+                deleteEmptyBlockBesideList(registry.itemTypeByList, 'backward'),
+            ),
+            Delete: deleteEmptyBlockBesideList(registry.itemTypeByList, 'forward'),
+            Enter: splitKeepingCarriedAttrs(registry),
+        }),
         keymap(baseKeymap),
-    ];
+    ].map(ignoringTextEntryKeys);
+};
+
+// Text entry keys
+
+// A Mac has no AltGr key, yet Firefox on macOS reports Option as AltGraph.
+/**
+ * A key an input method or an AltGr combination sends is text, not a command:
+ * Enter that commits a composition must not split the block, and AltGr+q (`@` on
+ * a German layout, Ctrl+Alt on Windows) must not run a Mod-Alt hotkey.
+ */
+const isTextEntryKey = (event: KeyboardEvent): boolean =>
+    // `keyCode` 229 marks the input method's keydowns that `isComposing` misses, just before and after a composition.
+    event.isComposing ||
+    event.keyCode === 229 ||
+    (!isApplePlatform() && (event.getModifierState?.('AltGraph') ?? false)); // NOSONAR
+
+/**
+ * The plugin with its key handler skipping those keys. It declines them rather
+ * than claiming them: a claimed keydown is `preventDefault`ed, which would stop
+ * the browser from typing the character.
+ */
+const ignoringTextEntryKeys = (plugin: PmPlugin): PmPlugin => {
+    const { handleKeyDown } = plugin.props;
+    if (!handleKeyDown) {
+        return plugin;
+    }
+    return new Plugin({
+        ...plugin.spec,
+        props: {
+            ...plugin.props,
+            // ProseMirror itself calls this with plain `Event`s for Android's Enter and Backspace.
+            handleKeyDown: (view, event) => !isTextEntryKey(event) && handleKeyDown.call(plugin, view, event),
+        },
+    });
 };
 
 // Feature hotkeys
@@ -70,15 +161,16 @@ const featureHotkeys = (hotkeys: PluginRegistry['hotkeys'], api: EditorControlAp
             .map(([keys, handlers]): [string, Command] => [keys, () => runUntilHandled(handlers, api)]),
     );
 
-const WORD_BOUNDARY_BEFORE = /[\s([{<'"“‘]/;
+// An inline element is a word start here, so `@name` fires after a soft break; it cannot yet tell a mention from a soft break.
+const WORD_BOUNDARY_BEFORE = new RegExp(`[${WORD_START_CONTEXT}${INLINE_PLACEHOLDER}]`);
 
-/** The start of the block, or after whitespace or opening punctuation. An inline element counts as a space. */
+/** The start of the block, or after whitespace, opening punctuation or an inline element. */
 const isAtWordStart = (state: EditorState, from: number): boolean => {
     const $from = state.doc.resolve(from);
     if ($from.parentOffset === 0) {
         return true;
     }
-    const before = $from.parent.textBetween($from.parentOffset - 1, $from.parentOffset, undefined, ' ');
+    const before = $from.parent.textBetween($from.parentOffset - 1, $from.parentOffset, undefined, INLINE_PLACEHOLDER);
     return WORD_BOUNDARY_BEFORE.test(before);
 };
 
@@ -86,46 +178,89 @@ const isAtWordStart = (state: EditorState, from: number): boolean => {
  * Character hotkeys fire on the character being TYPED, not on the keys pressed
  * (on a Swiss Mac `@` is Option-G, which a keymap would read as `Alt-@`). They
  * only fire at a word start: `@` in `noah@frontify.com` is not a mention.
+ * Text carrying a mark that opts out of rules (inline code) is typed as is.
  */
-const characterHotkeys = (hotkeys: PluginRegistry['hotkeys'], api: EditorControlApi): PmPlugin =>
-    new Plugin({
+const characterHotkeys = (
+    hotkeys: PluginRegistry['hotkeys'],
+    excludedMarks: readonly PmMarkType[],
+    api: EditorControlApi,
+): PmPlugin => {
+    return new Plugin({
         props: {
             handleTextInput: (view, from, _to, text) => {
                 // Mid-composition the character is not typed yet: the IME owns it.
                 if (view.composing) {
                     return false;
                 }
-                const handlers = isCharacterHotkey(text) ? hotkeys.get(text) : undefined;
-                return handlers && isAtWordStart(view.state, from) ? runUntilHandled(handlers, api) : false;
+                if (!isCharacterHotkey(text)) {
+                    return false;
+                }
+                const handlers = hotkeys.get(text);
+                if (!handlers || !isAtWordStart(view.state, from)) {
+                    return false;
+                }
+                if (isInExcludedMark(view.state, excludedMarks, from)) {
+                    return false;
+                }
+                return runUntilHandled(handlers, api);
             },
         },
     });
+};
 
 // Typing rewrites: one function per `RteInputRule` kind
 //
 // Each `xxxRule` turns a declared rule into an engine `InputRule`, or `null`
 // when it names a mark or block no mounted feature provides.
 
-type RuleHandler = (state: EditorState, match: RegExpMatchArray, start: number, end: number) => Transaction | null;
-type RulePattern = { pattern: RegExp; handler: RuleHandler };
-
-/** What every kind's translation needs: the schema, the registry, and the marks that opt out of rules. */
-type RuleContext = {
-    schema: Schema;
-    registry: PluginRegistry;
-    excludedMarks: readonly PmMarkType[];
-};
-
 const typingRewrites = (registry: PluginRegistry, schema: Schema): PmPlugin[] => {
-    const excludedMarks = [...registry.marks]
-        .filter(([, definition]) => definition.excludesInputRules === true)
-        .flatMap(([type]) => schema.marks[type] ?? []);
-    const context: RuleContext = { schema, registry, excludedMarks };
+    const context = ruleContext(registry, schema);
     // The registry orders rules longest delimiter first; otherwise `**bold**`
     // reads as an italic `*` wrapping `*bold*`.
     const rules = registry.inputRules.flatMap((rule) => toEngineRule(rule, context) ?? []);
 
-    return rules.length > 0 ? [inputRules({ rules })] : [];
+    return rules.length > 0 ? [rewritingOnlyComposedText(inputRules({ rules }))] : [];
+};
+
+/**
+ * The rules run again when a composition ends, so mobile keyboards, which
+ * compose ordinary typing, still get them. That run is skipped when the
+ * composition left the document as it was: a keyboard recomposing the word
+ * before the caret would otherwise redo a rewrite Backspace just took back.
+ * This replaces the engine's own run, which waits a second timeout an unmount
+ * can fall between. The plugin is edited in place: its undo bookkeeping is
+ * keyed by the instance.
+ */
+const rewritingOnlyComposedText = (plugin: PmPlugin): PmPlugin => {
+    const runRules = plugin.props.handleTextInput;
+    if (!runRules) {
+        return plugin;
+    }
+    let docAtStart: PmNode | null = null;
+    plugin.props.handleDOMEvents = {
+        ...plugin.props.handleDOMEvents,
+        compositionstart: (view) => {
+            docAtStart = view.state.doc;
+            return false;
+        },
+        compositionend: (view) => {
+            // Taken now: the next composition can start before the timeout runs.
+            const started = docAtStart;
+            // The last composed characters can land after `compositionend`.
+            setTimeout(() => {
+                if (view.isDestroyed || (started && view.state.doc.eq(started))) {
+                    return;
+                }
+                const { selection } = view.state;
+                if (selection instanceof TextSelection && selection.$cursor) {
+                    const { pos } = selection.$cursor;
+                    runRules.call(plugin, view, pos, pos, '', () => view.state.tr);
+                }
+            });
+            return false;
+        },
+    };
+    return plugin;
 };
 
 const toEngineRule = (rule: RteInputRule, context: RuleContext): InputRule | null => {
@@ -148,22 +283,22 @@ const toEngineRule = (rule: RteInputRule, context: RuleContext): InputRule | nul
     }
 };
 
-type RuleOfKind<Kind extends RteInputRule['kind']> = Extract<RteInputRule, { kind: Kind }>;
+/**
+ * A character that glues a closing delimiter to what follows it: a letter, digit, underscore or full stop.
+ */
+const GLUING_CHARACTER = /[\p{L}\p{N}_.]/u;
+
+/**
+ * Whether the text right after `pos` starts with a character that glues it to the word before.
+ */
+const isGluedAfter = (state: EditorState, pos: number): boolean => {
+    const $pos = state.doc.resolve(pos);
+    const { parent, parentOffset } = $pos;
+    const next = parent.textBetween(parentOffset, Math.min(parentOffset + 1, parent.content.size), '', ' ');
+    return GLUING_CHARACTER.test(next);
+};
 
 const escapeForRegExp = (text: string): string => text.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-/** Text carrying a mark that opts out (inline code) is typed as is: the rule steps aside. */
-const unlessInExcludedMark =
-    (excluded: readonly PmMarkType[], handler: RuleHandler): RuleHandler =>
-    (state, match, start, end) => {
-        const marks = state.storedMarks ?? state.doc.resolve(end).marks();
-        return excluded.some((markType) => markType.isInSet(marks)) ? null : handler(state, match, start, end);
-    };
-
-const withoutStateFlags = (pattern: RegExp): string => pattern.flags.replaceAll(/[gy]/g, '');
-
-const toInputRule = ({ pattern, handler }: RulePattern, { excludedMarks }: RuleContext): InputRule =>
-    new InputRule(pattern, unlessInExcludedMark(excludedMarks, handler));
 
 /** `**bold**` -> a bold mark over `bold`. The engine ships block and text rules but no mark rule. */
 const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | null => {
@@ -176,82 +311,40 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
     const firstChar = escapeForRegExp(delimiter.charAt(0));
     // The character before the opening delimiter must not be the delimiter
     // itself, or typing `**bold**` fires the italic rule on `**bold*` first.
-    const pattern = new RegExp(`(?:^|[^${firstChar}])${escaped}([^${firstChar}]+)${escaped}$`);
+    let before = `[^${firstChar}]`;
+    if (rule.wordBounded === true) {
+        before = `[${WORD_START_CONTEXT}]`;
+    }
+    const pattern = new RegExp(`(?:^|${before})${escaped}([^${firstChar}]+)${escaped}$`);
 
     const handler: RuleHandler = (state, match, start, end) => {
         const content = match[1];
         if (!content) {
             return null;
         }
-        // The match may include that preceding character. Derive the opening
-        // delimiter from `start`: `end` is where the just-typed character will
-        // land, so the closing delimiter is still one character short.
+        if (rule.wordBounded === true && isGluedAfter(state, end)) {
+            return null;
+        }
+        // The match may include that preceding character. Derive every position
+        // from `start`: the closing delimiter's last character is still to come
+        // while typing, but already in the document after a composition.
         const leading = match[0].length - (delimiter.length * 2 + content.length);
         const from = start + leading;
         const contentFrom = from + delimiter.length;
-        const contentTo = end - (delimiter.length - 1);
+        const contentTo = contentFrom + content.length;
+        // Content may carry an excluded mark; the delimiters the rule deletes may not.
+        if (
+            touchesExcludedMark(state, context.excludedMarks, from, contentFrom) ||
+            touchesExcludedMark(state, context.excludedMarks, contentTo, end)
+        ) {
+            return null;
+        }
         // Only the delimiters go, closing first so the opening one's position
         // holds: the content stays as it is, inline elements and marks included.
         return state.tr
             .delete(contentTo, end)
             .delete(from, contentFrom)
             .addMark(from, contentTo - delimiter.length, markType.create())
-            .removeStoredMark(markType);
-    };
-    return toInputRule({ pattern, handler }, context);
-};
-
-/** Punctuation that ends a sentence rather than a link, though a link may contain it. */
-const TRAILING_PUNCTUATION = /[.,;:!?]+$/;
-
-const count = (text: string, character: string): number => text.split(character).length - 1;
-
-/** Drops trailing punctuation, and a trailing `)` only while it has no `(` to close. */
-const trimTrailingPunctuation = (address: string): string => {
-    let trimmed = address;
-    for (;;) {
-        const next = trimmed.replace(TRAILING_PUNCTUATION, '');
-        const unbalanced = next.endsWith(')') && count(next, ')') > count(next, '(');
-        if (!unbalanced && next === trimmed) {
-            return trimmed;
-        }
-        trimmed = unbalanced ? next.slice(0, -1) : next;
-    }
-};
-
-/**
- * `https://example.com ` -> the address carries the mark, the space does not.
- * Punctuation right before the space is left out of the mark. A token that
- * already carries the mark, or one that opts out of rules, stays as typed.
- */
-const markPatternRule = (rule: RuleOfKind<'markPattern'>, context: RuleContext): InputRule | null => {
-    const markType = context.schema.marks[rule.mark];
-    if (!markType) {
-        return null;
-    }
-    const flags = withoutStateFlags(rule.pattern);
-    const token = new RegExp(`^(?:${rule.pattern.source})$`, flags);
-    const pattern = new RegExp(`(?:^|\\s)((?:${rule.pattern.source}))\\s$`, flags);
-
-    const handler: RuleHandler = (state, match, start, end) => {
-        const typed = match[1];
-        if (!typed) {
-            return null;
-        }
-        const linked = trimTrailingPunctuation(typed);
-        if (!token.test(linked)) {
-            return null;
-        }
-        // The match is the token plus the space being typed (not in the
-        // document yet), and maybe the whitespace before the token.
-        const from = start + (match[0].length - 1 - typed.length);
-        const to = from + linked.length;
-        if ([markType, ...context.excludedMarks].some((type) => state.doc.rangeHasMark(from, to, type))) {
-            return null;
-        }
-        return state.tr
-            .addMark(from, to, markType.create(valueAttrsFor(rule.value(linked))))
-            .insert(end, state.schema.text(' '))
             .removeStoredMark(markType);
     };
     return toInputRule({ pattern, handler }, context);
@@ -278,28 +371,193 @@ const blockRule = (rule: RuleOfKind<'block'>, { schema, registry }: RuleContext)
     });
 };
 
-/** `- ` at the start of a block wraps it in a list. */
+/** `- ` at the start of a block wraps it in a list, its new item carrying `itemAttributes`. */
 const listRule = (rule: RuleOfKind<'list'>, { schema, registry }: RuleContext): InputRule | null => {
     const listType = schema.nodes[rule.list];
-    return listType && registry.itemTypeByList.has(rule.list)
-        ? wrappingInputRule(new RegExp(`^${escapeForRegExp(rule.match)}$`), listType)
-        : null;
+    const itemName = registry.itemTypeByList.get(rule.list);
+    if (!listType || itemName === undefined) {
+        return null;
+    }
+    const pattern = new RegExp(`^${escapeForRegExp(rule.match)}$`);
+    const { itemAttributes } = rule;
+    // The engine's `wrappingInputRule` cannot set attributes on the item, so it is repeated here with them.
+    return new InputRule(pattern, (state, _match, start, end) => {
+        const transaction = state.tr.delete(start, end);
+        const range = transaction.doc.resolve(start).blockRange();
+        if (!range) {
+            return null;
+        }
+        const wrapping = findWrapping(range, listType);
+        if (!wrapping) {
+            return null;
+        }
+        const wrappers = wrapping.map((wrapper) => {
+            if (itemAttributes && wrapper.type.name === itemName) {
+                return { ...wrapper, attrs: itemAttributes };
+            }
+            return wrapper;
+        });
+        transaction.wrap(range, wrappers);
+        const before = transaction.doc.resolve(start - 1).nodeBefore;
+        if (before?.type === listType && canJoin(transaction.doc, start - 1)) {
+            transaction.join(start - 1);
+        }
+        return transaction;
+    });
+};
+
+/**
+ * Matches right at the caret.
+ */
+const AT_CARET = '$';
+
+/**
+ * Matches one character before the caret, the one that was just typed.
+ */
+const ONE_CHARACTER_BEFORE_CARET = String.raw`[\s\S]${AT_CARET}`;
+
+/**
+ * Matches a `$1`-style reference to a group of the rule's pattern. Not `$0`: a rule that waits for
+ * the run to end matches the ending character too, so the whole match would repeat it.
+ */
+const GROUP_REFERENCE = /\$([1-9])/g;
+
+/**
+ * A rule's `match` as a pattern anchored to the end of the text before the caret, then `suffix`.
+ * @param suffix - pattern source appended after the anchored match
+ */
+const textPattern = (match: string | RegExp, suffix: string): RegExp => {
+    if (typeof match === 'string') {
+        return new RegExp(`${escapeForRegExp(match)}${suffix}`);
+    }
+    return new RegExp(`(?:${match.source})${suffix}`, withoutStateFlags(match));
+};
+
+/**
+ * How many capturing groups a pattern has, read from a match of an empty alternative, which always matches.
+ */
+const groupCount = (pattern: RegExp): number => {
+    const empty = new RegExp(`${pattern.source}|`, withoutStateFlags(pattern)).exec('');
+    if (empty === null) {
+        throw new Error(`Text rule ${String(pattern)} could not be read.`);
+    }
+    return empty.length - 1;
+};
+
+/**
+ * A rule's replacement for what it found. `$1` stands for the first group of a pattern; a string
+ * `match` has none, so its `replace` is taken as written. A reference to a group the pattern does
+ * not have throws when the editor is built, not at the keystroke.
+ */
+const replacementOf = ({ match, replace }: RuleOfKind<'text'>): ((found: RegExpMatchArray) => string) => {
+    if (typeof match === 'string') {
+        return () => replace;
+    }
+    const groups = groupCount(match);
+    for (const [reference, group] of replace.matchAll(GROUP_REFERENCE)) {
+        if (Number(group) > groups) {
+            throw new Error(`Text rule ${String(match)} replaces with "${reference}", but has ${groups} group(s).`);
+        }
+    }
+    // A group that took no part in the match stands for nothing, as in `String.prototype.replace`.
+    return (found) => replace.replaceAll(GROUP_REFERENCE, (_, group: string) => found[Number(group)] ?? '');
+};
+
+/**
+ * The marks typed text gets: stored marks first, so a mark toggled off just before typing stays off.
+ */
+const typingMarks = (state: EditorState): readonly PmMark[] => state.storedMarks ?? state.selection.$from.marks();
+
+/**
+ * The marks of the first character from `start` that lies before the selection, kept by a
+ * replacement even where a mark such as a link ends there. Typing marks otherwise, so text typed
+ * over a selection does not take the selected text's marks.
+ */
+const replacedMarks = (state: EditorState, start: number, end: number): readonly PmMark[] => {
+    const first = start < Math.min(end, state.selection.from) ? state.doc.nodeAt(start) : null;
+    if (first === null) {
+        return typingMarks(state);
+    }
+    return first.marks;
 };
 
 /** `->` -> `→`. The replacement carries the marks the matched text did. */
 const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
-    const { match, replace } = rule;
-    const pattern =
-        typeof match === 'string'
-            ? new RegExp(`${escapeForRegExp(match)}$`)
-            : new RegExp(`(?:${match.source})$`, withoutStateFlags(match));
-    // `end` is where the just-typed character will land: it is in the match
-    // but not the document yet, so replacing up to `end` swaps all of it.
-    const handler: RuleHandler = (state, _match, start, end) => state.tr.insertText(replace, start, end);
-    return toInputRule({ pattern, handler }, context);
+    if (rule.waitForRunEnd) {
+        return runEndTextRule(rule, context);
+    }
+    const replacement = replacementOf(rule);
+    const pattern = textPattern(rule.match, AT_CARET);
+    // `start` to `end` is the part of the match in the document: replacing it swaps all of it, typed character or not.
+    const handler: RuleHandler = (state, found, start, end) =>
+        state.tr.replaceWith(start, end, state.schema.text(replacement(found), replacedMarks(state, start, end)));
+    return toInputRule({ pattern, handler: unlessRangeHasExcludedMark(context.excludedMarks, handler) }, context);
+};
+
+/**
+ * The characters that end a run unless the rule says otherwise: whitespace and sentence punctuation. Not
+ * quotes: one may close the quotation the run sits in, as in `"wait --"`.
+ */
+const DEFAULT_RUN_END = /[\s,;:!?)\]}…]/;
+
+/**
+ * `--` becomes a dash once a character that ends the run is typed, which stays.
+ */
+const runEndTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
+    const replacement = replacementOf(rule);
+    const endsRun = rule.runEnd ?? DEFAULT_RUN_END;
+    const pattern = textPattern(rule.match, ONE_CHARACTER_BEFORE_CARET);
+    const handler: RuleHandler = (state, found, start, end) => {
+        const typed = found[0].slice(-1);
+        if (!endsRun.test(typed)) {
+            return null;
+        }
+        const runEnd = start + found[0].length - typed.length;
+        const replaced = replacedMarks(state, start, runEnd);
+        // After a composition the ending character is already in the document: only the run before it is replaced.
+        if (state.selection.empty && runEnd + typed.length === end) {
+            return state.tr.replaceWith(start, runEnd, state.schema.text(replacement(found), replaced));
+        }
+        // While typing the ending character is still to come, and it carries the marks typing carries.
+        return state.tr.replaceWith(start, end, [
+            state.schema.text(replacement(found), replaced),
+            state.schema.text(typed, typingMarks(state)),
+        ]);
+    };
+    return toInputRule({ pattern, handler: unlessRangeHasExcludedMark(context.excludedMarks, handler) }, context);
 };
 
 // Baseline
+
+/** The engine's split drops alignment on the paragraph after a block's end and on the empty block above a heading's start. */
+const splitKeepingCarriedAttrs =
+    (registry: PluginRegistry): Command =>
+    (state, dispatch) => {
+        // Over a range the text that stays is the block the range ends in, so that block decides.
+        const source = state.selection.$to.parent;
+        const split: Command = (splitState, splitDispatch) => {
+            if (!splitDispatch) {
+                return splitBlock(splitState);
+            }
+            return splitBlock(splitState, (transaction) => {
+                const { $from } = transaction.selection;
+                const below = $from.parent;
+                const above = transaction.doc.resolve($from.before()).nodeBefore;
+                const belowAttrs = withCarriedAttrs(registry, below, source);
+                if (belowAttrs) {
+                    transaction.setNodeMarkup($from.before(), undefined, belowAttrs);
+                }
+                if (above?.isTextblock) {
+                    const aboveAttrs = withCarriedAttrs(registry, above, source);
+                    if (aboveAttrs) {
+                        transaction.setNodeMarkup($from.before() - above.nodeSize, undefined, aboveAttrs);
+                    }
+                }
+                splitDispatch(transaction);
+            });
+        };
+        return chainCommands(newlineInCode, createParagraphNear, liftEmptyBlock, split)(state, dispatch);
+    };
 
 /**
  * Backspace in an emptied block at the very top that is not the default block
@@ -315,5 +573,6 @@ const resetEmptyFirstBlock: Command = (state, dispatch) => {
     if (!block.isTextblock || block.content.size > 0 || block.type === paragraph) {
         return false;
     }
-    return setBlockType(paragraph)(state, dispatch);
+    // A plain paragraph, but its undeclared stored keys stay: the block is still there.
+    return setBlockType(paragraph, { [EXTRA_ATTR]: block.attrs[EXTRA_ATTR] as unknown })(state, dispatch);
 };

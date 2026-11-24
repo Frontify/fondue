@@ -35,6 +35,7 @@ import {
     CardThumbnailIcon,
     CardThumbnailImage,
     CardTitle,
+    type CardActionsVisibility,
     type CardBannerFit,
     type CardBannerImagePadding,
 } from './Card';
@@ -148,13 +149,15 @@ type BannerDescriptionDemoProps = {
     description: string;
     title: string;
     banner: 'icon' | 'image' | 'small';
+    selectable?: boolean;
 };
 
-const BannerDescriptionDemo = ({ description, title, banner }: BannerDescriptionDemoProps) => {
+const BannerDescriptionDemo = ({ description, title, banner, selectable = true }: BannerDescriptionDemoProps) => {
     const [selected, setSelected] = useState(false);
+    const selectionProps = selectable ? { selected, onSelect: () => setSelected((s) => !s) } : {};
 
     return (
-        <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
+        <Card.Root href="#" {...selectionProps}>
             <Card.Banner size={banner === 'small' ? 'small' : 'large'}>
                 {banner === 'image' ? (
                     <Card.BannerImage src="https://picsum.photos/seed/card-description/400/200" alt="" fit="cover" />
@@ -190,6 +193,49 @@ const BannerDescriptionDemo = ({ description, title, banner }: BannerDescription
         </Card.Root>
     );
 };
+
+type ActionsVisibilityDemoProps = { actionsVisibility: CardActionsVisibility; title: string };
+
+const ActionsVisibilityDemo = ({ actionsVisibility, title }: ActionsVisibilityDemoProps) => {
+    const [selected, setSelected] = useState(false);
+
+    return (
+        <Card.Root
+            href="#"
+            selected={selected}
+            onSelect={() => setSelected((s) => !s)}
+            actionsVisibility={actionsVisibility}
+        >
+            <Card.Banner>
+                <Card.BannerImage src="https://picsum.photos/seed/card-actions/400/300" alt="" />
+            </Card.Banner>
+
+            <Card.Title>{title}</Card.Title>
+            <Card.Description>{`actionsVisibility="${actionsVisibility}"`}</Card.Description>
+
+            <Card.Action>
+                <Card.ActionButton aria-label="Settings">
+                    <IconCog size={20} />
+                </Card.ActionButton>
+            </Card.Action>
+            <Card.Action>
+                <Dropdown.Root>
+                    <Dropdown.Trigger>
+                        <Card.ActionButton aria-label="More actions">
+                            <IconDotsVertical size={20} />
+                        </Card.ActionButton>
+                    </Dropdown.Trigger>
+                    <Dropdown.Content>
+                        <Dropdown.Item onSelect={() => {}}>Edit</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Delete</Dropdown.Item>
+                    </Dropdown.Content>
+                </Dropdown.Root>
+            </Card.Action>
+        </Card.Root>
+    );
+};
+
+const ACTIONS_LONG_TITLE = 'Summer campaign hero image final approved version.jpg';
 
 const BannerToneDimComparison = () => {
     const [selectedDefault, setSelectedDefault] = useState(false);
@@ -465,11 +511,13 @@ export const BannerDescription: StoryObj<BannerDescriptionDemoProps> = {
     },
     argTypes: {
         banner: { control: 'inline-radio', options: ['icon', 'image', 'small'] },
+        selectable: { control: 'boolean' },
     },
     args: {
         description: LONG_DESCRIPTION,
         title: 'Folder',
         banner: 'icon',
+        selectable: true,
     },
     render: (args) => <BannerDescriptionDemo {...args} />,
 };
@@ -481,7 +529,8 @@ export const BannerDescriptionVariants: Story = {
             description: {
                 story:
                     'Long text is clamped, short text is centred below the selection checkbox, image banners are ' +
-                    'covered, and small banners offset the text past the checkbox. The last card has no description.',
+                    'covered, and small banners offset the text past the checkbox. Cards without selection centre ' +
+                    'the text in the whole banner. The last card has no description.',
             },
         },
     },
@@ -491,7 +540,58 @@ export const BannerDescriptionVariants: Story = {
             <BannerDescriptionDemo banner="icon" title="Short description" description={SHORT_DESCRIPTION} />
             <BannerDescriptionDemo banner="image" title="Over an image" description={SHORT_DESCRIPTION} />
             <BannerDescriptionDemo banner="small" title="Small banner" description={LONG_DESCRIPTION} />
+            <BannerDescriptionDemo
+                banner="icon"
+                title="Long, without selection"
+                description={LONG_DESCRIPTION}
+                selectable={false}
+            />
+            <BannerDescriptionDemo
+                banner="icon"
+                title="Short, without selection"
+                description={SHORT_DESCRIPTION}
+                selectable={false}
+            />
             <BannerDescriptionDemo banner="icon" title="Without description" description="" />
+        </div>
+    ),
+};
+
+export const ActionsOnHover: StoryObj<ActionsVisibilityDemoProps> = {
+    name: 'Actions on hover',
+    decorators: [
+        (Story) => (
+            <div style={{ width: 280 }}>
+                <Story />
+            </div>
+        ),
+    ],
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Set `actionsVisibility="hover"` on `Card.Root` to hide the `Card.Action` children until the card ' +
+                    'is hovered, has keyboard focus or has an open menu. Hidden actions take no space, so the title ' +
+                    'uses the full width. They stay in the tab order and are always visible on devices without hover.',
+            },
+        },
+    },
+    argTypes: {
+        actionsVisibility: { control: 'inline-radio', options: ['always', 'hover'] },
+    },
+    args: {
+        actionsVisibility: 'hover',
+        title: ACTIONS_LONG_TITLE,
+    },
+    render: (args) => <ActionsVisibilityDemo {...args} />,
+};
+
+export const ActionsVisibilityComparison: Story = {
+    name: 'Actions visibility (hover to compare)',
+    render: () => (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, 280px)', gap: 16 }}>
+            <ActionsVisibilityDemo actionsVisibility="always" title={ACTIONS_LONG_TITLE} />
+            <ActionsVisibilityDemo actionsVisibility="hover" title={ACTIONS_LONG_TITLE} />
         </div>
     ),
 };

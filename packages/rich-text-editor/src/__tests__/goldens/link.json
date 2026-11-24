@@ -1,0 +1,71 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "plain"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "see "
+                },
+                {
+                    "text": "web",
+                    "link": {
+                        "href": "https://example.com/page?q=1#top"
+                    }
+                },
+                {
+                    "text": " now"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "new tab",
+                    "link": {
+                        "href": "https://example.com",
+                        "openInNewTab": true
+                    }
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "mail",
+                    "link": {
+                        "href": "mailto:jane@example.com"
+                    }
+                },
+                {
+                    "text": " "
+                },
+                {
+                    "text": "phone",
+                    "link": {
+                        "href": "tel:+4412345"
+                    }
+                },
+                {
+                    "text": " "
+                },
+                {
+                    "text": "relative",
+                    "link": {
+                        "href": "/docs/page"
+                    }
+                }
+            ]
+        }
+    ]
+}

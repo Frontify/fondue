@@ -82,8 +82,6 @@ export type TextInputBaseProps = {
     /** @deprecated a `ref` can be forwarded to expose the underlying `<input />` DOM node.
         @example
         ```tsx
-            import { TextInput } from '@frontify/fondue';
-
             const Component = () => {
             const inputRef = useRef();
 

@@ -4,11 +4,11 @@ import { Button, Dropdown } from '@frontify/fondue-components';
 import { IconCaretDown, IconCheckMark } from '@frontify/fondue-icons';
 import { type ComponentProps, type MouseEvent, type ReactNode, useRef } from 'react';
 
-import { type EditorControlApi, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
+import { type EditorControlApi, type RteSelectionSnapshot } from '#/core';
+import { MENU_ICON_SIZE } from '#/ui/toolbarIconSize';
+import { useTranslate } from '#/ui/translation';
 
-import { activeCommand } from '../helpers/blockCommands';
-import { type RichTextEditorLabels } from '../labels';
-import styles from '../richTextEditor.module.scss';
+import { activeCommand, availableCommands, type ShownCommand } from '../helpers/blockCommands';
 
 /** Never take the selection away from the text: the controls act on it. */
 const keepSelection = (event: MouseEvent<HTMLElement>): void => event.preventDefault();
@@ -46,48 +46,51 @@ const useReturnToText = (
 
 /**
  * The "Turn into" menu: a button naming what the block is now, listing what it
- * can become. Every command that converts a block, the built-in Text first.
+ * can become. Every command that converts a block and can run on the
+ * selection, the built-in Text first.
  */
 export const TurnInto = ({
     api,
     commands,
     selection,
-    labels,
 }: {
     api: EditorControlApi;
     /** The `'turnInto'` commands. */
-    commands: readonly RteBlockCommand[];
+    commands: readonly ShownCommand[];
     selection: RteSelectionSnapshot;
-    labels: RichTextEditorLabels;
 }): ReactNode => {
+    const translate = useTranslate();
     const active = activeCommand(commands, selection);
     const { returnToText, contentProps } = useReturnToText(api);
-    const label = active?.label ?? labels.text;
+    const label = active?.label ?? translate('RichTextEditor_text');
 
     return (
         <Dropdown.Root>
             <Dropdown.Trigger>
                 <Button
                     type="button"
-                    size="medium"
                     emphasis="weak"
-                    aria-label={labels.turnIntoCurrent(label)}
-                    title={labels.turnInto}
+                    aria-label={translate('RichTextEditor_turnIntoCurrent', { type: label })}
+                    title={translate('RichTextEditor_turnInto')}
                     {...keepsSelection}
-                    className={styles.turnInto}
                 >
                     <span>{label}</span>
                     <IconCaretDown size={16} />
                 </Button>
             </Dropdown.Trigger>
             <Dropdown.Content {...contentProps} onEscapeKeyDown={returnToText}>
-                {commands.map((command) => {
+                {availableCommands(commands, selection).map((command) => {
                     const isActive = command === active;
+                    const { icon: Icon } = command;
                     return (
                         <Dropdown.Item
                             key={command.id}
                             textValue={command.label}
-                            aria-label={isActive ? labels.currentCommand(command.label) : command.label}
+                            aria-label={
+                                isActive
+                                    ? translate('RichTextEditor_currentCommand', { command: command.label })
+                                    : command.label
+                            }
                             onSelect={() => {
                                 returnToText();
                                 // Idempotent: picking what the block already is changes nothing
@@ -97,8 +100,10 @@ export const TurnInto = ({
                                 }
                             }}
                         >
-                            {command.icon === undefined ? null : (
-                                <Dropdown.Slot name="left">{command.icon}</Dropdown.Slot>
+                            {Icon === undefined ? null : (
+                                <Dropdown.Slot name="left">
+                                    <Icon size={MENU_ICON_SIZE} />
+                                </Dropdown.Slot>
                             )}
                             {/* An element of its own: the menu keys only the ones it is handed, and wraps bare text without. */}
                             <span>{command.label}</span>

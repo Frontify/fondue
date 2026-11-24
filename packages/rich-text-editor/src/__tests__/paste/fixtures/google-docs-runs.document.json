@@ -1,0 +1,68 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "Normal "
+                },
+                {
+                    "text": "bold semibold ",
+                    "bold": true
+                },
+                {
+                    "text": "medium "
+                },
+                {
+                    "text": "extrabold italic",
+                    "bold": true,
+                    "italic": true
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "under",
+                    "underline": true
+                },
+                {
+                    "text": " "
+                },
+                {
+                    "text": "struck",
+                    "strikethrough": true
+                },
+                {
+                    "text": " "
+                },
+                {
+                    "text": "both",
+                    "underline": true,
+                    "strikethrough": true
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "H"
+                },
+                {
+                    "text": "2",
+                    "subscript": true
+                },
+                {
+                    "text": "O and E=mc"
+                },
+                {
+                    "text": "2",
+                    "superscript": true
+                }
+            ]
+        }
+    ]
+}

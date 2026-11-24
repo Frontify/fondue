@@ -2,13 +2,28 @@
 
 // @vitest-environment happy-dom
 
+import { Dialog, ThemeProvider } from '@frontify/fondue-components';
+import { deDE as fondueDeDE } from '@frontify/fondue-components/locales/de-DE';
 import { act, Profiler, type ReactNode, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { type RteToolbarGroup } from '#/core';
+import { deDE } from '#/locales/de-DE';
 
 // Driven through the package's public API, the way a host does: the props are
 // the whole conversation between a host and a mounted editor.
+import {
+    defineBlock,
+    defineContent,
+    definePlugin,
+    RichTextEditor,
+    RichTextRenderer,
+    type RteDocument,
+    type RtePlugin,
+    serializeToHtml,
+} from '../index';
 import {
     alignPlugin,
     boldPlugin,
@@ -16,12 +31,8 @@ import {
     defaultPlugins,
     linkPlugin,
     mentionPlugin,
-    RichTextEditor,
-    RichTextRenderer,
-    type RteDocument,
-    type RtePlugin,
-    serializeToHtml,
-} from '../index';
+    textStylePlugin,
+} from '../plugins';
 
 import { useFocusWithin } from './hooks/useFocusWithin';
 
@@ -116,6 +127,17 @@ const press = (target: Element, key: string, init: KeyboardEventInit = {}): void
         target.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }));
     });
 };
+
+const APPLE_PLATFORM = /Mac|iP(hone|[oa]d)/;
+
+const modifierFor = (platform: string) => {
+    if (APPLE_PLATFORM.test(platform)) {
+        return { metaKey: true };
+    }
+    return { ctrlKey: true };
+};
+
+const mod = modifierFor(window.navigator.platform);
 
 /** The text of a block in what the host was handed, marks and all. */
 const childrenOf = (doc: RteDocument | null, index = 0): unknown[] => {
@@ -279,6 +301,210 @@ describe('a readonly editor', () => {
     });
 });
 
+describe('a document from a newer format version', () => {
+    // A version of its own per test: the warning is given once per version for the whole page.
+    // Far above any real version, so raising the format's version leaves these documents newer.
+    let version = 1000;
+    let newer: RteDocument;
+    beforeEach(() => {
+        version += 1;
+        newer = { ...paragraph('from the future'), version } as unknown as RteDocument;
+    });
+
+    it('is shown read-only and warns once', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container, onChange } = mount((handler) => (
+            <RichTextEditor value={newer} onChange={handler} plugins={defaultPlugins} />
+        ));
+
+        expect(container.textContent).toContain('from the future');
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+        expect(container.querySelector('[role="toolbar"]')).toBeNull();
+        expect(warn).toHaveBeenCalledTimes(1);
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining(`version ${version}`));
+        expect(container.querySelector('[role="status"]')?.textContent).toBe(
+            'This content was saved with a newer version of the editor. Try reloading the page to edit it.',
+        );
+        expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it('shows the notice when only the content is drawn', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} showEditor={false} />);
+
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+        expect(container.querySelector('[role="status"]')).not.toBeNull();
+    });
+
+    it('says so in the language of its locale', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container } = mount(() => (
+            <ThemeProvider locale={fondueDeDE}>
+                <RichTextEditor value={newer} plugins={defaultPlugins} />
+            </ThemeProvider>
+        ));
+
+        expect(container.querySelector('[role="status"]')?.textContent).toBe(deDE.RichTextEditor_newerVersion);
+    });
+
+    it('shows no notice when the host already shows it read-only', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} readonly />);
+
+        expect(container.textContent).toContain('from the future');
+        expect(container.querySelector('[role="status"]')).toBeNull();
+    });
+
+    it('warns once for several editors showing the same version', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        mount(() => (
+            <>
+                <RichTextEditor value={newer} plugins={defaultPlugins} />
+                <RichTextEditor value={newer} plugins={defaultPlugins} />
+            </>
+        ));
+
+        expect(warn).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not repeat the warning on re-render', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { rerender } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} />);
+
+        rerender(<RichTextEditor value={newer} plugins={defaultPlugins} placeholder="again" />);
+
+        expect(warn).toHaveBeenCalledTimes(1);
+    });
+
+    it('stops reporting once the host switches to a newer document mid-edit', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const onChange = vi.fn<(doc: RteDocument) => void>();
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} onChange={onChange} plugins={defaultPlugins} />
+        ));
+        ready();
+        paste(container, '<p>typed</p>');
+        expect(onChange).toHaveBeenCalledTimes(1);
+
+        rerender(<RichTextEditor value={newer} onChange={onChange} plugins={defaultPlugins} />);
+
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+        expect(container.textContent).toContain('from the future');
+        expect(onChange).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not hand the older document to onBlur when focus leaves as a newer one arrives', () => {
+        vi.useFakeTimers();
+        teardown.push(() => vi.useRealTimers());
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const outside = window.document.createElement('input');
+        window.document.body.append(outside);
+        teardown.push(() => outside.remove());
+        const onBlur = vi.fn<(doc: RteDocument) => void>();
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} onBlur={onBlur} plugins={defaultPlugins} />
+        ));
+        ready();
+        act(() => editableIn(container).focus());
+
+        // Focus leaving and the newer document land in one render.
+        act(() => {
+            outside.focus();
+            rerender(<RichTextEditor value={newer} onBlur={onBlur} plugins={defaultPlugins} />);
+            vi.runAllTimers();
+        });
+
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+        expect(onBlur).not.toHaveBeenCalled();
+    });
+
+    it('moves focus to the notice when the text being edited goes away', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} />
+        ));
+        ready();
+        act(() => editableIn(container).focus());
+
+        rerender(<RichTextEditor value={newer} plugins={defaultPlugins} />);
+
+        const focused = window.document.activeElement;
+        expect(focused?.getAttribute('tabindex')).toBe('-1');
+        expect(focused?.firstElementChild).toBe(container.querySelector('[role="status"]'));
+    });
+
+    it('leaves focus where the user just moved it when a newer document arrives', () => {
+        vi.useFakeTimers();
+        teardown.push(() => vi.useRealTimers());
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const outside = window.document.createElement('input');
+        window.document.body.append(outside);
+        teardown.push(() => outside.remove());
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} />
+        ));
+        ready();
+        act(() => editableIn(container).focus());
+
+        // The host updates in the same task as the blur, before the editor hears that focus left.
+        act(() => {
+            outside.focus();
+            rerender(<RichTextEditor value={newer} plugins={defaultPlugins} />);
+        });
+
+        expect(window.document.activeElement).toBe(outside);
+    });
+
+    it('leaves focus alone when a newer document arrives in an editor nobody is in', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} />
+        ));
+        ready();
+
+        rerender(<RichTextEditor value={newer} plugins={defaultPlugins} />);
+
+        expect(container.contains(window.document.activeElement)).toBe(false);
+    });
+
+    it('becomes editable once given a document of the current version', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container, rerender, ready } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} />);
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+
+        rerender(<RichTextEditor value={paragraph('now current')} plugins={defaultPlugins} />);
+        ready();
+
+        expect(container.textContent).toContain('now current');
+    });
+
+    it.each([
+        ['the current version', paragraph('current')],
+        ['no version', { blocks: paragraph('missing').blocks } as unknown as RteDocument],
+        ['a version that is not a number', { ...paragraph('text'), version: '3' } as unknown as RteDocument],
+    ])('stays editable, without a warning, with %s', (_name, value) => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container, ready } = mount(() => <RichTextEditor value={value} plugins={defaultPlugins} />);
+        ready();
+
+        expect(warn).not.toHaveBeenCalled();
+        expect(container.querySelector('[role="status"]')).toBeNull();
+    });
+});
+
 describe('a page of editors', () => {
     const COUNT = 30;
     const KEYS = Array.from({ length: COUNT }, (_, index) => `editor-${index}`);
@@ -308,11 +534,40 @@ describe('a page of editors', () => {
         expect(container.textContent).toContain('edited');
         expect(onChange).not.toHaveBeenCalled();
     });
+
+    it('does not redraw its toolbar when the host re-renders with the same props', () => {
+        let draws = 0;
+        const Counted = (): ReactNode => {
+            draws += 1;
+            return <span>counted</span>;
+        };
+        const plugins = [
+            ...defaultPlugins,
+            definePlugin({ id: 'counted', toolbar: [{ label: 'Counted', render: Counted }] }),
+        ];
+        const value = paragraph('editor');
+        const onChange = vi.fn<(doc: RteDocument) => void>();
+        const editor = (): ReactNode => (
+            <RichTextEditor value={value} onChange={onChange} plugins={plugins} toolbarPlacement="top" />
+        );
+
+        const { rerender, ready } = mount(editor);
+        ready();
+        const drawsBefore = draws;
+
+        rerender(editor());
+
+        expect(drawsBefore).toBeGreaterThan(0);
+        expect(draws).toBe(drawsBefore);
+    });
 });
 
 describe('the editable element', () => {
     it("follows a plugin's content class when the plugins change", () => {
-        const columns = (className: string) => [...defaultPlugins, { id: 'columns', contentClassName: className }];
+        const columns = (className: string) => [
+            ...defaultPlugins,
+            definePlugin({ id: 'columns', content: defineContent({ contentClassName: className }) }),
+        ];
         const { container, rerender, ready } = mount(() => <RichTextEditor plugins={columns('two')} />);
         ready();
         expect(editableIn(container).classList.contains('two')).toBe(true);
@@ -343,77 +598,68 @@ describe('the editable element', () => {
         expect(editable.getAttribute('aria-placeholder')).toBe('Say something');
     });
 
-    it('takes its name from a visible label when one is pointed at', () => {
-        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} aria-labelledby="label" />);
+    it('marks the editable element required only when the host says so', () => {
+        const required = mount(() => <RichTextEditor plugins={defaultPlugins} required />);
+        required.ready();
+        expect(editableIn(required.container).getAttribute('aria-required')).toBe('true');
+
+        const optional = mount(() => <RichTextEditor plugins={defaultPlugins} />);
+        optional.ready();
+        expect(editableIn(optional.container).hasAttribute('aria-required')).toBe(false);
+    });
+
+    it('marks the editable element invalid and points at the error text while the status is error', () => {
+        const { container, ready } = mount(() => (
+            <RichTextEditor plugins={defaultPlugins} status="error" aria-errormessage="field-error" />
+        ));
         ready();
 
         const editable = editableIn(container);
-        expect(editable.getAttribute('aria-labelledby')).toBe('label');
-        expect(editable.hasAttribute('aria-label')).toBe(false);
+        expect(editable.getAttribute('aria-invalid')).toBe('true');
+        expect(editable.getAttribute('aria-errormessage')).toBe('field-error');
     });
 
-    it('still has a name when the host gave it none', () => {
-        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
+    it('marks nothing invalid while the status is neutral, even with an error message id', () => {
+        const { container, ready } = mount(() => (
+            <RichTextEditor plugins={defaultPlugins} aria-errormessage="field-error" />
+        ));
         ready();
 
-        expect(editableIn(container).getAttribute('aria-label')).toBe('Rich text editor');
-        expect(editableIn(container).hasAttribute('aria-placeholder')).toBe(false);
+        const editable = editableIn(container);
+        expect(editable.hasAttribute('aria-invalid')).toBe(false);
+        expect(editable.hasAttribute('aria-errormessage')).toBe(false);
     });
 
-    it('follows a changed name without being rebuilt', () => {
+    it('drops the invalid marks when the status goes from error to neutral, without a remount', () => {
         const { container, rerender, ready } = mount(() => (
-            <RichTextEditor plugins={defaultPlugins} aria-label="One" />
+            <RichTextEditor plugins={defaultPlugins} status="error" aria-errormessage="field-error" />
         ));
         ready();
         const editable = editableIn(container);
 
-        rerender(<RichTextEditor plugins={defaultPlugins} aria-label="Two" />);
+        rerender(<RichTextEditor plugins={defaultPlugins} status="neutral" aria-errormessage="field-error" />);
 
         expect(editableIn(container)).toBe(editable);
-        expect(editable.getAttribute('aria-label')).toBe('Two');
+        expect(editable.hasAttribute('aria-invalid')).toBe(false);
+        expect(editable.hasAttribute('aria-errormessage')).toBe(false);
     });
 
-    it('keeps a labelled editor named when it turns readonly', () => {
+    it('puts neither required nor invalid marks on the readonly view', () => {
         const { container } = mount(() => (
-            <RichTextEditor value={paragraph('read me')} plugins={defaultPlugins} aria-label="Comment" readonly />
+            <RichTextEditor
+                value={paragraph('for reading')}
+                plugins={defaultPlugins}
+                aria-label="Comment"
+                aria-errormessage="field-error"
+                readonly
+                required
+                status="error"
+            />
         ));
 
-        const group = container.querySelector('[role="group"]');
-        expect(group?.getAttribute('aria-label')).toBe('Comment');
-        expect(group?.textContent).toContain('read me');
-    });
-
-    it('lets Escape take focus out of the text', () => {
-        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
-        ready();
-        const editable = editableIn(container);
-        act(() => editable.focus());
-
-        // A browser's keydown carries `keyCode`, which ProseMirror reads to
-        // prevent Escape's default.
-        press(editable, 'Escape', { keyCode: 27 });
-
-        expect(editable.contains(window.document.activeElement)).toBe(false);
-    });
-
-    it('keeps focus in the text when Escape closed the `/` menu', () => {
-        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
-        ready();
-        const editable = editableIn(container);
-        act(() => editable.focus());
-        const data = new DataTransfer();
-        data.setData('text/plain', '/');
-        act(() => {
-            editable.dispatchEvent(
-                new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }),
-            );
-        });
-        expect(window.document.querySelector('[role="listbox"]')).not.toBeNull();
-
-        press(editable, 'Escape', { keyCode: 27 });
-
-        expect(window.document.querySelector('[role="listbox"]')).toBeNull();
-        expect(window.document.activeElement).toBe(editable);
+        expect(container.querySelector('[aria-required]')).toBeNull();
+        expect(container.querySelector('[aria-invalid]')).toBeNull();
+        expect(container.querySelector('[aria-errormessage]')).toBeNull();
     });
 
     it('does not re-render the editor around the text for an edit', () => {
@@ -436,6 +682,46 @@ describe('the editable element', () => {
     });
 });
 
+describe("the host's id and test id", () => {
+    it('puts the id on the editable element and points the toolbar at it', () => {
+        const { container, ready } = mount(() => (
+            <RichTextEditor plugins={defaultPlugins} toolbarPlacement="top" id="description" />
+        ));
+        ready();
+
+        const editable = window.document.getElementById('description');
+        expect(editable?.getAttribute('role')).toBe('textbox');
+        expect(container.querySelector('[role="toolbar"]')?.getAttribute('aria-controls')).toBe('description');
+    });
+
+    it('still gives the editable element an id of its own without one', () => {
+        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
+        ready();
+
+        expect(editableIn(container).id).not.toBe('');
+    });
+
+    it('puts the test id on the root, `fondue-rich-text-editor` unless the host gives one', () => {
+        const { container } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
+        const custom = mount(() => <RichTextEditor plugins={defaultPlugins} data-test-id="comment-editor" />);
+
+        expect(container.firstElementChild?.getAttribute('data-test-id')).toBe('fondue-rich-text-editor');
+        expect(custom.container.firstElementChild?.getAttribute('data-test-id')).toBe('comment-editor');
+    });
+
+    it('puts the id on the readonly view, which is not editable, and keeps the test id', () => {
+        const { container } = mount(() => (
+            <RichTextEditor value={paragraph('for reading')} plugins={defaultPlugins} readonly id="description" />
+        ));
+
+        const view = window.document.getElementById('description');
+        expect(view?.textContent).toContain('for reading');
+        expect(view?.hasAttribute('contenteditable')).toBe(false);
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+        expect(container.firstElementChild?.getAttribute('data-test-id')).toBe('fondue-rich-text-editor');
+    });
+});
+
 describe('the toolbar', () => {
     /** A control with state of its own, the way a flyout keeps whether it is open. */
     const ClickCounter = (): ReactNode => {
@@ -446,14 +732,17 @@ describe('the toolbar', () => {
             </button>
         );
     };
-    const statefulPlugin: RtePlugin = { id: 'stateful', toolbarItem: ClickCounter };
+    const statefulPlugin: RtePlugin = definePlugin({
+        id: 'stateful',
+        toolbar: [{ label: 'Clicks', render: ClickCounter }],
+    });
 
     /** A control using hooks of other kinds, so a shifted hook order would show. */
     const OtherHooks = (): ReactNode => {
         const [label] = useState(() => 'other');
         return <span>{label}</span>;
     };
-    const otherPlugin: RtePlugin = { id: 'other', toolbarItem: OtherHooks };
+    const otherPlugin: RtePlugin = definePlugin({ id: 'other', toolbar: [{ label: 'Other', render: OtherHooks }] });
 
     const clickCount = (container: HTMLElement): string | null | undefined =>
         container.querySelector('[data-testid="clicks"]')?.textContent;
@@ -478,6 +767,157 @@ describe('the toolbar', () => {
         ready();
         expect(container.textContent).toContain('other');
         expect(clickCount(container)).toBe('2');
+    });
+
+    it("keeps a control's own state when the host rebuilds a plugin that builds its control in the factory", () => {
+        const buildPlugin = (): RtePlugin => {
+            const Built = (): ReactNode => {
+                const [clicks, setClicks] = useState(0);
+                return (
+                    <button type="button" data-testid="clicks" onClick={() => setClicks((count) => count + 1)}>
+                        {clicks}
+                    </button>
+                );
+            };
+            return definePlugin({ id: 'built', toolbar: [{ label: 'Built', render: Built }] });
+        };
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor plugins={[...defaultPlugins, buildPlugin()]} toolbarPlacement="top" />
+        ));
+        ready();
+
+        const button = container.querySelector<HTMLButtonElement>('[data-testid="clicks"]');
+        act(() => {
+            button?.click();
+            button?.click();
+        });
+        expect(clickCount(container)).toBe('2');
+
+        rerender(<RichTextEditor plugins={[...defaultPlugins, buildPlugin()]} toolbarPlacement="top" />);
+        ready();
+        expect(clickCount(container)).toBe('2');
+    });
+
+    it('draws the control of a plugin with an unknown group last', () => {
+        // The test passes a group outside RteToolbarGroup on purpose.
+        const unknownGroupPlugin = definePlugin({
+            id: 'unknown-group',
+            toolbarGroup: 'not-a-group' as RteToolbarGroup,
+            toolbar: [{ label: 'Unknown', render: () => <span data-testid="unknown-group">unknown</span> }],
+        });
+        const { container, ready } = mount(() => (
+            <RichTextEditor plugins={[unknownGroupPlugin, ...defaultPlugins]} toolbarPlacement="top" />
+        ));
+        ready();
+
+        const group = container.querySelector('[data-testid="unknown-group"]')?.parentElement;
+        expect(group).toBeTruthy();
+        expect(group?.parentElement?.lastElementChild).toBe(group);
+    });
+
+    it("names a host plugin's control by its label function, called with the editor's language", () => {
+        const hostPlugin = definePlugin({
+            id: 'host-label',
+            toolbar: [
+                {
+                    label: ({ lang }) => `Host control ${lang}`,
+                    render: ({ label }) => <span data-testid="host-label">{label}</span>,
+                },
+            ],
+        });
+        const { container, ready } = mount(() => (
+            <ThemeProvider locale={fondueDeDE}>
+                <RichTextEditor plugins={[hostPlugin]} toolbarPlacement="top" />
+            </ThemeProvider>
+        ));
+        ready();
+
+        expect(container.querySelector('[data-testid="host-label"]')?.textContent).toBe('Host control de-DE');
+    });
+
+    describe('a press inside a toolbar slot', () => {
+        const isMousedownAllowed = (target: Element): boolean =>
+            target.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+
+        const withControls = definePlugin({
+            id: 'slot-controls',
+            toolbar: [
+                {
+                    label: 'Plain',
+                    render: () => (
+                        <>
+                            <button type="button" data-testid="plain-button">
+                                plain
+                            </button>
+                            <input type="text" aria-label="Field" data-testid="slot-field" />
+                            <span contentEditable={false} data-testid="slot-island">
+                                island
+                            </span>
+                        </>
+                    ),
+                },
+            ],
+        });
+
+        it('keeps the text selection when it lands on a plain button a plugin drew', () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor plugins={[withControls, ...defaultPlugins]} toolbarPlacement="top" />
+            ));
+            ready();
+
+            const button = container.querySelector('[data-testid="plain-button"]');
+            expect(button).toBeTruthy();
+            expect(isMousedownAllowed(button as Element)).toBe(false);
+        });
+
+        it('lets a text field in the slot take focus', () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor plugins={[withControls, ...defaultPlugins]} toolbarPlacement="top" />
+            ));
+            ready();
+
+            const field = container.querySelector('[data-testid="slot-field"]');
+            expect(field).toBeTruthy();
+            expect(isMousedownAllowed(field as Element)).toBe(true);
+        });
+
+        it('keeps the text selection when it lands on a span that is not editable', () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor plugins={[withControls, ...defaultPlugins]} toolbarPlacement="top" />
+            ));
+            ready();
+
+            const island = container.querySelector('[data-testid="slot-island"]');
+            expect(island?.getAttribute('contenteditable')).toBe('false');
+            expect(isMousedownAllowed(island as Element)).toBe(false);
+        });
+    });
+
+    it('keeps Undo and Redo current as edits are made and taken back', () => {
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor plugins={defaultPlugins} toolbarPlacement="top" onChange={onChange} />
+        ));
+        ready();
+        const undo = (): HTMLButtonElement | null => container.querySelector('[aria-label="Undo"]');
+        const redo = (): HTMLButtonElement | null => container.querySelector('[aria-label="Redo"]');
+        expect(undo()?.disabled).toBe(true);
+        expect(redo()?.disabled).toBe(true);
+
+        // Pasting is how this spec edits: the paste handler is the input the engine takes from the DOM here.
+        paste(container, '<p>one</p>');
+        expect(undo()?.disabled).toBe(false);
+        expect(redo()?.disabled).toBe(true);
+
+        // Edits close together share one undo step, so the count of presses is the history's to decide.
+        for (let presses = 0; undo()?.disabled === false; presses++) {
+            expect(presses).toBeLessThan(10);
+            act(() => undo()?.click());
+        }
+        expect(childrenOf(stored())).toEqual([]);
+        expect(redo()?.disabled).toBe(false);
+
+        act(() => redo()?.click());
+        expect(undo()?.disabled).toBe(false);
     });
 
     it('warns in development when two plugins share an id', () => {
@@ -511,7 +951,17 @@ describe('the toolbar', () => {
 });
 
 describe('the toolbar from the keyboard', () => {
-    const plugins = [boldPlugin(), alignPlugin(), linkPlugin()];
+    /** A control that is off on a caret, last in the bar, so the arrow keys have one to pass over. */
+    const NeedsText = ({ selection }: RtePlugin.ToolbarItemProps): ReactNode => (
+        <button type="button" aria-label="Needs text" disabled={selection.isCollapsed}>
+            N
+        </button>
+    );
+    const needsTextPlugin: RtePlugin = definePlugin({
+        id: 'needs-text',
+        toolbar: [{ label: 'Needs text', render: NeedsText }],
+    });
+    const plugins = [boldPlugin(), alignPlugin(), linkPlugin(), needsTextPlugin];
 
     const toolbarIn = (container: HTMLElement): HTMLElement => {
         const toolbar = container.querySelector<HTMLElement>('[role="toolbar"]');
@@ -534,6 +984,20 @@ describe('the toolbar from the keyboard', () => {
         expect(tabStops(toolbar)).toEqual(['Bold']);
     });
 
+    it('parts two groups with a separator, none before the first or after the last', () => {
+        const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
+        ready();
+
+        const toolbar = toolbarIn(container);
+        const groups = toolbar.querySelectorAll('[data-toolbar-group]');
+        const separators = toolbar.querySelectorAll('[role="separator"]');
+        expect(separators).toHaveLength(groups.length - 1);
+        expect(separators[0]?.getAttribute('aria-orientation')).toBe('vertical');
+        expect(groups[0]?.nextElementSibling?.contains(separators[0] ?? null)).toBe(true);
+        expect(toolbar.firstElementChild).toBe(groups[0]);
+        expect(toolbar.lastElementChild).toBe(groups[groups.length - 1]);
+    });
+
     it('moves between its controls with the arrow keys, Home and End, passing over disabled ones', () => {
         const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
         ready();
@@ -541,12 +1005,13 @@ describe('the toolbar from the keyboard', () => {
         const active = (): string | null | undefined => window.document.activeElement?.getAttribute('aria-label');
         act(() => toolbar.querySelector<HTMLElement>('[tabindex="0"]')?.focus());
 
+        // Link sits in its group after the marks, and can add a link at a caret.
         press(window.document.activeElement as Element, 'ArrowRight');
-        expect(active()).toBe('Align left');
+        expect(active()).toBe('Add link');
         press(window.document.activeElement as Element, 'ArrowLeft');
         expect(active()).toBe('Bold');
         press(window.document.activeElement as Element, 'ArrowLeft');
-        // Wraps round — and "Add link" is disabled on a caret, so Justify is last.
+        // Wraps round, passing over the disabled control at the end.
         expect(active()).toBe('Justify');
         press(window.document.activeElement as Element, 'Home');
         expect(active()).toBe('Bold');
@@ -565,6 +1030,11 @@ describe('the toolbar from the keyboard', () => {
         press(editable, 'F10', { altKey: true });
         expect(window.document.activeElement?.getAttribute('aria-label')).toBe('Bold');
 
+        // The first Escape belongs to the tooltip the focus opened.
+        press(window.document.activeElement as Element, 'Escape');
+        expect(window.document.querySelector('[role="tooltip"]')).toBeNull();
+        expect(window.document.activeElement?.getAttribute('aria-label')).toBe('Bold');
+
         press(window.document.activeElement as Element, 'Escape');
         expect(editable.contains(window.document.activeElement)).toBe(true);
     });
@@ -572,8 +1042,13 @@ describe('the toolbar from the keyboard', () => {
     const focusedLabel = (): string | null | undefined => window.document.activeElement?.getAttribute('aria-label');
 
     const selectAll = (editable: HTMLElement): void => {
-        const mod = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
         press(editable, 'a', mod);
+    };
+
+    // The focus opened a tooltip, which takes the first Escape.
+    const leaveToolbar = (): void => {
+        press(window.document.activeElement as Element, 'Escape');
+        press(window.document.activeElement as Element, 'Escape');
     };
 
     describe.each(['top', 'floating'] as const)('with the %s toolbar, asked for again', (placement) => {
@@ -600,7 +1075,7 @@ describe('the toolbar from the keyboard', () => {
 
             press(editable, 'F10', { altKey: true });
             expect(focusedLabel()).toBe('Bold');
-            press(window.document.activeElement as Element, 'Escape');
+            leaveToolbar();
             expect(window.document.activeElement).toBe(editable);
 
             press(editable, 'F10', { altKey: true });
@@ -610,9 +1085,9 @@ describe('the toolbar from the keyboard', () => {
         it('leaves no request pending to pull focus later', () => {
             const { editable, rerender } = start();
             press(editable, 'F10', { altKey: true });
-            press(window.document.activeElement as Element, 'Escape');
+            leaveToolbar();
             press(editable, 'F10', { altKey: true });
-            press(window.document.activeElement as Element, 'Escape');
+            leaveToolbar();
             expect(window.document.activeElement).toBe(editable);
 
             rerender();
@@ -643,15 +1118,492 @@ describe('the toolbar from the keyboard', () => {
 
         const radios = [...container.querySelectorAll('[role="radiogroup"] [role="radio"]')];
         expect(radios.map((radio) => radio.getAttribute('aria-checked'))).toEqual(['true', 'false', 'false', 'false']);
+        expect(radios.map((radio) => radio.getAttribute('data-emphasis'))).toEqual(['default', 'weak', 'weak', 'weak']);
+    });
+
+    describe('in a narrow top row', () => {
+        // Every slot and More are 30 wide; the row is as wide as `rowWidth`.
+        let rowWidth = 200;
+        const observers: ResizeObserverCallback[] = [];
+
+        beforeEach(() => {
+            rowWidth = 200;
+            vi.stubGlobal(
+                'ResizeObserver',
+                class {
+                    constructor(callback: ResizeObserverCallback) {
+                        observers.push(callback);
+                    }
+                    observe(): void {}
+                    unobserve(): void {}
+                    disconnect(): void {}
+                },
+            );
+            vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element) {
+                let width = 0;
+                if (this.getAttribute('role') === 'toolbar') {
+                    width = rowWidth;
+                }
+                if (this.hasAttribute('data-toolbar-slot') || this.hasAttribute('data-toolbar-more')) {
+                    width = 30;
+                }
+                return new DOMRect(0, 0, width, 24);
+            });
+        });
+
+        afterEach(() => {
+            vi.unstubAllGlobals();
+            vi.restoreAllMocks();
+            observers.splice(0);
+        });
+
+        const resize = (width: number): void => {
+            rowWidth = width;
+            act(() => {
+                for (const observer of observers) {
+                    observer([], {} as ResizeObserver);
+                }
+            });
+        };
+
+        const more = (container: HTMLElement): HTMLButtonElement | null =>
+            container.querySelector<HTMLButtonElement>('[aria-label="More"]');
+
+        it('parts the row from More with a separator, and draws none inside the panel', () => {
+            const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
+            ready();
+            const toolbar = toolbarIn(container);
+
+            resize(70);
+            expect(toolbar.querySelectorAll('[role="separator"]')).toHaveLength(1);
+
+            act(() => more(container)?.click());
+            const panel = window.document.querySelector<HTMLElement>('[role="toolbar"][aria-label="More"]');
+            expect(panel?.querySelector('[aria-label="Add link"]')).not.toBeNull();
+            expect(panel?.querySelector('[role="separator"]')).toBeNull();
+        });
+
+        it('moves what does not fit behind More, whose panel the arrow keys move through', () => {
+            const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
+            ready();
+            const toolbar = toolbarIn(container);
+            expect(more(container)).toBeNull();
+
+            // Bold, More and the gap: Link and Align no longer fit.
+            resize(70);
+            expect(toolbar.querySelector('[aria-label="Bold"]')).not.toBeNull();
+            // Parked out of sight beside More, not drawn in the row.
+            expect(toolbar.querySelector('[aria-label="Align left"]')?.closest('[aria-hidden="true"]')).not.toBeNull();
+            expect(more(container)?.getAttribute('aria-haspopup')).toBe('dialog');
+
+            // A click with no pointer behind it is the keyboard's: focus moves into the panel.
+            act(() => more(container)?.click());
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            const panel = window.document.querySelector<HTMLElement>('[role="toolbar"][aria-label="More"]');
+            expect(panel?.querySelector('[aria-label="Add link"]')).not.toBeNull();
+            // Link comes first in the panel, and can add a link at a caret.
+            expect(focusedLabel()).toBe('Add link');
+
+            press(window.document.activeElement as Element, 'ArrowRight');
+            expect(focusedLabel()).toBe('Align left');
+            press(window.document.activeElement as Element, 'End');
+            expect(focusedLabel()).toBe('Justify');
+            press(window.document.activeElement as Element, 'Home');
+            expect(focusedLabel()).toBe('Add link');
+
+            // The first Escape belongs to the tooltip the focus opened.
+            press(window.document.activeElement as Element, 'Escape');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            press(window.document.activeElement as Element, 'Escape');
+            expect(window.document.activeElement).toBe(more(container));
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+
+            resize(200);
+            expect(more(container)).toBeNull();
+            expect(toolbar.querySelector('[aria-label="Align left"]')).not.toBeNull();
+        });
+
+        it("hangs a hidden control's flyout from More when a hotkey opens it, with the panel closed", async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+            const editable = editableIn(container);
+            act(() => editable.focus());
+            selectAll(editable);
+
+            const mod = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
+            press(editable, 'k', mod);
+            await act(async () => {});
+
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+            const dialogs = [...window.document.querySelectorAll('[role="dialog"]')];
+            expect(dialogs.some((dialog) => dialog.textContent?.includes('Add link'))).toBe(true);
+        });
+
+        it('closes the link form on one Escape, the panel never opened, focus never on the page', async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            const editable = editableIn(container);
+            const linkForm = (): Element | undefined =>
+                [...window.document.querySelectorAll('[role="dialog"]')].find((dialog) =>
+                    dialog.textContent?.includes('Add link'),
+                );
+            // Radix hands focus back a task after a flyout closes.
+            const settle = (): Promise<void> => act(() => new Promise<void>((resolve) => setTimeout(resolve, 0)));
+            const mod = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
+
+            // Twice over: the second round starts from what the first left behind, with the pointer resting on
+            // the link button, whose tooltip must not come back as the form closes.
+            for (let round = 0; round < 2; round++) {
+                act(() => editable.focus());
+                selectAll(editable);
+                press(editable, 'k', mod);
+                await act(async () => {});
+                expect(linkForm()).not.toBeUndefined();
+                expect(linkForm()?.contains(window.document.activeElement)).toBe(true);
+                if (round === 1) {
+                    act(() => {
+                        window.document
+                            .querySelector('[aria-label="Add link"]')
+                            ?.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerType: 'mouse' }));
+                    });
+                    // Past the tooltip's delay.
+                    await act(() => new Promise<void>((resolve) => setTimeout(resolve, 800)));
+                }
+
+                press(window.document.activeElement as Element, 'Escape');
+                await settle();
+                expect(linkForm()).toBeUndefined();
+                expect(window.document.activeElement).toBe(editable);
+                expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+                expect(window.document.querySelector('[role="tooltip"]')).toBeNull();
+            }
+        });
+
+        it('closes a panel opened with a click on Escape in the text, leaving the caret there', () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            const editable = editableIn(container);
+            act(() => editable.focus());
+
+            act(() => {
+                more(container)?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }));
+            });
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            expect(window.document.activeElement).toBe(editable);
+
+            press(editable, 'Escape');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+            expect(window.document.activeElement).toBe(editable);
+        });
+
+        it('closes only the host dialog on Escape, with More shown inside it', () => {
+            const onOpenChange = vi.fn<(open: boolean) => void>();
+            mount(() => (
+                <Dialog.Root open onOpenChange={onOpenChange}>
+                    <Dialog.Content>
+                        <Dialog.Header>
+                            <Dialog.Title>Edit</Dialog.Title>
+                        </Dialog.Header>
+                        <Dialog.Body>
+                            <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+                        </Dialog.Body>
+                    </Dialog.Content>
+                </Dialog.Root>
+            ));
+            resize(70);
+            const dialogMore = window.document.querySelector<HTMLElement>('[aria-label="More"]');
+            expect(dialogMore?.getAttribute('aria-expanded')).toBe('false');
+            const editable = window.document.querySelector<HTMLElement>('[contenteditable]');
+            act(() => editable?.focus());
+
+            press(editable as Element, 'Escape');
+
+            expect(onOpenChange).toHaveBeenCalledWith(false);
+        });
+
+        it('leaves Escape to a suggestion list open in the text before the panel takes it', () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            const editable = editableIn(container);
+            act(() => editable.focus());
+            act(() => {
+                more(container)?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }));
+            });
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            // What the focused element of an open mention or emoji draft says.
+            editable.setAttribute('aria-expanded', 'true');
+            press(editable, 'Escape');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            editable.removeAttribute('aria-expanded');
+            press(editable, 'Escape');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+        });
+
+        // Radix hands focus back a task after a flyout closes.
+        const settle = (): Promise<void> => act(() => new Promise<void>((resolve) => setTimeout(resolve, 0)));
+
+        /** Where focus may not rest after a flyout closes: the page, or what the open panel hides. */
+        const expectFocusSomewhereReal = (): void => {
+            const { activeElement, body } = window.document;
+            expect(activeElement).not.toBe(body);
+            expect(activeElement?.closest('[aria-hidden="true"]')).toBeNull();
+        };
+
+        const panelOf = (): HTMLElement | null =>
+            window.document.querySelector<HTMLElement>('[role="toolbar"][aria-label="More"]');
+
+        const linkForm = (): Element | undefined =>
+            [...window.document.querySelectorAll('[role="dialog"]')].find((dialog) =>
+                dialog.textContent?.includes('Add link'),
+            );
+
+        /** Overflows the toolbar, opens More from the keyboard and the link form from the panel. */
+        const openLinkFormFromPanel = async (container: HTMLElement): Promise<HTMLElement> => {
+            resize(70);
+            const editable = editableIn(container);
+            act(() => editable.focus());
+            selectAll(editable);
+
+            press(editable, 'F10', { altKey: true });
+            expect(focusedLabel()).toBe('Bold');
+            press(window.document.activeElement as Element, 'End');
+            expect(window.document.activeElement).toBe(more(container));
+            press(window.document.activeElement as Element, 'Enter');
+            act(() => more(container)?.click());
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            expect(panelOf()?.contains(window.document.activeElement)).toBe(true);
+
+            while (focusedLabel() !== 'Add link') {
+                press(window.document.activeElement as Element, 'ArrowRight');
+            }
+            press(window.document.activeElement as Element, 'Enter');
+            act(() => (window.document.activeElement as HTMLElement).click());
+            await settle();
+
+            expect(linkForm()).not.toBeUndefined();
+            expect(linkForm()?.contains(window.document.activeElement)).toBe(true);
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            return editable;
+        };
+
+        /** A press Radix reads as outside the panel: the pointer's event first, then the mouse's own. */
+        const pressOn = (target: Element): void => {
+            act(() => {
+                target.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerType: 'mouse' }));
+                target.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+                target.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+            });
+        };
+
+        it('keeps the panel open under the link form opened from it, and Escape closes the form before the panel', async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            const editable = await openLinkFormFromPanel(container);
+
+            press(window.document.activeElement as Element, 'Escape');
+            await settle();
+            expect(linkForm()).toBeUndefined();
+            expectFocusSomewhereReal();
+            const rested = window.document.activeElement;
+            expect(rested === editable || panelOf()?.contains(rested) === true).toBe(true);
+
+            if (panelOf()?.contains(rested) === true) {
+                expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+                // The first Escape belongs to the tooltip the focus opened, if any.
+                press(rested as Element, 'Escape');
+                if (more(container)?.getAttribute('aria-expanded') === 'true') {
+                    press(window.document.activeElement as Element, 'Escape');
+                }
+                expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+                expect(window.document.activeElement).toBe(more(container));
+            }
+        });
+
+        it('keeps the panel open on a press inside the link form opened from it', async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            await openLinkFormFromPanel(container);
+            const input = linkForm()?.querySelector('input');
+            expect(input).not.toBeNull();
+
+            pressOn(input as Element);
+            await settle();
+
+            expect(linkForm()).not.toBeUndefined();
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+        });
+
+        it('closes the panel on a press outside once the link form opened from it is closed', async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            await openLinkFormFromPanel(container);
+            const outside = window.document.createElement('div');
+            window.document.body.append(outside);
+            teardown.push(() => outside.remove());
+            press(window.document.activeElement as Element, 'Escape');
+            await settle();
+            expect(linkForm()).toBeUndefined();
+            // The form hands focus back to the text, which may have closed the panel; open it again.
+            if (more(container)?.getAttribute('aria-expanded') === 'false') {
+                act(() => {
+                    more(container)?.dispatchEvent(
+                        new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }),
+                    );
+                });
+                await settle();
+            }
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            pressOn(outside);
+            await settle();
+
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+        });
+
+        it('closes the panel on a press inside a popper layer that is not a flyout of its controls', async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            const layer = window.document.createElement('div');
+            layer.setAttribute('data-radix-popper-content-wrapper', '');
+            window.document.body.append(layer);
+            teardown.push(() => layer.remove());
+            act(() => more(container)?.click());
+            await settle();
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            pressOn(layer);
+            await settle();
+
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+        });
+
+        it('keeps the panel usable after a text style menu opened from it is closed with Escape', async () => {
+            const withSelect = [boldPlugin(), linkPlugin(), alignPlugin(), textStylePlugin()];
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={withSelect} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(40);
+            const editable = editableIn(container);
+            act(() => editable.focus());
+            selectAll(editable);
+
+            act(() => more(container)?.click());
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            const select = panelOf()?.querySelector<HTMLElement>('[aria-label="Text style"]');
+            expect(select).not.toBeNull();
+            act(() => select?.focus());
+            press(select as Element, 'Enter');
+            await settle();
+            expect(select?.getAttribute('aria-expanded')).toBe('true');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            // A press in the menu is outside the panel to Radix, yet the menu is the panel's own.
+            const option = window.document.querySelector('[role="option"]');
+            expect(option).not.toBeNull();
+            act(() => {
+                option?.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerType: 'mouse' }));
+            });
+            await settle();
+            expect(select?.getAttribute('aria-expanded')).toBe('true');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            press(window.document.activeElement as Element, 'Escape');
+            await settle();
+            expect(select?.getAttribute('aria-expanded')).toBe('false');
+            expectFocusSomewhereReal();
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            // Still a toolbar: an arrow key moves focus between its controls.
+            act(() => select?.focus());
+            const before = window.document.activeElement;
+            press(before as Element, 'ArrowLeft');
+            expect(window.document.activeElement).not.toBe(before);
+            expect(panelOf()?.contains(window.document.activeElement)).toBe(true);
+        });
+
+        it('closes a click-opened panel on a press outside without moving focus onto More, onBlur as with no panel', () => {
+            vi.useFakeTimers();
+            teardown.push(() => vi.useRealTimers());
+            const onBlur = vi.fn<(doc: RteDocument) => void>();
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} onBlur={onBlur} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            const editable = editableIn(container);
+            const outside = window.document.createElement('div');
+            window.document.body.append(outside);
+            teardown.push(() => outside.remove());
+            act(() => {
+                editable.focus();
+                vi.runAllTimers();
+            });
+            act(() => {
+                more(container)?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }));
+            });
+            // The panel starts listening for outside presses a task after it opens.
+            act(() => {
+                vi.runAllTimers();
+            });
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            expect(window.document.activeElement).toBe(editable);
+
+            act(() => {
+                outside.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerType: 'mouse' }));
+                outside.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+                outside.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+                vi.runAllTimers();
+            });
+
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+            expect(window.document.activeElement).not.toBe(more(container));
+            expect(onBlur).not.toHaveBeenCalled();
+        });
+
+        it('keeps focus in the toolbar when a refit takes the focused control away', () => {
+            const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
+            ready();
+            act(() => container.querySelector<HTMLElement>('[aria-label="Align left"]')?.focus());
+
+            resize(70);
+
+            expect(window.document.activeElement).toBe(more(container));
+        });
     });
 
     it('names the shortcut a button has', () => {
         const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
         ready();
 
-        const bold = container.querySelector('[aria-label="Bold"]');
+        const bold = container.querySelector<HTMLElement>('[aria-label="Bold"]');
         expect(bold?.getAttribute('aria-keyshortcuts')).toMatch(/^(Meta|Control)\+B$/);
-        expect(bold?.getAttribute('title')).toMatch(/^Bold \((⌘B|Ctrl\+B)\)$/);
+
+        act(() => bold?.focus());
+        expect(window.document.querySelector('[role="tooltip"]')?.textContent).toMatch(/^Bold(⌘B|Ctrl\+B)$/);
     });
 });
 
@@ -737,6 +1689,1011 @@ describe('content no mounted plugin knows', () => {
     });
 });
 
+/** A switch a test flips to make a toolbar item throw. */
+type CrashSwitch = { crash: boolean };
+
+/** A switch a test flips to make a plugin throw until it is fixed. */
+type BrokenSwitch = { broken: boolean };
+
+type CalloutProps = { children?: ReactNode };
+
+/** Read by `Callout`, which the editor renders with block props only. */
+const calloutState: BrokenSwitch = { broken: false };
+
+const Callout = ({ children }: CalloutProps): ReactNode => {
+    if (calloutState.broken) {
+        throw new Error('readonly view broke');
+    }
+    return <p>{children}</p>;
+};
+
+describe('an editor that crashes', () => {
+    beforeEach(() => {
+        calloutState.broken = false;
+    });
+
+    /** React logs every caught render error; the tests expect it and keep the output clean. */
+    const silenceReact = (): void => {
+        const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+        teardown.push(() => error.mockRestore());
+    };
+    /** Blurs the focused element; fails when nothing is focused, since the test expects focus to leave. */
+    const blurActiveElement = (): void => {
+        const active = window.document.activeElement;
+        if (!(active instanceof HTMLElement)) {
+            throw new TypeError('No element has focus to blur');
+        }
+        active.blur();
+    };
+    const throwingPlugin = (): RtePlugin =>
+        definePlugin({
+            id: 'throws',
+            toolbar: [
+                {
+                    label: 'Throws',
+                    render: () => {
+                        throw new Error('toolbar broke');
+                    },
+                },
+            ],
+        });
+    /** A toolbar item that throws once `state.crash` is set and the selection moves, as an edit makes it. */
+    const lateCrashPlugin = (state: CrashSwitch): RtePlugin =>
+        definePlugin({
+            id: 'late',
+            toolbar: [
+                {
+                    label: 'Late',
+                    render: ({ selection }) => {
+                        if (state.crash && selection) {
+                            throw new Error('after the edit');
+                        }
+                        return <span>fine</span>;
+                    },
+                },
+            ],
+        });
+    /** A toolbar item under its own id, which throws when `crash` is set; new ids remount the engine. */
+    const idPlugin = (id: string, crash = false): RtePlugin =>
+        definePlugin({
+            id,
+            toolbar: [
+                {
+                    label: 'Fine',
+                    render: () => {
+                        if (crash) {
+                            throw new Error(`plugin ${id} broke`);
+                        }
+                        return <span>fine</span>;
+                    },
+                },
+            ],
+        });
+    /** A toolbar item that throws while `state.broken` is set. */
+    const flakyPlugin = (state: BrokenSwitch): RtePlugin =>
+        definePlugin({
+            id: 'flaky',
+            toolbar: [
+                {
+                    label: 'Flaky',
+                    render: () => {
+                        if (state.broken) {
+                            throw new Error('until fixed');
+                        }
+                        return <span>fine</span>;
+                    },
+                },
+            ],
+        });
+    /** A block whose readonly view throws while `calloutState.broken` is set. */
+    const calloutPlugin = (): RtePlugin =>
+        definePlugin({
+            id: 'callout',
+            content: defineContent({
+                blocks: {
+                    callout: defineBlock({
+                        content: 'text',
+                        toHtml: () => ({ tag: 'p', attrs: { 'data-callout': '' }, children: true }),
+                        parse: [{ tag: 'p[data-callout]' }],
+                        render: { component: Callout },
+                    }),
+                },
+            }),
+        });
+    // A test-only block type outside the `RteBlock` union.
+    const callout = (text: string): RteDocument =>
+        ({ version: 1, blocks: [{ type: 'callout', children: [{ text }] }] }) as unknown as RteDocument;
+
+    const retryButton = (container: HTMLElement): HTMLButtonElement => {
+        const button = [...container.querySelectorAll('button')].find(
+            (candidate) => candidate.textContent === 'Try again',
+        );
+        if (!button) {
+            throw new Error('no Retry button');
+        }
+        return button;
+    };
+    /** Presses Retry as a keyboard, or a browser that focuses buttons on click, does. */
+    const retry = (container: HTMLElement): void => {
+        act(() => {
+            const button = retryButton(container);
+            button.focus();
+            button.click();
+        });
+    };
+    const errorSpy = () => vi.fn<(error: Error) => void>();
+
+    it('shows the document read-only with a message and Retry, and reports nothing', () => {
+        silenceReact();
+        const { container, onChange } = mount((change) => (
+            <RichTextEditor value={paragraph('still here')} onChange={change} plugins={[throwingPlugin()]} />
+        ));
+
+        expect(container.textContent).toContain('still here');
+        expect(container.textContent).toContain('The editor stopped working. Try again to load it.');
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+        expect(retryButton(container)).toBeDefined();
+        expect(onChange).not.toHaveBeenCalled();
+        // Unnamed by the host, it reads as text, as the readonly view does.
+        expect(container.querySelector('[role="group"]')).toBeNull();
+    });
+
+    it("puts the host's id and test id on the fallback's root", () => {
+        silenceReact();
+        const { container } = mount(() => (
+            <RichTextEditor
+                value={paragraph('still here')}
+                plugins={[throwingPlugin()]}
+                id="comment"
+                data-test-id="comment-editor"
+            />
+        ));
+
+        expect(container.querySelector('[role="alert"]')).not.toBeNull();
+        expect(container.firstElementChild?.getAttribute('data-test-id')).toBe('comment-editor');
+        expect(container.firstElementChild?.id).toBe('comment');
+    });
+
+    it('shows the fallback again when Retry meets the same failure, and reports it again', () => {
+        silenceReact();
+        const onError = errorSpy();
+        const { container } = mount(() => (
+            <RichTextEditor value={paragraph('still here')} plugins={[throwingPlugin()]} onError={onError} />
+        ));
+
+        retry(container);
+
+        expect(container.textContent).toContain('still here');
+        // The button that had focus was replaced: its successor takes the keyboard back.
+        expect(window.document.activeElement).toBe(retryButton(container));
+        expect(onError).toHaveBeenCalledTimes(2);
+    });
+
+    it('leaves focus alone after a Retry pressed without taking focus, as a mouse press may', () => {
+        silenceReact();
+        calloutState.broken = true;
+        const { container } = mount(() => (
+            <RichTextEditor value={callout('read me')} plugins={[calloutPlugin()]} readonly />
+        ));
+        calloutState.broken = false;
+
+        act(() => {
+            retryButton(container).click();
+        });
+
+        expect(container.textContent).toContain('read me');
+        expect(window.document.activeElement).toBe(window.document.body);
+        // Nothing to hand on, so the readonly view stays out of focus.
+        expect(container.querySelector('[tabindex="-1"]')).toBeNull();
+    });
+
+    it('is editable again when Retry finds the cause gone', () => {
+        silenceReact();
+        const state = { broken: true };
+        const flaky = flakyPlugin(state);
+        const { container, ready } = mount(() => <RichTextEditor value={paragraph('back again')} plugins={[flaky]} />);
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+
+        state.broken = false;
+        retry(container);
+        ready();
+
+        expect(editableIn(container).textContent).toBe('back again');
+        expect(container.textContent).not.toContain('Try again');
+    });
+
+    it('takes a value the host passes after Retry', () => {
+        silenceReact();
+        const state = { broken: true };
+        const flaky = flakyPlugin(state);
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('before')} plugins={[flaky]} />
+        ));
+        state.broken = false;
+        retry(container);
+        ready();
+
+        rerender(<RichTextEditor value={paragraph('after')} plugins={[flaky]} />);
+
+        expect(editableIn(container).textContent).toBe('after');
+    });
+
+    it('keeps what was typed into an uncontrolled editor', () => {
+        silenceReact();
+        const state = { crash: false };
+        const late = lateCrashPlugin(state);
+        const { container, ready } = mount(() => <RichTextEditor plugins={[late, ...defaultPlugins]} />);
+        ready();
+        state.crash = true;
+
+        paste(container, '<p>typed</p>');
+
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+        expect(container.textContent).toContain('typed');
+    });
+
+    it('hands onError the error, shows the edits made before the crash, and saves nothing through onBlur', () => {
+        silenceReact();
+        const state = { crash: false };
+        const late = lateCrashPlugin(state);
+        const onBlur = vi.fn<(doc: RteDocument) => void>();
+        const onError = errorSpy();
+        const { container, ready } = mount(() => (
+            <RichTextEditor plugins={[late, ...defaultPlugins]} onBlur={onBlur} onError={onError} />
+        ));
+        ready();
+        state.crash = true;
+        paste(container, '<p>typed</p>');
+
+        expect(onError).toHaveBeenCalledOnce();
+        expect(onError.mock.calls[0]?.[0].message).toBe('after the edit');
+        expect(container.textContent).toContain('typed');
+        expect(onBlur).not.toHaveBeenCalled();
+    });
+
+    it('shows the edits a controlled host holds', () => {
+        silenceReact();
+        const state = { crash: false };
+        const late = lateCrashPlugin(state);
+        const onError = errorSpy();
+        const Host = (): ReactNode => {
+            const [value, setValue] = useState<RteDocument>(() => paragraph('saved'));
+            return (
+                <RichTextEditor
+                    value={value}
+                    onChange={setValue}
+                    onError={onError}
+                    plugins={[late, ...defaultPlugins]}
+                />
+            );
+        };
+        const { container, ready } = mount(() => <Host />);
+        ready();
+        state.crash = true;
+        paste(container, '<p>typed</p>');
+
+        expect(onError).toHaveBeenCalledOnce();
+        expect(container.textContent).toContain('typed');
+    });
+
+    it('mounts on Retry what the fallback showed, though the host value is older', () => {
+        silenceReact();
+        const state = { crash: false };
+        const late = lateCrashPlugin(state);
+        const { container, ready } = mount((change) => (
+            <RichTextEditor value={paragraph('saved')} onChange={change} plugins={[late, ...defaultPlugins]} />
+        ));
+        ready();
+        state.crash = true;
+        paste(container, '<p>typed</p>');
+        expect(container.textContent).toContain('typed');
+
+        state.crash = false;
+        retry(container);
+
+        expect(container.querySelector('[contenteditable]')?.textContent).toContain('typed');
+    });
+
+    it('leaves focus where the user put it when the editor crashes again after a Retry', () => {
+        silenceReact();
+        const state = { broken: true };
+        const flaky = flakyPlugin(state);
+        const { container, rerender } = mount(() => (
+            <>
+                <input aria-label="elsewhere" />
+                <RichTextEditor value={paragraph('one')} plugins={[flaky]} />
+            </>
+        ));
+        state.broken = false;
+        retry(container);
+        const elsewhere = container.querySelector('input');
+        if (!(elsewhere instanceof HTMLInputElement)) {
+            throw new TypeError('The test input is missing');
+        }
+        act(() => elsewhere.focus());
+
+        state.broken = true;
+        rerender(
+            <>
+                <input aria-label="elsewhere" />
+                <RichTextEditor value={paragraph('two')} plugins={[flaky]} />
+            </>,
+        );
+
+        expect(retryButton(container)).toBeDefined();
+        expect(window.document.activeElement).toBe(elsewhere);
+    });
+
+    it('hands the keyboard to Retry when the editor crashes while it has focus', () => {
+        silenceReact();
+        const state = { broken: false };
+        const flaky = flakyPlugin(state);
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('one')} plugins={[flaky]} />
+        ));
+        ready();
+        act(() => editableIn(container).focus());
+
+        state.broken = true;
+        rerender(<RichTextEditor value={paragraph('two')} plugins={[flaky]} />);
+
+        expect(window.document.activeElement).toBe(retryButton(container));
+    });
+
+    it('does not take focus when it crashes after a Retry with focus already gone', () => {
+        silenceReact();
+        vi.useFakeTimers();
+        teardown.push(() => vi.useRealTimers());
+        const state = { broken: true };
+        const flaky = flakyPlugin(state);
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('one')} plugins={[flaky]} />
+        ));
+        state.broken = false;
+        retry(container);
+        ready();
+        expect(editableIn(container).contains(window.document.activeElement)).toBe(true);
+        act(() => {
+            blurActiveElement();
+            vi.runAllTimers();
+        });
+        expect(window.document.activeElement).toBe(window.document.body);
+
+        state.broken = true;
+        rerender(<RichTextEditor value={paragraph('two')} plugins={[flaky]} />);
+
+        expect(retryButton(container)).toBeDefined();
+        expect(window.document.activeElement).toBe(window.document.body);
+    });
+
+    it('puts the keyboard back in the text after Retry', () => {
+        silenceReact();
+        const state = { broken: true };
+        const flaky = flakyPlugin(state);
+        const { container, ready } = mount(() => <RichTextEditor value={paragraph('text')} plugins={[flaky]} />);
+        retryButton(container).focus();
+        expect(window.document.activeElement).toBe(retryButton(container));
+
+        state.broken = false;
+        retry(container);
+        ready();
+
+        expect(editableIn(container).contains(window.document.activeElement)).toBe(true);
+        // The text has the focus: nothing around it is made focusable for a Retry.
+        expect(editableIn(container).parentElement?.closest('[tabindex]')).toBeNull();
+        // Typing goes on after the text, not before it.
+        const caret = window.getSelection();
+        expect(caret?.isCollapsed).toBe(true);
+        expect(caret?.anchorNode?.textContent).toBe('text');
+        expect(caret?.anchorOffset).toBe('text'.length);
+    });
+
+    it('does not take focus later when it was retried readonly', () => {
+        silenceReact();
+        calloutState.broken = true;
+        const plugin = calloutPlugin();
+        const value = callout('read me');
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={value} plugins={[plugin]} readonly />
+        ));
+
+        calloutState.broken = false;
+        retry(container);
+        expect(container.textContent).toContain('read me');
+        rerender(<RichTextEditor value={value} plugins={[plugin]} />);
+        ready();
+
+        expect(editableIn(container).contains(window.document.activeElement)).toBe(false);
+    });
+
+    it('shows the last edit when the host pushes a value in the render that crashes, and a value it passes after', () => {
+        silenceReact();
+        const fine = idPlugin('late');
+        const bad = idPlugin('late', true);
+        const onError = errorSpy();
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('A')} plugins={[fine, ...defaultPlugins]} onError={onError} />
+        ));
+        ready();
+        paste(container, '<p>B</p>');
+
+        // The editor never applied C: it crashed in the render that brought it.
+        const pushed = paragraph('C');
+        rerender(<RichTextEditor value={pushed} plugins={[bad, ...defaultPlugins]} onError={onError} />);
+        expect(container.textContent).toContain('The editor stopped working.');
+        expect(container.textContent).toContain('B');
+        expect(container.textContent).not.toContain('C');
+
+        rerender(<RichTextEditor value={paragraph('D')} plugins={[bad, ...defaultPlugins]} onError={onError} />);
+        expect(container.textContent).toContain('D');
+    });
+
+    it('shows a value the host pushed after the last edit', () => {
+        silenceReact();
+        const fine = idPlugin('late');
+        const bad = idPlugin('late', true);
+        const onError = errorSpy();
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('A')} plugins={[fine, ...defaultPlugins]} onError={onError} />
+        ));
+        ready();
+        paste(container, '<p>B</p>');
+        const pushed = paragraph('C');
+        rerender(<RichTextEditor value={pushed} plugins={[fine, ...defaultPlugins]} onError={onError} />);
+
+        rerender(<RichTextEditor value={pushed} plugins={[bad, ...defaultPlugins]} onError={onError} />);
+
+        expect(container.textContent).toContain('The editor stopped working.');
+        expect(container.textContent).toContain('C');
+        expect(container.textContent).not.toContain('B');
+    });
+
+    it('shows an edit made after a pushed value', () => {
+        silenceReact();
+        const state = { crash: false };
+        const late = lateCrashPlugin(state);
+        const onError = errorSpy();
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('A')} plugins={[late, ...defaultPlugins]} onError={onError} />
+        ));
+        ready();
+        rerender(<RichTextEditor value={paragraph('C')} plugins={[late, ...defaultPlugins]} onError={onError} />);
+        state.crash = true;
+        paste(container, '<p>D</p>');
+
+        expect(onError).toHaveBeenCalledOnce();
+        expect(container.textContent).toContain('D');
+    });
+
+    it('shows every edit when the host echoes an older one late', () => {
+        silenceReact();
+        const fine = idPlugin('late');
+        const bad = idPlugin('late', true);
+        const onError = errorSpy();
+        const { container, onChange, rerender, ready } = mount((change) => (
+            <RichTextEditor
+                value={paragraph('V0')}
+                onChange={change}
+                plugins={[fine, ...defaultPlugins]}
+                onError={onError}
+            />
+        ));
+        ready();
+        paste(container, '<p>one</p>');
+        paste(container, '<p>two</p>');
+        paste(container, '<p>three</p>');
+        const first = onChange.mock.calls[0]?.[0];
+
+        // The host (a debounce, an async normaliser) hands back the first edit, long after the third.
+        rerender(<RichTextEditor value={first} plugins={[bad, ...defaultPlugins]} onError={onError} />);
+
+        expect(onError).toHaveBeenCalledOnce();
+        expect(container.textContent).toContain('three');
+    });
+
+    it('keeps an earlier edit the host restores while readonly', () => {
+        silenceReact();
+        calloutState.broken = false;
+        const plugins = [...defaultPlugins, calloutPlugin()];
+        const onError = errorSpy();
+        const { container, onChange, rerender, ready } = mount((change) => (
+            <RichTextEditor value={callout('start')} onChange={change} plugins={plugins} onError={onError} />
+        ));
+        ready();
+        paste(container, '<p>one</p>');
+        paste(container, '<p>two</p>');
+        const first = onChange.mock.calls[0]?.[0];
+        const last = onChange.mock.calls[onChange.mock.calls.length - 1]?.[0];
+        rerender(<RichTextEditor value={last} onChange={onChange} plugins={plugins} onError={onError} />);
+
+        // An undo in the host, made while the editor is readonly: the readonly view shows it.
+        rerender(<RichTextEditor value={first} onChange={onChange} plugins={plugins} onError={onError} readonly />);
+        calloutState.broken = true;
+        // A new plugin list draws the readonly view again.
+        rerender(
+            <RichTextEditor value={first} onChange={onChange} plugins={[...plugins]} onError={onError} readonly />,
+        );
+
+        // The fallback's read-only view is the one that crashed, so it is not reported twice.
+        expect(onError).toHaveBeenCalledOnce();
+
+        // The fallback cannot show it, so Retry with the cause gone does.
+        calloutState.broken = false;
+        retry(container);
+        expect(container.textContent).toContain('one');
+        expect(container.textContent).not.toContain('two');
+    });
+
+    it('shows a document the host pushes after the fallback could not show the last one', () => {
+        silenceReact();
+        calloutState.broken = true;
+        const plugins = [throwingPlugin(), calloutPlugin()];
+        const { container, rerender } = mount(() => <RichTextEditor value={callout('unshowable')} plugins={plugins} />);
+        expect(retryButton(container)).toBeDefined();
+        expect(container.textContent).not.toContain('unshowable');
+
+        rerender(<RichTextEditor value={paragraph('replacement')} plugins={plugins} />);
+
+        expect(container.textContent).toContain('replacement');
+    });
+
+    it('hands onError an Error when a plugin throws something else', () => {
+        silenceReact();
+        const throwsString: RtePlugin = definePlugin({
+            id: 'throws',
+            toolbar: [
+                {
+                    label: 'Throws',
+                    render: () => {
+                        // oxlint-disable-next-line typescript/only-throw-error -- what a careless plugin throws
+                        throw 'not an error';
+                    },
+                },
+            ],
+        });
+        const onError = errorSpy();
+        mount(() => <RichTextEditor value={paragraph('still here')} plugins={[throwsString]} onError={onError} />);
+
+        const error = onError.mock.calls[0]?.[0];
+        expect(error).toBeInstanceOf(Error);
+        expect(error?.message).toBe('not an error');
+    });
+
+    it('keeps the name the host gave the editor, and ties Retry to the message', () => {
+        silenceReact();
+        const { container } = mount(() => (
+            <RichTextEditor
+                value={paragraph('still here')}
+                plugins={[throwingPlugin()]}
+                aria-label="Comment"
+                aria-describedby="comment-help"
+            />
+        ));
+
+        const group = container.querySelector('[role="group"]');
+        expect(group?.getAttribute('aria-label')).toBe('Comment');
+        expect(group?.getAttribute('aria-describedby')).toBe('comment-help');
+        expect(group?.contains(retryButton(container))).toBe(true);
+        const messageId = retryButton(container).getAttribute('aria-describedby') ?? '';
+        const message = window.document.getElementById(messageId);
+        expect(message?.textContent).toBe('The editor stopped working. Try again to load it.');
+        expect(message?.getAttribute('role')).toBe('alert');
+    });
+
+    it('says its crash texts in the language of its locale', () => {
+        silenceReact();
+        const { container } = mount(() => (
+            <ThemeProvider locale={fondueDeDE}>
+                <RichTextEditor value={paragraph('still here')} plugins={[throwingPlugin()]} />
+            </ThemeProvider>
+        ));
+
+        const button = [...container.querySelectorAll('button')].find(
+            (candidate) => candidate.textContent === deDE.RichTextEditor_retry,
+        );
+        const messageId = button?.getAttribute('aria-describedby') ?? '';
+        expect(window.document.getElementById(messageId)?.textContent).toBe(deDE.RichTextEditor_editorFailed);
+    });
+
+    it('names the fallback by a visible label, and only when the host named the editor', () => {
+        silenceReact();
+        const { container, rerender } = mount(() => (
+            <RichTextEditor value={paragraph('still here')} plugins={[throwingPlugin()]} aria-labelledby="label" />
+        ));
+        expect(container.querySelector('[role="group"]')?.getAttribute('aria-labelledby')).toBe('label');
+
+        rerender(
+            <RichTextEditor value={paragraph('still here')} plugins={[throwingPlugin()]} aria-describedby="help" />,
+        );
+
+        expect(container.querySelector('[role="group"]')).toBeNull();
+    });
+
+    it('hands the focus of a pressed Retry to a readonly view', () => {
+        silenceReact();
+        calloutState.broken = true;
+        const { container } = mount(() => (
+            <RichTextEditor value={callout('read me')} plugins={[calloutPlugin()]} readonly />
+        ));
+        calloutState.broken = false;
+
+        retry(container);
+
+        expect(container.textContent).toContain('read me');
+        expect(window.document.activeElement).not.toBe(window.document.body);
+        expect(container.contains(window.document.activeElement)).toBe(true);
+        // Focusable by script only, never a tab stop.
+        expect(window.document.activeElement?.getAttribute('tabindex')).toBe('-1');
+    });
+
+    it('does not take focus when a readonly view retried earlier crashes with focus gone', () => {
+        silenceReact();
+        vi.useFakeTimers();
+        teardown.push(() => vi.useRealTimers());
+        calloutState.broken = true;
+        const plugins = [calloutPlugin()];
+        const { container, rerender } = mount(() => (
+            <RichTextEditor value={callout('one')} plugins={plugins} readonly />
+        ));
+        calloutState.broken = false;
+        retry(container);
+        act(() => {
+            blurActiveElement();
+            vi.runAllTimers();
+        });
+        expect(window.document.activeElement).toBe(window.document.body);
+
+        calloutState.broken = true;
+        rerender(<RichTextEditor value={callout('two')} plugins={plugins} readonly />);
+
+        expect(retryButton(container)).toBeDefined();
+        expect(window.document.activeElement).toBe(window.document.body);
+    });
+
+    it('does not fire onBlur when it crashes while it has focus', () => {
+        silenceReact();
+        vi.useFakeTimers();
+        teardown.push(() => vi.useRealTimers());
+        const state = { crash: false };
+        const late = lateCrashPlugin(state);
+        const onBlur = vi.fn<(doc: RteDocument) => void>();
+        const { container, ready } = mount(() => (
+            <RichTextEditor plugins={[late, ...defaultPlugins]} onBlur={onBlur} />
+        ));
+        ready();
+        act(() => {
+            editableIn(container).focus();
+            vi.runAllTimers();
+        });
+        state.crash = true;
+        paste(container, '<p>typed</p>');
+        act(() => {
+            vi.runAllTimers();
+        });
+
+        expect(container.textContent).toContain('The editor stopped working.');
+        expect(onBlur).not.toHaveBeenCalled();
+    });
+
+    it('still shows the fallback when the host onError throws', () => {
+        silenceReact();
+        const reportError = vi.fn();
+        vi.stubGlobal('reportError', reportError);
+        teardown.push(() => vi.unstubAllGlobals());
+        const failure = new Error('host onError broke');
+        const { container } = mount(() => (
+            <RichTextEditor
+                value={paragraph('still here')}
+                plugins={[throwingPlugin()]}
+                onError={() => {
+                    throw failure;
+                }}
+            />
+        ));
+
+        expect(container.textContent).toContain('The editor stopped working.');
+        expect(reportError).toHaveBeenCalledWith(failure);
+    });
+
+    it('rethrows a throwing host onError on its own task where reportError is missing', () => {
+        silenceReact();
+        vi.useFakeTimers();
+        teardown.push(() => vi.useRealTimers());
+        vi.stubGlobal('reportError', undefined);
+        teardown.push(() => vi.unstubAllGlobals());
+        const failure = new Error('host onError broke');
+        const { container } = mount(() => (
+            <RichTextEditor
+                value={paragraph('still here')}
+                plugins={[throwingPlugin()]}
+                onError={() => {
+                    throw failure;
+                }}
+            />
+        ));
+
+        expect(container.textContent).toContain('The editor stopped working.');
+        expect(() => vi.runAllTimers()).toThrow(failure);
+    });
+
+    it('reports a read-only view that cannot show the document after a crash', () => {
+        silenceReact();
+        calloutState.broken = true;
+        const onError = errorSpy();
+        mount(() => (
+            <RichTextEditor
+                value={callout('unshowable')}
+                plugins={[throwingPlugin(), calloutPlugin()]}
+                onError={onError}
+            />
+        ));
+
+        const messages = onError.mock.calls.map(([error]) => error.message);
+        expect(messages).toHaveLength(2);
+        expect(messages).toEqual(expect.arrayContaining(['toolbar broke', 'readonly view broke']));
+    });
+
+    it('reports a read-only view that cannot show the document once per crash, however often the host passes it', () => {
+        silenceReact();
+        calloutState.broken = true;
+        const plugins = [throwingPlugin(), calloutPlugin()];
+        const onError = errorSpy();
+        const { container, rerender } = mount(() => (
+            <RichTextEditor value={callout('same')} plugins={plugins} onError={onError} />
+        ));
+
+        rerender(<RichTextEditor value={callout('same')} plugins={plugins} onError={onError} />);
+        rerender(<RichTextEditor value={callout('same')} plugins={plugins} onError={onError} />);
+        expect(onError.mock.calls.map(([error]) => error.message).sort()).toEqual([
+            'readonly view broke',
+            'toolbar broke',
+        ]);
+
+        retry(container);
+
+        expect(onError).toHaveBeenCalledTimes(4);
+    });
+
+    it('reports a readonly view that crashes once, not again for the same view in the fallback', () => {
+        silenceReact();
+        calloutState.broken = true;
+        const plugins = [calloutPlugin()];
+        const onError = errorSpy();
+        const { container, rerender } = mount(() => (
+            <RichTextEditor value={callout('same')} plugins={plugins} readonly onError={onError} />
+        ));
+
+        rerender(<RichTextEditor value={callout('same')} plugins={plugins} readonly onError={onError} />);
+        rerender(<RichTextEditor value={callout('same')} plugins={plugins} readonly onError={onError} />);
+        expect(onError).toHaveBeenCalledOnce();
+        expect(container.textContent).toBe('The editor stopped working. Try again to load it.Try again');
+
+        retry(container);
+
+        expect(onError).toHaveBeenCalledTimes(2);
+    });
+
+    it('reports once when a document from a newer version, shown read-only, crashes its view', () => {
+        silenceReact();
+        calloutState.broken = true;
+        const onError = errorSpy();
+        // A version this editor does not write, which `RteDocument` does not allow.
+        const newer = { ...callout('newer'), version: 2 } as unknown as RteDocument;
+        mount(() => <RichTextEditor value={newer} plugins={[calloutPlugin()]} onError={onError} />);
+
+        expect(onError).toHaveBeenCalledOnce();
+    });
+
+    it('settles on the message and Retry when every document it gets cannot be shown', () => {
+        silenceReact();
+        calloutState.broken = true;
+        const plugins = [throwingPlugin(), calloutPlugin()];
+        const { container, rerender } = mount(() => <RichTextEditor value={callout('first')} plugins={plugins} />);
+
+        rerender(<RichTextEditor value={callout('second')} plugins={plugins} />);
+        rerender(<RichTextEditor value={callout('third')} plugins={plugins} />);
+
+        expect(container.textContent).toBe('The editor stopped working. Try again to load it.Try again');
+    });
+
+    it('shows a value the host passes again after leaving it out', () => {
+        silenceReact();
+        const saved = paragraph('saved');
+        const onError = errorSpy();
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={saved} plugins={[idPlugin('a'), ...defaultPlugins]} onError={onError} />
+        ));
+        ready();
+        rerender(<RichTextEditor plugins={[idPlugin('a'), ...defaultPlugins]} onError={onError} />);
+        paste(container, '<p>draft</p>');
+        // New plugin ids remount the engine from the draft, so the saved value no longer matches what it holds.
+        rerender(<RichTextEditor plugins={[idPlugin('b'), ...defaultPlugins]} onError={onError} />);
+        rerender(<RichTextEditor value={saved} plugins={[idPlugin('b'), ...defaultPlugins]} onError={onError} />);
+
+        rerender(<RichTextEditor value={saved} plugins={[idPlugin('b', true), ...defaultPlugins]} onError={onError} />);
+
+        expect(onError).toHaveBeenCalledOnce();
+        expect(container.textContent).toContain('saved');
+        expect(container.textContent).not.toContain('draft');
+    });
+
+    it('shows edits made after a Retry, though the plugins change', () => {
+        silenceReact();
+        const state = { broken: true };
+        const saved = paragraph('saved');
+        const onError = errorSpy();
+        // A host that commits on blur and never passes edits back as `value`.
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={saved} plugins={[flakyPlugin(state), ...defaultPlugins]} onError={onError} />
+        ));
+        state.broken = false;
+        retry(container);
+        ready();
+        paste(container, '<p>typed</p>');
+
+        // After a Retry the shell gets what the editor holds, not `value`, whatever the plugins.
+        rerender(
+            <RichTextEditor value={saved} plugins={[idPlugin('other', true), ...defaultPlugins]} onError={onError} />,
+        );
+
+        expect(container.textContent).toContain('The editor stopped working.');
+        expect(container.textContent).toContain('typed');
+    });
+
+    it('shows an earlier edit the host restores after the plugins changed', () => {
+        silenceReact();
+        const onError = errorSpy();
+        const { container, onChange, rerender, ready } = mount((change) => (
+            <RichTextEditor
+                value={paragraph('V0')}
+                onChange={change}
+                plugins={[idPlugin('a'), ...defaultPlugins]}
+                onError={onError}
+            />
+        ));
+        ready();
+        paste(container, '<p>one</p>');
+        paste(container, '<p>two</p>');
+        const first = onChange.mock.calls[0]?.[0];
+        // The remounted engine forgets it emitted `first`, and shows it when it comes back.
+        rerender(
+            <RichTextEditor value={paragraph('V0')} plugins={[idPlugin('b'), ...defaultPlugins]} onError={onError} />,
+        );
+
+        rerender(<RichTextEditor value={first} plugins={[idPlugin('b'), ...defaultPlugins]} onError={onError} />);
+
+        rerender(<RichTextEditor value={first} plugins={[idPlugin('b', true), ...defaultPlugins]} onError={onError} />);
+
+        expect(onError).toHaveBeenCalledOnce();
+        expect(container.textContent).toContain('one');
+        expect(container.textContent).not.toContain('two');
+    });
+
+    it('keeps the value a readonly view shows, though newer edits never reached the host', () => {
+        silenceReact();
+        calloutState.broken = false;
+        const plugins = [...defaultPlugins, calloutPlugin()];
+        const saved = callout('saved');
+        const onError = errorSpy();
+        // A host that commits on blur and never passes edits back as `value`.
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={saved} plugins={plugins} onError={onError} />
+        ));
+        ready();
+        paste(container, '<p>draft</p>');
+        rerender(<RichTextEditor value={saved} plugins={plugins} onError={onError} readonly />);
+
+        calloutState.broken = true;
+        // A new plugin list draws the readonly view again.
+        rerender(<RichTextEditor value={saved} plugins={[...plugins]} onError={onError} readonly />);
+
+        // The fallback's read-only view is the one that crashed, so it is not reported twice.
+        expect(onError).toHaveBeenCalledOnce();
+
+        // The fallback cannot show it, so Retry with the cause gone does.
+        calloutState.broken = false;
+        retry(container);
+        expect(container.textContent).toContain('saved');
+        expect(container.textContent).not.toContain('draft');
+    });
+
+    it('shows an earlier edit the host restores along with other plugins', () => {
+        silenceReact();
+        const fine = idPlugin('late');
+        const bad = idPlugin('other', true);
+        const onError = errorSpy();
+        const { container, onChange, rerender, ready } = mount((change) => (
+            <RichTextEditor
+                value={paragraph('V0')}
+                onChange={change}
+                plugins={[fine, ...defaultPlugins]}
+                onError={onError}
+            />
+        ));
+        ready();
+        paste(container, '<p>one</p>');
+        paste(container, '<p>two</p>');
+        const first = onChange.mock.calls[0]?.[0];
+
+        // New plugin ids remount the engine, which then shows `first` instead of ignoring it as an echo.
+        rerender(<RichTextEditor value={first} plugins={[idPlugin('other'), ...defaultPlugins]} onError={onError} />);
+
+        rerender(<RichTextEditor value={first} plugins={[bad, ...defaultPlugins]} onError={onError} />);
+
+        expect(onError).toHaveBeenCalledOnce();
+        expect(container.textContent).toContain('one');
+        expect(container.textContent).not.toContain('two');
+    });
+
+    it('catches a node view that throws inside the view portals', () => {
+        silenceReact();
+        const Broken = (): ReactNode => {
+            throw new Error('view broke');
+        };
+        const broken: RtePlugin = definePlugin({
+            id: 'broken',
+            content: defineContent({
+                blocks: {
+                    broken: defineBlock({
+                        content: 'text',
+                        toHtml: () => ({ tag: 'div', attrs: { 'data-broken': '' }, children: true }),
+                        parse: [{ tag: 'div[data-broken]' }],
+                    }),
+                },
+            }),
+            edit: { broken: Broken },
+        });
+        // A test-only block type outside the `RteBlock` union.
+        const value = {
+            version: 1,
+            blocks: [{ type: 'broken', children: [{ text: 'in a view' }] }],
+        } as unknown as RteDocument;
+
+        const { container } = mount(() => <RichTextEditor value={value} plugins={[broken]} />);
+
+        expect(container.textContent).toContain('The editor stopped working.');
+        expect(retryButton(container)).toBeDefined();
+    });
+});
+
+describe('the reset formatting button', () => {
+    it('removes every mark but the link and makes the block a plain paragraph', () => {
+        const value: RteDocument = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'bulletList',
+                    children: [
+                        {
+                            type: 'listItem',
+                            children: [
+                                {
+                                    type: 'paragraph',
+                                    align: 'center',
+                                    children: [{ text: 'linked', bold: true, link: { href: 'https://example.com' } }],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor value={value} onChange={onChange} plugins={defaultPlugins} toolbarPlacement="top" />
+        ));
+        ready();
+        const editable = editableIn(container);
+        act(() => editable.focus());
+        press(editable, 'a', mod);
+
+        act(() => container.querySelector<HTMLElement>('[aria-label="Reset formatting"]')?.click());
+
+        expect(stored()?.blocks).toEqual([
+            { type: 'paragraph', children: [{ text: 'linked', link: { href: 'https://example.com' } }] },
+        ]);
+    });
+});
+
 describe('onBlur', () => {
     it('fires once focus leaves the editor, not when it moves into the toolbar, with the document', () => {
         vi.useFakeTimers();
@@ -770,9 +2727,8 @@ describe('onBlur', () => {
 
 describe('pasting', () => {
     describe('into a mounted editor', () => {
-        it('turns a copied mention back into a mention, even where links are mounted', () => {
-            // A mention is written as `<a href data-mention-id>`, which the link's
-            // `a[href]` rule matches as well; one with no profile as a `<span>`.
+        it('pastes a copied mention as its text, a linked one as a link', () => {
+            // A mention is written as `<a href data-mention-id>`; one with no profile as a `<span>`.
             const plugins = [
                 ...defaultPlugins,
                 mentionPlugin({
@@ -806,21 +2762,12 @@ describe('pasting', () => {
 
             const block = stored()?.blocks[0];
             const children = block && 'children' in block ? block.children : [];
-            expect(children).toContainEqual({ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' });
-            expect(children).toContainEqual({
-                type: 'mention',
-                id: 'design',
-                username: 'design',
-                name: 'Design',
-                kind: 'group',
-            });
-            expect(children).toContainEqual({
-                type: 'mention',
-                id: 'all',
-                username: 'all',
-                name: 'Everyone',
-                kind: 'all',
-            });
+            expect(children).toEqual([
+                { text: 'Ask ' },
+                { text: '@jane', link: { href: '/people/jane' } },
+                { text: '@design', link: { href: '/people/design' } },
+                { text: '@all' },
+            ]);
         });
 
         it('keeps the marks and blocks the pasted HTML carried', () => {
@@ -853,7 +2800,7 @@ describe('pasting', () => {
             const block = stored()?.blocks[0];
             const children = block && 'children' in block ? block.children : [];
             expect(children).toContainEqual({ text: 'plain ' });
-            expect(children).toContainEqual({ text: 'red', fontColor: { color: 'red' } });
+            expect(children).toContainEqual({ text: 'red', fontColor: { color: '#ff0000' } });
         });
 
         it('shows what was pasted', () => {
@@ -909,12 +2856,12 @@ describe('pasting', () => {
             ]);
         });
 
-        it('keeps a colour as it was written, and leaves plain black alone', () => {
+        it('stores a colour as hex, and leaves plain black alone', () => {
             const doc = pasted(
                 '<p><span style="color: #f00">red</span><span style="color: rgb(0, 0, 0)">black</span></p>',
             );
 
-            expect(childrenOf(doc)).toEqual([{ text: 'red', fontColor: { color: '#f00' } }, { text: 'black' }]);
+            expect(childrenOf(doc)).toEqual([{ text: 'red', fontColor: { color: '#ff0000' } }, { text: 'black' }]);
         });
 
         it('reads only the alignments it offers', () => {
@@ -944,6 +2891,25 @@ describe('exported links', () => {
     });
 });
 
+describe('a new-tab link in the editor', () => {
+    it('is drawn by its own view, so the hidden note of the reading view is not added to it', () => {
+        const value: RteDocument = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'docs', link: { href: 'https://example.com', openInNewTab: true } }],
+                },
+            ],
+        };
+        const container = render(<RichTextEditor value={value} plugins={[linkPlugin()]} />);
+        const anchor = editableIn(container).querySelector('a');
+
+        expect(anchor?.textContent).toBe('docs');
+        expect(anchor?.getAttribute('aria-description')).toBe('Opens in a new tab');
+    });
+});
+
 describe('a to-do list', () => {
     it('exports checkboxes named by their state, the text in a block element', () => {
         const html = serializeToHtml(toDo, { plugins: checkListPlugins });
@@ -969,5 +2935,61 @@ describe('a to-do list', () => {
         expect(box?.getAttribute('aria-readonly')).toBe('true');
         act(() => box?.click());
         expect(box?.checked).toBe(true);
+    });
+
+    // `RteDocument` names no plugin block, so the check list needs the cast.
+    const started = (checked: boolean | 'inProgress'): RteDocument =>
+        ({
+            version: 1,
+            blocks: [
+                {
+                    type: 'checkList',
+                    children: [
+                        {
+                            type: 'checkItem',
+                            checked,
+                            children: [{ type: 'paragraph', children: [{ text: 'Started' }] }],
+                        },
+                    ],
+                },
+            ],
+        }) as RteDocument;
+
+    it('shows an item in progress as a mixed checkbox, in the editor and the readonly view', () => {
+        for (const element of [
+            <RichTextEditor key="editor" value={started('inProgress')} plugins={checkListPlugins} />,
+            <RichTextRenderer key="renderer" value={started('inProgress')} plugins={checkListPlugins} />,
+        ]) {
+            const box = render(element).querySelector<HTMLInputElement>('input[type="checkbox"]');
+
+            expect(box?.indeterminate).toBe(true);
+            expect(box?.checked).toBe(false);
+        }
+    });
+
+    it('marks an item in progress done on a click', () => {
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor value={started('inProgress')} onChange={onChange} plugins={checkListPlugins} />
+        ));
+        ready();
+
+        act(() => container.querySelector<HTMLInputElement>('input[type="checkbox"]')?.click());
+
+        expect(stored()).toEqual(started(true));
+    });
+
+    it('exports an item in progress named by its state, and reads it back', () => {
+        const html = serializeToHtml(started('inProgress'), { plugins: checkListPlugins });
+
+        expect(html).toContain('aria-label="In progress"');
+        expect(html).toContain('data-checked="inProgress"');
+
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor onChange={onChange} plugins={checkListPlugins} />
+        ));
+        ready();
+        paste(container, html);
+
+        expect(stored()?.blocks).toContainEqual(started('inProgress').blocks[0]);
     });
 });

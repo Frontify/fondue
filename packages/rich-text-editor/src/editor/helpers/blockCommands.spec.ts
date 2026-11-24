@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
 
-import { activeCommand, matchCommands, TEXT_COMMAND } from './blockCommands';
+import { activeCommand, availableCommands, matchCommands, TEXT_COMMAND } from './blockCommands';
 
 const command = (label: string, keywords: string[] = [], group: RteBlockCommand['group'] = 'turnInto') => ({
     id: label,
@@ -15,7 +15,7 @@ const command = (label: string, keywords: string[] = [], group: RteBlockCommand[
 });
 
 const commands = [
-    TEXT_COMMAND,
+    { ...TEXT_COMMAND, label: 'Text' },
     command('Heading 1', ['h1', 'title']),
     command('Heading 2', ['h2']),
     command('Bulleted list', ['ul']),
@@ -52,11 +52,14 @@ describe('the active command', () => {
 
         expect(
             activeCommand([TEXT_COMMAND, heading], {
+                kind: 'text' as const,
+                grid: null,
                 isCollapsed: true,
                 text: '',
                 block: { type: 'x' },
                 blocks: [{ type: 'x' }],
                 marks: {},
+                history: { canUndo: false, canRedo: false },
             }),
         ).toBe(heading);
     });
@@ -70,22 +73,63 @@ describe('the active command', () => {
         const numbered = listCommand('numberedList');
         const blocks = ['paragraph', 'listItem', 'numberedList', 'listItem', 'bulletList'].map((type) => ({ type }));
 
-        const selection = { isCollapsed: true, text: '', block: blocks[0] ?? null, blocks, marks: {} };
+        const selection = {
+            kind: 'text' as const,
+            grid: null,
+            isCollapsed: true,
+            text: '',
+            block: blocks[0] ?? null,
+            blocks,
+            marks: {},
+            history: { canUndo: false, canRedo: false },
+        };
 
         expect(activeCommand([TEXT_COMMAND, bullet, numbered], selection)).toBe(numbered);
     });
 
     it('is the built-in Text only on a paragraph that is not in a list', () => {
         const selection = (types: string[]) => ({
+            kind: 'text' as const,
+            grid: null,
             isCollapsed: true,
             text: '',
             block: { type: types[0] ?? '' },
             blocks: types.map((type) => ({ type })),
             marks: {},
+            history: { canUndo: false, canRedo: false },
         });
 
         expect(TEXT_COMMAND.isActive?.(selection(['paragraph']))).toBe(true);
         expect(TEXT_COMMAND.isActive?.(selection(['paragraph', 'listItem', 'bulletList']))).toBe(false);
         expect(TEXT_COMMAND.isActive?.(selection(['textStyle']))).toBe(false);
+    });
+});
+
+describe('whether a command can run', () => {
+    const selection: RteSelectionSnapshot = {
+        kind: 'text',
+        grid: null,
+        isCollapsed: true,
+        text: '',
+        block: { type: 'paragraph' },
+        blocks: [{ type: 'paragraph' }],
+        marks: {},
+        history: { canUndo: false, canRedo: false },
+    };
+
+    it('keeps a command that says nothing', () => {
+        const always = command('Heading 1');
+
+        expect(availableCommands([always], selection)).toEqual([always]);
+    });
+
+    it('drops a command that says it cannot run on the selection', () => {
+        const limited: RteBlockCommand = {
+            ...command('Add section'),
+            isAvailable: (current) => current.block?.type !== 'paragraph',
+        };
+
+        expect(availableCommands([limited], selection)).toEqual([]);
+        expect(availableCommands([limited], { ...selection, block: { type: 'heading' } })).toEqual([limited]);
     });
 });

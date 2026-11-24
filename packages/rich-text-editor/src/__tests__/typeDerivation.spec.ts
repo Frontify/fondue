@@ -7,6 +7,7 @@
 // `RteText` is the document format's own building block, not a root export.
 import { type RteText } from '../documentFormat';
 import { defineBlock, type RteBlock, type RteDocument, type RteDocumentWith, type RtePlugin } from '../index';
+import { linkPlugin, textStyleContent, textStylePlugin } from '../plugins';
 
 // The shipped case: one annotation, everything checked
 const doc: RteDocument = {
@@ -152,6 +153,22 @@ const valuedBlockWithoutDefaults = defineBlock<{ tone: string }>({
 // A block without a value needs none
 const plainBlock = defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [] });
 
+// A link keeps its underline, and vertical margins do nothing on inline text
+// @ts-expect-error a link look has no text decoration
+const linkDecoration = linkPlugin({ look: { text: { textDecoration: 'none' } } });
+
+// @ts-expect-error a link look has no top margin
+const linkMarginTop = linkPlugin({ look: { text: { marginTop: '4px' } } });
+
+// @ts-expect-error a link look has no bottom margin
+const linkMarginBottom = linkPlugin({ look: { text: { marginBottom: '4px' } } });
+
+// @ts-expect-error links take their look from the link plugin
+const textStyleLink = textStylePlugin({ look: { link: { color: 'red' } } });
+
+// @ts-expect-error links take their look from the link content
+const textStyleContentLink = textStyleContent({ look: { link: { color: 'red' } } });
+
 export const __typeAssertions = [
     doc,
     badBlock,
@@ -174,4 +191,9 @@ export const __typeAssertions = [
     valuedBlock,
     valuedBlockWithoutDefaults,
     plainBlock,
+    linkDecoration,
+    linkMarginTop,
+    linkMarginBottom,
+    textStyleLink,
+    textStyleContentLink,
 ];

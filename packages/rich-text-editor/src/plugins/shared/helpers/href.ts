@@ -10,6 +10,21 @@ const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
  */
 const HOST_AND_PORT = /^[^/:?#]+:\d+(?:[/?#]|$)/;
 
+/**
+ * The schemes a typed or pasted address may start with to become a link
+ */
+const LINKABLE_SCHEMES = 'https?://|mailto:|tel:';
+
+/**
+ * A web, mail or phone address as it is typed in text: a linkable scheme and everything up to the next space
+ */
+export const LINKABLE_ADDRESS = new RegExp(String.raw`(?:${LINKABLE_SCHEMES})[^\s]+`, 'i');
+
+/**
+ * What pasted text starts with to become a link: a web, mail or phone scheme
+ */
+const LINKABLE_PASTE = new RegExp(`^(?:${LINKABLE_SCHEMES})`, 'i');
+
 /** Longer than any link someone means, and than most browsers keep. */
 const MAX_HREF_LENGTH = 2048;
 
@@ -17,7 +32,7 @@ const MAX_HREF_LENGTH = 2048;
 const CONTROL_CHARACTER = /[\u0000-\u001F\u007F-\u009F]/;
 
 /** The scheme an href names, lower-cased with its colon, or null for a relative one. */
-const schemeOf = (href: string): string | null => {
+export const schemeOf = (href: string): string | null => {
     // Browsers ignore tabs, newlines and control characters in URLs, so `java\tscript:` must read as `javascript:`.
     const compact = href.replaceAll(/[\u0000- ]/g, '');
     return /^([a-z][a-z\d+.-]*:)/i.exec(compact)?.[1]?.toLowerCase() ?? null;
@@ -36,6 +51,8 @@ export const isSafeHref = (href: unknown): href is string => {
     const scheme = schemeOf(href);
     return scheme === null || SAFE_SCHEMES.has(scheme);
 };
+
+export const isLinkablePaste = (text: string): boolean => LINKABLE_PASTE.test(text);
 
 /** Paths and fragments within the site the document is shown on, kept as typed. */
 const isRelative = (typed: string): boolean => /^(#|\/|\.\.?\/|\?)/.test(typed);

@@ -100,7 +100,7 @@ node -e "import('@frontify/fondue/sdk').then(({guides}) => ['getting-started/Set
 For upgrades:
 
 ```bash
-node -e "import('@frontify/fondue/sdk').then(({guides}) => console.log(guides.get('development/Upgrading')?.content))"
+node -e "import('@frontify/fondue/sdk').then(({guides}) => console.log(guides.get('development/upgrading/v14')?.content))"
 ```
 
 The output is the same markdown the Storybook docs render. Use it as the source for peer dependency versions (React, Tailwind), token imports, component-style imports, font face definitions, the Tailwind preset and its `tw-` prefix, `ThemeProvider`, and which colour tokens to use for text and surfaces.

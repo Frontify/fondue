@@ -3,7 +3,7 @@
 import { createElement } from 'react';
 import { addons, types } from 'storybook/manager-api';
 
-import fonduePackageJson from '../../packages/fondue/package.json';
+import fonduePackageJson from '../../fondue/package.json';
 
 import { dark } from './frontifyTheme';
 

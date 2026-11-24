@@ -6,6 +6,7 @@ import * as sinon from 'sinon';
 
 import { Select } from '#/components/Select';
 import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
+import { resolveToken } from '#/testutils/resolveToken';
 import { MAX_HEIGHT_MARGIN } from '#/utilities/domUtilities';
 
 const SELECT_TEST_ID = 'test-select';
@@ -114,19 +115,28 @@ test('should navigate though menu with arrow', async ({ mount, page }) => {
 
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS(
+        'background-color',
+        await resolveToken(page, '--color-surface-hover'),
+    );
 
     await page.keyboard.press('ArrowDown');
 
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS(
+        'background-color',
+        await resolveToken(page, '--color-surface-hover'),
+    );
 
     await page.keyboard.press('ArrowUp');
 
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS(
+        'background-color',
+        await resolveToken(page, '--color-surface-hover'),
+    );
 });
 
 test('should select item in list', async ({ mount, page }) => {
@@ -521,13 +531,14 @@ test('render indicator on selected item', async ({ mount, page }) => {
     await component.click();
 
     await expect(firstItem).toHaveAttribute('data-selected', 'true');
-    await expect(firstItem).toHaveCSS('background-color', 'rgb(234, 234, 228)');
+    await expect(firstItem).toHaveCSS('background-color', await resolveToken(page, '--color-surface-active'));
     await expect(firstItem).toHaveAttribute('aria-selected', 'true');
     await expect(chekmarkIcon).toBeVisible();
 
     await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowUp');
 
-    await expect(firstItem).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await expect(firstItem).toHaveCSS('background-color', await resolveToken(page, '--color-surface-hover'));
     await expect(chekmarkIcon).toBeVisible();
 });
 
@@ -571,5 +582,121 @@ test('should handle state with default value set to first item', async ({ mount,
 
     await expect(component).toContainText(ITEM_TEXT1);
     expect(onSelectChange.callCount).toBe(1);
-    expect(onSelectChange.calledWith('test1')).toBe(true);
+    expect(onSelectChange.calledWith('test2')).toBe(true);
+});
+
+const FRUIT_ITEMS = (
+    <Select.Slot name="menu">
+        <Select.Item value="apple">Apple</Select.Item>
+        <Select.Item value="banana">Banana</Select.Item>
+        <Select.Item value="cherry">Cherry</Select.Item>
+    </Select.Slot>
+);
+
+test('should highlight the selected item on keyboard open and move to the next one on ArrowDown', async ({
+    mount,
+    page,
+}) => {
+    const wrapper = await mount(
+        <Select aria-label="Fruit" data-test-id={SELECT_TEST_ID} value="banana">
+            {FRUIT_ITEMS}
+        </Select>,
+    );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
+
+    await component.focus();
+    await page.keyboard.press('Enter');
+
+    const banana = page.getByRole('option', { name: 'Banana' });
+    const bananaId = await banana.getAttribute('id');
+    expect(bananaId).toBeTruthy();
+    await expect(component).toHaveAttribute('aria-activedescendant', bananaId ?? '');
+
+    await page.keyboard.press('ArrowDown');
+
+    await expect(page.getByRole('option', { name: 'Cherry' })).toHaveAttribute('data-highlighted', 'true');
+});
+
+test('should name the listbox from aria-label and not wrap it in a dialog', async ({ mount, page }) => {
+    const wrapper = await mount(
+        <Select aria-label="Fruit" data-test-id={SELECT_TEST_ID}>
+            {FRUIT_ITEMS}
+        </Select>,
+    );
+
+    await wrapper.getByTestId(SELECT_TEST_ID).click();
+
+    await expect(page.getByRole('listbox', { name: 'Fruit' })).toBeVisible();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+});
+
+test('should name the listbox from aria-labelledby', async ({ mount, page }) => {
+    const wrapper = await mount(
+        <>
+            <span id="fruit-label">Fruit label</span>
+            <Select aria-labelledby="fruit-label" data-test-id={SELECT_TEST_ID}>
+                {FRUIT_ITEMS}
+            </Select>
+        </>,
+    );
+
+    await wrapper.getByTestId(SELECT_TEST_ID).click();
+
+    await expect(page.getByRole('listbox', { name: 'Fruit label' })).toBeVisible();
+});
+
+test('should call onSelect when the selected item is chosen again', async ({ mount, page }) => {
+    const onSelectChange = sinon.spy();
+
+    const wrapper = await mount(
+        <Select aria-label="Fruit" data-test-id={SELECT_TEST_ID} value="banana" onSelect={onSelectChange}>
+            {FRUIT_ITEMS}
+        </Select>,
+    );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
+
+    await component.focus();
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Enter');
+
+    expect(onSelectChange.callCount).toBe(1);
+    expect(onSelectChange.calledWith('banana')).toBe(true);
+});
+
+test('should not call onSelect when tabbing out of the list without moving the highlight', async ({ mount, page }) => {
+    const onSelectChange = sinon.spy();
+
+    const wrapper = await mount(
+        <Select aria-label="Fruit" data-test-id={SELECT_TEST_ID} value="banana" onSelect={onSelectChange}>
+            {FRUIT_ITEMS}
+        </Select>,
+    );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
+
+    await component.focus();
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Tab');
+
+    expect(onSelectChange.callCount).toBe(0);
+});
+
+test('should not pick the previous item again after choosing another one', async ({ mount, page }) => {
+    const onSelectChange = sinon.spy();
+
+    const wrapper = await mount(
+        <Select aria-label="Fruit" data-test-id={SELECT_TEST_ID} defaultValue="apple" onSelect={onSelectChange}>
+            {FRUIT_ITEMS}
+        </Select>,
+    );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
+
+    await component.click();
+    await page.getByRole('option', { name: 'Banana' }).click();
+    await component.focus();
+    await page.keyboard.press('z');
+    await page.keyboard.press('Tab');
+
+    expect(onSelectChange.lastCall.args).toEqual(['banana']);
+    expect(onSelectChange.neverCalledWith('apple')).toBe(true);
+    await expect(component).toContainText('Banana');
 });

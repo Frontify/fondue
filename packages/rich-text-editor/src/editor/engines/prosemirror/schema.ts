@@ -12,9 +12,25 @@ import {
     type PluginRegistry,
 } from '#/core';
 
-import { plainTextOf, RAW_ATTR, UNKNOWN_BLOCK, UNKNOWN_INLINE, UNKNOWN_MARKS, VALUE_ATTR } from './documentConversion';
+import {
+    EXTRA_ATTR,
+    plainTextOf,
+    RAW_ATTR,
+    UNKNOWN_BLOCK,
+    UNKNOWN_INLINE,
+    UNKNOWN_MARKS,
+    VALUE_ATTR,
+} from './documentConversion';
+import { gridNodeSpec, gridSlotAttrs } from './grid';
 import { htmlSpecToDom } from './htmlSpecToDom';
-import { blockParseRules, INLINE_PRIORITY, MARK_PRIORITY, valueParseRules } from './pasteRules';
+import {
+    blockParseRules,
+    type DefaultStyleRule,
+    defaultStyleRules,
+    INLINE_PRIORITY,
+    markParseRules,
+    valueParseRules,
+} from './pasteRules';
 
 /**
  * The mounted features -> one engine schema (`buildSchema`, at the bottom, with
@@ -29,10 +45,11 @@ import { blockParseRules, INLINE_PRIORITY, MARK_PRIORITY, valueParseRules } from
  *     Enter creates.
  * (2) Marks are declared in NESTING order, not mount order, since the
  *     first-declared mark wraps the rest.
- * (3) Every content block except paragraph and lists is `defining`, which makes
- *     pasted content keep the block it was copied out of.
- * (4) A list item stays OUT of the `block` group; it is only ever reached
- *     through its list. That is also why the selection snapshot's `block` is the
+ * (3) Every content block except paragraph, lists and blocks made of parts is
+ *     `defining`, which makes pasted content keep the block it was copied out of.
+ * (4) A list item, and any part (a type named in some block's `{ parts }`),
+ *     stays OUT of the `block` group; it is only ever reached through the block
+ *     that holds it. That is also why the selection snapshot's `block` is the
  *     paragraph inside an item rather than the item itself.
  */
 
@@ -56,6 +73,17 @@ const contentExpression = (
         }
         return `${content.items}+`;
     }
+    if ('parts' in content) {
+        // Thrown, as with `items`: a part has no other place to stand, so one left out would be lost on the way out.
+        const missing = content.parts.find((name) => !known.has(name));
+        if (missing !== undefined) {
+            throw new Error(`Block "${type}" declares parts of type "${missing}", which is not registered.`);
+        }
+        if (content.parts.length === 0) {
+            throw new Error(`Block "${type}" declares parts but names no type.`);
+        }
+        return `(${[...new Set(content.parts)].join(' | ')})+`;
+    }
     const expanded = content.blocks.flatMap((name) => (name === ANY_LIST ? [...lists] : [name]));
     const contains = [...new Set(expanded)].filter((name) => known.has(name));
     if (contains.length === 0) {
@@ -65,18 +93,22 @@ const contentExpression = (
     return `(${[...contains, UNKNOWN_BLOCK].join(' | ')})+`;
 };
 
+type BlockNodeSpecParams = {
+    registry: PluginRegistry;
+    /** A list item or a part: reached only through the block that holds it. */
+    isHeld: boolean;
+    known: Set<string>;
+    lists: Set<string>;
+};
+
 const blockNodeSpec = (
     type: string,
     definition: BlockDefinition,
-    {
-        registry,
-        isListItem,
-        known,
-        lists,
-    }: { registry: PluginRegistry; isListItem: boolean; known: Set<string>; lists: Set<string> },
+    { registry, isHeld, known, lists }: BlockNodeSpecParams,
 ): PmNodeSpec => {
     const isVoid = definition.content === undefined;
     const isList = typeof definition.content === 'object' && 'items' in definition.content;
+    const hasParts = typeof definition.content === 'object' && 'parts' in definition.content;
     // Attributes every text block carries are engine attributes of each one.
     const carried = definition.content === 'text' ? [...registry.blockAttributes] : [];
 
@@ -85,12 +117,15 @@ const blockNodeSpec = (
         atom: isVoid,
         // Mod-click selects the innermost selectable node whole; for a block of
         // text that would only draw a ring around it.
-        selectable: isVoid || definition.render?.edit !== undefined,
+        selectable: isVoid || registry.edits.has(type),
         // invariant (3)
-        ...(isVoid || isList || type === PARAGRAPH ? {} : { defining: true }),
+        ...(isVoid || isList || hasParts || type === PARAGRAPH ? {} : { defining: true }),
         // invariant (4)
-        ...(isListItem ? {} : { group: 'block' }),
+        ...(isHeld ? {} : { group: 'block' }),
+        ...gridNodeSpec(definition),
         attrs: {
+            [EXTRA_ATTR]: { default: null },
+            ...gridSlotAttrs(definition),
             ...Object.fromEntries(
                 Object.entries(definition.defaults ?? {}).map(([name, value]) => [name, { default: value ?? null }]),
             ),
@@ -101,13 +136,13 @@ const blockNodeSpec = (
     };
 };
 
-const inlineNodeSpec = (definition: InlineDefinition): PmNodeSpec => ({
+const inlineNodeSpec = (definition: InlineDefinition, hasEditView: boolean): PmNodeSpec => ({
     group: 'inline',
     inline: true,
     atom: true,
     // With editing UI, a node inserted without a value is a draft (null) the UI
     // completes; without it, it stores the declared defaults.
-    attrs: { [VALUE_ATTR]: { default: definition.render?.edit ? null : (definition.defaults ?? {}) } },
+    attrs: { [VALUE_ATTR]: { default: hasEditView ? null : (definition.defaults ?? {}) } },
     parseDOM: valueParseRules(definition.parse, INLINE_PRIORITY),
     toDOM: (node) => {
         const value = node.attrs[VALUE_ATTR] as Record<string, unknown> | null;
@@ -116,11 +151,27 @@ const inlineNodeSpec = (definition: InlineDefinition): PmNodeSpec => ({
     },
 });
 
-const markSpec = (definition: MarkDefinition): PmMarkSpec => ({
+/**
+ * The mark itself plus the marks it excludes: the engine's list replaces its default of the mark itself.
+ * @param type - the mark's name in the schema
+ */
+const excludesSpec = (type: string, definition: MarkDefinition): string | undefined => {
+    if (!definition.excludes) {
+        return undefined;
+    }
+    return [type, ...definition.excludes].join(' ');
+};
+
+const markSpec = (
+    type: string,
+    definition: MarkDefinition,
+    defaultStyles: readonly DefaultStyleRule[],
+): PmMarkSpec => ({
     // A mark turned on without a value carries its declared defaults.
     attrs: { [VALUE_ATTR]: { default: definition.defaults ?? {} } },
     inclusive: definition.inclusive ?? true,
-    parseDOM: valueParseRules(definition.parse, MARK_PRIORITY),
+    excludes: excludesSpec(type, definition),
+    parseDOM: markParseRules(type, definition.parse, defaultStyles),
     toDOM: (mark) => htmlSpecToDom(definition.toHtml(mark.attrs[VALUE_ATTR] as Record<string, unknown>)),
 });
 
@@ -154,7 +205,14 @@ const unknownMarksSpec: PmMarkSpec = {
 
 export const buildSchema = (registry: PluginRegistry): Schema => {
     const { itemTypeByList } = registry;
-    const itemTypes = new Set(itemTypeByList.values());
+    const heldTypes = new Set(itemTypeByList.values());
+    for (const block of registry.blocks.values()) {
+        if (typeof block.content === 'object' && 'parts' in block.content) {
+            for (const part of block.content.parts) {
+                heldTypes.add(part);
+            }
+        }
+    }
     const lists = new Set(itemTypeByList.keys());
     const known = new Set(registry.blocks.keys());
 
@@ -162,18 +220,19 @@ export const buildSchema = (registry: PluginRegistry): Schema => {
 
     // invariant (1): the registry puts the paragraph first.
     for (const [type, block] of registry.blocks) {
-        nodes[type] = blockNodeSpec(type, block, { registry, isListItem: itemTypes.has(type), known, lists });
+        nodes[type] = blockNodeSpec(type, block, { registry, isHeld: heldTypes.has(type), known, lists });
     }
     for (const [type, inline] of registry.inlines) {
-        nodes[type] = inlineNodeSpec(inline);
+        nodes[type] = inlineNodeSpec(inline, registry.edits.has(type));
     }
     nodes[UNKNOWN_BLOCK] = unknownBlockSpec;
     nodes[UNKNOWN_INLINE] = unknownInlineSpec;
 
     // invariant (2): the registry already holds marks in nesting order.
     const marks: Record<string, PmMarkSpec> = {};
+    const defaultStyles = defaultStyleRules(registry);
     for (const [type, mark] of registry.marks) {
-        marks[type] = markSpec(mark);
+        marks[type] = markSpec(type, mark, defaultStyles);
     }
     // Last, so it wraps nothing a plugin's mark would.
     marks[UNKNOWN_MARKS] = unknownMarksSpec;

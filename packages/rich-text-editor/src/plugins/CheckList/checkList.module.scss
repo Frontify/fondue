@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../../styles/stack.module.scss';
+
 .checkList {
     margin: 0;
     padding-left: 0;
@@ -43,18 +45,12 @@
 }
 
 .label {
+    // The editor wraps an item's blocks in elements of its own, so they are selected by tag.
+    @include stack.stack(0, ':is(p, ul, ol)');
+
     flex: 1;
     min-width: 0;
     // A div of the plugin's own around editable text: it keeps the editor's
     // `pre-wrap` even where a host styles every div with its own white-space.
     white-space: inherit;
-
-    /**
-     * An item holds blocks, so its text sits in a paragraph that must not add
-     * space. A descendant rather than a child selector: in the editor the
-     * paragraph sits inside the node view's content hole.
-     */
-    p {
-        margin: 0;
-    }
 }

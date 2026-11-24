@@ -1,0 +1,33 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "plain"
+                }
+            ]
+        },
+        {
+            "type": "quote",
+            "children": [
+                {
+                    "text": "a quote"
+                }
+            ]
+        },
+        {
+            "type": "quote",
+            "children": [
+                {
+                    "text": "two quotes"
+                }
+            ]
+        },
+        {
+            "type": "quote",
+            "children": []
+        }
+    ]
+}

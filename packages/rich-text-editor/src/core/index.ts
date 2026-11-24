@@ -3,7 +3,26 @@
 // The shared language: document shape, plugin contract, commands, registry.
 // Imports from no other layer; plugins, renderer and editor all import here.
 
-export { type EditorControlApi, type RteSelectionSnapshot } from './commands';
+export {
+    type ClearMarksOptions,
+    type ClearMarksScope,
+    EDITOR_SHORTCUTS,
+    type EditorControlApi,
+    type EditorShortcut,
+    type InsertTextOptions,
+    type InsertTextUndo,
+    REDO_HOTKEY,
+    type RteMarkState,
+    type RteSelectionSnapshot,
+    UNDO_HOTKEY,
+} from './commands';
+export {
+    blockAttributeStyle,
+    blockHtml,
+    blockValueOf,
+    buildContentRegistry,
+    type ContentRegistry,
+} from './contentRegistry';
 export {
     type ParagraphBlock,
     type RteBlockNode,
@@ -14,34 +33,79 @@ export {
     type StoredMarkValue,
 } from './document';
 export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
+export {
+    type HotkeyEvent,
+    type HotkeyModifier,
+    isApplePlatform,
+    matchesHotkey,
+    type ParsedHotkey,
+    parseHotkey,
+} from './hotkeys';
 export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
+export { DOCUMENT_GAP_VARIABLES, OWN_MARGIN_VARIABLES } from './documentContract';
+export { LOOK_PROPERTIES, lookProperties, type TextLook } from './look';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,
     type ContentModel,
+    type DefaultStyle,
     defineBlock,
+    defineContent,
     defineInline,
     defineMark,
+    definePlugin,
     type EditProps,
+    type GridRole,
+    gridSpanOf,
     type HotkeyHandler,
     type InlineDefinition,
+    type MarkClearRule,
     type MarkDefinition,
+    type MarkParseRule,
+    onlyTypeOf,
     type ParseRule,
+    type Paste,
     type PasteHandler,
+    type PasteSource,
     type RteBlockCommand,
+    type RteContent,
+    type RteContentDefinition,
+    type RteDelimiterRule,
+    type RteEditView,
+    type RteHotkey,
+    type RteIcon,
     type RteInputRule,
+    type RteLabel,
+    type RteLabelContext,
+    type RteMarkPatternTrim,
     type RtePlugin,
+    type RtePluginDefinition,
+    type RteToolbarEntry,
+    RTE_TOOLBAR_GROUPS,
+    type RteToolbarGroup,
     type SelectedNode,
+    type StyleParseRule,
     type ToolbarItemProps,
 } from './plugin';
 export {
-    blockAttributeStyle,
-    blockHtml,
-    blockValueOf,
     buildPluginRegistry,
+    controlOf,
+    isOwnActive,
+    type OwnControl,
     type OwnType,
     ownTypeOf,
     type PluginRegistry,
+    type RteShortcut,
+    type RteShortcutOwner,
     type ToolbarEntry,
+    toggleOwn,
 } from './registry';
-export { ANY_LIST, DOCUMENT_VERSION, emptyDocument, PARAGRAPH } from './vocabulary';
+export {
+    ANY_LIST,
+    DOCUMENT_VERSION,
+    emptyDocument,
+    INLINE_PLACEHOLDER,
+    newerVersionOf,
+    PARAGRAPH,
+    WORD_START_CONTEXT,
+} from './vocabulary';

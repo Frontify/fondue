@@ -1,3 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { textStylePlugin, type TextStyleBlock, type TextStylePluginOptions } from './TextStyle';
+export {
+    textStyleContent,
+    type TextStyleBlock,
+    type TextStyleContentOptions,
+    type TextStyleName,
+    textStylePlugin,
+    type TextStylePluginOptions,
+    type TextStyleLook,
+} from './TextStyle';

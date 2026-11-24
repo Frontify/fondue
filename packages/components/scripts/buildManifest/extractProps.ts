@@ -18,6 +18,9 @@ import { getForwardRefInnerName, scanDisplayNames, type ScanResult } from './uti
 import { collectTypeDefinitions } from './utils/collectTypeDefinitions';
 
 let _parser: FileParser | null = null;
+let _compilerOptions: ts.CompilerOptions | null = null;
+let _compilerHost: ts.CompilerHost | null = null;
+let _previousProgram: ts.Program | undefined;
 
 const parseTsConfig = (): ts.CompilerOptions => {
     const configPath = resolveFromRoot('tsconfig.json');
@@ -34,30 +37,55 @@ const parseTsConfig = (): ts.CompilerOptions => {
     return parsed.options;
 };
 
+const getCompilerOptions = (): ts.CompilerOptions => {
+    _compilerOptions ??= {
+        ...parseTsConfig(),
+        baseUrl: resolveFromRoot(),
+        strict: false,
+    };
+    return _compilerOptions;
+};
+
+// Compiler host that parses each file once and hands the same SourceFile to every program.
+const getCompilerHost = (): ts.CompilerHost => {
+    if (!_compilerHost) {
+        const host = ts.createCompilerHost(getCompilerOptions());
+        const sourceFiles = new Map<string, ts.SourceFile | undefined>();
+        const getSourceFile = host.getSourceFile;
+        host.getSourceFile = (fileName, languageVersion, ...rest) => {
+            if (!sourceFiles.has(fileName)) {
+                sourceFiles.set(fileName, getSourceFile(fileName, languageVersion, ...rest));
+            }
+            return sourceFiles.get(fileName);
+        };
+        _compilerHost = host;
+    }
+    return _compilerHost;
+};
+
+// Still one program (and type checker) per file, like `parser.parse(file)`, so the order in which
+// TypeScript creates types (and thus union/prop order in the manifest) is unchanged. Only parsing is shared.
+const createProgramForFile = (file: string): ts.Program => {
+    _previousProgram = ts.createProgram([file], getCompilerOptions(), getCompilerHost(), _previousProgram);
+    return _previousProgram;
+};
+
 const getParser = (): FileParser => {
     if (!_parser) {
-        const compilerOptions = parseTsConfig();
-        _parser = withCompilerOptions(
-            {
-                ...compilerOptions,
-                baseUrl: resolveFromRoot(),
-                strict: false,
+        _parser = withCompilerOptions(getCompilerOptions(), {
+            savePropValueAsString: true,
+            shouldExtractLiteralValuesFromEnum: true,
+            shouldIncludePropTagMap: true,
+            propFilter: (prop) => {
+                if (prop.name === 'className') {
+                    return false;
+                }
+                if (prop.declarations && prop.declarations.length > 0) {
+                    return prop.declarations.some((declaration) => !declaration.fileName.includes('node_modules'));
+                }
+                return true;
             },
-            {
-                savePropValueAsString: true,
-                shouldExtractLiteralValuesFromEnum: true,
-                shouldIncludePropTagMap: true,
-                propFilter: (prop) => {
-                    if (prop.name === 'className') {
-                        return false;
-                    }
-                    if (prop.declarations && prop.declarations.length > 0) {
-                        return prop.declarations.some((declaration) => !declaration.fileName.includes('node_modules'));
-                    }
-                    return true;
-                },
-            },
-        );
+        });
     }
     return _parser;
 };
@@ -112,7 +140,7 @@ const parseFiles = (files: string[]): ComponentDoc[] => {
 
     for (const file of files) {
         try {
-            const docs = parser.parse(file);
+            const docs = parser.parseWithProgramProvider(file, () => createProgramForFile(file));
             resolveDisplayNames(docs, scanResults.get(file));
             allDocs.push(...docs);
         } catch (error) {

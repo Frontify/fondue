@@ -1,0 +1,38 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "first column"
+                }
+            ]
+        },
+        {
+            "type": "columnBreak"
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "second column"
+                }
+            ]
+        },
+        {
+            "type": "columnBreak"
+        },
+        {
+            "type": "columnBreak"
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "fourth column"
+                }
+            ]
+        }
+    ]
+}

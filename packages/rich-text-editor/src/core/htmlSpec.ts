@@ -21,6 +21,14 @@ export type HtmlAttributes = {
     id?: string;
     /** As HTML spells it; the readonly view passes it to React as `tabIndex`. */
     tabindex?: string;
+    /** An ordered list's first number. */
+    start?: string;
+    /** How many columns a cell covers. As HTML spells it; the readonly view passes it to React as `colSpan`. */
+    colspan?: string;
+    /** How many rows a cell covers. As HTML spells it; the readonly view passes it to React as `rowSpan`. */
+    rowspan?: string;
+    /** What a header cell labels: `'col'`, `'row'`, `'colgroup'` or `'rowgroup'`. */
+    scope?: string;
     /** Boolean attributes: present when true, absent otherwise. */
     checked?: boolean;
     disabled?: boolean;
@@ -49,6 +57,9 @@ const CSS_PROPERTY = /^-{0,2}[a-zA-Z][a-zA-Z0-9-]*$/;
  */
 const UNSAFE_CSS_VALUE = /[;{}\\<]|url\(|expression\(/i;
 
+/** Whether a value cannot break out of its declaration. */
+export const isSafeCssValue = (value: string): boolean => !UNSAFE_CSS_VALUE.test(value);
+
 /**
  * The declarations safe to write: a property that is a property name, a value
  * that cannot break out of its declaration. The rest are dropped. Every
@@ -56,8 +67,7 @@ const UNSAFE_CSS_VALUE = /[;{}\\<]|url\(|expression\(/i;
  */
 export const safeStyleEntries = (style: StyleMap): [string, string][] =>
     Object.entries(style).filter(
-        ([property, value]) =>
-            CSS_PROPERTY.test(property) && typeof value === 'string' && !UNSAFE_CSS_VALUE.test(value),
+        ([property, value]) => CSS_PROPERTY.test(property) && typeof value === 'string' && isSafeCssValue(value),
     );
 
 /** `{ 'text-align': 'center' }` → `text-align: center;`, the way browsers write a style attribute. */

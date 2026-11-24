@@ -31,6 +31,9 @@ export type LabelProps = CommonGlobalProps & {
     'data-test-id'?: string;
 };
 
+const isEditableTextbox = (element: HTMLElement): boolean =>
+    element.getAttribute('role') === 'textbox' && element.isContentEditable;
+
 export const LabelComponent = (
     { className, 'data-test-id': dataTestId = 'fondue-label', children, variant = 'default', ...props }: LabelProps,
     ref: ForwardedRef<HTMLLabelElement>,
@@ -60,13 +63,23 @@ export const LabelComponent = (
                 // Add support of Select component, Radix only allows native `select`
                 // but we use `div[role=combobox]` because of downshift
                 // https://github.com/radix-ui/primitives/blob/6e75e117977c9e6ffa939e6951a707f16ba0f95e/packages/react/label/src/label.tsx#L22
-                const targetId = (event.target as HTMLElement).getAttribute('for');
+                const targetId = (event.currentTarget as HTMLLabelElement).htmlFor;
                 const target = targetId ? document.getElementById(targetId) : null;
 
-                if (target && target.getAttribute('role') === 'combobox') {
+                if (!target) {
+                    return;
+                }
+
+                if (target.getAttribute('role') === 'combobox') {
                     event.preventDefault();
                     event.stopPropagation();
                     target.click();
+                    return;
+                }
+
+                // Browsers only apply `for` to labelable elements, a contenteditable textbox is not one
+                if (isEditableTextbox(target)) {
+                    target.focus();
                 }
             }}
             {...props}

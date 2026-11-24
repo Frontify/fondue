@@ -4,12 +4,23 @@ import { Button, Flyout } from '@frontify/fondue-components';
 import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { type EditProps } from '#/core';
+import { useTranslate } from '#/ui/translation';
 
 import { isSafeHref } from '../../shared/helpers/href';
-import { type LinkValue } from '../helpers/value';
+import { isButtonLink, linkClassName } from '../helpers/appearance';
+import { type LinkSearch } from '../helpers/destination';
+import { NEW_TAB_REL, NEW_TAB_TARGET } from '../helpers/newTab';
+import { type LinkAppearance, type LinkValue } from '../helpers/value';
 import styles from '../link.module.scss';
 
 import { LinkTargetForm } from './LinkTargetForm';
+
+const PANEL_CONTROLS = 'a[href], button:not([disabled])';
+
+type LinkEditorProps = EditProps<LinkValue> & {
+    search?: LinkSearch;
+    appearances?: readonly LinkAppearance[];
+};
 
 /**
  * A link while editing: the anchor around the editable text, with a flyout.
@@ -28,7 +39,10 @@ export const LinkEditor = ({
     setOpen,
     remove,
     api,
-}: EditProps<LinkValue>): ReactNode => {
+    search,
+    appearances,
+}: LinkEditorProps): ReactNode => {
+    const translate = useTranslate();
     // A flyout closed by hand stays closed until the caret leaves the link and returns.
     const [dismissed, setDismissed] = useState(false);
     const [wasFocused, setWasFocused] = useState(isFocused);
@@ -74,7 +88,7 @@ export const LinkEditor = ({
             if (!active?.contains(anchor)) {
                 return;
             }
-            const first = contentRef.current?.querySelector<HTMLElement>('a[href], button:not([disabled])');
+            const first = contentRef.current?.querySelector<HTMLElement>(PANEL_CONTROLS);
             if (first) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -86,14 +100,25 @@ export const LinkEditor = ({
     }, [open, isOpen]);
 
     // Shift-Tab from the panel's first control goes back where Tab came from.
-    const backToText = (event: KeyboardEvent<HTMLAnchorElement>): void => {
-        if (event.key === 'Tab' && event.shiftKey) {
+    const backToText = (event: KeyboardEvent<HTMLDivElement>): void => {
+        if (event.key !== 'Tab' || !event.shiftKey) {
+            return;
+        }
+        if (event.target === event.currentTarget.querySelector(PANEL_CONTROLS)) {
             event.preventDefault();
             api.focus();
         }
     };
 
-    const href = isSafeHref(value.href) ? value.href : undefined;
+    let href: string | undefined;
+    if (isSafeHref(value.href)) {
+        href = value.href;
+    }
+
+    let appearance: LinkAppearance | undefined;
+    if (isButtonLink(value)) {
+        appearance = value.appearance;
+    }
 
     return (
         <Flyout.Root
@@ -109,10 +134,12 @@ export const LinkEditor = ({
                 <a
                     ref={anchorRef}
                     href={href}
-                    className={styles.link}
+                    className={linkClassName(appearance)}
                     // ARIA 1.3 global attribute that the lint rule's table does not know yet.
                     // oxlint-disable-next-line jsx-a11y/role-supports-aria-props
-                    aria-description={value.openInNewTab === true ? 'Opens in a new tab' : undefined}
+                    aria-description={
+                        value.openInNewTab === true ? translate('RichTextEditor_linkOpensInNewTab') : undefined
+                    }
                     // A click places the caret; it must neither follow the link nor toggle the flyout.
                     onClick={(event) => event.preventDefault()}
                 >
@@ -124,7 +151,7 @@ export const LinkEditor = ({
                 side="bottom"
                 align="start"
                 padding="compact"
-                aria-label={isOpen ? 'Edit link' : 'Link'}
+                aria-label={isOpen ? translate('RichTextEditor_linkEdit') : translate('RichTextEditor_link')}
                 onEscapeKeyDown={() => {
                     escapedRef.current = true;
                 }}
@@ -135,6 +162,9 @@ export const LinkEditor = ({
                     {isOpen ? (
                         <LinkTargetForm
                             initial={value}
+                            kind="edit"
+                            search={search}
+                            appearances={appearances}
                             onSave={(next) => {
                                 // Close first: the link is rebuilt with its new value and would reopen.
                                 setOpen(false);
@@ -152,19 +182,21 @@ export const LinkEditor = ({
                             }
                         />
                     ) : (
-                        <div className={styles.panel}>
-                            <a
-                                href={href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={styles.target}
-                                onKeyDown={backToText}
-                            >
+                        // The div only catches the Tab key bubbling up from the controls inside it; it is not a control itself.
+                        // oxlint-disable-next-line jsx-a11y/no-static-element-interactions
+                        <div // NOSONAR
+                            className={styles.panel}
+                            onKeyDown={backToText}
+                        >
+                            <a href={href} target={NEW_TAB_TARGET} rel={NEW_TAB_REL} className={styles.target}>
                                 {value.href}
-                                <span className={styles.visuallyHidden}> (opens in new tab)</span>
+                                <span className={styles.visuallyHidden}>
+                                    {' '}
+                                    {translate('RichTextEditor_linkOpensInNewTab')}
+                                </span>
                             </a>
                             <Button size="small" emphasis="weak" onPress={() => setOpen(true)}>
-                                Edit
+                                {translate('RichTextEditor_edit')}
                             </Button>
                             <Button
                                 size="small"
@@ -174,7 +206,7 @@ export const LinkEditor = ({
                                     api.focus();
                                 }}
                             >
-                                Remove
+                                {translate('RichTextEditor_remove')}
                             </Button>
                         </div>
                     )}

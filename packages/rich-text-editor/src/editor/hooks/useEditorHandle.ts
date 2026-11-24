@@ -3,15 +3,15 @@
 /**
  * Owns the live editor: mounts it once per plugin set, carries later prop
  * changes into it, and notifies subscribers whenever the editor state moves.
- * The only file outside `engines/prosemirror/` that imports that adapter (a
- * second engine is a new folder plus changing that import).
+ * With `editor/parseHtml.ts`, the only file outside `engines/prosemirror/` that
+ * imports that adapter (a second engine is a new folder plus changing those imports).
  *
  * The editor state is NOT React state: every transaction goes to the
  * subscribers of `editorState` and only they re-render (the toolbar reads the
  * selection off it, the floating bar the box around it), so typing does not
  * re-render the component holding the editor.
  *
- * The React a plugin's `render.edit` draws is handed over by the engine as
+ * The React a plugin's `edit` view draws is handed over by the engine as
  * portals and rendered by `viewPortals` from inside the shell's tree.
  */
 
@@ -27,7 +27,7 @@ import {
 
 import { type PluginRegistry, type RteDocumentOf } from '#/core';
 import { mountDocument } from '#/editor/engines/prosemirror';
-import { type EditorHandle, type MountedDocument, type ViewPortals } from '#/editor/port';
+import { type EditorHandle, type ElementAttributes, type MountedDocument, type ViewPortals } from '#/editor/port';
 
 /**
  * The editor state as an external store, in the shape `useSyncExternalStore`
@@ -103,8 +103,12 @@ export const createViewPortals = (): ViewPortals & {
 const NO_PORTALS: readonly ReactNode[] = [];
 const noPortals = (): readonly ReactNode[] => NO_PORTALS;
 
+type ViewPortalHostProps = {
+    store: ReturnType<typeof createViewPortals>;
+};
+
 /** Renders every view's portal; one React commit covers all of them. */
-export const ViewPortalHost = ({ store }: { store: ReturnType<typeof createViewPortals> }): ReactNode =>
+export const ViewPortalHost = ({ store }: ViewPortalHostProps): ReactNode =>
     // No views on the server: the editor only mounts in the browser.
     useSyncExternalStore(store.subscribe, store.getSnapshot, noPortals);
 
@@ -131,9 +135,11 @@ type UseEditorHandleOptions = {
     document: RteDocumentOf;
     placeholder: string;
     /** Further attributes for the editable element. Memoize them: a new object is applied to the editor. */
-    attributes: Readonly<Record<string, string>>;
+    attributes: ElementAttributes;
     placeholderClassName: string;
     onDocChange: (doc: RteDocumentOf) => void;
+    /** The editor took on a document from the host: at mount, or through a new `document`. */
+    onDocApplied: (doc: RteDocumentOf) => void;
     /** When false, nothing is mounted — the shell is showing the renderer. */
     enabled: boolean;
 };
@@ -145,6 +151,7 @@ export const useEditorHandle = ({
     attributes,
     placeholderClassName,
     onDocChange,
+    onDocApplied,
     enabled,
 }: UseEditorHandleOptions): {
     containerRef: MutableRefObject<HTMLDivElement | null>;
@@ -153,7 +160,7 @@ export const useEditorHandle = ({
     /** Subscribe here to re-render with the editor state. */
     editorState: EditorStateStore;
     /**
-     * The React the editor's views draw (a plugin's `render.edit`), as portals
+     * The React the editor's views draw (a plugin's `edit` view), as portals
      * into the content. Render it anywhere inside the editor's tree: the views
      * then share its context providers.
      */
@@ -169,8 +176,8 @@ export const useEditorHandle = ({
     const [viewPortals] = useState(() => createElement(ViewPortalHost, { store: portals }));
     // The latest props, read by the mount (which runs only when the plugins
     // change or editing is turned on) and by the callbacks it hands the editor.
-    const latestRef = useRef({ document, placeholder, registry, attributes, onDocChange });
-    latestRef.current = { document, placeholder, registry, attributes, onDocChange };
+    const latestRef = useRef({ document, placeholder, registry, attributes, onDocChange, onDocApplied });
+    latestRef.current = { document, placeholder, registry, attributes, onDocChange, onDocApplied };
 
     const pluginsKey = registry.ids.join('|');
 
@@ -198,6 +205,7 @@ export const useEditorHandle = ({
             attributes: latest.attributes,
             placeholderClassName,
             onDocChange: (doc) => latestRef.current.onDocChange(doc),
+            onDocApplied: (doc) => latestRef.current.onDocApplied(doc),
             onStateChange: store.notify,
             viewPortals: portals,
         });

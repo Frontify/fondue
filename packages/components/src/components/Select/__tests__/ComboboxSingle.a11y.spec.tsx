@@ -127,6 +127,17 @@ describe('ComboboxSingle - Accessibility', () => {
             expect(screen.getByTestId('fondue-select-combobox-error-icon')).toBeInTheDocument();
             expect(input).not.toHaveAttribute('aria-invalid');
         });
+
+        it('does not show an error while the input is empty and there are no items', () => {
+            render(
+                <Select.Combobox aria-label="Assignee">
+                    <Select.Slot name="menu">{null}</Select.Slot>
+                </Select.Combobox>,
+            );
+
+            expect(screen.queryByTestId('fondue-select-combobox-error-icon')).not.toBeInTheDocument();
+            expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+        });
     });
 
     describe('menu ARIA attributes', () => {

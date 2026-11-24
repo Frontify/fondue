@@ -1,0 +1,86 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "textStyle",
+            "style": "heading2",
+            "children": [
+                {
+                    "text": "Launch plan"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "The "
+                },
+                {
+                    "text": "brand refresh",
+                    "bold": true
+                },
+                {
+                    "text": " ships in May."
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": []
+        },
+        {
+            "type": "bulletList",
+            "children": [
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "Logo"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "Colours",
+                                    "bold": true
+                                },
+                                {
+                                    "text": " and type"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": []
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "Frontify",
+                    "link": {
+                        "href": "https://www.frontify.com/"
+                    },
+                    "fontColor": {
+                        "color": "#1155cc"
+                    }
+                }
+            ]
+        }
+    ]
+}

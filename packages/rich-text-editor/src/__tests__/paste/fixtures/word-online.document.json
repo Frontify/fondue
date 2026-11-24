@@ -1,0 +1,36 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "align": "left",
+            "children": [
+                {
+                    "text": "Quarterly "
+                },
+                {
+                    "text": "update",
+                    "bold": true
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "Numbers",
+                    "italic": true
+                },
+                {
+                    "text": " follow"
+                },
+                {
+                    "type": "break"
+                },
+                {
+                    "text": "next week"
+                }
+            ]
+        }
+    ]
+}

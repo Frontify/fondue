@@ -1,0 +1,45 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { IconSubscript } from '@frontify/fondue-icons';
+
+import { defineContent, defineMark, definePlugin } from '#/core';
+import { translatedLabel } from '#/ui/translation';
+
+import { isVerticalAlign, markWhen } from '../shared/helpers/declaredStyle';
+
+/**
+ * The flag this plugin sets on text nodes
+ */
+export type SubscriptMark = {
+    /**
+     * Whether the text is subscript. Present means on, and `true` is the only value.
+     */
+    subscript?: true;
+};
+
+/**
+ * Subscript text, written as `<sub>`
+ */
+export const subscriptContent = defineContent({
+    marks: {
+        subscript: defineMark({
+            tag: 'sub',
+            excludes: ['superscript'],
+            // An element with the alignment is subscript too: how Google Docs writes it.
+            parse: [
+                { tag: 'sub' },
+                { style: 'vertical-align', value: markWhen((value) => isVerticalAlign(value, 'sub')) },
+            ],
+        }),
+    },
+});
+
+/**
+ * Subscript text with the `Mod-,` shortcut
+ */
+export const subscriptPlugin = () =>
+    definePlugin({
+        content: subscriptContent,
+        toolbarGroup: 'marks',
+        toolbar: [{ label: translatedLabel('RichTextEditor_subscript'), icon: IconSubscript, shortcut: 'Mod-,' }],
+    });

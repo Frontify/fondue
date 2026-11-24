@@ -6,6 +6,7 @@ import * as sinon from 'sinon';
 
 import { Select } from '#/components/Select';
 import { MockComboboxWithAsyncFetcher } from '#/components/Select/__tests__/MockComboboxWithAsyncFetcher.tsx';
+import { resolveToken } from '#/testutils/resolveToken';
 
 const SELECT_TEST_ID = 'test-combobox';
 const GROUP_TEST_ID = 'test-group';
@@ -110,19 +111,28 @@ test('should navigate though menu with arrow', async ({ mount, page }) => {
 
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS(
+        'background-color',
+        await resolveToken(page, '--color-surface-hover'),
+    );
 
     await page.keyboard.press('ArrowDown');
 
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS(
+        'background-color',
+        await resolveToken(page, '--color-surface-hover'),
+    );
 
     await page.keyboard.press('ArrowUp');
 
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS(
+        'background-color',
+        await resolveToken(page, '--color-surface-hover'),
+    );
 });
 
 test('should select item in list', async ({ mount, page }) => {

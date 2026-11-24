@@ -1,0 +1,90 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "plain"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "coloured #ff0000",
+                    "fontColor": {
+                        "color": "#ff0000"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "coloured #f00",
+                    "fontColor": {
+                        "color": "#f00"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "coloured #ff000080",
+                    "fontColor": {
+                        "color": "#ff000080"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "coloured rgb(255, 0, 0)",
+                    "fontColor": {
+                        "color": "rgb(255, 0, 0)"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "coloured rgba(0, 0, 255, 0.5)",
+                    "fontColor": {
+                        "color": "rgba(0, 0, 255, 0.5)"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "coloured red",
+                    "fontColor": {
+                        "color": "red"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "coloured hsl(120, 100%, 50%)",
+                    "fontColor": {
+                        "color": "hsl(120, 100%, 50%)"
+                    }
+                }
+            ]
+        }
+    ]
+}

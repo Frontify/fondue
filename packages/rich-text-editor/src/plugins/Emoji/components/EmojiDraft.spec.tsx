@@ -91,11 +91,11 @@ describe('a shortcode being typed', () => {
         expect(listbox?.getAttribute('role')).toBe('listbox');
         const options = [...(listbox?.querySelectorAll('[role="option"]') ?? [])];
         expect(options.map((option) => option.getAttribute('aria-label'))).toEqual([
-            'Grinning face with smiling eyes',
-            'Smirking face',
+            'Grinning face with smiling eyes :smile:',
+            'Smirking face :smirk:',
         ]);
         expect(input.getAttribute('aria-activedescendant')).toBe(options[0]?.id);
-        expect(status()).toBe('2 emoji');
+        expect(status()).toBe('Results: 2');
     });
 
     it('chooses the highlighted emoji with Enter', async () => {
@@ -137,7 +137,7 @@ describe('a shortcode being typed', () => {
         const first = mountDraft();
         await first.type('zz');
         first.press('Enter');
-        expect(first.status()).toBe('No matches');
+        expect(first.status()).toBe('No results');
         expect(first.onCancel).toHaveBeenCalledWith(':zz');
 
         const second = mountDraft();

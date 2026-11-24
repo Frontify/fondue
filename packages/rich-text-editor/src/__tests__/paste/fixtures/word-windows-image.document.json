@@ -1,0 +1,25 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "Our logo:"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": []
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "End"
+                }
+            ]
+        }
+    ]
+}

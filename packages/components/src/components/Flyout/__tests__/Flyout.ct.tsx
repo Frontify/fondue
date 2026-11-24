@@ -10,6 +10,7 @@ import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
 import { Flyout } from '../Flyout';
 
 import { FlyoutWithFocusRedirect } from './FlyoutWithFocusRedirect';
+import { FlyoutWithOutsideInteractionBlocked } from './FlyoutWithOutsideInteractionBlocked';
 
 const FLYOUT_TRIGGER_TEST_ID = 'fondue-flyout-trigger';
 const FLYOUT_CONTENT_TEST_ID = 'fondue-flyout-content';
@@ -20,6 +21,9 @@ const FLYOUT_HEADER_TEST_ID = 'fondue-flyout-header';
 const FLYOUT_HEADER_TEXT = 'Flyout Header';
 const FLYOUT_FOOTER_TEST_ID = 'fondue-flyout-footer';
 const FLYOUT_FOOTER_TEXT = 'Flyout Footer';
+const FLYOUT_ARIA_LABEL = 'Flyout Label';
+const OUTSIDE_CLICK_POSITION = 5;
+const BLOCKED_COUNT_TEST_ID = 'blocked-count';
 const TEXT_INPUT_TEST_ID_1 = 'fondue-text-input-1';
 const TEXT_INPUT_TEST_ID_2 = 'fondue-text-input-2';
 const TEXT_INPUT_TEST_ID_3 = 'fondue-text-input-3';
@@ -587,4 +591,53 @@ test('should allow redirecting focus when onCloseAutoFocus calls preventDefault'
     await expect(flyoutContent).not.toBeVisible();
     await expect(page.getByTestId('focus-target')).toBeFocused();
     await expect(flyoutTrigger).not.toBeFocused();
+});
+
+test('should call onInteractOutside and close when clicking outside the flyout', async ({ mount, page }) => {
+    const onInteractOutside = sinon.spy();
+    await mount(
+        <Flyout.Root>
+            <Flyout.Trigger>
+                <Button>{FLYOUT_TRIGGER_TEXT}</Button>
+            </Flyout.Trigger>
+            <Flyout.Content onInteractOutside={onInteractOutside}>
+                <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
+            </Flyout.Content>
+        </Flyout.Root>,
+    );
+
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await page.getByTestId(FLYOUT_TRIGGER_TEST_ID).click();
+    await expect(flyoutContent).toBeVisible();
+    expect(onInteractOutside.callCount).toBe(0);
+    await page.mouse.click(OUTSIDE_CLICK_POSITION, OUTSIDE_CLICK_POSITION);
+    await expect(flyoutContent).not.toBeVisible();
+    expect(onInteractOutside.callCount).toBeGreaterThan(0);
+});
+
+test('should keep the flyout open when onInteractOutside calls preventDefault', async ({ mount, page }) => {
+    await mount(<FlyoutWithOutsideInteractionBlocked blockedCountTestId={BLOCKED_COUNT_TEST_ID} />);
+
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await page.getByTestId(FLYOUT_TRIGGER_TEST_ID).click();
+    await expect(flyoutContent).toBeVisible();
+    await page.mouse.click(OUTSIDE_CLICK_POSITION, OUTSIDE_CLICK_POSITION);
+    await expect(page.getByTestId(BLOCKED_COUNT_TEST_ID)).not.toHaveText('0');
+    await expect(flyoutContent).toBeVisible();
+});
+
+test('should set aria-label on the flyout content', async ({ mount, page }) => {
+    await mount(
+        <Flyout.Root>
+            <Flyout.Trigger>
+                <Button>{FLYOUT_TRIGGER_TEXT}</Button>
+            </Flyout.Trigger>
+            <Flyout.Content aria-label={FLYOUT_ARIA_LABEL}>
+                <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
+            </Flyout.Content>
+        </Flyout.Root>,
+    );
+
+    await page.getByTestId(FLYOUT_TRIGGER_TEST_ID).click();
+    await expect(page.getByTestId(FLYOUT_CONTENT_TEST_ID)).toHaveAttribute('aria-label', FLYOUT_ARIA_LABEL);
 });

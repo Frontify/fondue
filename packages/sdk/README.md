@@ -69,7 +69,7 @@ components.where({ category: 'icon' }); // all icons as ComponentNodes
 components.get('IconAdobeCreativeCloud'); // { category: 'icon', … }
 
 // Prose guides — the same content the Storybook docs site renders
-guides.list().map((g) => g.id); // ['development/Contributing', 'development/Upgrading', 'getting-started/Setup', …]
+guides.list().map((g) => g.id); // ['development/Contributing', 'development/upgrading/v13', 'development/upgrading/v14', 'getting-started/Setup', …]
 guides.get('getting-started/Setup')?.content; // raw markdown body
 ```
 

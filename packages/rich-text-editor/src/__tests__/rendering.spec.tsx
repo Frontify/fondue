@@ -7,15 +7,16 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
-    columnBreakPlugin,
-    defaultPlugins,
+    defineContent,
     defineMark,
+    definePlugin,
+    RichTextRenderer,
     type RteDocument,
     type RteDocumentWith,
-    RichTextRenderer,
     type RtePlugin,
     serializeToHtml,
 } from '../index';
+import { columnBreakPlugin, defaultContent, defaultPlugins, linkPlugin, textStyleContent } from '../plugins';
 
 // The readonly view and export draw the same tree, so they are tested side by
 // side: the renderer as React in the test DOM, export as the string it returns.
@@ -57,18 +58,20 @@ const paragraph = (
 
 /** A highlight whose readonly view is a component of its own. */
 type HighlightMark = { highlight?: true };
-const highlightPlugin: RtePlugin = {
+const highlightPlugin: RtePlugin = definePlugin({
     id: 'highlight',
-    marks: {
-        highlight: defineMark({
-            toHtml: () => ({ tag: 'mark', children: true }),
-            parse: [{ tag: 'mark' }],
-            render: {
-                component: ({ children }) => <span data-highlight-component="">{children}</span>,
-            },
-        }),
-    },
-};
+    content: defineContent({
+        marks: {
+            highlight: defineMark({
+                toHtml: () => ({ tag: 'mark', children: true }),
+                parse: [{ tag: 'mark' }],
+                render: {
+                    component: ({ children }) => <span data-highlight-component="">{children}</span>,
+                },
+            }),
+        },
+    }),
+});
 const highlighted: RteDocumentWith<{ mark: HighlightMark }> = {
     version: 1,
     blocks: [{ type: 'paragraph', children: [{ text: 'bright', highlight: true }] }],
@@ -101,7 +104,7 @@ describe('marks shared by neighbouring runs', () => {
 
     it('are drawn once around the whole stretch, as the editor draws them', () => {
         for (const container of [
-            rendered(<RichTextRenderer value={formula} />),
+            rendered(<RichTextRenderer value={formula} plugins={defaultContent} />),
             exported(serializeToHtml(formula, { plugins: defaultPlugins })),
         ]) {
             const codes = container.querySelectorAll('code');
@@ -120,7 +123,7 @@ describe('marks shared by neighbouring runs', () => {
         ]);
 
         for (const container of [
-            rendered(<RichTextRenderer value={doc} />),
+            rendered(<RichTextRenderer value={doc} plugins={defaultContent} />),
             exported(serializeToHtml(doc, { plugins: defaultPlugins })),
         ]) {
             expect(container.querySelectorAll('a')).toHaveLength(1);
@@ -143,7 +146,7 @@ describe('a line break at the end of a block', () => {
 
     it('keeps the empty line after it open, as the editor does', () => {
         for (const container of [
-            rendered(<RichTextRenderer value={doc} />),
+            rendered(<RichTextRenderer value={doc} plugins={defaultContent} />),
             exported(serializeToHtml(doc, { plugins: defaultPlugins })),
         ]) {
             expect(container.querySelectorAll('p > br')).toHaveLength(2);
@@ -172,11 +175,35 @@ describe('the element a document sits in', () => {
             expect((root as HTMLElement | null)?.style.getPropertyValue('--rte-column-gap')).toBe('24px');
         }
         expect(exportRoot?.className).toBe(view?.className);
-        expect(view?.classList.length).toBe(2);
+        // The document's own class, the text style content's and the column layout's.
+        expect(view?.classList.length).toBe(3);
     });
 
     it('is left out of export with wrap: false', () => {
         expect(serializeToHtml(doc, { plugins, wrap: false })).toBe('<p>Hello</p>');
+    });
+});
+
+describe('host looks given only as content', () => {
+    const doc = paragraph([{ text: 'Hello' }]);
+    const look = { body: { fontSize: '17px' }, heading1: { color: 'red' } };
+
+    it('reach the readonly view and export without the text style plugin', () => {
+        const plugins = [textStyleContent({ look })];
+        const view = rendered(<RichTextRenderer value={doc} plugins={plugins} />).firstElementChild;
+        const exportRoot = exported(serializeToHtml(doc, { plugins })).firstElementChild;
+
+        for (const root of [view, exportRoot]) {
+            expect((root as HTMLElement | null)?.style.getPropertyValue('--rte-body-font-size')).toBe('17px');
+            expect((root as HTMLElement | null)?.style.getPropertyValue('--rte-heading1-color')).toBe('red');
+        }
+    });
+
+    it('reach the readonly view when added after the default content', () => {
+        const plugins = [...defaultContent, textStyleContent({ look })];
+        const view = rendered(<RichTextRenderer value={doc} plugins={plugins} />).firstElementChild;
+
+        expect((view as HTMLElement | null)?.style.getPropertyValue('--rte-body-font-size')).toBe('17px');
     });
 });
 
@@ -186,7 +213,7 @@ describe('a mark stored as false or null', () => {
 
     it('is not carried: the text is drawn bare', () => {
         for (const container of [
-            rendered(<RichTextRenderer value={doc} />),
+            rendered(<RichTextRenderer value={doc} plugins={defaultContent} />),
             exported(serializeToHtml(doc, { plugins: defaultPlugins })),
         ]) {
             expect(container.querySelector('strong, em')).toBeNull();
@@ -214,7 +241,7 @@ describe('a node no plugin defines', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
         for (const container of [
-            rendered(<RichTextRenderer value={doc} />),
+            rendered(<RichTextRenderer value={doc} plugins={defaultContent} />),
             exported(serializeToHtml(doc, { plugins: defaultPlugins, wrap: false })),
         ]) {
             expect(container.textContent).toBe('before afterinside a calloutin a tab');
@@ -226,5 +253,71 @@ describe('a node no plugin defines', () => {
         expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown inline type "embed"'));
         expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown mark type "glow"'));
         warn.mockRestore();
+    });
+});
+
+describe('a list holding a block no plugin defines among its items', () => {
+    const item = (children: unknown[]) => ({ type: 'listItem', children: [{ type: 'paragraph', children }] });
+    const doc = {
+        version: 1,
+        blocks: [
+            {
+                type: 'numberedList',
+                children: [
+                    item([{ text: 'one' }]),
+                    { type: 'callout', children: [{ text: 'two' }] },
+                    item([{ text: 'three', link: { href: 'https://example.com' } }]),
+                ],
+            },
+        ],
+    } as unknown as RteDocument;
+
+    it('draws the block as an item of its own, keeping the known items as they are', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        for (const container of [
+            rendered(<RichTextRenderer value={doc} plugins={defaultContent} />),
+            exported(serializeToHtml(doc, { plugins: defaultPlugins, wrap: false })),
+        ]) {
+            expect(container.querySelectorAll('ol > :not(li)')).toHaveLength(0);
+            expect([...container.querySelectorAll('ol > li')].map((li) => li.textContent)).toEqual([
+                'one',
+                'two',
+                'three',
+            ]);
+            expect(container.querySelector('ol > li a')?.getAttribute('href')).toBe('https://example.com');
+        }
+        warn.mockRestore();
+    });
+});
+
+describe('a link in a reading view and in export', () => {
+    it('opens a new tab with its target and rel, and adds no text of its own', () => {
+        const doc = paragraph([{ text: 'new', link: { href: 'https://example.com', openInNewTab: true } }]);
+
+        for (const container of [
+            rendered(<RichTextRenderer value={doc} plugins={defaultContent} />),
+            exported(serializeToHtml(doc, { plugins: defaultPlugins })),
+        ]) {
+            const anchor = container.querySelector('a');
+            expect(anchor?.textContent).toBe('new');
+            expect(anchor?.getAttribute('target')).toBe('_blank');
+            expect(anchor?.getAttribute('rel')).toBe('noopener noreferrer');
+        }
+    });
+
+    it('keeps a focused link in the reading view focused when its parent renders again with a new link plugin', () => {
+        const doc = paragraph([{ text: 'docs', link: { href: 'https://example.com' } }]);
+        const container = window.document.createElement('div');
+        window.document.body.append(container);
+        const root = createRoot(container);
+        act(() => root.render(<RichTextRenderer value={doc} plugins={[linkPlugin()]} />));
+        container.querySelector('a')?.focus();
+
+        act(() => root.render(<RichTextRenderer value={doc} plugins={[linkPlugin()]} />));
+
+        expect(window.document.activeElement).toBe(container.querySelector('a'));
+        act(() => root.unmount());
+        container.remove();
     });
 });

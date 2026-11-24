@@ -1,50 +1,44 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// What a plugin's `toolbarItem` is handed, composed from the control API so it holds for any engine.
+// What a toolbar entry's `render` is handed, composed from the control API so it holds for any engine.
 
 import {
     type EditorControlApi,
+    isOwnActive,
     type OwnType,
-    PARAGRAPH,
     type RteSelectionSnapshot,
     type SelectedNode,
+    toggleOwn,
+    type ToolbarEntry,
     type ToolbarItemProps,
 } from '#/core';
 
-/** `own` is what the plugin acts on, resolved by the registry (`ownTypeOf`). */
+/** A toolbar entry as the toolbar draws it: its label already resolved for the shown language. */
+export type ShownToolbarEntry = ToolbarEntry & { label: string };
+
+/**
+ * The part of a registry toolbar entry its `render` props come from
+ */
+type ToolbarItemSource = Pick<ShownToolbarEntry, 'own' | 'label' | 'shortcut'>;
+
+/**
+ * The props a toolbar entry's `render` is handed, for what the entry acts on
+ * (`own`, resolved by the registry's `ownTypeOf`).
+ */
 export const toolbarItemProps = (
-    own: OwnType,
+    { own, label, shortcut }: ToolbarItemSource,
     api: EditorControlApi,
     selection: RteSelectionSnapshot,
 ): ToolbarItemProps => {
     const selectedNode = selectedNodeOf(own, api, selection);
-    const isActive = own.kind === 'mark' ? own.type in selection.marks : selectedNode !== null;
+    const isActive = isOwnActive(own, selection);
 
-    const toggle = (value?: Record<string, unknown>): void => {
-        switch (own.kind) {
-            case 'mark':
-                api.marks.toggle(own.type, value);
-                break;
-            case 'list':
-                api.lists.toggle(own.type);
-                break;
-            case 'textBlock':
-                api.blocks.setType(isActive ? PARAGRAPH : own.type, value);
-                break;
-            case 'voidBlock':
-            case 'inline':
-                api.insert(own.type, value);
-                break;
-            // A block holding other blocks is not something a selection turns
-            // into, so there is nothing to toggle.
-            case 'container':
-            case 'none':
-                break;
-        }
-    };
+    const toggle = (value?: Record<string, unknown>): void => toggleOwn({ own, api, selection, value });
 
     return {
         api,
+        label,
+        shortcut,
         selectedNode,
         selection,
         isActive,

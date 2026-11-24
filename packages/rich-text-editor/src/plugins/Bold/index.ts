@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { boldPlugin, type BoldMark } from './Bold';
+export { type BoldMark, boldContent, boldPlugin } from './Bold';

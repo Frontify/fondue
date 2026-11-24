@@ -83,7 +83,6 @@
         }
     }
 
-    &:has(> .content:focus-visible),
     &:not(:has(.handle)):focus-visible {
         @include focusStyle.focus-outline-styles;
     }

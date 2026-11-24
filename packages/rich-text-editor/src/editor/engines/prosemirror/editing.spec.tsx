@@ -9,8 +9,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
     buildPluginRegistry,
+    defineContent,
     defineInline,
     defineMark,
+    definePlugin,
     emptyDocument,
     PARAGRAPH,
     type RteDocumentOf,
@@ -24,24 +26,28 @@ import { mountEditorForTests } from './editing';
  * and what happens then decides whether the editor is usable at all.
  */
 const plugins: RtePlugin[] = [
-    {
+    definePlugin({
         id: 'tag',
-        inlines: {
-            tag: defineInline<{ name: string }>({
-                toHtml: ({ name }) => ({ tag: 'span', children: name }),
-                parse: [],
-            }),
-        },
-    },
-    {
+        content: defineContent({
+            inlines: {
+                tag: defineInline<{ name: string }>({
+                    toHtml: ({ name }) => ({ tag: 'span', children: name }),
+                    parse: [],
+                }),
+            },
+        }),
+    }),
+    definePlugin({
         id: 'bold',
-        marks: {
-            bold: defineMark({
-                toHtml: () => ({ tag: 'strong', children: true }),
-                parse: [{ tag: 'strong' }],
-            }),
-        },
-    },
+        content: defineContent({
+            marks: {
+                bold: defineMark({
+                    toHtml: () => ({ tag: 'strong', children: true }),
+                    parse: [{ tag: 'strong' }],
+                }),
+            },
+        }),
+    }),
 ];
 
 const paragraph = (text: string): RteDocumentOf => ({
@@ -67,16 +73,22 @@ const mount = (
         attributes,
         placeholderClassName: 'placeholder',
         onDocChange,
+        onDocApplied: () => {},
         onStateChange: () => {},
         viewPortals: { set: () => {}, delete: () => {} },
     });
     mounted.push(live);
     const handle = { ...live.handle, setDoc: live.setDoc };
 
-    const stored = (): RteDocumentOf | null => {
-        const { calls } = onDocChange.mock;
-        return calls.length === 0 ? null : (calls[calls.length - 1]?.[0] ?? null);
+    const stored = (): RteDocumentOf => {
+        const { lastCall } = onDocChange.mock;
+        if (lastCall === undefined) {
+            throw new Error('The editor has reported no document.');
+        }
+
+        return lastCall[0];
     };
+
     return { handle, onDocChange, stored, live, view, container };
 };
 
@@ -112,8 +124,8 @@ describe('a document set by the host', () => {
 
         const held = stored();
         onDocChange.mockClear();
-        handle.setDoc(held as RteDocumentOf);
-        handle.setDoc(structuredClone(held) as RteDocumentOf);
+        handle.setDoc(held);
+        handle.setDoc(structuredClone(held));
 
         expect(onDocChange).not.toHaveBeenCalled();
     });
@@ -128,6 +140,58 @@ describe('a document set by the host', () => {
 
         expect(stored()).toEqual(paragraph('123456|'));
         expect(onDocChange).toHaveBeenCalledTimes(1);
+    });
+
+    describe('with keys on the document itself that no plugin declares', () => {
+        const withMeta = (meta?: string): RteDocumentOf =>
+            ({ ...paragraph('same'), ...(meta === undefined ? {} : { meta }) }) as RteDocumentOf;
+
+        it('takes the new ones from the host, and reports them with the next edit', () => {
+            const { handle, onDocChange, stored } = mount(withMeta('a'));
+
+            handle.setDoc(withMeta('b'));
+
+            expect(onDocChange).not.toHaveBeenCalled();
+            expect(handle.document()).toEqual(withMeta('b'));
+            handle.api.insertText('!');
+            expect(stored()).toMatchObject({ meta: 'b' });
+        });
+
+        it('drops the ones the host no longer has', () => {
+            const { handle } = mount(withMeta('a'));
+
+            handle.setDoc(withMeta());
+
+            expect(handle.document()).toStrictEqual(paragraph('same'));
+        });
+
+        it('leaves the caret where it was when only they changed', () => {
+            const { handle, view } = mount(withMeta('a'));
+            view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, 2)));
+
+            handle.setDoc(withMeta('b'));
+
+            expect(view.state.selection.from).toBe(2);
+        });
+
+        it('redraws nothing when only they changed', () => {
+            const { handle, view } = mount(withMeta('a'));
+            const { state } = view;
+            const drawn = view.dom.firstChild;
+
+            handle.setDoc(withMeta('b'));
+
+            expect(view.state).toBe(state);
+            expect(view.dom.firstChild).toBe(drawn);
+        });
+
+        it('takes them along with new content', () => {
+            const { handle } = mount(withMeta('a'));
+
+            handle.setDoc({ ...paragraph('other'), meta: 'b' } as RteDocumentOf);
+
+            expect(handle.document()).toEqual({ ...paragraph('other'), meta: 'b' });
+        });
     });
 
     it('still reports the edits the user makes after it', () => {
@@ -148,6 +212,63 @@ describe('a document set by the host', () => {
 
         expect(view.state.doc.textContent).toBe('from the host');
         expect(stored()).toEqual(paragraph('typed mine'));
+    });
+
+    it('applies a reset to a document the editor reported before, and edits that after', () => {
+        const { handle, view, stored } = mount(emptyDocument());
+        handle.api.insertText('a');
+        const docA = stored();
+        handle.api.insertText('b');
+        const docB = stored();
+
+        handle.setDoc(docB);
+        handle.setDoc(docA);
+        expect(view.state.doc.textContent).toBe('a');
+        handle.api.insertText('c');
+
+        expect(stored()).toEqual(paragraph('ac'));
+    });
+
+    it('applies a document the editor reported before when the host restores it after its own reset', () => {
+        const { handle, view, stored } = mount(emptyDocument());
+        handle.api.insertText('a');
+        const docA = stored();
+        handle.setDoc(docA);
+        handle.api.insertText('b');
+        const docB = stored();
+
+        handle.setDoc(paragraph('from the host'));
+        handle.setDoc(docB);
+
+        expect(view.state.doc.textContent).toBe('ab');
+    });
+
+    it('applies an earlier reported document after the host hands back a copy of the latest', () => {
+        const { handle, view, stored } = mount(emptyDocument());
+        handle.api.insertText('a');
+        const docA = stored();
+        handle.api.insertText('b');
+
+        handle.setDoc(structuredClone(stored()));
+        handle.setDoc(docA);
+
+        expect(view.state.doc.textContent).toBe('a');
+    });
+
+    it('treats what the editor reports after a reset as newer than it', () => {
+        const { handle, view, stored } = mount(emptyDocument());
+        handle.api.insertText('a');
+        const docA = stored();
+        handle.api.insertText('b');
+        handle.setDoc(stored());
+        handle.setDoc(docA);
+        handle.api.insertText('c');
+        const docC = stored();
+        handle.api.insertText('d');
+
+        handle.setDoc(docC);
+
+        expect(view.state.doc.textContent).toBe('acd');
     });
 });
 
@@ -176,7 +297,7 @@ describe('a document set by the host while the editor holds more than it reporte
         const { handle, view, stored } = withDraft();
         const caret = view.state.selection.from;
 
-        handle.setDoc(structuredClone(stored()) as RteDocumentOf);
+        handle.setDoc(structuredClone(stored()));
 
         expect(drafts(view)).toBe(1);
         expect(view.state.selection.from).toBe(caret);
@@ -185,7 +306,7 @@ describe('a document set by the host while the editor holds more than it reporte
     it('is ignored when it is one the editor reported before, arriving late', () => {
         const { handle, view, stored } = mount(emptyDocument());
         handle.api.insertText('a');
-        const older = stored() as RteDocumentOf;
+        const older = stored();
         handle.api.insertText('b');
 
         handle.setDoc(older);
@@ -250,5 +371,38 @@ describe('the editable element', () => {
         expect(editable?.getAttribute('aria-describedby')).toBe('hint');
         expect(editable?.classList.contains('three')).toBe(true);
         expect(editable?.classList.contains('two')).toBe(false);
+    });
+
+    it('sets and removes attributes by name through `setEditableAttributes`, keeping the others', () => {
+        const { handle, container } = mount(emptyDocument(), { attributes: { 'aria-label': 'Notes' } });
+        const editable = container.querySelector('[contenteditable]');
+
+        handle.setEditableAttributes({ 'aria-activedescendant': 'option-1', 'aria-controls': 'list' });
+        expect(editable?.getAttribute('aria-activedescendant')).toBe('option-1');
+        expect(editable?.getAttribute('aria-controls')).toBe('list');
+
+        handle.setEditableAttributes({ 'aria-activedescendant': null });
+        expect(editable?.hasAttribute('aria-activedescendant')).toBe(false);
+        expect(editable?.getAttribute('aria-controls')).toBe('list');
+        expect(editable?.getAttribute('aria-label')).toBe('Notes');
+    });
+});
+
+describe('the drop cursor', () => {
+    it('shows a 2px line in the primary colour token while something is dragged over the editor', () => {
+        const { view } = mount(paragraph('text'));
+        // happy-dom has no layout: the pointer position, its rectangle, the editor's size and the offset parent are given.
+        Object.defineProperty(view.dom, 'offsetParent', { value: window.document.body });
+        Object.defineProperty(view.dom, 'offsetWidth', { value: 100 });
+        Object.defineProperty(view.dom, 'offsetHeight', { value: 20 });
+        vi.spyOn(view.dom, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 100, 20));
+        vi.spyOn(view, 'posAtCoords').mockReturnValue({ pos: 3, inside: 1 });
+        vi.spyOn(view, 'coordsAtPos').mockReturnValue({ left: 10, right: 10, top: 0, bottom: 20 });
+
+        view.dom.dispatchEvent(new Event('dragover', { bubbles: true }));
+
+        const cursor = window.document.querySelector<HTMLElement>('.prosemirror-dropcursor-inline');
+        expect(cursor?.style.backgroundColor).toBe('var(--color-primary-default)');
+        expect(cursor?.style.width).toBe('2px');
     });
 });

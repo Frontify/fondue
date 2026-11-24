@@ -99,28 +99,6 @@ describe('ThemeProvider context inheritance', () => {
         expect(probe.dataset.scope).toBe('outer-scope');
     });
 
-    it('falls back to deprecated translations prop when locale is not provided', () => {
-        render(
-            <ThemeProvider locale={deDE}>
-                <ContextProbe id="probe" />
-            </ThemeProvider>,
-        );
-
-        const probe = screen.getByTestId('probe');
-        expect(probe.dataset.locale).toBe(deDE.translationStrings.Dialog_close);
-    });
-
-    it('prefers locale over the deprecated translations prop', () => {
-        render(
-            <ThemeProvider locale={frFR}>
-                <ContextProbe id="probe" />
-            </ThemeProvider>,
-        );
-
-        const probe = screen.getByTestId('probe');
-        expect(probe.dataset.locale).toBe(frFR.translationStrings.Dialog_close);
-    });
-
     it('renders the parent className alongside the inherited scope on a nested provider', () => {
         const { container } = render(
             <ThemeProvider theme="dark" className="parent-scope">

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type ItemInstance } from '@headless-tree/core';
-import { useLayoutEffect, useRef, type ChangeEventHandler, type FocusEvent, type MouseEvent } from 'react';
+import { useLayoutEffect, useRef, type ChangeEventHandler, type MouseEvent } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -48,19 +48,12 @@ export const TreeRowRenameInput = ({ item }: TreeRowRenameInputProps) => {
         event.stopPropagation();
     };
 
-    // Blur commits, but `completeRenaming()`'s focus restore would steal focus back to
-    // the row when the user moved on. Restore only when focus stays inside the tree;
-    // otherwise replicate the commit without touching DOM focus.
-    const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
+    // Blur commits, but replicates `completeRenaming()` without its deferred focus restore:
+    // the user already moved focus, and the restore would close a menu opened in the meantime.
+    const handleBlur = () => {
         const tree = item.getTree();
         // Enter may have completed the rename already; committing again would double-fire.
         if (!item.isRenaming()) {
-            return;
-        }
-        const focusStaysInTree =
-            event.relatedTarget instanceof Node && Boolean(tree.getElement()?.contains(event.relatedTarget));
-        if (focusStaysInTree) {
-            tree.completeRenaming();
             return;
         }
         tree.getConfig().onRename?.(item, tree.getRenamingValue());

@@ -1,0 +1,75 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "textStyle",
+            "style": "heading2",
+            "children": [
+                {
+                    "text": "Release notes"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "This release is "
+                },
+                {
+                    "text": "faster",
+                    "bold": true
+                },
+                {
+                    "text": " and "
+                },
+                {
+                    "text": "simpler",
+                    "italic": true
+                },
+                {
+                    "text": "."
+                }
+            ]
+        },
+        {
+            "type": "numberedList",
+            "children": [
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "Faster export"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "Fewer clicks"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "Danke"
+                }
+            ]
+        }
+    ]
+}

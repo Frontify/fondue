@@ -5,7 +5,6 @@ import { createContext, useContext } from 'react';
 type OrderableItemContextType = {
     itemId: string;
     dragHandleRef: (element: Element | null) => void;
-    hasHandle: boolean;
     selected?: boolean;
     onSelect?: (isSelected: boolean) => void;
 };
@@ -13,7 +12,6 @@ type OrderableItemContextType = {
 export const OrderableItemContext = createContext<OrderableItemContextType>({
     itemId: '',
     dragHandleRef: () => null,
-    hasHandle: false,
 });
 OrderableItemContext.displayName = 'OrderableItemContext';
 

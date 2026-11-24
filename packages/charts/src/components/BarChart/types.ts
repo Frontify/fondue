@@ -40,6 +40,7 @@ export type BarChartProps<DataPointDetails extends Record<string, any> | void = 
     legendPosition?: LegendPosition;
     valueFormatter?: ValueFormatter;
     labelFormatter?: LabelFormatter;
+    maxLabelLength?: number;
     onBarClick?: (e: BarChartClickHandlerParams<DataPointDetails>) => void;
 };
 

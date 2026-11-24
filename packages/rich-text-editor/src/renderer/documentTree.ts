@@ -13,9 +13,9 @@ import {
     blockAttributeStyle,
     blockHtml,
     blockValueOf,
+    type ContentRegistry,
     type HtmlSpec,
     type MarkDefinition,
-    type PluginRegistry,
     type RteBlockNode,
     type RteDocumentOf,
     type RteInlineNode,
@@ -89,8 +89,8 @@ const isEmpty = (inlines: readonly RteInlineNode[]): boolean =>
 type CarriedMark = { type: string; value: Record<string, unknown>; definition: MarkDefinition };
 
 /** The registry's marks as a list, cached per registry rather than rebuilt per text run. */
-const markLists = new WeakMap<PluginRegistry, readonly [string, MarkDefinition][]>();
-const markListOf = (registry: PluginRegistry): readonly [string, MarkDefinition][] => {
+const markLists = new WeakMap<ContentRegistry, readonly [string, MarkDefinition][]>();
+const markListOf = (registry: ContentRegistry): readonly [string, MarkDefinition][] => {
     let list = markLists.get(registry);
     if (list === undefined) {
         list = [...registry.marks];
@@ -100,7 +100,7 @@ const markListOf = (registry: PluginRegistry): readonly [string, MarkDefinition]
 };
 
 /** The marks a text run carries, outermost first — the registry's order. Unknown marks are left off. */
-const carriedMarks = (text: RteTextNode, registry: PluginRegistry): CarriedMark[] => {
+const carriedMarks = (text: RteTextNode, registry: ContentRegistry): CarriedMark[] => {
     for (const key of Object.keys(text)) {
         if (key !== 'text' && key !== 'type' && isCarried(text[key]) && !registry.marks.has(key)) {
             warnUnknownType('mark', key);
@@ -134,7 +134,7 @@ const sameMark = (left: CarriedMark, right: CarriedMark): boolean =>
 /** An inline element, or null for one no plugin defines: it has no text of its own to fall back to. */
 const inlineElement = (
     inline: Exclude<RteInlineNode, RteTextNode>,
-    registry: PluginRegistry,
+    registry: ContentRegistry,
     options: Options,
 ): DrawnNode | null => {
     const definition = registry.inlines.get(inline.type);
@@ -154,7 +154,7 @@ const inlineElement = (
  * Marks nest outermost first; a mark stays open while the following runs carry
  * it, and every mark outside it, with the same values.
  */
-const inlineNodes = (inlines: readonly RteInlineNode[], registry: PluginRegistry, options: Options): DrawnNode[] => {
+const inlineNodes = (inlines: readonly RteInlineNode[], registry: ContentRegistry, options: Options): DrawnNode[] => {
     const root: DrawnNode[] = [];
     const open: (CarriedMark & { content: DrawnNode[] })[] = [];
     const close = (keep: number): void => {
@@ -202,7 +202,7 @@ const isLineBreak = (node: DrawnNode | undefined): boolean =>
     typeof node === 'object' && node.kind === 'html' && node.spec.tag === 'br';
 
 /** A text block's content: inlines, or one break when empty so the line still takes space. */
-const textBlockContent = (block: RteBlockNode, registry: PluginRegistry, options: Options): DrawnNode[] => {
+const textBlockContent = (block: RteBlockNode, registry: ContentRegistry, options: Options): DrawnNode[] => {
     const inlines = (block.children as RteInlineNode[] | undefined) ?? [];
     if (isEmpty(inlines)) {
         return [html({ tag: 'br' })];
@@ -217,7 +217,7 @@ const textBlockContent = (block: RteBlockNode, registry: PluginRegistry, options
 };
 
 /** A child stored as a block (it has a type the plugins know, or children of its own) rather than an inline. */
-const isBlockLike = (node: unknown, registry: PluginRegistry): boolean => {
+const isBlockLike = (node: unknown, registry: ContentRegistry): boolean => {
     const { type, children } = node as { type?: unknown; children?: unknown };
     return Array.isArray(children) || (typeof type === 'string' && registry.blocks.has(type));
 };
@@ -226,7 +226,7 @@ const isBlockLike = (node: unknown, registry: PluginRegistry): boolean => {
  * A block no plugin defines: its content, in a plain `div`, so the text in it
  * still reads. Nothing when it holds nothing (a void block).
  */
-const unknownBlockNode = (block: RteBlockNode, registry: PluginRegistry, options: Options): DrawnNode | null => {
+const unknownBlockNode = (block: RteBlockNode, registry: ContentRegistry, options: Options): DrawnNode | null => {
     warnUnknownType('block', block.type);
     const children = (block.children as unknown[] | undefined) ?? [];
     if (children.length === 0) {
@@ -238,10 +238,25 @@ const unknownBlockNode = (block: RteBlockNode, registry: PluginRegistry, options
     return content.length === 0 ? null : html({ tag: 'div', children: true }, content);
 };
 
+/** A block's child. A list holds only items, so a block no plugin defines stands in one as an item of its own. */
+const childNode = (
+    child: RteBlockNode,
+    parent: RteBlockNode,
+    registry: ContentRegistry,
+    options: Options,
+): DrawnNode | null => {
+    const drawn = blockNode(child, registry, options);
+    const isUnknownInList = registry.itemTypeByList.has(parent.type) && !registry.blocks.has(child.type);
+    if (drawn === null || !isUnknownInList) {
+        return drawn;
+    }
+    return html({ tag: 'li', children: true }, [drawn]);
+};
+
 // --- Public ---
 
 /** The block drawn, or null for a block no plugin defines that holds nothing. */
-export const blockNode = (block: RteBlockNode, registry: PluginRegistry, options: Options): DrawnNode | null => {
+export const blockNode = (block: RteBlockNode, registry: ContentRegistry, options: Options): DrawnNode | null => {
     const definition = registry.blocks.get(block.type);
     if (!definition) {
         return unknownBlockNode(block, registry, options);
@@ -252,7 +267,7 @@ export const blockNode = (block: RteBlockNode, registry: PluginRegistry, options
         content = textBlockContent(block, registry, options);
     } else if (definition.content !== undefined) {
         content = ((block.children as RteBlockNode[] | undefined) ?? []).flatMap(
-            (child) => blockNode(child, registry, options) ?? [],
+            (child) => childNode(child, block, registry, options) ?? [],
         );
     }
     const style = definition.content === 'text' ? blockAttributeStyle(registry, stored) : undefined;
@@ -262,7 +277,7 @@ export const blockNode = (block: RteBlockNode, registry: PluginRegistry, options
     );
 };
 
-export const documentTree = (doc: RteDocumentOf, registry: PluginRegistry, options: Options): DrawnNode[] =>
+export const documentTree = (doc: RteDocumentOf, registry: ContentRegistry, options: Options): DrawnNode[] =>
     doc.blocks.flatMap((block) => blockNode(block, registry, options) ?? []);
 
 /**
@@ -270,7 +285,7 @@ export const documentTree = (doc: RteDocumentOf, registry: PluginRegistry, optio
  * classes and their custom properties. Readonly view and export both wrap in
  * it, so a document reads the same in either, and as in the editor.
  */
-export const documentRootSpec = (registry: PluginRegistry, className?: string): HtmlSpec => ({
+export const documentRootSpec = (registry: ContentRegistry, className?: string): HtmlSpec => ({
     tag: 'div',
     attrs: {
         class: [styles.document, className, ...registry.contentClassNames].filter(Boolean).join(' '),

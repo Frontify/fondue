@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useSortable } from '@dnd-kit/react/sortable';
-import { forwardRef, useCallback, useEffect, useRef, useState, type ReactNode, useMemo } from 'react';
+import { forwardRef, useEffect, useRef, type ReactNode, useMemo } from 'react';
 
 import { OrderableItemContextProvider } from './hooks/useOrderedListItemContext';
 import styles from './styles/orderable-list.module.scss';
@@ -33,18 +33,9 @@ export const OrderableListItemComponent = forwardRef<HTMLLIElement, OrderableLis
 
         const { isDragging, isDropping, handleRef } = useSortable({ id, index, element: internalRef, disabled });
 
-        const [hasHandle, setHasHandle] = useState(false);
-        const wrappedHandleRef = useCallback(
-            (element: Element | null) => {
-                setHasHandle(element !== null);
-                handleRef(element);
-            },
-            [handleRef],
-        );
-
         const itemContextValue = useMemo(
-            () => ({ itemId: id, dragHandleRef: wrappedHandleRef, hasHandle, selected, onSelect }),
-            [id, wrappedHandleRef, hasHandle, selected, onSelect],
+            () => ({ itemId: id, dragHandleRef: handleRef, selected, onSelect }),
+            [id, handleRef, selected, onSelect],
         );
 
         useEffect(() => {

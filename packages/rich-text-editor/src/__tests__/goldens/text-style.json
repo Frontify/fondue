@@ -1,0 +1,94 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "plain"
+                }
+            ]
+        },
+        {
+            "type": "textStyle",
+            "style": "heading1",
+            "children": [
+                {
+                    "text": "text heading1"
+                }
+            ]
+        },
+        {
+            "type": "textStyle",
+            "style": "heading2",
+            "children": [
+                {
+                    "text": "text heading2"
+                }
+            ]
+        },
+        {
+            "type": "textStyle",
+            "style": "heading3",
+            "children": [
+                {
+                    "text": "text heading3"
+                }
+            ]
+        },
+        {
+            "type": "textStyle",
+            "style": "heading4",
+            "children": [
+                {
+                    "text": "text heading4"
+                }
+            ]
+        },
+        {
+            "type": "textStyle",
+            "style": "custom1",
+            "children": [
+                {
+                    "text": "text custom1"
+                }
+            ]
+        },
+        {
+            "type": "textStyle",
+            "style": "custom2",
+            "children": [
+                {
+                    "text": "text custom2"
+                }
+            ]
+        },
+        {
+            "type": "textStyle",
+            "style": "custom3",
+            "children": [
+                {
+                    "text": "text custom3"
+                }
+            ]
+        },
+        {
+            "type": "textStyle",
+            "style": "imageTitle",
+            "children": [
+                {
+                    "text": "text imageTitle"
+                }
+            ]
+        },
+        {
+            "type": "textStyle",
+            "style": "imageCaption",
+            "children": [
+                {
+                    "text": "text imageCaption"
+                }
+            ]
+        }
+    ]
+}

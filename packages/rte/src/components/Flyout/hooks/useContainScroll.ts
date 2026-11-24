@@ -14,9 +14,8 @@ export const useContainScroll = (overlayRef: MutableRefObject<HTMLDivElement | n
             const hasVisibleScroll = SCROLL_TYPES.includes(window.getComputedStyle(element).overflowY);
             if (element.scrollHeight > element.clientHeight && hasVisibleScroll) {
                 return element;
-            } else {
-                return closestScrollableAncestor(element.parentElement);
             }
+            return closestScrollableAncestor(element.parentElement);
         };
 
         const scrollHandler = (event: WheelEvent) => {

@@ -3,8 +3,41 @@
 // The commands plugins run and the selection they read — the only way plugin
 // code reaches the editor.
 
+/**
+ * How a mark is carried by the selection. `'all'`: every counted text carries
+ * it, or a caret would type with it, and `value` is its attributes. `'some'`:
+ * only part of a range carries it.
+ */
+export type RteMarkState = { coverage: 'all'; value: Record<string, unknown> } | { coverage: 'some' };
+
+/**
+ * How `insertText` is undone. `'together'`: the text and its marks in one step. `'marksFirst'`: the marks in a step
+ * of their own, so the first undo keeps the text, as undoing an autolink does.
+ */
+export type InsertTextUndo = 'together' | 'marksFirst';
+
+export type InsertTextOptions = {
+    /**
+     * How the insert is undone.
+     * @default 'together'
+     */
+    undo?: InsertTextUndo;
+};
+
 /** What is selected, as one value that plugin UI renders itself from. Read it in a toolbar render function, which runs on every state change. */
 export type RteSelectionSnapshot = {
+    /**
+     * What the selection is made of:
+     * - `'text'` → a caret or a range of text, the usual case
+     * - `'node'` → one whole block or inline element, such as a selected column break
+     * - `'grid'` → a rectangle of a block laid out in rows and columns; `grid` says which part
+     */
+    kind: 'text' | 'node' | 'grid';
+    /**
+     * The rows and columns a `'grid'` selection covers, `null` for any other
+     * kind. Both count from 0 and include both ends.
+     */
+    grid: { rows: { from: number; to: number }; columns: { from: number; to: number } } | null;
     /** A caret rather than a range, so it covers nothing and `text` is empty. */
     isCollapsed: boolean;
     /** The plain text the selection covers — what plugin UI prefills a text field with. */
@@ -14,26 +47,45 @@ export type RteSelectionSnapshot = {
     /** Every block around the selection, innermost first (`block`, then its list items and lists) — what a wrapper's active state reads. */
     blocks: { type: string; [attribute: string]: unknown }[];
     /**
-     * The marks the selection carries, by mark type. Presence is on/off
-     * (`'bold' in marks`); the value is the mark's attributes (`{}` for a plain
-     * mark, `{ href }` for a link).
+     * The marks the selection carries, by mark type; a mark the selection does
+     * not touch is absent. `coverage: 'all'` carries the mark's attributes in
+     * `value` (`{}` for a plain mark, `{ href }` for a link).
      *
-     * On a caret, the marks typing here would carry; over a range, the marks
-     * every text in it carries — a half-bold range is not bold.
+     * On a caret, every entry is `'all'`: the marks typing here would carry.
+     * Over a range, `'all'` is a mark every text in it carries and `'some'` one
+     * only part of it carries — a half-bold range is `'some'`, not bold. A mark
+     * all of it carries, but with different values, is `'some'` too: a
+     * red-and-blue range has no one colour.
      */
-    marks: Record<string, Record<string, unknown>>;
+    marks: Record<string, RteMarkState>;
+    /** Whether the undo history has a change to take back or make again — what undo and redo buttons enable on. */
+    history: { canUndo: boolean; canRedo: boolean };
 };
 
 /**
- * The API plugins are handed in their toolbar item, hotkeys and `render.edit`:
- * all a plugin needs to drive the editor, whatever the engine.
- *
- * Reads and writes are shaped differently on purpose: everything to *know* is
- * one value (`selection.get()`); everything to *do* is one command per act,
- * keyed by the type it acts on, so new features need nothing added here.
+ * What a caret clears: the marks it would type with (`'typing'`) or its whole text block (`'block'`). A range is cleared either way.
+ */
+export type ClearMarksScope = 'typing' | 'block';
+
+export type ClearMarksOptions = {
+    /**
+     * How much a caret clears.
+     * @default 'typing'
+     */
+    scope?: ClearMarksScope;
+    /**
+     * Leave on the marks that declare `survivesClear`.
+     * @default false
+     */
+    keepSurviving?: boolean;
+};
+
+/**
+ * The API plugins are handed in their toolbar controls, hotkeys and `edit` views,
+ * to drive the editor whatever the engine. Read with `selection.get()`; act with
+ * one command per act, keyed by the type it acts on.
  */
 export type EditorControlApi = {
-    /** What is selected. */
     selection: {
         get(): RteSelectionSnapshot;
     };
@@ -45,8 +97,20 @@ export type EditorControlApi = {
          * (`{ href }` for links).
          */
         toggle(type: string, value?: Record<string, unknown>): void;
-        /** Strip every mark from the selection — the formatting half of "reset formatting". */
-        removeAll(): void;
+        /**
+         * Put a mark on all of the selection with `value`, replacing the value
+         * any of it carried, as one undo step: how a colour is changed.
+         */
+        set(type: string, value?: Record<string, unknown>): void;
+        /**
+         * Take a mark off all of the selection, however much of it carried the
+         * mark, as one undo step: how a colour is removed.
+         */
+        remove(type: string): void;
+        /**
+         * Strip every mark from the selection, except those that declare `survivesClear` when `keepSurviving` is set.
+         */
+        removeAll(options?: ClearMarksOptions): void;
         /**
          * The whole run of a mark around the selection (its value and text), or
          * null. Unlike the snapshot's `marks` it is about the run, not the
@@ -58,7 +122,8 @@ export type EditorControlApi = {
     blocks: {
         /**
          * Turn every text block the selection touches into this type, with `value` as its attributes.
-         * A block inside a list is first taken out of its list, so the result stands on its own.
+         * A block inside a list is first taken out of its list, so the result stands on its own, whichever lists
+         * the selection spans.
          */
         setType(type: string, value?: Record<string, unknown>): void;
         /** Set attributes on every block the selection touches — how alignment is applied. */
@@ -77,20 +142,77 @@ export type EditorControlApi = {
         indent(): boolean;
         /** Lift the current list item out one level, leaving the list entirely at the top. */
         outdent(): boolean;
-        /** Split the current list item in two — Enter inside a list. Returns false outside one. */
+        /**
+         * Split the current list item in two or, in an empty item, leave the list (outdent) — Enter inside a list. Returns false outside one.
+         */
         split(): boolean;
         /** Replace every list the selection touches with the blocks its items held, even when the selection merely contains lists. */
         unwrapAll(): boolean;
     };
 
     /**
+     * The grid (`gridRole: 'grid'`) the selection is in: the slot the caret is
+     * in, or the selected slots. Each change is one undo step and keeps the
+     * text of every slot that stays; each returns false when it did nothing,
+     * outside a grid included.
+     */
+    grid: {
+        /**
+         * The grid around the selection, or null outside one: its size, how
+         * many rows and columns the selection covers (a slot's spans
+         * included), and whether its first row and first column are all
+         * header slots.
+         */
+        shape(): {
+            rows: number;
+            columns: number;
+            selectedRows: number;
+            selectedColumns: number;
+            headerRow: boolean;
+            headerColumn: boolean;
+        } | null;
+        /** Add a row above or below, or a column left or right of, the selection. */
+        add(axis: 'row' | 'column', side: 'before' | 'after'): boolean;
+        /**
+         * Remove the rows or columns the selection covers. Does nothing when
+         * it covers every row or every column: a grid keeps at least one.
+         */
+        removeSelected(axis: 'row' | 'column'): boolean;
+        /** Remove the whole grid. */
+        removeGrid(): boolean;
+        /**
+         * Turn the first row or column into header slots, or back. After any
+         * change a user makes to a grid, a header slot that declares a `scope`
+         * default gets `'col'` when its whole row is header slots, else `'row'`.
+         */
+        toggleHeader(axis: 'row' | 'column'): boolean;
+        /** Merge the selected slots, a rectangle of two or more, into one. Each slot's blocks are kept, in order; empty slots are dropped. */
+        mergeSlots(): boolean;
+        /** Split the slot the selection is in, when it covers several rows or columns, back into single slots. */
+        splitSlot(): boolean;
+        /** Whether `mergeSlots` would do something now — what a menu enables it on. */
+        canMergeSlots(): boolean;
+        /** Whether `splitSlot` would do something now — what a menu enables it on. */
+        canSplitSlot(): boolean;
+    };
+
+    /**
      * Insert a node at the selection — how void blocks (a column break) and
      * inline elements (mentions) get added, with `value` as what it stores.
      * The caret ends up after what was inserted.
+     *
+     * A block whose `value` holds `children` comes in whole, as the document
+     * format writes it: in place of a selected or an empty top-level block, or
+     * after the top-level block the caret is in, with the caret at its first
+     * place for text.
      */
     insert(type: string, value?: Record<string, unknown>): void;
-    /** Insert plain text at the selection, carrying the marks typing there would. */
-    insertText(text: string): void;
+    /**
+     * Insert plain text at the selection, carrying the marks typing there would plus `marks`. Unknown mark types
+     * are ignored.
+     * @param marks - Marks to add, by type to value, as in `marks.toggle`.
+     */
+    insertText(text: string, marks?: Record<string, Record<string, unknown>>, options?: InsertTextOptions): void;
 
     /** The text around the caret, within its block. */
     text: {
@@ -102,6 +224,14 @@ export type EditorControlApi = {
         deleteBefore(count: number): void;
     };
 
+    /** The undo history, the same steps as `UNDO_HOTKEY` and `REDO_HOTKEY`. */
+    history: {
+        /** Take the last change back; right after a typing rewrite, only the rewrite. */
+        undo(): void;
+        /** Make the last undone change again. */
+        redo(): void;
+    };
+
     /** Return focus to the editor, e.g. after closing plugin UI. */
     focus(): void;
     /** Give up focus, e.g. to commit a single-line editor on Enter. */
@@ -109,8 +239,30 @@ export type EditorControlApi = {
 
     /** Which node's editing UI is open. The editor holds it so a toolbar button can open it; leaving the node closes it. */
     editors: {
-        /** Open the `render.edit` of the node of this type at the selection. */
+        /**
+         * Open the `edit` view of the node of this type at the selection
+         */
         open(type: string): void;
         close(): void;
     };
 };
+
+/** The key that takes the last change back. */
+export const UNDO_HOTKEY = 'Mod-z';
+
+/** The key that makes the last undone change again. */
+export const REDO_HOTKEY = 'Mod-Shift-z';
+
+/** Written as in a plugin's `hotkeys` (`Mod-b`). */
+export type EditorShortcut = {
+    key: string;
+    label: string;
+};
+
+/** The editor's own keys: the engine binds undo and redo from these, the shell matches `focusToolbar`. */
+export const EDITOR_SHORTCUTS = {
+    undo: { key: UNDO_HOTKEY, label: 'Undo' },
+    redo: { key: 'Mod-y', label: 'Redo' },
+    redoWithShift: { key: REDO_HOTKEY, label: 'Redo' },
+    focusToolbar: { key: 'Alt-F10', label: 'Move focus to the toolbar' },
+} satisfies Record<string, EditorShortcut>;

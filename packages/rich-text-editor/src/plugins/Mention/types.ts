@@ -1,7 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+/** Every kind a mention can have; the one list that `MentionKind` and parsing read. */
+export const MENTION_KINDS = ['user', 'group', 'all'] as const;
+
 /** Who a mention names: one person, a group of people, or everyone. */
-export type MentionKind = 'user' | 'group' | 'all';
+export type MentionKind = (typeof MENTION_KINDS)[number];
 
 /** What a mention stores on its inline node. */
 export type MentionValue = {
@@ -19,6 +22,11 @@ export type MentionItem = MentionValue & {
     /** Avatar URL, shown in the picker only; the document does not keep it. */
     image?: string;
 };
+
+/**
+ * Where a mention links to, such as the profile of a person or group. Returns `undefined` when the mention has no page.
+ */
+export type MentionHref = (mention: MentionValue) => string | undefined;
 
 /** The void inline this plugin adds to the document. */
 export type MentionInline = { type: 'mention' } & MentionValue;

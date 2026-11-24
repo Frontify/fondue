@@ -6,19 +6,30 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it } from 'vitest';
 
-import { buildPluginRegistry, defineBlock, type EditorControlApi, type RtePlugin } from '../core';
+import {
+    buildPluginRegistry,
+    defineBlock,
+    defineContent,
+    definePlugin,
+    type EditorControlApi,
+    type RtePlugin,
+    type ToolbarItemProps,
+} from '../core';
+import { RichTextRenderer, serializeToHtml } from '../index';
+import { enUS, ENGLISH } from '../locales/en-US';
 import {
     blurOnBreakPlugin,
+    type BlurOnBreakPluginOptions,
     bulletListPlugin,
     columnBreakPlugin,
     defaultPlugins,
     mentionPlugin,
     numberedListPlugin,
-    RichTextRenderer,
-    serializeToHtml,
+    resetFormattingPlugin,
     textStylePlugin,
-} from '../index';
+} from '../plugins';
 import { searchIn } from '../plugins/Mention/Mention';
+import { labelContextOf, resolveLabel, translatorFor } from '../ui/translation';
 
 /**
  * The plugin definitions that hold behaviour of their own — what they declare,
@@ -32,7 +43,11 @@ declare global {
 }
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
-const recordingApi = ({ inList = false } = {}) => {
+type RecordingApiOptions = {
+    inList?: boolean;
+};
+
+const recordingApi = ({ inList = false }: RecordingApiOptions = {}) => {
     const calls: string[] = [];
     const api = {
         lists: {
@@ -48,12 +63,52 @@ const recordingApi = ({ inList = false } = {}) => {
             setType: (type: string, value?: Record<string, unknown>) => {
                 calls.push(`blocks.setType ${type}${value ? ` ${JSON.stringify(value)}` : ''}`);
             },
+            resetAttributes: () => {
+                calls.push('blocks.resetAttributes');
+            },
+        },
+        marks: {
+            removeAll: (options?: Record<string, unknown>) => {
+                calls.push(`marks.removeAll ${JSON.stringify(options)}`);
+            },
         },
         blur: () => {
             calls.push('blur');
         },
+        selection: { get: () => ({ marks: {} }) },
     } as unknown as EditorControlApi;
     return { api, calls };
+};
+
+type ClickToolbarButtonParams = { plugin: RtePlugin; api: EditorControlApi; name: string };
+
+const clickToolbarButton = ({ plugin, api, name }: ClickToolbarButtonParams): void => {
+    const entry = buildPluginRegistry([plugin]).toolbarItems[0];
+    if (entry?.control !== 'custom') {
+        throw new Error('the plugin has no custom toolbar entry');
+    }
+    const container = window.document.createElement('div');
+    window.document.body.append(container);
+    const root = createRoot(container);
+    const Entry = entry.render;
+    // The entries read `api`, `label` and `selection`; the rest is what any entry is handed.
+    const props: ToolbarItemProps = {
+        api,
+        label: resolveLabel(entry.label, labelContextOf(ENGLISH, translatorFor(enUS))),
+        selection: api.selection.get(),
+        selectedNode: null,
+        isActive: false,
+        toggle: () => {},
+        openEditor: () => {},
+    };
+    act(() => root.render(<Entry {...props} />));
+    const button = container.querySelector<HTMLElement>(`[aria-label="${name}"]`);
+    if (button === null) {
+        throw new Error(`the entry drew no button named ${name}`);
+    }
+    act(() => button.click());
+    act(() => root.unmount());
+    container.remove();
 };
 
 const PEOPLE = [
@@ -118,29 +173,56 @@ describe('mentionPlugin', () => {
 });
 
 describe('blurOnBreakPlugin', () => {
-    const enter = blurOnBreakPlugin().hotkeys?.Enter;
+    const enterOf = (options?: BlurOnBreakPluginOptions) => blurOnBreakPlugin(options).hotkeys?.Enter?.run;
 
     it('splits the list item when Enter is pressed inside a list, and keeps focus', () => {
         const { api, calls } = recordingApi({ inList: true });
 
-        expect(enter?.(api)).toBe(true);
+        expect(enterOf({ onBreak: () => calls.push('onBreak') })?.(api)).toBe(true);
         expect(calls).toEqual(['split']);
     });
 
     it('gives up focus when Enter is pressed anywhere else, adding no paragraph', () => {
         const { api, calls } = recordingApi();
 
-        expect(enter?.(api)).toBe(true);
+        expect(enterOf()?.(api)).toBe(true);
         expect(calls).toEqual(['split', 'blur']);
+    });
+
+    it('calls onBreak before it gives up focus', () => {
+        const { api, calls } = recordingApi();
+
+        enterOf({ onBreak: () => calls.push('onBreak') })?.(api);
+
+        expect(calls).toEqual(['split', 'onBreak', 'blur']);
+    });
+
+    it('binds Enter alone, so Shift-Enter stays with whatever else binds it', () => {
+        expect(Object.keys(blurOnBreakPlugin().hotkeys ?? {})).toEqual(['Enter']);
+    });
+});
+
+describe('resetFormattingPlugin', () => {
+    it('resets the marks, keeping those that survive, the block type and the attributes with its button', () => {
+        const { api, calls } = recordingApi();
+
+        clickToolbarButton({ plugin: resetFormattingPlugin(), api, name: 'Reset formatting' });
+
+        expect(calls).toEqual([
+            'marks.removeAll {"scope":"block","keepSurviving":true}',
+            'blocks.setType paragraph',
+            'blocks.resetAttributes',
+        ]);
     });
 });
 
 describe('the list plugins', () => {
     it('toggle their list on the shortcuts other editors use', () => {
         const { api, calls } = recordingApi();
+        const { hotkeys } = buildPluginRegistry([bulletListPlugin(), numberedListPlugin()]);
 
-        bulletListPlugin().hotkeys?.['Mod-Shift-8']?.(api);
-        numberedListPlugin().hotkeys?.['Mod-Shift-7']?.(api);
+        hotkeys.get('Mod-Shift-8')?.[0]?.(api);
+        hotkeys.get('Mod-Shift-7')?.[0]?.(api);
 
         expect(calls).toEqual(['lists.toggle bulletList', 'lists.toggle numberedList']);
     });
@@ -163,7 +245,7 @@ describe('textStylePlugin', () => {
         const hotkeys = textStylePlugin().hotkeys ?? {};
 
         for (const keys of ['Mod-Alt-0', 'Mod-Alt-1', 'Mod-Alt-4']) {
-            hotkeys[keys]?.(api);
+            hotkeys[keys]?.run(api);
         }
 
         expect(calls).toEqual([
@@ -177,6 +259,23 @@ describe('textStylePlugin', () => {
         const hotkeys = textStylePlugin({ styles: ['heading2', 'custom1'] }).hotkeys ?? {};
 
         expect(Object.keys(hotkeys)).toEqual(['Mod-Alt-2']);
+    });
+
+    it('adds no toolbar item, command, hotkey or input rule when the editor offers no styles', () => {
+        const plugin = textStylePlugin({ styles: [] });
+
+        expect(plugin.toolbar ?? []).toEqual([]);
+        expect(plugin.commands ?? []).toEqual([]);
+        expect(plugin.hotkeys ?? {}).toEqual({});
+        expect(plugin.inputRules ?? []).toEqual([]);
+    });
+
+    it('adds no toolbar item when the only style is the paragraph, since there is nothing to choose', () => {
+        expect(textStylePlugin({ styles: ['paragraph'] }).toolbar ?? []).toEqual([]);
+    });
+
+    it('adds a toolbar item when the editor offers a style to choose', () => {
+        expect(textStylePlugin({ styles: ['paragraph', 'heading1'] }).toolbar).toHaveLength(1);
     });
 });
 
@@ -201,22 +300,24 @@ describe('defaultPlugins', () => {
 describe('the readonly renderer', () => {
     it('redraws only the blocks that changed', () => {
         const drawn: string[] = [];
-        const notePlugin: RtePlugin = {
+        const notePlugin: RtePlugin = definePlugin({
             id: 'note',
-            blocks: {
-                note: defineBlock<{ label: string }>({
-                    defaults: { label: '' },
-                    toHtml: ({ label }) => ({ tag: 'p', children: label }),
-                    parse: [],
-                    render: {
-                        component: ({ value }) => {
-                            drawn.push(value.label);
-                            return <p>{value.label}</p>;
+            content: defineContent({
+                blocks: {
+                    note: defineBlock<{ label: string }>({
+                        defaults: { label: '' },
+                        toHtml: ({ label }) => ({ tag: 'p', children: label }),
+                        parse: [],
+                        render: {
+                            component: ({ value }) => {
+                                drawn.push(value.label);
+                                return <p>{value.label}</p>;
+                            },
                         },
-                    },
-                }),
-            },
-        };
+                    }),
+                },
+            }),
+        });
         // One list for both renders, as a host holds it: a new list is a new
         // set of plugins, which redraws everything.
         const plugins = [notePlugin];

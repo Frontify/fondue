@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { type RteBlockNode, type RteDocumentOf } from './document';
 import { isEmpty, toPlainText } from './documentText';
-import { defineBlock, defineInline, type RtePlugin } from './plugin';
+import { defineBlock, defineContent, defineInline, definePlugin, type RtePlugin } from './plugin';
 import { emptyDocument } from './vocabulary';
 
 /**
@@ -24,35 +24,48 @@ const list = (...items: RteBlockNode[][]): RteBlockNode => ({
 const mention = { type: 'mention', id: '1', username: 'jane' };
 
 const plugins: RtePlugin[] = [
-    {
+    definePlugin({
         id: 'list',
-        blocks: {
-            list: defineBlock({ content: { items: 'item' }, toHtml: () => ({ tag: 'ul', children: true }), parse: [] }),
-            item: defineBlock({
-                content: { blocks: ['paragraph', 'list'] },
-                toHtml: () => ({ tag: 'li', children: true }),
-                parse: [],
-            }),
-        },
-    },
-    {
+        content: defineContent({
+            blocks: {
+                list: defineBlock({
+                    content: { items: 'item' },
+                    toHtml: () => ({ tag: 'ul', children: true }),
+                    parse: [],
+                }),
+                item: defineBlock({
+                    content: { blocks: ['paragraph', 'list'] },
+                    toHtml: () => ({ tag: 'li', children: true }),
+                    parse: [],
+                }),
+            },
+        }),
+    }),
+    definePlugin({
         id: 'divider',
-        blocks: { divider: defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [] }) },
-    },
-    {
+        content: defineContent({ blocks: { divider: defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [] }) } }),
+    }),
+    definePlugin({
         id: 'mention',
-        inlines: {
-            mention: defineInline<{ username: string }>({
-                toHtml: ({ username }) => ({ tag: 'a', children: [{ tag: 'span', children: '@' }, username] }),
-                parse: [],
-            }),
-        },
-    },
-    { id: 'break', inlines: { break: defineInline({ toHtml: () => ({ tag: 'br' }), parse: [] }) } },
-    {
+        content: defineContent({
+            inlines: {
+                mention: defineInline<{ username: string }>({
+                    toHtml: ({ username }) => ({ tag: 'a', children: [{ tag: 'span', children: '@' }, username] }),
+                    parse: [],
+                }),
+            },
+        }),
+    }),
+    definePlugin({
+        id: 'break',
+        content: defineContent({ inlines: { break: defineInline({ toHtml: () => ({ tag: 'br' }), parse: [] }) } }),
+    }),
+    definePlugin({
         id: 'emoji',
-        inlines: { emoji: defineInline({ toHtml: () => ({ tag: 'img', attrs: { alt: '🙂' } }), parse: [] }) },
-    },
+        content: defineContent({
+            inlines: { emoji: defineInline({ toHtml: () => ({ tag: 'img', attrs: { alt: '🙂' } }), parse: [] }) },
+        }),
+    }),
 ];
 
 describe('isEmpty', () => {
@@ -81,13 +94,15 @@ describe('isEmpty', () => {
 
 describe('toPlainText', () => {
     it('puts each text block on its own line, an empty one kept as an empty line', () => {
-        expect(toPlainText(doc(paragraph({ text: 'one' }), paragraph({ text: '' }), paragraph({ text: 'two' })))).toBe(
-            'one\n\ntwo',
-        );
+        expect(
+            toPlainText(doc(paragraph({ text: 'one' }), paragraph({ text: '' }), paragraph({ text: 'two' })), {
+                plugins: [],
+            }),
+        ).toBe('one\n\ntwo');
     });
 
     it('joins a block’s runs without separators and drops marks', () => {
-        expect(toPlainText(doc(paragraph({ text: 'bold', bold: true }, { text: ' and plain' })))).toBe(
+        expect(toPlainText(doc(paragraph({ text: 'bold', bold: true }, { text: ' and plain' })), { plugins: [] })).toBe(
             'bold and plain',
         );
     });
@@ -101,7 +116,9 @@ describe('toPlainText', () => {
     it('flattens a block no plugin defines by what its children are', () => {
         const callout = { type: 'callout', children: [paragraph({ text: 'inside' })] };
 
-        expect(toPlainText(doc(callout, { type: 'unknownText', children: [{ text: 'line' }] }))).toBe('inside\nline');
+        expect(toPlainText(doc(callout, { type: 'unknownText', children: [{ text: 'line' }] }), { plugins: [] })).toBe(
+            'inside\nline',
+        );
     });
 
     it('reads an inline element as the text of its markup: a mention, a break, an image’s alt', () => {
@@ -118,8 +135,10 @@ describe('toPlainText', () => {
     });
 
     it('gives nothing for a void block or an inline no plugin defines', () => {
-        expect(toPlainText(doc(paragraph({ text: 'a' }, mention), { type: 'divider' }, paragraph({ text: 'b' })))).toBe(
-            'a\nb',
-        );
+        expect(
+            toPlainText(doc(paragraph({ text: 'a' }, mention), { type: 'divider' }, paragraph({ text: 'b' })), {
+                plugins: [],
+            }),
+        ).toBe('a\nb');
     });
 });

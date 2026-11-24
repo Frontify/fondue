@@ -16,14 +16,6 @@ const storybookDir = dirname(fileURLToPath(import.meta.url));
 const packagesRoot = resolve(storybookDir, '../../packages');
 const packagePath = (...segments: string[]): string => join(packagesRoot, ...segments);
 
-const getSubpackageURL = (subpackage: string): string => {
-    if (process.env.CONTEXT === 'deploy-preview' && process.env.REVIEW_ID) {
-        return `https://deploy-preview-${process.env.REVIEW_ID}.${subpackage}.fondue-components.frontify.com/`;
-    } else {
-        return `https://${subpackage}.fondue-components.frontify.com/`;
-    }
-};
-
 const config: StorybookConfig = {
     // Story files carry their full sidebar path in `title`; the order lives in `storySort` in preview.tsx.
     stories: [
@@ -33,6 +25,8 @@ const config: StorybookConfig = {
         '../../packages/icons/src/**/*.stories.@(ts|tsx)',
         '../../packages/components/src/**/*.stories.@(ts|tsx)',
         '../../packages/charts/src/**/*.stories.@(ts|tsx)',
+        '../../packages/rich-text-editor/src/**/*.stories.@(ts|tsx)',
+        '../../packages/rich-text-editor/src/**/*.mdx',
     ],
     addons: [
         '@storybook/addon-links',
@@ -56,26 +50,6 @@ const config: StorybookConfig = {
     },
     core: {
         disableTelemetry: true,
-    },
-    refs: (_config, { configType }) => {
-        if (configType === 'DEVELOPMENT') {
-            return {
-                rte: {
-                    title: 'Rich Text Editor',
-                    url: 'http://localhost:6011',
-                    type: 'auto-inject',
-                    expanded: true,
-                },
-            };
-        }
-
-        return {
-            rte: {
-                title: 'Rich Text Editor',
-                url: `${getSubpackageURL('rte')}`,
-                expanded: true,
-            },
-        };
     },
     viteFinal: (viteConfig) => {
         const mdxReactShimPath = join(getAbsolutePath('@storybook/addon-docs'), 'mdx-react-shim.js');
@@ -113,7 +87,7 @@ const config: StorybookConfig = {
                 // Resolves each package's own aliases (`#/`, `#storybook/`, `@components/`).
                 tsConfigPaths({
                     root: packagesRoot,
-                    projects: ['components/tsconfig.json', 'charts/tsconfig.json'],
+                    projects: ['components/tsconfig.json', 'charts/tsconfig.json', 'rich-text-editor/tsconfig.json'],
                 }),
                 {
                     name: 'fix-mdx-file-imports',

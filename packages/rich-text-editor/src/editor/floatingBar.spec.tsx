@@ -2,11 +2,17 @@
 
 // @vitest-environment happy-dom
 
+import { ThemeProvider } from '@frontify/fondue-components';
+import { deDE as fondueDeDE } from '@frontify/fondue-components/locales/de-DE';
 import { act, type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { columnBreakPlugin, defaultPlugins, RichTextEditor, type RteDocument } from '../index';
+import { deDE } from '#/locales/de-DE';
+import { translatorFor } from '#/ui/translation';
+
+import { definePlugin, RichTextEditor, type RteDocument } from '../index';
+import { columnBreakPlugin, defaultPlugins } from '../plugins';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -84,6 +90,21 @@ const selectText = (editable: HTMLElement): void => {
     });
 };
 
+const selectFirstToLastText = (editable: HTMLElement): void => {
+    const walker = window.document.createTreeWalker(editable, NodeFilter.SHOW_TEXT);
+    const first = walker.nextNode();
+    let last = first;
+    for (let next = walker.nextNode(); next; next = walker.nextNode()) {
+        last = next;
+    }
+    act(() => {
+        if (first && last) {
+            window.getSelection()?.setBaseAndExtent(first, 0, last, last.textContent?.length ?? 0);
+        }
+        window.document.dispatchEvent(new Event('selectionchange'));
+    });
+};
+
 const labels = (elements: Iterable<Element>): (string | null)[] =>
     [...elements].map((element) => element.getAttribute('aria-label'));
 
@@ -95,6 +116,28 @@ const spokenText = (element: Element): string => {
     }
     return copy.textContent ?? '';
 };
+
+/** A plugin with one command per menu that can never run. */
+const unavailablePlugin = (run: () => void) =>
+    definePlugin({
+        id: 'unavailable',
+        commands: [
+            {
+                id: 'big-block',
+                label: 'Big block',
+                group: 'turnInto',
+                isAvailable: () => false,
+                run,
+            },
+            {
+                id: 'big-insert',
+                label: 'Big insert',
+                group: 'insert',
+                isAvailable: () => false,
+                run,
+            },
+        ],
+    });
 
 describe('the floating bar', () => {
     const open = (html: string) => {
@@ -138,19 +181,12 @@ describe('the floating bar', () => {
         expect(window.document.querySelector('[aria-label="More formatting"]')).toBeNull();
     });
 
-    it('says what the host gave it in labels', () => {
+    it('says everything in the language of its locale', () => {
+        const translate = translatorFor(deDE);
         const editor = mount((onChange) => (
-            <RichTextEditor
-                plugins={defaultPlugins}
-                toolbarPlacement="floating"
-                onChange={onChange}
-                labels={{
-                    editor: 'Texteditor',
-                    toolbar: 'Formatierung',
-                    turnInto: 'Umwandeln',
-                    turnIntoCurrent: (label) => `Umwandeln: ${label}`,
-                }}
-            />
+            <ThemeProvider locale={fondueDeDE}>
+                <RichTextEditor plugins={defaultPlugins} toolbarPlacement="floating" onChange={onChange} />
+            </ThemeProvider>
         ));
         paste(editor.editable, { html: '<h2>text</h2>' });
         act(() => editor.editable.focus());
@@ -158,16 +194,23 @@ describe('the floating bar', () => {
 
         const bar = window.document.querySelector<HTMLElement>('[role="toolbar"]');
         const trigger = bar?.querySelector('button');
-        expect(editor.editable.getAttribute('aria-label')).toBe('Texteditor');
-        expect(bar?.getAttribute('aria-label')).toBe('Formatierung');
-        expect(trigger?.getAttribute('aria-label')).toBe('Umwandeln: Heading 2');
-        expect(trigger?.getAttribute('title')).toBe('Umwandeln');
+        expect(editor.editable.getAttribute('aria-label')).toBe(translate('RichTextEditor_editor'));
+        expect(bar?.getAttribute('aria-label')).toBe(translate('RichTextEditor_toolbar'));
+        expect(trigger?.getAttribute('aria-label')).toBe(
+            translate('RichTextEditor_turnIntoCurrent', { type: translate('RichTextEditor_heading2') }),
+        );
+        expect(trigger?.getAttribute('title')).toBe(translate('RichTextEditor_turnInto'));
     });
 
     it('draws no bar when there is nothing to put in it', () => {
         const editor = mount((onChange) => (
             <RichTextEditor
-                plugins={[{ id: 'quiet', toolbarItem: () => null, floatingToolbar: 'hidden' }]}
+                plugins={[
+                    definePlugin({
+                        id: 'quiet',
+                        toolbar: [{ label: 'Quiet', render: () => null, floating: 'hidden' }],
+                    }),
+                ]}
                 toolbarPlacement="floating"
                 onChange={onChange}
             />
@@ -219,6 +262,19 @@ describe('the floating bar', () => {
         });
     });
 
+    it('turns a range across two lists and the text between them into plain text', () => {
+        const { bar, editable, stored } = open('<ul><li>one</li></ul><p>between</p><ol><li>two</li></ol>');
+        selectFirstToLastText(editable);
+
+        turnInto(bar, 'Text');
+
+        expect(stored()?.blocks).toEqual([
+            { type: 'paragraph', children: [{ text: 'one' }] },
+            { type: 'paragraph', children: [{ text: 'between' }] },
+            { type: 'paragraph', children: [{ text: 'two' }] },
+        ]);
+    });
+
     it('does nothing when the entry chosen is the one the block already is', () => {
         const { bar, stored } = open('<ul><li>one</li></ul>');
         const before = stored();
@@ -227,6 +283,31 @@ describe('the floating bar', () => {
 
         expect(stored()).toBe(before);
         expect(stored()?.blocks[0]).toMatchObject({ type: 'bulletList' });
+    });
+
+    it('leaves out a command that cannot run', () => {
+        const editor = mount((onChange) => (
+            <RichTextEditor
+                plugins={[...defaultPlugins, unavailablePlugin(vi.fn())]}
+                toolbarPlacement="floating"
+                onChange={onChange}
+            />
+        ));
+        paste(editor.editable, { html: '<p>text</p>' });
+        act(() => editor.editable.focus());
+        selectText(editor.editable);
+        const trigger = window.document.querySelector<HTMLElement>('[aria-label^="Turn into"]');
+        if (!trigger) {
+            throw new Error('no Turn into');
+        }
+        act(() => trigger.focus());
+        press(trigger, 'ArrowDown');
+
+        const items = [...window.document.querySelectorAll<HTMLElement>('[role="menuitem"]')].map((item) =>
+            item.getAttribute('aria-label'),
+        );
+        expect(items).toContain('Heading 1');
+        expect(items).not.toContain('Big block');
     });
 });
 
@@ -249,7 +330,7 @@ describe('the / menu', () => {
         expect(listbox()).not.toBeNull();
         expect(options()).toEqual(expect.arrayContaining(['Text', 'Heading 1', 'Quote', 'Column break']));
         expect([...window.document.querySelectorAll('[role="status"]')].map((status) => status.textContent)).toContain(
-            `${options().length} commands`,
+            `Commands: ${options().length}`,
         );
         // The text names the highlighted option, so the caret never leaves it.
         const active = window.document.querySelector('[role="option"][aria-selected="true"]');
@@ -257,6 +338,19 @@ describe('the / menu', () => {
         expect(window.document.querySelector('[contenteditable]')?.getAttribute('aria-activedescendant')).toBe(
             active?.id,
         );
+    });
+
+    it("clears the text's pointers to the list once the list closes", () => {
+        const { editable } = start();
+        act(() => editable.focus());
+        type(editable, '/');
+        expect(editable.getAttribute('aria-controls')).toBeTruthy();
+
+        press(editable, 'Escape');
+
+        expect(listbox()).toBeNull();
+        expect(editable.hasAttribute('aria-controls')).toBe(false);
+        expect(editable.hasAttribute('aria-activedescendant')).toBe(false);
     });
 
     it('narrows to what is typed after the slash', () => {
@@ -334,34 +428,30 @@ describe('the / menu', () => {
         expect(editable.getAttribute('aria-controls')).toBe(listbox()?.id);
     });
 
-    it('says what the host gave it in labels, English otherwise', () => {
+    it('says everything in the language of its locale', () => {
+        const translate = translatorFor(deDE);
         const { editable } = mount(() => (
-            <RichTextEditor
-                plugins={plugins}
-                labels={{
-                    turnInto: 'Umwandeln',
-                    insert: 'Einfügen',
-                    commands: 'Befehle',
-                    text: 'Absatz',
-                    noResults: 'Keine Treffer',
-                    commandCount: (count) => `${count} Befehle`,
-                }}
-            />
+            <ThemeProvider locale={fondueDeDE}>
+                <RichTextEditor plugins={plugins} />
+            </ThemeProvider>
         ));
         act(() => editable.focus());
 
         type(editable, '/');
 
-        expect(listbox()?.getAttribute('aria-label')).toBe('Befehle');
-        expect(labels(window.document.querySelectorAll('[role="group"]'))).toEqual(['Umwandeln', 'Einfügen']);
-        expect(options()).toContain('Absatz');
+        expect(listbox()?.getAttribute('aria-label')).toBe(translate('RichTextEditor_commands'));
+        expect(labels(listbox()?.querySelectorAll('[role="group"]') ?? [])).toEqual([
+            translate('RichTextEditor_turnInto'),
+            translate('RichTextEditor_insert'),
+        ]);
+        expect(options()).toContain(translate('RichTextEditor_text'));
         expect([...window.document.querySelectorAll('[role="status"]')].map((status) => status.textContent)).toContain(
-            `${options().length} Befehle`,
+            translate('RichTextEditor_commandCount', { count: String(options().length) }),
         );
 
         type(editable, 'zzz');
 
-        expect(window.document.body.textContent).toContain('Keine Treffer');
+        expect(window.document.body.textContent).toContain(translate('RichTextEditor_noResults'));
     });
 
     it('does not open for a slash in the middle of text', () => {
@@ -372,5 +462,21 @@ describe('the / menu', () => {
         type(editable, ' /');
 
         expect(listbox()).toBeNull();
+    });
+
+    it('leaves out a command that cannot run, so typing its name finds nothing', () => {
+        const { editable } = mount((onChange) => (
+            <RichTextEditor plugins={[...plugins, unavailablePlugin(vi.fn())]} onChange={onChange} />
+        ));
+        act(() => editable.focus());
+        type(editable, '/');
+
+        expect(options()).not.toContain('Big block');
+        expect(options()).not.toContain('Big insert');
+
+        type(editable, 'big');
+
+        expect(listbox()).toBeNull();
+        expect(window.document.body.textContent).toContain('No results');
     });
 });

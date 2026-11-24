@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue-tokens",
     "type": "module",
-    "version": "5.2.0",
+    "version": "6.0.0-rc.0",
     "description": "Single source of truth for Fondue Design Tokens",
     "author": "Frontify Developers <developers@frontify.com>",
     "homepage": "https://github.com/Frontify/fondue",
@@ -32,7 +32,6 @@
         "./json/utilities": "./dist/json/utilities.json",
         "./legacy/tokens": "./dist/legacy/deprecatedBaseTokens.css",
         "./legacy/tailwind": "./dist/legacy/deprecatedTailwindConfig.ts",
-        "./legacy/tools/replaceLegacyTokens": "./tools/replaceLegacyTokens.ts",
         "./manifest.json": "./dist/manifest.json"
     },
     "files": [
@@ -40,12 +39,11 @@
     ],
     "scripts": {
         "storybook": "pnpm --workspace-root storybook",
-        "build": "tsx src/buildTokens.ts && cp -r legacyTokens/* ./dist/legacy && mkdir -p ./dist/legacy/tools && cp -r tools/* ./dist/legacy/tools",
+        "build": "tsx src/buildTokens.ts && cp -r legacyTokens/* ./dist/legacy",
         "format": "oxfmt",
         "format:check": "oxfmt --check",
         "lint": "oxlint",
         "lint:fix": "oxlint --fix",
-        "migrate": "tsx tools/migrate.js",
         "typecheck": "tsgo --noEmit"
     },
     "publishConfig": {
@@ -64,7 +62,7 @@
         "@types/node": "^24.19.2",
         "@types/react": "^18.3.31",
         "@types/react-dom": "^18.3.7",
-        "@typescript/native-preview": "7.0.0-dev.20260421.2",
+        "@typescript/native-preview": "7.0.0-dev.20260707.2",
         "@vitejs/plugin-react": "^5.2.0",
         "oxfmt": "^0.74.0",
         "oxlint": "^1.90.0",

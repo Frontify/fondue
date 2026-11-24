@@ -1,0 +1,49 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "plain"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "plain then "
+                },
+                {
+                    "text": "marked",
+                    "italic": true
+                },
+                {
+                    "text": " then plain"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "all marked",
+                    "italic": true
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "start",
+                    "italic": true
+                },
+                {
+                    "text": " end"
+                }
+            ]
+        }
+    ]
+}

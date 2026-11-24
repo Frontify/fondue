@@ -485,69 +485,6 @@ test('should set title on sortable header cell when content is truncated', async
     );
 });
 
-test('should support legacy sticky="head" prop', async ({ mount }) => {
-    const wrapper = await mount(
-        <Table.Root sticky="head" aria-label="Table" data-test-id="table-root">
-            <Table.Header>
-                <Table.Row>
-                    <Table.HeaderCell>Name</Table.HeaderCell>
-                </Table.Row>
-            </Table.Header>
-            <Table.Body>
-                <Table.Row>
-                    <Table.RowCell>Test</Table.RowCell>
-                </Table.Row>
-            </Table.Body>
-        </Table.Root>,
-    );
-    const component = wrapper.getByTestId('table-root');
-
-    await expect(component).toHaveAttribute('data-sticky-header', 'true');
-    await expect(component).toHaveAttribute('data-sticky-left-column', 'false');
-});
-
-test('should support legacy sticky="col" prop', async ({ mount }) => {
-    const wrapper = await mount(
-        <Table.Root sticky="col" aria-label="Table" data-test-id="table-root">
-            <Table.Header>
-                <Table.Row>
-                    <Table.HeaderCell>Name</Table.HeaderCell>
-                </Table.Row>
-            </Table.Header>
-            <Table.Body>
-                <Table.Row>
-                    <Table.RowCell>Test</Table.RowCell>
-                </Table.Row>
-            </Table.Body>
-        </Table.Root>,
-    );
-    const component = wrapper.getByTestId('table-root');
-
-    await expect(component).toHaveAttribute('data-sticky-header', 'false');
-    await expect(component).toHaveAttribute('data-sticky-left-column', 'true');
-});
-
-test('should support legacy sticky="both" prop', async ({ mount }) => {
-    const wrapper = await mount(
-        <Table.Root sticky="both" aria-label="Table" data-test-id="table-root">
-            <Table.Header>
-                <Table.Row>
-                    <Table.HeaderCell>Name</Table.HeaderCell>
-                </Table.Row>
-            </Table.Header>
-            <Table.Body>
-                <Table.Row>
-                    <Table.RowCell>Test</Table.RowCell>
-                </Table.Row>
-            </Table.Body>
-        </Table.Root>,
-    );
-    const component = wrapper.getByTestId('table-root');
-
-    await expect(component).toHaveAttribute('data-sticky-header', 'true');
-    await expect(component).toHaveAttribute('data-sticky-left-column', 'true');
-});
-
 test('should set data-has-horizontal-overflow when content overflows', async ({ mount }) => {
     const wrapper = await mount(
         <div style={{ width: '100px', overflow: 'auto' }}>

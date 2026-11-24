@@ -21,6 +21,7 @@
         "vite.config.ts",
         "oxlint.config.ts",
         "oxfmt.config.ts",
+        "playwright.config.ts",
         "tailwind.config.ts",
         "lint-fixtures/*.ts"
     ]

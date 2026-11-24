@@ -1,5 +1,54 @@
 # @frontify/fondue-charts
 
+## 10.0.0-rc.1
+
+### Minor Changes
+
+- [#3087](https://github.com/Frontify/fondue/pull/3087) [`b3ee8c8`](https://github.com/Frontify/fondue/commit/b3ee8c8b495023a9219a764194f213acfb00fd92) Thanks [@joseazevedo88](https://github.com/joseazevedo88)! - feat(LinearGauge): add `tooltipMode="hovered"` to show only the section under the pointer or keyboard focus with its new `description`, `legendPosition="bottom"`, and keyboard access to the sections in both modes
+  feat(AreaStackChart, LineChart): add `dateGranularity="month"` to show months on the axis and in the tooltip
+  fix(LinearGauge): reduce the gap between the bar and the legend to 16px
+  fix(AreaStackChart): keep five grid lines for all-zero or small values, and draw a circle per series for a single date
+  fix(AreaStackChart, LineChart): make room for the first date label, so it is not clipped
+  fix(AreaStackChart, BarChart, LineChart): measure the axis labels again once the web font has loaded, so they are not clipped
+
+### Patch Changes
+
+- [#3086](https://github.com/Frontify/fondue/pull/3086) [`65e0562`](https://github.com/Frontify/fondue/commit/65e0562e44a65caa35a31fcdc4be5e0111d126d6) Thanks [@joseazevedo88](https://github.com/joseazevedo88)! - fix(PieChart): use the v14 font size token for the labels, so the chart gets a valid height again
+
+## 10.0.0-rc.0
+
+### Patch Changes
+
+- [#3035](https://github.com/Frontify/fondue/pull/3035) [`cf1839b`](https://github.com/Frontify/fondue/commit/cf1839b10095b928008a8a11934056d0cf5b2581) Thanks [@noahwaldner](https://github.com/noahwaldner)! - First release candidate for Fondue v14.
+
+## 10.0.0-beta.0
+
+### Major Changes
+
+- [#3008](https://github.com/Frontify/fondue/pull/3008) [`40df7a2`](https://github.com/Frontify/fondue/commit/40df7a2c25b4d2ec66e4bc2017c966fa277fda03) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - Release charts on the fondue v14 line. The code is the same as 9.1.0; the peer dependency now requires `@frontify/fondue-tokens` 6.
+
+## 9.0.0-beta.0
+
+### Major Changes
+
+- [#2877](https://github.com/Frontify/fondue/pull/2877) [`f59824e`](https://github.com/Frontify/fondue/commit/f59824e0f9b33a4ee6b8f1f290cbfed5b67374c7) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - bump packages for fondue v14
+
+### Patch Changes
+
+- Updated dependencies [[`f59824e`](https://github.com/Frontify/fondue/commit/f59824e0f9b33a4ee6b8f1f290cbfed5b67374c7)]:
+  - @frontify/fondue-tokens@6.0.0-beta.0
+
+## 9.1.0
+
+### Minor Changes
+
+- [#2960](https://github.com/Frontify/fondue/pull/2960) [`1fc4e6e`](https://github.com/Frontify/fondue/commit/1fc4e6e5859082edc24fc3bde97491fccae907e0) Thanks [@joewoodson](https://github.com/joewoodson)! - feat(BarChart): add `maxLabelLength` prop to configure or disable (`Infinity`) axis label truncation
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @frontify/fondue-tokens@5.2.0
+
 ## 9.0.0
 
 ### Patch Changes

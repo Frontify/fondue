@@ -1,5 +1,89 @@
 # @frontify/fondue-sdk
 
+## 1.0.0-rc.1
+
+### Patch Changes
+
+- Updated dependencies [[`9b6a452`](https://github.com/Frontify/fondue/commit/9b6a452773883a485b221894cea4496708a679db), [`8d134e1`](https://github.com/Frontify/fondue/commit/8d134e1ec9dd723a9782bda0f15e1e8919dec3a2)]:
+    - @frontify/fondue-components@37.0.0-rc.1
+    - @frontify/fondue-tokens@6.0.0-rc.0
+
+## 1.0.0-rc.0
+
+### Patch Changes
+
+- [#3035](https://github.com/Frontify/fondue/pull/3035) [`cf1839b`](https://github.com/Frontify/fondue/commit/cf1839b10095b928008a8a11934056d0cf5b2581) Thanks [@noahwaldner](https://github.com/noahwaldner)! - First release candidate for Fondue v14.
+
+- Updated dependencies [[`cf1839b`](https://github.com/Frontify/fondue/commit/cf1839b10095b928008a8a11934056d0cf5b2581)]:
+    - @frontify/fondue-components@37.0.0-rc.0
+    - @frontify/fondue-icons@1.0.0-rc.0
+    - @frontify/fondue-tokens@6.0.0-rc.0
+
+## 1.0.0-beta.2
+
+### Patch Changes
+
+- [#3013](https://github.com/Frontify/fondue/pull/3013) [`b7bc6c7`](https://github.com/Frontify/fondue/commit/b7bc6c7774795824cdcf52cb10201162d83ee252) Thanks [@noahwaldner](https://github.com/noahwaldner)! - docs: update import paths and links for fondue 14. The SDK guides no longer mention the removed `@frontify/fondue` root entry or `@frontify/fondue/styles`, and `ThemeProvider` points to `@frontify/fondue/components/locales`.
+
+- [#3020](https://github.com/Frontify/fondue/pull/3020) [`b73c9d4`](https://github.com/Frontify/fondue/commit/b73c9d43562cf5579b29ebaf941ee2fd8d717157) Thanks [@noahwaldner](https://github.com/noahwaldner)! - docs: add the "Upgrading to Fondue v14" guide. The upgrade guides now live under `development/upgrading/v13` and `development/upgrading/v14`, replacing `development/Upgrading`.
+
+- Updated dependencies [[`4e92d69`](https://github.com/Frontify/fondue/commit/4e92d69a07cd9df0763a2e00cbd78c7ca3ceb4ed), [`b7bc6c7`](https://github.com/Frontify/fondue/commit/b7bc6c7774795824cdcf52cb10201162d83ee252), [`876e823`](https://github.com/Frontify/fondue/commit/876e8239702086c9acc2139fa7f5037a984de05b)]:
+    - @frontify/fondue-components@37.0.0-beta.1
+    - @frontify/fondue-tokens@6.0.0-beta.1
+
+## 1.0.0-beta.1
+
+### Patch Changes
+
+- Updated dependencies [[`40df7a2`](https://github.com/Frontify/fondue/commit/40df7a2c25b4d2ec66e4bc2017c966fa277fda03), [`a59db73`](https://github.com/Frontify/fondue/commit/a59db7301cbb6d4dd9d62dcdad5bbd63542bc49b), [`d5df360`](https://github.com/Frontify/fondue/commit/d5df3600960affc56fbf662d807ef3a31578ce20), [`e610067`](https://github.com/Frontify/fondue/commit/e610067b4878e90f675aabb4a61333002bd99105), [`66a5800`](https://github.com/Frontify/fondue/commit/66a5800ac077b4bf23f943e845b68cec8b7a7c3a), [`a711a4d`](https://github.com/Frontify/fondue/commit/a711a4d48ceda578e757296dfbef6f0baea2ad40)]:
+    - @frontify/fondue-components@37.0.0-beta.0
+    - @frontify/fondue-icons@1.0.0-beta.1
+    - @frontify/fondue-tokens@6.0.0-beta.0
+
+## 1.0.0-beta.0
+
+### Major Changes
+
+- [#2877](https://github.com/Frontify/fondue/pull/2877) [`f59824e`](https://github.com/Frontify/fondue/commit/f59824e0f9b33a4ee6b8f1f290cbfed5b67374c7) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - bump packages for fondue v14
+
+### Patch Changes
+
+- Updated dependencies [[`f59824e`](https://github.com/Frontify/fondue/commit/f59824e0f9b33a4ee6b8f1f290cbfed5b67374c7)]:
+    - @frontify/fondue-components@34.0.0-beta.0
+    - @frontify/fondue-icons@1.0.0-beta.0
+    - @frontify/fondue-tokens@6.0.0-beta.0
+
+## 0.3.4
+
+### Patch Changes
+
+- [#2991](https://github.com/Frontify/fondue/pull/2991) [`136542d`](https://github.com/Frontify/fondue/commit/136542d78767263187de2011bab9194078e79a38) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(Flyout): expose `onInteractOutside` and `aria-label` on `Flyout.Content`
+
+- Updated dependencies [[`48899ef`](https://github.com/Frontify/fondue/commit/48899ef5a6beb9eb5e2bf36f36deb6a97918aa49), [`48899ef`](https://github.com/Frontify/fondue/commit/48899ef5a6beb9eb5e2bf36f36deb6a97918aa49), [`a59db73`](https://github.com/Frontify/fondue/commit/a59db7301cbb6d4dd9d62dcdad5bbd63542bc49b), [`136542d`](https://github.com/Frontify/fondue/commit/136542d78767263187de2011bab9194078e79a38), [`48899ef`](https://github.com/Frontify/fondue/commit/48899ef5a6beb9eb5e2bf36f36deb6a97918aa49), [`d5df360`](https://github.com/Frontify/fondue/commit/d5df3600960affc56fbf662d807ef3a31578ce20), [`e610067`](https://github.com/Frontify/fondue/commit/e610067b4878e90f675aabb4a61333002bd99105), [`66a5800`](https://github.com/Frontify/fondue/commit/66a5800ac077b4bf23f943e845b68cec8b7a7c3a), [`a711a4d`](https://github.com/Frontify/fondue/commit/a711a4d48ceda578e757296dfbef6f0baea2ad40)]:
+    - @frontify/fondue-components@36.0.3
+    - @frontify/fondue-icons@0.32.1
+    - @frontify/fondue-tokens@5.2.0
+
+## 0.3.3
+
+### Patch Changes
+
+- [#2966](https://github.com/Frontify/fondue/pull/2966) [`04ee335`](https://github.com/Frontify/fondue/commit/04ee335b4f5071262315ac1df2d6297fb82fc602) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(Card): center `Card.BannerDescription` in the banner and only leave room for the selection checkbox when the card is selectable, so the description shows more lines. The revealed description now has a bottom border that separates it from the card content.
+
+- [#2962](https://github.com/Frontify/fondue/pull/2962) [`eddd1cc`](https://github.com/Frontify/fondue/commit/eddd1cc0a496ba20e3f8926d893b0bc2ee25dfe2) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(Tree): add `folderClickType` to `Tree.Root`. The default `'select'` keeps the current single-select behavior (the first click on a folder only selects it). `'toggle'` expands or collapses a folder on every click, for trees whose folders are only containers.
+
+- Updated dependencies [[`04ee335`](https://github.com/Frontify/fondue/commit/04ee335b4f5071262315ac1df2d6297fb82fc602), [`eddd1cc`](https://github.com/Frontify/fondue/commit/eddd1cc0a496ba20e3f8926d893b0bc2ee25dfe2), [`f9f8c9f`](https://github.com/Frontify/fondue/commit/f9f8c9f39efab944a8163cb912ca31f0e17f6a7b)]:
+    - @frontify/fondue-components@36.0.2
+    - @frontify/fondue-tokens@5.2.0
+
+## 0.3.2
+
+### Patch Changes
+
+- Updated dependencies [[`ed52d6e`](https://github.com/Frontify/fondue/commit/ed52d6e458a8c03be92559fc00fc43d648106608), [`cbec3e4`](https://github.com/Frontify/fondue/commit/cbec3e41f01ac497b59816bae2b771c3f10e7315), [`90552fe`](https://github.com/Frontify/fondue/commit/90552fe1a71ccf86b58d87b792dd711794965608), [`35390a0`](https://github.com/Frontify/fondue/commit/35390a03b88f30045d5b8b738564fb33e43031ad), [`2c9db91`](https://github.com/Frontify/fondue/commit/2c9db91df4d604b5c1ee6518b64f2f8368b4753b)]:
+    - @frontify/fondue-components@36.0.1
+    - @frontify/fondue-tokens@5.2.0
+
 ## 0.3.1
 
 ### Patch Changes

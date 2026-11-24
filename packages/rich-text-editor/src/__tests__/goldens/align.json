@@ -1,0 +1,49 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "no align"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "align": "left",
+            "children": [
+                {
+                    "text": "aligned left"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "align": "center",
+            "children": [
+                {
+                    "text": "aligned center"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "align": "right",
+            "children": [
+                {
+                    "text": "aligned right"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "align": "justify",
+            "children": [
+                {
+                    "text": "aligned justify"
+                }
+            ]
+        }
+    ]
+}

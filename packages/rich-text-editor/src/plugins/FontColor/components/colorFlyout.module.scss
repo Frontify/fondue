@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/** The icon with the current colour under it. */
+/** The icon with the current colour under it, no gap so both fit the button. */
 .trigger {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
 }
 
 /** Empty while nothing is set — the element stays, so the icon does not shift. */
@@ -23,10 +22,27 @@
 
 /** The suggested colours, a row of swatches above the picker. */
 .presets {
+    // A <fieldset>, whose own border, padding and minimum width would show.
+    min-inline-size: 0;
+    margin: 0 0 var(--spacing-small);
+    padding: 0;
+    border: 0;
     display: flex;
     flex-wrap: wrap;
     gap: var(--spacing-x-small);
-    margin-bottom: var(--spacing-small);
+}
+
+/** Read by screen readers, not shown: the swatches already say what they are. */
+.visuallyHidden {
+    position: absolute;
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip-path: inset(50%);
+    white-space: nowrap;
 }
 
 /** One swatch: big enough to hit (24px), its colour its whole face. */

@@ -1,46 +1,103 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use 'sass:list';
+@use 'sass:map';
+
+@use '../../styles/stack.module.scss';
+
+// The host's look of a level, `--rte-<list><level>-<field>` as `listLookProperties` in List.ts writes it, or Fondue's.
+@function level-look($list, $level, $field, $fallback) {
+    @return var(--rte-#{$list}#{$level}-#{$field}, #{$fallback});
+}
+
+// Read directly rather than inherited from the item, so a relative body size applies once.
+$body-color: var(--rte-body-color, currentcolor);
+$body-font-size: var(--rte-body-font-size, 1em);
+
+$slots: this, next, after-next;
+
+// The three looks repeat at any depth: a list's items pass its next looks on as the nested list's own.
+// Items use their own `passed-` names, because a custom property cannot read its inherited value while setting it.
+// Fondue's levels differ only in their marker; `$shared` holds the other fields.
+@mixin level-looks($list, $markers, $shared) {
+    $fields: list.join(marker, map.keys($shared));
+
+    @each $slot in $slots {
+        $level: list.index($slots, $slot);
+        @each $field, $fondue in map.set($shared, marker, list.nth($markers, $level)) {
+            --_#{$list}-#{$slot}-#{$field}: var(
+                --_#{$list}-passed-#{$slot}-#{$field},
+                #{level-look($list, $level, $field, $fondue)}
+            );
+        }
+    }
+
+    list-style-type: var(--_#{$list}-this-marker);
+
+    > .item {
+        @each $slot in $slots {
+            $handed-on: list.nth($slots, list.index($slots, $slot) % list.length($slots) + 1);
+            @each $field in $fields {
+                --_#{$list}-passed-#{$slot}-#{$field}: var(--_#{$list}-#{$handed-on}-#{$field});
+            }
+        }
+    }
+
+    > .item::marker {
+        color: var(--_#{$list}-this-color);
+        @content;
+    }
+}
+
 // Markers hang in the list's own padding, so it has to be wide enough for the
 // widest one: a marker wider than the padding pokes out of the document and is
 // cut off by a host that clips its overflow.
-@mixin list($indent) {
-    margin: 0;
-    padding-left: $indent;
-}
+$bullet-indent: 1.5em;
 
-// The marker changes with the nesting depth, the way legacy configured it per
-// level. A list nested in a list of the *other* type starts over at its own
-// first level, which is what the tag-based selectors did too.
 .bulletList {
-    @include list(1.5em);
-
-    list-style-type: disc;
-
-    .bulletList {
-        list-style-type: circle;
-
-        .bulletList {
-            list-style-type: square;
-        }
-    }
-}
-
-// Two digits and a full stop (`10.`) need more room than a bullet.
-.numberedList {
-    @include list(2em);
-
-    list-style-type: decimal;
-
-    .numberedList {
-        list-style-type: lower-alpha;
-
-        .numberedList {
-            list-style-type: lower-roman;
-        }
-    }
-}
-
-/** An item holds blocks, so its text sits in a paragraph that must not add space. */
-.item > p {
     margin: 0;
+    padding-left: var(--_bullet-list-this-indent);
+
+    @include level-looks(
+        'bullet-list',
+        (disc, circle, square),
+        (
+            color: $body-color,
+            size: $body-font-size,
+            indent: $bullet-indent,
+        )
+    ) {
+        font-size: var(--_bullet-list-this-size);
+    }
+}
+
+// Two digits and a full stop (`10.`) need more room than a bullet. A list
+// that starts at 100 or more sets how many digits its first number adds; it
+// is reset here so a list nested inside does not inherit it. The room fits
+// the first number only, so a list that grows to more digits than it starts
+// with clips, as one past 99 items always did. The property name and the
+// two-digit room are set from `EXTRA_DIGITS_PROPERTY` and `MARKER_DIGITS` in
+// List.ts.
+$numbered-indent: 2em;
+
+.numberedList {
+    --rte-list-extra-digits: 0;
+
+    margin: 0;
+    padding-left: calc(var(--_numbered-list-this-indent) + var(--rte-list-extra-digits) * 1ch);
+
+    @include level-looks(
+        'numbered-list',
+        (decimal, lower-alpha, lower-roman),
+        (
+            color: $body-color,
+            indent: $numbered-indent,
+        )
+    ) {
+        font-size: $body-font-size;
+    }
+}
+
+.item {
+    @include stack.stack(0);
 }

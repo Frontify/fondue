@@ -1,12 +1,12 @@
 # Fondue Rich Text Editor
 
-<a href="https://github.com/Frontify/fondue/actions/workflows/continuous-integration.yml">
-    <img src="https://github.com/Frontify/react-components/actions/workflows/continuous-integration.yml/badge.svg" alt="CI Status" />
+<a href="https://github.com/Frontify/fondue/actions/workflows/continuous-deployment.yaml">
+    <img src="https://github.com/Frontify/fondue/actions/workflows/continuous-deployment.yaml/badge.svg" alt="CI Status" />
 </a>
 <a href="https://snyk.io/test/github/Frontify/fondue">
     <img src="https://snyk.io/test/github/Frontify/fondue/badge.svg" alt="Known Vulnerabilities" />
 </a>
-<a href="https://github.com/Frontify/fondue/blob/main/README.md" title="latest">
+<a href="https://www.npmjs.com/package/@frontify/fondue-rte" title="latest">
     <img alt="latest" src="https://img.shields.io/npm/v/@frontify/fondue-rte/latest.svg" alt="NPM Version" />
 </a>
 
@@ -77,10 +77,10 @@ See [Contribution Guidelines](../../CONTRIBUTING.md) for contributing and local 
 
 ## Related Packages
 
-- [@frontify/fondue](../fondue) - Main Fondue component library
-- [@frontify/fondue-components](../components) - New refactored Fondue components
-- [@frontify/fondue-tokens](../tokens) - Design tokens
-- [@frontify/fondue-icons](../icons) - Icon components
+- [@frontify/fondue](https://www.npmjs.com/package/@frontify/fondue) - Main Fondue package
+- [@frontify/fondue-components](https://www.npmjs.com/package/@frontify/fondue-components) - Fondue components
+- [@frontify/fondue-tokens](https://www.npmjs.com/package/@frontify/fondue-tokens) - Design tokens
+- [@frontify/fondue-icons](https://www.npmjs.com/package/@frontify/fondue-icons) - Icon components
 
 ## Important Links
 

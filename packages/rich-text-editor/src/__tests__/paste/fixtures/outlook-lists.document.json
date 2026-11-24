@@ -1,0 +1,161 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "Hi all,"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": []
+        },
+        {
+            "type": "bulletList",
+            "children": [
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "Logos are final"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "bulletList",
+                            "children": [
+                                {
+                                    "type": "listItem",
+                                    "children": [
+                                        {
+                                            "type": "paragraph",
+                                            "children": [
+                                                {
+                                                    "text": "Dark and light"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "Fonts need a licence"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "Icons are next"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": []
+        },
+        {
+            "type": "bulletList",
+            "children": [
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "Ship the kit"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "bulletList",
+                            "children": [
+                                {
+                                    "type": "listItem",
+                                    "children": [
+                                        {
+                                            "type": "paragraph",
+                                            "children": [
+                                                {
+                                                    "text": "Templates"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "listItem",
+                                    "children": [
+                                        {
+                                            "type": "paragraph",
+                                            "children": []
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "Announce it"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": []
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "Best,"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "Ada"
+                }
+            ]
+        }
+    ]
+}

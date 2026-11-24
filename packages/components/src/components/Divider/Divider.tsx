@@ -71,7 +71,7 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
                 data-padding={padding}
                 data-test-id={dataTestId}
                 decorative={decorative}
-                data-orientation={direction}
+                orientation={direction}
                 asChild
             >
                 <Component />

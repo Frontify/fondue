@@ -57,11 +57,6 @@ type TableRootProps = {
      */
     stickyBackgroundColor?: CSSProperties['backgroundColor'];
     /**
-     * Whether header should stick to the top when scrolling
-     * @deprecated Use `Table.Header sticky` prop instead. For sticky columns, use `Table.Body firstColumnSticky` or `lastColumnSticky` props
-     */
-    sticky?: 'head' | 'col' | 'both';
-    /**
      * Whether to remove the top and bottom borders from the table
      * @default false
      */
@@ -77,7 +72,6 @@ export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
             fontSize = 'medium',
             gutter = '0px',
             stickyBackgroundColor,
-            sticky,
             noBorder = false,
             children,
             ...props
@@ -88,10 +82,6 @@ export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
         const [hasHorizontalOverflow, setHasHorizontalOverflow] = useState(false);
 
         useSyncRefs<HTMLTableElement>(tableRef, ref);
-
-        // Handle deprecated `sticky` prop for backward compatibility
-        const legacyStickyHeader = sticky === 'head' || sticky === 'both';
-        const legacyStickyLeftColumn = sticky === 'col' || sticky === 'both';
 
         useEffect(() => {
             const table = tableRef.current;
@@ -136,8 +126,6 @@ export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
                 }
                 data-layout={layout}
                 data-font-size={fontSize}
-                data-sticky-header={legacyStickyHeader}
-                data-sticky-left-column={legacyStickyLeftColumn}
                 data-no-border={noBorder}
                 data-has-horizontal-overflow={hasHorizontalOverflow}
                 onKeyDown={handleKeyDown}

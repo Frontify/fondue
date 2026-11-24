@@ -1,0 +1,57 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "textStyle",
+            "style": "heading1",
+            "children": [
+                {
+                    "text": "Introduction"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "Why the brand moves to one system."
+                }
+            ]
+        },
+        {
+            "type": "textStyle",
+            "style": "heading2",
+            "children": [
+                {
+                    "text": "Scope"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "Logos, colours and type."
+                }
+            ]
+        },
+        {
+            "type": "textStyle",
+            "style": "heading2",
+            "children": [
+                {
+                    "text": "Out of scope"
+                }
+            ]
+        },
+        {
+            "type": "textStyle",
+            "style": "heading1",
+            "children": [
+                {
+                    "text": "Timeline"
+                }
+            ]
+        }
+    ]
+}

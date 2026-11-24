@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ForwardedRef, forwardRef, useEffect, useState } from 'react';
+import { type ForwardedRef, forwardRef, useEffect, useId, useState } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -49,6 +49,22 @@ type ColorValueInputProps = {
 
 const nooperation = () => {};
 
+/** Ignores alpha, which the hex field does not carry. */
+const showsColor = (hex: string, color: RgbaColor): boolean => {
+    if (!isValidHexColor(hex)) {
+        return false;
+    }
+    const typedColor = hexColorToRgba(hex);
+    return typedColor.red === color.red && typedColor.green === color.green && typedColor.blue === color.blue;
+};
+
+const describedByWhenInvalid = (valid: boolean, id: string): string | undefined => {
+    if (valid) {
+        return undefined;
+    }
+    return id;
+};
+
 export const ColorValueInput = (
     {
         currentColor = DEFAULT_COLOR,
@@ -61,9 +77,17 @@ export const ColorValueInput = (
 ) => {
     const { t } = useTranslation();
     const [hexColorValue, setHexColorValue] = useState<string>(() => rgbColorToHex(currentColor));
+    const hexErrorId = useId();
+    const hexIsValid = isValidHexColor(hexColorValue);
 
     useEffect(() => {
-        setHexColorValue(rgbColorToHex(currentColor));
+        // A typed `abc` must not be rewritten to `aabbcc` while the colour round-trips through the parent.
+        setHexColorValue((previous) => {
+            if (showsColor(previous, currentColor)) {
+                return previous;
+            }
+            return rgbColorToHex(currentColor);
+        });
     }, [currentColor]);
 
     return (
@@ -82,30 +106,40 @@ export const ColorValueInput = (
                 </Select>
             </div>
             {currentFormat === 'HEX' ? (
-                <TextInput.Root
-                    data-test-id="color-picker-value-input-hex"
-                    className={styles.valueInput}
-                    type="text"
-                    value={hexColorValue}
-                    status={isValidHexColor(hexColorValue) ? 'neutral' : 'error'}
-                    onBlur={(event) => {
-                        if (isValidHexColor(event.target.value)) {
-                            onColorChange({ ...hexColorToRgba(event.target.value), alpha: currentColor.alpha });
-                        }
-                    }}
-                    onChange={(event) => {
-                        const inputValue = event.target.value.startsWith('#')
-                            ? event.target.value.slice(1)
-                            : event.target.value;
+                <>
+                    <TextInput.Root
+                        data-test-id="color-picker-value-input-hex"
+                        className={styles.valueInput}
+                        type="text"
+                        value={hexColorValue}
+                        status={hexIsValid ? 'neutral' : 'error'}
+                        onChange={(event) => {
+                            const inputValue = event.target.value.startsWith('#')
+                                ? event.target.value.slice(1)
+                                : event.target.value;
 
-                        setHexColorValue(inputValue);
-                    }}
-                    aria-label={t('ColorPicker_hexValue')}
-                >
-                    <TextInput.Slot name="left">
-                        <span className={styles.inputDecorator}>#</span>
-                    </TextInput.Slot>
-                </TextInput.Root>
+                            setHexColorValue(inputValue);
+                            if (isValidHexColor(inputValue)) {
+                                onColorChange({
+                                    ...hexColorToRgba(inputValue),
+                                    alpha: currentColor.alpha,
+                                });
+                            }
+                        }}
+                        aria-label={t('ColorPicker_hexValue')}
+                        aria-describedby={describedByWhenInvalid(hexIsValid, hexErrorId)}
+                        aria-errormessage={hexErrorId}
+                    >
+                        <TextInput.Slot name="left">
+                            <span className={styles.inputDecorator}>#</span>
+                        </TextInput.Slot>
+                    </TextInput.Root>
+                    {hexIsValid ? null : (
+                        <span id={hexErrorId} className={styles.valueError}>
+                            {t('ColorPicker_hexInvalid')}
+                        </span>
+                    )}
+                </>
             ) : (
                 <div className={styles.colorChannelInputGroup}>
                     <TextInput.Root

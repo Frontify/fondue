@@ -17,6 +17,6 @@
         "target": "ES2021",
         "useDefineForClassFields": true
     },
-    "include": ["src", "legacyTokens", "tools", "stories", "playwright"],
+    "include": ["src", "legacyTokens", "stories", "playwright"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

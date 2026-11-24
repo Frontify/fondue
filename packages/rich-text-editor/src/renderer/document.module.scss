@@ -1,5 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../styles/stack.module.scss';
+
+// Custom properties inherit by default, and a quote's margin must not reach the paragraphs inside it.
+@property --rte-own-margin-top {
+    syntax: '*';
+    inherits: false;
+}
+
+@property --rte-own-margin-bottom {
+    syntax: '*';
+    inherits: false;
+}
+
 /**
  * How a document reads, wherever it is drawn: the editable element in the
  * editor and the root of `RichTextRenderer` both carry this class, so the two
@@ -30,13 +43,8 @@
     // flex parent that the document sits in.
     overflow-wrap: anywhere;
 
-    // A paragraph adds no space of its own, like every other block: spacing
-    // between blocks belongs to the document, not to the page's default
-    // stylesheet (which would otherwise give paragraphs `1em` margins in some
-    // hosts and none in others).
-    p {
-        margin: 0;
-    }
+    // Host stylesheets give blocks `1em` margins in some hosts and none in others.
+    @include stack.stack(var(--spacing-x-small));
 
     // Raised and lowered text without growing the line it sits on. Browsers'
     // own `vertical-align: super`/`sub` push the line box apart, so a host

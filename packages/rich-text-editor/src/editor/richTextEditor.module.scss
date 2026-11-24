@@ -5,6 +5,13 @@
 //
 // No frame: no border, background, shadow or inset around the editor. The
 // editor is its content; a host that wants a field draws the box around it.
+// One exception: the sticky top toolbar paints the surface colour, so text scrolled under it stays hidden.
+
+// 4px shorter than the regular Button, as the design draws it.
+$separator-size: 2rem;
+
+// How far a focus outline inside the content reaches past its element: the table's 2px offset plus its border width.
+$focus-outline-reach: calc(2px + var(--border-width-default));
 
 /**
  * Wraps the toolbar, the content and the floating bar so the editor has one
@@ -14,23 +21,129 @@
     display: contents;
 }
 
-/** The controls themselves, wherever the bar holding them ends up. */
+/**
+ * The top toolbar, the notice and the content. Its own stacking context keeps
+ * the toolbar's z-index inside the editor: it lifts the toolbar over the text
+ * scrolling under it, but not over the page's menus and flyouts, which leave
+ * `z-index` unset and rely on coming later in the page.
+ */
+.body {
+    isolation: isolate;
+}
+
+/** With `maxRows`, the content scrolls below the toolbar; `lh` here is the document's line height. */
+.body[data-max-rows='true'] .content {
+    // Room for a focus outline at the edge, taken back by the margin.
+    box-sizing: content-box;
+    padding: $focus-outline-reach;
+    margin: calc(-1 * #{$focus-outline-reach});
+    max-block-size: calc(var(--max-rows) * 1lh);
+    overflow-y: auto;
+}
+
+/** Why the content cannot be edited, kept off its first line like the toolbar. */
+.notice {
+    margin-bottom: var(--spacing-x-small);
+}
+
+/** The controls themselves, wherever the bar holding them ends up. The gap parts the groups. */
 .toolbar {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: var(--spacing-xx-small);
+    gap: var(--spacing-small);
     // The inset inside the floating bar's surface.
-    padding: var(--spacing-x-small);
+    padding: var(--spacing-xx-small);
 
     /**
-     * A row above the content, lined up with the text's left edge rather than
-     * inset into a strip; the space below keeps it off the first line.
+     * One row above the content that stays in view while the content scrolls,
+     * lined up with the text's left edge rather than inset into a strip; the
+     * space below keeps it off the first line.
      */
     &[data-placement='top'] {
+        position: sticky;
+        inset-block-start: 0;
+        z-index: 1;
+        flex-wrap: nowrap;
+        // Its slots must not widen a grid or flex parent; the fit moves what does not fit behind More.
+        contain: inline-size;
         padding: 0;
         margin-bottom: var(--spacing-x-small);
+        background-color: var(--color-surface-default);
     }
+
+    @media print {
+        display: none;
+    }
+}
+
+/** One cluster of related controls, a narrower gap apart than the groups. */
+.group {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xx-small);
+}
+
+/** The divider between two groups of the row. */
+.separator {
+    display: flex;
+    flex: none;
+    block-size: $separator-size;
+}
+
+/** One plugin's controls. Never shrunk, so the top row measures each at its own size. */
+.slot {
+    display: flex;
+    flex: none;
+    align-items: center;
+}
+
+/** More, and the zero-size spot below it its controls are parked in; a flyout they open hangs from here. */
+.moreAnchor {
+    position: relative;
+    display: flex;
+    flex: none;
+}
+
+/**
+ * Where the controls behind More wait while the panel is closed: laid out, so
+ * their slots keep a size, but not seen, focused or announced. Clipped to
+ * nothing, so they add no scrolling to the page.
+ */
+.morePanelParked {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-end: 0;
+    inline-size: 0;
+    block-size: 0;
+    overflow: clip;
+    visibility: hidden;
+    pointer-events: none;
+
+    // Stacked on one spot below More, each at its own width, so a flyout one opens hangs in view.
+    .slot {
+        position: absolute;
+        inset-block-start: 0;
+        inset-inline-end: 0;
+        inline-size: max-content;
+    }
+}
+
+/** The controls behind More, in their groups, wrapping onto more lines when the panel is too narrow. */
+.moreControls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-small);
+    padding: var(--spacing-x-small);
+}
+
+/**
+ * Where the editable element mounts. Positioned so the drop cursor, which the
+ * engine draws in the editable's offset parent, stays inside the host's theme.
+ */
+.mount {
+    position: relative;
 }
 
 /**
@@ -45,7 +158,7 @@
     // The readonly view is read, not typed into: no caret cursor there.
     cursor: default;
 
-    &[contenteditable='true'] {
+    &.editable {
         cursor: text;
     }
 
@@ -56,24 +169,11 @@
         }
     }
 
-    /**
-     * Drawn on the empty block so it starts where typing will; the float and
-     * zero height keep it out of the caret's way. The `/ ''` alternative hides
-     * it from assistive technology (the field has `aria-placeholder`); the
-     * first declaration is the fallback for browsers without that syntax.
-     */
+    /** The float and zero height keep it out of the caret's way; the engine sets the text. */
     .placeholder::before {
-        content: attr(data-placeholder);
-        content: attr(data-placeholder) / '';
         float: left;
         height: 0;
         color: var(--color-secondary-default);
         pointer-events: none;
     }
-}
-
-/** The "Turn into" button of the floating bar: the block's name beside a caret. */
-.turnInto {
-    gap: var(--spacing-xx-small);
-    white-space: nowrap;
 }

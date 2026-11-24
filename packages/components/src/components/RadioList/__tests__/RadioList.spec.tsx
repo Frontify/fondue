@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
+import { Badge } from '../../Badge/Badge';
 import { Label } from '../../Label/Label';
 import { RadioList } from '../RadioList';
 
@@ -240,5 +241,54 @@ describe('RadioList component', () => {
             'aria-describedby',
             'visibility-hint',
         );
+    });
+
+    describe('pill variant', () => {
+        const createPillRadioList = (props = {}) => (
+            <RadioList.Root variant="pill" aria-label="Page size" {...props}>
+                <RadioList.RadioButton id="a4" value="a4">
+                    A4 <Badge size="small">12</Badge>
+                </RadioList.RadioButton>
+                <RadioList.RadioButton id="a5" value="a5">
+                    A5
+                </RadioList.RadioButton>
+                <RadioList.RadioButton id="letter" value="letter" disabled>
+                    Letter
+                </RadioList.RadioButton>
+            </RadioList.Root>
+        );
+
+        it('should name each radio button by its content', () => {
+            render(createPillRadioList());
+
+            expect(screen.getByRole('radio', { name: 'A4 12' })).toBeInTheDocument();
+            expect(screen.getByRole('radio', { name: 'A5' })).toBeInTheDocument();
+        });
+
+        it('should select the clicked pill', async () => {
+            const onValueChange = vi.fn();
+            render(createPillRadioList({ onValueChange }));
+
+            await userEvent.click(screen.getByRole('radio', { name: 'A5' }));
+
+            expect(onValueChange).toHaveBeenCalledWith('a5');
+            expect(screen.getByRole('radio', { name: 'A5' })).toBeChecked();
+        });
+
+        it('should show the checkmark only on the selected pill', () => {
+            render(createPillRadioList({ value: 'a5' }));
+
+            expect(screen.getByRole('radio', { name: 'A5' }).querySelector('svg')).toBeInTheDocument();
+            expect(screen.getByRole('radio', { name: 'A4 12' }).querySelector('svg')).not.toBeInTheDocument();
+        });
+
+        it('should not select a disabled pill', async () => {
+            const onValueChange = vi.fn();
+            render(createPillRadioList({ onValueChange }));
+
+            await userEvent.click(screen.getByRole('radio', { name: 'Letter' }));
+
+            expect(onValueChange).not.toHaveBeenCalled();
+        });
     });
 });

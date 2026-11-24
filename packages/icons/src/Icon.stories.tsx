@@ -2,7 +2,6 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import fuzzysort from 'fuzzysort';
-import { kebabCase } from 'lodash-es';
 import { type FormEvent } from 'react';
 import { useArgs } from 'storybook/preview-api';
 
@@ -20,6 +19,22 @@ export default meta;
 const tooltipStyle =
     'before:tw-content-[attr(data-tooltip-text)] before:tw-absolute before:tw-opacity-0 before:tw-left-2/4 before:-tw-translate-x-2/4 before:tw-top-full before:-tw-mt-1 before:tw-px-2 before:tw-py-1 before:tw-whitespace-nowrap before:tw-text-x-small before:tw-rounded before:tw-text-center hover:before:tw-block focus-within:before:tw-block before:tw-bg-container-secondary-on-secondary-container before:tw-z-10 before:tw-text-white hover:before:tw-opacity-100 focus-within:before:tw-opacity-100 before:tw-transition-opacity motion-reduce:before:tw-transition-none';
 
+const getDisplayName = (icon: string) => icon.replace(/^Icon/, '');
+
+const searchIcons = (search: string) => {
+    const icons = Object.keys(FondueIcons);
+    const query = search
+        .replace(/^Icon(?=[A-Z])/, '')
+        .replaceAll(/[-_]/g, ' ')
+        .trim();
+
+    if (query === '') {
+        return icons.toSorted();
+    }
+
+    return fuzzysort.go(query, icons, { key: getDisplayName, limit: 0 }).map((result) => result.obj);
+};
+
 type IconsGalleryProps = {
     iconName: string;
     updateArgs: (args: Partial<{ iconName: string }>) => void;
@@ -30,10 +45,7 @@ const IconsGallery = ({ iconName, updateArgs }: IconsGalleryProps) => {
         updateArgs({ iconName: (event.target as HTMLInputElement).value });
     };
 
-    const iconsListSource: string[] =
-        iconName !== ''
-            ? fuzzysort.go(iconName, Object.keys(FondueIcons)).map((elem) => elem.target)
-            : Object.keys(FondueIcons).toSorted();
+    const iconsListSource = searchIcons(iconName);
 
     return (
         <div className="tw-p-8">
@@ -52,13 +64,12 @@ const IconsGallery = ({ iconName, updateArgs }: IconsGalleryProps) => {
             <div className="tw-mt-8 tw-gap-4 tw-grid tw-grid-cols-[repeat(auto-fill,minmax(56px,1fr))]">
                 {iconsListSource.map((icon) => {
                     const FondueIconComponent = FondueIcons[icon as keyof typeof FondueIcons];
-                    const iconPath = kebabCase(icon).replace(/^icon-/, '');
 
                     return (
                         <button
                             type="button"
                             key={icon}
-                            data-tooltip-text={iconPath}
+                            data-tooltip-text={getDisplayName(icon)}
                             onClick={() => updateArgs({ iconName: icon })}
                             className={[
                                 'tw-relative tw-inline-flex tw-items-center tw-justify-center tw-aspect-square tw-rounded tw-bg-container-secondary hover:tw-bg-container-secondary-hover active:tw-bg-container-secondary-active tw-transition-colors motion-reduce:tw-transition-none',

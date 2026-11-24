@@ -7,7 +7,7 @@ import { useEffect, type RefObject } from 'react';
  * It observes the element's size and adds a title attribute with the full text
  * when the content is truncated.
  *
- * @param {RefObject<HTMLElement>} ref - Reference to the HTML element to observe for truncation.
+ * @param ref - Reference to the HTML element to observe for truncation.
  *
  * @example
  * ```tsx

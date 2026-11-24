@@ -7,15 +7,17 @@ import {
     ANY_LIST,
     buildPluginRegistry,
     defineBlock,
+    defineContent,
     defineInline,
     defineMark,
+    definePlugin,
     emptyDocument,
     PARAGRAPH,
     type RteDocumentOf,
     type RtePlugin,
 } from '#/core';
 
-import { toEngineDocument, toRteDocument } from './documentConversion';
+import { EXTRA_ATTR, rootExtrasOf, toEngineDocument, toRteDocument } from './documentConversion';
 import { buildSchema } from './schema';
 
 /**
@@ -25,63 +27,79 @@ import { buildSchema } from './schema';
  * list that nests.
  */
 const plugins: RtePlugin[] = [
-    {
+    definePlugin({
         id: 'bold',
-        marks: {
-            bold: defineMark({
-                toHtml: () => ({ tag: 'strong', children: true }),
-                parse: [{ tag: 'strong' }],
-            }),
-        },
-    },
-    {
+        content: defineContent({
+            marks: {
+                bold: defineMark({
+                    toHtml: () => ({ tag: 'strong', children: true }),
+                    parse: [{ tag: 'strong' }],
+                }),
+            },
+        }),
+    }),
+    definePlugin({
         id: 'link',
-        marks: {
-            link: defineMark<{ href: string }>({
-                toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
-                parse: [{ tag: 'a', value: (element) => ({ href: element.getAttribute('href') ?? '' }) }],
-            }),
-        },
-    },
-    {
+        content: defineContent({
+            marks: {
+                link: defineMark<{ href: string }>({
+                    toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
+                    parse: [{ tag: 'a', value: (element) => ({ href: element.getAttribute('href') ?? '' }) }],
+                }),
+            },
+        }),
+    }),
+    definePlugin({
         id: 'heading',
-        blocks: {
-            heading: defineBlock({
-                content: 'text',
-                defaults: { level: 1 },
-                toHtml: () => ({ tag: 'h1', children: true }),
-                parse: [{ tag: 'h1' }],
-            }),
-        },
-    },
-    {
+        content: defineContent({
+            blocks: {
+                heading: defineBlock({
+                    content: 'text',
+                    defaults: { level: 1 },
+                    toHtml: () => ({ tag: 'h1', children: true }),
+                    parse: [{ tag: 'h1' }],
+                }),
+            },
+        }),
+    }),
+    definePlugin({
         id: 'mention',
-        inlines: {
-            mention: defineInline<{ id: string }>({
-                toHtml: ({ id }) => ({ tag: 'span', children: id }),
-                parse: [{ tag: 'span', value: (element) => ({ id: element.textContent ?? '' }) }],
-            }),
-        },
-    },
-    {
+        content: defineContent({
+            inlines: {
+                mention: defineInline<{ id: string }>({
+                    toHtml: ({ id }) => ({ tag: 'span', children: id }),
+                    parse: [{ tag: 'span', value: (element) => ({ id: element.textContent ?? '' }) }],
+                }),
+            },
+        }),
+    }),
+    definePlugin({
         id: 'list',
-        blocks: {
-            bulletList: defineBlock({
-                content: { items: 'listItem' },
-                toHtml: () => ({ tag: 'ul', children: true }),
-                parse: [{ tag: 'ul' }],
-            }),
-            listItem: defineBlock({
-                content: { blocks: [PARAGRAPH, ANY_LIST] },
-                toHtml: () => ({ tag: 'li', children: true }),
-                parse: [{ tag: 'li' }],
-            }),
-        },
-    },
-    {
+        content: defineContent({
+            blocks: {
+                bulletList: defineBlock({
+                    content: { items: 'listItem' },
+                    toHtml: () => ({ tag: 'ul', children: true }),
+                    parse: [{ tag: 'ul' }],
+                }),
+                listItem: defineBlock({
+                    content: { blocks: [PARAGRAPH, ANY_LIST] },
+                    toHtml: () => ({ tag: 'li', children: true }),
+                    parse: [{ tag: 'li' }],
+                }),
+            },
+        }),
+    }),
+    definePlugin({
+        id: 'divider',
+        content: defineContent({
+            blocks: { divider: defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [{ tag: 'hr' }] }) },
+        }),
+    }),
+    definePlugin({
         id: 'align',
-        blockAttributes: { align: { style: (value) => ({ 'text-align': value }) } },
-    },
+        content: defineContent({ blockAttributes: { align: { style: (value) => ({ 'text-align': value }) } } }),
+    }),
 ];
 
 const schema = buildSchema(buildPluginRegistry(plugins));
@@ -242,6 +260,128 @@ describe('the document boundary', () => {
 
         expect(echoed.child(1)).toBe(doc.child(1));
         expect(echoed.eq(doc)).toBe(true);
+    });
+});
+
+describe('keys no mounted plugin declares', () => {
+    const roundTrip = (doc: unknown, mounted: RtePlugin[] = plugins): RteDocumentOf =>
+        toRteDocument(
+            toEngineDocument(doc as RteDocumentOf, buildSchema(buildPluginRegistry(mounted))),
+            rootExtrasOf(doc as RteDocumentOf),
+        );
+
+    it('are kept on a paragraph, a list, a list item, a void block and the document', () => {
+        const stored = {
+            version: 1,
+            site: { id: 'a' },
+            blocks: [
+                { type: PARAGRAPH, foo: 1, children: [{ text: 'x' }] },
+                {
+                    type: 'bulletList',
+                    marker: 'dash',
+                    children: [{ type: 'listItem', ref: 'i1', children: [{ type: PARAGRAPH, children: [] }] }],
+                },
+                { type: 'divider', thickness: 2 },
+            ],
+        };
+
+        expect(roundTrip(stored)).toEqual(stored);
+    });
+
+    it('come after the type of a block and after the version and blocks of the document', () => {
+        const stored = { site: 'a', version: 1, blocks: [{ id: 'x', type: PARAGRAPH, children: [{ text: 'x' }] }] };
+
+        expect(JSON.stringify(roundTrip(stored))).toBe(
+            JSON.stringify({
+                version: 1,
+                blocks: [{ type: PARAGRAPH, id: 'x', children: [{ text: 'x' }] }],
+                site: 'a',
+            }),
+        );
+    });
+
+    it('keep null and nested values exactly as stored', () => {
+        const stored = {
+            version: 1,
+            blocks: [
+                { type: PARAGRAPH, gone: null, deep: { list: [1, { two: null }], flag: false }, children: [] },
+                { type: 'divider', align: null },
+            ],
+        };
+
+        expect(roundTrip(stored)).toStrictEqual({
+            ...stored,
+            blocks: [stored.blocks[0], { type: 'divider', align: null }],
+        });
+    });
+
+    it('include a key named like the engine attribute that holds them', () => {
+        const stored = {
+            version: 1,
+            [EXTRA_ATTR]: 'on the document',
+            blocks: [{ type: PARAGRAPH, [EXTRA_ATTR]: { nested: true }, foo: 1, children: [] }],
+        };
+
+        expect(roundTrip(stored)).toEqual(stored);
+    });
+
+    it('include keys named like built-in object properties', () => {
+        const stored = {
+            version: 1,
+            constructor: 'on the document',
+            blocks: [{ type: PARAGRAPH, valueOf: 1, toString: 'x', hasOwnProperty: true, children: [] }],
+        };
+
+        expect(roundTrip(stored)).toEqual(stored);
+    });
+
+    it('include alignment where no plugin mounted declares it, on any block', () => {
+        const stored = {
+            version: 1,
+            blocks: [
+                { type: PARAGRAPH, align: 'center', children: [] },
+                { type: 'bulletList', align: 'right', children: [{ type: 'listItem', children: [] }] },
+                { type: 'divider', align: 'left' },
+            ],
+        };
+        const withoutAlign = plugins.filter((plugin) => plugin.id !== 'align');
+
+        expect(roundTrip(stored, withoutAlign).blocks).toEqual([
+            stored.blocks[0],
+            { ...stored.blocks[1], children: [{ type: 'listItem', children: [{ type: PARAGRAPH, children: [] }] }] },
+            stored.blocks[2],
+        ]);
+    });
+
+    it('are each named in a development warning, on the document too', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        try {
+            rootExtrasOf({ version: 1, rootOnly: 1, blocks: [] } as unknown as RteDocumentOf);
+
+            expect(warn).toHaveBeenCalledWith(expect.stringContaining('Key "rootOnly" on the document'));
+        } finally {
+            warn.mockRestore();
+        }
+    });
+
+    it('leave no trace on a block or a document that has none', () => {
+        const doc = toEngineDocument(document, schema);
+
+        expect(rootExtrasOf(document)).toBeNull();
+        expect(doc.firstChild?.attrs[EXTRA_ATTR]).toBeNull();
+        expect(Object.keys(toRteDocument(doc))).toEqual(['version', 'blocks']);
+    });
+
+    it('lose to an attribute the block type declares, set or unset', () => {
+        const doc = schema.node('doc', null, [
+            schema.node('heading', { level: 3, [EXTRA_ATTR]: { level: 9, foo: 1 } }),
+            schema.node(PARAGRAPH, { [EXTRA_ATTR]: { align: 'right', foo: 1 } }),
+        ]);
+
+        expect(toRteDocument(doc).blocks).toEqual([
+            { type: 'heading', level: 3, foo: 1, children: [] },
+            { type: PARAGRAPH, foo: 1, children: [] },
+        ]);
     });
 });
 

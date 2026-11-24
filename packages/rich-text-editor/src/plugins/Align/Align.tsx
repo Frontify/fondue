@@ -8,9 +8,11 @@ import {
     IconTextAlignmentRight,
 } from '@frontify/fondue-icons';
 
-import { type RtePlugin, type StyleMap } from '#/core';
-
-import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
+import { defineContent, definePlugin, type StyleMap, type ToolbarItemProps } from '#/core';
+import { type PlainStringKey } from '#/locales/types';
+import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
+import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
+import { translatedLabel, useTranslate } from '#/ui/translation';
 
 import styles from './align.module.scss';
 
@@ -20,22 +22,21 @@ import styles from './align.module.scss';
  * block types this plugin knows nothing about included.
  */
 export type AlignAttribute = {
+    /**
+     * The text alignment of the block
+     */
     align?: 'left' | 'center' | 'right' | 'justify';
 };
 
-const ALIGNMENTS: readonly { value: NonNullable<AlignAttribute['align']>; icon: FondueIcon; title: string }[] = [
-    { value: 'left', icon: IconTextAlignmentLeft, title: 'Align left' },
-    { value: 'center', icon: IconTextAlignmentCentre, title: 'Align center' },
-    { value: 'right', icon: IconTextAlignmentRight, title: 'Align right' },
-    { value: 'justify', icon: IconTextAlignmentJustify, title: 'Justify' },
-];
+const ALIGN_VALUES: readonly NonNullable<AlignAttribute['align']>[] = ['left', 'center', 'right', 'justify'];
 
 const isAlignment = (value: unknown): value is NonNullable<AlignAttribute['align']> =>
-    ALIGNMENTS.some((alignment) => alignment.value === value);
+    ALIGN_VALUES.some((alignment) => alignment === value);
 
-/** Text alignment as a block attribute, with a four-way radio group in the toolbar. */
-export const alignPlugin = (): RtePlugin => ({
-    id: 'align',
+/**
+ * Text alignment as a block attribute
+ */
+export const alignContent = defineContent({
     blockAttributes: {
         align: {
             // Only the four this plugin offers reach a style: a stored value is
@@ -46,33 +47,60 @@ export const alignPlugin = (): RtePlugin => ({
             parse: (element) => (isAlignment(element.style.textAlign) ? element.style.textAlign : null),
         },
     },
-    toolbarItem: ({ api, selection }) => {
-        // The block the selection is in carries the attribute this plugin
-        // added, which the structural node type does not know about.
-        const align = (selection.block as AlignAttribute | null)?.align;
-        // A block without one reads left to right, so left is what it shows.
-        const current = align ?? 'left';
-        return (
-            // One choice of four, so a radio group: the checked one is the
-            // block's alignment.
-            <div role="radiogroup" aria-label="Alignment" className={styles.group}>
-                {ALIGNMENTS.map(({ value, icon: Icon, title }) => (
-                    // A <button> underneath, which the toolbar gives its tabIndex.
-                    // oxlint-disable-next-line jsx-a11y/interactive-supports-focus
-                    <ToolbarButton
-                        key={value}
-                        role="radio"
-                        aria-checked={current === value}
-                        title={title}
-                        // Choosing the alignment already set clears it, so the
-                        // block inherits the editor's direction again.
-                        onClick={() => api.blocks.updateAttributes({ align: align === value ? null : value })}
-                    >
-                        <Icon size={16} />
-                    </ToolbarButton>
-                ))}
-            </div>
-        );
-    },
-    floatingToolbar: 'inline',
 });
+
+type AlignmentChoice = { value: NonNullable<AlignAttribute['align']>; icon: FondueIcon; title: PlainStringKey };
+
+const ALIGNMENTS: readonly AlignmentChoice[] = [
+    { value: 'left', icon: IconTextAlignmentLeft, title: 'RichTextEditor_alignLeft' },
+    { value: 'center', icon: IconTextAlignmentCentre, title: 'RichTextEditor_alignCenter' },
+    { value: 'right', icon: IconTextAlignmentRight, title: 'RichTextEditor_alignRight' },
+    { value: 'justify', icon: IconTextAlignmentJustify, title: 'RichTextEditor_alignJustify' },
+];
+
+const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
+    const translate = useTranslate();
+    // The block the selection is in carries the attribute this plugin
+    // added, which the structural node type does not know about.
+    const align = (selection.block as AlignAttribute | null)?.align;
+    // A block without one reads left to right, so left is what it shows.
+    const current = align ?? 'left';
+    return (
+        // One choice of four, so a radio group: the checked one is the
+        // block's alignment.
+        <div role="radiogroup" aria-label={label} className={styles.group}>
+            {ALIGNMENTS.map(({ value, icon: Icon, title }) => (
+                // A <button> underneath, which the toolbar gives its tabIndex.
+                // oxlint-disable-next-line jsx-a11y/interactive-supports-focus
+                <ToolbarButton
+                    key={value}
+                    role="radio"
+                    aria-checked={current === value}
+                    title={translate(title)}
+                    // Choosing the alignment already set clears it, so the
+                    // block inherits the editor's direction again.
+                    onClick={() => {
+                        let next: typeof value | null = value;
+                        if (align === value) {
+                            next = null;
+                        }
+                        api.blocks.updateAttributes({ align: next });
+                    }}
+                >
+                    <Icon size={TOOLBAR_ICON_SIZE} />
+                </ToolbarButton>
+            ))}
+        </div>
+    );
+};
+
+/**
+ * Text alignment, with a four-way radio group in the toolbar
+ */
+export const alignPlugin = () =>
+    definePlugin({
+        id: 'align',
+        content: alignContent,
+        toolbarGroup: 'align',
+        toolbar: [{ label: translatedLabel('RichTextEditor_alignment'), render: AlignToolbar, floating: 'inline' }],
+    });

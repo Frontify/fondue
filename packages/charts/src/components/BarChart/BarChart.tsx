@@ -4,7 +4,7 @@ import { Grid, XYChart } from '@visx/xychart';
 import { useState } from 'react';
 
 import { BandwidthAdjuster } from '@components/BarChart/components/BandwidthAdjuster';
-import { getInitialBandTicks } from '@components/BarChart/helpers';
+import { DEFAULT_MAX_LABEL_LENGTH, getInitialBandTicks } from '@components/BarChart/helpers';
 import { Legend, Tooltip } from '@components/common/components';
 import { colorAccessorByKey, getNonZeroLinearScaleDomain } from '@components/common/helpers';
 import { getLinearScaleTicks } from '@components/common/helpers/getLinearScaleTicks';
@@ -32,6 +32,7 @@ export const BarChart = <DataPointDetails extends Record<string, any> | void = v
     legendPosition = 'top',
     valueFormatter = DEFAULT_VALUE_FORMATTER,
     labelFormatter = DEFAULT_LABEL_FORMATTER,
+    maxLabelLength = DEFAULT_MAX_LABEL_LENGTH,
     onBarClick,
 }: BarChartProps<DataPointDetails>) => {
     const [maxLabelHeight, setMaxLabelHeight] = useState<number>(0);
@@ -50,6 +51,7 @@ export const BarChart = <DataPointDetails extends Record<string, any> | void = v
         valueFormatter,
         maxLabelHeight,
         firstLabelOverflowsBy,
+        maxLabelLength,
     });
 
     return (
@@ -92,6 +94,7 @@ export const BarChart = <DataPointDetails extends Record<string, any> | void = v
                         updateBandScaleTicks={setBandScaleTicks}
                         valueFormatter={valueFormatter}
                         labelFormatter={labelFormatter}
+                        maxLabelLength={maxLabelLength}
                     />
                     <Bars series={series} horizontal={horizontal} displayStyle={displayStyle} />
                     <Tooltip

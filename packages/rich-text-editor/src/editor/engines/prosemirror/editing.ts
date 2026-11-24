@@ -1,18 +1,30 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { dropCursor } from 'prosemirror-dropcursor';
 import { EditorState, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { type MountedDocument, type MountDocument, type MountOptions } from '#/editor/port';
+import { type RteDocumentOf } from '#/core';
+import { type ElementAttributes, type MountedDocument, type MountDocument, type MountOptions } from '#/editor/port';
 
-import { clipboardParser, clipboardSerializer, handlePasteByFeatures, handlePasteIntoEmptyBlock } from './clipboard';
+import {
+    clipboardParser,
+    clipboardSerializer,
+    handlePasteByFeatures,
+    handlePasteIntoEmptyBlock,
+    keepOfficeListStyles,
+    pastedWithoutExtras,
+} from './clipboard';
 import { createControlApi, type OpenEditors } from './controlApi';
-import { toEngineDocument, toRteDocument, withoutDrafts } from './documentConversion';
+import { rootExtrasOf, toEngineDocument, toRteDocument, withoutDrafts } from './documentConversion';
+import { copiedExtrasPlugin } from './extraAttributes';
+import { createHostRecord, hostDocAction, recordAgreed, recordEcho, recordHandOver, recordReport } from './hostRecord';
 import { keystrokePipeline } from './keystrokes';
 import { createMarkViews, createNodeViews, LiveViews } from './nodeViews';
 import { placeholderPlugin } from './placeholder';
 import { buildSchema } from './schema';
 import { createSelectionRectReader } from './selectionRect';
+import { HOST_DOC } from './transactionMeta';
 import './engine.scss';
 
 /**
@@ -30,20 +42,24 @@ export const mountDocument: MountDocument = (options) => mount(options).mounted;
 export const mountEditorForTests = (options: MountOptions): { mounted: MountedDocument; view: EditorView } =>
     mount(options);
 
-/** Transaction meta marking a change that came from the host, not the user. */
-const HOST_DOC = 'rte-host-doc';
-
 /**
  * Set on the editable element, so engine.scss can scope the engine's own
  * classes to THIS editor's content and leave other editors on the page alone.
  */
 const EDITABLE_ATTRIBUTE = 'data-rte-editable';
 
-/** The editable element's attributes: the host's, then the marker. */
-const editableAttributes = (attributes: Readonly<Record<string, string>>): Record<string, string> => ({
-    ...attributes,
-    [EDITABLE_ATTRIBUTE]: '',
-});
+/** ProseMirror writes an `undefined` value as the text "undefined", so unset attributes stay out. */
+const editableAttributes = (attributes: ElementAttributes): Record<string, string> => {
+    const present: Record<string, string> = {};
+    for (const [name, value] of Object.entries(attributes)) {
+        if (value !== undefined) {
+            present[name] = value;
+        }
+    }
+
+    present[EDITABLE_ATTRIBUTE] = '';
+    return present;
+};
 
 /**
  * Assembly order matters because of one cycle: the view's constructor paints
@@ -59,16 +75,17 @@ const mount = ({
     attributes,
     placeholderClassName,
     onDocChange,
+    onDocApplied,
     onStateChange,
     viewPortals,
 }: MountOptions): { mounted: MountedDocument; view: EditorView } => {
     const schema = buildSchema(registry);
     let currentPlaceholder = placeholder;
-    // The last document the host handed over that the editor holds; lets `setDoc` ignore it again.
-    let agreedDoc = initialDoc;
-    // Every document reported to the host: one arriving back, even late and
-    // behind newer edits, is the editor's own and never replaces what it holds.
-    const emittedDocs = new WeakSet<typeof initialDoc>();
+    let record = createHostRecord(initialDoc);
+    // The order each document was reported in, which tells an echo from a reset.
+    const reportOrders = new WeakMap<RteDocumentOf, number>();
+    // The document's own undeclared keys: only the host changes them, so they live here, not in the engine document.
+    let rootExtras = rootExtrasOf(initialDoc);
 
     // 1. Views with editing UI (blocks, inline elements, link-like marks) follow
     //    the selection, since `isFocused` does. Each state change is offered to
@@ -103,6 +120,8 @@ const mount = ({
         markViews: createMarkViews(registry, api, liveViews, openEditors),
         clipboardSerializer: clipboardSerializer(schema),
         clipboardParser: clipboardParser(schema),
+        transformPastedHTML: keepOfficeListStyles,
+        transformPasted: pastedWithoutExtras,
         handlePaste: (pasteView, event, slice) =>
             handlePasteByFeatures(registry.pasteHandlers, api)(pasteView, event) ||
             handlePasteIntoEmptyBlock(pasteView, event, slice),
@@ -110,7 +129,10 @@ const mount = ({
             doc: toEngineDocument(initialDoc, schema),
             plugins: [
                 ...keystrokePipeline(registry, schema, api),
+                copiedExtrasPlugin(),
                 placeholderPlugin(() => currentPlaceholder, placeholderClassName),
+                // Drawn in the view's offset parent, outside the text, so `currentColor` would be the host's colour.
+                dropCursor({ color: 'var(--color-primary-default)', width: 2 }),
             ],
         }),
         // Clicking an inline atom (mention, ...) puts the caret after it rather than selecting it.
@@ -130,26 +152,27 @@ const mount = ({
             repaintViews();
             // Host-originated changes are not reported back to the host.
             if (transaction.docChanged && transaction.getMeta(HOST_DOC) !== true) {
-                const emitted = toRteDocument(editorView.state.doc);
-                emittedDocs.add(emitted);
+                const emitted = toRteDocument(editorView.state.doc, rootExtras);
+                record = recordReport(record);
+                reportOrders.set(emitted, record.reportCount);
                 onDocChange(emitted);
             }
             onStateChange();
         },
     });
     view = editorView;
+    onDocApplied(initialDoc);
 
     // 4. What the host gets back.
-    const setDoc = (doc: typeof initialDoc): void => {
-        if (doc === agreedDoc || emittedDocs.has(doc)) {
-            return;
-        }
+    const applyDoc = (doc: RteDocumentOf): void => {
         const next = toEngineDocument(doc, schema);
         // Drafts (an inline still being made) are in no document the host holds,
         // though a block reused from one handed out may bring one along; an
         // echo of what is there must leave them, and the caret, alone.
+        rootExtras = rootExtrasOf(doc);
         if (withoutDrafts(next).eq(withoutDrafts(editorView.state.doc))) {
-            agreedDoc = doc;
+            record = recordAgreed(record, doc);
+            onDocApplied(doc);
             return;
         }
         // Different content: the old caret position means nothing in it, so the
@@ -159,14 +182,44 @@ const mount = ({
         transaction.setMeta(HOST_DOC, true);
         transaction.setMeta('addToHistory', false);
         editorView.dispatch(transaction);
-        agreedDoc = doc;
+        record = recordAgreed(record, doc);
+        onDocApplied(doc);
+    };
+
+    const setDoc = (doc: RteDocumentOf): void => {
+        const action = hostDocAction({ record, doc, reportOrder: reportOrders.get(doc) });
+
+        switch (action.kind) {
+            case 'unchanged':
+                return;
+            case 'echo':
+                record = recordEcho(record, action.order);
+                return;
+            case 'apply':
+                record = recordHandOver(record);
+                applyDoc(doc);
+                return;
+        }
     };
 
     const mounted: MountedDocument = {
         handle: {
             api,
+            setEditableAttributes(next) {
+                for (const [name, value] of Object.entries(next)) {
+                    if (value === null) {
+                        editorView.dom.removeAttribute(name);
+                    } else if (value !== undefined) {
+                        editorView.dom.setAttribute(name, value);
+                    }
+                }
+            },
             selectionRect: createSelectionRectReader(editorView),
-            document: () => toRteDocument(editorView.state.doc),
+            document: () => toRteDocument(editorView.state.doc, rootExtras),
+            focusAtEnd: () => {
+                editorView.dispatch(editorView.state.tr.setSelection(Selection.atEnd(editorView.state.doc)));
+                editorView.focus();
+            },
         },
         setDoc,
         setPlaceholder(next) {

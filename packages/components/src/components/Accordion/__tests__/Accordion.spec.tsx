@@ -13,9 +13,7 @@ describe('Accordion Component', () => {
         render(
             <Accordion.Root data-test-id={ACCORDION_TEST_ID}>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>{ACCORDION_TEXT}</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>{ACCORDION_TEXT}</Accordion.Header>
                 </Accordion.Item>
             </Accordion.Root>,
         );

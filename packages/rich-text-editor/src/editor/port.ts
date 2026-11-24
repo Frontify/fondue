@@ -14,6 +14,20 @@ import { type EditorControlApi, type PluginRegistry, type RteDocumentOf } from '
 /** What an engine adapter implements: put an editable document in a container. */
 export type MountDocument = (options: MountOptions) => MountedDocument;
 
+/** What an engine adapter implements to read HTML into a document, by the rules it reads a paste with. */
+export type ParseHtmlDocument = (options: ParseHtmlDocumentOptions) => RteDocumentOf;
+
+export type ParseHtmlDocumentOptions = {
+    html: string;
+    /** The plugins whose parse rules read the HTML, already gathered. */
+    registry: PluginRegistry;
+    /** Where the HTML's elements are built; only its DOM implementation is used, never its page. */
+    document: Document;
+};
+
+/** An `undefined` value leaves the attribute unset. */
+export type ElementAttributes = Readonly<Record<string, string | undefined>>;
+
 export type MountOptions = {
     container: HTMLElement;
     initialDoc: RteDocumentOf;
@@ -24,9 +38,11 @@ export type MountOptions = {
     /** Class the placeholder decoration carries. */
     placeholderClassName: string;
     /** Attributes for the editable element: its classes (the editor's own plus the plugins'; the adapter does no styling) and accessible name. Starting value; change it later through `setAttributes`. */
-    attributes: Readonly<Record<string, string>>;
+    attributes: ElementAttributes;
     /** The document changed through editing. */
     onDocChange: (doc: RteDocumentOf) => void;
+    /** The editor now shows this document from the host: the initial one, or one `setDoc` took rather than ignored as its own. */
+    onDocApplied: (doc: RteDocumentOf) => void;
     /** The editor state moved: any transaction, including a caret move. */
     onStateChange: () => void;
     viewPortals: ViewPortals;
@@ -39,13 +55,20 @@ export type MountedDocument = {
     /** Change the text shown while the document is empty. Empty string means none. */
     setPlaceholder(placeholder: string): void;
     /** Replace the further attributes of the editable element. */
-    setAttributes(attributes: Readonly<Record<string, string>>): void;
+    setAttributes(attributes: ElementAttributes): void;
     destroy(): void;
 };
+
+export type EditableAriaAttribute = 'aria-controls' | 'aria-activedescendant';
+
+/** `null` removes an attribute; an absent name leaves it alone. */
+export type EditableAttributes = Readonly<Partial<Record<EditableAriaAttribute, string | null>>>;
 
 /** What a live editor offers the shell: the commands, and where the selection is on screen. */
 export type EditorHandle = {
     api: EditorControlApi;
+    /** For state that changes while the editor is mounted, such as the `/` menu's active option. */
+    setEditableAttributes(attributes: EditableAttributes): void;
     /**
      * The box around the selected text, or around the caret when nothing is
      * selected. For the editor's own chrome (the floating toolbar, the `/`
@@ -54,11 +77,13 @@ export type EditorHandle = {
     selectionRect(): FloatingRect;
     /** The document as it stands now, as the host would be handed it. */
     document(): RteDocumentOf;
+    /** Focus the text with the caret after its last character, as when the editor comes back after a crash. */
+    focusAtEnd(): void;
 };
 
 /**
  * Where the engine hands over the React its views draw (a plugin's
- * `render.edit`), one portal per view and keyed by the owning view. The shell
+ * `edit` view), one portal per view and keyed by the owning view. The shell
  * renders them all from one place inside its own tree, so they commit together
  * and see the host's context providers.
  */

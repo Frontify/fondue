@@ -6,8 +6,7 @@ export const DEFAULT_COLOR = { red: 255, green: 255, blue: 255, alpha: 1, name: 
 
 /**
  * Converts a color object to a CSS color string.
- * @param {RgbaColor} color - The color object to be converted.
- * @returns {string}
+ * @param color - The color object to be converted.
  * @example
  * colorToCss({ red: 255, green: 255, blue: 255, alpha: 1 }); // 'rgba(255, 255, 255, 1)'
  * @example

@@ -72,7 +72,7 @@ export default defineConfig({
             rollupTypes: true,
             // Only the package source: not `.storybook/`, which the tsconfig also covers.
             include: ['src'],
-            exclude: ['**/*.stories.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
+            exclude: ['**/*.stories.tsx', '**/*.spec.ts', '**/*.spec.tsx', '**/*.ct.ts', '**/*.ct.tsx'],
         }),
         externalizeJsDeps(),
     ],
@@ -106,9 +106,10 @@ export default defineConfig({
     },
     build: {
         lib: {
-            entry: './src/index.ts',
+            entry: { index: './src/index.ts', plugins: './src/plugins/index.ts' },
             fileName: (format: string) => `[name].${format}.js`,
             formats: ['es'],
+            cssFileName: 'style',
         },
         sourcemap: true,
         minify: true,

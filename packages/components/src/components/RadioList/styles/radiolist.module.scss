@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 @use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
 
 .root {
     display: flex;
@@ -91,9 +92,109 @@
         transition: outline cubic-bezier(0.4, 0, 0.2, 1) 150ms;
     }
 
+    & svg {
+        display: none;
+    }
+
     .root[data-emphasis='highlight'] & {
         &::after {
             outline: 6px solid var(--color-highlight-default);
+        }
+    }
+}
+
+.root[data-variant='pill'] {
+    flex-wrap: wrap;
+    gap: var(--spacing-xx-small);
+
+    & button:not(:first-child) {
+        margin-inline-start: 0;
+    }
+
+    &[data-orientation='vertical'] {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    & .item {
+        box-sizing: border-box;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-xx-small);
+        width: auto;
+        height: auto;
+        min-height: sizeToken.get(6);
+        padding: sizeToken.get(1) sizeToken.get(2);
+        border: none;
+        border-radius: var(--border-radius-medium);
+        user-select: none;
+
+        font-family: var(--typography-font-family-primary);
+        font-size: var(--typography-font-size-x-small);
+        line-height: var(--typography-line-height-tight);
+        color: var(--color-container-secondary-on-secondary-container);
+        background-color: var(--color-container-secondary-default);
+
+        transition: background-color cubic-bezier(0.4, 0, 0.2, 1) 150ms;
+
+        & svg {
+            flex-shrink: 0;
+        }
+
+        &:hover:not(:disabled) {
+            border: none;
+            background-color: var(--color-container-secondary-hover);
+        }
+
+        &:active:not(:disabled) {
+            background-color: var(--color-container-secondary-active);
+        }
+
+        &[data-state='checked'] {
+            color: var(--color-primary-on-primary);
+            background-color: var(--color-primary-default);
+
+            &:hover:not(:disabled) {
+                background-color: var(--color-primary-hover);
+            }
+
+            &:active:not(:disabled) {
+                background-color: var(--color-primary-active);
+            }
+        }
+
+        &:disabled {
+            border: none;
+            color: var(--color-container-disabled-on-disabled-container);
+            background-color: var(--color-container-disabled-default);
+        }
+    }
+
+    &[data-emphasis='highlight'] .item[data-state='checked']:not(:disabled) {
+        color: var(--color-highlight-on-highlight);
+        background-color: var(--color-highlight-default);
+
+        &:hover {
+            background-color: var(--color-highlight-hover);
+        }
+
+        &:active {
+            background-color: var(--color-highlight-active);
+        }
+    }
+
+    & .indicator {
+        display: inline-flex;
+        width: auto;
+        height: auto;
+
+        &::after {
+            display: none;
+        }
+
+        & svg {
+            display: block;
         }
     }
 }

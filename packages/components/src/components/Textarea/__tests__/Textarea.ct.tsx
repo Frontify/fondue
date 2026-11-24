@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCross } from '@frontify/fondue-icons';
 import { expect, test } from '@playwright/experimental-ct-react';
 import sinon from 'sinon';
 
@@ -63,25 +62,6 @@ test('clear button resets value', async ({ mount }) => {
     const component = wrapper.getByTestId(TEXTAREA_TEST_ID);
     await component.locator('button:has(svg)').click();
     await expect(component.locator('textarea')).toHaveValue('');
-});
-
-test('render extra actions', async ({ mount }) => {
-    const actionSpy = sinon.spy();
-    const extraActions = [
-        {
-            icon: <IconCross />,
-            title: 'Action',
-            callback: actionSpy,
-        },
-    ];
-
-    const wrapper = await mount(
-        <Textarea data-test-id={TEXTAREA_TEST_ID} extraActions={extraActions} defaultValue="Test" />,
-    );
-    const component = wrapper.getByTestId(TEXTAREA_TEST_ID);
-
-    await component.locator('button[title="Action"]').click();
-    expect(actionSpy.calledOnce).toBe(true);
 });
 
 test('emits change events', async ({ mount }) => {

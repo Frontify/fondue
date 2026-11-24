@@ -18,9 +18,25 @@ describe('typographyPlugin', () => {
 
     it('declares each shortcut once', () => {
         const matches = (typographyPlugin().inputRules ?? []).map((rule) =>
-            rule.kind === 'text' ? String(rule.match) : rule.kind,
+            'kind' in rule && rule.kind === 'text' ? String(rule.match) : 'kind' in rule ? rule.kind : 'delimiter',
         );
 
         expect(new Set(matches).size).toBe(matches.length);
+    });
+
+    it('orders the rules the same whatever order the groups are listed in', () => {
+        expect(typographyPlugin({ groups: ['numeric', 'symbols', 'quotes'] }).inputRules).toEqual(
+            typographyPlugin({ groups: ['quotes', 'symbols', 'numeric'] }).inputRules,
+        );
+    });
+
+    it('declares fewer rules for fewer groups, and none for no group', () => {
+        const count = (groups: Parameters<typeof typographyPlugin>[0]) =>
+            (typographyPlugin(groups).inputRules ?? []).length;
+
+        expect(count({ groups: ['dashes'] })).toBe(1);
+        expect(count({ groups: ['dashes', 'ellipsis'] })).toBe(2);
+        expect(count({ groups: [] })).toBe(0);
+        expect(count({ groups: ['dashes'] })).toBeLessThan(count({}));
     });
 });

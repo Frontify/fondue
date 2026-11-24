@@ -1,19 +1,139 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineBlock, type HotkeyHandler, PARAGRAPH, type RteBlockCommand, type RtePlugin } from '#/core';
+import {
+    type DefaultStyle,
+    type BlockDefinition,
+    defineBlock,
+    defineContent,
+    definePlugin,
+    LOOK_PROPERTIES,
+    lookProperties,
+    PARAGRAPH,
+    type RteBlockCommand,
+    type RteContent,
+    type RteHotkey,
+    type RteIcon,
+    type RtePlugin,
+    type RteToolbarEntry,
+    type TextLook,
+} from '#/core';
+import { enUS } from '#/locales/en-US';
+import { translatedLabel } from '#/ui/translation';
 
-import { HeadingLevelIcon } from './components/HeadingLevelIcon';
+import { withoutBoldWeight } from '../shared/helpers/declaredStyle';
+
+import { HEADING_LEVEL_ICONS } from './components/HeadingLevelIcon';
 import { TextStyleSelect } from './components/TextStyleSelect';
 import {
     ALL_TEXT_STYLES,
     findPreset,
     FIRST_PRESET,
     isTextStyle,
+    labelOf,
     markdownRuleFor,
     parseRuleFor,
     presetsFor,
+    type TextStyleName,
     type TextStyleOption,
 } from './helpers/presets';
+import styles from './textStyle.module.scss';
+
+// The block this plugin contributes; the package root assembles it into the
+// official document union.
+export type { TextStyleBlock, TextStyleName } from './helpers/presets';
+
+/** The look of each kind of text, by name: the 9 text styles, body text and block quotes. */
+export type TextStyleLook = Partial<Record<TextStyleName | 'body' | 'quote', TextLook>>;
+
+/** How the text-style content looks; what a renderer needs to draw a document the way the editor does. */
+export type TextStyleContentOptions = {
+    /**
+     * How each kind of text looks, by name: a text style, `body` for plain paragraphs and `quote`.
+     * A kind left out, and a field left out of one, keeps Fondue's look.
+     * A value that is empty or can end its CSS declaration early throws an error that names the look and the
+     * field, so a mistake in the host's configuration never passes silently.
+     */
+    look?: TextStyleLook;
+};
+
+export type TextStylePluginOptions = TextStyleContentOptions & {
+    /**
+     * The styles the dropdown offers, in order, and what pasted HTML may become.
+     * Include `'paragraph'` for the option that clears a style.
+     * @default ALL_TEXT_STYLES
+     */
+    styles?: readonly TextStyleOption[];
+};
+
+// Headings are bold by default, so a bold the pasted heading declares on itself is not the author's. Bold on text inside it is.
+const TEXT_STYLE_DEFAULT_STYLES: readonly DefaultStyle[] = [
+    { property: 'font-weight', scope: 'self', strip: withoutBoldWeight },
+];
+
+const textStyleBlockFor = (options: readonly TextStyleOption[]): BlockDefinition => {
+    const offered = presetsFor(options);
+
+    return defineBlock<{ style: string }>({
+        content: 'text',
+        // Only reached by a node that arrives without one; every
+        // path that sets the attribute names a style.
+        defaults: { style: offered[0]?.name ?? FIRST_PRESET },
+        defaultStyles: TEXT_STYLE_DEFAULT_STYLES,
+        toHtml: ({ style }) => {
+            const preset = findPreset(style);
+            if (preset === undefined) {
+                return { tag: 'p', children: true };
+            }
+            const attrs: Record<string, string | undefined> = { class: preset.className };
+            if (preset.tag === 'p') {
+                attrs['data-text-style'] = preset.name;
+            }
+            return { tag: preset.tag, attrs, children: true };
+        },
+        parse: offered.map(parseRuleFor),
+    });
+};
+
+// Shared so every content offering all styles declares the very same block, which the registry requires.
+const ALL_STYLES_BLOCK = textStyleBlockFor(ALL_TEXT_STYLES);
+
+const textStyleContentFor = (options: readonly TextStyleOption[], look: TextStyleLook = {}): RteContent => {
+    const contentProperties: Record<string, string> = {};
+    for (const [name, entry] of Object.entries(look)) {
+        if (entry !== undefined) {
+            Object.assign(contentProperties, lookProperties(name, entry, LOOK_PROPERTIES));
+        }
+    }
+
+    let block = ALL_STYLES_BLOCK;
+    if (options !== ALL_TEXT_STYLES) {
+        block = textStyleBlockFor(options);
+    }
+
+    return defineContent({
+        // The class the body look hangs off, so it reaches plain paragraphs only where this content is mounted.
+        contentClassName: styles.content,
+        contentProperties,
+        blocks: { textStyle: block },
+    });
+};
+
+// Shared so the default plugin, `defaultContent` and every call without looks hand out the very same content.
+const DEFAULT_TEXT_STYLE_CONTENT = textStyleContentFor(ALL_TEXT_STYLES);
+
+/**
+ * The text block carrying a style, and the look of each kind of text. Renders every style, whatever the editor
+ * offers. Pass the same `look` as `textStylePlugin`, so a renderer given only content draws the host's looks.
+ *
+ * @example
+ * <RichTextRenderer plugins={[textStyleContent({ look }), boldContent]} value={doc} />
+ */
+export const textStyleContent = ({ look }: TextStyleContentOptions = {}): RteContent => {
+    if (look === undefined) {
+        return DEFAULT_TEXT_STYLE_CONTENT;
+    }
+    return textStyleContentFor(ALL_TEXT_STYLES, look);
+};
 
 const HEADING_LEVEL: Partial<Record<string, number>> = { h1: 1, h2: 2, h3: 3, h4: 4 };
 
@@ -25,15 +145,6 @@ const HEADING_KEYWORDS: Partial<Record<number, readonly string[]>> = {
     4: ['h4'],
 };
 
-// The block this plugin contributes; the package root assembles it into the
-// official document union.
-export type { TextStyleBlock } from './helpers/presets';
-
-export type TextStylePluginOptions = {
-    /** The styles the dropdown offers, in order. Include `'paragraph'` for the option that clears one. */
-    styles?: readonly TextStyleOption[];
-};
-
 /**
  * Which styles an editor offers is a product decision — a comment box wants
  * none, a page editor wants all — so it is an option. `styles` is the dropdown,
@@ -43,29 +154,40 @@ export type TextStylePluginOptions = {
  * Rendering is not restricted the same way, so a document written by a
  * differently configured editor still displays as it was authored.
  */
-export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStylePluginOptions = {}): RtePlugin => {
+export const textStylePlugin = ({
+    styles: options = ALL_TEXT_STYLES,
+    look,
+}: TextStylePluginOptions = {}): RtePlugin => {
     const offered = presetsFor(options);
 
     // The shortcuts other editors use: `Mod-Alt-0` for a paragraph, `Mod-Alt-1`
     // to `Mod-Alt-4` for the headings — each only when this editor offers it.
-    const hotkeys: Record<string, HotkeyHandler> = {};
+    // Their labels feed only the keyboard reference, which is written in English.
+    const hotkeys: Record<string, RteHotkey> = {};
     if (options.includes(PARAGRAPH)) {
-        hotkeys['Mod-Alt-0'] = (api) => api.blocks.setType(PARAGRAPH);
+        hotkeys['Mod-Alt-0'] = { label: enUS[labelOf(PARAGRAPH)], run: (api) => api.blocks.setType(PARAGRAPH) };
     }
     for (const preset of offered) {
         const level = HEADING_LEVEL[preset.tag];
         if (level !== undefined) {
-            hotkeys[`Mod-Alt-${level}`] = (api) => api.blocks.setType('textStyle', { style: preset.name });
+            hotkeys[`Mod-Alt-${level}`] = {
+                label: enUS[preset.label],
+                run: (api) => api.blocks.setType('textStyle', { style: preset.name }),
+            };
         }
     }
 
     // The paragraph is the editor's own "Text" command, so only the presets are listed.
     const commands: RteBlockCommand[] = offered.map((preset) => {
         const level = HEADING_LEVEL[preset.tag];
+        let icon: RteIcon | undefined;
+        if (level !== undefined) {
+            icon = HEADING_LEVEL_ICONS[level];
+        }
         return {
             id: preset.tag === 'p' ? preset.name : `heading-${level}`,
-            label: preset.label,
-            icon: level === undefined ? undefined : <HeadingLevelIcon level={level} />,
+            label: translatedLabel(preset.label),
+            icon,
             keywords: level === undefined ? [] : (HEADING_KEYWORDS[level] ?? []),
             group: 'turnInto',
             isActive: (selection) => isTextStyle(selection.block) && selection.block.style === preset.name,
@@ -73,36 +195,29 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
         };
     });
 
-    return {
+    // A paragraph alone is nothing to choose, so the picker needs at least one real style.
+    const toolbar: RteToolbarEntry[] = [];
+    if (offered.length > 0) {
+        toolbar.push({
+            label: translatedLabel('RichTextEditor_textStyle'),
+            render: (props) => <TextStyleSelect {...props} options={options} />,
+        });
+    }
+
+    // Offering every style is exactly `textStyleContent`, so the default plugin and `defaultContent` share one object.
+    let content = textStyleContent({ look });
+    if (options !== ALL_TEXT_STYLES) {
+        content = textStyleContentFor(options, look);
+    }
+
+    return definePlugin({
         id: 'text-style',
-        blocks: {
-            textStyle: defineBlock<{ style: string }>({
-                content: 'text',
-                // Only reached by a node that arrives without one; every
-                // path that sets the attribute names a style.
-                defaults: { style: offered[0]?.name ?? FIRST_PRESET },
-                toHtml: ({ style }) => {
-                    const preset = findPreset(style);
-                    if (preset === undefined) {
-                        return { tag: 'p', children: true };
-                    }
-                    return {
-                        tag: preset.tag,
-                        attrs: {
-                            class: preset.className,
-                            ...(preset.tag === 'p' ? { 'data-text-style': preset.name } : {}),
-                        },
-                        children: true,
-                    };
-                },
-                parse: offered.map(parseRuleFor),
-            }),
-        },
-        toolbarItem: ({ api, selection }) => <TextStyleSelect selection={selection} api={api} options={options} />,
+        content,
+        toolbarGroup: 'text',
+        toolbar,
         hotkeys,
         // `# ` through `#### `, for the headings this editor offers.
         inputRules: offered.flatMap(markdownRuleFor),
         commands,
-        floatingToolbar: 'hidden',
-    };
+    });
 };

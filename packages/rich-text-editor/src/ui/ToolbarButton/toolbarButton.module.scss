@@ -1,0 +1,7 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+/** The label and its shortcut side by side. */
+.tooltip {
+    display: inline-flex;
+    gap: var(--spacing-x-small);
+}

@@ -4,58 +4,51 @@ import { Tooltip } from '@frontify/fondue-components';
 import { IconPeople } from '@frontify/fondue-icons';
 import { type MouseEvent, type ReactNode } from 'react';
 
+import { type MentionDisplay, mentionAttributes } from '../helpers/display';
 import styles from '../mention.module.scss';
 import { type MentionValue } from '../types';
 
-/** In the editor a click places the caret; the link is followed only when reading. */
-const placeCaretInEditor = (event: MouseEvent<HTMLAnchorElement>): void => {
-    if (event.currentTarget.closest('[contenteditable="true"]') !== null) {
-        event.preventDefault();
-    }
+type MentionLinkProps = {
+    value: MentionValue;
+    display: MentionDisplay;
+    placesCaret: boolean;
 };
 
 /**
- * A finished mention: the username linking to the person, full name on hover.
- * Carries the same attributes as `toHtml`, so copied text pastes back as a
- * mention. A group is marked with its icon, as the old editor did; with nowhere
- * to link to (`@all`), the mention is text.
+ * A finished mention: the shown username linking to the person, name on hover. Carries the same attributes as
+ * `toHtml`.
  */
-export const MentionLink = ({
-    value,
-    href,
-    trigger,
-}: {
-    value: MentionValue;
-    /** Absent when the app gives no target, or one that is not a safe link. */
-    href: string | undefined;
-    trigger: string;
-}): ReactNode => {
+export const MentionLink = ({ value, display, placesCaret }: MentionLinkProps): ReactNode => {
+    const followLinkOnlyWhenReading = (event: MouseEvent<HTMLAnchorElement>): void => {
+        if (placesCaret) {
+            event.preventDefault();
+        }
+    };
+
     const attributes = {
-        title: value.name,
-        'data-mention-id': value.id,
-        'data-mention-username': value.username,
-        'data-mention-kind': value.kind,
+        title: display.title,
+        ...mentionAttributes(value),
         className: styles.mention,
     };
-    const content = (
+    const name = (
         <>
             {value.kind === 'group' ? <IconPeople size={12} aria-hidden className={styles.kindIcon} /> : null}
-            {trigger}
-            {value.username}
+            {/* Isolated so a right-to-left name cannot reorder the text around it. */}
+            <bdi>{display.label}</bdi>
         </>
     );
+    let element = <span {...attributes}>{name}</span>;
+    if (display.href !== undefined) {
+        element = (
+            <a href={display.href} {...attributes} onClick={followLinkOnlyWhenReading}>
+                {name}
+            </a>
+        );
+    }
     return (
         <Tooltip.Root>
-            <Tooltip.Trigger asChild>
-                {href === undefined ? (
-                    <span {...attributes}>{content}</span>
-                ) : (
-                    <a href={href} {...attributes} onClick={placeCaretInEditor}>
-                        {content}
-                    </a>
-                )}
-            </Tooltip.Trigger>
-            <Tooltip.Content padding="compact">{value.name}</Tooltip.Content>
+            <Tooltip.Trigger asChild>{element}</Tooltip.Trigger>
+            <Tooltip.Content padding="compact">{display.title}</Tooltip.Content>
         </Tooltip.Root>
     );
 };

@@ -28,13 +28,13 @@ describe('the emoji plugin', () => {
         const inserted: string[] = [];
         const api = { insert: (type: string) => inserted.push(type) } as unknown as EditorControlApi;
 
-        emojiPlugin().hotkeys?.[':']?.(api);
+        emojiPlugin().hotkeys?.[':']?.run(api);
 
         expect(inserted).toEqual(['emojiDraft']);
     });
 
     it('reads nothing pasted as a draft', () => {
-        expect(emojiPlugin().inlines?.emojiDraft?.parse).toEqual([]);
+        expect(emojiPlugin().content?.inlines?.emojiDraft?.parse).toEqual([]);
     });
 });
 

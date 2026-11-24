@@ -1,5 +1,57 @@
 # @frontify/fondue-rte
 
+## 0.2.0-rc.0
+
+### Patch Changes
+
+- [#3035](https://github.com/Frontify/fondue/pull/3035) [`cf1839b`](https://github.com/Frontify/fondue/commit/cf1839b10095b928008a8a11934056d0cf5b2581) Thanks [@noahwaldner](https://github.com/noahwaldner)! - First release candidate for Fondue v14.
+
+- Updated dependencies [[`cf1839b`](https://github.com/Frontify/fondue/commit/cf1839b10095b928008a8a11934056d0cf5b2581)]:
+  - @frontify/fondue-charts@10.0.0-rc.0
+  - @frontify/fondue-components@37.0.0-rc.0
+  - @frontify/fondue-icons@1.0.0-rc.0
+  - @frontify/fondue-tokens@6.0.0-rc.0
+
+## 0.2.0-beta.0
+
+### Minor Changes
+
+- [`23ccc7e`](https://github.com/Frontify/fondue/commit/23ccc7eb80a62ad7d1113b489a4de8ad4bea8478) Thanks [@noahwaldner](https://github.com/noahwaldner)! - Release the legacy rich text editor on the fondue v14 line, continuing from 0.1.15. It stays on 0.x; the v14 changes are breaking, so this is a minor bump.
+
+### Patch Changes
+
+- Updated dependencies [[`40df7a2`](https://github.com/Frontify/fondue/commit/40df7a2c25b4d2ec66e4bc2017c966fa277fda03), [`40df7a2`](https://github.com/Frontify/fondue/commit/40df7a2c25b4d2ec66e4bc2017c966fa277fda03), [`a59db73`](https://github.com/Frontify/fondue/commit/a59db7301cbb6d4dd9d62dcdad5bbd63542bc49b), [`d5df360`](https://github.com/Frontify/fondue/commit/d5df3600960affc56fbf662d807ef3a31578ce20), [`e610067`](https://github.com/Frontify/fondue/commit/e610067b4878e90f675aabb4a61333002bd99105), [`66a5800`](https://github.com/Frontify/fondue/commit/66a5800ac077b4bf23f943e845b68cec8b7a7c3a), [`a711a4d`](https://github.com/Frontify/fondue/commit/a711a4d48ceda578e757296dfbef6f0baea2ad40)]:
+  - @frontify/fondue-charts@10.0.0-beta.0
+  - @frontify/fondue-components@37.0.0-beta.0
+  - @frontify/fondue-icons@1.0.0-beta.1
+
+## 1.0.0-beta.0
+
+### Major Changes
+
+- [#2877](https://github.com/Frontify/fondue/pull/2877) [`f59824e`](https://github.com/Frontify/fondue/commit/f59824e0f9b33a4ee6b8f1f290cbfed5b67374c7) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - bump packages for fondue v14
+
+### Patch Changes
+
+- Updated dependencies [[`f59824e`](https://github.com/Frontify/fondue/commit/f59824e0f9b33a4ee6b8f1f290cbfed5b67374c7)]:
+  - @frontify/fondue-charts@9.0.0-beta.0
+  - @frontify/fondue-components@34.0.0-beta.0
+  - @frontify/fondue-icons@1.0.0-beta.0
+  - @frontify/fondue-tokens@6.0.0-beta.0
+
+## 0.1.15
+
+### Patch Changes
+
+- [#2781](https://github.com/Frontify/fondue/pull/2781) [`7311deb`](https://github.com/Frontify/fondue/commit/7311deb88a2dfdc4f5820b89883c574ecb4d4bee) Thanks [@sgruetter](https://github.com/sgruetter)! - fix(RichTextEditor): wrap long words and URLs instead of scrolling horizontally
+
+  Long unbreakable strings (URLs, long words) wrap inside shrink-wrapping containers, such as a `ScrollArea` viewport, while editing and in serialized HTML. Serialized HTML carries the class `[overflow-wrap:anywhere]` where it carried `tw-break-words`.
+
+- [#2923](https://github.com/Frontify/fondue/pull/2923) [`ed52d6e`](https://github.com/Frontify/fondue/commit/ed52d6e458a8c03be92559fc00fc43d648106608) Thanks [@jcosta33](https://github.com/jcosta33)! - Update runtime dependencies to the latest versions already allowed by the current majors. Radix primitives move to their current 1.x minors, except `@radix-ui/react-scroll-area`, which stays on the patched 1.2.18. `@headless-tree/*` moves to 1.8, `@react-types/shared` to 3.37, and `@ctrl/tinycolor`, `react-colorful`, and `unist-util-visit` move to their latest patches.
+
+- Updated dependencies [[`ed52d6e`](https://github.com/Frontify/fondue/commit/ed52d6e458a8c03be92559fc00fc43d648106608), [`cbec3e4`](https://github.com/Frontify/fondue/commit/cbec3e41f01ac497b59816bae2b771c3f10e7315), [`90552fe`](https://github.com/Frontify/fondue/commit/90552fe1a71ccf86b58d87b792dd711794965608), [`35390a0`](https://github.com/Frontify/fondue/commit/35390a03b88f30045d5b8b738564fb33e43031ad), [`2c9db91`](https://github.com/Frontify/fondue/commit/2c9db91df4d604b5c1ee6518b64f2f8368b4753b)]:
+  - @frontify/fondue-components@36.0.1
+
 ## 0.1.14
 
 ### Patch Changes

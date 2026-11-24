@@ -1,5 +1,124 @@
 # @frontify/fondue-components
 
+## 37.0.0-rc.1
+
+### Patch Changes
+
+- [#3026](https://github.com/Frontify/fondue/pull/3026) [`9b6a452`](https://github.com/Frontify/fondue/commit/9b6a452773883a485b221894cea4496708a679db) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(ColorPicker): the HEX field of `ColorPicker.Values` reports each valid typed value through `onColorChange`, as the R, G, B and alpha fields already do, instead of only on blur
+
+- [#3083](https://github.com/Frontify/fondue/pull/3083) [`8d134e1`](https://github.com/Frontify/fondue/commit/8d134e1ec9dd723a9782bda0f15e1e8919dec3a2) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Divider): set `aria-orientation` on a vertical divider and stop the browser default border width from widening it
+
+## 37.0.0-rc.0
+
+### Patch Changes
+
+- [#3035](https://github.com/Frontify/fondue/pull/3035) [`cf1839b`](https://github.com/Frontify/fondue/commit/cf1839b10095b928008a8a11934056d0cf5b2581) Thanks [@noahwaldner](https://github.com/noahwaldner)! - First release candidate for Fondue v14.
+
+## 37.0.0-beta.1
+
+### Major Changes
+
+- [#3019](https://github.com/Frontify/fondue/pull/3019) [`4e92d69`](https://github.com/Frontify/fondue/commit/4e92d69a07cd9df0763a2e00cbd78c7ca3ceb4ed) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat!: remove deprecated APIs
+
+  - `Accordion.Trigger`: put the content in `Accordion.Header` directly.
+  - `Table.Root` `sticky` (`'head' | 'col' | 'both'`): use `Table.Header sticky` for a sticky header, and `Table.Body firstColumnSticky` or `lastColumnSticky` for sticky columns.
+  - `Textarea` `extraActions` and the `ExtraAction` type: use `Textarea.Slot` with your own buttons.
+  - `ThemeProvider` `translations`: use `locale`.
+
+### Patch Changes
+
+- [#3013](https://github.com/Frontify/fondue/pull/3013) [`b7bc6c7`](https://github.com/Frontify/fondue/commit/b7bc6c7774795824cdcf52cb10201162d83ee252) Thanks [@noahwaldner](https://github.com/noahwaldner)! - docs: update import paths and links for fondue 14. The SDK guides no longer mention the removed `@frontify/fondue` root entry or `@frontify/fondue/styles`, and `ThemeProvider` points to `@frontify/fondue/components/locales`.
+
+## 37.0.0-beta.0
+
+### Major Changes
+
+- [#3008](https://github.com/Frontify/fondue/pull/3008) [`40df7a2`](https://github.com/Frontify/fondue/commit/40df7a2c25b4d2ec66e4bc2017c966fa277fda03) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - Release components on the fondue v14 line, continuing from 36.0.2. The peer dependency now requires `@frontify/fondue-tokens` 6.
+
+### Patch Changes
+
+- [#2978](https://github.com/Frontify/fondue/pull/2978) [`a59db73`](https://github.com/Frontify/fondue/commit/a59db7301cbb6d4dd9d62dcdad5bbd63542bc49b) Thanks [@jcosta33](https://github.com/jcosta33)! - fix: declare `sideEffects` in both packages so bundlers drop the icons and components you do not import.
+
+- [#2994](https://github.com/Frontify/fondue/pull/2994) [`d5df360`](https://github.com/Frontify/fondue/commit/d5df3600960affc56fbf662d807ef3a31578ce20) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Select): reset the option menu's list margin, padding and bullets so it has no empty strip on pages without a CSS reset
+
+- [#2965](https://github.com/Frontify/fondue/pull/2965) [`e610067`](https://github.com/Frontify/fondue/commit/e610067b4878e90f675aabb4a61333002bd99105) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tabs): call `onActiveTabChange` once per tab change. `@radix-ui/react-tabs` 1.2.1 focuses the trigger on mouse down, which with automatic activation requested the tab twice, so controlled Tabs called the handler twice per click. See https://github.com/radix-ui/primitives/pull/4060 and https://github.com/Frontify/web-app/pull/18284.
+
+- [#2975](https://github.com/Frontify/fondue/pull/2975) [`66a5800`](https://github.com/Frontify/fondue/commit/66a5800ac077b4bf23f943e845b68cec8b7a7c3a) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(TextInput, Textarea): remove the browser's default border from the inner `<input>` and `<textarea>`. Hosts without a CSS reset showed a native border inside the component frame, for example in the ColorPicker hex and opacity fields.
+
+- [#2997](https://github.com/Frontify/fondue/pull/2997) [`a711a4d`](https://github.com/Frontify/fondue/commit/a711a4d48ceda578e757296dfbef6f0baea2ad40) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): truncate long labels so the row's actions stay in view. A long label widened the row past its container and pushed the actions out of reach.
+
+## 34.0.0-beta.0
+
+### Major Changes
+
+- [#2877](https://github.com/Frontify/fondue/pull/2877) [`f59824e`](https://github.com/Frontify/fondue/commit/f59824e0f9b33a4ee6b8f1f290cbfed5b67374c7) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - bump packages for fondue v14
+
+### Patch Changes
+
+- Updated dependencies [[`f59824e`](https://github.com/Frontify/fondue/commit/f59824e0f9b33a4ee6b8f1f290cbfed5b67374c7)]:
+  - @frontify/fondue-icons@1.0.0-beta.0
+  - @frontify/fondue-tokens@6.0.0-beta.0
+
+## 36.0.3
+
+### Patch Changes
+
+- [#3016](https://github.com/Frontify/fondue/pull/3016) [`48899ef`](https://github.com/Frontify/fondue/commit/48899ef5a6beb9eb5e2bf36f36deb6a97918aa49) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(ColorPicker): forward the ref and id of `ColorPicker.Input` to its button, so focus returns to it when a flyout closes, and add the shown color to a name given by `aria-labelledby`
+
+- [#3016](https://github.com/Frontify/fondue/pull/3016) [`48899ef`](https://github.com/Frontify/fondue/commit/48899ef5a6beb9eb5e2bf36f36deb6a97918aa49) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(Select): don't show the no-match error of `Select.Combobox` while its input is empty
+
+- [#2978](https://github.com/Frontify/fondue/pull/2978) [`a59db73`](https://github.com/Frontify/fondue/commit/a59db7301cbb6d4dd9d62dcdad5bbd63542bc49b) Thanks [@jcosta33](https://github.com/jcosta33)! - fix: declare `sideEffects` in both packages so bundlers drop the icons and components you do not import.
+
+- [#2991](https://github.com/Frontify/fondue/pull/2991) [`136542d`](https://github.com/Frontify/fondue/commit/136542d78767263187de2011bab9194078e79a38) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(Flyout): expose `onInteractOutside` and `aria-label` on `Flyout.Content`
+
+- [#3016](https://github.com/Frontify/fondue/pull/3016) [`48899ef`](https://github.com/Frontify/fondue/commit/48899ef5a6beb9eb5e2bf36f36deb6a97918aa49) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(OrderableList): stop making the content of a non-selectable item a tab stop when it has a drag handle
+
+- [#2994](https://github.com/Frontify/fondue/pull/2994) [`d5df360`](https://github.com/Frontify/fondue/commit/d5df3600960affc56fbf662d807ef3a31578ce20) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Select): reset the option menu's list margin, padding and bullets so it has no empty strip on pages without a CSS reset
+
+- [#2965](https://github.com/Frontify/fondue/pull/2965) [`e610067`](https://github.com/Frontify/fondue/commit/e610067b4878e90f675aabb4a61333002bd99105) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tabs): call `onActiveTabChange` once per tab change. `@radix-ui/react-tabs` 1.2.1 focuses the trigger on mouse down, which with automatic activation requested the tab twice, so controlled Tabs called the handler twice per click. See https://github.com/radix-ui/primitives/pull/4060 and https://github.com/Frontify/web-app/pull/18284.
+
+- [#2975](https://github.com/Frontify/fondue/pull/2975) [`66a5800`](https://github.com/Frontify/fondue/commit/66a5800ac077b4bf23f943e845b68cec8b7a7c3a) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(TextInput, Textarea): remove the browser's default border from the inner `<input>` and `<textarea>`. Hosts without a CSS reset showed a native border inside the component frame, for example in the ColorPicker hex and opacity fields.
+
+- [#2997](https://github.com/Frontify/fondue/pull/2997) [`a711a4d`](https://github.com/Frontify/fondue/commit/a711a4d48ceda578e757296dfbef6f0baea2ad40) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): truncate long labels so the row's actions stay in view. A long label widened the row past its container and pushed the actions out of reach.
+
+- Updated dependencies [[`a59db73`](https://github.com/Frontify/fondue/commit/a59db7301cbb6d4dd9d62dcdad5bbd63542bc49b)]:
+  - @frontify/fondue-icons@0.32.1
+  - @frontify/fondue-tokens@5.2.0
+
+## 36.0.2
+
+### Patch Changes
+
+- [#2966](https://github.com/Frontify/fondue/pull/2966) [`04ee335`](https://github.com/Frontify/fondue/commit/04ee335b4f5071262315ac1df2d6297fb82fc602) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(Card): center `Card.BannerDescription` in the banner and only leave room for the selection checkbox when the card is selectable, so the description shows more lines. The revealed description now has a bottom border that separates it from the card content.
+
+- [#2962](https://github.com/Frontify/fondue/pull/2962) [`eddd1cc`](https://github.com/Frontify/fondue/commit/eddd1cc0a496ba20e3f8926d893b0bc2ee25dfe2) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(Tree): add `folderClickType` to `Tree.Root`. The default `'select'` keeps the current single-select behavior (the first click on a folder only selects it). `'toggle'` expands or collapses a folder on every click, for trees whose folders are only containers.
+
+- [#2963](https://github.com/Frontify/fondue/pull/2963) [`f9f8c9f`](https://github.com/Frontify/fondue/commit/f9f8c9f39efab944a8163cb912ca31f0e17f6a7b) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): keep focus where the user moved it when a rename input blurs
+
+  Blurring the rename input still commits the name, but it no longer moves focus back to a tree row afterwards. Before, opening another row's action menu while a row was renaming closed the menu right after it opened, because the deferred focus restore pulled focus out of it. Enter and Escape still return focus to the renamed row.
+
+- Updated dependencies []:
+  - @frontify/fondue-tokens@5.2.0
+
+## 36.0.1
+
+### Patch Changes
+
+- [#2923](https://github.com/Frontify/fondue/pull/2923) [`ed52d6e`](https://github.com/Frontify/fondue/commit/ed52d6e458a8c03be92559fc00fc43d648106608) Thanks [@jcosta33](https://github.com/jcosta33)! - Update runtime dependencies to the latest versions already allowed by the current majors. Radix primitives move to their current 1.x minors, except `@radix-ui/react-scroll-area`, which stays on the patched 1.2.18. `@headless-tree/*` moves to 1.8, `@react-types/shared` to 3.37, and `@ctrl/tinycolor`, `react-colorful`, and `unist-util-visit` move to their latest patches.
+
+- [#2914](https://github.com/Frontify/fondue/pull/2914) [`cbec3e4`](https://github.com/Frontify/fondue/commit/cbec3e41f01ac497b59816bae2b771c3f10e7315) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): removing a row no longer pulls focus back into the tree after focus has moved elsewhere, such as after a dismissed row menu
+
+- [#2931](https://github.com/Frontify/fondue/pull/2931) [`90552fe`](https://github.com/Frontify/fondue/commit/90552fe1a71ccf86b58d87b792dd711794965608) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(Tree): add `onDoubleClick` to rows; the second click of a double-click no longer selects or toggles a row that has one
+
+- [#2945](https://github.com/Frontify/fondue/pull/2945) [`35390a0`](https://github.com/Frontify/fondue/commit/35390a03b88f30045d5b8b738564fb33e43031ad) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): the drag handle no longer shifts row content in single-select reorderable trees. It overlays the row's leading space, so reorderable and static roots align. Row content in every tree moves 2px toward the end to make room for it.
+
+- [#2949](https://github.com/Frontify/fondue/pull/2949) [`2c9db91`](https://github.com/Frontify/fondue/commit/2c9db91df4d604b5c1ee6518b64f2f8368b4753b) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): derive the row geometry from shared custom properties and align the drag line in right-to-left trees
+
+  The indent, drag handle, drag line and loading row now derive their offsets from custom properties declared once on the tree root, and the indent step comes from the same constant headless-tree uses for drop hit-testing. At the default 16px root font size nothing moves; at other root font sizes each level now indents 16px (the step drop hit-testing already used) instead of `1rem`, and the drag line follows the chevron. The drag line uses logical properties, so in right-to-left trees it starts under the target folder's chevron instead of from the left edge.
+
+- Updated dependencies []:
+  - @frontify/fondue-tokens@5.2.0
+
 ## 36.0.0
 
 ### Patch Changes

@@ -74,8 +74,8 @@ const useAsyncItems = (filterText: string, getAsyncItems?: AsyncItemsFetcher) =>
  * Recursively extracts option values from children.
  * This function traverses through the React component tree and collects all SelectItem values.
  *
- * @param {ReactNode} children - The React children to extract values from.
- * @returns {SelectItemType[]} An array of SelectItemType objects.
+ * @param children - The React children to extract values from.
+ * @returns An array of SelectItemType objects.
  *
  * @example
  * const options = (
@@ -105,9 +105,9 @@ export const getRecursiveOptionValues = (
 /**
  * Custom hook for managing select data and filtering.
  *
- * @param {ReactNode} children - The React children to process, typically SelectItem components.
- * @param {AsyncItemsFetcher} [getAsyncItems] - Optional function to fetch items asynchronously based on filter text.
- * @returns {Object} An object containing the processed data.
+ * @param children - The React children to process, typically SelectItem components.
+ * @param [getAsyncItems] - Optional function to fetch items asynchronously based on filter text.
+ * @returns An object containing the processed data.
  */
 export const useSelectData = (children: ReactNode, getAsyncItems?: AsyncItemsFetcher) => {
     const [filterText, setFilterText] = useState('');

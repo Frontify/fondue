@@ -133,6 +133,33 @@ test.describe('TreeRow', () => {
         );
         await expect(component.getByRole('treeitem', { name: /Row/ }).locator('svg')).toHaveCount(0);
     });
+
+    test('keeps the actions inside a narrow row when the label is long', async ({ mount }) => {
+        const component = await mount(
+            <div style={{ width: 240 }}>
+                <Tree.Root>
+                    <Tree.Item id="1">
+                        <Tree.Label>
+                            A very long label that keeps going well past the width of its container so it must truncate
+                            instead of growing
+                        </Tree.Label>
+                        <Tree.Action>
+                            <button type="button">Row actions</button>
+                        </Tree.Action>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        const row = component.getByRole('treeitem');
+        const rowBox = await row.boundingBox();
+        const actionBox = await component.getByRole('button', { name: 'Row actions' }).boundingBox();
+        if (rowBox === null || actionBox === null) {
+            throw new Error('the row did not render its row and action boxes');
+        }
+
+        expect(actionBox.x + actionBox.width).toBeLessThanOrEqual(rowBox.x + rowBox.width + 0.5);
+    });
 });
 
 test.describe('TreeRow renaming', () => {

@@ -10,10 +10,11 @@ import { i8 } from '#/index'; // banned
 import { i4 } from '#/plugins'; // banned
 import { i5 } from '#/plugins/Bold'; // banned
 import { i7 } from '#/renderer'; // banned
+import { i12 } from '#/ui/ToolbarButton/ToolbarButton'; // banned
 
 import { i2 } from '../editor/port'; // banned
 import { i3 } from '../plugins'; // banned
 
 import { i0 } from './document';
 
-export const all = [i0, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11];
+export const all = [i0, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12];

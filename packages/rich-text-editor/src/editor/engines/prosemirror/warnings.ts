@@ -20,3 +20,14 @@ export const warnUnknownContent = (kind: 'block' | 'inline' | 'mark', type: stri
         `[RichTextEditor] Unknown ${kind} type "${type}" kept as it is but cannot be edited. Did you forget to pass the plugin that defines it in \`plugins\`?`,
     );
 };
+
+/** Dev-only warning, once per owner and key, for a stored key that no mounted plugin declares; it is kept as it is. */
+export const warnUndeclaredKey = (owner: string, key: string): void => {
+    if (process.env.NODE_ENV === 'production' || warnedUnknown.has(`key:${owner}:${key}`)) {
+        return;
+    }
+    warnedUnknown.add(`key:${owner}:${key}`);
+    console.warn(
+        `[RichTextEditor] Key "${key}" on ${owner} is declared by no mounted plugin: kept as it is, but not shown or edited. Did you forget to pass the plugin that defines it in \`plugins\`?`,
+    );
+};
