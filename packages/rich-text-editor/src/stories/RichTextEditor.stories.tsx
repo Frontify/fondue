@@ -2,36 +2,37 @@
 
 import { ThemeProvider } from '@frontify/fondue-components';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
+import { type CSSProperties, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
 // Stories import only the package public API. The plugins have their own story
 // file (`PluginExamples.stories.tsx`); this one is about the editor itself — the props
 // that are its own rather than a plugin's.
+import { definePlugin, RichTextEditor, RichTextRenderer, type RteDocument, type RtePlugin } from '../index';
 import {
     boldPlugin,
     bulletListContent,
+    type BulletLevelLook,
     bulletListPlugin,
     checkListContent,
     checkListPlugin,
     columnBreakPlugin,
     defaultPlugins,
-    definePlugin,
     italicPlugin,
     linkContent,
     linkPlugin,
     type MentionItem,
     mentionPlugin,
+    numberedListContent,
+    type NumberedLevelLook,
+    numberedListPlugin,
     quoteContent,
     quotePlugin,
-    type RteDocument,
-    type RtePlugin,
-    RichTextEditor,
-    RichTextRenderer,
+    type TextLinkLook,
     textStyleContent,
     textStylePlugin,
     type TextStylePluginOptions,
-    type TextStylePresets,
-} from '../index';
+    type TextStyleLook,
+} from '../plugins';
 
 /** Who can be mentioned is the app's business, which is why the mention plugin requires it as an option. */
 const MENTIONABLE: readonly MentionItem[] = [
@@ -61,8 +62,21 @@ const HINT = 'tw-col-span-full tw-m-0 tw-body-small tw-text-secondary';
  */
 const SURFACE = 'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-surface tw-p-medium';
 
-/** The field box around an editor: the surface, with a stronger border on hover and while the caret is inside, as Fondue's Textarea does. */
-const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-line-strong`;
+/** The field box around an editor, with Fondue Textarea's hover and focus looks. */
+const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-border-line-strong has-[[data-keyboard-focus=true]]:tw-ring-focus`;
+
+/** Inline, so it wins over FRAME's hover and focus borders. */
+const ERROR_FRAME_STYLE: CSSProperties = { borderColor: 'var(--color-error-default)' };
+
+const FIELD = 'tw-flex tw-flex-col tw-gap-2 tw-max-w-xl tw-p-4 tw-font-primary';
+const FIELD_LABEL = 'tw-body-small tw-text-primary';
+const FIELD_ERROR = 'tw-m-0 tw-body-small';
+const FIELD_ERROR_STYLE: CSSProperties = { color: 'var(--color-error-default)' };
+
+const REQUIRED_LABEL_ID = 'required-story-label';
+const INVALID_LABEL_ID = 'invalid-story-label';
+const INVALID_ERROR_ID = 'invalid-story-error';
+const INVALID_ERROR_TEXT = 'Enter a description.';
 
 const buttonClasses = (active: boolean): string =>
     [
@@ -167,6 +181,100 @@ export const Placeholder: Story = {
                         onChange={setDoc}
                         plugins={defaultPlugins}
                         placeholder="Write something…"
+                    />
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/** The editor sets `aria-required`; the host's label draws the asterisk. */
+export const Required: Story = {
+    args: { required: true },
+    argTypes: { required: { control: 'boolean' } },
+    render: (args) => {
+        let asterisk: ReactNode = null;
+        if (args.required) {
+            asterisk = <span aria-hidden="true"> *</span>;
+        }
+
+        return (
+            <div className={FIELD}>
+                <span id={REQUIRED_LABEL_ID} className={FIELD_LABEL}>
+                    Description
+                    {asterisk}
+                </span>
+                <div className={FRAME}>
+                    <RichTextEditor
+                        plugins={defaultPlugins}
+                        aria-labelledby={REQUIRED_LABEL_ID}
+                        required={args.required}
+                    />
+                </div>
+            </div>
+        );
+    },
+};
+
+/** The editor sets `aria-invalid` and `aria-errormessage`; the host draws the red border and the message. */
+export const Invalid: Story = {
+    args: { status: 'error' },
+    argTypes: { status: { control: 'inline-radio', options: ['neutral', 'error'] } },
+    render: (args) => {
+        const isInvalid = args.status === 'error';
+        let frameStyle: CSSProperties = {};
+        if (isInvalid) {
+            frameStyle = ERROR_FRAME_STYLE;
+        }
+
+        return (
+            <div className={FIELD}>
+                <span id={INVALID_LABEL_ID} className={FIELD_LABEL}>
+                    Description
+                </span>
+                <div className={FRAME} style={frameStyle}>
+                    <RichTextEditor
+                        plugins={defaultPlugins}
+                        aria-labelledby={INVALID_LABEL_ID}
+                        aria-describedby={INVALID_ERROR_ID}
+                        aria-errormessage={INVALID_ERROR_ID}
+                        status={args.status}
+                    />
+                </div>
+                <p id={INVALID_ERROR_ID} className={FIELD_ERROR} style={FIELD_ERROR_STYLE} hidden={!isInvalid}>
+                    {INVALID_ERROR_TEXT}
+                </p>
+            </div>
+        );
+    },
+};
+
+/** How many paragraphs the long document of `MaxRows` holds. */
+const MAX_ROWS_PARAGRAPH_COUNT = 20;
+
+/** How many lines of body text `MaxRows` shows before the content scrolls. */
+const MAX_ROWS_STORY_ROWS = 8;
+
+/** `maxRows` caps the content at that many lines; past it the content scrolls below the toolbar. */
+export const MaxRows: Story = {
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: Array.from({ length: MAX_ROWS_PARAGRAPH_COUNT }, (_, index) => ({
+                type: 'paragraph' as const,
+                children: [{ text: `Paragraph ${index + 1}: scroll the content, the toolbar stays where it is.` }],
+            })),
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <div className={FRAME}>
+                    <RichTextEditor
+                        value={doc}
+                        onChange={setDoc}
+                        plugins={defaultPlugins}
+                        maxRows={MAX_ROWS_STORY_ROWS}
                     />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
@@ -835,7 +943,7 @@ export const TwoEditors: Story = {
     },
 };
 
-/** The guideline settings a host defines around its editors; the presets below read them. */
+/** The guideline settings a host defines around its editors; the looks below read them. */
 type GuidelineVariables = Record<`--f-theme-settings-${string}`, string>;
 
 const LIGHT_GUIDELINE: GuidelineVariables = {
@@ -854,6 +962,12 @@ const LIGHT_GUIDELINE: GuidelineVariables = {
     '--f-theme-settings-quote-color': 'rgb(90, 50, 110)',
     '--f-theme-settings-link-color': 'rgb(190, 40, 90)',
     '--f-theme-settings-link-font-weight': '600',
+    '--f-theme-settings-list-bullet1-shape': "'– '",
+    '--f-theme-settings-list-bullet1-color': 'rgb(190, 40, 90)',
+    '--f-theme-settings-list-bullet2-color': 'rgb(30, 90, 60)',
+    '--f-theme-settings-list-bullet2-size': '1.4em',
+    '--f-theme-settings-list-numbered1-counter-type': 'upper-roman',
+    '--f-theme-settings-list-numbered1-color': 'rgb(20, 60, 120)',
 };
 
 const DARK_GUIDELINE: GuidelineVariables = {
@@ -872,13 +986,19 @@ const DARK_GUIDELINE: GuidelineVariables = {
     '--f-theme-settings-quote-color': 'rgb(210, 170, 235)',
     '--f-theme-settings-link-color': 'rgb(255, 150, 190)',
     '--f-theme-settings-link-font-weight': '600',
+    '--f-theme-settings-list-bullet1-shape': "'– '",
+    '--f-theme-settings-list-bullet1-color': 'rgb(255, 150, 190)',
+    '--f-theme-settings-list-bullet2-color': 'rgb(150, 230, 190)',
+    '--f-theme-settings-list-bullet2-size': '1.4em',
+    '--f-theme-settings-list-numbered1-counter-type': 'upper-roman',
+    '--f-theme-settings-list-numbered1-color': 'rgb(150, 190, 255)',
 };
 
 /**
- * Each preset reads the guideline variables the host defines. `heading3` reads one that
+ * Each look reads the guideline variables the host defines. `heading3` reads one that
  * no section defines, so it keeps Fondue's look.
  */
-const GUIDELINE_PRESETS: TextStylePluginOptions['presets'] = {
+const GUIDELINE_LOOKS: TextStylePluginOptions['look'] = {
     heading1: {
         fontFamily: 'var(--f-theme-settings-heading1-font-family)',
         fontSize: 'var(--f-theme-settings-heading1-font-size)',
@@ -903,27 +1023,50 @@ const GUIDELINE_PRESETS: TextStylePluginOptions['presets'] = {
         lineHeight: 'var(--f-theme-settings-quote-line-height)',
         color: 'var(--f-theme-settings-quote-color)',
     },
-    link: {
-        fontWeight: 'var(--f-theme-settings-link-font-weight)',
-        color: 'var(--f-theme-settings-link-color)',
-    },
 };
 
+const GUIDELINE_LINK_LOOK: TextLinkLook = {
+    fontWeight: 'var(--f-theme-settings-link-font-weight)',
+    color: 'var(--f-theme-settings-link-color)',
+};
+
+/** A bullet level read from the guideline's list variables, as the brand SDK names them. */
+const guidelineBulletLevel = (level: number): BulletLevelLook => ({
+    marker: `var(--f-theme-settings-list-bullet${level}-shape)`,
+    color: `var(--f-theme-settings-list-bullet${level}-color)`,
+    size: `var(--f-theme-settings-list-bullet${level}-size)`,
+});
+
+const guidelineNumberedLevel = (level: number): NumberedLevelLook => ({
+    marker: `var(--f-theme-settings-list-numbered${level}-counter-type)`,
+    color: `var(--f-theme-settings-list-numbered${level}-color)`,
+});
+
+// The third levels read variables no section defines, so they keep Fondue's look.
+const GUIDELINE_BULLET_LOOK = [guidelineBulletLevel(1), guidelineBulletLevel(2), guidelineBulletLevel(3)] as const;
+const GUIDELINE_NUMBERED_LOOK = [
+    guidelineNumberedLevel(1),
+    guidelineNumberedLevel(2),
+    guidelineNumberedLevel(3),
+] as const;
+
 const HOST_STYLING_PLUGINS = [
-    textStylePlugin({ presets: GUIDELINE_PRESETS }),
-    bulletListPlugin(),
+    textStylePlugin({ look: GUIDELINE_LOOKS }),
+    bulletListPlugin({ look: GUIDELINE_BULLET_LOOK }),
+    numberedListPlugin({ look: GUIDELINE_NUMBERED_LOOK }),
     checkListPlugin(),
     quotePlugin(),
-    linkPlugin(),
+    linkPlugin({ look: { text: GUIDELINE_LINK_LOOK } }),
 ];
 
-// The renderer takes content only, with the same presets, so a page that only shows documents ships no editing code.
+// The renderer takes content only, with the same looks, so a page that only shows documents ships no editing code.
 const HOST_STYLING_CONTENT = [
-    textStyleContent({ presets: GUIDELINE_PRESETS }),
-    bulletListContent,
+    textStyleContent({ look: GUIDELINE_LOOKS }),
+    bulletListContent({ look: GUIDELINE_BULLET_LOOK }),
+    numberedListContent({ look: GUIDELINE_NUMBERED_LOOK }),
     checkListContent,
     quoteContent,
-    linkContent,
+    linkContent({ look: { text: GUIDELINE_LINK_LOOK } }),
 ];
 
 const HOST_STYLING_DOCUMENT: RteDocument = {
@@ -941,7 +1084,59 @@ const HOST_STYLING_DOCUMENT: RteDocument = {
         { type: 'paragraph', children: [{ text: 'Body text takes the body look.' }] },
         {
             type: 'bulletList',
-            children: [{ type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'A bullet item' }] }] }],
+            children: [
+                {
+                    type: 'listItem',
+                    children: [
+                        { type: 'paragraph', children: [{ text: 'A bullet item' }] },
+                        {
+                            type: 'bulletList',
+                            children: [
+                                {
+                                    type: 'listItem',
+                                    children: [
+                                        { type: 'paragraph', children: [{ text: 'A second-level item' }] },
+                                        {
+                                            type: 'bulletList',
+                                            children: [
+                                                {
+                                                    type: 'listItem',
+                                                    children: [
+                                                        {
+                                                            type: 'paragraph',
+                                                            children: [{ text: 'A third-level item, Fondue look' }],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            type: 'numberedList',
+            children: [
+                {
+                    type: 'listItem',
+                    children: [
+                        { type: 'paragraph', children: [{ text: 'A numbered item' }] },
+                        {
+                            type: 'numberedList',
+                            children: [
+                                {
+                                    type: 'listItem',
+                                    children: [{ type: 'paragraph', children: [{ text: 'A second-level item' }] }],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
         },
         {
             type: 'checkList',
@@ -989,7 +1184,7 @@ const HostStylingSection = ({ title, guideline }: HostStylingSectionProps) => {
     );
 };
 
-const PRESETS_DEFAULT: TextStylePresets = {
+const LOOKS_DEFAULT: TextStyleLook = {
     heading1: { fontFamily: 'Georgia, serif', fontSize: '36px', color: 'rgb(120, 40, 20)' },
     heading2: { textTransform: 'uppercase' },
     custom1: { letterSpacing: '0.1em' },
@@ -999,10 +1194,11 @@ const PRESETS_DEFAULT: TextStylePresets = {
     imageCaption: { fontSize: '11px' },
     body: { fontSize: '16px', lineHeight: '1.7', color: 'rgb(40, 40, 60)' },
     quote: { fontStyle: 'italic', color: 'rgb(90, 50, 110)' },
-    link: { fontWeight: '600', color: 'rgb(190, 40, 90)' },
 };
 
-const PRESETS_TEXT_STYLE_KEYS = [
+const LINK_LOOK_DEFAULT: TextLinkLook = { fontWeight: '600', color: 'rgb(190, 40, 90)' };
+
+const LOOKS_TEXT_STYLE_KEYS = [
     'heading1',
     'heading2',
     'heading3',
@@ -1014,7 +1210,7 @@ const PRESETS_TEXT_STYLE_KEYS = [
     'imageCaption',
 ];
 
-const PRESETS_FIELDS = [
+const LOOKS_FIELDS = [
     'fontFamily',
     'fontSize',
     'fontWeight',
@@ -1028,30 +1224,45 @@ const PRESETS_FIELDS = [
     'color',
 ];
 
-const PRESETS_LEGEND_LINES = [
-    `Keys, one per text style: ${PRESETS_TEXT_STYLE_KEYS.join(', ')}.`,
-    'Keys for the rest: body (plain paragraphs and list items), quote, link.',
-    `Fields: ${PRESETS_FIELDS.join(', ')}.`,
-    'A link takes no textDecoration, marginTop or marginBottom.',
+const LOOKS_LEGEND_LINES = [
+    `Keys, one per text style: ${LOOKS_TEXT_STYLE_KEYS.join(', ')}.`,
+    'Keys for the rest: body (plain paragraphs and list items), quote.',
+    `Fields: ${LOOKS_FIELDS.join(', ')}.`,
+    'linkPlugin({ look: { text } }) takes the same fields but textDecoration, marginTop and marginBottom.',
     "A key or field left out keeps Fondue's look.",
     'A value that could end its CSS declaration early throws.',
 ];
 
-const PRESETS_CODE_INDENT = 4;
-const PRESETS_LEGEND = 'tw-m-0 tw-pl-4 tw-body-small tw-text-secondary';
-const PRESETS_ERROR = 'tw-m-0 tw-rounded tw-bg-surface-dim tw-p-3 tw-body-small tw-text-primary';
+const LOOKS_CODE_INDENT = 4;
+const LOOKS_LEGEND = 'tw-m-0 tw-pl-4 tw-body-small tw-text-secondary';
+const LOOKS_ERROR = 'tw-m-0 tw-rounded tw-bg-surface-dim tw-p-3 tw-body-small tw-text-primary';
 
-const presetsConfigurationCode = (presets: TextStylePresets): string =>
-    `textStylePlugin({ presets: ${JSON.stringify(presets, null, PRESETS_CODE_INDENT)} })`;
+type LooksStoryArgs = {
+    look: TextStyleLook;
+    linkLook: TextLinkLook;
+};
 
-type PresetsPluginsResult = { status: 'ready'; plugins: RtePlugin[] } | { status: 'invalid'; message: string };
+const looksConfigurationCode = ({ look, linkLook }: LooksStoryArgs): string =>
+    [
+        `textStylePlugin({ look: ${JSON.stringify(look, null, LOOKS_CODE_INDENT)} })`,
+        `linkPlugin({ look: { text: ${JSON.stringify(linkLook, null, LOOKS_CODE_INDENT)} } })`,
+    ].join('\n');
 
-// textStylePlugin throws on a value that could end its CSS declaration early, so a bad Controls entry is reported here.
-const presetsPluginsFor = (presets: TextStylePresets): PresetsPluginsResult => {
+type LooksPluginsResult = { status: 'ready'; plugins: RtePlugin[] } | { status: 'invalid'; message: string };
+
+// Both plugins throw on a value that could end its CSS declaration early, so a bad Controls entry is reported here.
+const looksPluginsFor = ({ look, linkLook }: LooksStoryArgs): LooksPluginsResult => {
     try {
         return {
             status: 'ready',
-            plugins: [textStylePlugin({ presets }), bulletListPlugin(), checkListPlugin(), quotePlugin(), linkPlugin()],
+            plugins: [
+                textStylePlugin({ look }),
+                bulletListPlugin(),
+                numberedListPlugin(),
+                checkListPlugin(),
+                quotePlugin(),
+                linkPlugin({ look: { text: linkLook } }),
+            ],
         };
     } catch (error) {
         if (error instanceof Error) {
@@ -1061,19 +1272,20 @@ const presetsPluginsFor = (presets: TextStylePresets): PresetsPluginsResult => {
     }
 };
 
-type PresetsSurfacesProps = {
-    presets: TextStylePresets;
+type LooksSurfacesProps = {
+    looks: LooksStoryArgs;
     doc: RteDocument;
     onChange: (doc: RteDocument) => void;
 };
 
-const PresetsSurfaces = ({ presets, doc, onChange }: PresetsSurfacesProps) => {
-    const result = useMemo(() => presetsPluginsFor(presets), [presets]);
+const LooksSurfaces = ({ looks, doc, onChange }: LooksSurfacesProps) => {
+    const { look, linkLook } = looks;
+    const result = useMemo(() => looksPluginsFor({ look, linkLook }), [look, linkLook]);
 
     switch (result.status) {
         case 'invalid':
             return (
-                <p role="alert" className={PRESETS_ERROR}>
+                <p role="alert" className={LOOKS_ERROR}>
                     {result.message}
                 </p>
             );
@@ -1091,54 +1303,50 @@ const PresetsSurfaces = ({ presets, doc, onChange }: PresetsSurfacesProps) => {
     }
 };
 
-type PresetsPlaygroundProps = {
-    presets: TextStylePresets;
+type LooksPlaygroundProps = {
+    looks: LooksStoryArgs;
 };
 
-const PresetsPlayground = ({ presets }: PresetsPlaygroundProps) => {
+const LooksPlayground = ({ looks }: LooksPlaygroundProps) => {
     const [doc, setDoc] = useState<RteDocument>(HOST_STYLING_DOCUMENT);
 
     return (
         <div className="tw-grid tw-gap-4 tw-p-4 tw-font-primary">
             <pre className={JSON_PANEL}>
-                <code>{presetsConfigurationCode(presets)}</code>
+                <code>{looksConfigurationCode(looks)}</code>
             </pre>
-            <ul className={PRESETS_LEGEND}>
-                {PRESETS_LEGEND_LINES.map((line) => (
+            <ul className={LOOKS_LEGEND}>
+                {LOOKS_LEGEND_LINES.map((line) => (
                     <li key={line}>{line}</li>
                 ))}
             </ul>
-            {/* The plugin list is read at mount, so a change to the presets remounts both surfaces. */}
-            <PresetsSurfaces key={JSON.stringify(presets)} presets={presets} doc={doc} onChange={setDoc} />
+            {/* The plugin list is read at mount, so a change to the looks remounts both surfaces. */}
+            <LooksSurfaces key={JSON.stringify(looks)} looks={looks} doc={doc} onChange={setDoc} />
         </div>
     );
 };
 
-type PresetsStoryArgs = {
-    presets: TextStylePresets;
-};
-
 /**
- * The configuration of `textStylePlugin({ presets })` as plain values, printed above the editor and the renderer.
- * Edit `presets` in Controls and both surfaces redraw.
+ * The configuration of `textStylePlugin({ look })` and `linkPlugin({ look: { text } })` as plain values, printed above the
+ * editor and the renderer. Edit `look` or `linkLook` in Controls and both surfaces redraw.
  */
-export const Presets: StoryObj<PresetsStoryArgs> = {
-    args: { presets: PRESETS_DEFAULT },
-    argTypes: { presets: { control: 'object' } },
-    // The meta's editor props are not this story's args, so Controls lists only the presets.
-    parameters: { controls: { include: ['presets'] } },
-    render: ({ presets }) => <PresetsPlayground presets={presets} />,
+export const Look: StoryObj<LooksStoryArgs> = {
+    args: { look: LOOKS_DEFAULT, linkLook: LINK_LOOK_DEFAULT },
+    argTypes: { look: { control: 'object' }, linkLook: { control: 'object' } },
+    // The meta's editor props are not this story's args, so Controls lists only the looks.
+    parameters: { controls: { include: ['look', 'linkLook'] } },
+    render: ({ look, linkLook }) => <LooksPlayground looks={{ look, linkLook }} />,
 };
 
 /**
  * The usual production setup: the values are `var(--f-theme-settings-…)`, so one editor configuration follows the section (light or dark) it sits in.
- * A host sets the look of each text style, body text, quotes and links with `textStylePlugin({ presets })`, usually from its guideline settings,
- * and hands the renderer `textStyleContent({ presets })` with the same values.
+ * A host sets the look of each text style, body text and quotes with `textStylePlugin({ look })`, of links with `linkPlugin({ look: { text } })`, and of list markers per level with `bulletListPlugin({ look })` and `numberedListPlugin({ look })`, usually from its guideline settings,
+ * and hands the renderer `textStyleContent({ look })`, `linkContent({ look: { text } })`, `bulletListContent({ look })` and `numberedListContent({ look })` with the same values.
  * Anything the host leaves out, or a variable nobody defines, keeps Fondue's look.
  * The editor and the renderer draw the same.
  */
-export const PresetsFromGuidelineVariables: Story = {
-    name: 'Presets from guideline variables',
+export const LookFromGuidelineVariables: Story = {
+    name: 'Looks from guideline variables',
     render: () => (
         <div className="tw-grid tw-font-primary">
             <ThemeProvider theme="light">

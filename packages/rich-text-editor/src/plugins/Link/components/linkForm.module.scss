@@ -36,3 +36,48 @@
     color: var(--color-error-default);
     font-size: var(--typography-font-size-small);
 }
+
+// The destinations found, listed in the flow under the field so the flyout needs no placement of its own.
+.results {
+    max-height: 160px;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+    font-size: var(--typography-font-size-small);
+    line-height: var(--typography-line-height-medium);
+}
+
+.option {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: var(--spacing-x-small) var(--spacing-small);
+    border: none;
+    border-radius: var(--border-radius-medium);
+    background: none;
+    color: var(--color-primary-default);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-focus-default);
+        outline-offset: -2px;
+    }
+
+    &:active {
+        background-color: var(--color-surface-active);
+    }
+}
+
+.optionHref {
+    overflow: hidden;
+    color: var(--color-secondary-default);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

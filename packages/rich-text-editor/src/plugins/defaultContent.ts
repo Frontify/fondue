@@ -21,8 +21,9 @@ import { underlineContent } from './Underline/Underline';
 // Each plugin is a function, so the renderer drops it with its editing UI; a top-level `definePlugin` call needs `/* @__PURE__ */` instead, and rendererBundle.spec.ts fails when one drags editing UI in.
 
 /**
- * The content of every `defaultPlugins` entry, in the same order, which the renderer reads when given no `plugins`.
- * Text takes Fondue's look; for the host's looks, add `textStyleContent({ presets })` after these.
+ * The content of every `defaultPlugins` entry, in the same order.
+ * Hosts pass it to the renderer and the conversion functions when they want every shipped plugin's content.
+ * Text takes Fondue's look; for the host's looks, add `textStyleContent({ look })` and `linkContent({ look: { text } })` after these.
  */
 export const defaultContent: readonly RteContent[] = Object.freeze([
     textStyleContent(),
@@ -34,10 +35,10 @@ export const defaultContent: readonly RteContent[] = Object.freeze([
     subscriptContent,
     superscriptContent,
     fontColorContent,
-    linkContent,
+    linkContent(),
     alignContent,
-    bulletListContent,
-    numberedListContent,
+    bulletListContent(),
+    numberedListContent(),
     checkListContent,
     quoteContent,
     softBreakContent,

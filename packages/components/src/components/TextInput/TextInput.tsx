@@ -167,7 +167,12 @@ export const TextFieldRoot = (
             </div>
 
             {status === 'success' ? (
-                <IconCheckMark size={16} className={styles.iconSuccess} data-test-id={`${dataTestId}-success-icon`} />
+                <IconCheckMark
+                    size={16}
+                    className={styles.iconSuccess}
+                    data-test-id={`${dataTestId}-success-icon`}
+                    aria-hidden="true"
+                />
             ) : null}
 
             {status === 'error' ? (
@@ -175,6 +180,7 @@ export const TextFieldRoot = (
                     size={16}
                     className={styles.iconError}
                     data-test-id={`${dataTestId}-error-icon`}
+                    aria-hidden="true"
                 />
             ) : null}
 

@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { defineContent, defineInline, definePlugin, type RtePlugin } from '#/core';
+import { translatedLabel } from '#/ui/translation';
 
 import { EmojiDraft, TRIGGER } from './components/EmojiDraft';
 import { EmojiToolbarButton } from './components/EmojiToolbarButton';
@@ -34,7 +35,12 @@ export const emojiPlugin = (options: EmojiPluginOptions = {}): RtePlugin => {
             },
         }),
         toolbarGroup: 'insert',
-        toolbar: [{ label: 'Emoji', render: (props) => <EmojiToolbarButton {...props} emojis={emojis} /> }],
+        toolbar: [
+            {
+                label: translatedLabel('RichTextEditor_emoji'),
+                render: (props) => <EmojiToolbarButton {...props} emojis={emojis} />,
+            },
+        ],
         edit: {
             emojiDraft: ({ isFocused, remove, api }) => (
                 <EmojiDraft
@@ -60,7 +66,7 @@ export const emojiPlugin = (options: EmojiPluginOptions = {}): RtePlugin => {
         hotkeys: {
             // Inserts an empty draft that the `edit` view takes over. The editor
             // fires it only at a word start, so `10:30` and `https:` stay as typed.
-            [TRIGGER]: (api) => api.insert('emojiDraft'),
+            [TRIGGER]: { label: 'Insert an emoji', run: (api) => api.insert('emojiDraft') },
         },
     });
 };

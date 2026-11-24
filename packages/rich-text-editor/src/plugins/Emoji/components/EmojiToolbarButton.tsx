@@ -51,7 +51,7 @@ export const EmojiToolbarButton = ({ api, emojis, label }: EmojiToolbarButtonPro
                 }}
             >
                 <Flyout.Header>
-                    <span id={titleId}>Emoji</span>
+                    <span id={titleId}>{label}</span>
                 </Flyout.Header>
                 <Flyout.Body>
                     <EmojiPicker

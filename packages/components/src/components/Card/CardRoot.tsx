@@ -23,6 +23,8 @@ import { ForwardedRefCardAction } from './CardAction';
 import { CardContext } from './CardContext';
 import styles from './styles/card.module.scss';
 
+export type CardActionsVisibility = 'always' | 'hover';
+
 type CardRootBaseProps = CommonGlobalProps & {
     'data-test-id'?: string;
     /**
@@ -31,6 +33,15 @@ type CardRootBaseProps = CommonGlobalProps & {
      * styles on descendants). Merged after the internal styles.
      */
     className?: string;
+    /**
+     * When the `Card.Action` children are shown. `hover` hides them, without
+     * keeping their space, until the card is hovered, has keyboard focus or has
+     * an open menu, so the title can use the full width. On devices without
+     * hover the actions stay visible.
+     *
+     * @default 'always'
+     */
+    actionsVisibility?: CardActionsVisibility;
     /**
      * Called when the pointer enters the card.
      */
@@ -116,6 +127,7 @@ export const CardRoot = (
         'aria-label': ariaLabel,
         'aria-describedby': ariaDescribedby,
         className = '',
+        actionsVisibility = 'always',
         lang,
         selected = false,
         href,
@@ -205,6 +217,7 @@ export const CardRoot = (
             data-interactive={isClickable}
             data-selectable={isSelectable}
             data-selected={isSelectable && selected}
+            data-actions-visibility={actionsVisibility}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
         >

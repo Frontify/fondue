@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { buildPluginRegistry, type RteBlockNode, type RteContent, type RteDocumentOf, type RtePlugin } from '#/core';
+import { buildContentRegistry, type RteBlockNode, type RteContent, type RteDocumentOf, type RtePlugin } from '#/core';
 
 import { documentRootSpec, documentTree } from './documentTree';
 import { toHtmlString } from './toHtmlString';
@@ -9,9 +9,8 @@ export type SerializeToHtmlOptions = {
     /**
      * The plugins, or only their content, whose markup to draw with. A node whose
      * plugin is missing is skipped (a block keeps its content), with a warning in development.
-     * @default defaultContent
      */
-    plugins?: readonly (RtePlugin | RteContent)[];
+    plugins: readonly (RtePlugin | RteContent)[];
     /**
      * Wrap the document in the element `RichTextRenderer` draws, whose class
      * sets how it reads and carries plugins' content-wide styling (columns).
@@ -32,9 +31,9 @@ export type SerializeToHtmlOptions = {
  */
 export const serializeToHtml = <TBlock extends RteBlockNode>(
     doc: RteDocumentOf<TBlock>,
-    { plugins = [], wrap = true }: SerializeToHtmlOptions = {},
+    { plugins, wrap = true }: SerializeToHtmlOptions,
 ): string => {
-    const registry = buildPluginRegistry(plugins);
+    const registry = buildContentRegistry(plugins);
     const blocks = documentTree(doc, registry, { useComponents: false });
     return toHtmlString(wrap ? [{ kind: 'html', spec: documentRootSpec(registry), content: blocks }] : blocks);
 };

@@ -3,8 +3,8 @@
 import { memo, type ReactNode, useMemo } from 'react';
 
 import {
-    buildPluginRegistry,
-    type PluginRegistry,
+    buildContentRegistry,
+    type ContentRegistry,
     type RteBlockNode,
     type RteContent,
     type RteDocumentOf,
@@ -20,9 +20,8 @@ export type RendererProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * The plugins, or only their content, whose markup draws the document. A node
      * shows its `render.component`, else its `toHtml`. A node whose plugin is
      * missing is skipped (a block keeps its content), with a warning in development.
-     * @default defaultContent
      */
-    plugins?: readonly (RtePlugin | RteContent)[];
+    plugins: readonly (RtePlugin | RteContent)[];
     /**
      * A class for the element the document sits in, beside the document's own
      */
@@ -31,13 +30,13 @@ export type RendererProps<TBlock extends RteBlockNode = RteBlockNode> = {
 
 type RegistryRendererProps = {
     value: RteDocumentOf;
-    registry: PluginRegistry;
+    registry: ContentRegistry;
     className?: string;
 };
 
 type BlockProps = {
     block: RteBlockNode;
-    registry: PluginRegistry;
+    registry: ContentRegistry;
 };
 
 /** One top-level block, memoized on the block itself: the editor keeps the same object for untouched blocks, so an edit redraws only its block. */
@@ -58,9 +57,9 @@ export const RegistryRenderer = ({ value, registry, className }: RegistryRendere
 /** A stored document as React, with no editing engine: readonly display, client or server. */
 export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlockNode>({
     value,
-    plugins = [],
+    plugins,
     className,
 }: RendererProps<TBlock>): ReactNode => {
-    const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
+    const registry = useMemo(() => buildContentRegistry(plugins), [plugins]);
     return <RegistryRenderer value={value} registry={registry} className={className} />;
 };

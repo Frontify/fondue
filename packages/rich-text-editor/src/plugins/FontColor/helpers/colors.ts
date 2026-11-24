@@ -38,12 +38,6 @@ const HUE_UNIT = new RegExp(`(${Object.keys(HUE_UNIT_DEGREES).join('|')})$`);
 const PRINTABLE_ASCII = /^[\t\n\f\r -~]*$/;
 const PERCENT = 100;
 
-/** What the picker's hex field takes: three or six digits; anything else is its error state, not a colour. */
-const HEX_FIELD_DIGITS = /^([\dA-Fa-f]{3}){1,2}$/;
-
-/** A leading `#` on typed hex. */
-const LEADING_HASH = /^#/;
-
 const HEX_COLOR = /^#([\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/;
 const COLOR_FUNCTION = new RegExp(`^(${COLOR_FUNCTIONS.join('|')})a?\\(([^()]*)\\)$`);
 const isColorFunction = (kind: string): kind is ColorFunction => COLOR_FUNCTIONS.some((known) => known === kind);
@@ -316,31 +310,6 @@ export const toColorName = (color: Rgba): string => {
         name += ` ${Math.round(color.alpha * PERCENT)}%`;
     }
     return name;
-};
-
-/**
- * The colour typed in the picker's hex field, or `undefined` while it is no colour.
- *
- * @param alpha - the opacity to give the colour, full when `undefined`
- *
- * @example
- * ```ts
- * parseTypedHex('#f00', 0.5); // { red: 255, green: 0, blue: 0, alpha: 0.5 }
- * ```
- */
-export const parseTypedHex = (text: string | undefined, alpha: number | undefined): Rgba | undefined => {
-    if (text === undefined) {
-        return undefined;
-    }
-    const digits = text.replace(LEADING_HASH, '');
-    if (!HEX_FIELD_DIGITS.test(digits)) {
-        return undefined;
-    }
-    const stored = toStoredColor(`#${digits}`);
-    if (stored === undefined) {
-        return undefined;
-    }
-    return { ...decodeStoredColor(stored), alpha: alpha ?? OPAQUE_ALPHA };
 };
 
 /**

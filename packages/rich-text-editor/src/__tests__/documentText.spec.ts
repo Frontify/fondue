@@ -2,7 +2,8 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { defaultPlugins, isEmpty, mentionPlugin, type RteDocument, toPlainText } from '../index';
+import { isEmpty, type RteDocument, toPlainText } from '../index';
+import { defaultContent, defaultPlugins, mentionPlugin } from '../plugins';
 
 // The document helpers against the shipped plugins; their rules are in `core/documentText.spec.ts`.
 
@@ -23,8 +24,8 @@ const doc: RteDocument = {
 };
 
 describe('toPlainText', () => {
-    it('reads with the default plugins when given none, leaving out an inline they do not define', () => {
-        expect(toPlainText(doc)).toBe('Title\nline one\nline two\nAn item\nHi ');
+    it('reads with the default content, leaving out an inline it does not define', () => {
+        expect(toPlainText(doc, { plugins: defaultContent })).toBe('Title\nline one\nline two\nAn item\nHi ');
     });
 
     it('reads a mention the way its plugin writes it, trigger included', () => {

@@ -3,8 +3,8 @@
 /**
  * Owns the live editor: mounts it once per plugin set, carries later prop
  * changes into it, and notifies subscribers whenever the editor state moves.
- * The only file outside `engines/prosemirror/` that imports that adapter (a
- * second engine is a new folder plus changing that import).
+ * With `editor/parseHtml.ts`, the only file outside `engines/prosemirror/` that
+ * imports that adapter (a second engine is a new folder plus changing those imports).
  *
  * The editor state is NOT React state: every transaction goes to the
  * subscribers of `editorState` and only they re-render (the toolbar reads the
@@ -27,7 +27,7 @@ import {
 
 import { type PluginRegistry, type RteDocumentOf } from '#/core';
 import { mountDocument } from '#/editor/engines/prosemirror';
-import { type EditorHandle, type MountedDocument, type ViewPortals } from '#/editor/port';
+import { type EditorHandle, type ElementAttributes, type MountedDocument, type ViewPortals } from '#/editor/port';
 
 /**
  * The editor state as an external store, in the shape `useSyncExternalStore`
@@ -135,7 +135,7 @@ type UseEditorHandleOptions = {
     document: RteDocumentOf;
     placeholder: string;
     /** Further attributes for the editable element. Memoize them: a new object is applied to the editor. */
-    attributes: Readonly<Record<string, string>>;
+    attributes: ElementAttributes;
     placeholderClassName: string;
     onDocChange: (doc: RteDocumentOf) => void;
     /** The editor took on a document from the host: at mount, or through a new `document`. */

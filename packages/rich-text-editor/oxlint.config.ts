@@ -46,6 +46,9 @@ const OUTER_LAYERS = [
 /** The shared UI, which only the editor shell and the plugins may import. */
 const UI_LAYER = ['#/ui', '#/ui/**'];
 
+/** The interface strings, which only the editor shell, the shared UI and the plugins show. */
+const LOCALES_LAYER = ['#/locales', '#/locales/**'];
+
 /** Bans relative imports that climb `up` (`..`, `../..`, …) or further. */
 const noRelativeEscape = (up: string, message: string) => ({
     group: [`${up}/**`],
@@ -54,7 +57,7 @@ const noRelativeEscape = (up: string, message: string) => ({
 
 const CORE_ONLY = {
     group: OUTER_LAYERS,
-    message: 'Plugins may only import the core surface (#/core) and the shared UI (#/ui).',
+    message: 'Plugins may only import the core surface (#/core), the shared UI (#/ui) and the strings (#/locales).',
 };
 
 /**
@@ -70,10 +73,16 @@ const noSiblingPlugin = (up: string) => ({
         'A plugin may not import another plugin, nor reach out of src/plugins/ by a relative path (use #/core). What several plugins are built out of belongs in src/plugins/shared/.',
 });
 
-/** The shell reaches the engine only through `useEditorHandle`; `up` is the relative path to `src/editor/`. */
+/** The shell reaches the engine only through `useEditorHandle` and `parseHtml`; `up` is the relative path to `src/editor/`. */
 const noEngineFromShell = (up: string) => ({
     group: ['#/editor/engines', '#/editor/engines/**', `${up}/engines`, `${up}/engines/**`],
-    message: 'Only useEditorHandle wires an adapter in. Everything else uses the editor port.',
+    message: 'Only useEditorHandle and parseHtml wire an adapter in. Everything else uses the editor port.',
+});
+
+/** A shell file that wires the engine in reaches it through its barrel only; `up` as for `noEngineFromShell`. */
+const engineBarrelOnly = (up: string) => ({
+    group: [...noEngineFromShell(up).group, '!#/editor/engines/prosemirror'],
+    message: 'Wire the engine in through #/editor/engines/prosemirror, never a file inside it.',
 });
 
 const SHELL_OUTER_LAYERS = {
@@ -99,6 +108,7 @@ const engineRing = (allowPluginBarrel: boolean) => ({
         ...(allowPluginBarrel ? [] : ['#/plugins']),
         '#/plugins/**',
         ...UI_LAYER,
+        ...LOCALES_LAYER,
         '#/index',
         '#/documentFormat',
         '../**',
@@ -178,6 +188,25 @@ export default defineConfig({
             },
         },
         {
+            files: ['src/ui/**/*.{ts,tsx}'],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    {
+                        patterns: [
+                            NO_ENGINE,
+                            NO_SERVER_RENDER,
+                            {
+                                group: OUTER_LAYERS,
+                                message:
+                                    'The shared UI may import the core (#/core) and the strings (#/locales), nothing further out.',
+                            },
+                        ],
+                    },
+                ],
+            },
+        },
+        {
             files: ['src/core/**/*.{ts,tsx}'],
             rules: {
                 'no-restricted-imports': [
@@ -189,8 +218,26 @@ export default defineConfig({
                                 message: 'The core may use React types, never an engine or a renderer.',
                             },
                             {
-                                group: [...OUTER_LAYERS, ...UI_LAYER, '../**'],
+                                group: [...OUTER_LAYERS, ...UI_LAYER, ...LOCALES_LAYER, '../**'],
                                 message: 'The core imports from no other layer — it is what the other layers import.',
+                            },
+                        ],
+                    },
+                ],
+            },
+        },
+        {
+            files: ['src/locales/*.ts'],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    {
+                        patterns: [
+                            NO_ENGINE,
+                            NO_SERVER_RENDER,
+                            {
+                                group: ['#/**', '../**', 'react', 'react/**'],
+                                message: 'The strings are data every layer reads, so they import no other layer.',
                             },
                         ],
                     },
@@ -216,6 +263,7 @@ export default defineConfig({
                                     '#/plugins',
                                     '#/plugins/**',
                                     ...UI_LAYER,
+                                    ...LOCALES_LAYER,
                                     '#/index',
                                     '#/documentFormat',
                                     '../**',
@@ -264,6 +312,7 @@ export default defineConfig({
         },
         {
             files: ['src/editor/*.{ts,tsx}'],
+            excludeFiles: ['src/editor/parseHtml.ts'],
             rules: {
                 'no-restricted-imports': [
                     'error',
@@ -291,7 +340,10 @@ export default defineConfig({
                             NO_ENGINE,
                             noEngineFromShell('.'),
                             SHELL_OUTER_LAYERS,
-                            { ...noRelativeEscape('..', SHELL_ESCAPE_MESSAGE), group: ['../**', '!../index'] },
+                            {
+                                ...noRelativeEscape('..', SHELL_ESCAPE_MESSAGE),
+                                group: ['../**', '!../index', '!../plugins'],
+                            },
                         ],
                     },
                 ],
@@ -333,6 +385,24 @@ export default defineConfig({
             },
         },
         {
+            // The shell file that reads HTML with the engine's parse rules, with no editor mounted.
+            files: ['src/editor/parseHtml.ts'],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    {
+                        patterns: [
+                            NO_SERVER_RENDER,
+                            NO_ENGINE,
+                            engineBarrelOnly('.'),
+                            SHELL_OUTER_LAYERS,
+                            noRelativeEscape('..', SHELL_ESCAPE_MESSAGE),
+                        ],
+                    },
+                ],
+            },
+        },
+        {
             files: [`${ENGINE}/**/*.{ts,tsx}`],
             excludeFiles: [`${ENGINE}/grid.ts`],
             rules: {
@@ -365,8 +435,8 @@ export default defineConfig({
                             NO_SERVER_RENDER,
                             NO_ENGINE,
                             {
-                                group: ['#/**', './**', '../**', '!../index'],
-                                message: 'Stories may only import the package public API (../index).',
+                                group: ['#/**', './**', '../**', '!../index', '!../plugins'],
+                                message: 'Stories may only import the package public API (../index, ../plugins).',
                             },
                         ],
                     },

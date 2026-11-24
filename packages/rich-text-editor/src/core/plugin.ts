@@ -115,7 +115,7 @@ export type RtePlugin = {
      * Alt and Shift in any case; any other throws when the editor mounts. They run
      * before the editor's own, in plugin order.
      */
-    hotkeys?: Record<string, HotkeyHandler>;
+    hotkeys?: Record<string, RteHotkey>;
     /** Text rewritten as it is typed: markdown shortcuts and autolinks. */
     inputRules?: readonly (RteInputRule | RteDelimiterRule)[];
     /** Runs before the editor's own paste, in plugin order. */
@@ -185,6 +185,20 @@ export type RteIconProps = { size?: 16 | 20 };
 export type RteIcon = (props: RteIconProps) => ReactNode;
 
 /**
+ * What the editor hands a label function: the language its own UI is shown in, such as `'de-CH'`
+ */
+export type RteLabelContext = { lang: string };
+
+/**
+ * A control's name: text already in the host's language, or a function the editor
+ * calls with its language each time it draws the control, so the name follows a
+ * change of language without the plugin being built again.
+ * @example
+ * label: ({ lang }) => hostStrings(lang).insertVideo
+ */
+export type RteLabel = string | ((context: RteLabelContext) => string);
+
+/**
  * What every toolbar control has, whether it is a button or custom UI
  */
 type RteToolbarEntryBase = {
@@ -196,7 +210,7 @@ type RteToolbarEntryBase = {
     /**
      * The button's accessible name and tooltip, and the control's name in the `/` menu
      */
-    label: string;
+    label: RteLabel;
     /**
      * Hotkey in `Mod-b` style, shown in the tooltip. It toggles `toggles`
      * unless the plugin's `hotkeys` binds the same key.
@@ -374,8 +388,16 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
     inclusive?: boolean;
     /** Mark types that cannot sit on the same text as this one: putting either mark on takes the other off. Naming it in one mark is enough. A type no mounted plugin registers is ignored. */
     excludes?: readonly string[];
-    /** Typing rules do not rewrite text carrying this mark — inline code keeps `--` and `**` as typed. Defaults to false. */
+    /**
+     * Typing rules and single-character hotkeys do not act on text carrying this mark — inline code keeps `--`, `**` and `@` as typed.
+     * @default false
+     */
     excludesInputRules?: boolean;
+    /**
+     * Clearing marks with `keepSurviving` leaves this mark on, where clearing without it removes every mark.
+     * @default false
+     */
+    survivesClear?: boolean;
     /** What the mark carries when put on without a value (a toggle, a parse rule). Defaults to `{}`. */
     defaults?: TValue;
     /** Styles the mark's own tags show by default, which pasted HTML repeats without meaning them as formatting. */
@@ -605,7 +627,7 @@ export type RteBlockCommand = {
     /** Unique across plugins, e.g. `'heading-1'`. */
     id: string;
     /** What the menus call it: `'Heading 1'`. */
-    label: string;
+    label: RteLabel;
     icon?: RteIcon;
     /** Further words the `/` menu filters by: `['h1', 'title']`. */
     keywords?: readonly string[];
@@ -618,11 +640,43 @@ export type RteBlockCommand = {
     run: (api: EditorControlApi) => void;
 };
 
+export type RteHotkey = {
+    /**
+     * What the keyboard reference calls the binding: `Align left`
+     */
+    label: string;
+    run: HotkeyHandler;
+};
+
 /** A plugin's handler for one key. Return `false` to leave the key to the next handler, and in the end the editor and browser. */
 export type HotkeyHandler = (api: EditorControlApi) => boolean | void;
 
-/** A plugin's `onPaste`, handed the clipboard's text and HTML (if any). Return true when handled: the default paste and later plugins are skipped. */
-export type PasteHandler = (paste: { text: string; html: string | null }, api: EditorControlApi) => boolean;
+/**
+ * Where a paste was copied from: an editor of this package, whose markup pastes back as it was, or anywhere else.
+ */
+export type PasteSource = 'editor' | 'elsewhere';
+
+export type Paste = { text: string; html: string | null; source: PasteSource };
+
+/**
+ * A plugin's `onPaste`, handed the paste. Return true when handled: the default paste and later plugins are skipped.
+ */
+export type PasteHandler = (paste: Paste, api: EditorControlApi) => boolean;
+
+/**
+ * How a `markPattern` token loses the end it does not own, such as the full stop of the sentence it ends.
+ */
+export type RteMarkPatternTrim = {
+    /**
+     * Characters dropped from the end of the token. The engine anchors the pattern to the token's end.
+     */
+    punctuation: RegExp;
+    /**
+     * Each closing bracket a token may end in, and the opening one it closes.
+     * A closing bracket is dropped only while the token holds no opening one left for it to close.
+     */
+    pairs: Readonly<Record<string, string>>;
+};
 
 /**
  * A text pattern rewritten while typing. Declared, not implemented: the editor
@@ -639,9 +693,20 @@ export type RteInputRule =
      * A token ended by a space, Enter or Shift-Enter (or punctuation then one
      * of them) becomes text carrying the mark: an autolink. Backspace right
      * after takes the mark back. `pattern` matches the token only; the engine
-     * anchors it to the end of the text before the terminator.
+     * anchors it to the end of the text before the terminator. A `value`
+     * that returns null leaves the token as typed.
      */
-    | { kind: 'markPattern'; pattern: RegExp; mark: string; value: (match: string) => Record<string, unknown> }
+    | {
+          kind: 'markPattern';
+          pattern: RegExp;
+          mark: string;
+          value: (match: string) => Record<string, unknown> | null;
+          /**
+           * What the token's end may hold that is not part of it, so it stays outside the mark.
+           * @default no trimming: the token ends where `pattern` says
+           */
+          trim?: RteMarkPatternTrim;
+      }
     /**
      * Text swapped for other text the moment its last character is typed, no
      * space needed: `->` becomes `→`. A string matches as written; a pattern

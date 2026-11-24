@@ -6,6 +6,7 @@ import { type UseComboboxPropGetters, type UseSelectPropGetters } from 'downshif
 import { isValidElement, type ForwardedRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
 import { ThemeProvider, useFondueTheme } from '#/components/ThemeProvider/ThemeProvider';
+import { type CommonAriaProps } from '#/helpers/aria';
 
 import styles from '../styles/select.module.scss';
 import { getSelectOptionValue, recursiveMap } from '../utils';
@@ -77,6 +78,11 @@ export type SelectMenuProps = {
      * Event handler called when the escape key is pressed.
      */
     onEscapeKeyDown?: (event: KeyboardEvent) => void;
+    /**
+     * @internal
+     * The list's accessible name, the trigger's own `aria-label`. Without it downshift labels the list by a label element only a labelled Select renders.
+     */
+    'aria-label'?: CommonAriaProps['aria-label'];
 };
 
 export const SelectMenu = ({
@@ -92,6 +98,7 @@ export const SelectMenu = ({
     hasInteractedSinceOpening,
     viewportCollisionPadding = 'compact',
     onEscapeKeyDown,
+    'aria-label': ariaLabel,
 }: SelectMenuProps) => {
     const hasIndeterminateValues = (indeterminateItemValues?.length ?? 0) > 0;
 
@@ -125,6 +132,8 @@ export const SelectMenu = ({
         <RadixPopover.Portal>
             <ThemeProvider>
                 <RadixPopover.Content
+                    // The listbox is the popup the trigger controls, so the wrapper is no dialog
+                    role={undefined}
                     dir={dir}
                     align={align}
                     side={getAdjustedSide(side)}
@@ -139,7 +148,7 @@ export const SelectMenu = ({
                         // We are mounting/unmounting the menu on open/close
                         // We should instead toggle its visibility for accessibility reasons
                         // https://github.com/downshift-js/downshift?tab=readme-ov-file#getmenuprops
-                        {...getMenuProps({}, { suppressRefError: true })}
+                        {...getMenuProps({ 'aria-label': ariaLabel }, { suppressRefError: true })}
                         data-has-interacted={hasInteractedSinceOpening ? 'true' : 'false'}
                         data-test-id="fondue-select-menu"
                     >

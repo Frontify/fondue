@@ -7,13 +7,10 @@ import { describe, expect, it } from 'vitest';
 
 import { HEADING_GAP_VARIABLE } from '../plugins/TextStyle/helpers/headingGap';
 
-// Stylesheets cannot import the constant, so these read them as text. The document stylesheet is
-// listed because it zeroes the gap where no block sits above a heading, and it is a layer of its own,
-// so this spec sits with the package-level ones.
+// Stylesheets cannot import the constant, so these read them as text.
 
 const STYLESHEETS = {
     'text style presets': fileURLToPath(new URL('../plugins/TextStyle/textStyle.module.scss', import.meta.url)),
-    document: fileURLToPath(new URL('../renderer/document.module.scss', import.meta.url)),
 };
 
 /** Whatever a stylesheet spells as a heading gap variable, or a misspelling of one. */
