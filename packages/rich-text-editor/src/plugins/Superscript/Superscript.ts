@@ -3,6 +3,7 @@
 import { IconSuperscript } from '@frontify/fondue-icons';
 
 import { defineContent, defineMark, definePlugin } from '#/core';
+import { translatedLabel } from '#/ui/translation';
 
 import { isVerticalAlign, markWhen } from '../shared/helpers/declaredStyle';
 
@@ -40,5 +41,5 @@ export const superscriptPlugin = () =>
     definePlugin({
         content: superscriptContent,
         toolbarGroup: 'marks',
-        toolbar: [{ label: 'Superscript', icon: IconSuperscript, shortcut: 'Mod-.' }],
+        toolbar: [{ label: translatedLabel('RichTextEditor_superscript'), icon: IconSuperscript, shortcut: 'Mod-.' }],
     });

@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/experimental-ct-react';
-import { type Page } from '@playwright/test';
+import { type Locator, type Page } from '@playwright/test';
 
-import { RichTextEditor, RichTextRenderer, type RteDocument } from '../../index';
+import { RichTextEditor, type RteDocument } from '../../index';
 
+import { scan } from './axeScan';
 import { EditorWithMentions, RendererWithMentions } from './editorWithMentions';
+
+import type AxeBuilder from '@axe-core/playwright';
 
 // Driven through the package's public API in a real browser: keys go in as
 // the browser sends them, so what the engine does with them is what a user gets.
@@ -152,18 +154,6 @@ const everyPluginDocument: RteDocument = {
         ...document.blocks,
     ],
 };
-
-// Page-level rules about the bare test page (no main landmark, no h1), not about the component.
-const PAGE_LEVEL_RULES = ['landmark-one-main', 'page-has-heading-one', 'region'];
-
-// WCAG 2.2 AA, the editor's bar: axe's defaults leave out its rules, `target-size` among them.
-const WCAG_22_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
-
-// Fondue's text field draws its placeholder under a transparent input, which axe cannot see through (5.7:1, measured by hand).
-const FIELD_PLACEHOLDER = '[data-test-id="fondue-text-input"] div[aria-hidden="true"]';
-
-const scan = (page: Page): AxeBuilder =>
-    new AxeBuilder({ page }).withTags(WCAG_22_AA).disableRules(PAGE_LEVEL_RULES).exclude(FIELD_PLACEHOLDER);
 
 const COLOR_CONTRAST = 'color-contrast';
 
@@ -351,7 +341,7 @@ test.describe('accessibility', () => {
     for (const view of ['renderer', 'editor'] as const) {
         test(`inline code in muted text in the ${view} has no axe violations`, async ({ mount, page }) => {
             if (view === 'renderer') {
-                await mount(<RichTextRenderer value={mutedCode} />);
+                await mount(<RendererWithMentions value={mutedCode} />);
                 await expect(page.getByText('imageCaption code')).toBeVisible();
             } else {
                 await mount(<RichTextEditor value={mutedCode} />);
@@ -369,6 +359,31 @@ test.describe('accessibility', () => {
         await expect(page.getByRole('textbox')).toHaveAttribute('aria-placeholder', 'Write something');
         await expect(page.getByRole('toolbar')).toBeVisible();
 
+        expect(await violationsOf(page)).toEqual([]);
+    });
+
+    test('a labelled, required, invalid editor has no axe violations', async ({ mount, page }) => {
+        await mount(
+            <div>
+                <label id="summary-label" htmlFor="summary">
+                    Summary
+                </label>
+                <RichTextEditor
+                    id="summary"
+                    aria-labelledby="summary-label"
+                    aria-describedby="summary-error"
+                    aria-errormessage="summary-error"
+                    required
+                    status="error"
+                />
+                <p id="summary-error">Summary is required.</p>
+            </div>,
+        );
+        const editable = page.getByRole('textbox', { name: 'Summary' });
+
+        await expect(editable).toHaveAttribute('aria-required', 'true');
+        await expect(editable).toHaveAttribute('aria-invalid', 'true');
+        await expect(editable).toHaveAccessibleDescription('Summary is required.');
         expect(await violationsOf(page)).toEqual([]);
     });
 
@@ -401,21 +416,20 @@ test.describe('accessibility', () => {
         expect(await violationsOf(page)).toEqual(symbolicHeadings);
     });
 
-    test("the text style menu has only Fondue Select's known axe violation", async ({ mount, page }) => {
+    test('the text style menu has no axe violations', async ({ mount, page }) => {
         await mount(<RichTextEditor />);
         await page.getByRole('textbox').click();
         await page.getByRole('combobox', { name: 'Text style' }).click();
         await expect(page.getByRole('option', { name: 'Heading 1' })).toBeVisible();
 
-        // Known (FP-792): Fondue's Select opens its list in a dialog without a name; its target is a generated id.
-        expect(await violationsOf(page)).toEqual([{ rule: 'aria-dialog-name', target: expect.any(String) }]);
+        expect(await violationsOf(page)).toEqual([]);
     });
 
     test('the text colour flyout has no axe violations', async ({ mount, page }) => {
         await mount(<RichTextEditor />);
         await typeAndSelect(page, 'Hello');
-        await page.getByRole('button', { name: 'Text colour' }).click();
-        await expect(page.getByRole('group', { name: 'Suggested colours' }).getByRole('button').first()).toBeVisible();
+        await page.getByRole('button', { name: 'Text color' }).click();
+        await expect(page.getByRole('group', { name: 'Suggested colors' }).getByRole('button').first()).toBeVisible();
 
         expect(await violationsOf(page)).toEqual([]);
     });
@@ -475,5 +489,112 @@ test.describe('accessibility', () => {
         await expect(page.getByRole('dialog', { name: 'Emoji' })).toBeVisible();
 
         expect(await violationsOf(page)).toEqual([]);
+    });
+});
+
+const headingThreeDocument: RteDocument = {
+    version: 1,
+    blocks: [
+        { type: 'textStyle', style: 'heading3', children: [{ text: 'A heading' }] },
+        { type: 'paragraph', children: [{ text: 'A paragraph' }] },
+    ],
+};
+
+const openTextStyleList = async (page: Page): Promise<Locator> => {
+    await page.getByRole('textbox').locator('h3').click();
+    const combobox = page.getByRole('combobox', { name: 'Text style' });
+    await combobox.focus();
+    await page.keyboard.press('Enter');
+    await expect(combobox).toHaveAttribute('aria-expanded', 'true');
+    return combobox;
+};
+
+test.describe('text style list', () => {
+    test('keeps the list open and the style unchanged on ArrowRight and ArrowLeft', async ({ mount, page }) => {
+        await mount(<RichTextEditor value={headingThreeDocument} />);
+        const combobox = await openTextStyleList(page);
+        await page.keyboard.press('ArrowDown');
+
+        await page.keyboard.press('ArrowRight');
+        await page.keyboard.press('ArrowLeft');
+
+        await expect(combobox).toBeFocused();
+        await expect(combobox).toHaveAttribute('aria-expanded', 'true');
+        await expect(page.getByRole('listbox')).toBeVisible();
+        await expect(page.getByRole('textbox').locator('h3')).toHaveText('A heading');
+    });
+
+    test('highlights the selected option when the list opens', async ({ mount, page }) => {
+        await mount(<RichTextEditor value={headingThreeDocument} />);
+        const combobox = await openTextStyleList(page);
+
+        const selected = page.getByRole('option', { name: 'Heading 3' });
+        const selectedId = await selected.getAttribute('id');
+        expect(selectedId).toBeTruthy();
+        await expect(combobox).toHaveAttribute('aria-activedescendant', selectedId ?? '');
+    });
+
+    test('moves to the option after the selected one on the first ArrowDown', async ({ mount, page }) => {
+        await mount(<RichTextEditor value={headingThreeDocument} />);
+        const combobox = await openTextStyleList(page);
+
+        await page.keyboard.press('ArrowDown');
+
+        const next = page.getByRole('option', { name: 'Heading 4' });
+        const nextId = await next.getAttribute('id');
+        expect(nextId).toBeTruthy();
+        await expect(combobox).toHaveAttribute('aria-activedescendant', nextId ?? '');
+    });
+
+    test('applies the shown style to every block the selection spans', async ({ mount, page }) => {
+        await mount(<RichTextEditor value={headingThreeDocument} />);
+        await page.getByRole('textbox').locator('h3').click();
+        await page.keyboard.press('Home');
+        await page.keyboard.press('Shift+ArrowDown');
+        await page.keyboard.press('Shift+End');
+        const combobox = page.getByRole('combobox', { name: 'Text style' });
+        await expect(combobox).toContainText('Heading 3');
+
+        await combobox.focus();
+        await page.keyboard.press('Enter');
+        await expect(combobox).toHaveAttribute('aria-expanded', 'true');
+        await page.keyboard.press('Enter');
+
+        await expect(page.getByRole('textbox').locator('h3')).toHaveCount(2);
+    });
+
+    test('has no dialog around the list', async ({ mount, page }) => {
+        await mount(<RichTextEditor value={headingThreeDocument} />);
+        await openTextStyleList(page);
+
+        await expect(page.getByRole('dialog')).toHaveCount(0);
+    });
+
+    test('names the list "Text style"', async ({ mount, page }) => {
+        await mount(<RichTextEditor value={headingThreeDocument} />);
+        await openTextStyleList(page);
+
+        await expect(page.getByRole('listbox', { name: 'Text style' })).toBeVisible();
+    });
+
+    test('applies the highlighted option on Enter', async ({ mount, page }) => {
+        await mount(<RichTextEditor value={headingThreeDocument} />);
+        await openTextStyleList(page);
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Enter');
+
+        await expect(page.getByRole('textbox').locator('h4')).toHaveText('A heading');
+    });
+
+    test('closes on Escape, keeps focus on the combobox and leaves the style unchanged', async ({ mount, page }) => {
+        await mount(<RichTextEditor value={headingThreeDocument} />);
+        const combobox = await openTextStyleList(page);
+        await page.keyboard.press('ArrowDown');
+
+        await page.keyboard.press('Escape');
+
+        await expect(combobox).toHaveAttribute('aria-expanded', 'false');
+        await expect(combobox).toBeFocused();
+        await expect(page.getByRole('textbox').locator('h3')).toHaveText('A heading');
     });
 });

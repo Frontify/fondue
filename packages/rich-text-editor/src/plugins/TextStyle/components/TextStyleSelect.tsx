@@ -4,6 +4,7 @@ import { Select } from '@frontify/fondue-components';
 import { type ReactNode } from 'react';
 
 import { type EditorControlApi, PARAGRAPH, type RteSelectionSnapshot } from '#/core';
+import { useTranslate } from '#/ui/translation';
 
 import { findPreset, isTextStyle, labelOf, type TextStyleOption } from '../helpers/presets';
 
@@ -18,6 +19,7 @@ type TextStyleSelectProps = {
 
 /** The style dropdown, controlled by the document: its value is derived from the selection on every render. */
 export const TextStyleSelect = ({ selection, api, options, label }: TextStyleSelectProps): ReactNode => {
+    const translate = useTranslate();
     const currentBlock = selection.block;
     // A stored style this editor does not offer still renders, but the dropdown shows it as a paragraph.
     const current = isTextStyle(currentBlock) && options.includes(currentBlock.style) ? currentBlock.style : PARAGRAPH;
@@ -41,9 +43,9 @@ export const TextStyleSelect = ({ selection, api, options, label }: TextStyleSel
             <Select aria-label={label} value={current} onSelect={handleSelect}>
                 {options.map((option) => (
                     // Rows preview their style; the trigger keeps the plain label so the toolbar height stays fixed.
-                    <Select.Item key={option} value={option} label={labelOf(option)}>
+                    <Select.Item key={option} value={option} label={translate(labelOf(option))}>
                         <span className={styles.preview}>
-                            <span className={findPreset(option)?.className}>{labelOf(option)}</span>
+                            <span className={findPreset(option)?.className}>{translate(labelOf(option))}</span>
                         </span>
                     </Select.Item>
                 ))}

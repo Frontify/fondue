@@ -1,0 +1,17 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// A host box as the stories draw it: Fondue's focus ring while the editor marks keyboard focus.
+.host {
+    padding: var(--spacing-medium);
+    border: var(--border-width-default) solid var(--color-line-mid);
+
+    &:has([data-keyboard-focus='true']) {
+        box-shadow:
+            0 0 0 2px var(--color-surface-default),
+            0 0 0 6px var(--color-focus-default);
+    }
+
+    &:focus-within {
+        border-color: var(--color-line-strong);
+    }
+}

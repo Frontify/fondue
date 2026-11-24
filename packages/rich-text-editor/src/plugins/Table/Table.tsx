@@ -16,6 +16,7 @@ import {
 } from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
+import { translatedLabel } from '#/ui/translation';
 
 import { TableMenu } from './components/TableMenu';
 import { isInTable } from './helpers/isInTable';
@@ -61,9 +62,8 @@ export type TableHeaderBlock<TContent extends RteBlockNode = RteBlockNode> = Cel
     scope?: HeaderScope;
 };
 
-/** Until the editor's locale files exist, like every shipped plugin. */
-const TABLE_LABEL = 'Table';
-const INSERT_TABLE_LABEL = 'Insert table';
+/** The readonly view's name. It belongs to the content, whose language the renderer does not know, so it stays English. */
+const TABLE_REGION_LABEL = 'Table';
 
 type SpanValue = { colspan: number; rowspan: number };
 type HeaderValue = SpanValue & { scope: HeaderScope };
@@ -96,7 +96,7 @@ type ReadonlyTableProps = { children?: ReactNode };
 const ReadonlyTable = ({ children }: ReadonlyTableProps): ReactNode => (
     // Keyboard-reachable, or a table wider than the page could not be scrolled without a mouse.
     // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-    <section tabIndex={0} aria-label={TABLE_LABEL} className={styles.scroll}>
+    <section tabIndex={0} aria-label={TABLE_REGION_LABEL} className={styles.scroll}>
         <table className={styles.table}>
             <tbody>{children}</tbody>
         </table>
@@ -192,17 +192,17 @@ export const tablePlugin = () =>
         content: tableContent,
         toolbarGroup: 'insert',
         toolbar: [
-            { label: INSERT_TABLE_LABEL, render: InsertTableButton },
+            { label: translatedLabel('RichTextEditor_tableInsert'), render: InsertTableButton },
             {
-                label: TABLE_LABEL,
+                label: translatedLabel('RichTextEditor_table'),
                 floating: 'inline',
-                render: ({ api, selection }) => <TableMenu api={api} selection={selection} />,
+                render: ({ api, selection, label }) => <TableMenu api={api} selection={selection} label={label} />,
             },
         ],
         commands: [
             {
                 id: 'table',
-                label: TABLE_LABEL,
+                label: translatedLabel('RichTextEditor_table'),
                 icon: IconTable,
                 keywords: ['grid', 'rows', 'columns', 'spreadsheet'],
                 group: 'insert',

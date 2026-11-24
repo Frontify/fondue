@@ -291,6 +291,40 @@ describe('Card Component', () => {
         expect(screen.queryByTestId('fondue-card-actions')).not.toBeInTheDocument();
     });
 
+    it('should show the actions at all times by default', () => {
+        render(
+            <Card.Root data-test-id={CARD_TEST_ID}>
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        expect(screen.getByTestId(CARD_TEST_ID)).toHaveAttribute('data-actions-visibility', 'always');
+    });
+
+    it('should expose the hover actions visibility as a data attribute', () => {
+        render(
+            <Card.Root data-test-id={CARD_TEST_ID} actionsVisibility="hover">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        expect(screen.getByTestId(CARD_TEST_ID)).toHaveAttribute('data-actions-visibility', 'hover');
+    });
+
+    it('should keep hover-only actions in the tab order', async () => {
+        renderWithRouter(
+            <Card.Root href="/page" aria-label="Card" actionsVisibility="hover">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+                <Card.Action>
+                    <Card.ActionButton aria-label="Settings">
+                        <svg />
+                    </Card.ActionButton>
+                </Card.Action>
+            </Card.Root>,
+        );
+        await userEvent.tab();
+        await userEvent.tab();
+        expect(screen.getByRole('button', { name: 'Settings' })).toHaveFocus();
+    });
+
     it('should render non-action children outside the actions container', () => {
         render(
             <Card.Root data-test-id={CARD_TEST_ID}>

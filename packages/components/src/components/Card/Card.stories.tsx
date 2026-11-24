@@ -35,6 +35,7 @@ import {
     CardThumbnailIcon,
     CardThumbnailImage,
     CardTitle,
+    type CardActionsVisibility,
     type CardBannerFit,
     type CardBannerImagePadding,
 } from './Card';
@@ -192,6 +193,49 @@ const BannerDescriptionDemo = ({ description, title, banner, selectable = true }
         </Card.Root>
     );
 };
+
+type ActionsVisibilityDemoProps = { actionsVisibility: CardActionsVisibility; title: string };
+
+const ActionsVisibilityDemo = ({ actionsVisibility, title }: ActionsVisibilityDemoProps) => {
+    const [selected, setSelected] = useState(false);
+
+    return (
+        <Card.Root
+            href="#"
+            selected={selected}
+            onSelect={() => setSelected((s) => !s)}
+            actionsVisibility={actionsVisibility}
+        >
+            <Card.Banner>
+                <Card.BannerImage src="https://picsum.photos/seed/card-actions/400/300" alt="" />
+            </Card.Banner>
+
+            <Card.Title>{title}</Card.Title>
+            <Card.Description>{`actionsVisibility="${actionsVisibility}"`}</Card.Description>
+
+            <Card.Action>
+                <Card.ActionButton aria-label="Settings">
+                    <IconCog size={20} />
+                </Card.ActionButton>
+            </Card.Action>
+            <Card.Action>
+                <Dropdown.Root>
+                    <Dropdown.Trigger>
+                        <Card.ActionButton aria-label="More actions">
+                            <IconDotsVertical size={20} />
+                        </Card.ActionButton>
+                    </Dropdown.Trigger>
+                    <Dropdown.Content>
+                        <Dropdown.Item onSelect={() => {}}>Edit</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Delete</Dropdown.Item>
+                    </Dropdown.Content>
+                </Dropdown.Root>
+            </Card.Action>
+        </Card.Root>
+    );
+};
+
+const ACTIONS_LONG_TITLE = 'Summer campaign hero image final approved version.jpg';
 
 const BannerToneDimComparison = () => {
     const [selectedDefault, setSelectedDefault] = useState(false);
@@ -509,6 +553,45 @@ export const BannerDescriptionVariants: Story = {
                 selectable={false}
             />
             <BannerDescriptionDemo banner="icon" title="Without description" description="" />
+        </div>
+    ),
+};
+
+export const ActionsOnHover: StoryObj<ActionsVisibilityDemoProps> = {
+    name: 'Actions on hover',
+    decorators: [
+        (Story) => (
+            <div style={{ width: 280 }}>
+                <Story />
+            </div>
+        ),
+    ],
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Set `actionsVisibility="hover"` on `Card.Root` to hide the `Card.Action` children until the card ' +
+                    'is hovered, has keyboard focus or has an open menu. Hidden actions take no space, so the title ' +
+                    'uses the full width. They stay in the tab order and are always visible on devices without hover.',
+            },
+        },
+    },
+    argTypes: {
+        actionsVisibility: { control: 'inline-radio', options: ['always', 'hover'] },
+    },
+    args: {
+        actionsVisibility: 'hover',
+        title: ACTIONS_LONG_TITLE,
+    },
+    render: (args) => <ActionsVisibilityDemo {...args} />,
+};
+
+export const ActionsVisibilityComparison: Story = {
+    name: 'Actions visibility (hover to compare)',
+    render: () => (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, 280px)', gap: 16 }}>
+            <ActionsVisibilityDemo actionsVisibility="always" title={ACTIONS_LONG_TITLE} />
+            <ActionsVisibilityDemo actionsVisibility="hover" title={ACTIONS_LONG_TITLE} />
         </div>
     ),
 };

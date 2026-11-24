@@ -1,15 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button } from '@frontify/fondue-components';
-import { type ReactNode, useEffect, useId, useRef, useState } from 'react';
+import { type AriaAttributes, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
 import { type PluginRegistry, type RteDocumentOf } from '#/core';
 import { RegistryRenderer } from '#/renderer';
+import { useTranslate } from '#/ui/translation';
 
-import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
 
 import { EditorErrorBoundary } from './EditorErrorBoundary';
+
+/** The attributes that make a named editor a group carrying the host's labels where it is not a field. */
+export type GroupAttributes = Pick<AriaAttributes, 'aria-label' | 'aria-labelledby' | 'aria-describedby'> & {
+    role?: 'group';
+};
 
 type EditorFallbackProps = {
     id?: string;
@@ -20,13 +25,12 @@ type EditorFallbackProps = {
     /** Told what this shows, for Try again. */
     onShown: (document: RteDocumentOf) => void;
     registry: PluginRegistry;
-    labels: RichTextEditorLabels;
     /** Told whether the pressed button had focus, which goes with it. */
     onRetry: (hadFocus: boolean) => void;
     /** Whether focus was in what this replaces: the editor, or a fallback whose Retry was pressed. */
     focusWasWithin: () => boolean;
     /** The host's name for the editor as a group, so the message and Retry say which editor failed. */
-    groupAttributes: Record<string, string>;
+    groupAttributes: GroupAttributes;
     /** Told when the read-only view throws too, as a crash of its own. */
     onCatch?: (error: Error) => void;
     /** The test id of the editor's root element. */
@@ -45,13 +49,13 @@ export const EditorFallback = ({
     shownDocument,
     onShown,
     registry,
-    labels,
     onRetry,
     focusWasWithin,
     groupAttributes,
     onCatch,
     dataTestId,
 }: EditorFallbackProps): ReactNode => {
+    const translate = useTranslate();
     const retryRef = useRef<HTMLButtonElement | null>(null);
     const messageId = useId();
     const onPress = (): void => {
@@ -84,7 +88,7 @@ export const EditorFallback = ({
                 <RegistryRenderer value={document} registry={registry} className={styles.content} />
             </EditorErrorBoundary>
             <p id={messageId} role="alert">
-                {labels.editorFailed}
+                {translate('RichTextEditor_editorFailed')}
             </p>
             <Button
                 ref={retryRef}
@@ -94,7 +98,7 @@ export const EditorFallback = ({
                 aria-describedby={messageId}
                 onPress={onPress}
             >
-                {labels.retry}
+                {translate('RichTextEditor_retry')}
             </Button>
         </div>
     );

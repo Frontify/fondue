@@ -429,6 +429,7 @@ const ComboboxBaseInput = (
                 hasInteractedSinceOpening={hasInteractedSinceOpening}
                 viewportCollisionPadding={viewportCollisionPadding}
                 onEscapeKeyDown={onEscapeKeyDown}
+                aria-label={props['aria-label']}
             >
                 {menuSlots}
             </SelectMenu>
