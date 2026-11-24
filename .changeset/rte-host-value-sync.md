@@ -2,4 +2,4 @@
 "@frontify/fondue-rich-text-editor": patch
 ---
 
-fix(RichTextEditor): apply host value changes in place
+fix(RichTextEditor): keep the caret, undo and IME input through a new value
