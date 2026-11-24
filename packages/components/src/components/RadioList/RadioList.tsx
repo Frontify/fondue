@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCheckMark } from '@frontify/fondue-icons';
 import * as RadioGroupPrimitve from '@radix-ui/react-radio-group';
 import { type ReactNode } from 'react';
 
@@ -20,6 +21,12 @@ export type RadioListRootProps = {
     readOnly?: boolean;
     required?: boolean;
     value?: string;
+    /**
+     * The visual style of the radio buttons. With `pill`, each radio button renders its children inside a pill
+     * and shows a checkmark when selected, so no separate `Label` is needed.
+     * @default 'default'
+     */
+    variant?: 'default' | 'pill';
     'data-test-id'?: string;
 } & OptionalCommonAriaAttrs;
 export const RadioListRoot = ({
@@ -34,6 +41,7 @@ export const RadioListRoot = ({
     readOnly,
     required,
     value,
+    variant = 'default',
     'data-test-id': dataTestId,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
@@ -52,6 +60,7 @@ export const RadioListRoot = ({
             data-emphasis={emphasis}
             data-readonly={readOnly}
             data-test-id={dataTestId}
+            data-variant={variant}
             dir={dir}
             disabled={disabled}
             id={id}
@@ -86,6 +95,7 @@ const RadioListRadioButton = ({
     disabled,
     value,
     id,
+    children,
     'data-test-id': dataTestId,
     ...restProps
 }: RadioListRadioButtonProps) => {
@@ -107,7 +117,10 @@ const RadioListRadioButton = ({
             value={value}
             {...restProps}
         >
-            <RadioGroupPrimitve.Indicator className={styles.indicator} />
+            <RadioGroupPrimitve.Indicator className={styles.indicator}>
+                <IconCheckMark size={16} />
+            </RadioGroupPrimitve.Indicator>
+            {children}
         </RadioGroupPrimitve.Item>
     );
 };
