@@ -135,8 +135,8 @@ const numberedList = defineBlock<NumberedListValue>({
  */
 export type BulletLevelLook = {
     /**
-     * A `list-style-type`, such as `square`, or a quoted string, such as `'– '`, drawn as written, so it carries
-     * its own space before the item text
+     * A `list-style-type`, such as `square`, or a quoted string, such as `'–'`, drawn as written. A string gets no
+     * room of its own, so set `gap` for room before the item text
      */
     marker?: string;
     /**
@@ -151,6 +151,10 @@ export type BulletLevelLook = {
      * The room before the item text, where the marker hangs
      */
     indent?: string;
+    /**
+     * The room between the marker and the item text, added to the indent so the text starts at the indent plus the gap
+     */
+    gap?: string;
 };
 
 /**
@@ -180,6 +184,7 @@ const NUMBERED_LOOK_FIELDS = {
     marker: 'marker',
     color: 'color',
     indent: 'indent',
+    gap: 'gap',
 } as const satisfies Record<keyof NumberedLevelLook, string>;
 
 const BULLET_LOOK_FIELDS = {

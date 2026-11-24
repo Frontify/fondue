@@ -35,6 +35,8 @@ $slots: this, next, after-next;
     list-style-type: var(--_#{$list}-this-marker);
 
     > .item {
+        padding-inline-start: var(--_#{$list}-this-gap);
+
         @each $slot in $slots {
             $handed-on: list.nth($slots, list.index($slots, $slot) % list.length($slots) + 1);
             @each $field in $fields {
@@ -54,9 +56,12 @@ $slots: this, next, after-next;
 // cut off by a host that clips its overflow.
 $bullet-indent: 1.5em;
 
+// A length rather than 0, so `calc()` takes it; zero keeps Fondue's look.
+$no-gap: 0px;
+
 .bulletList {
     margin: 0;
-    padding-left: var(--_bullet-list-this-indent);
+    padding-inline-start: calc(var(--_bullet-list-this-indent) + var(--_bullet-list-this-gap));
 
     @include level-looks(
         'bullet-list',
@@ -65,6 +70,7 @@ $bullet-indent: 1.5em;
             color: $body-color,
             size: $body-font-size,
             indent: $bullet-indent,
+            gap: $no-gap,
         )
     ) {
         font-size: var(--_bullet-list-this-size);
@@ -84,7 +90,9 @@ $numbered-indent: 2em;
     --rte-list-extra-digits: 0;
 
     margin: 0;
-    padding-left: calc(var(--_numbered-list-this-indent) + var(--rte-list-extra-digits) * 1ch);
+    padding-inline-start: calc(
+        var(--_numbered-list-this-indent) + var(--_numbered-list-this-gap) + var(--rte-list-extra-digits) * 1ch
+    );
 
     @include level-looks(
         'numbered-list',
@@ -92,6 +100,7 @@ $numbered-indent: 2em;
         (
             color: $body-color,
             indent: $numbered-indent,
+            gap: $no-gap,
         )
     ) {
         font-size: $body-font-size;
