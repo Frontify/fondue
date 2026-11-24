@@ -6,6 +6,7 @@ import * as sinon from 'sinon';
 
 import { Select } from '#/components/Select';
 import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
+import { resolveToken } from '#/testutils/resolveToken';
 import { MAX_HEIGHT_MARGIN } from '#/utilities/domUtilities';
 
 const SELECT_TEST_ID = 'test-select';
@@ -114,19 +115,28 @@ test('should navigate though menu with arrow', async ({ mount, page }) => {
 
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS(
+        'background-color',
+        await resolveToken(page, '--color-surface-hover'),
+    );
 
     await page.keyboard.press('ArrowDown');
 
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS(
+        'background-color',
+        await resolveToken(page, '--color-surface-hover'),
+    );
 
     await page.keyboard.press('ArrowUp');
 
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS(
+        'background-color',
+        await resolveToken(page, '--color-surface-hover'),
+    );
 });
 
 test('should select item in list', async ({ mount, page }) => {
@@ -521,14 +531,14 @@ test('render indicator on selected item', async ({ mount, page }) => {
     await component.click();
 
     await expect(firstItem).toHaveAttribute('data-selected', 'true');
-    await expect(firstItem).toHaveCSS('background-color', 'rgb(234, 234, 228)');
+    await expect(firstItem).toHaveCSS('background-color', await resolveToken(page, '--color-surface-active'));
     await expect(firstItem).toHaveAttribute('aria-selected', 'true');
     await expect(chekmarkIcon).toBeVisible();
 
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowUp');
 
-    await expect(firstItem).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await expect(firstItem).toHaveCSS('background-color', await resolveToken(page, '--color-surface-hover'));
     await expect(chekmarkIcon).toBeVisible();
 });
 
