@@ -1,0 +1,24 @@
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.spec.tsx
+  s_a585d10f570924::t_7a46ac32977c34 227,256,413-431
+  s_a585d10f570924::t_86808df00c6073 432
+packages/rich-text-editor/src/plugins/Mention/hooks/usePeople.ts
+  s_a585d10f570924::t_7d309b3f8bae91 14-26,29,32,38,67
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.tsx
+  s_a585d10f570924::t_1a2b6a500dfc75 8,11-12,28-30,40,59,76,89,94-104,264,266-269,358-359,361
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "000a8e0091c63878f57c807d62cff3476277f3e9",
+  "prompts": {},
+  "sessions": {
+    "s_a585d10f570924": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12fffd99-7ec0-43c7-a09b-65001cf93f56",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_b9d1b78c08dd46::t_04285742a3a4d0 1247,1262
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5b922922c77230f4ba0134d0afec25b8b9c0f8b0",
+  "prompts": {},
+  "sessions": {
+    "s_b9d1b78c08dd46": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "99e5e51c-bd3a-4245-97cd-209951d97f21",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
