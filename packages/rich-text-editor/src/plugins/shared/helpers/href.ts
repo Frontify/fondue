@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { MARKDOWN_ENTITY_START } from '#/core';
+
 /** The schemes a link may use. Everything else — `javascript:`, `data:` — never becomes one. */
 const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
 
@@ -58,9 +60,11 @@ const DESTINATION_NEEDS_BRACKETS = /[\s()]/;
 /** What a Markdown link destination escapes: the backslash and the angle brackets that would end or open it. */
 const DESTINATION_ESCAPED = /[\\<>]/g;
 
-/** An address as a Markdown link destination: wrapped in `<…>` when it holds a space or a parenthesis. */
+/** An address as a Markdown link destination: wrapped in `<…>` when it holds a space or a parenthesis, and with an entity-like `&` escaped. */
 export const markdownDestination = (href: string): string => {
-    const escaped = href.replaceAll(DESTINATION_ESCAPED, (character) => `\\${character}`);
+    const escaped = href
+        .replaceAll(DESTINATION_ESCAPED, (character) => `\\${character}`)
+        .replaceAll(MARKDOWN_ENTITY_START, String.raw`\&`);
     if (DESTINATION_NEEDS_BRACKETS.test(href)) {
         return `<${escaped}>`;
     }

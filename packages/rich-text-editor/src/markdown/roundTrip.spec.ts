@@ -147,6 +147,82 @@ const FORM_CASES: readonly RoundTripCase[] = [
         },
     },
     {
+        name: 'a link whose address holds an entity-like run',
+        markdown: String.raw`[x](https://e.com/?a=1\&amp;b)`,
+        document: {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'x', link: { href: 'https://e.com/?a=1&amp;b' } }] }],
+        },
+    },
+    {
+        name: 'a heading ending in a hash',
+        markdown: String.raw`# Chapter \#`,
+        document: {
+            version: 1,
+            blocks: [{ type: 'textStyle', style: 'heading1', children: [{ text: 'Chapter #' }] }],
+        },
+    },
+    {
+        name: 'a list item holding a paragraph and a numbered list starting at 2',
+        markdown: '- a\n\n  2. b',
+        document: {
+            version: 1,
+            blocks: [
+                {
+                    type: 'bulletList',
+                    children: [
+                        {
+                            type: 'listItem',
+                            children: [
+                                { type: 'paragraph', children: [{ text: 'a' }] },
+                                {
+                                    type: 'numberedList',
+                                    start: 2,
+                                    children: [
+                                        {
+                                            type: 'listItem',
+                                            children: [{ type: 'paragraph', children: [{ text: 'b' }] }],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+    },
+    {
+        name: 'a list item holding a paragraph, a list and a paragraph',
+        markdown: '- a\n  - b\n\n  c',
+        document: {
+            version: 1,
+            blocks: [
+                {
+                    type: 'bulletList',
+                    children: [
+                        {
+                            type: 'listItem',
+                            children: [
+                                { type: 'paragraph', children: [{ text: 'a' }] },
+                                {
+                                    type: 'bulletList',
+                                    children: [
+                                        {
+                                            type: 'listItem',
+                                            children: [{ type: 'paragraph', children: [{ text: 'b' }] }],
+                                        },
+                                    ],
+                                },
+                                { type: 'paragraph', children: [{ text: 'c' }] },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+    },
+    {
         name: 'a bullet list',
         markdown: '- one\n- two',
         document: {
@@ -328,6 +404,34 @@ describe('markdown round trip of text that looks like Markdown', () => {
             expectRoundTrip(escapingCase);
         });
     }
+});
+
+describe('markdown round trip of text that would start a block after leading space or a newline', () => {
+    const LEADING_SPACE_TEXTS = [' - x', ' # x', ' 1. x', '   > x'];
+
+    for (const text of LEADING_SPACE_TEXTS) {
+        it(`reads ${JSON.stringify(text)} back as a paragraph`, () => {
+            const document: RteDocumentOf = {
+                version: 1,
+                blocks: [{ type: 'paragraph', children: [{ text }] }],
+            };
+
+            const { markdown } = serializeToMarkdown(document, OPTIONS);
+
+            expect(parseMarkdown(markdown, OPTIONS).blocks.map((block) => block.type)).toEqual(['paragraph']);
+        });
+    }
+
+    it('reads a line after a newline in a text run back as text', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a\n- b' }] }],
+        };
+
+        const { markdown } = serializeToMarkdown(document, OPTIONS);
+
+        expect(parseMarkdown(markdown, OPTIONS).blocks.map((block) => block.type)).toEqual(['paragraph']);
+    });
 });
 
 describe('markdown round trip of empty text', () => {

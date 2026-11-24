@@ -16,7 +16,7 @@ import {
     type RteTextNode,
 } from '#/core';
 
-import { escapeText } from './escape';
+import { escapeClosingHashes, escapeText, type TextPosition } from './escape';
 import { type MarkdownForms } from './forms';
 
 /** What a node lost on write: `path` is the index of each block, child and inline from `document.blocks` down to it. */
@@ -61,6 +61,8 @@ type LineMode = 'multiline' | 'singleLine';
 
 const SPACE = ' ';
 
+const UNKNOWN_TYPE = 'unknown';
+
 // --- Inlines ---
 
 type CarriedMark = { name: string; value: NodeValue; form: MarkdownMarkForm };
@@ -68,7 +70,7 @@ type CarriedMark = { name: string; value: NodeValue; form: MarkdownMarkForm };
 /** What a text block's inlines are once the runs sharing a mark sit inside one piece, as the marks nest. */
 type Piece =
     | { kind: 'text'; text: string }
-    | { kind: 'output'; output: MarkdownInlineOutput }
+    | { kind: 'output'; output: MarkdownInlineOutput; path: Path; type: string }
     | { kind: 'mark'; mark: CarriedMark; path: Path; pieces: Piece[] };
 
 type OpenMark = Extract<Piece, { kind: 'mark' }>;
@@ -81,6 +83,23 @@ type LineCursor = { atLineStart: boolean };
 
 /** A stored mark value that puts the mark on: `false` and `null` say it is off, as if left out. */
 const isCarried = (stored: unknown): boolean => stored !== undefined && stored !== null && stored !== false;
+
+const isNode = <TNode extends object>(value: unknown): value is TNode =>
+    typeof value === 'object' && value !== null && !Array.isArray(value);
+
+/** What a loss names a node by: its type, or `unknown` for one a host sent without a usable type. */
+const typeNameOf = (node: unknown): string => {
+    if (isNode<{ type?: unknown }>(node) && typeof node.type === 'string') {
+        return node.type;
+    }
+
+    return UNKNOWN_TYPE;
+};
+
+const isTextRun = (inline: RteInlineNode): inline is RteTextNode => typeof inline.text === 'string';
+
+const isInlineElement = (inline: RteInlineNode): inline is RteInlineElementNode =>
+    inline.text === undefined && typeof inline.type === 'string';
 
 const markValueOf = (stored: unknown): NodeValue => {
     if (typeof stored === 'object' && stored !== null) {
@@ -166,28 +185,53 @@ const outputOf = (
     return output;
 };
 
+/** A break that ends the block, or is followed only by breaks, would start a line that holds nothing: it is left out. */
+const withoutTrailingBreaks = (pieces: Piece[], state: WriteState): Piece[] => {
+    let end = pieces.length;
+    while (end > 0) {
+        const last = pieces[end - 1];
+        if (last?.kind !== 'output' || last.output.kind !== 'lineBreak') {
+            break;
+        }
+        end--;
+    }
+
+    for (const piece of pieces.slice(end)) {
+        if (piece.kind === 'output') {
+            state.losses.push({ path: piece.path, type: piece.type });
+        }
+    }
+
+    return pieces.slice(0, end);
+};
+
 /**
  * A text block's inlines, with each mark opened once around the whole stretch of neighbours sharing it, as the
  * renderer does, so a bold link that is partly italic is still one link.
  */
-const piecesOf = (
-    inlines: readonly RteInlineNode[],
-    parentPath: Path,
-    lineMode: LineMode,
-    state: WriteState,
-): Piece[] => {
+const piecesOf = (inlines: readonly unknown[], parentPath: Path, lineMode: LineMode, state: WriteState): Piece[] => {
     const root: Piece[] = [];
     const open: OpenMark[] = [];
 
     for (const [index, inline] of inlines.entries()) {
         const path = [...parentPath, index];
 
-        if (inline.text === undefined) {
+        if (!isNode<RteInlineNode>(inline)) {
+            state.losses.push({ path, type: typeNameOf(inline) });
+            continue;
+        }
+
+        if (isInlineElement(inline)) {
             closeMarks(root, open, 0);
             const output = outputOf(inline, path, lineMode, state);
             if (output !== null) {
-                root.push({ kind: 'output', output });
+                root.push({ kind: 'output', output, path, type: inline.type });
             }
+            continue;
+        }
+
+        if (!isTextRun(inline)) {
+            state.losses.push({ path, type: typeNameOf(inline) });
             continue;
         }
 
@@ -208,7 +252,7 @@ const piecesOf = (
 
     closeMarks(root, open, 0);
 
-    return root;
+    return withoutTrailingBreaks(root, state);
 };
 
 /** The text a mark wraps, as the mark's form reads it to choose its delimiters. */
@@ -238,17 +282,20 @@ const renderText = (text: string, mode: TextMode, cursor: LineCursor): string =>
         return text;
     }
 
-    let written = text;
+    // The text after a newline is at the start of a line, so it is escaped as one.
+    const lines = text.split(LINE_SEPARATOR);
     if (mode === 'escaped') {
-        let position: 'lineStart' | 'inline' = 'inline';
-        if (cursor.atLineStart) {
-            position = 'lineStart';
+        for (const [index, line] of lines.entries()) {
+            let position: TextPosition = 'lineStart';
+            if (index === 0 && !cursor.atLineStart) {
+                position = 'inline';
+            }
+            lines[index] = escapeText(line, position);
         }
-        written = escapeText(text, position);
     }
-    cursor.atLineStart = false;
+    cursor.atLineStart = lines[lines.length - 1] === '';
 
-    return written;
+    return lines.join(LINE_SEPARATOR);
 };
 
 const renderOutput = (output: MarkdownInlineOutput, mode: TextMode, cursor: LineCursor, state: WriteState): string => {
@@ -338,7 +385,11 @@ const childrenOf = (block: RteBlockNode): unknown[] => {
 };
 
 const isBlockLike = (child: unknown, registry: ContentRegistry): boolean => {
-    const { type, children } = child as { type?: unknown; children?: unknown };
+    if (!isNode<{ type?: unknown; children?: unknown }>(child)) {
+        return false;
+    }
+
+    const { type, children } = child;
 
     return Array.isArray(children) || (typeof type === 'string' && registry.blocks.has(type));
 };
@@ -412,7 +463,7 @@ const prefixOf = (block: RteBlockNode, path: Path, state: WriteState): MarkdownL
         }
     }
 
-    state.losses.push({ path, type: block.type });
+    state.losses.push({ path, type: typeNameOf(block) });
 
     return NO_PREFIX;
 };
@@ -431,32 +482,50 @@ const writeTextBlock = (block: RteBlockNode, path: Path, state: WriteState): str
     const prefix = prefixOf(block, path, state);
     reportBlockAttributes(block, path, state);
 
-    const inlines = childrenOf(block) as RteInlineNode[];
     let lineMode: LineMode = 'multiline';
     if (prefix.rest === null) {
         lineMode = 'singleLine';
     }
 
-    let text = writeInlines(inlines, path, lineMode, state);
-    if (text === '') {
+    let text = writeInlines(childrenOf(block), path, lineMode, state);
+    if (lineMode === 'singleLine') {
+        text = escapeClosingHashes(text);
+    }
+    if (text.trim() === '') {
         text = NBSP_ENTITY;
     }
 
     return prefixed(text.split(LINE_SEPARATOR), prefix);
 };
 
-/** In a list item, a list follows its paragraph on the next line, and any other two blocks keep the blank line. */
+/** The first number of an ordered list's marker, which decides whether the list can interrupt a paragraph. */
+const ORDINAL_MARKER = /^(\d+)[.)]/;
+
+const FIRST_ORDINAL = '1';
+
+/** A bullet can; an ordered list can only when it starts at 1. */
+const canInterruptParagraph = (firstLine: string): boolean => {
+    const ordinal = ORDINAL_MARKER.exec(firstLine);
+
+    return ordinal === null || ordinal[1] === FIRST_ORDINAL;
+};
+
+/** In a list item, a list follows its paragraph on the next line where it can interrupt it; any other two blocks keep the blank line. */
 const linesBetween = (
     gap: BlockGap,
     previous: RteBlockNode,
-    next: RteBlockNode,
+    next: { block: RteBlockNode; lines: readonly string[] },
     state: WriteState,
 ): readonly string[] => {
     switch (gap) {
         case 'blankLine':
             return BLANK_LINE;
         case 'itemChildren':
-            if (kindOf(previous, state.registry) === 'list' || kindOf(next, state.registry) === 'list') {
+            if (
+                kindOf(next.block, state.registry) === 'list' &&
+                kindOf(previous, state.registry) !== 'list' &&
+                canInterruptParagraph(next.lines[0] ?? '')
+            ) {
                 return NO_LINES;
             }
 
@@ -464,16 +533,22 @@ const linesBetween = (
     }
 };
 
-const writeBlocks = (blocks: readonly RteBlockNode[], parentPath: Path, gap: BlockGap, state: WriteState): string[] => {
+const writeBlocks = (blocks: readonly unknown[], parentPath: Path, gap: BlockGap, state: WriteState): string[] => {
     const lines: string[] = [];
     let previous: RteBlockNode | null = null;
     for (const [index, block] of blocks.entries()) {
-        const blockLines = writeBlock(block, [...parentPath, index], state);
+        const path = [...parentPath, index];
+        if (!isNode<RteBlockNode>(block)) {
+            state.losses.push({ path, type: typeNameOf(block) });
+            continue;
+        }
+
+        const blockLines = writeBlock(block, path, state);
         if (blockLines.length === 0) {
             continue;
         }
         if (previous !== null) {
-            lines.push(...linesBetween(gap, previous, block, state));
+            lines.push(...linesBetween(gap, previous, { block, lines: blockLines }, state));
         }
         for (const line of blockLines) {
             lines.push(line);
@@ -492,17 +567,13 @@ const writeContainer = (block: RteBlockNode, path: Path, state: WriteState): str
         gap = 'itemChildren';
     }
 
-    return prefixed(writeBlocks(childrenOf(block) as RteBlockNode[], path, gap, state), prefix);
+    return prefixed(writeBlocks(childrenOf(block), path, gap, state), prefix);
 };
 
-type ListItemLines = { item: RteBlockNode; prefix: MarkdownLinePrefix };
+type ListItemLines = { item: unknown; prefix: MarkdownLinePrefix };
 
 /** The prefix of every item, or null when the list or any of its items has none. */
-const itemPrefixesOf = (
-    block: RteBlockNode,
-    items: readonly RteBlockNode[],
-    state: WriteState,
-): ListItemLines[] | null => {
+const itemPrefixesOf = (block: RteBlockNode, items: readonly unknown[], state: WriteState): ListItemLines[] | null => {
     const definition = state.registry.blocks.get(block.type);
     const form = state.forms.blocks.get(block.type);
     if (definition === undefined || form === undefined) {
@@ -524,16 +595,21 @@ const itemPrefixesOf = (
 
 /** A list: each item's lines carry the item's own prefix. Without one for every item, the items are written as blocks. */
 const writeList = (block: RteBlockNode, path: Path, state: WriteState): string[] => {
-    const items = childrenOf(block) as RteBlockNode[];
+    const items = childrenOf(block);
     const entries = itemPrefixesOf(block, items, state);
     if (entries === null) {
-        state.losses.push({ path, type: block.type });
+        state.losses.push({ path, type: typeNameOf(block) });
 
         return writeBlocks(items, path, 'blankLine', state);
     }
 
     const lines: string[] = [];
     for (const [index, { item, prefix }] of entries.entries()) {
+        if (!isNode<RteBlockNode>(item)) {
+            state.losses.push({ path: [...path, index], type: typeNameOf(item) });
+            continue;
+        }
+
         for (const line of prefixed(writeBlock(item, [...path, index], state), prefix)) {
             lines.push(line);
         }
@@ -551,7 +627,7 @@ const writeBlock = (block: RteBlockNode, path: Path, state: WriteState): string[
         case 'container':
             return writeContainer(block, path, state);
         case 'void':
-            state.losses.push({ path, type: block.type });
+            state.losses.push({ path, type: typeNameOf(block) });
 
             return [];
     }

@@ -112,6 +112,91 @@ describe('serializeToMarkdown single-line blocks', () => {
     });
 });
 
+describe('serializeToMarkdown trailing breaks', () => {
+    it.each([false, true])('leaves out a break at the end of a block and reports it, with breaks: %s', (breaks) => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'foo' }, { type: 'break' }] }],
+        };
+
+        expect(serializeToMarkdown(document, { plugins: defaultContent, breaks })).toEqual({
+            markdown: 'foo',
+            losses: [{ path: [0, 1], type: 'break' }],
+        });
+    });
+
+    it('leaves out every break that only breaks follow, in order', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'foo' }, { type: 'break' }, { type: 'break' }] }],
+        };
+
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({
+            markdown: 'foo',
+            losses: [
+                { path: [0, 1], type: 'break' },
+                { path: [0, 2], type: 'break' },
+            ],
+        });
+    });
+});
+
+describe('serializeToMarkdown whitespace-only text', () => {
+    it('writes a text block of spaces as a non-breaking space entity', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'paragraph', children: [{ text: '  ' }] },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: 'a\n\n&nbsp;', losses: [] });
+    });
+});
+
+describe('serializeToMarkdown with nodes a host may send malformed', () => {
+    it('skips an inline whose text is not a string, and an entry that is not an object, and reports each', () => {
+        const document = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a' }, { text: 5 }, null, { type: 'weird', text: 5 }] }],
+        } as unknown as RteDocumentOf;
+
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({
+            markdown: 'a',
+            losses: [
+                { path: [0, 1], type: 'unknown' },
+                { path: [0, 2], type: 'unknown' },
+                { path: [0, 3], type: 'weird' },
+            ],
+        });
+    });
+
+    it('skips an entry that is not an object in a block list, and reports it', () => {
+        const document = {
+            version: 1,
+            blocks: [
+                null,
+                {
+                    type: 'bulletList',
+                    children: [
+                        'text',
+                        { type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'a' }] }] },
+                    ],
+                },
+            ],
+        } as unknown as RteDocumentOf;
+
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({
+            markdown: '- a',
+            losses: [
+                { path: [0], type: 'unknown' },
+                { path: [1, 0], type: 'unknown' },
+            ],
+        });
+    });
+});
+
 describe('serializeToMarkdown losses', () => {
     it('keeps underlined text and reports the mark at the text path', () => {
         const document: RteDocumentOf = {
