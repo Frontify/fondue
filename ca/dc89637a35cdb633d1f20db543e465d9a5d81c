@@ -1,0 +1,14 @@
+.changeset/rte-unknown-block-raw-leak.md
+  h_1228e573df1f42 1-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cadc89637a35cdb633d1f20db543e465d9a5d81c",
+  "prompts": {},
+  "humans": {
+    "h_1228e573df1f42": {
+      "author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

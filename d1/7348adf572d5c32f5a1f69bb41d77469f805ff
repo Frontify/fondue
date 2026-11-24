@@ -1,0 +1,19 @@
+packages/rich-text-editor/src/styles/stack.module.scss
+  s_36288c28f1d690::t_4bd4cb9d7443e5 10-12,18,20-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d17348adf572d5c32f5a1f69bb41d77469f805ff",
+  "prompts": {},
+  "sessions": {
+    "s_36288c28f1d690": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2dcba55a-3711-4934-8a75-206c16c8eb1c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

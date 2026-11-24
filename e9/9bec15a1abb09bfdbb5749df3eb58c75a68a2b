@@ -1,0 +1,29 @@
+packages/components/oxlint.config.ts
+  s_2da9535d030739::t_425f219df7e1d5 63-86
+packages/components/src/components/Card/__tests__/Card.ct.tsx
+  s_2da9535d030739::t_3d563dc85b48c1 6-7,17-20,104,120,143,161-162,181,203,252-253,273,443-444,461,669
+packages/components/src/components/Dropdown/__tests__/Dropdown.ct.tsx
+  s_2da9535d030739::t_31b0b6ad33c821 8,305-308,311-318
+packages/components/src/components/Select/__tests__/Combobox.ct.tsx
+  s_2da9535d030739::t_20dc5342e94adc 9,114-117,123-126,132-135
+packages/components/src/components/Select/__tests__/Select.ct.tsx
+  s_2da9535d030739::t_ebe3041e93a726 9,118-121,127-130,136-139,534,541
+packages/components/src/testutils/resolveToken.ts
+  s_2da9535d030739::t_a7b3c32b748a30 1-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "e99bec15a1abb09bfdbb5749df3eb58c75a68a2b",
+  "prompts": {},
+  "sessions": {
+    "s_2da9535d030739": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "58eec220-d33c-4c23-a344-8e9222351be3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

@@ -1,0 +1,424 @@
+packages/rich-text-editor/.gitignore
+  h_2139c5e5c94509 2
+packages/rich-text-editor/.storybook/global.d.ts
+  h_2139c5e5c94509 1-6
+packages/rich-text-editor/.storybook/main.ts
+  h_2139c5e5c94509 1-47
+packages/rich-text-editor/.storybook/preview-head.html
+  h_2139c5e5c94509 1-21
+packages/rich-text-editor/.storybook/preview.tsx
+  h_2139c5e5c94509 1-35
+packages/rich-text-editor/.storybook/styles.css
+  h_2139c5e5c94509 1-5
+packages/rich-text-editor/PARITY_GAPS.md
+  h_2139c5e5c94509 1-30
+packages/rich-text-editor/README.md
+  h_2139c5e5c94509 1,3-4,6-8,10-12,14-16,18-44
+packages/rich-text-editor/lint-fixtures/importRings.spec.ts
+  h_2139c5e5c94509 1-69
+packages/rich-text-editor/lint-fixtures/rings.oxlint.config.ts
+  h_2139c5e5c94509 1-5
+packages/rich-text-editor/lint-fixtures/src/core/fixture.ts
+  h_2139c5e5c94509 1-19
+packages/rich-text-editor/lint-fixtures/src/editor/RichTextEditor.spec.tsx
+  h_2139c5e5c94509 3,5-6,8-9,11
+packages/rich-text-editor/lint-fixtures/src/editor/RichTextEditor.tsx
+  h_2139c5e5c94509 1-20
+packages/rich-text-editor/lint-fixtures/src/editor/engines/prosemirror/editing.ts
+  h_2139c5e5c94509 1-24
+packages/rich-text-editor/lint-fixtures/src/editor/engines/prosemirror/lists.spec.tsx
+  h_2139c5e5c94509 3-12
+packages/rich-text-editor/lint-fixtures/src/editor/engines/prosemirror/testEditor.ts
+  h_2139c5e5c94509 1-10
+packages/rich-text-editor/lint-fixtures/src/editor/hooks/useEditorHandle.ts
+  h_2139c5e5c94509 1-12
+packages/rich-text-editor/lint-fixtures/src/editor/hooks/useSelectionRect.ts
+  h_2139c5e5c94509 1-14
+packages/rich-text-editor/lint-fixtures/src/plugins/Bold/Bold.tsx
+  h_2139c5e5c94509 1-14
+packages/rich-text-editor/lint-fixtures/src/plugins/Link/components/fixture.tsx
+  h_2139c5e5c94509 1-13
+packages/rich-text-editor/lint-fixtures/src/plugins/index.ts
+  h_2139c5e5c94509 1-13
+packages/rich-text-editor/lint-fixtures/src/renderer/fixture.ts
+  h_2139c5e5c94509 1-17
+packages/rich-text-editor/lint-fixtures/src/stories/Fixture.stories.tsx
+  h_2139c5e5c94509 1-19
+packages/rich-text-editor/oxfmt.config.ts
+  h_2139c5e5c94509 4,10
+packages/rich-text-editor/oxlint.config.ts
+  h_2139c5e5c94509 5,7-24,26-30,32-42,44-48,50-53,55-66,68-72,74-76,79,81-101,104,111-117,134-144,156-271,273-284,287-302,304-352
+packages/rich-text-editor/package.json
+  h_2139c5e5c94509 2-3,6-7,14-15,20-35,38,43-63,66-68,71-72,74-76,78-79,84-89
+packages/rich-text-editor/src/__tests__/documentText.spec.ts
+  h_2139c5e5c94509 1-52
+packages/rich-text-editor/src/__tests__/htmlParity.spec.tsx
+  h_2139c5e5c94509 3,5-6,9-79,82-87,89-92,94-104,106-107,109-111,113-115,117,119-133,135-138,142-153,156-157,159-160
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  h_2139c5e5c94509 1-236
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  h_2139c5e5c94509 1-230
+packages/rich-text-editor/src/__tests__/serializeToHtml.node.spec.tsx
+  h_2139c5e5c94509 1-53
+packages/rich-text-editor/src/__tests__/serializeToHtml.spec.tsx
+  h_2139c5e5c94509 1-61
+packages/rich-text-editor/src/__tests__/serverRendering.node.spec.tsx
+  h_2139c5e5c94509 1-31
+packages/rich-text-editor/src/__tests__/serverRendering.spec.tsx
+  h_2139c5e5c94509 1-31
+packages/rich-text-editor/src/__tests__/typeDerivation.spec.ts
+  h_2139c5e5c94509 1-177
+packages/rich-text-editor/src/core/commands.ts
+  h_2139c5e5c94509 1-116
+packages/rich-text-editor/src/core/document.ts
+  h_2139c5e5c94509 1-69
+packages/rich-text-editor/src/core/documentText.spec.ts
+  h_2139c5e5c94509 1-125
+packages/rich-text-editor/src/core/documentText.ts
+  h_2139c5e5c94509 1-103
+packages/rich-text-editor/src/core/htmlSpec.ts
+  h_2139c5e5c94509 1-92
+packages/rich-text-editor/src/core/index.ts
+  h_2139c5e5c94509 1-47
+packages/rich-text-editor/src/core/plugin.ts
+  h_2139c5e5c94509 1-312
+packages/rich-text-editor/src/core/registry.spec.ts
+  h_2139c5e5c94509 1-221
+packages/rich-text-editor/src/core/registry.ts
+  h_2139c5e5c94509 1-276
+packages/rich-text-editor/src/core/vocabulary.ts
+  h_2139c5e5c94509 1-32
+packages/rich-text-editor/src/documentFormat.ts
+  h_2139c5e5c94509 1-144
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  h_2139c5e5c94509 1-973
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  h_2139c5e5c94509 1-354
+packages/rich-text-editor/src/editor/components/FloatingToolbar.tsx
+  h_2139c5e5c94509 1-56
+packages/rich-text-editor/src/editor/components/SlashMenu.tsx
+  h_2139c5e5c94509 1-341
+packages/rich-text-editor/src/editor/components/Toolbar.tsx
+  h_2139c5e5c94509 1-219
+packages/rich-text-editor/src/editor/components/TurnInto.tsx
+  h_2139c5e5c94509 1-116
+packages/rich-text-editor/src/editor/components/slashMenu.module.scss
+  h_2139c5e5c94509 1-73
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.spec.tsx
+  h_2139c5e5c94509 1-100
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.spec.tsx
+  h_2139c5e5c94509 1-94
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.ts
+  h_2139c5e5c94509 1-153
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  h_2139c5e5c94509 1-632
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  h_2139c5e5c94509 1-390
+packages/rich-text-editor/src/editor/engines/prosemirror/documentConversion.spec.tsx
+  h_2139c5e5c94509 1-263
+packages/rich-text-editor/src/editor/engines/prosemirror/documentConversion.ts
+  h_2139c5e5c94509 1-317
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.spec.tsx
+  h_2139c5e5c94509 1-254
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.ts
+  h_2139c5e5c94509 1-185
+packages/rich-text-editor/src/editor/engines/prosemirror/engine.scss
+  h_2139c5e5c94509 1-84
+packages/rich-text-editor/src/editor/engines/prosemirror/htmlSpecToDom.ts
+  h_2139c5e5c94509 1-25
+packages/rich-text-editor/src/editor/engines/prosemirror/index.ts
+  h_2139c5e5c94509 3
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  h_2139c5e5c94509 1-409
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  h_2139c5e5c94509 1-319
+packages/rich-text-editor/src/editor/engines/prosemirror/lists.spec.tsx
+  h_2139c5e5c94509 1-223
+packages/rich-text-editor/src/editor/engines/prosemirror/lists.ts
+  h_2139c5e5c94509 1-195
+packages/rich-text-editor/src/editor/engines/prosemirror/nodeViews.spec.tsx
+  h_2139c5e5c94509 1-517
+packages/rich-text-editor/src/editor/engines/prosemirror/nodeViews.tsx
+  h_2139c5e5c94509 1-752
+packages/rich-text-editor/src/editor/engines/prosemirror/paste.spec.tsx
+  h_2139c5e5c94509 1-131
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteRules.ts
+  h_2139c5e5c94509 1-60
+packages/rich-text-editor/src/editor/engines/prosemirror/placeholder.ts
+  h_2139c5e5c94509 1-35
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.spec.tsx
+  h_2139c5e5c94509 1-150
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.ts
+  h_2139c5e5c94509 1-182
+packages/rich-text-editor/src/editor/engines/prosemirror/selectionRect.ts
+  h_2139c5e5c94509 1-47
+packages/rich-text-editor/src/editor/engines/prosemirror/testEditor.ts
+  h_2139c5e5c94509 1-151
+packages/rich-text-editor/src/editor/engines/prosemirror/textRules.spec.tsx
+  h_2139c5e5c94509 1-117
+packages/rich-text-editor/src/editor/engines/prosemirror/warnings.ts
+  h_2139c5e5c94509 1-22
+packages/rich-text-editor/src/editor/floatingBar.spec.tsx
+  h_2139c5e5c94509 1-376
+packages/rich-text-editor/src/editor/helpers/blockCommands.spec.ts
+  h_2139c5e5c94509 1-91
+packages/rich-text-editor/src/editor/helpers/blockCommands.ts
+  h_2139c5e5c94509 1-67
+packages/rich-text-editor/src/editor/helpers/toolbarItem.spec.ts
+  h_2139c5e5c94509 1-353
+packages/rich-text-editor/src/editor/helpers/toolbarItem.ts
+  h_2139c5e5c94509 1-79
+packages/rich-text-editor/src/editor/hooks/useEditorHandle.ts
+  h_2139c5e5c94509 1-235
+packages/rich-text-editor/src/editor/hooks/useFocusWithin.ts
+  h_2139c5e5c94509 1-36
+packages/rich-text-editor/src/editor/hooks/useMouseDrag.spec.tsx
+  h_2139c5e5c94509 1-69
+packages/rich-text-editor/src/editor/hooks/useMouseDrag.ts
+  h_2139c5e5c94509 1-40
+packages/rich-text-editor/src/editor/hooks/useSelectionAnchor.ts
+  h_2139c5e5c94509 1-42
+packages/rich-text-editor/src/editor/index.ts
+  h_2139c5e5c94509 1-5
+packages/rich-text-editor/src/editor/labels.ts
+  h_2139c5e5c94509 1-42
+packages/rich-text-editor/src/editor/port.ts
+  h_2139c5e5c94509 1-71
+packages/rich-text-editor/src/editor/richTextEditor.module.scss
+  h_2139c5e5c94509 1-79
+packages/rich-text-editor/src/index.ts
+  h_2139c5e5c94509 1-152
+packages/rich-text-editor/src/plugins/Align/Align.spec.ts
+  h_2139c5e5c94509 1-19
+packages/rich-text-editor/src/plugins/Align/Align.tsx
+  h_2139c5e5c94509 1-78
+packages/rich-text-editor/src/plugins/Align/align.module.scss
+  h_2139c5e5c94509 1-7
+packages/rich-text-editor/src/plugins/Align/index.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/src/plugins/BlurOnBreak/BlurOnBreak.tsx
+  h_2139c5e5c94509 1-22
+packages/rich-text-editor/src/plugins/BlurOnBreak/index.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/src/plugins/Bold/Bold.tsx
+  h_2139c5e5c94509 1-41
+packages/rich-text-editor/src/plugins/Bold/index.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/src/plugins/CheckList/CheckList.spec.ts
+  h_2139c5e5c94509 1-23
+packages/rich-text-editor/src/plugins/CheckList/CheckList.tsx
+  h_2139c5e5c94509 1-165
+packages/rich-text-editor/src/plugins/CheckList/checkList.module.scss
+  h_2139c5e5c94509 1-60
+packages/rich-text-editor/src/plugins/CheckList/index.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/src/plugins/Code/Code.tsx
+  h_2139c5e5c94509 1-37
+packages/rich-text-editor/src/plugins/Code/code.module.scss
+  h_2139c5e5c94509 1-11
+packages/rich-text-editor/src/plugins/Code/index.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/src/plugins/ColumnBreak/ColumnBreak.tsx
+  h_2139c5e5c94509 1-67
+packages/rich-text-editor/src/plugins/ColumnBreak/columnBreak.module.scss
+  h_2139c5e5c94509 1-19
+packages/rich-text-editor/src/plugins/ColumnBreak/index.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/src/plugins/Emoji/Emoji.spec.ts
+  h_2139c5e5c94509 1-112
+packages/rich-text-editor/src/plugins/Emoji/Emoji.tsx
+  h_2139c5e5c94509 1-69
+packages/rich-text-editor/src/plugins/Emoji/components/EmojiDraft.spec.tsx
+  h_2139c5e5c94509 1-157
+packages/rich-text-editor/src/plugins/Emoji/components/EmojiDraft.tsx
+  h_2139c5e5c94509 1-209
+packages/rich-text-editor/src/plugins/Emoji/components/EmojiPicker.spec.tsx
+  h_2139c5e5c94509 1-100
+packages/rich-text-editor/src/plugins/Emoji/components/EmojiPicker.tsx
+  h_2139c5e5c94509 1-89
+packages/rich-text-editor/src/plugins/Emoji/components/EmojiToolbarButton.tsx
+  h_2139c5e5c94509 1-69
+packages/rich-text-editor/src/plugins/Emoji/emoji.module.scss
+  h_2139c5e5c94509 1-151
+packages/rich-text-editor/src/plugins/Emoji/helpers/emojis.ts
+  h_2139c5e5c94509 1-472
+packages/rich-text-editor/src/plugins/Emoji/helpers/search.ts
+  h_2139c5e5c94509 1-70
+packages/rich-text-editor/src/plugins/Emoji/index.ts
+  h_2139c5e5c94509 1-5
+packages/rich-text-editor/src/plugins/Emoji/types.ts
+  h_2139c5e5c94509 1-15
+packages/rich-text-editor/src/plugins/FontColor/FontColor.spec.ts
+  h_2139c5e5c94509 1-32
+packages/rich-text-editor/src/plugins/FontColor/FontColor.tsx
+  h_2139c5e5c94509 1-60
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.tsx
+  h_2139c5e5c94509 1-187
+packages/rich-text-editor/src/plugins/FontColor/components/colorFlyout.module.scss
+  h_2139c5e5c94509 1-48
+packages/rich-text-editor/src/plugins/FontColor/helpers/colors.spec.ts
+  h_2139c5e5c94509 1-48
+packages/rich-text-editor/src/plugins/FontColor/helpers/colors.ts
+  h_2139c5e5c94509 1-73
+packages/rich-text-editor/src/plugins/FontColor/index.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/src/plugins/Italic/Italic.tsx
+  h_2139c5e5c94509 1-43
+packages/rich-text-editor/src/plugins/Italic/index.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/src/plugins/Link/Link.spec.ts
+  h_2139c5e5c94509 1-21
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  h_2139c5e5c94509 1-117
+packages/rich-text-editor/src/plugins/Link/_underline.scss
+  h_2139c5e5c94509 1-9
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  h_2139c5e5c94509 3-50,52-72,74-75,77-81,83-92,94,96,98-185
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.tsx
+  h_2139c5e5c94509 1-110
+packages/rich-text-editor/src/plugins/Link/components/LinkToolbarButton.tsx
+  h_2139c5e5c94509 1-89
+packages/rich-text-editor/src/plugins/Link/components/linkForm.module.scss
+  h_2139c5e5c94509 1-38
+packages/rich-text-editor/src/plugins/Link/helpers/newLinkForms.ts
+  h_2139c5e5c94509 1-23
+packages/rich-text-editor/src/plugins/Link/helpers/value.ts
+  h_2139c5e5c94509 1-4
+packages/rich-text-editor/src/plugins/Link/index.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/src/plugins/Link/link.module.scss
+  h_2139c5e5c94509 1-65
+packages/rich-text-editor/src/plugins/List/List.tsx
+  h_2139c5e5c94509 1-129
+packages/rich-text-editor/src/plugins/List/index.ts
+  h_2139c5e5c94509 1-9
+packages/rich-text-editor/src/plugins/List/list.module.scss
+  h_2139c5e5c94509 1-46
+packages/rich-text-editor/src/plugins/Mention/Mention.spec.ts
+  h_2139c5e5c94509 1-83
+packages/rich-text-editor/src/plugins/Mention/Mention.tsx
+  h_2139c5e5c94509 1-141
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.spec.tsx
+  h_2139c5e5c94509 1-143
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.tsx
+  h_2139c5e5c94509 1-267
+packages/rich-text-editor/src/plugins/Mention/components/MentionLink.tsx
+  h_2139c5e5c94509 1-61
+packages/rich-text-editor/src/plugins/Mention/index.ts
+  h_2139c5e5c94509 1-4
+packages/rich-text-editor/src/plugins/Mention/mention.module.scss
+  h_2139c5e5c94509 1-143
+packages/rich-text-editor/src/plugins/Mention/types.ts
+  h_2139c5e5c94509 1-27
+packages/rich-text-editor/src/plugins/Quote/Quote.tsx
+  h_2139c5e5c94509 1-45
+packages/rich-text-editor/src/plugins/Quote/index.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/src/plugins/Quote/quote.module.scss
+  h_2139c5e5c94509 1-8
+packages/rich-text-editor/src/plugins/ResetFormatting/ResetFormatting.tsx
+  h_2139c5e5c94509 1-34
+packages/rich-text-editor/src/plugins/ResetFormatting/index.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/src/plugins/SoftBreak/SoftBreak.tsx
+  h_2139c5e5c94509 1-23
+packages/rich-text-editor/src/plugins/SoftBreak/index.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/src/plugins/Strikethrough/Strikethrough.tsx
+  h_2139c5e5c94509 1-40
+packages/rich-text-editor/src/plugins/Strikethrough/index.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/src/plugins/Subscript/Subscript.tsx
+  h_2139c5e5c94509 1-33
+packages/rich-text-editor/src/plugins/Subscript/index.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/src/plugins/Superscript/Superscript.tsx
+  h_2139c5e5c94509 1-33
+packages/rich-text-editor/src/plugins/Superscript/index.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  h_2139c5e5c94509 1-108
+packages/rich-text-editor/src/plugins/TextStyle/components/HeadingLevelIcon.tsx
+  h_2139c5e5c94509 1-12
+packages/rich-text-editor/src/plugins/TextStyle/components/TextStyleSelect.tsx
+  h_2139c5e5c94509 1-54
+packages/rich-text-editor/src/plugins/TextStyle/components/headingLevelIcon.module.scss
+  h_2139c5e5c94509 1-13
+packages/rich-text-editor/src/plugins/TextStyle/components/textStyleSelect.module.scss
+  h_2139c5e5c94509 1-17
+packages/rich-text-editor/src/plugins/TextStyle/helpers/presets.ts
+  h_2139c5e5c94509 1-95
+packages/rich-text-editor/src/plugins/TextStyle/index.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/src/plugins/TextStyle/textStyle.module.scss
+  h_2139c5e5c94509 1-81
+packages/rich-text-editor/src/plugins/Typography/Typography.spec.ts
+  h_2139c5e5c94509 1-26
+packages/rich-text-editor/src/plugins/Typography/Typography.ts
+  h_2139c5e5c94509 1-79
+packages/rich-text-editor/src/plugins/Typography/index.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/src/plugins/Underline/Underline.tsx
+  h_2139c5e5c94509 1-37
+packages/rich-text-editor/src/plugins/Underline/index.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/src/plugins/index.ts
+  h_2139c5e5c94509 1-64
+packages/rich-text-editor/src/plugins/shared/ToolbarButton/ToolbarButton.spec.ts
+  h_2139c5e5c94509 1-18
+packages/rich-text-editor/src/plugins/shared/ToolbarButton/ToolbarButton.tsx
+  h_2139c5e5c94509 1-77
+packages/rich-text-editor/src/plugins/shared/ToolbarButton/toolbarButton.module.scss
+  h_2139c5e5c94509 1-31
+packages/rich-text-editor/src/plugins/shared/helpers/declaredStyle.ts
+  h_2139c5e5c94509 1-35
+packages/rich-text-editor/src/plugins/shared/helpers/href.spec.ts
+  h_2139c5e5c94509 1-86
+packages/rich-text-editor/src/plugins/shared/helpers/href.ts
+  h_2139c5e5c94509 3-4,7-9,11,13-14,16-17,19-24,26-34,36-37,40-41,43,45-47,49-61,63-64,66-69,71-75,77-78,80-81
+packages/rich-text-editor/src/plugins/shared/hooks/useAnchoredPosition.ts
+  h_2139c5e5c94509 1-44
+packages/rich-text-editor/src/plugins/shared/hooks/useFocusAfterClose.ts
+  h_2139c5e5c94509 1-39
+packages/rich-text-editor/src/renderer/RichTextRenderer.tsx
+  h_2139c5e5c94509 1-57
+packages/rich-text-editor/src/renderer/document.module.scss
+  h_2139c5e5c94509 1-59
+packages/rich-text-editor/src/renderer/documentTree.ts
+  h_2139c5e5c94509 1-280
+packages/rich-text-editor/src/renderer/index.ts
+  h_2139c5e5c94509 1-4
+packages/rich-text-editor/src/renderer/serializeToHtml.ts
+  h_2139c5e5c94509 1-40
+packages/rich-text-editor/src/renderer/toHtmlString.ts
+  h_2139c5e5c94509 1-65
+packages/rich-text-editor/src/renderer/toReact.ts
+  h_2139c5e5c94509 1-77
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  h_2139c5e5c94509 1-1152
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  h_2139c5e5c94509 1-723
+packages/rich-text-editor/src/vite-env.d.ts
+  h_2139c5e5c94509 1-3
+packages/rich-text-editor/tailwind.config.ts
+  h_2139c5e5c94509 1-19
+packages/rich-text-editor/tsconfig.json
+  h_2139c5e5c94509 6,23
+packages/rich-text-editor/tsconfig.node.json
+  h_2139c5e5c94509 3,11,13-16,18-26
+packages/rich-text-editor/vite.config.ts
+  h_2139c5e5c94509 3-6,12,14,29,39-65,68,71-75,79-106,109-110
+pnpm-lock.yaml
+  h_2139c5e5c94509 80,92,95,107,116,143,191,194,197,200,282,297,300,336,423,426,586,722,833-857,859-867,873-879,882-891,895-900,913-930,1174,1358,8564-8566,8925-8951,9279-9281,10137-10139,10379,10412,10418,10425,10433,10447,10454,10464,10476,10479,10486,10489,10495,10509,10526,10528,10535,10541,10551,10553,10560,10565,10571,10577,10583,10589,10595,10600,10606,10612,10618,10624,10629,10635,10641,10647,10653,10659,10665,10671,10677,10682,10689,10695,10698,10705,10715,10721,10727,10735,10744,10750,10757,10764,10766,10773,10780,10786,10792,10798,10804,10810,10819,10822,10829,10835,10841,10847,10853,10862,10870,10874,10881,10890,10897,10903,10908,10914,10919,10926,10935,10941,10949,10955,10963,10973,10979,10984,10989,10995,11001,11007,11016,11022,11028,11034,11045,11051,11058,11065,11073,11160,11167,11175,11186,11201,12117,12121,12128,12137,12291,12308,14070,14074,14078,14082,14086,14090,14094,14098,14102,14114,14129,14448,14458,14496,14519,14536,15245-15246,15257-15258,15560,15569,15578,16423,16500,16832,17465,17487,18327,18531-18532,18926-18974,19061,19352-19353,20277-20278
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "047b3ecf217e8810932ae7bf33f7db49426e5b6f",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
