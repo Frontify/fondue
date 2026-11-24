@@ -1,5 +1,35 @@
 # @frontify/fondue
 
+## 14.0.0-rc.2
+
+### Minor Changes
+
+- [#3084](https://github.com/Frontify/fondue/pull/3084) [`4f5626d`](https://github.com/Frontify/fondue/commit/4f5626d9639b4a81558c0c92119cddf1af566791) Thanks [@mikeyrayvon](https://github.com/mikeyrayvon)! - feat(RadioList): add a `pill` variant. `RadioList.Root variant="pill"` renders each `RadioList.RadioButton` as a pill with its children inside and a checkmark when selected. `RadioList.RadioButton` now renders its children.
+
+  ```tsx
+  <RadioList.Root
+    variant="pill"
+    aria-label="Page size"
+    value={size}
+    onValueChange={setSize}
+  >
+    <RadioList.RadioButton id="a4" value="a4">
+      A4 <Badge size="small">12</Badge>
+    </RadioList.RadioButton>
+    <RadioList.RadioButton id="letter" value="letter">
+      Letter
+    </RadioList.RadioButton>
+  </RadioList.Root>
+  ```
+
+### Patch Changes
+
+- Updated dependencies [[`5af8952`](https://github.com/Frontify/fondue/commit/5af89527bc62b334a7b4d2a92dea9ab65b077faa), [`697f5ad`](https://github.com/Frontify/fondue/commit/697f5ad3ed29ebd9e8338039707a4de9888f7ac0), [`66a61e2`](https://github.com/Frontify/fondue/commit/66a61e2dbe2ec6b11b8e55f2aeda4cf48c8b1007), [`e90d1bf`](https://github.com/Frontify/fondue/commit/e90d1bf5928b85014c35b825a216651b4ecfb85f), [`ab677bc`](https://github.com/Frontify/fondue/commit/ab677bc458458f81ed256d1367334fa1d30e2798), [`13a5be5`](https://github.com/Frontify/fondue/commit/13a5be559ec82d81270617911daa77676a634aed), [`a541057`](https://github.com/Frontify/fondue/commit/a541057c61d9e9803a21c9d4b89041a7f547af99), [`fd30c44`](https://github.com/Frontify/fondue/commit/fd30c4450cfb77bfa0c063e28bb1e1cd6df8e78d), [`e737498`](https://github.com/Frontify/fondue/commit/e737498f217159d8e83fc0860e1d7469012f8dd1), [`4f5626d`](https://github.com/Frontify/fondue/commit/4f5626d9639b4a81558c0c92119cddf1af566791), [`487d311`](https://github.com/Frontify/fondue/commit/487d3112e14537e077895a744feacb2138b69032), [`c071e21`](https://github.com/Frontify/fondue/commit/c071e2108b19b31e49dea5c3950fb9d79d2c1901), [`5e6a0da`](https://github.com/Frontify/fondue/commit/5e6a0dabbda7e64bf9e4e677902861743d74ede2), [`7e8cab8`](https://github.com/Frontify/fondue/commit/7e8cab85503ef706b46ede4c1b72e344736d097c), [`8d5be35`](https://github.com/Frontify/fondue/commit/8d5be35210180c9ba62519d93b052be122a4a98c), [`ff01a22`](https://github.com/Frontify/fondue/commit/ff01a2248dcecf7ab0ebfe8b57aa6452076807c7), [`c95ae86`](https://github.com/Frontify/fondue/commit/c95ae86188922942674fbc382981c39f81a6ccd3), [`1ccf04f`](https://github.com/Frontify/fondue/commit/1ccf04f4f42846da6403f526c2e9aee2ab8d8239), [`a6217b1`](https://github.com/Frontify/fondue/commit/a6217b17481a20eaf530aee759fe4bcfc21ad42a), [`a6693d1`](https://github.com/Frontify/fondue/commit/a6693d18439060546fed779248e303b26942af1b), [`c818a03`](https://github.com/Frontify/fondue/commit/c818a0336a7b15407302f682552e9a4cf45967f4), [`3693a48`](https://github.com/Frontify/fondue/commit/3693a48b6d54182e4a857123588b1c5a3bfd429d), [`2809824`](https://github.com/Frontify/fondue/commit/2809824f273f4cbd1c4d8b109429076aaf4a3723), [`3693a48`](https://github.com/Frontify/fondue/commit/3693a48b6d54182e4a857123588b1c5a3bfd429d), [`a0fe11f`](https://github.com/Frontify/fondue/commit/a0fe11fdda122bceef518d3f76cc7c930b1328b0)]:
+  - @frontify/fondue-rich-text-editor@0.1.0-rc.2
+  - @frontify/fondue-tokens@6.0.0-rc.1
+  - @frontify/fondue-components@37.0.0-rc.2
+  - @frontify/fondue-sdk@1.0.0-rc.2
+
 ## 14.0.0-rc.1
 
 ### Patch Changes
