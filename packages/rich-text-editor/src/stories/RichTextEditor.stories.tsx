@@ -681,8 +681,10 @@ export const CrashFallback: Story = {
 
 /**
  * The document is controlled from outside: the buttons replace the editor
- * content through the `value` prop. The literals they pass need no annotation
- * — `setDoc` supplies the type.
+ * content through the `value` prop. A literal passed straight to `setDoc`
+ * needs no annotation, and one kept in a variable takes `RteDocument`. Save
+ * keeps the document as it stands, and Cancel hands the saved one back, the
+ * way a host discards an edit.
  */
 export const ControlledValue: Story = {
     render: () => {
@@ -699,6 +701,7 @@ export const ControlledValue: Story = {
                 },
             ],
         });
+        const [saved, setSaved] = useState(doc);
 
         return (
             <div className={LAYOUT}>
@@ -706,8 +709,8 @@ export const ControlledValue: Story = {
                     <button
                         type="button"
                         className={buttonClasses(false)}
-                        onClick={() =>
-                            setDoc({
+                        onClick={() => {
+                            const sample: RteDocument = {
                                 version: 1,
                                 blocks: [
                                     {
@@ -724,10 +727,18 @@ export const ControlledValue: Story = {
                                         ],
                                     },
                                 ],
-                            })
-                        }
+                            };
+                            setDoc(sample);
+                            setSaved(sample);
+                        }}
                     >
                         Load sample
+                    </button>
+                    <button type="button" className={buttonClasses(false)} onClick={() => setSaved(doc)}>
+                        Save
+                    </button>
+                    <button type="button" className={buttonClasses(false)} onClick={() => setDoc(saved)}>
+                        Cancel
                     </button>
                     <button
                         type="button"
