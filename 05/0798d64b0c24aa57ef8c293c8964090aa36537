@@ -1,0 +1,19 @@
+.changeset/feat-rte-mention-names.md
+  s_a585d10f570924::t_dad0b586303c86 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "050798d64b0c24aa57ef8c293c8964090aa36537",
+  "prompts": {},
+  "sessions": {
+    "s_a585d10f570924": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12fffd99-7ec0-43c7-a09b-65001cf93f56",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.spec.tsx
+  s_f14f850d92b8d2::t_e477cff8b57436 372,380-395
+  s_f14f850d92b8d2::t_21db1a343fcdcc 373-375,377
+  s_f14f850d92b8d2::t_5e5fe673e7b928 376,378-379
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.tsx
+  s_f14f850d92b8d2::t_03bb8d46809091 117-122
+  s_f14f850d92b8d2::t_bb34e76c3f5ea1 77-78
+  s_f14f850d92b8d2::t_1fdf9a4f27f38e 217
+  s_f14f850d92b8d2::t_f42ac0fb28fba3 218-219,221-225
+  s_f14f850d92b8d2::t_64d0c724e4d5e9 144
+  s_f14f850d92b8d2::t_298845d7ac255b 113-116
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ce88ec161f09f9b18b2e087ccc0864bb4f4eee1a",
+  "prompts": {},
+  "sessions": {
+    "s_f14f850d92b8d2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b6405031-b112-4a5e-8b9d-72a1169049db",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

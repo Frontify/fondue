@@ -1,0 +1,22 @@
+packages/rich-text-editor/src/docs/keyboardReference.module.scss
+  s_3da29b36b0ad36::t_0efacb7ee7b068 3,5-6,11-12,21-22
+  s_3da29b36b0ad36::t_9a51c44b93bfe9 23-24
+packages/rich-text-editor/src/docs/PluginKeyboardReference.tsx
+  s_3da29b36b0ad36::t_635d37195bd080 11-13,46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c96cebcbcaf33bfa9eaecbd0a6775d9a2e038f61",
+  "prompts": {},
+  "sessions": {
+    "s_3da29b36b0ad36": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52275dbb-cfd4-472c-b295-02ca60ef0ab1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

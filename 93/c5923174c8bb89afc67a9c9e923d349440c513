@@ -1,0 +1,59 @@
+packages/rich-text-editor/playwright/index.tsx
+  s_fdaaa509e11bd7::t_61872c59f359c2 1-14
+packages/rich-text-editor/tsconfig.node.json
+  s_fdaaa509e11bd7::t_61872c59f359c2 24
+packages/rich-text-editor/package.json
+  s_fdaaa509e11bd7::t_61872c59f359c2 41,47-48,70,76-77
+packages/rich-text-editor/.gitignore
+  s_fdaaa509e11bd7::t_61872c59f359c2 3-6
+packages/rich-text-editor/tsconfig.json
+  s_fdaaa509e11bd7::t_61872c59f359c2 23
+packages/rich-text-editor/playwright.config.ts
+  s_fdaaa509e11bd7::t_61872c59f359c2 1-26
+.changeset/rte-browser-tests.md
+  s_fdaaa509e11bd7::t_61872c59f359c2 1-4
+packages/components/src/components/Tree/styles/tree.module.scss
+  s_fdaaa509e11bd7::t_61872c59f359c2 66
+packages/rich-text-editor/src/__tests__/browser/editor.ct.tsx
+  s_fdaaa509e11bd7::t_61872c59f359c2 1-126
+packages/components/src/components/Select/styles/select.module.scss
+  s_fdaaa509e11bd7::t_61872c59f359c2 263-265
+.changeset/tree-item-min-width.md
+  s_fdaaa509e11bd7::t_61872c59f359c2 1-5
+packages/components/src/components/Tree/components/TreeRow.ct.tsx
+  s_fdaaa509e11bd7::t_61872c59f359c2 136-162
+packages/rich-text-editor/playwright/index.html
+  s_fdaaa509e11bd7::t_61872c59f359c2 1-12
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_fdaaa509e11bd7::t_0e961d5e66860b 18,48
+  s_fdaaa509e11bd7::t_61872c59f359c2 22-29,42-43,78-112,186-227,285-287,291,344,350-351,354,396-397
+.github/workflows/rich-text-editor-pull-requests.yaml
+  s_fdaaa509e11bd7::t_61872c59f359c2 83-108
+.changeset/select-menu-list-reset.md
+  s_fdaaa509e11bd7::t_61872c59f359c2 1-5
+packages/rich-text-editor/src/__tests__/browser/composition.ct.tsx
+  s_fdaaa509e11bd7::t_61872c59f359c2 1-168
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_fdaaa509e11bd7::t_61872c59f359c2 27-34,37,211-238,390-424
+  s_fdaaa509e11bd7::t_25650520357a68 425-426
+packages/rich-text-editor/vite.config.ts
+  s_fdaaa509e11bd7::t_61872c59f359c2 75
+pnpm-lock.yaml
+  s_fdaaa509e11bd7::t_24e500e1116841 772-774,790-795,1480-1485,6160-6163,10407-10411,12926-12943,12963-12981,15658-15659
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "93c5923174c8bb89afc67a9c9e923d349440c513",
+  "prompts": {},
+  "sessions": {
+    "s_fdaaa509e11bd7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a7a2498e-e7d3-4103-bd6f-0be3ec74e476",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

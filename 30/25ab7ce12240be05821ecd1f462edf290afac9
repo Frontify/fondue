@@ -1,0 +1,19 @@
+packages/rich-text-editor/src/__tests__/rendererBundle.spec.ts
+  s_53de767222940a::t_2cd38e37adeef8 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3025ab7ce12240be05821ecd1f462edf290afac9",
+  "prompts": {},
+  "sessions": {
+    "s_53de767222940a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f9b7337-8455-4b7f-ac95-dde194f54be3",
+        "model": "unknown"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
