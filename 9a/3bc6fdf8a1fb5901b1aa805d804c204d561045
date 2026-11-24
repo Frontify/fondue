@@ -1,0 +1,56 @@
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.tsx
+  s_f829710935f5ae::t_3390e303ad3ac0 8,38
+  s_f829710935f5ae::t_a31c3fef0cbbb6 177-178
+packages/rich-text-editor/src/plugins/FontColor/components/colorFlyout.module.scss
+  s_f829710935f5ae::t_28fb85e7a17138 35-47
+packages/rich-text-editor/src/plugins/Link/components/LinkToolbarButton.tsx
+  s_f829710935f5ae::t_80507454149a1a 69-73,88
+packages/rich-text-editor/src/plugins/TextStyle/helpers/presets.ts
+  s_f829710935f5ae::t_3390e303ad3ac0 4,42,69
+packages/rich-text-editor/src/plugins/Emoji/components/EmojiPicker.spec.tsx
+  s_f829710935f5ae::t_f6c1143bfbbf7f 70-77
+packages/rich-text-editor/src/plugins/Align/Align.tsx
+  s_f829710935f5ae::t_3390e303ad3ac0 12,52
+packages/rich-text-editor/src/plugins/Emoji/components/EmojiPicker.tsx
+  s_f829710935f5ae::t_bbd2f26a81d79a 69-72
+packages/rich-text-editor/src/ui/translation.ts
+  s_f829710935f5ae::t_6faa967459cacb 71
+  s_f829710935f5ae::t_9f711e9acae56f 7-17,20-23,29-33
+  s_f829710935f5ae::t_06c96c9cc253f0 40
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.spec.tsx
+  s_f829710935f5ae::t_34e516f0ba6468 236-241
+packages/rich-text-editor/src/plugins/Table/components/TableMenu.tsx
+  s_f829710935f5ae::t_80507454149a1a 32-92
+  s_f829710935f5ae::t_3390e303ad3ac0 8,16
+packages/rich-text-editor/src/locales/en-US.ts
+  s_f829710935f5ae::t_3c485d69d78c9e 107
+packages/rich-text-editor/src/locales/types.ts
+  s_f829710935f5ae::t_0680d0268a0512 5-8,10-18,20-23
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_f829710935f5ae::t_b7216ee7a61993 123-132,150,162,203
+packages/rich-text-editor/src/ui/translation.spec.ts
+  s_f829710935f5ae::t_6faa967459cacb 47
+  s_f829710935f5ae::t_61ec84ff0d42a3 20-23
+packages/rich-text-editor/src/editor/components/SlashMenu.tsx
+  s_f829710935f5ae::t_3390e303ad3ac0 10,24
+packages/rich-text-editor/src/editor/components/TurnInto.tsx
+  s_f829710935f5ae::t_80507454149a1a 85-89,94
+packages/rich-text-editor/src/plugins/Link/helpers/appearance.ts
+  s_f829710935f5ae::t_3390e303ad3ac0 4,10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9a3bc6fdf8a1fb5901b1aa805d804c204d561045",
+  "prompts": {},
+  "sessions": {
+    "s_f829710935f5ae": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ca429fc0-99d9-4a17-ab47-22e5f376ecf5",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

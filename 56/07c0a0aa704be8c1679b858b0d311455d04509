@@ -1,0 +1,100 @@
+packages/rich-text-editor/src/plugins/BlurOnBreak/BlurOnBreak.tsx
+  s_5d96399366c7b7::t_c969315e84717b 12-13,24
+  s_5d96399366c7b7::t_190fe4dd070e32 14-22
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_5d96399366c7b7::t_2edd94bb64db9f 189,215,239,263,291,315,339,363,391,423,452,496,531,565,673-681,711,739,811,1017,1091
+  s_5d96399366c7b7::t_190fe4dd070e32 782-788
+packages/rich-text-editor/src/plugins/Align/Align.spec.ts
+  s_5d96399366c7b7::t_2edd94bb64db9f 7
+packages/rich-text-editor/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_5d96399366c7b7::t_c969315e84717b 34-35,39
+  s_5d96399366c7b7::t_190fe4dd070e32 36-38
+packages/rich-text-editor/src/plugins/FontColor/FontColor.spec.ts
+  s_5d96399366c7b7::t_2edd94bb64db9f 11
+packages/rich-text-editor/src/plugins/SoftBreak/SoftBreak.tsx
+  s_5d96399366c7b7::t_c969315e84717b 25-26,30
+  s_5d96399366c7b7::t_190fe4dd070e32 27-29
+packages/rich-text-editor/src/plugins/FontColor/FontColor.tsx
+  s_5d96399366c7b7::t_190fe4dd070e32 65-68
+  s_5d96399366c7b7::t_c969315e84717b 63-64,69
+packages/rich-text-editor/src/__tests__/browser/HostNoHeadingsPair.tsx
+  s_5d96399366c7b7::t_190fe4dd070e32 24-30
+packages/rich-text-editor/src/plugins/List/List.ts
+  s_5d96399366c7b7::t_c969315e84717b 175-176,185,190-191,200
+  s_5d96399366c7b7::t_190fe4dd070e32 177-184,192-199
+packages/rich-text-editor/src/plugins/Bold/Bold.ts
+  s_5d96399366c7b7::t_190fe4dd070e32 44-48
+  s_5d96399366c7b7::t_c969315e84717b 42-43,49
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_5d96399366c7b7::t_2edd94bb64db9f 129,149,158
+packages/rich-text-editor/src/plugins/CheckList/CheckList.tsx
+  s_5d96399366c7b7::t_c969315e84717b 179-180,202
+  s_5d96399366c7b7::t_190fe4dd070e32 181-201
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_5d96399366c7b7::t_c969315e84717b 106-107,136
+  s_5d96399366c7b7::t_190fe4dd070e32 108-135
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_5d96399366c7b7::t_2edd94bb64db9f 133,814,1325,1499,2475,2664
+packages/rich-text-editor/src/plugins/Quote/Quote.ts
+  s_5d96399366c7b7::t_190fe4dd070e32 35-38
+  s_5d96399366c7b7::t_c969315e84717b 33-34,39
+packages/rich-text-editor/src/plugins/Strikethrough/Strikethrough.ts
+  s_5d96399366c7b7::t_190fe4dd070e32 37-40
+  s_5d96399366c7b7::t_c969315e84717b 35-36,41
+packages/rich-text-editor/src/plugins/Code/Code.ts
+  s_5d96399366c7b7::t_c969315e84717b 38-39,44
+  s_5d96399366c7b7::t_190fe4dd070e32 40-43
+packages/rich-text-editor/src/plugins/Subscript/Subscript.ts
+  s_5d96399366c7b7::t_c969315e84717b 39-40,44
+  s_5d96399366c7b7::t_190fe4dd070e32 41-43
+packages/rich-text-editor/src/plugins/Underline/Underline.ts
+  s_5d96399366c7b7::t_c969315e84717b 35-36,40
+  s_5d96399366c7b7::t_190fe4dd070e32 37-39
+packages/rich-text-editor/src/plugins/Link/Link.spec.ts
+  s_5d96399366c7b7::t_2edd94bb64db9f 7
+packages/rich-text-editor/src/plugins/Align/Align.tsx
+  s_5d96399366c7b7::t_c969315e84717b 95-96,101
+  s_5d96399366c7b7::t_190fe4dd070e32 97-100
+packages/rich-text-editor/src/plugins/History/History.tsx
+  s_5d96399366c7b7::t_c969315e84717b 35-36,43
+  s_5d96399366c7b7::t_190fe4dd070e32 37-42
+packages/rich-text-editor/README.md
+  s_5d96399366c7b7::t_095ff0d6c9b07a 28-32,39-40,43,45
+  s_5d96399366c7b7::t_65ead04ef4f06e 41-42
+.changeset/rte-plugins-all-factories.md
+  s_5d96399366c7b7::t_241e40184bbe5b 1-5
+packages/rich-text-editor/src/__tests__/browser/HostLooksPair.tsx
+  s_5d96399366c7b7::t_2edd94bb64db9f 35-39
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_5d96399366c7b7::t_2edd94bb64db9f 704-706,824,909-912,1040
+packages/rich-text-editor/src/core/plugin.ts
+  s_5d96399366c7b7::t_65ead04ef4f06e 134-139
+packages/rich-text-editor/src/plugins/index.ts
+  s_5d96399366c7b7::t_2edd94bb64db9f 38,40-54,58
+packages/rich-text-editor/src/plugins/Superscript/Superscript.ts
+  s_5d96399366c7b7::t_190fe4dd070e32 41-43
+  s_5d96399366c7b7::t_c969315e84717b 39-40,44
+packages/rich-text-editor/src/plugins/Italic/Italic.ts
+  s_5d96399366c7b7::t_c969315e84717b 40-41,47
+  s_5d96399366c7b7::t_190fe4dd070e32 42-46
+packages/rich-text-editor/src/__tests__/formatRegression.spec.tsx
+  s_5d96399366c7b7::t_2edd94bb64db9f 33
+packages/rich-text-editor/src/plugins/defaultContent.ts
+  s_5d96399366c7b7::t_65ead04ef4f06e 21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "5607c0a0aa704be8c1679b858b0d311455d04509",
+  "prompts": {},
+  "sessions": {
+    "s_5d96399366c7b7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "15c1c6b4-51ea-4de7-ba7e-f0cf43ee78d1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

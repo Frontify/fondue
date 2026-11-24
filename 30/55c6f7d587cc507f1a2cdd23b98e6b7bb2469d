@@ -1,0 +1,91 @@
+packages/rich-text-editor/src/__tests__/browser/documentSpacing.ct.tsx
+  s_db1d4607d5e58e::t_d9369c1ee4c053 1-61,63-95,97-148
+  s_db1d4607d5e58e::t_d435f629953286 62,96
+packages/rich-text-editor/src/renderer/inlineLooks.spec.ts
+  s_db1d4607d5e58e::t_b752d8735f0ba9 64-67,112,122
+  s_db1d4607d5e58e::t_8a9a090a484fd3 5-12,28-43,129-130,132-134,137-138,145,151-152,155-171,176-194,197,199,202,205-206,212
+  s_db1d4607d5e58e::t_51fee8f3d63ca0 140-143
+  s_db1d4607d5e58e::t_c15718aef48aa5 139
+packages/rich-text-editor/src/plugins/Paragraph/Paragraph.ts
+  s_db1d4607d5e58e::t_09a2d21addbe46 3-12,33
+packages/rich-text-editor/src/__tests__/browser/ExportedLooksPair.tsx
+  s_db1d4607d5e58e::t_dcc73ac9e9e91c 3
+  s_db1d4607d5e58e::t_1b536e1db3327d 5,27
+  s_db1d4607d5e58e::t_a8742d2082db59 22-26,28,31-32,36-37
+packages/rich-text-editor/src/plugins/CheckList/CheckList.tsx
+  s_db1d4607d5e58e::t_f8d5665c4462a5 111
+packages/rich-text-editor/src/__tests__/browser/documentSpacingValues.ts
+  s_db1d4607d5e58e::t_01bcf573a202e0 3,19-21,26
+  s_db1d4607d5e58e::t_1b536e1db3327d 22-25
+  s_db1d4607d5e58e::t_0a9d80015c4141 1-2,4-18,27-91
+packages/rich-text-editor/src/core/documentContract.ts
+  s_db1d4607d5e58e::t_cc4ef369053a24 14-18,27-31
+  s_db1d4607d5e58e::t_5642050f54369c 32
+packages/rich-text-editor/src/core/index.ts
+  s_db1d4607d5e58e::t_fad92e703d83bd 23-44,48,82-83
+packages/rich-text-editor/src/renderer/document.module.scss
+  s_db1d4607d5e58e::t_e49e1fada520a4 34-38,40-45,51-55,58-59,61
+packages/rich-text-editor/src/__tests__/childSpacing.spec.ts
+  s_db1d4607d5e58e::t_aade7f7c04c142 1-21,23-78,80-98
+  s_db1d4607d5e58e::t_2082d11c6432e6 22,79
+packages/rich-text-editor/src/plugins/TextStyle/textStyle.module.scss
+  s_db1d4607d5e58e::t_e49e1fada520a4 11-12
+packages/rich-text-editor/src/core/htmlSpec.ts
+  s_db1d4607d5e58e::t_cc4ef369053a24 97-135
+packages/rich-text-editor/src/core/plugin.ts
+  s_db1d4607d5e58e::t_cc4ef369053a24 58,288-292,309-313
+  s_db1d4607d5e58e::t_946a9f30b2e44f 314
+.changeset/rte-structure-spacing.md
+  s_db1d4607d5e58e::t_f9e7d209b4a3a3 1-5
+packages/rich-text-editor/src/core/registry.ts
+  s_db1d4607d5e58e::t_fad92e703d83bd 10-11,16,696-729,733-734,756-759
+packages/rich-text-editor/src/__tests__/documentContract.spec.ts
+  s_db1d4607d5e58e::t_7fd086b1f0bcf1 9-10,17-24,31-32,50-63
+  s_db1d4607d5e58e::t_f637456f325df9 64
+packages/rich-text-editor/src/__tests__/serializeToHtml.node.spec.tsx
+  s_db1d4607d5e58e::t_85894c4c5d9fba 158-160
+  s_db1d4607d5e58e::t_f752b6598841db 170,174-175
+  s_db1d4607d5e58e::t_c967e428e6592c 13
+packages/rich-text-editor/src/renderer/inlineLooks.ts
+  s_db1d4607d5e58e::t_0a1a50c712c73e 6-14,20,23-27,29,31,36-45,49-50,52,54-55,58,62-67,70-78,97-102,115,120,124,127,129,133-136,139,154-157,164,170
+packages/rich-text-editor/src/plugins/ColumnBreak/ColumnBreak.ts
+  s_db1d4607d5e58e::t_f8d5665c4462a5 36-37
+packages/rich-text-editor/src/__tests__/browser/HostLooksPair.tsx
+  s_db1d4607d5e58e::t_1b536e1db3327d 5-6,16
+  s_db1d4607d5e58e::t_dcc73ac9e9e91c 3
+packages/rich-text-editor/src/plugins/List/List.ts
+  s_db1d4607d5e58e::t_f8d5665c4462a5 46
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_db1d4607d5e58e::t_09a2d21addbe46 9,95
+packages/rich-text-editor/src/plugins/Quote/Quote.ts
+  s_db1d4607d5e58e::t_09a2d21addbe46 9,53
+packages/rich-text-editor/src/core/look.ts
+  s_db1d4607d5e58e::t_fad92e703d83bd 3,39-46
+  s_db1d4607d5e58e::t_cfb65abfb390df 47
+packages/rich-text-editor/src/plugins/TextStyle/helpers/presets.ts
+  s_db1d4607d5e58e::t_09a2d21addbe46 3-10,15-21,30-31
+packages/rich-text-editor/src/editor/engines/prosemirror/nodeViews.tsx
+  s_db1d4607d5e58e::t_a3d92bec834b6b 21,389-392
+packages/rich-text-editor/src/plugins/TextStyle/helpers/headingGap.spec.ts
+  s_db1d4607d5e58e::t_7fd086b1f0bcf1 33
+  s_db1d4607d5e58e::t_106726ac6230c0 10-11,17,31-32,34
+packages/rich-text-editor/src/renderer/documentTree.ts
+  s_db1d4607d5e58e::t_7865b78ba32dda 14,17,258-270,277-278,298-303
+  s_db1d4607d5e58e::t_51fee8f3d63ca0 271-276,304
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3055c6f7d587cc507f1a2cdd23b98e6b7bb2469d",
+  "prompts": {},
+  "sessions": {
+    "s_db1d4607d5e58e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1084a074-7586-420c-8797-a9dbcd3c7659",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

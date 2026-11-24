@@ -1,0 +1,19 @@
+packages/rich-text-editor/src/editor/parseHtml.ts
+  s_043757b46ab933::t_6349845dd5c750 22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9763d4fde704c0dd16e7b927fcfaa1fc29a9eb18",
+  "prompts": {},
+  "sessions": {
+    "s_043757b46ab933": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "94bc10c4-bd0a-46f6-8835-e414eca06e4f",
+        "model": "unknown"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
