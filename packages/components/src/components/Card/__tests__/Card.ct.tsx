@@ -3,6 +3,8 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator } from '@playwright/test';
 
+import { resolveToken } from '#/testutils/resolveToken';
+
 import { Dropdown } from '../../Dropdown/Dropdown';
 import { RouterProvider } from '../../RouterProvider/RouterProvider';
 import { Card } from '../Card';
@@ -12,34 +14,10 @@ const CARD_TEST_ID = 'test-card';
 // 1x1 transparent gif, so the image element lays out without a network request.
 const TRANSPARENT_GIF = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 
-// Resolves a CSS custom property to its computed value (e.g. a token color or
-// spacing length) using a throwaway probe element, mirroring readBorder below.
-const resolveToken = (locator: Locator, property: 'color' | 'width', cssVariable: string) =>
-    locator.evaluate(
-        (_element, { property, cssVariable }) => {
-            const probe = document.createElement('span');
-            probe.style.setProperty(property, `var(${cssVariable})`);
-            document.body.append(probe);
-            const value = getComputedStyle(probe).getPropertyValue(property);
-            probe.remove();
-            return value;
-        },
-        { property, cssVariable },
-    );
-
-const readBorder = (card: Locator) =>
-    card.evaluate((element: Element) => {
-        const probe = document.createElement('span');
-        probe.style.color = 'var(--color-line-strong)';
-        document.body.append(probe);
-        const expectedColor = getComputedStyle(probe).color;
-        probe.remove();
-
-        return {
-            boxShadow: getComputedStyle(element, '::after').boxShadow,
-            expectedColor,
-        };
-    });
+const readBorder = async (card: Locator) => ({
+    boxShadow: await card.evaluate((element: Element) => getComputedStyle(element, '::after').boxShadow),
+    expectedColor: await resolveToken(card, '--color-line-strong'),
+});
 
 test('should render the border on the selected state', async ({ mount }) => {
     const wrapper = await mount(
@@ -123,7 +101,7 @@ test('should keep the checkbox and its check mark in place when the card gets se
     const component = await mount(selectableCard(false));
     const card = page.getByTestId(CARD_TEST_ID);
     const checkbox = card.getByRole('button', { name: 'Select' });
-    const expectedBorderWidth = await resolveToken(card, 'width', '--border-width-default');
+    const expectedBorderWidth = await resolveToken(card, '--border-width-default', 'width');
     await card.hover();
 
     const unselected = await readCheckboxGeometry(checkbox);
@@ -139,7 +117,7 @@ test('should keep the checkbox and its check mark in place when the card gets se
 test('should colour the selected checkbox border like its fill', async ({ mount, page }) => {
     await mount(selectableCard(true));
     const checkbox = page.getByTestId(CARD_TEST_ID).getByRole('button', { name: 'Deselect' });
-    const expectedColor = await resolveToken(checkbox, 'color', '--color-primary-default');
+    const expectedColor = await resolveToken(checkbox, '--color-primary-default');
 
     await expect(checkbox).toHaveCSS('background-color', expectedColor);
     await expect(checkbox).toHaveCSS('border-top-color', expectedColor);
@@ -162,7 +140,7 @@ test('should apply inner padding to a padded banner image', async ({ mount }) =>
     const image = wrapper.getByTestId('banner-image');
 
     // `medium` maps to --spacing-large (24px) by value, not the same-named token.
-    const expectedPadding = await resolveToken(image, 'width', '--spacing-large');
+    const expectedPadding = await resolveToken(image, '--spacing-large', 'width');
     expect(await image.evaluate((element) => getComputedStyle(element).paddingTop)).toBe(expectedPadding);
     expect(await image.evaluate((element) => getComputedStyle(element).objectFit)).toBe('contain');
 });
@@ -180,8 +158,8 @@ test('should render the inverted banner tone with a dark background and light ic
     const banner = wrapper.getByTestId('banner');
     const icon = wrapper.getByTestId('banner-icon');
 
-    const expectedBackground = await resolveToken(banner, 'color', '--color-primary-default');
-    const expectedIconColor = await resolveToken(icon, 'color', '--color-primary-on-primary');
+    const expectedBackground = await resolveToken(banner, '--color-primary-default');
+    const expectedIconColor = await resolveToken(icon, '--color-primary-on-primary');
 
     expect(await banner.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe(expectedBackground);
     expect(await icon.evaluate((element) => getComputedStyle(element).color)).toBe(expectedIconColor);
@@ -200,7 +178,7 @@ test('should keep the dim banner tone on hover instead of the implicit shift', a
         </RouterProvider>,
     );
     const banner = wrapper.getByTestId('banner');
-    const expectedDim = await resolveToken(banner, 'color', '--color-surface-dim');
+    const expectedDim = await resolveToken(banner, '--color-surface-dim');
 
     await wrapper.getByTestId(CARD_TEST_ID).hover();
 
@@ -222,7 +200,7 @@ test('should still shift an un-toned banner background on hover', async ({ mount
         </RouterProvider>,
     );
     const banner = wrapper.getByTestId('banner');
-    const expectedHover = await resolveToken(banner, 'color', '--color-surface-hover');
+    const expectedHover = await resolveToken(banner, '--color-surface-hover');
 
     await wrapper.getByTestId(CARD_TEST_ID).hover();
 
@@ -271,8 +249,8 @@ test('should fade the hover tint in on hover and out on leave', async ({ mount, 
         </RouterProvider>,
     );
     const card = wrapper.getByTestId(CARD_TEST_ID);
-    const expectedHover = await resolveToken(card, 'color', '--color-surface-hover');
-    const expectedDefault = await resolveToken(card, 'color', '--color-surface-default');
+    const expectedHover = await resolveToken(card, '--color-surface-hover');
+    const expectedDefault = await resolveToken(card, '--color-surface-default');
     expect(await readHoverOpacity(card)).toBe('0');
 
     await card.hover();
@@ -292,7 +270,7 @@ test('should show the pressed tint while the card is pressed', async ({ mount, p
         </RouterProvider>,
     );
     const card = wrapper.getByTestId(CARD_TEST_ID);
-    const expectedActive = await resolveToken(card, 'color', '--color-surface-active');
+    const expectedActive = await resolveToken(card, '--color-surface-active');
 
     await card.hover();
     await page.mouse.down();
@@ -462,8 +440,8 @@ test('should center the banner description below the checkbox when the card is s
     expect(bannerBox).not.toBeNull();
     expect(textBox).not.toBeNull();
 
-    const spacingSmall = Number.parseFloat(await resolveToken(wrapper, 'width', '--spacing-small'));
-    const spacingMedium = Number.parseFloat(await resolveToken(wrapper, 'width', '--spacing-medium'));
+    const spacingSmall = Number.parseFloat(await resolveToken(wrapper, '--spacing-small', 'width'));
+    const spacingMedium = Number.parseFloat(await resolveToken(wrapper, '--spacing-medium', 'width'));
     const areaTop = checkboxBox!.y + checkboxBox!.height + spacingSmall;
     const areaBottom = bannerBox!.y + bannerBox!.height - spacingMedium;
     const textCenter = textBox!.y + textBox!.height / 2;
@@ -480,7 +458,7 @@ test('should draw a bottom border under the banner description', async ({ mount 
         </Card.Root>,
     );
     const description = wrapper.getByTestId('banner-description');
-    const lineColor = await resolveToken(description, 'color', '--color-line-subtle');
+    const lineColor = await resolveToken(description, '--color-line-subtle');
     const boxShadow = await description.evaluate((element) => getComputedStyle(element).boxShadow);
 
     expect(boxShadow).toBe(`${lineColor} 0px -1px 0px 0px inset`);
@@ -688,7 +666,7 @@ test('should round the banner corners partway through the hover transition in bo
     await mount(bannerCard);
     const card = page.getByTestId(CARD_TEST_ID);
     const banner = card.getByTestId('fondue-card-banner');
-    const roundedRadius = await resolveToken(card, 'width', '--border-radius-large');
+    const roundedRadius = await resolveToken(card, '--border-radius-large', 'width');
     const rounded = Number.parseFloat(roundedRadius);
     await expect(banner).toHaveCSS('border-bottom-left-radius', roundedRadius);
 
