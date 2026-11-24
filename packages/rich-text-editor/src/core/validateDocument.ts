@@ -52,6 +52,45 @@ const textNodeIssue = (node: Record<string, unknown>, kind: PendingNode['kind'])
     }
 };
 
+type CheckNodeParams = {
+    node: Record<string, unknown>;
+    path: string;
+    kind: PendingNode['kind'];
+};
+
+type NodeChildren = {
+    childrenPath: string;
+    children: unknown[];
+};
+
+/** Checks one node, pushes its issues, and returns the children to walk next, or null when it has none or failed. */
+const checkNode = ({ node, path, kind }: CheckNodeParams, issues: RteDocumentIssue[]): NodeChildren | null => {
+    if ('text' in node) {
+        const reason = textNodeIssue(node, kind);
+        if (reason !== null) {
+            issues.push({ reason, path });
+        }
+        return null;
+    }
+
+    if (typeof node.type !== 'string') {
+        issues.push({ reason: 'missing-type', path });
+        return null;
+    }
+
+    if (node.children === undefined) {
+        return null;
+    }
+
+    const childrenPath = pointer(path, 'children');
+    if (!Array.isArray(node.children)) {
+        issues.push({ reason: 'not-an-array', path: childrenPath });
+        return null;
+    }
+
+    return { childrenPath, children: node.children };
+};
+
 const validateBlocks = (blocks: unknown[], blocksPath: string, issues: RteDocumentIssue[]): void => {
     const pending: PendingNode[] = [];
     for (let index = blocks.length - 1; index >= 0; index--) {
@@ -74,32 +113,18 @@ const validateBlocks = (blocks: unknown[], blocksPath: string, issues: RteDocume
         }
         seen.add(node);
 
-        if ('text' in node) {
-            const reason = textNodeIssue(node, kind);
-            if (reason !== null) {
-                issues.push({ reason, path });
-            }
-            continue;
-        }
-
-        if (typeof node.type !== 'string') {
-            issues.push({ reason: 'missing-type', path });
-            continue;
-        }
-
-        if (node.children === undefined) {
-            continue;
-        }
-
-        const childrenPath = pointer(path, 'children');
-        if (!Array.isArray(node.children)) {
-            issues.push({ reason: 'not-an-array', path: childrenPath });
+        const checked = checkNode({ node, path, kind }, issues);
+        if (checked === null) {
             continue;
         }
 
         // Pushed in reverse so the first child is popped first and issues stay in document order.
-        for (let index = node.children.length - 1; index >= 0; index--) {
-            pending.push({ node: node.children[index], path: pointer(childrenPath, index), kind: 'child' });
+        for (let index = checked.children.length - 1; index >= 0; index--) {
+            pending.push({
+                node: checked.children[index],
+                path: pointer(checked.childrenPath, index),
+                kind: 'child',
+            });
         }
     }
 };
