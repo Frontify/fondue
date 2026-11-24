@@ -80,10 +80,15 @@ const mount = (
     mounted.push(live);
     const handle = { ...live.handle, setDoc: live.setDoc };
 
-    const stored = (): RteDocumentOf | null => {
-        const { calls } = onDocChange.mock;
-        return calls.length === 0 ? null : (calls[calls.length - 1]?.[0] ?? null);
+    const stored = (): RteDocumentOf => {
+        const { lastCall } = onDocChange.mock;
+        if (lastCall === undefined) {
+            throw new Error('The editor has reported no document.');
+        }
+
+        return lastCall[0];
     };
+
     return { handle, onDocChange, stored, live, view, container };
 };
 
@@ -119,8 +124,8 @@ describe('a document set by the host', () => {
 
         const held = stored();
         onDocChange.mockClear();
-        handle.setDoc(held as RteDocumentOf);
-        handle.setDoc(structuredClone(held) as RteDocumentOf);
+        handle.setDoc(held);
+        handle.setDoc(structuredClone(held));
 
         expect(onDocChange).not.toHaveBeenCalled();
     });
@@ -208,6 +213,63 @@ describe('a document set by the host', () => {
         expect(view.state.doc.textContent).toBe('from the host');
         expect(stored()).toEqual(paragraph('typed mine'));
     });
+
+    it('applies a reset to a document the editor reported before, and edits that after', () => {
+        const { handle, view, stored } = mount(emptyDocument());
+        handle.api.insertText('a');
+        const docA = stored();
+        handle.api.insertText('b');
+        const docB = stored();
+
+        handle.setDoc(docB);
+        handle.setDoc(docA);
+        expect(view.state.doc.textContent).toBe('a');
+        handle.api.insertText('c');
+
+        expect(stored()).toEqual(paragraph('ac'));
+    });
+
+    it('applies a document the editor reported before when the host restores it after its own reset', () => {
+        const { handle, view, stored } = mount(emptyDocument());
+        handle.api.insertText('a');
+        const docA = stored();
+        handle.setDoc(docA);
+        handle.api.insertText('b');
+        const docB = stored();
+
+        handle.setDoc(paragraph('from the host'));
+        handle.setDoc(docB);
+
+        expect(view.state.doc.textContent).toBe('ab');
+    });
+
+    it('applies an earlier reported document after the host hands back a copy of the latest', () => {
+        const { handle, view, stored } = mount(emptyDocument());
+        handle.api.insertText('a');
+        const docA = stored();
+        handle.api.insertText('b');
+
+        handle.setDoc(structuredClone(stored()));
+        handle.setDoc(docA);
+
+        expect(view.state.doc.textContent).toBe('a');
+    });
+
+    it('treats what the editor reports after a reset as newer than it', () => {
+        const { handle, view, stored } = mount(emptyDocument());
+        handle.api.insertText('a');
+        const docA = stored();
+        handle.api.insertText('b');
+        handle.setDoc(stored());
+        handle.setDoc(docA);
+        handle.api.insertText('c');
+        const docC = stored();
+        handle.api.insertText('d');
+
+        handle.setDoc(docC);
+
+        expect(view.state.doc.textContent).toBe('acd');
+    });
 });
 
 describe('a document set by the host while the editor holds more than it reported', () => {
@@ -235,7 +297,7 @@ describe('a document set by the host while the editor holds more than it reporte
         const { handle, view, stored } = withDraft();
         const caret = view.state.selection.from;
 
-        handle.setDoc(structuredClone(stored()) as RteDocumentOf);
+        handle.setDoc(structuredClone(stored()));
 
         expect(drafts(view)).toBe(1);
         expect(view.state.selection.from).toBe(caret);
@@ -244,7 +306,7 @@ describe('a document set by the host while the editor holds more than it reporte
     it('is ignored when it is one the editor reported before, arriving late', () => {
         const { handle, view, stored } = mount(emptyDocument());
         handle.api.insertText('a');
-        const older = stored() as RteDocumentOf;
+        const older = stored();
         handle.api.insertText('b');
 
         handle.setDoc(older);
@@ -309,6 +371,20 @@ describe('the editable element', () => {
         expect(editable?.getAttribute('aria-describedby')).toBe('hint');
         expect(editable?.classList.contains('three')).toBe(true);
         expect(editable?.classList.contains('two')).toBe(false);
+    });
+
+    it('sets and removes attributes by name through `setEditableAttributes`, keeping the others', () => {
+        const { handle, container } = mount(emptyDocument(), { attributes: { 'aria-label': 'Notes' } });
+        const editable = container.querySelector('[contenteditable]');
+
+        handle.setEditableAttributes({ 'aria-activedescendant': 'option-1', 'aria-controls': 'list' });
+        expect(editable?.getAttribute('aria-activedescendant')).toBe('option-1');
+        expect(editable?.getAttribute('aria-controls')).toBe('list');
+
+        handle.setEditableAttributes({ 'aria-activedescendant': null });
+        expect(editable?.hasAttribute('aria-activedescendant')).toBe(false);
+        expect(editable?.getAttribute('aria-controls')).toBe('list');
+        expect(editable?.getAttribute('aria-label')).toBe('Notes');
     });
 });
 

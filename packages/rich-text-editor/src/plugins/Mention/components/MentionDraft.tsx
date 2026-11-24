@@ -4,10 +4,11 @@ import { IconPeople, IconPerson, IconTarget } from '@frontify/fondue-icons';
 import { type KeyboardEvent, type ReactElement, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { type Translate, useTranslate } from '#/ui/translation';
+
 import { isCompositionKey } from '../../shared/helpers/keys';
 import { storedKind } from '../helpers/display';
 import { isSafeImageSrc } from '../helpers/image';
-import { MENTION_STRINGS } from '../helpers/strings';
 import { withoutControlCharacters } from '../helpers/text';
 import { type PeopleLookup, type PeopleOutcome, usePeople } from '../hooks/usePeople';
 import styles from '../mention.module.scss';
@@ -111,17 +112,17 @@ const isOpen = (phase: PeoplePhase, query: string): boolean => {
 };
 
 /** Silent while waiting or searching, so a count or a failure is not interrupted on every key. */
-const statusOf = (phase: PeoplePhase, people: readonly MentionItem[]): string => {
+const statusOf = (phase: PeoplePhase, people: readonly MentionItem[], translate: Translate): string => {
     switch (phase) {
         case 'waiting':
         case 'searching':
             return '';
         case 'failed':
-            return MENTION_STRINGS.failed;
+            return translate('RichTextEditor_mentionFailed');
         case 'empty':
-            return MENTION_STRINGS.noMatches;
+            return translate('RichTextEditor_noResults');
         case 'list':
-            return MENTION_STRINGS.peopleCount(people.length);
+            return translate('RichTextEditor_results', { count: String(people.length) });
     }
 };
 
@@ -195,16 +196,22 @@ const MentionPopupBody = ({
     onPick,
     onHighlight,
 }: MentionPopupBodyProps): ReactElement | null => {
+    const translate = useTranslate();
     switch (phase) {
         case 'waiting':
             return null;
         case 'searching':
-            return <div className={styles.empty}>{MENTION_STRINGS.searching}</div>;
+            return <div className={styles.empty}>{translate('RichTextEditor_searching')}</div>;
         case 'failed':
             return (
                 <>
-                    <div className={styles.empty}>{MENTION_STRINGS.failed}</div>
-                    <ul id={listId} role="listbox" aria-label={MENTION_STRINGS.list} className={styles.list}>
+                    <div className={styles.empty}>{translate('RichTextEditor_mentionFailed')}</div>
+                    <ul
+                        id={listId}
+                        role="listbox"
+                        aria-label={translate('RichTextEditor_people')}
+                        className={styles.list}
+                    >
                         {/* The keyboard runs it from the input as the active option; the mouse runs it here. */}
                         {/* oxlint-disable-next-line jsx-a11y/click-events-have-key-events */}
                         <li
@@ -216,16 +223,16 @@ const MentionPopupBody = ({
                             onClick={onRetry}
                             className={`${styles.option} ${styles.optionActive}`}
                         >
-                            {MENTION_STRINGS.retry}
+                            {translate('RichTextEditor_retry')}
                         </li>
                     </ul>
                 </>
             );
         case 'empty':
-            return <div className={styles.empty}>{MENTION_STRINGS.noMatches}</div>;
+            return <div className={styles.empty}>{translate('RichTextEditor_noResults')}</div>;
         case 'list':
             return (
-                <ul id={listId} role="listbox" aria-label={MENTION_STRINGS.list} className={styles.list}>
+                <ul id={listId} role="listbox" aria-label={translate('RichTextEditor_people')} className={styles.list}>
                     {people.map((person, index) => (
                         // The keyboard drives the list from the input; the mouse picks here.
                         // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
@@ -321,6 +328,7 @@ export const MentionDraft = ({
     onCancel,
     onRemove,
 }: MentionDraftProps): ReactNode => {
+    const translate = useTranslate();
     const listId = useId();
     const draftRef = useRef<HTMLSpanElement | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -426,7 +434,7 @@ export const MentionDraft = ({
                 aria-controls={listboxShown ? listId : undefined}
                 aria-autocomplete="list"
                 aria-activedescendant={activeOptionId({ listboxShown, phase, active, activeIndex, retryId, optionId })}
-                aria-label={MENTION_STRINGS.input}
+                aria-label={translate('RichTextEditor_mentionSomeone')}
                 value={query}
                 size={Math.max(query.length, 1)}
                 onChange={(event) => setQuery(event.target.value)}
@@ -435,7 +443,7 @@ export const MentionDraft = ({
                 className={styles.input}
             />
             <span role="status" className={styles.visuallyHidden}>
-                {statusOf(phase, people)}
+                {statusOf(phase, people, translate)}
             </span>
             {open && position !== null
                 ? createPortal(

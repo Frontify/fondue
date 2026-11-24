@@ -7,23 +7,28 @@ import { Anchor as FlyoutAnchor } from '@radix-ui/react-popover';
 import { type ReactNode, type RefObject, useEffect, useId, useRef, useState } from 'react';
 
 import { PARAGRAPH, type RteBlockCommand } from '#/core';
+import { type PlainStringKey } from '#/locales/types';
 import { MENU_ICON_SIZE } from '#/ui/toolbarIconSize';
+import { type Translate, useTranslate } from '#/ui/translation';
 
-import { availableCommands, matchCommands } from '../helpers/blockCommands';
+import { availableCommands, matchCommands, type ShownCommand } from '../helpers/blockCommands';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
 import { useSelectionAnchor } from '../hooks/useSelectionAnchor';
-import { type RichTextEditorLabels } from '../labels';
-import { type EditorHandle } from '../port';
+import { type EditableAttributes, type EditorHandle } from '../port';
 
 import styles from './slashMenu.module.scss';
 
 /** The character that opens the menu. */
 const TRIGGER = '/';
 
-/** The groups in list order, each headed by the label under that key. */
-const GROUPS: readonly { group: RteBlockCommand['group']; label: 'turnInto' | 'insert' }[] = [
-    { group: 'turnInto', label: 'turnInto' },
-    { group: 'insert', label: 'insert' },
+const NO_LIST_ATTRIBUTES: EditableAttributes = { 'aria-controls': null, 'aria-activedescendant': null };
+
+type CommandGroup = { group: RteBlockCommand['group']; label: PlainStringKey };
+
+/** The groups in list order, each headed by the string under that key. */
+const GROUPS: readonly CommandGroup[] = [
+    { group: 'turnInto', label: 'RichTextEditor_turnInto' },
+    { group: 'insert', label: 'RichTextEditor_insert' },
 ];
 
 type Session = { query: string; index: number };
@@ -32,12 +37,16 @@ type Session = { query: string; index: number };
  * The commands in the order they are listed: grouped, each group in the order
  * the plugins gave them. The arrow keys and the highlight walk this order.
  */
-const inListOrder = (commands: readonly RteBlockCommand[]): RteBlockCommand[] =>
+const inListOrder = (commands: readonly ShownCommand[]): ShownCommand[] =>
     GROUPS.flatMap(({ group }) => commands.filter((command) => command.group === group));
 
-/** `n commands`, or none — what the status region says as the list narrows. */
-const describeCount = (count: number, labels: RichTextEditorLabels): string =>
-    count === 0 ? labels.noResults : labels.commandCount(count);
+/** How many commands match, or that none does — what the status region says as the list narrows. */
+const describeCount = (count: number, translate: Translate): string => {
+    if (count === 0) {
+        return translate('RichTextEditor_noResults');
+    }
+    return translate('RichTextEditor_commandCount', { count: String(count) });
+};
 
 /**
  * The `/` menu: typed at the start of an empty paragraph it lists every block
@@ -60,13 +69,11 @@ export const SlashMenu = ({
     editorState,
     editableRef,
     commands,
-    labels,
 }: {
     handle: EditorHandle;
     editorState: EditorStateStore;
     editableRef: RefObject<HTMLElement | null>;
-    commands: readonly RteBlockCommand[];
-    labels: RichTextEditorLabels;
+    commands: readonly ShownCommand[];
 }): ReactNode => {
     const { api } = handle;
     // Null while closed. Escape closes it and it stays shut until a `/` is
@@ -114,7 +121,7 @@ export const SlashMenu = ({
         });
     }, [api, editorState]);
 
-    const run = (command: RteBlockCommand): void => {
+    const run = (command: ShownCommand): void => {
         const typed = api.text.beforeCaret().length;
         updateSession(null);
         api.text.deleteBefore(typed);
@@ -187,7 +194,6 @@ export const SlashMenu = ({
             onHover={(index) => updateSession({ ...session, index })}
             onRun={run}
             onDismiss={() => updateSession(null)}
-            labels={labels}
         />
     );
 };
@@ -202,19 +208,18 @@ const SlashList = ({
     onHover,
     onRun,
     onDismiss,
-    labels,
 }: {
     handle: EditorHandle;
     editorState: EditorStateStore;
     editableRef: RefObject<HTMLElement | null>;
     /** The matches, in list order. */
-    commands: readonly RteBlockCommand[];
+    commands: readonly ShownCommand[];
     index: number;
     onHover: (index: number) => void;
-    onRun: (command: RteBlockCommand) => void;
+    onRun: (command: ShownCommand) => void;
     onDismiss: () => void;
-    labels: RichTextEditorLabels;
 }): ReactNode => {
+    const translate = useTranslate();
     const listId = useId();
     const popupRef = useRef<HTMLDivElement | null>(null);
     const optionId = (position: number): string => `${listId}-option-${position}`;
@@ -224,23 +229,14 @@ const SlashList = ({
     // follows the list while the caret stays in the text.
     const activeId = commands.length === 0 ? undefined : optionId(index);
     useEffect(() => {
-        const editable = editableRef.current?.querySelector<HTMLElement>('[contenteditable]');
-        if (!editable) {
-            return;
-        }
         // With nothing matching there is no list to point at, only the "no results" note.
         if (activeId === undefined) {
-            editable.removeAttribute('aria-controls');
-            editable.removeAttribute('aria-activedescendant');
+            handle.setEditableAttributes(NO_LIST_ATTRIBUTES);
         } else {
-            editable.setAttribute('aria-controls', listId);
-            editable.setAttribute('aria-activedescendant', activeId);
+            handle.setEditableAttributes({ 'aria-controls': listId, 'aria-activedescendant': activeId });
         }
-        return () => {
-            editable.removeAttribute('aria-controls');
-            editable.removeAttribute('aria-activedescendant');
-        };
-    }, [editableRef, listId, activeId]);
+        return () => handle.setEditableAttributes(NO_LIST_ATTRIBUTES);
+    }, [handle, listId, activeId]);
 
     // Keep the highlighted row in view as the arrows walk the list.
     useEffect(() => {
@@ -255,7 +251,7 @@ const SlashList = ({
         <Flyout.Root open onOpenChange={(open) => !open && onDismiss()}>
             <FlyoutAnchor virtualRef={anchor} />
             <Flyout.Content
-                aria-label={labels.commands}
+                aria-label={translate('RichTextEditor_commands')}
                 side="bottom"
                 align="start"
                 padding="none"
@@ -264,7 +260,7 @@ const SlashList = ({
                 onEscapeKeyDown={(event) => event.preventDefault()}
             >
                 <span role="status" className={styles.visuallyHidden}>
-                    {describeCount(commands.length, labels)}
+                    {describeCount(commands.length, translate)}
                 </span>
                 {/* The surface; the keyboard stays in the text, the mouse picks here. */}
                 {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions */}
@@ -275,11 +271,16 @@ const SlashList = ({
                     onMouseDown={(event) => event.preventDefault()}
                 >
                     {commands.length === 0 ? (
-                        <div className={styles.empty}>{labels.noResults}</div>
+                        <div className={styles.empty}>{translate('RichTextEditor_noResults')}</div>
                     ) : (
-                        <div id={listId} role="listbox" aria-label={labels.commands} className={styles.list}>
+                        <div
+                            id={listId}
+                            role="listbox"
+                            aria-label={translate('RichTextEditor_commands')}
+                            className={styles.list}
+                        >
                             {GROUPS.map(({ group, label: labelKey }) => {
-                                const label = labels[labelKey];
+                                const label = translate(labelKey);
                                 const inGroup = commands.filter((command) => command.group === group);
                                 if (inGroup.length === 0) {
                                     return null;
@@ -315,7 +316,7 @@ const SlashList = ({
 
 type SlashOptionProps = {
     id: string;
-    command: RteBlockCommand;
+    command: ShownCommand;
     isActive: boolean;
     onHover: () => void;
     onRun: () => void;

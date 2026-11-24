@@ -87,9 +87,8 @@ export type ToPlainTextOptions = {
     /**
      * The plugins, or only their content, whose inlines to read. An inline
      * whose plugin is missing contributes nothing.
-     * @default defaultContent
      */
-    plugins?: readonly (RtePlugin | RteContent)[];
+    plugins: readonly (RtePlugin | RteContent)[];
 };
 
 /**
@@ -99,5 +98,5 @@ export type ToPlainTextOptions = {
  * (a mention's `@jane`, a line break's `\n`), so no plugin declares a plain
  * form of its own.
  */
-export const toPlainText = (doc: RteDocumentOf, { plugins = [] }: ToPlainTextOptions = {}): string =>
+export const toPlainText = (doc: RteDocumentOf, { plugins }: ToPlainTextOptions): string =>
     blockLines(doc.blocks, buildContentRegistry(plugins)).join('\n');

@@ -3,6 +3,8 @@
 import { TextInput } from '@frontify/fondue-components';
 import { type ReactNode, type Ref, useEffect, useMemo, useState } from 'react';
 
+import { useTranslate } from '#/ui/translation';
+
 import styles from '../emoji.module.scss';
 import { byCategory, searchEmojis } from '../helpers/search';
 import { type EmojiItem } from '../types';
@@ -65,6 +67,7 @@ export const EmojiPicker = ({
     /** The search field, which the flyout focuses as it opens. */
     searchRef?: Ref<HTMLInputElement>;
 }): ReactNode => {
+    const translate = useTranslate();
     const [query, setQuery] = useState('');
     const sections = useMemo(() => byCategory(emojis), [emojis]);
     const matches = useMemo(() => searchEmojis(emojis, query), [emojis, query]);
@@ -77,8 +80,8 @@ export const EmojiPicker = ({
             <TextInput
                 ref={searchRef}
                 type="search"
-                aria-label="Search emoji"
-                placeholder="Search emoji"
+                aria-label={translate('RichTextEditor_emojiSearch')}
+                placeholder={translate('RichTextEditor_emojiSearch')}
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 onKeyDown={(event) => {
@@ -93,13 +96,16 @@ export const EmojiPicker = ({
             <div className={styles.sections}>
                 {searching ? (
                     matches.length === 0 ? (
-                        <div className={styles.empty}>No matches</div>
+                        <div className={styles.empty}>{translate('RichTextEditor_noResults')}</div>
                     ) : (
-                        <div role="group" aria-label="Search results" className={styles.grid}>
+                        <fieldset className={styles.grid}>
+                            <legend className={styles.visuallyHidden}>
+                                {translate('RichTextEditor_searchResults')}
+                            </legend>
                             {matches.map((item) => (
                                 <EmojiButton key={item.emoji} item={item} onPick={onPick} />
                             ))}
-                        </div>
+                        </fieldset>
                     )
                 ) : (
                     sections.map(([category, items]) => (

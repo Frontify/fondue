@@ -67,6 +67,14 @@ describe('the emoji picker', () => {
         expect(buttons()).toEqual(['😄', '😏', '🐶']);
     });
 
+    it('names the search results with the legend of their group', () => {
+        const { container, type } = mountPicker();
+
+        type('dog');
+
+        expect(container.querySelector('fieldset > legend:first-child')?.textContent).toBe('Search results');
+    });
+
     it('narrows to the matches as the search is typed, and Enter picks the first', () => {
         const { search, type, buttons, onPick } = mountPicker();
 
@@ -85,7 +93,7 @@ describe('the emoji picker', () => {
         type('zz');
 
         expect(buttons()).toEqual([]);
-        expect(container.textContent).toContain('No matches');
+        expect(container.textContent).toContain('No results');
     });
 
     it('announces the result count once typing pauses', () => {

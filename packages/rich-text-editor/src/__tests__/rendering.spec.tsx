@@ -104,7 +104,7 @@ describe('marks shared by neighbouring runs', () => {
 
     it('are drawn once around the whole stretch, as the editor draws them', () => {
         for (const container of [
-            rendered(<RichTextRenderer value={formula} />),
+            rendered(<RichTextRenderer value={formula} plugins={defaultContent} />),
             exported(serializeToHtml(formula, { plugins: defaultPlugins })),
         ]) {
             const codes = container.querySelectorAll('code');
@@ -123,7 +123,7 @@ describe('marks shared by neighbouring runs', () => {
         ]);
 
         for (const container of [
-            rendered(<RichTextRenderer value={doc} />),
+            rendered(<RichTextRenderer value={doc} plugins={defaultContent} />),
             exported(serializeToHtml(doc, { plugins: defaultPlugins })),
         ]) {
             expect(container.querySelectorAll('a')).toHaveLength(1);
@@ -146,7 +146,7 @@ describe('a line break at the end of a block', () => {
 
     it('keeps the empty line after it open, as the editor does', () => {
         for (const container of [
-            rendered(<RichTextRenderer value={doc} />),
+            rendered(<RichTextRenderer value={doc} plugins={defaultContent} />),
             exported(serializeToHtml(doc, { plugins: defaultPlugins })),
         ]) {
             expect(container.querySelectorAll('p > br')).toHaveLength(2);
@@ -213,7 +213,7 @@ describe('a mark stored as false or null', () => {
 
     it('is not carried: the text is drawn bare', () => {
         for (const container of [
-            rendered(<RichTextRenderer value={doc} />),
+            rendered(<RichTextRenderer value={doc} plugins={defaultContent} />),
             exported(serializeToHtml(doc, { plugins: defaultPlugins })),
         ]) {
             expect(container.querySelector('strong, em')).toBeNull();
@@ -241,7 +241,7 @@ describe('a node no plugin defines', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
         for (const container of [
-            rendered(<RichTextRenderer value={doc} />),
+            rendered(<RichTextRenderer value={doc} plugins={defaultContent} />),
             exported(serializeToHtml(doc, { plugins: defaultPlugins, wrap: false })),
         ]) {
             expect(container.textContent).toBe('before afterinside a calloutin a tab');
@@ -276,7 +276,7 @@ describe('a list holding a block no plugin defines among its items', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
         for (const container of [
-            rendered(<RichTextRenderer value={doc} />),
+            rendered(<RichTextRenderer value={doc} plugins={defaultContent} />),
             exported(serializeToHtml(doc, { plugins: defaultPlugins, wrap: false })),
         ]) {
             expect(container.querySelectorAll('ol > :not(li)')).toHaveLength(0);
@@ -296,7 +296,7 @@ describe('a link in a reading view and in export', () => {
         const doc = paragraph([{ text: 'new', link: { href: 'https://example.com', openInNewTab: true } }]);
 
         for (const container of [
-            rendered(<RichTextRenderer value={doc} />),
+            rendered(<RichTextRenderer value={doc} plugins={defaultContent} />),
             exported(serializeToHtml(doc, { plugins: defaultPlugins })),
         ]) {
             const anchor = container.querySelector('a');

@@ -3,9 +3,23 @@
 import { IconTable } from '@frontify/fondue-icons';
 import { type ReactNode } from 'react';
 
-import { ANY_LIST, defineBlock, defineContent, definePlugin, gridSpanOf, PARAGRAPH, type RteBlockNode } from '#/core';
+import {
+    ANY_LIST,
+    defineBlock,
+    defineContent,
+    definePlugin,
+    type EditorControlApi,
+    gridSpanOf,
+    PARAGRAPH,
+    type RteBlockNode,
+    type ToolbarItemProps,
+} from '#/core';
+import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
+import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
+import { translatedLabel } from '#/ui/translation';
 
 import { TableMenu } from './components/TableMenu';
+import { isInTable } from './helpers/isInTable';
 import styles from './table.module.scss';
 
 export type TableBlock<TRow extends RteBlockNode = RteBlockNode> = {
@@ -48,8 +62,8 @@ export type TableHeaderBlock<TContent extends RteBlockNode = RteBlockNode> = Cel
     scope?: HeaderScope;
 };
 
-/** Until the editor's locale files exist, like every shipped plugin. */
-const TABLE_LABEL = 'Table';
+/** The readonly view's name. It belongs to the content, whose language the renderer does not know, so it stays English. */
+const TABLE_REGION_LABEL = 'Table';
 
 type SpanValue = { colspan: number; rowspan: number };
 type HeaderValue = SpanValue & { scope: HeaderScope };
@@ -82,7 +96,7 @@ type ReadonlyTableProps = { children?: ReactNode };
 const ReadonlyTable = ({ children }: ReadonlyTableProps): ReactNode => (
     // Keyboard-reachable, or a table wider than the page could not be scrolled without a mouse.
     // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-    <section tabIndex={0} aria-label={TABLE_LABEL} className={styles.scroll}>
+    <section tabIndex={0} aria-label={TABLE_REGION_LABEL} className={styles.scroll}>
         <table className={styles.table}>
             <tbody>{children}</tbody>
         </table>
@@ -152,10 +166,25 @@ const emptyRows = (rows: number, columns: number): TableRowBlock[] =>
         return { type: 'tableRow' as const, children: Array.from({ length: columns }, () => emptyCell(type)) };
     });
 
+const insertTable = (api: EditorControlApi): void => api.insert('table', { children: emptyRows(3, 3) });
+
+const InsertTableButton = ({ api, selection, label }: ToolbarItemProps) => {
+    if (isInTable(selection)) {
+        return null;
+    }
+
+    return (
+        <ToolbarButton title={label} onClick={() => insertTable(api)}>
+            <IconTable size={TOOLBAR_ICON_SIZE} />
+        </ToolbarButton>
+    );
+};
+
 /**
- * Tables, with a `/` entry that inserts one with a header row, and a menu,
- * shown while the selection is in a table, for its rows, columns and headers.
- * Tab in the last cell adds a row.
+ * Tables, with an "Insert table" toolbar button and a `/` entry that insert one
+ * with a header row, and a menu, shown while the selection is in a table, for
+ * its rows, columns and headers. The button and the entry are left out in a
+ * table. Tab in the last cell adds a row.
  */
 export const tablePlugin = () =>
     definePlugin({
@@ -163,20 +192,22 @@ export const tablePlugin = () =>
         content: tableContent,
         toolbarGroup: 'insert',
         toolbar: [
+            { label: translatedLabel('RichTextEditor_tableInsert'), render: InsertTableButton },
             {
-                label: TABLE_LABEL,
+                label: translatedLabel('RichTextEditor_table'),
                 floating: 'inline',
-                render: ({ api, selection }) => <TableMenu api={api} selection={selection} />,
+                render: ({ api, selection, label }) => <TableMenu api={api} selection={selection} label={label} />,
             },
         ],
         commands: [
             {
                 id: 'table',
-                label: TABLE_LABEL,
+                label: translatedLabel('RichTextEditor_table'),
                 icon: IconTable,
                 keywords: ['grid', 'rows', 'columns', 'spreadsheet'],
                 group: 'insert',
-                run: (api) => api.insert('table', { children: emptyRows(3, 3) }),
+                isAvailable: (selection) => !isInTable(selection),
+                run: insertTable,
             },
         ],
     });
