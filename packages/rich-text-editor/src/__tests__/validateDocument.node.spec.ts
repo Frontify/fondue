@@ -200,7 +200,7 @@ describe('validateDocument, an invalid document', () => {
         });
     });
 
-    it('reports an inline element without a type next to a text node', () => {
+    it('reports a child without a type', () => {
         const document = { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'a' }, {}] }] };
 
         expect(validateDocument(document)).toEqual({
@@ -209,12 +209,50 @@ describe('validateDocument, an invalid document', () => {
         });
     });
 
-    it('reports a member of an inline array that is not an object', () => {
+    it('reports a child that is not an object', () => {
         const document = { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'a' }, 'x'] }] };
 
         expect(validateDocument(document)).toEqual({
             valid: false,
             issues: [{ reason: 'not-an-object', path: '/blocks/0/children/1' }],
+        });
+    });
+
+    it.each([
+        ['alone', [{ type: 'mention', children: 'x' }], '/blocks/0/children/0/children'],
+        ['next to a text run', [{ text: 'a' }, { type: 'mention', children: 'x' }], '/blocks/0/children/1/children'],
+    ])('reports an inline element with string children as not an array %s', (_name, children, path) => {
+        const document = { version: 1, blocks: [{ type: 'paragraph', children }] };
+
+        expect(validateDocument(document)).toEqual({
+            valid: false,
+            issues: [{ reason: 'not-an-array', path }],
+        });
+    });
+
+    it('reports an undeclared text key on a block of unknown type inside a list as malformed text', () => {
+        const document = {
+            version: 1,
+            blocks: [{ type: 'bulletList', children: [{ type: 'callout', text: 'x' }] }],
+        };
+
+        expect(validateDocument(document)).toEqual({
+            valid: false,
+            issues: [{ reason: 'malformed-text', path: '/blocks/0/children/0' }],
+        });
+    });
+
+    it('reports a text node directly in blocks as missing a type', () => {
+        expect(validateDocument({ version: 1, blocks: [{ text: 'a' }] })).toEqual({
+            valid: false,
+            issues: [{ reason: 'missing-type', path: '/blocks/0' }],
+        });
+    });
+
+    it('reports a block in blocks that also carries text as malformed text', () => {
+        expect(validateDocument({ version: 1, blocks: [{ type: 'paragraph', text: 'a' }] })).toEqual({
+            valid: false,
+            issues: [{ reason: 'malformed-text', path: '/blocks/0' }],
         });
     });
 
@@ -258,6 +296,29 @@ describe('validateDocument, an invalid document', () => {
                 { reason: 'not-an-array', path: '/blocks/2/children' },
             ],
         });
+    });
+});
+
+describe('validateDocument, on hostile input', () => {
+    it('accepts a value nested far deeper than the call stack allows', () => {
+        const depth = 20_000;
+        let json = '{"version":1,"blocks":[';
+        for (let level = 0; level < depth; level++) {
+            json += '{"type":"a","children":[';
+        }
+        for (let level = 0; level < depth; level++) {
+            json += ']}';
+        }
+        json += ']}';
+
+        expect(validateDocument(JSON.parse(json)).valid).toBe(true);
+    });
+
+    it('terminates on a node whose children contain itself', () => {
+        const node: { type: string; children: unknown[] } = { type: 'a', children: [] };
+        node.children.push(node);
+
+        expect(validateDocument({ version: 1, blocks: [node] }).valid).toBe(true);
     });
 });
 
