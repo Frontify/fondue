@@ -3,6 +3,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { defineBlock, defineContent, defineMark, type RteDocumentOf } from '../core';
+import { type RteDocument } from '../documentFormat';
 import { columnBreakContent, defaultContent, mentionContent } from '../plugins';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
@@ -92,7 +93,7 @@ describe('serializeToMarkdown line breaks', () => {
 });
 
 describe('serializeToMarkdown single-line blocks', () => {
-    const document: RteDocumentOf = {
+    const document: RteDocument = {
         version: 1,
         blocks: [{ type: 'textStyle', style: 'heading1', children: [{ text: 'a' }, { type: 'break' }, { text: 'b' }] }],
     };
@@ -226,7 +227,7 @@ describe('serializeToMarkdown losses', () => {
     });
 
     it('keeps aligned text and reports the attribute at the block path', () => {
-        const document: RteDocumentOf = {
+        const document: RteDocument = {
             version: 1,
             blocks: [
                 { type: 'paragraph', children: [{ text: 'a' }] },

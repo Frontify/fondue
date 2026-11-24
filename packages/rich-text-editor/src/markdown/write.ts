@@ -365,7 +365,7 @@ const renderMark = (piece: OpenMark, mode: TextMode, cursor: LineCursor, state: 
     return wrapped(renderPieces(pieces, innerMode, cursor, state), delimiters.open, delimiters.close);
 };
 
-const writeInlines = (inlines: readonly RteInlineNode[], path: Path, lineMode: LineMode, state: WriteState): string => {
+const writeInlines = (inlines: readonly unknown[], path: Path, lineMode: LineMode, state: WriteState): string => {
     const cursor: LineCursor = { atLineStart: true };
 
     return renderPieces(piecesOf(inlines, path, lineMode, state), 'escaped', cursor, state);

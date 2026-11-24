@@ -10,10 +10,10 @@ import {
     type InlineDefinition,
     isEmpty,
     type MarkDefinition,
-    type MarkdownBlockForm,
-    type MarkdownInlineForm,
-    type MarkdownMarkForm,
-    type MarkdownToken,
+    type MarkdownBlockForm as CoreMarkdownBlockForm,
+    type MarkdownInlineForm as CoreMarkdownInlineForm,
+    type MarkdownMarkForm as CoreMarkdownMarkForm,
+    type MarkdownToken as CoreMarkdownToken,
     type PasteHandler,
     type RteBlockCommand,
     type RteLabel,
@@ -135,10 +135,6 @@ type MarkDef<TValue> = MarkDefinition<TValue>;
 type InlineDef<TValue> = InlineDefinition<TValue>;
 type EditComponentProps<TValue, TCurrent> = EditProps<TValue, TCurrent>;
 type Html = HtmlSpec;
-type MarkdownBlockFormAlias<TValue> = MarkdownBlockForm<TValue>;
-type MarkdownMarkFormAlias<TValue> = MarkdownMarkForm<TValue>;
-type MarkdownInlineFormAlias<TValue> = MarkdownInlineForm<TValue>;
-type MarkdownTokenAlias = MarkdownToken;
 
 // oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
 export declare namespace RtePlugin {
@@ -157,8 +153,8 @@ export declare namespace RtePlugin {
     export type LabelContext = RteLabelContext;
     export type PasteHandler = OnPaste;
     export type HtmlSpec = Html;
-    export type MarkdownBlockForm<TValue = Record<string, unknown>> = MarkdownBlockFormAlias<TValue>;
-    export type MarkdownMarkForm<TValue = Record<string, unknown>> = MarkdownMarkFormAlias<TValue>;
-    export type MarkdownInlineForm<TValue = Record<string, unknown>> = MarkdownInlineFormAlias<TValue>;
-    export type MarkdownToken = MarkdownTokenAlias;
+    export type MarkdownBlockForm<TValue = Record<string, unknown>> = CoreMarkdownBlockForm<TValue>;
+    export type MarkdownMarkForm<TValue = Record<string, unknown>> = CoreMarkdownMarkForm<TValue>;
+    export type MarkdownInlineForm<TValue = Record<string, unknown>> = CoreMarkdownInlineForm<TValue>;
+    export type MarkdownToken = CoreMarkdownToken;
 }

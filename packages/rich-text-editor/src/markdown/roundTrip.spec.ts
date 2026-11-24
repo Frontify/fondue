@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type RteDocumentOf } from '../core';
+import { type RteDocument, type RteDocumentWith } from '../documentFormat';
 import { bulletListContent, defaultContent } from '../plugins';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
@@ -12,7 +12,7 @@ import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from './inde
 type RoundTripCase = {
     name: string;
     markdown: string;
-    document: RteDocumentOf;
+    document: RteDocument | RteDocumentWith<{ inline: { type: 'mention'; id: string } }>;
 };
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
@@ -343,7 +343,7 @@ describe('markdown round trip, one form at a time', () => {
 
 describe('markdown round trip with breaks', () => {
     it('reads a single newline as a line break and writes a line break as a newline', () => {
-        const document: RteDocumentOf = {
+        const document: RteDocument = {
             version: 1,
             blocks: [{ type: 'paragraph', children: [{ text: 'a' }, { type: 'break' }, { text: 'b' }] }],
         };
@@ -411,7 +411,7 @@ describe('markdown round trip of text that would start a block after leading spa
 
     for (const text of LEADING_SPACE_TEXTS) {
         it(`reads ${JSON.stringify(text)} back as a paragraph`, () => {
-            const document: RteDocumentOf = {
+            const document: RteDocument = {
                 version: 1,
                 blocks: [{ type: 'paragraph', children: [{ text }] }],
             };
@@ -423,7 +423,7 @@ describe('markdown round trip of text that would start a block after leading spa
     }
 
     it('reads a line after a newline in a text run back as text', () => {
-        const document: RteDocumentOf = {
+        const document: RteDocument = {
             version: 1,
             blocks: [{ type: 'paragraph', children: [{ text: 'a\n- b' }] }],
         };
@@ -436,7 +436,7 @@ describe('markdown round trip of text that would start a block after leading spa
 
 describe('markdown round trip of empty text', () => {
     it('gives back an empty paragraph between two paragraphs', () => {
-        const document: RteDocumentOf = {
+        const document: RteDocument = {
             version: 1,
             blocks: [
                 { type: 'paragraph', children: [{ text: 'a' }] },
@@ -449,7 +449,7 @@ describe('markdown round trip of empty text', () => {
     });
 
     it('gives back the empty document for an empty string', () => {
-        const document: RteDocumentOf = {
+        const document: RteDocument = {
             version: 1,
             blocks: [{ type: 'paragraph', children: [{ text: '' }] }],
         };
@@ -460,7 +460,7 @@ describe('markdown round trip of empty text', () => {
 
 describe('markdown round trip of a mention override', () => {
     it('gives back a mention written in the host syntax', () => {
-        const document: RteDocumentOf = {
+        const document: RteDocumentWith<{ inline: { type: 'mention'; id: string } }> = {
             version: 1,
             blocks: [
                 {
@@ -474,7 +474,7 @@ describe('markdown round trip of a mention override', () => {
     });
 
     it('keeps an escaped mention as text in both directions', () => {
-        const document: RteDocumentOf = {
+        const document: RteDocument = {
             version: 1,
             blocks: [{ type: 'paragraph', children: [{ text: '@[user:1]' }] }],
         };
@@ -488,7 +488,7 @@ describe('markdown round trip of a mention override', () => {
 
 describe('markdown round trip with list content only', () => {
     it('gives back a bullet list from bulletListContent alone', () => {
-        const document: RteDocumentOf = {
+        const document: RteDocument = {
             version: 1,
             blocks: [
                 {
