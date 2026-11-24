@@ -184,6 +184,23 @@ describe('reading a pasted link', () => {
         }
     });
 
+    it('reads a _new target in any letter case as a new tab', () => {
+        for (const target of ['_new', '_NEW', '_New']) {
+            expect(parseAnchor({ href: 'https://example.com', target })).toEqual({
+                href: 'https://example.com',
+                openInNewTab: true,
+            });
+        }
+    });
+
+    it('reads any other target as the same tab', () => {
+        for (const target of ['_self', '_top', 'new', 'blank', 'some-window']) {
+            expect(parseAnchor({ href: 'https://example.com', target })).toEqual({
+                href: 'https://example.com',
+            });
+        }
+    });
+
     it('reads a target that lowercases to _blank only outside ASCII as the same tab', () => {
         // U+212A is the Kelvin sign, which Unicode lowercasing turns into k.
         expect(parseAnchor({ href: 'https://example.com', target: '_blan\u212A' })).toEqual({

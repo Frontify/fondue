@@ -9,11 +9,14 @@ export const NEW_TAB_REL = 'noopener noreferrer';
 
 const ASCII_UPPERCASE = /[A-Z]/g;
 
-/** Whether an anchor's target opens a new tab; browsers match the keyword ASCII case-insensitively. */
+/** Targets browsers open in a new tab: the `_blank` keyword, and `_new`, a window name no page has opened yet. */
+const NEW_TAB_TARGETS: ReadonlySet<string> = new Set([NEW_TAB_TARGET, '_new']);
+
+/** Whether an anchor's target opens a new tab: `_blank` or `_new`, matched ASCII case-insensitively as browsers match the keyword. */
 export const opensInNewTab = (target: string | null): boolean => {
     if (target === null) {
         return false;
     }
 
-    return target.replaceAll(ASCII_UPPERCASE, (letter) => letter.toLowerCase()) === NEW_TAB_TARGET;
+    return NEW_TAB_TARGETS.has(target.replaceAll(ASCII_UPPERCASE, (letter) => letter.toLowerCase()));
 };
