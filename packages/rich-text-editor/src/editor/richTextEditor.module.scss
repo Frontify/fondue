@@ -162,6 +162,11 @@ $focus-outline-reach: calc(2px + var(--border-width-default));
         cursor: text;
     }
 
+    // Host stylesheets such as Tailwind's preflight set `:-moz-focusring`, which beats the class alone.
+    &:focus-visible {
+        outline: none;
+    }
+
     /** Forced colours flatten a host's border change on focus; a transparent outline turns visible there. */
     @media (forced-colors: active) {
         &:focus {

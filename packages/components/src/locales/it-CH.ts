@@ -37,6 +37,8 @@ const translations = {
     Table_sortByAscending: 'Ordina per ${column} crescente',
     Table_sortByDescending: 'Ordina per ${column} decrescente',
     Table_sortDescending: 'Ordina decrescente',
+    Tag_add: 'Aggiungi ${label}',
+    Tag_dismiss: 'Chiudi ${label}',
     Tree_checkboxHint: 'Selezionabile, premi Tab per mettere a fuoco la casella.',
     Tree_loading: 'Caricamento…',
     Tree_renameInputLabel: 'Nuovo nome',

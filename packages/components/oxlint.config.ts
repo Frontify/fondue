@@ -61,6 +61,30 @@ export default defineConfig({
             },
         },
         {
+            // Test-only helpers (Playwright, harnesses) must not end up in the shipped bundle
+            files: ['**/*.{ts,tsx}'],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    {
+                        patterns: [
+                            {
+                                group: ['#/testutils', '#/testutils/*', '**/testutils', '**/testutils/*'],
+                                message:
+                                    'testutils are for tests only. Import them from *.ct.tsx or *.spec.ts(x) files.',
+                            },
+                        ],
+                    },
+                ],
+            },
+        },
+        {
+            files: ['**/*.ct.tsx', '**/*.spec.{ts,tsx}', '**/*.test.{ts,tsx}', '**/__tests__/**', '**/testutils/**'],
+            rules: {
+                'no-restricted-imports': 'off',
+            },
+        },
+        {
             files: ['**/*.stories.tsx'],
             rules: {
                 '@eslint-react/rules-of-hooks': 'off',
