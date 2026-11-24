@@ -203,7 +203,7 @@ const STYLES = [
     'imageTitle',
     'imageCaption',
 ];
-const ALIGNS = ['left', 'center', 'right', 'justify'];
+const ALIGNS = ['start', 'center', 'end', 'justify'];
 const KINDS = ['user', 'group', 'all'];
 // Keys no plugin declares on most blocks, but `align`, `style` and `checked` are declared on some: those are left out there.
 const EXTRA_KEYS = ['foo', 'meta', 'note', 'align', 'style', 'checked', '__rteExtra'];

@@ -100,6 +100,7 @@ const clickToolbarButton = ({ plugin, api, name }: ClickToolbarButtonParams): vo
         isActive: false,
         toggle: () => {},
         openEditor: () => {},
+        direction: 'ltr',
     };
     act(() => root.render(<Entry {...props} />));
     const button = container.querySelector<HTMLElement>(`[aria-label="${name}"]`);

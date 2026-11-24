@@ -597,7 +597,7 @@ export const Align: Story = {
             version: 1,
             blocks: [
                 { type: 'paragraph', align: 'center', children: [{ text: 'This paragraph is centred.' }] },
-                { type: 'paragraph', align: 'right', children: [{ text: 'This one is right-aligned.' }] },
+                { type: 'paragraph', align: 'end', children: [{ text: 'This one is aligned to the end.' }] },
                 { type: 'paragraph', children: [{ text: 'This one carries no alignment at all.' }] },
             ],
         });

@@ -69,7 +69,7 @@ const everyPluginDocument: RteDocument = {
                 { text: 'after a soft break' },
             ],
         },
-        ...(['center', 'right', 'justify'] as const).map((align) => ({
+        ...(['center', 'end', 'justify'] as const).map((align) => ({
             type: 'paragraph' as const,
             align,
             children: [{ text: `Aligned ${align}` }],

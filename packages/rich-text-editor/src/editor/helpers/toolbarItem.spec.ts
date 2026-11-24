@@ -144,6 +144,7 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
                 { own: ownTypeOf(content, type ?? onlyTypeOf(content)), label: LABEL },
                 api,
                 api.selection.get(),
+                'ltr',
             ),
         inserted,
         openEditor: () => openEditor,
@@ -407,7 +408,7 @@ describe('an entry with no type of its own', () => {
         const editor = fakeEditor();
         const selection = editor.api.selection.get();
 
-        const props = toolbarItemProps({ own: { kind: 'none' }, label: LABEL }, editor.api, selection);
+        const props = toolbarItemProps({ own: { kind: 'none' }, label: LABEL }, editor.api, selection, 'ltr');
 
         expect(props.api).toBe(editor.api);
         expect(props.selection).toBe(selection);
@@ -420,9 +421,23 @@ describe('an entry with no type of its own', () => {
             { own: { kind: 'none' }, label: LABEL, shortcut: 'Mod-k' },
             editor.api,
             editor.api.selection.get(),
+            'ltr',
         );
 
         expect(props.label).toBe(LABEL);
         expect(props.shortcut).toBe('Mod-k');
+    });
+
+    it('hands over the direction it was given', () => {
+        const editor = fakeEditor();
+
+        const props = toolbarItemProps(
+            { own: { kind: 'none' }, label: LABEL },
+            editor.api,
+            editor.api.selection.get(),
+            'rtl',
+        );
+
+        expect(props.direction).toBe('rtl');
     });
 });
