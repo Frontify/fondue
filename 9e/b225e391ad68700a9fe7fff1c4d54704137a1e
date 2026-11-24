@@ -1,0 +1,26 @@
+packages/components/src/components/Tree/components/TreeRoot.ct.tsx
+  s_60acb4f95d52c9::t_bfe151d0bf2bb5 1066-1074,1076-1079,1085-1089,1670,1673-1687
+  s_60acb4f95d52c9::t_c3b5e6794dde10 1065,1075,1080-1084,1671-1672
+  s_60acb4f95d52c9::t_2216f50e03b4f6 1688
+packages/components/src/components/Tree/components/TreeRoot.tsx
+  s_60acb4f95d52c9::t_baee085a2defbe 67,192-196
+.changeset/tree-feature-toggle-remount.md
+  s_60acb4f95d52c9::t_baee085a2defbe 1-4,6-7
+  s_60acb4f95d52c9::t_8e740c2560eacc 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9eb225e391ad68700a9fe7fff1c4d54704137a1e",
+  "prompts": {},
+  "sessions": {
+    "s_60acb4f95d52c9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b0fbce44-f734-4f54-9ea9-ce5b85c1d3b5",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
