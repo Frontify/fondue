@@ -456,8 +456,11 @@ export type MarkdownReadRule<TValue> = { token: string; value?: (token: Markdown
 /** Reads text the writer did not escape as an inline, by pattern. */
 export type MarkdownTextPattern<TValue> = { pattern: RegExp; value: (match: RegExpExecArray) => TValue | null };
 
-/** What a block writes before its first line and before every later line. */
-export type MarkdownLinePrefix = { first: string; rest: string };
+/**
+ * What a block writes before its first line and before every later line. `rest` is null for a block that holds
+ * one line (a heading): a line break inside it writes as a space, and is a loss.
+ */
+export type MarkdownLinePrefix = { first: string; rest: string | null };
 
 /** What a mark writes before and after its text. */
 export type MarkdownDelimiters = { open: string; close: string };

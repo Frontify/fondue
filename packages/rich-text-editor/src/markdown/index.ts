@@ -3,20 +3,18 @@
 // The `@frontify/fondue-rich-text-editor/markdown` package entry: every export here is public API.
 // It imports no ProseMirror, React or editor code, so it runs in Node with no DOM.
 
-import { type MarkdownBlockForm, type MarkdownInlineForm, type MarkdownMarkForm, type RteBlockNode } from '#/core';
+import { buildContentRegistry, type RteBlockNode, type RteContent, type RtePlugin } from '#/core';
 import { type RteBlock, type RteDocument } from '#/documentFormat';
-import { type SerializeToHtmlOptions } from '#/renderer';
 
-/** Replaces a node's Markdown form, by the name the node is stored under. */
-export type MarkdownOverrides = {
-    blocks?: Record<string, MarkdownBlockForm>;
-    marks?: Record<string, MarkdownMarkForm>;
-    inlines?: Record<string, MarkdownInlineForm>;
-};
+import { buildForms, type MarkdownOverrides } from './forms';
+import { readDocument } from './read';
+import { type MarkdownLoss, writeDocument } from './write';
+
+export type { MarkdownLoss, MarkdownOverrides };
 
 export type MarkdownOptions = {
     /** The plugins, or only their content, whose Markdown forms to read and write with. */
-    plugins: SerializeToHtmlOptions['plugins'];
+    plugins: readonly (RtePlugin | RteContent)[];
     /**
      * A single newline reads as a line break, and a line break writes as a bare newline.
      * @default false
@@ -24,13 +22,6 @@ export type MarkdownOptions = {
     breaks?: boolean;
     /** Replaces a node's Markdown form, by node name. */
     overrides?: MarkdownOverrides;
-};
-
-/** What a node lost on write: `path` is the index of each block, child and inline from `document.blocks` down to it. */
-export type MarkdownLoss = {
-    path: readonly number[];
-    /** The block type, mark key, inline type or block attribute name that has no Markdown form. */
-    type: string;
 };
 
 export type SerializeToMarkdownResult = {
@@ -45,8 +36,13 @@ export type SerializeToMarkdownResult = {
  * @example
  * const value = parseMarkdown('**Hello**', { plugins: defaultContent });
  */
-export const parseMarkdown = (_markdown: string, _options: MarkdownOptions): RteDocument<RteBlockNode> => {
-    throw new Error('not implemented');
+export const parseMarkdown = (
+    markdown: string,
+    { plugins, breaks = false, overrides }: MarkdownOptions,
+): RteDocument<RteBlockNode> => {
+    const registry = buildContentRegistry(plugins);
+
+    return readDocument(markdown, { registry, forms: buildForms(registry, overrides), breaks });
 };
 
 /**
@@ -57,8 +53,10 @@ export const parseMarkdown = (_markdown: string, _options: MarkdownOptions): Rte
  * const { markdown, losses } = serializeToMarkdown(value, { plugins: defaultContent });
  */
 export const serializeToMarkdown = <TBlock extends RteBlockNode = RteBlock>(
-    _document: RteDocument<TBlock>,
-    _options: MarkdownOptions,
+    document: RteDocument<TBlock>,
+    { plugins, breaks = false, overrides }: MarkdownOptions,
 ): SerializeToMarkdownResult => {
-    throw new Error('not implemented');
+    const registry = buildContentRegistry(plugins);
+
+    return writeDocument(document, { registry, forms: buildForms(registry, overrides), breaks });
 };

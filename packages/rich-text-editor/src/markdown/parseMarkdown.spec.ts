@@ -137,6 +137,34 @@ describe('parseMarkdown lists', () => {
     });
 });
 
+describe('parseMarkdown with no text to put in a block', () => {
+    const EMPTY_ITEM_LIST = {
+        version: 1,
+        blocks: [
+            {
+                type: 'bulletList',
+                children: [{ type: 'listItem', children: [{ type: 'paragraph', children: [] }] }],
+            },
+        ],
+    };
+
+    it('reads a list item with no content as an item holding one empty paragraph', () => {
+        expect(parseMarkdown('-', OPTIONS)).toEqual(EMPTY_ITEM_LIST);
+    });
+
+    it('reads a list marker followed by a space as an item holding one empty paragraph', () => {
+        expect(parseMarkdown('- ', OPTIONS)).toEqual(EMPTY_ITEM_LIST);
+    });
+
+    it('reads Markdown that is only a horizontal rule as the empty document', () => {
+        expect(parseMarkdown('---', OPTIONS)).toEqual(EMPTY_DOCUMENT);
+    });
+
+    it('reads Markdown that is only an empty quote as the empty document', () => {
+        expect(parseMarkdown('>', OPTIONS)).toEqual(EMPTY_DOCUMENT);
+    });
+});
+
 describe('parseMarkdown with nothing to read a token by', () => {
     it('reads a heading as a paragraph when no plugin has a heading', () => {
         expect(parseMarkdown('## Title', { plugins: [] })).toEqual({

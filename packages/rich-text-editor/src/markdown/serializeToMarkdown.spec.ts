@@ -91,6 +91,27 @@ describe('serializeToMarkdown line breaks', () => {
     });
 });
 
+describe('serializeToMarkdown single-line blocks', () => {
+    const document: RteDocumentOf = {
+        version: 1,
+        blocks: [{ type: 'textStyle', style: 'heading1', children: [{ text: 'a' }, { type: 'break' }, { text: 'b' }] }],
+    };
+
+    it('writes a break inside a heading as a space and reports the break', () => {
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({
+            markdown: '# a b',
+            losses: [{ path: [0, 1], type: 'break' }],
+        });
+    });
+
+    it('writes a break inside a heading as a space with breaks: true too', () => {
+        expect(serializeToMarkdown(document, { plugins: defaultContent, breaks: true })).toEqual({
+            markdown: '# a b',
+            losses: [{ path: [0, 1], type: 'break' }],
+        });
+    });
+});
+
 describe('serializeToMarkdown losses', () => {
     it('keeps underlined text and reports the mark at the text path', () => {
         const document: RteDocumentOf = {

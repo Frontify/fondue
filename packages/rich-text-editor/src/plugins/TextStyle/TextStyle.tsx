@@ -30,6 +30,7 @@ import {
     FIRST_PRESET,
     isTextStyle,
     labelOf,
+    markdownFormFor,
     markdownRuleFor,
     parseRuleFor,
     presetsFor,
@@ -91,6 +92,7 @@ const textStyleBlockFor = (options: readonly TextStyleOption[]): BlockDefinition
             return { tag: preset.tag, attrs, children: true };
         },
         parse: offered.map(parseRuleFor),
+        markdown: markdownFormFor(offered),
     });
 };
 

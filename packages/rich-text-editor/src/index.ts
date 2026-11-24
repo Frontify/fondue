@@ -11,14 +11,8 @@ import {
     isEmpty,
     type MarkDefinition,
     type MarkdownBlockForm,
-    type MarkdownDelimiters,
     type MarkdownInlineForm,
-    type MarkdownInlineOutput,
-    type MarkdownLinePrefix,
-    type MarkdownListItem,
     type MarkdownMarkForm,
-    type MarkdownReadRule,
-    type MarkdownTextPattern,
     type MarkdownToken,
     type PasteHandler,
     type RteBlockCommand,
@@ -145,12 +139,6 @@ type MarkdownBlockFormAlias<TValue> = MarkdownBlockForm<TValue>;
 type MarkdownMarkFormAlias<TValue> = MarkdownMarkForm<TValue>;
 type MarkdownInlineFormAlias<TValue> = MarkdownInlineForm<TValue>;
 type MarkdownTokenAlias = MarkdownToken;
-type MarkdownReadRuleAlias<TValue> = MarkdownReadRule<TValue>;
-type MarkdownTextPatternAlias<TValue> = MarkdownTextPattern<TValue>;
-type MarkdownLinePrefixAlias = MarkdownLinePrefix;
-type MarkdownDelimitersAlias = MarkdownDelimiters;
-type MarkdownInlineOutputAlias = MarkdownInlineOutput;
-type MarkdownListItemAlias = MarkdownListItem;
 
 // oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
 export declare namespace RtePlugin {
@@ -173,10 +161,4 @@ export declare namespace RtePlugin {
     export type MarkdownMarkForm<TValue = Record<string, unknown>> = MarkdownMarkFormAlias<TValue>;
     export type MarkdownInlineForm<TValue = Record<string, unknown>> = MarkdownInlineFormAlias<TValue>;
     export type MarkdownToken = MarkdownTokenAlias;
-    export type MarkdownReadRule<TValue> = MarkdownReadRuleAlias<TValue>;
-    export type MarkdownTextPattern<TValue> = MarkdownTextPatternAlias<TValue>;
-    export type MarkdownLinePrefix = MarkdownLinePrefixAlias;
-    export type MarkdownDelimiters = MarkdownDelimitersAlias;
-    export type MarkdownInlineOutput = MarkdownInlineOutputAlias;
-    export type MarkdownListItem = MarkdownListItemAlias;
 }

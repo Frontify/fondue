@@ -210,6 +210,27 @@ const FORM_CASES: readonly RoundTripCase[] = [
         },
     },
     {
+        name: 'a list item holding two paragraphs',
+        markdown: '- one\n\n  two',
+        document: {
+            version: 1,
+            blocks: [
+                {
+                    type: 'bulletList',
+                    children: [
+                        {
+                            type: 'listItem',
+                            children: [
+                                { type: 'paragraph', children: [{ text: 'one' }] },
+                                { type: 'paragraph', children: [{ text: 'two' }] },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+    },
+    {
         name: 'a quote',
         markdown: '> quoted',
         document: { version: 1, blocks: [{ type: 'quote', children: [{ text: 'quoted' }] }] },

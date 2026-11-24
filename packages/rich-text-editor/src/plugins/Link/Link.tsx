@@ -15,7 +15,7 @@ import {
 import { translatedLabel } from '#/ui/translation';
 
 import { withoutDecorationLine } from '../shared/helpers/declaredStyle';
-import { isLinkablePaste, isSafeHref, LINKABLE_ADDRESS, toHref } from '../shared/helpers/href';
+import { isLinkablePaste, isSafeHref, LINKABLE_ADDRESS, markdownDestination, toHref } from '../shared/helpers/href';
 
 import { LinkEditor } from './components/LinkEditor';
 import { LinkToolbarButton } from './components/LinkToolbarButton';
@@ -186,6 +186,26 @@ const linkMarkFor = (appearances: readonly LinkAppearance[]): MarkDefinition =>
         defaultStyles: LINK_DEFAULT_STYLES,
 
         parse: [{ tag: 'a[href]', value: (element) => linkFromElement(element, appearances) }],
+
+        markdown: {
+            read: [
+                {
+                    token: 'link_open',
+                    value: ({ attrs }) => {
+                        if (isSafeHref(attrs.href)) {
+                            return { href: attrs.href };
+                        }
+                        return null;
+                    },
+                },
+            ],
+            write: ({ href }) => {
+                if (isSafeHref(href)) {
+                    return { open: '[', close: `](${markdownDestination(href)})` };
+                }
+                return null;
+            },
+        },
     });
 
 // Shared so every link content with the same offer declares the very same mark, which the registry requires.

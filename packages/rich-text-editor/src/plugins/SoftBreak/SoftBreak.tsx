@@ -15,6 +15,7 @@ export const softBreakContent = defineContent({
         break: defineInline({
             toHtml: () => ({ tag: 'br' }),
             parse: [{ tag: 'br' }],
+            markdown: { read: [{ token: 'hardbreak' }], write: () => ({ kind: 'lineBreak' }) },
         }),
     },
 });

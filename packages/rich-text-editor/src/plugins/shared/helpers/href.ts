@@ -52,6 +52,22 @@ export const isSafeHref = (href: unknown): href is string => {
     return scheme === null || SAFE_SCHEMES.has(scheme);
 };
 
+/** What makes a Markdown link destination need `<…>` around it. */
+const DESTINATION_NEEDS_BRACKETS = /[\s()]/;
+
+/** What a Markdown link destination escapes: the backslash and the angle brackets that would end or open it. */
+const DESTINATION_ESCAPED = /[\\<>]/g;
+
+/** An address as a Markdown link destination: wrapped in `<…>` when it holds a space or a parenthesis. */
+export const markdownDestination = (href: string): string => {
+    const escaped = href.replaceAll(DESTINATION_ESCAPED, (character) => `\\${character}`);
+    if (DESTINATION_NEEDS_BRACKETS.test(href)) {
+        return `<${escaped}>`;
+    }
+
+    return escaped;
+};
+
 export const isLinkablePaste = (text: string): boolean => LINKABLE_PASTE.test(text);
 
 /** Paths and fragments within the site the document is shown on, kept as typed. */

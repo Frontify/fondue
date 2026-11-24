@@ -31,6 +31,7 @@ export const italicContent = defineContent({
                 { style: 'font-style', value: markWhen(isItalicStyle) },
                 { style: 'font-style', clears: isNormalStyle },
             ],
+            markdown: { read: [{ token: 'em_open' }], write: () => ({ open: '*', close: '*' }) },
         }),
     },
 });

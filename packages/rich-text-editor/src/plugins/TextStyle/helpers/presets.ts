@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PARAGRAPH, type ParseRule, type RteInlineNode, type RteInputRule } from '#/core';
+import { type MarkdownBlockForm, PARAGRAPH, type ParseRule, type RteInlineNode, type RteInputRule } from '#/core';
 import { type PlainStringKey } from '#/locales/types';
 
 import styles from '../textStyle.module.scss';
@@ -73,19 +73,57 @@ export const labelOf = (option: TextStyleOption): PlainStringKey =>
 export const presetsFor = (options: readonly TextStyleOption[]): Preset[] =>
     options.map(findPreset).filter((preset) => preset !== undefined);
 
-/** The `#` prefix each heading tag answers to; the presets rendering as `p` have none. */
-const MARKDOWN_PREFIX: Partial<Record<Preset['tag'], string>> = {
-    h1: '# ',
-    h2: '## ',
-    h3: '### ',
-    h4: '#### ',
+/** The heading level each heading tag stands for; the presets rendering as `p` have none. */
+const HEADING_LEVEL: Partial<Record<Preset['tag'], number>> = {
+    h1: 1,
+    h2: 2,
+    h3: 3,
+    h4: 4,
+};
+
+/** The `#` prefix a heading preset answers to (`## ` for level 2), or `undefined` for a preset that is not a heading. */
+const markdownPrefixOf = ({ tag }: Preset): string | undefined => {
+    const level = HEADING_LEVEL[tag];
+    if (level === undefined) {
+        return undefined;
+    }
+    return `${'#'.repeat(level)} `;
 };
 
 /** The markdown shortcut for a preset that has one (`## ` for a level-2 heading), so it follows the configured presets. */
-export const markdownRuleFor = ({ name, tag }: Preset): RteInputRule[] => {
-    const match = MARKDOWN_PREFIX[tag];
-    return match === undefined ? [] : [{ kind: 'block', match, block: 'textStyle', attributes: { style: name } }];
+export const markdownRuleFor = (preset: Preset): RteInputRule[] => {
+    const match = markdownPrefixOf(preset);
+    return match === undefined
+        ? []
+        : [{ kind: 'block', match, block: 'textStyle', attributes: { style: preset.name } }];
 };
+
+/** How Markdown headings map to the offered presets: by tag on read, by the `#` prefix on write. */
+export const markdownFormFor = (offered: readonly Preset[]): MarkdownBlockForm<{ style: string }> => ({
+    read: [
+        {
+            token: 'heading_open',
+            value: ({ tag }) => {
+                const heading = offered.find((preset) => preset.tag === tag && markdownPrefixOf(preset) !== undefined);
+                if (heading === undefined) {
+                    return null;
+                }
+                return { style: heading.name };
+            },
+        },
+    ],
+    write: ({ style }) => {
+        const preset = findPreset(style);
+        if (preset === undefined) {
+            return null;
+        }
+        const first = markdownPrefixOf(preset);
+        if (first === undefined) {
+            return null;
+        }
+        return { first, rest: null };
+    },
+});
 
 /** How pasted HTML maps to a preset: headings by bare tag, paragraph presets by their `data-text-style` attribute. */
 export const parseRuleFor = ({ name, tag }: Preset): ParseRule<{ style: string }> => ({

@@ -14,6 +14,7 @@ export const paragraphBlock: BlockDefinition = defineBlock({
     content: 'text',
     toHtml: () => ({ tag: 'p', children: true }),
     parse: [{ tag: 'p' }],
+    markdown: { read: [{ token: 'paragraph_open' }], write: () => ({ first: '', rest: '' }) },
 });
 
 /**
