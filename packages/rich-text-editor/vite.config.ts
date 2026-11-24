@@ -106,7 +106,11 @@ export default defineConfig({
     },
     build: {
         lib: {
-            entry: { index: './src/index.ts', plugins: './src/plugins/index.ts' },
+            entry: {
+                index: './src/index.ts',
+                plugins: './src/plugins/index.ts',
+                markdown: './src/markdown/index.ts',
+            },
             fileName: (format: string) => `[name].${format}.js`,
             formats: ['es'],
             cssFileName: 'style',
