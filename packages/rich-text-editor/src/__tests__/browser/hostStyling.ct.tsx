@@ -391,6 +391,44 @@ const HOST_LINK_LOOK: TextLinkLook = {
     color: HOST_LOOK.color,
 };
 
+/** The box a host draws around a text link's text, which the link look leaves out until a host sets it. */
+const HOST_LINK_BOX_LOOK: TextLinkLook = {
+    paddingTop: '2px',
+    paddingRight: '6px',
+    paddingBottom: '2px',
+    paddingLeft: '6px',
+    backgroundColor: 'rgb(255, 240, 0)',
+    borderColor: 'rgb(0, 0, 100)',
+    borderWidth: '2px',
+    borderStyle: 'dashed',
+    borderRadius: '4px',
+};
+
+const HOST_LINK_BOX_COMPUTED: Record<string, string> = {
+    'padding-top': '2px',
+    'padding-right': '6px',
+    'padding-bottom': '2px',
+    'padding-left': '6px',
+    'background-color': 'rgb(255, 240, 0)',
+    'border-top-color': 'rgb(0, 0, 100)',
+    'border-top-width': '2px',
+    'border-top-style': 'dashed',
+    'border-top-left-radius': '4px',
+    'text-decoration-line': 'underline',
+};
+
+/** What a text link draws where the host sets no box: nothing around the text. */
+const FONDUE_LINK_BOX_COMPUTED: Record<string, string> = {
+    'padding-top': '0px',
+    'padding-right': '0px',
+    'padding-bottom': '0px',
+    'padding-left': '0px',
+    'background-color': 'rgba(0, 0, 0, 0)',
+    'border-top-style': 'none',
+    'border-top-width': '0px',
+    'border-top-left-radius': '0px',
+};
+
 const HOST_LINK_COMPUTED_LOOK: ComputedLook = {
     ...HOST_COMPUTED_LOOK,
     'text-decoration-line': 'underline',
@@ -513,6 +551,30 @@ test.describe('host styling of body text, quotes and links', () => {
         }
     });
 
+    test('draws the box the host sets around a text link and keeps the underline', async ({ mount }) => {
+        const component = await mount(<HostLooksPair link={HOST_LINK_BOX_LOOK} />);
+
+        for (const surface of SURFACES) {
+            const link = component.getByTestId(surface).getByRole('link', { name: LOOKED_TEXTS.link, exact: true });
+
+            for (const [property, value] of Object.entries(HOST_LINK_BOX_COMPUTED)) {
+                await expect(link).toHaveCSS(property, value);
+            }
+        }
+    });
+
+    test('draws no box around a text link where the host sets none', async ({ mount }) => {
+        const component = await mount(<HostLooksPair />);
+
+        for (const surface of SURFACES) {
+            const link = component.getByTestId(surface).getByRole('link', { name: LOOKED_TEXTS.link, exact: true });
+
+            for (const [property, value] of Object.entries(FONDUE_LINK_BOX_COMPUTED)) {
+                await expect(link).toHaveCSS(property, value);
+            }
+        }
+    });
+
     test('keeps Fondue looks for values that resolve to an unset guideline variable', async ({ mount }) => {
         const component = await mount(<HostLooksPair body={UNSET_LOOK} quote={UNSET_LOOK} link={UNSET_LINK_LOOK} />);
 
@@ -532,6 +594,8 @@ const HOST_BUTTON_LOOK: ButtonLook = {
     paddingRight: '20px',
     paddingBottom: '6px',
     paddingLeft: '20px',
+    marginTop: '10px',
+    marginBottom: '10px',
     backgroundColor: 'rgb(0, 0, 200)',
     borderColor: 'rgb(0, 0, 100)',
     borderWidth: '2px',
@@ -547,6 +611,8 @@ const HOST_BUTTON_COMPUTED: Record<string, string> = {
     'padding-right': '20px',
     'padding-bottom': '6px',
     'padding-left': '20px',
+    'margin-top': '10px',
+    'margin-bottom': '10px',
     'background-color': 'rgb(0, 0, 200)',
     'border-top-color': 'rgb(0, 0, 100)',
     'border-top-width': '2px',
@@ -560,10 +626,38 @@ const FONDUE_BUTTON_COMPUTED: Record<string, string> = {
     'border-top-style': 'solid',
     'border-top-width': '1px',
     'border-top-color': 'rgba(0, 0, 0, 0)',
+    'margin-top': '0px',
+    'margin-bottom': '0px',
     display: 'inline-block',
 };
 
 test.describe('host styling of button links', () => {
+    test('keeps the edge of a button link and of a boxed text link when forced colours replace the colours', async ({
+        mount,
+        page,
+    }) => {
+        await page.emulateMedia({ forcedColors: 'active' });
+        const component = await mount(
+            <HostLooksPair
+                value={BUTTON_LINKS_DOCUMENT}
+                link={HOST_LINK_BOX_LOOK}
+                buttons={{ primary: HOST_BUTTON_LOOK }}
+            />,
+        );
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            const button = section.getByRole('link', { name: BUTTON_LINK_TEXT, exact: true });
+            const textLink = section.getByRole('link', { name: PLAIN_LINK_TEXT, exact: true });
+
+            await expect(button).toHaveCSS('border-top-style', 'solid');
+            await expect(button).not.toHaveCSS('border-top-width', '0px');
+            await expect(textLink).toHaveCSS('text-decoration-line', 'underline');
+            await expect(textLink).toHaveCSS('border-top-style', 'dashed');
+            await expect(textLink).not.toHaveCSS('border-top-width', '0px');
+        }
+    });
+
     test('draws a button link without an underline and keeps a plain link underlined', async ({ mount }) => {
         const component = await mount(<HostLooksPair value={BUTTON_LINKS_DOCUMENT} />);
 

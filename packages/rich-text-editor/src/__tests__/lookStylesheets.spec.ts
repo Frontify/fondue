@@ -7,7 +7,11 @@ import { describe, expect, it } from 'vitest';
 
 import { OWN_MARGIN_VARIABLES } from '../core/documentContract';
 import { LOOK_PROPERTIES, lookVariableName } from '../core/look';
-import { BUTTON_HOVER_LOOK_FIELDS, BUTTON_LOOK_FIELDS } from '../plugins/Link/helpers/appearance';
+import {
+    BUTTON_HOVER_LOOK_FIELDS,
+    BUTTON_LOOK_FIELDS,
+    TEXT_LINK_LOOK_FIELDS,
+} from '../plugins/Link/helpers/appearance';
 import { ALL_LINK_APPEARANCES, type LinkAppearance } from '../plugins/Link/helpers/value';
 import { bulletListPlugin, numberedListPlugin } from '../plugins/List/List';
 import { ALL_TEXT_STYLES, findPreset } from '../plugins/TextStyle/helpers/presets';
@@ -130,6 +134,12 @@ describe('the link stylesheet', () => {
             property,
             variable: lookVariableName(kind, property),
         }));
+
+    it('reads the text link look from the variables the link plugin sets', () => {
+        expect(lookDeclarationsIn(ruleBodyForSelector('.link, .link:link, .link:visited'))).toEqual(
+            declarationsOf('link', TEXT_LINK_LOOK_FIELDS),
+        );
+    });
 
     for (const appearance of ALL_LINK_APPEARANCES) {
         const className = BUTTON_CLASSES[appearance];

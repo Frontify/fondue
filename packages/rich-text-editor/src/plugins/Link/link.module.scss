@@ -5,6 +5,9 @@
 @use '../../styles/look.module.scss';
 @use './underline' as link;
 
+// The width a border draws with when the host gives it a style but no width; with the style `none` it computes to 0.
+$border-width: 1px;
+
 /** A stylesheet rule, not inline, so an explicit font colour (written inline) still wins. */
 .link {
     cursor: pointer;
@@ -21,6 +24,15 @@
             ),
             $except: (text-decoration, margin-top, margin-bottom)
         );
+        padding-top: var(--rte-link-padding-top, 0);
+        padding-right: var(--rte-link-padding-right, 0);
+        padding-bottom: var(--rte-link-padding-bottom, 0);
+        padding-left: var(--rte-link-padding-left, 0);
+        background-color: var(--rte-link-background-color, transparent);
+        border-color: var(--rte-link-border-color, currentcolor);
+        border-width: var(--rte-link-border-width, #{$border-width});
+        border-radius: var(--rte-link-border-radius, 0);
+        border-style: var(--rte-link-border-style, none);
     }
 
     @include link.underline;
@@ -35,8 +47,6 @@
         @include link.underline;
     }
 }
-
-$button-border-width: 1px;
 
 // Fondue's own Button colours for each kind, where the host sets no look.
 $buttons: (
@@ -87,6 +97,8 @@ $buttons: (
             letter-spacing: var(--rte-button-#{$kind}-letter-spacing, inherit);
             text-transform: var(--rte-button-#{$kind}-text-transform, inherit);
             text-decoration: var(--rte-button-#{$kind}-text-decoration, none);
+            margin-top: var(--rte-button-#{$kind}-margin-top, 0);
+            margin-bottom: var(--rte-button-#{$kind}-margin-bottom, 0);
             color: var(--rte-button-#{$kind}-color, #{map.get($button, color)});
             padding-top: var(--rte-button-#{$kind}-padding-top, var(--spacing-x-small));
             padding-right: var(--rte-button-#{$kind}-padding-right, var(--spacing-small));
@@ -94,7 +106,7 @@ $buttons: (
             padding-left: var(--rte-button-#{$kind}-padding-left, var(--spacing-small));
             background-color: var(--rte-button-#{$kind}-background-color, #{map.get($button, background)});
             border-color: var(--rte-button-#{$kind}-border-color, transparent);
-            border-width: var(--rte-button-#{$kind}-border-width, #{$button-border-width});
+            border-width: var(--rte-button-#{$kind}-border-width, #{$border-width});
             border-radius: var(--rte-button-#{$kind}-border-radius, var(--border-radius-medium));
         }
 

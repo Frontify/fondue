@@ -6,11 +6,9 @@ import {
     defineContent,
     defineMark,
     definePlugin,
-    LOOK_PROPERTIES,
     lookProperties,
     type RteContent,
     type RteHotkey,
-    type TextLook,
 } from '#/core';
 import { translatedLabel } from '#/ui/translation';
 
@@ -27,6 +25,8 @@ import {
     isLinkAppearance,
     linkClassName,
     NO_APPEARANCES,
+    TEXT_LINK_LOOK_FIELDS,
+    type TextLinkLook,
 } from './helpers/appearance';
 import { type LinkSearch } from './helpers/destination';
 import { openNewLinkForm } from './helpers/newLinkForms';
@@ -47,11 +47,6 @@ export type LinkMark = {
      */
     link?: LinkValue;
 };
-
-/**
- * How text links look. A link keeps its underline, and vertical margins do nothing on inline text, so neither is a field.
- */
-export type TextLinkLook = Omit<TextLook, 'textDecoration' | 'marginTop' | 'marginBottom'>;
 
 /** How each kind of link looks. */
 export type LinkLook = {
@@ -247,7 +242,7 @@ export const linkContent = ({ kinds = DEFAULT_LINK_KINDS, look }: LinkContentOpt
     return defineContent({
         marks: { link: mark },
         contentProperties: {
-            ...lookProperties(LINK_LOOK_NAME, look?.text ?? {}, LOOK_PROPERTIES),
+            ...lookProperties(LINK_LOOK_NAME, look?.text ?? {}, TEXT_LINK_LOOK_FIELDS),
             ...buttonLookProperties(look?.button ?? {}),
         },
     });
