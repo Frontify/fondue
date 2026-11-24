@@ -1,0 +1,180 @@
+packages/components/src/components/Select/Select.stories.tsx
+  s_a5f1223ef58431::t_e00423c84ba398 122-123,125,127-128,144-149,151,153-157,164-173
+  s_a5f1223ef58431::t_19cc5200e4cddb 129-131,138-143
+  s_90246622e6e157::t_20f8893fbcc4fa 124,150
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 126,132-137,152,158-163
+packages/components/src/components/Select/hooks/useSelectionDescription.ts
+  s_a5f1223ef58431::t_fb11eb420533e8 30-32,42
+  s_90246622e6e157::t_2404cc2ac47322 28,33-41,43-44,46-47
+  s_fbbc580b74bf80::t_b0058aed6682c9 23
+packages/components/src/components/Select/ComboboxMultiple.tsx
+  s_90246622e6e157::t_b51e112ba39e75 22,25
+  s_a5f1223ef58431::t_632f42a203261a 21,24,28-29
+  s_90246622e6e157::t_599211e743ba34 23
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 26-27
+packages/components/src/components/Select/SelectMultiple.tsx
+  s_a5f1223ef58431::t_632f42a203261a 21,24,28-29
+  s_90246622e6e157::t_d1e64b3af03fcb 22,25
+  s_90246622e6e157::t_c1324381c6d95a 23
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 26-27
+packages/components/src/components/Select/__tests__/SelectMultiple.spec.tsx
+  s_90246622e6e157::t_2d6da8f3dd8fc0 167
+  s_90246622e6e157::t_5512aaea197ed1 219
+  s_a5f1223ef58431::t_9b7d5f7e7d6eb0 165-166,168-179,180-182,184-192,194-195,197-203,206-207,210,213-218,220
+  s_a5f1223ef58431::t_bfcbb14a2df1a4 183
+  s_90246622e6e157::t_e6f4d75c9b5f1c 208-209,212
+  s_fbbc580b74bf80::t_8283dc6ba432f8 211
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 193,196,204-205
+packages/components/src/components/Select/__tests__/ComboboxMultiple.a11y.spec.tsx
+  s_a5f1223ef58431::t_94ffdf3fca0277 401-402,404-415,418,420-421
+  s_90246622e6e157::t_993420d0517a87 403
+  s_90246622e6e157::t_47a8f8d589d931 416-417,419
+.changeset/soft-pugs-wander.md
+  s_a5f1223ef58431::t_edf197c7f7b274 1-2,5-7
+  s_90246622e6e157::t_1f4be9ed46f505 8-12
+  s_fbbc580b74bf80::t_8283dc6ba432f8 12,16-17
+packages/components/src/components/Select/components/ComboboxBase.tsx
+  s_a5f1223ef58431::t_40187e00579a89 97-101,120,311,347-349,417
+  s_90246622e6e157::t_d1e836f7d2dec0 153
+  s_fbbc580b74bf80::t_b0058aed6682c9 323
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 26,147-148,173,201,248,271
+packages/components/src/components/Select/components/SelectBase.tsx
+  s_a5f1223ef58431::t_cfbbec4d1e1ca3 80-84,103,222,263,280
+  s_90246622e6e157::t_8ccc9567c4a621 141
+  s_fbbc580b74bf80::t_b0058aed6682c9 251
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 15,135-136,174,253
+packages/components/src/components/Select/styles/select.module.scss
+  s_90246622e6e157::t_b80401b8a1245c 350-352
+  s_a5f1223ef58431::t_f9aca2c3512247 344-349
+  s_a5f1223ef58431::t_6fd87b04112550 365-366
+  s_fbbc580b74bf80::t_fd80e2b643f39d 413
+packages/components/src/components/Select/__tests__/ComboboxMultiple.spec.tsx
+  s_a5f1223ef58431::t_4c72ee2e1e4d0d 226-227,230,233-242,244-250,266
+  s_90246622e6e157::t_15d1dc5ae68c15 251,253-261,265
+  s_90246622e6e157::t_c25615910a0e42 228-229,232
+  s_fbbc580b74bf80::t_8283dc6ba432f8 231,243
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 252,262-264
+packages/components/src/components/Select/components/SelectItem.tsx
+  s_a5f1223ef58431::t_dd7516c76528fa 3
+  s_a5f1223ef58431::t_964768682aa6ae 41
+packages/components/src/components/Select/__tests__/useSelectionDescription.spec.ts
+  s_a5f1223ef58431::t_a37ea2b8d52852 86-87,89-93,95-96,104-105
+  s_90246622e6e157::t_e922add2120772 88,94,97-103
+packages/components/src/components/Select/components/SelectMenu.tsx
+  s_90246622e6e157::t_c283f0a7d48989 191
+  s_90246622e6e157::t_d3160840d510b6 166
+  s_a5f1223ef58431::t_c888428bf011c9 61-63
+  s_a5f1223ef58431::t_308c7c908717f6 91
+  s_90246622e6e157::t_612987a5755b28 167-170
+  s_90246622e6e157::t_8c0d95ab513529 96-97
+  s_a5f1223ef58431::t_371a2fa5054f7e 165
+  s_a5f1223ef58431::t_26fe9c0d865e35 59-60
+  s_fbbc580b74bf80::t_b0058aed6682c9 171-174,181
+packages/components/src/components/Select/__tests__/SelectMultiple.a11y.spec.tsx
+  s_90246622e6e157::t_a8d8bea467d0fc 448
+  s_a5f1223ef58431::t_94ffdf3fca0277 446-447,449-471,474,476-477
+  s_90246622e6e157::t_1d01820d3da218 472-473,475
+packages/components/src/components/Select/__tests__/CollapsibleBadges.spec.tsx
+  s_a5f1223ef58431::t_c814a9abb0b969 115,122
+  s_a5f1223ef58431::t_a37ea2b8d52852 99,103,106-107,123,125-129,131-135,137-138
+  s_90246622e6e157::t_655c0d8408fc54 105-108,110
+  s_fbbc580b74bf80::t_b0058aed6682c9 100-102,109,114,130
+  s_fbbc580b74bf80::t_c0563ae46e2706 116-121
+  s_fbbc580b74bf80::t_8283dc6ba432f8 104,111,124,136
+packages/components/src/components/Select/__tests__/MultiselectIndeterminate.ct.tsx
+  s_a5f1223ef58431::t_50627d7fe8e6ea 1-2,5-14,18-21,42-43,45-55,62-65,84-91,94,101-102,118,231
+  s_90246622e6e157::t_081d95e676f063 56-58,60-61
+  s_90246622e6e157::t_0d60b2f6c0d008 59
+  s_a5f1223ef58431::t_55a48a285e16a4 22-41,44,66-83,92-93,95,97-99,104-108,110-113,115-117
+  s_90246622e6e157::t_ddd96bbace5934 3-4
+  s_90246622e6e157::t_d89f0e1091e157 122-124,126-151
+  s_90246622e6e157::t_639c07d7c8b03b 103,109,114,119-120
+  s_90246622e6e157::t_1d79761c012262 121
+  s_90246622e6e157::t_3bd751e4a2d6fb 153,172,202,210,214-218,219,231
+  s_90246622e6e157::t_f5e4a6b53f1c77 176,184,189-192,193,199-200
+  s_fbbc580b74bf80::t_8283dc6ba432f8 15-17,125,153-226,231
+  s_fbbc580b74bf80::t_03a9f327f2ceca 227-230
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 96,100
+packages/components/src/locales/de-DE.ts
+  s_90246622e6e157::t_ec32241ca104e3 28
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/locales/fr-FR.ts
+  s_90246622e6e157::t_ec32241ca104e3 28
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/locales/nl-NL.ts
+  s_90246622e6e157::t_ec32241ca104e3 28
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/locales/fr-CH.ts
+  s_90246622e6e157::t_ec32241ca104e3 28
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/locales/it-CH.ts
+  s_90246622e6e157::t_ec32241ca104e3 28
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/components/Select/components/CollapsibleBadges.tsx
+  s_90246622e6e157::t_b04795e376fb41 148-176,179-182,212-213
+  s_90246622e6e157::t_713604b9fa7f6b 128
+  s_90246622e6e157::t_f60bdbfb676bb5 214
+  s_fbbc580b74bf80::t_fd80e2b643f39d 58-59,61,185
+  s_fbbc580b74bf80::t_b0058aed6682c9 27-28,45,47,53,62,90,100,109-111,121,123,201,204
+  s_fbbc580b74bf80::t_8283dc6ba432f8 31-43,46,48,50-52,54-55,72-81,96-98,112-113,127,129-130,183,193-200,202-203,208-211
+  s_fbbc580b74bf80::t_48558d6cdd107e 212-214
+packages/components/src/locales/es-ES.ts
+  s_90246622e6e157::t_ec32241ca104e3 28
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/locales/pl-PL.ts
+  s_90246622e6e157::t_ec32241ca104e3 28
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/locales/en-US.ts
+  s_90246622e6e157::t_ec32241ca104e3 26
+  s_fbbc580b74bf80::t_8283dc6ba432f8 25,29
+packages/components/src/locales/pt-PT.ts
+  s_90246622e6e157::t_ec32241ca104e3 28
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/locales/de-CH.ts
+  s_90246622e6e157::t_ec32241ca104e3 28
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/locales/it-IT.ts
+  s_90246622e6e157::t_ec32241ca104e3 28
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/components/Badge/Badge.tsx
+  s_fbbc580b74bf80::t_bd7ee3dcadde7e 136
+packages/components/src/components/Select/utils.ts
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 132-141
+packages/components/src/components/Select/__tests__/utils.spec.tsx
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 9,122-130
+  s_fbbc580b74bf80::t_74c0ec019570fd 131
+packages/components/src/components/Select/Select.metadata.json
+  s_fbbc580b74bf80::t_b4ca250ccf9c6a 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "bab07c2f5b12c0f39e82107f0cf52a05e2d9a0f2",
+  "prompts": {},
+  "sessions": {
+    "s_90246622e6e157": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b03505de-347f-4015-bcd8-0c418eb63dbe",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_a5f1223ef58431": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "36be214a-2e26-4577-b279-6815cbdc127e",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_fbbc580b74bf80": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "531792a9-9c10-420f-a827-63acef15ca4a",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+.changeset/bump-prosemirror-view.md
+  h_2139c5e5c94509 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "fc66bc1d66918420bde1526cf30df0e4333d1ae0",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

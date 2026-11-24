@@ -1,0 +1,98 @@
+packages/rich-text-editor/src/plugins/TextStyle/helpers/presets.ts
+  s_22527a1a684ccf::t_9d928468cc044c 28
+packages/rich-text-editor/src/plugins/TextStyle/textStyle.module.scss
+  s_22527a1a684ccf::t_9d928468cc044c 3,8-12,15-23,27-35,39-47,51-59,63-72,76-83,87-94,98-104,108-121,123-125
+packages/rich-text-editor/src/plugins/Link/link.module.scss
+  s_22527a1a684ccf::t_9d928468cc044c 3,15-21
+packages/rich-text-editor/src/index.ts
+  s_22527a1a684ccf::t_9d928468cc044c 166-172
+packages/rich-text-editor/src/__tests__/browser/HostLooksPair.tsx
+  s_22527a1a684ccf::t_9d928468cc044c 1-56
+packages/rich-text-editor/src/plugins/TextStyle/index.ts
+  s_22527a1a684ccf::t_9d928468cc044c 3-11
+packages/rich-text-editor/src/__tests__/browser/ownMarginsValues.ts
+  s_22527a1a684ccf::t_9d928468cc044c 1-27
+.changeset/rte-paragraph-quote-link-looks.md
+  s_22527a1a684ccf::t_9d928468cc044c 1-5
+packages/rich-text-editor/src/plugins/Quote/quote.module.scss
+  s_22527a1a684ccf::t_9d928468cc044c 3-4,7-14
+packages/rich-text-editor/src/__tests__/browser/OwnMarginsFrame.tsx
+  s_22527a1a684ccf::t_9d928468cc044c 1-45
+packages/rich-text-editor/src/__tests__/browser/HostResetPair.tsx
+  s_22527a1a684ccf::t_9d928468cc044c 1-22
+packages/rich-text-editor/src/__tests__/browser/ownMargins.ct.tsx
+  s_22527a1a684ccf::t_9d928468cc044c 1-60
+packages/rich-text-editor/src/__tests__/browser/HostNoHeadingsPair.tsx
+  s_22527a1a684ccf::t_9d928468cc044c 1-40
+packages/rich-text-editor/src/plugins/shared/_mutedText.scss
+  s_22527a1a684ccf::t_9d928468cc044c 3-6
+packages/rich-text-editor/src/core/registry.ts
+  s_22527a1a684ccf::t_9d928468cc044c 700-702,709-713
+packages/rich-text-editor/src/styles/look.module.scss
+  s_22527a1a684ccf::t_9d928468cc044c 1-62
+packages/rich-text-editor/src/core/look.ts
+  s_22527a1a684ccf::t_9d928468cc044c 1-76
+packages/rich-text-editor/src/__tests__/serializeToHtml.node.spec.tsx
+  s_22527a1a684ccf::t_9d928468cc044c 65-75
+packages/rich-text-editor/src/__tests__/documentContract.spec.ts
+  s_22527a1a684ccf::t_9d928468cc044c 1-63
+packages/rich-text-editor/src/core/htmlSpec.ts
+  s_22527a1a684ccf::t_9d928468cc044c 54-56,64
+packages/rich-text-editor/src/plugins/TextStyle/helpers/headingGap.ts
+  s_22527a1a684ccf::t_9d928468cc044c 1-7
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_22527a1a684ccf::t_9d928468cc044c 3,5,12-13,21,26-28,832-1137
+packages/rich-text-editor/src/__tests__/lookStylesheets.spec.ts
+  s_22527a1a684ccf::t_9d928468cc044c 1-97
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_22527a1a684ccf::t_9d928468cc044c 1-536
+packages/rich-text-editor/src/__tests__/browser/HostStylingPair.tsx
+  s_22527a1a684ccf::t_9d928468cc044c 1-34
+packages/rich-text-editor/src/__tests__/browser/HostStylingSections.tsx
+  s_22527a1a684ccf::t_9d928468cc044c 1-23
+packages/rich-text-editor/src/__tests__/browser/hostStylingValues.ts
+  s_22527a1a684ccf::t_9d928468cc044c 1-111
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_22527a1a684ccf::t_9d928468cc044c 493-509
+packages/rich-text-editor/src/core/look.spec.ts
+  s_22527a1a684ccf::t_9d928468cc044c 1-29
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_22527a1a684ccf::t_9d928468cc044c 5,9,16-17,33,36,40-48,57-63,71,74-89,91,95-119,141-144,181-187,189-190,197
+packages/rich-text-editor/src/renderer/document.module.scss
+  s_22527a1a684ccf::t_9d928468cc044c 3-4,9-19,61-63,72-83
+  s_22527a1a684ccf::t_e85e773b6dc54f 84
+packages/rich-text-editor/src/__tests__/headingGap.spec.ts
+  s_22527a1a684ccf::t_9d928468cc044c 1-31
+packages/rich-text-editor/src/core/index.ts
+  s_22527a1a684ccf::t_9d928468cc044c 38-39
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_22527a1a684ccf::t_9d928468cc044c 182-183
+.changeset/rte-text-style-looks.md
+  s_22527a1a684ccf::t_9d928468cc044c 1-5
+packages/rich-text-editor/src/__tests__/typeDerivation.spec.ts
+  s_22527a1a684ccf::t_9d928468cc044c 9-16,162-171,194-196
+packages/rich-text-editor/src/editor/engines/prosemirror/testEditor.ts
+  s_22527a1a684ccf::t_9d928468cc044c 202
+packages/rich-text-editor/src/core/documentContract.ts
+  s_22527a1a684ccf::t_9d928468cc044c 1-25
+.changeset/fix-rte-empty-text-style-picker.md
+  s_22527a1a684ccf::t_9d928468cc044c 1-5
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.spec.ts
+  s_22527a1a684ccf::t_9d928468cc044c 1-76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a02d198accc579e489f4a083dfaf07468892db5a",
+  "prompts": {},
+  "sessions": {
+    "s_22527a1a684ccf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2a5abef-0d60-4dfb-93a0-af8f62c61098",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

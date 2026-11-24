@@ -1,0 +1,158 @@
+packages/rich-text-editor/src/plugins/History/History.tsx
+  s_c56bde808bb5f7::t_9941c725ecf7eb 8,41-42
+packages/rich-text-editor/src/plugins/Underline/Underline.ts
+  s_c56bde808bb5f7::t_9941c725ecf7eb 6,40
+packages/rich-text-editor/src/locales/en-US.ts
+  s_c56bde808bb5f7::t_94263da589187c 57-58
+  s_c56bde808bb5f7::t_f5817bdb59c8fa 3-56,59-102
+packages/rich-text-editor/src/locales/nl-NL.ts
+  s_c56bde808bb5f7::t_94263da589187c 56-57
+  s_c56bde808bb5f7::t_f5817bdb59c8fa 3-55,58-97,100-101
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_c56bde808bb5f7::t_9941c725ecf7eb 19,187,200
+packages/rich-text-editor/src/core/registry.ts
+  s_c56bde808bb5f7::t_c61bdeeca78add 26
+  s_c56bde808bb5f7::t_c132e9650c07a2 62,310-312,319
+packages/rich-text-editor/src/locales/de-CH.ts
+  s_c56bde808bb5f7::t_f5817bdb59c8fa 3-48,51-56,59-98,101-102
+  s_c56bde808bb5f7::t_94263da589187c 49-50,57-58
+packages/rich-text-editor/src/locales/es-ES.ts
+  s_c56bde808bb5f7::t_f5817bdb59c8fa 3-48,51-56,59-98,101-102
+  s_c56bde808bb5f7::t_94263da589187c 49-50,57-58
+packages/rich-text-editor/src/plugins/FontColor/FontColor.tsx
+  s_c56bde808bb5f7::t_9941c725ecf7eb 4,69
+packages/rich-text-editor/src/plugins/List/List.ts
+  s_c56bde808bb5f7::t_ea676996d61293 13
+  s_c56bde808bb5f7::t_9941c725ecf7eb 16,183,198
+  s_c56bde808bb5f7::t_1ec83a170d7023 145
+packages/rich-text-editor/src/locales/pt-PT.ts
+  s_c56bde808bb5f7::t_94263da589187c 49-50,57-58
+  s_c56bde808bb5f7::t_f5817bdb59c8fa 3-48,51-56,59-98,101-102
+packages/rich-text-editor/src/editor/hooks/useEditorStrings.ts
+  s_c56bde808bb5f7::t_44481319da8c55 1-64
+packages/rich-text-editor/src/editor/warnings.ts
+  s_c56bde808bb5f7::t_6502dd4b51b9a7 6,21-28
+  s_c56bde808bb5f7::t_87a9b08dee43a2 29-31
+packages/rich-text-editor/src/locales/it-IT.ts
+  s_c56bde808bb5f7::t_f5817bdb59c8fa 3-48,51-56,59-98,101-102
+  s_c56bde808bb5f7::t_94263da589187c 49-50,57-58
+packages/rich-text-editor/src/locales/types.ts
+  s_c56bde808bb5f7::t_5f8214e6ce8f14 3-5,8,12-17
+packages/rich-text-editor/src/ui/translation.ts
+  s_c56bde808bb5f7::t_3979fc69b83631 5-7,12,18,20,25,30,39-51,53-55,57-70,72-73
+packages/rich-text-editor/src/plugins/Table/Table.tsx
+  s_c56bde808bb5f7::t_9941c725ecf7eb 7,168,176
+packages/rich-text-editor/src/core/plugin.ts
+  s_c56bde808bb5f7::t_c132e9650c07a2 187-200,213,622
+packages/rich-text-editor/src/plugins/ColumnBreak/ColumnBreak.ts
+  s_c56bde808bb5f7::t_9941c725ecf7eb 6,68
+fondue/package.json
+  s_c56bde808bb5f7::t_b3f6ef3519c4d6 44-51
+packages/rich-text-editor/src/plugins/Code/Code.ts
+  s_c56bde808bb5f7::t_9941c725ecf7eb 6,43
+packages/rich-text-editor/src/plugins/Subscript/Subscript.ts
+  s_c56bde808bb5f7::t_9941c725ecf7eb 6,44
+packages/rich-text-editor/src/locales/__tests__/locales.spec.ts
+  s_c56bde808bb5f7::t_9b5d3598f040ba 5,8,10,35-39,64,69-71,74-75,80-81,83-84
+  s_c56bde808bb5f7::t_cce685ec13b3f4 66
+  s_c56bde808bb5f7::t_247313a5193f21 76-79
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_c56bde808bb5f7::t_7999bcfc97f54b 763-782
+  s_c56bde808bb5f7::t_1efeb29a611559 5,332-336,2146-2148
+packages/rich-text-editor/src/index.ts
+  s_c56bde808bb5f7::t_c61bdeeca78add 15-16,113-114,128-129
+packages/rich-text-editor/src/plugins/Strikethrough/Strikethrough.ts
+  s_c56bde808bb5f7::t_9941c725ecf7eb 6
+  s_c56bde808bb5f7::t_94263da589187c 41-45
+packages/rich-text-editor/src/plugins/CheckList/CheckList.tsx
+  s_c56bde808bb5f7::t_9941c725ecf7eb 7,188
+packages/rich-text-editor/src/core/index.ts
+  s_c56bde808bb5f7::t_c61bdeeca78add 54-55
+packages/rich-text-editor/src/locales/pl-PL.ts
+  s_c56bde808bb5f7::t_f5817bdb59c8fa 3-96,99-100
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_c56bde808bb5f7::t_9941c725ecf7eb 4,111
+packages/rich-text-editor/src/plugins/Emoji/Emoji.tsx
+  s_c56bde808bb5f7::t_9941c725ecf7eb 4
+  s_c56bde808bb5f7::t_94263da589187c 39-42
+packages/rich-text-editor/src/editor/helpers/blockCommands.spec.ts
+  s_c56bde808bb5f7::t_1efeb29a611559 18
+packages/rich-text-editor/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_c56bde808bb5f7::t_9941c725ecf7eb 8
+  s_c56bde808bb5f7::t_94263da589187c 39-41
+packages/rich-text-editor/src/plugins/Bold/Bold.ts
+  s_c56bde808bb5f7::t_9941c725ecf7eb 6,47
+packages/rich-text-editor/src/plugins/Quote/Quote.ts
+  s_c56bde808bb5f7::t_9941c725ecf7eb 6,40
+packages/rich-text-editor/src/editor/components/TurnInto.tsx
+  s_c56bde808bb5f7::t_1ec83a170d7023 7,11,59
+packages/rich-text-editor/locales.vite.config.ts
+  s_c56bde808bb5f7::t_247313a5193f21 41-42
+packages/rich-text-editor/README.md
+  s_c56bde808bb5f7::t_b035b379a4b925 34-36,39,41-43,46-49,76-78
+packages/rich-text-editor/src/locales/it-CH.ts
+  s_c56bde808bb5f7::t_f5817bdb59c8fa 3-48,51-56,59-98,101-102
+  s_c56bde808bb5f7::t_94263da589187c 49-50,57-58
+.changeset/feat-rte-locales.md
+  s_c56bde808bb5f7::t_b035b379a4b925 3,6
+packages/rich-text-editor/src/plugins/labels.spec.ts
+  s_c56bde808bb5f7::t_01e995eaddae0a 5-6,14-16,23-24
+packages/rich-text-editor/src/ui/translation.spec.ts
+  s_c56bde808bb5f7::t_c4222d9e52ca13 5,8-10,14,21,25-30,32-33,36-47
+packages/rich-text-editor/src/editor/hooks/useEditorStrings.spec.tsx
+  s_c56bde808bb5f7::t_becd206d4bea85 1-80
+packages/rich-text-editor/src/editor/components/SlashMenu.tsx
+  s_c56bde808bb5f7::t_1ec83a170d7023 14,38,74,122,214,217,326
+packages/rich-text-editor/src/plugins/Align/Align.tsx
+  s_c56bde808bb5f7::t_9941c725ecf7eb 15,105
+packages/rich-text-editor/src/editor/helpers/toolbarItem.ts
+  s_c56bde808bb5f7::t_c1ea08d25a21b4 16-18,22
+packages/rich-text-editor/src/locales/fr-CH.ts
+  s_c56bde808bb5f7::t_f5817bdb59c8fa 3-48,51-56,59-98,101-102
+  s_c56bde808bb5f7::t_94263da589187c 49-50,57-58
+fondue/scripts/copyLocales.ts
+  s_c56bde808bb5f7::t_b0ed6d00abfe5b 9-11,13-20
+packages/rich-text-editor/src/plugins/Italic/Italic.ts
+  s_c56bde808bb5f7::t_9941c725ecf7eb 6,45
+packages/rich-text-editor/src/editor/helpers/blockCommands.ts
+  s_c56bde808bb5f7::t_247313a5193f21 31-33,72-75
+  s_c56bde808bb5f7::t_c1ea08d25a21b4 21-23,40-41,43,60-61,63
+  s_c56bde808bb5f7::t_9941c725ecf7eb 4,13
+packages/rich-text-editor/src/locales/fr-FR.ts
+  s_c56bde808bb5f7::t_f5817bdb59c8fa 3-48,51-56,59-98,101-102
+  s_c56bde808bb5f7::t_94263da589187c 49-50,57-58
+packages/rich-text-editor/.storybook/preview.tsx
+  s_c56bde808bb5f7::t_2bb6f488b4118b 21-24,28,30,58,65
+  s_c56bde808bb5f7::t_9296097059066e 54
+packages/rich-text-editor/src/editor/components/Toolbar.tsx
+  s_c56bde808bb5f7::t_247313a5193f21 14
+  s_c56bde808bb5f7::t_4b2d80837f24bb 19,21,42,47,101,179,192,195,207
+packages/rich-text-editor/src/editor/floatingBar.spec.tsx
+  s_c56bde808bb5f7::t_1efeb29a611559 169,171-173,390-395
+  s_c56bde808bb5f7::t_247313a5193f21 5
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_c56bde808bb5f7::t_d9306395bdac58 29-36,45,136,161-164,251,264-265,276,301-302,305-306
+  s_c56bde808bb5f7::t_94263da589187c 258
+  s_c56bde808bb5f7::t_9d4dcb959bd339 299
+packages/rich-text-editor/src/locales/de-DE.ts
+  s_c56bde808bb5f7::t_f5817bdb59c8fa 3-48,51-56,59-98,101-102
+  s_c56bde808bb5f7::t_94263da589187c 49-50,57-58
+packages/rich-text-editor/src/plugins/Superscript/Superscript.ts
+  s_c56bde808bb5f7::t_9941c725ecf7eb 6,44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b360005804f61adb9a1db85f7610fc6b1ccce20f",
+  "prompts": {},
+  "sessions": {
+    "s_c56bde808bb5f7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "67ddf8bd-870f-4212-974e-54afa59d04ad",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
