@@ -256,6 +256,29 @@ const withoutTrailingBreaks = (pieces: Piece[], state: WriteState): Piece[] => {
     return pieces.slice(0, end);
 };
 
+type AddTextPieceParams = {
+    root: Piece[];
+    open: OpenMark[];
+    inline: RteTextNode;
+    path: Path;
+    state: WriteState;
+};
+
+const addTextPiece = ({ root, open, inline, path, state }: AddTextPieceParams): void => {
+    const marks = carriedMarks(inline, path, state);
+    const keep = sharedMarkCount(open, marks);
+
+    closeMarks(root, open, keep);
+    for (const mark of marks.slice(keep)) {
+        open.push({ kind: 'mark', mark, path, paths: [], pieces: [] });
+    }
+    for (const mark of open) {
+        mark.paths.push(path);
+    }
+
+    (open[open.length - 1]?.pieces ?? root).push({ kind: 'text', text: inline.text });
+};
+
 /**
  * A text block's inlines, with each mark opened once around the whole stretch of neighbours sharing it, as the
  * renderer does, so a bold link that is partly italic is still one link.
@@ -290,18 +313,7 @@ const piecesOf = (inlines: readonly unknown[], parentPath: Path, lineMode: LineM
             continue;
         }
 
-        const marks = carriedMarks(inline, path, state);
-        const keep = sharedMarkCount(open, marks);
-
-        closeMarks(root, open, keep);
-        for (const mark of marks.slice(keep)) {
-            open.push({ kind: 'mark', mark, path, paths: [], pieces: [] });
-        }
-        for (const mark of open) {
-            mark.paths.push(path);
-        }
-
-        (open[open.length - 1]?.pieces ?? root).push({ kind: 'text', text: inline.text });
+        addTextPiece({ root, open, inline, path, state });
     }
 
     closeMarks(root, open, 0);

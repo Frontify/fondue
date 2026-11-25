@@ -168,6 +168,56 @@ const sameRuns = (left: readonly Run[], right: readonly Run[]): boolean =>
         return other !== undefined && sameRun(run, other);
     });
 
+type LostCollector = {
+    lost: Lost[];
+    report: (type: string, path: Path) => void;
+};
+
+const createLostCollector = (): LostCollector => {
+    const lost: Lost[] = [];
+    const reported = new Set<string>();
+    const report = (type: string, path: Path): void => {
+        const key = `${type}:${path.join('.')}`;
+        if (!reported.has(key)) {
+            reported.add(key);
+            lost.push({ type, path });
+        }
+    };
+
+    return { lost, report };
+};
+
+type LostAtPositionParams = {
+    run: Run;
+    index: number;
+    plain: string;
+    readPositions: readonly (Run | undefined)[];
+    report: LostCollector['report'];
+};
+
+const lostAtPosition = ({ run, index, plain, readPositions, report }: LostAtPositionParams): void => {
+    if (run.kind === 'inline') {
+        const read = readPositions[index];
+        if (read === undefined || !sameRun(run, read)) {
+            report(run.type, run.path);
+        }
+
+        return;
+    }
+
+    if (isWhitespace(plain.charAt(index))) {
+        return;
+    }
+
+    for (const mark of run.marks) {
+        if (!carriesMark(readPositions[index], mark)) {
+            for (const path of mark.paths) {
+                report(mark.name, path);
+            }
+        }
+    }
+};
+
 /**
  * What the document holds that the Markdown does not read back, by position: a mark that is missing or has another
  * value on a character that is not whitespace, and an inline element that is not the one read. When the plain texts
@@ -186,39 +236,13 @@ const lostOf = (reference: readonly Run[], read: readonly Run[]): Lost[] => {
     }
 
     const readPositions = runsByPosition(read, standIn);
-    const lost: Lost[] = [];
-    const reported = new Set<string>();
-    const report = (type: string, path: Path): void => {
-        const key = `${type}:${path.join('.')}`;
-        if (!reported.has(key)) {
-            reported.add(key);
-            lost.push({ type, path });
-        }
-    };
+    const collector = createLostCollector();
 
     for (const [index, run] of runsByPosition(reference, standIn).entries()) {
-        if (run.kind === 'inline') {
-            const read = readPositions[index];
-            if (read === undefined || !sameRun(run, read)) {
-                report(run.type, run.path);
-            }
-            continue;
-        }
-
-        if (isWhitespace(plain.charAt(index))) {
-            continue;
-        }
-
-        for (const mark of run.marks) {
-            if (!carriesMark(readPositions[index], mark)) {
-                for (const path of mark.paths) {
-                    report(mark.name, path);
-                }
-            }
-        }
+        lostAtPosition({ run, index, plain, readPositions, report: collector.report });
     }
 
-    return lost;
+    return collector.lost;
 };
 
 /** Reads the Markdown again as one paragraph with the reader's own parser, and compares what it gives with the document's runs. */
