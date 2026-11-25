@@ -12,7 +12,7 @@ const TEXT_GROUP: RteToolbarGroup = 'text';
 const MARKS_GROUP: RteToolbarGroup = 'marks';
 const COLOR_GROUP: RteToolbarGroup = 'color';
 const LINK_GROUP: RteToolbarGroup = 'link';
-const LAST_GROUP: RteToolbarGroup = 'panels';
+const PANELS_GROUP: RteToolbarGroup = 'panels';
 
 const FILLER_LABEL = 'Filler';
 const EMPTY_LABEL = 'Empty';
@@ -58,7 +58,7 @@ const PLUGINS: readonly RtePlugin[] = [
     fillerPlugin({ id: 'color-filler', toolbarGroup: COLOR_GROUP }),
     emptyPlugin({ id: 'color-empty', toolbarGroup: COLOR_GROUP }),
     fillerPlugin({ id: 'link-filler', toolbarGroup: LINK_GROUP }),
-    emptyPlugin({ id: 'panels-empty', toolbarGroup: LAST_GROUP }),
+    emptyPlugin({ id: 'panels-empty', toolbarGroup: PANELS_GROUP }),
 ];
 
 /** The editor over a paragraph, with groups that draw a control and groups that draw nothing. */

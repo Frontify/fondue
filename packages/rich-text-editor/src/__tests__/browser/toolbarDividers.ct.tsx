@@ -7,7 +7,9 @@ import { GROUP_ATTRIBUTE, SEPARATOR_ATTRIBUTE, SLOT_ATTRIBUTE } from '../../edit
 
 import { ToolbarDividersHost } from './ToolbarDividersHost';
 
-const DRAWN_ROW = ['group', 'separator', 'group', 'separator', 'group'];
+type ToolbarPart = 'separator' | 'group';
+
+const DRAWN_ROW: readonly ToolbarPart[] = ['group', 'separator', 'group', 'separator', 'group'];
 
 type ToolbarSelectors = {
     separator: string;
@@ -16,7 +18,7 @@ type ToolbarSelectors = {
 };
 
 type ToolbarDrawing = {
-    row: string[];
+    row: ToolbarPart[];
     everyDrawnSlotHasContent: boolean;
 };
 
@@ -28,7 +30,7 @@ const SELECTORS: ToolbarSelectors = {
 
 const toolbarDrawingOf = async (page: Page): Promise<ToolbarDrawing> =>
     page.getByRole('toolbar').evaluate((toolbar, selectors): ToolbarDrawing => {
-        const row: string[] = [];
+        const row: ToolbarPart[] = [];
 
         for (const child of toolbar.children) {
             if (getComputedStyle(child).display === 'none') {
