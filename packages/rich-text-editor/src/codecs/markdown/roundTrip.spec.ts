@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { type RteBlock, type RteDocument, type RteDocumentWith } from '../../documentFormat';
-import { bulletListContent, defaultContent } from '../../plugins';
+import { bulletListContent, defaultContent, horizontalRuleContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
@@ -15,6 +15,8 @@ type RoundTripCase = {
 };
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
+
+const RULE_OPTIONS: MarkdownOptions = { plugins: [...defaultContent, horizontalRuleContent] };
 
 const expectRoundTrip = ({ markdown, document }: RoundTripCase, options: MarkdownOptions = OPTIONS) => {
     expect(parseMarkdown(markdown, options)).toEqual(document);
@@ -385,11 +387,11 @@ const RULE_CASES: readonly RoundTripCase[] = [
 describe('markdown round trip of horizontal rules', () => {
     for (const ruleCase of RULE_CASES) {
         it(`gives back the same Markdown and document for ${ruleCase.name}`, () => {
-            expectRoundTrip(ruleCase);
+            expectRoundTrip(ruleCase, RULE_OPTIONS);
         });
 
         it(`gives back the same Markdown and document for ${ruleCase.name} with breaks: true`, () => {
-            expectRoundTrip(ruleCase, { plugins: defaultContent, breaks: true });
+            expectRoundTrip(ruleCase, { ...RULE_OPTIONS, breaks: true });
         });
     }
 });

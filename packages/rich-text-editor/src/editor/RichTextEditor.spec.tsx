@@ -29,6 +29,7 @@ import {
     boldPlugin,
     checkListPlugin,
     defaultPlugins,
+    horizontalRulePlugin,
     linkPlugin,
     mentionPlugin,
     textStylePlugin,
@@ -895,7 +896,12 @@ describe('the toolbar', () => {
 
     it('inserts a horizontal rule when the Divider button is clicked', () => {
         const { container, ready, stored } = mount((onChange) => (
-            <RichTextEditor value={paragraph('a')} plugins={defaultPlugins} toolbarPlacement="top" onChange={onChange} />
+            <RichTextEditor
+                value={paragraph('a')}
+                plugins={[...defaultPlugins, horizontalRulePlugin()]}
+                toolbarPlacement="top"
+                onChange={onChange}
+            />
         ));
         ready();
         const divider = container.querySelector<HTMLButtonElement>('[aria-label="Divider"]');

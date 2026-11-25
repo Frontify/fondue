@@ -19,7 +19,7 @@ import {
     type RteBlockNode,
     type RtePlugin,
 } from '#/core';
-import { defaultPlugins } from '#/plugins';
+import { defaultPlugins, horizontalRulePlugin } from '#/plugins';
 
 import { trimTrailingPunctuation } from './autolink';
 import { destroyEditors, editorWith, paragraph, shipped, text, TOKEN_TRIM } from './testEditor';
@@ -367,11 +367,10 @@ const RULE_POSITION = 3;
 
 describe('Backspace', () => {
     it('removes a selected horizontal rule', () => {
-        const editor = editorWith(defaultPlugins, [
-            paragraph(text('a')),
-            { type: 'horizontalRule' },
-            paragraph(text('b')),
-        ]);
+        const editor = editorWith(
+            [...defaultPlugins, horizontalRulePlugin()],
+            [paragraph(text('a')), { type: 'horizontalRule' }, paragraph(text('b'))],
+        );
         editor.view.dispatch(
             editor.view.state.tr.setSelection(NodeSelection.create(editor.view.state.doc, RULE_POSITION)),
         );

@@ -4,12 +4,15 @@ import { describe, expect, it } from 'vitest';
 
 import { defineBlock, defineContent, defineMark, type RteDocumentOf } from '../../core';
 import { type RteDocument, type RteDocumentWith } from '../../documentFormat';
-import { columnBreakContent, defaultContent, mentionContent } from '../../plugins';
+import { columnBreakContent, defaultContent, horizontalRuleContent, mentionContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
+import { starBreakContent } from './starBreak.fixture';
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
+
+const RULE_OPTIONS: MarkdownOptions = { plugins: [...defaultContent, horizontalRuleContent] };
 
 const ESCAPED_DASHES = String.raw`\---`;
 
@@ -104,7 +107,7 @@ describe('serializeToMarkdown horizontal rules', () => {
             ],
         };
 
-        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: 'a\n\n---\n\nb', losses: [] });
+        expect(serializeToMarkdown(document, RULE_OPTIONS)).toEqual({ markdown: 'a\n\n---\n\nb', losses: [] });
     });
 
     it('writes a rule between two paragraphs the same way with breaks: true', () => {
@@ -117,7 +120,7 @@ describe('serializeToMarkdown horizontal rules', () => {
             ],
         };
 
-        expect(serializeToMarkdown(document, { plugins: defaultContent, breaks: true })).toEqual({
+        expect(serializeToMarkdown(document, { ...RULE_OPTIONS, breaks: true })).toEqual({
             markdown: 'a\n\n---\n\nb',
             losses: [],
         });
@@ -129,7 +132,7 @@ describe('serializeToMarkdown horizontal rules', () => {
             blocks: [{ type: 'horizontalRule' }, { type: 'horizontalRule' }],
         };
 
-        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: '---\n\n---', losses: [] });
+        expect(serializeToMarkdown(document, RULE_OPTIONS)).toEqual({ markdown: '---\n\n---', losses: [] });
     });
 
     it('writes a paragraph whose text is three dashes with the first one escaped', () => {
@@ -138,7 +141,7 @@ describe('serializeToMarkdown horizontal rules', () => {
             blocks: [{ type: 'paragraph', children: [{ text: '---' }] }],
         };
 
-        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: ESCAPED_DASHES, losses: [] });
+        expect(serializeToMarkdown(document, RULE_OPTIONS)).toEqual({ markdown: ESCAPED_DASHES, losses: [] });
     });
 
     it('writes nothing for a rule when no plugin has one and reports the block', () => {
@@ -154,6 +157,24 @@ describe('serializeToMarkdown horizontal rules', () => {
         expect(serializeToMarkdown(document, { plugins: [] })).toEqual({
             markdown: 'a\n\nb',
             losses: [{ path: [1], type: 'horizontalRule' }],
+        });
+    });
+});
+
+describe('serializeToMarkdown a void block with a Markdown form', () => {
+    it('writes its marker alone on its line between two paragraphs', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'starBreak' },
+                { type: 'paragraph', children: [{ text: 'b' }] },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, { plugins: [...defaultContent, starBreakContent] })).toEqual({
+            markdown: 'a\n\n***\n\nb',
+            losses: [],
         });
     });
 });

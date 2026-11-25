@@ -3,12 +3,15 @@
 import { describe, expect, it } from 'vitest';
 
 import { type MarkdownMarkForm } from '../../core';
-import { bulletListContent, defaultContent, mentionContent } from '../../plugins';
+import { bulletListContent, defaultContent, horizontalRuleContent, mentionContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
+import { starBreakContent } from './starBreak.fixture';
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
+
+const RULE_OPTIONS: MarkdownOptions = { plugins: [...defaultContent, horizontalRuleContent] };
 
 const EMPTY_DOCUMENT = { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '' }] }] };
 
@@ -176,7 +179,7 @@ const HORIZONTAL_RULE_DOCUMENT = { version: 1, blocks: [{ type: 'horizontalRule'
 
 describe('parseMarkdown horizontal rules', () => {
     it('reads a rule between two paragraphs as a horizontal rule block', () => {
-        expect(parseMarkdown('a\n\n---\n\nb', OPTIONS)).toEqual({
+        expect(parseMarkdown('a\n\n---\n\nb', RULE_OPTIONS)).toEqual({
             version: 1,
             blocks: [
                 { type: 'paragraph', children: [{ text: 'a' }] },
@@ -187,13 +190,26 @@ describe('parseMarkdown horizontal rules', () => {
     });
 
     it.each(['---', '***', '___', '* * *'])('reads %s alone as only a horizontal rule block', (markdown) => {
-        expect(parseMarkdown(markdown, OPTIONS)).toEqual(HORIZONTAL_RULE_DOCUMENT);
+        expect(parseMarkdown(markdown, RULE_OPTIONS)).toEqual(HORIZONTAL_RULE_DOCUMENT);
     });
 
     it('reads a dashed line right under a paragraph as a level 2 heading, not a rule', () => {
-        expect(parseMarkdown('a\n---', OPTIONS)).toEqual({
+        expect(parseMarkdown('a\n---', RULE_OPTIONS)).toEqual({
             version: 1,
             blocks: [{ type: 'textStyle', style: 'heading2', children: [{ text: 'a' }] }],
+        });
+    });
+});
+
+describe('parseMarkdown a void block with a Markdown form', () => {
+    it('reads its marker alone between two paragraphs as that block', () => {
+        expect(parseMarkdown('a\n\n***\n\nb', { plugins: [...defaultContent, starBreakContent] })).toEqual({
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'starBreak' },
+                { type: 'paragraph', children: [{ text: 'b' }] },
+            ],
         });
     });
 });
