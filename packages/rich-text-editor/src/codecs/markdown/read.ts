@@ -466,9 +466,10 @@ const readCode = (frame: Frame, token: MarkdownTokenNode, context: ReadContext):
     }
 
     const state: InlineState = { nodes: [], open: [] };
+    const lineBreak: MarkdownTokenNode = { ...token, type: HARD_BREAK };
     for (const [index, line] of token.content.replace(TRAILING_NEWLINE, '').split(LINE_SEPARATOR).entries()) {
         if (index > 0) {
-            readLeaf(state, { ...token, type: HARD_BREAK }, context.forms);
+            readLeaf(state, lineBreak, context.forms, { tokens: [lineBreak], index: 0 });
         }
         addText(state.nodes, line, {});
     }
