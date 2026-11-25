@@ -397,8 +397,8 @@ const HOST_LINK_LOOK: TextLinkLook = {
 const HOST_LINK_BOX_LOOK: TextLinkLook = {
     paddingTop: '2px',
     paddingRight: '6px',
-    paddingBottom: '2px',
-    paddingLeft: '6px',
+    paddingBottom: '4px',
+    paddingLeft: '8px',
     backgroundColor: 'rgb(255, 240, 0)',
     borderColor: 'rgb(0, 0, 100)',
     borderWidth: '2px',
@@ -409,8 +409,8 @@ const HOST_LINK_BOX_LOOK: TextLinkLook = {
 const HOST_LINK_BOX_COMPUTED: Record<string, string> = {
     'padding-top': '2px',
     'padding-right': '6px',
-    'padding-bottom': '2px',
-    'padding-left': '6px',
+    'padding-bottom': '4px',
+    'padding-left': '8px',
     'background-color': 'rgb(255, 240, 0)',
     'border-top-color': 'rgb(0, 0, 100)',
     'border-top-width': '2px',
@@ -468,6 +468,12 @@ const lineSpansOf = (link: Locator): Promise<LinkSpans> =>
     });
 
 const INSET_TOLERANCE_PX = 1;
+
+/** The computed colour of a border or a background that is not drawn. */
+const TRANSPARENT = 'rgba(0, 0, 0, 0)';
+
+/** A host that sets only the border style, leaving the width and the colour to Fondue's fallbacks. */
+const HOST_LINK_BORDER_STYLE_ONLY_LOOK: TextLinkLook = { borderStyle: 'solid' };
 
 const HOST_LINK_COMPUTED_LOOK: ComputedLook = {
     ...HOST_COMPUTED_LOOK,
@@ -605,8 +611,9 @@ test.describe('host styling of body text, quotes and links', () => {
 
     test('draws the text link box on each line of a link that wraps', async ({ mount }) => {
         const component = await mount(<HostLooksPair link={HOST_LINK_BOX_LOOK} value={WRAPPING_LINK_DOCUMENT} />);
-        const boxInset =
-            parseFloat(HOST_LINK_BOX_LOOK.paddingLeft ?? '') + parseFloat(HOST_LINK_BOX_LOOK.borderWidth ?? '');
+        const borderWidth = parseFloat(HOST_LINK_BOX_LOOK.borderWidth ?? '');
+        const leftInset = parseFloat(HOST_LINK_BOX_LOOK.paddingLeft ?? '') + borderWidth;
+        const rightInset = parseFloat(HOST_LINK_BOX_LOOK.paddingRight ?? '') + borderWidth;
 
         for (const surface of SURFACES) {
             const link = component.getByTestId(surface).getByRole('link', { name: WRAPPING_LINK_TEXT, exact: true });
@@ -620,8 +627,8 @@ test.describe('host styling of body text, quotes and links', () => {
                     throw new Error(`The link has no line of text for box fragment ${index}`);
                 }
 
-                expect(Math.abs(line.left - fragment.left - boxInset)).toBeLessThanOrEqual(INSET_TOLERANCE_PX);
-                expect(Math.abs(fragment.right - line.right - boxInset)).toBeLessThanOrEqual(INSET_TOLERANCE_PX);
+                expect(Math.abs(line.left - fragment.left - leftInset)).toBeLessThanOrEqual(INSET_TOLERANCE_PX);
+                expect(Math.abs(fragment.right - line.right - rightInset)).toBeLessThanOrEqual(INSET_TOLERANCE_PX);
             }
         }
     });
@@ -635,6 +642,19 @@ test.describe('host styling of body text, quotes and links', () => {
             for (const [property, value] of Object.entries(FONDUE_LINK_BOX_COMPUTED)) {
                 await expect(link).toHaveCSS(property, value);
             }
+        }
+    });
+
+    test('draws a 1px border in the link colour where the host sets only a border style', async ({ mount }) => {
+        const component = await mount(<HostLooksPair link={HOST_LINK_BORDER_STYLE_ONLY_LOOK} />);
+
+        for (const surface of SURFACES) {
+            const link = component.getByTestId(surface).getByRole('link', { name: LOOKED_TEXTS.link, exact: true });
+            const linkColor = await link.evaluate((element) => getComputedStyle(element).color);
+
+            await expect(link).toHaveCSS('border-top-style', 'solid');
+            await expect(link).toHaveCSS('border-top-width', '1px');
+            await expect(link).toHaveCSS('border-top-color', linkColor);
         }
     });
 
@@ -658,7 +678,7 @@ const HOST_BUTTON_LOOK: ButtonLook = {
     paddingBottom: '6px',
     paddingLeft: '20px',
     marginTop: '10px',
-    marginBottom: '10px',
+    marginBottom: '14px',
     backgroundColor: 'rgb(0, 0, 200)',
     borderColor: 'rgb(0, 0, 100)',
     borderWidth: '2px',
@@ -675,7 +695,7 @@ const HOST_BUTTON_COMPUTED: Record<string, string> = {
     'padding-bottom': '6px',
     'padding-left': '20px',
     'margin-top': '10px',
-    'margin-bottom': '10px',
+    'margin-bottom': '14px',
     'background-color': 'rgb(0, 0, 200)',
     'border-top-color': 'rgb(0, 0, 100)',
     'border-top-width': '2px',
@@ -708,6 +728,8 @@ test.describe('host styling of button links', () => {
             />,
         );
 
+        expect(await page.evaluate(() => matchMedia('(forced-colors: active)').matches)).toBe(true);
+
         for (const surface of SURFACES) {
             const section = component.getByTestId(surface);
             const button = section.getByRole('link', { name: BUTTON_LINK_TEXT, exact: true });
@@ -715,9 +737,25 @@ test.describe('host styling of button links', () => {
 
             await expect(button).toHaveCSS('border-top-style', 'solid');
             await expect(button).not.toHaveCSS('border-top-width', '0px');
+            await expect(button).not.toHaveCSS('border-top-color', TRANSPARENT);
             await expect(textLink).toHaveCSS('text-decoration-line', 'underline');
             await expect(textLink).toHaveCSS('border-top-style', 'dashed');
             await expect(textLink).not.toHaveCSS('border-top-width', '0px');
+            await expect(textLink).not.toHaveCSS('border-top-color', TRANSPARENT);
+        }
+    });
+
+    test("keeps Fondue's button look when the host gives text links a box", async ({ mount }) => {
+        const component = await mount(<HostLooksPair value={BUTTON_LINKS_DOCUMENT} link={HOST_LINK_BOX_LOOK} />);
+
+        for (const surface of SURFACES) {
+            const button = component.getByTestId(surface).getByRole('link', { name: BUTTON_LINK_TEXT, exact: true });
+
+            for (const [property, value] of Object.entries(FONDUE_BUTTON_COMPUTED)) {
+                await expect(button).toHaveCSS(property, value);
+            }
+
+            await expect(button).not.toHaveCSS('padding-left', HOST_LINK_BOX_LOOK.paddingLeft ?? '');
         }
     });
 
