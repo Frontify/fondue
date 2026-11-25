@@ -727,7 +727,7 @@ describe('serializeToMarkdown mark suffixes', () => {
                                 },
                             ],
                             // Only the second italic has a suffix, so the first still touches the bold that follows it.
-                            write: (_value, text) => {
+                            write: (_value, { text }) => {
                                 if (text === 'c') {
                                     return { open: '*', close: '*', suffix: '{.note}' };
                                 }

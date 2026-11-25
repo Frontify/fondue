@@ -389,7 +389,7 @@ const ESCAPING_CASES: readonly RoundTripCase[] = [
     },
     {
         name: 'the other characters Markdown reads',
-        markdown: String.raw`a\_b \~c\~ \<d\> \| \\e`,
+        markdown: String.raw`a_b \~c\~ \<d\> \| \\e`,
         document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'a_b ~c~ <d> | \\e' }] }] },
     },
     {
@@ -673,6 +673,113 @@ describe('markdown round trip of text a reader could take for an autolink', () =
     for (const autolinkCase of AUTOLINK_CASES) {
         it(`gives back the same text for ${autolinkCase.name}`, () => {
             expectRoundTrip(autolinkCase);
+        });
+    }
+});
+
+const linkedTextDocument = (text: string, href: string): RteDocument => ({
+    version: 1,
+    blocks: [{ type: 'paragraph', children: [{ text: 'see ' }, { text, link: { href } }, { text: ' now' }] }],
+});
+
+const AUTOLINK_WRITE_CASES: readonly RoundTripCase[] = [
+    {
+        name: 'a web address that is its own text',
+        markdown: 'see <https://x.com/a?b=1&c=2> now',
+        document: linkedTextDocument('https://x.com/a?b=1&c=2', 'https://x.com/a?b=1&c=2'),
+    },
+    {
+        name: 'a mail address that is its own text',
+        markdown: 'see <ana@example.com> now',
+        document: linkedTextDocument('ana@example.com', 'mailto:ana@example.com'),
+    },
+];
+
+describe('markdown round trip of links whose text is their address', () => {
+    for (const autolinkCase of AUTOLINK_WRITE_CASES) {
+        it(`writes ${autolinkCase.name} as an autolink and reads it back`, () => {
+            expectRoundTrip(autolinkCase);
+        });
+    }
+
+    it('keeps a bold link whose text is its address as a Markdown link', () => {
+        const document: RteDocument = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'https://x', bold: true, link: { href: 'https://x' } }] }],
+        };
+
+        const { markdown, losses } = serializeToMarkdown(document, OPTIONS);
+
+        expect(losses).toEqual([]);
+        expect(markdown).not.toContain('<');
+        expect(parseMarkdown(markdown, OPTIONS)).toEqual(document);
+    });
+
+    it('keeps a mail address with a non-ASCII domain as a Markdown link', () => {
+        const document = linkedTextDocument('ana@müller.de', 'mailto:ana@müller.de');
+
+        const { markdown, losses } = serializeToMarkdown(document, OPTIONS);
+
+        expect(losses).toEqual([]);
+        expect(parseMarkdown(markdown, OPTIONS)).toEqual(document);
+    });
+
+    it('keeps a mail address whose scheme is not lowercase as a Markdown link', () => {
+        const document = linkedTextDocument('a@b.c', 'MAILTO:a@b.c');
+
+        const { markdown, losses } = serializeToMarkdown(document, OPTIONS);
+
+        expect(losses).toEqual([]);
+        expect(parseMarkdown(markdown, OPTIONS)).toEqual(document);
+    });
+
+    it('gives the same document after a second write when the Markdown holds a bare address', () => {
+        const first = parseMarkdown('see https://x.com/a?b=1&c=2 now', OPTIONS);
+
+        const { markdown, losses } = serializeToMarkdown(first, OPTIONS);
+
+        expect(markdown).toBe('see <https://x.com/a?b=1&c=2> now');
+        expect(losses).toEqual([]);
+        expect(parseMarkdown(markdown, OPTIONS)).toEqual(first);
+    });
+
+    it('writes a link with other text as a Markdown link', () => {
+        const document = linkedTextDocument('x.com', 'https://x.com');
+
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({
+            markdown: 'see [x.com](https://x.com) now',
+            losses: [],
+        });
+    });
+});
+
+const UNDERSCORE_CASES: readonly RoundTripCase[] = [
+    {
+        name: 'underscores inside a word',
+        markdown: 'snake_case_name',
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'snake_case_name' }] }] },
+    },
+    {
+        name: 'single letters between underscores',
+        markdown: 'a_b_c',
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'a_b_c' }] }] },
+    },
+    {
+        name: 'an underscore at the start of a word',
+        markdown: String.raw`\_leading`,
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '_leading' }] }] },
+    },
+    {
+        name: 'an underscore at the end of a word',
+        markdown: String.raw`trailing\_`,
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'trailing_' }] }] },
+    },
+];
+
+describe('markdown round trip of underscores', () => {
+    for (const underscoreCase of UNDERSCORE_CASES) {
+        it(`gives back the same text for ${underscoreCase.name}`, () => {
+            expectRoundTrip(underscoreCase);
         });
     }
 });

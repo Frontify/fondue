@@ -8,6 +8,8 @@ import {
     definePlugin,
     LOOK_PROPERTIES,
     lookProperties,
+    type MarkdownDelimiters,
+    type MarkdownMarkContent,
     type RteContent,
     type RteHotkey,
     type TextLook,
@@ -100,6 +102,26 @@ type LinkAnchorAttrs = {
     href?: string;
     target?: string;
     rel?: string;
+};
+
+const MAILTO_PREFIX = 'mailto:';
+
+/** CommonMark's email autolink: its local part, then dot-joined domain labels of at most 63 characters. */
+const AUTOLINK_ADDRESS =
+    /^(?:https?:[^\s<>]*|mailto:[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)$/i;
+
+/** The Markdown a link writes: `<address>` when its bare text is the address, `[text](address)` otherwise. */
+const writeLink = (href: string, { text, marked }: MarkdownMarkContent): MarkdownDelimiters => {
+    let shownAddress = href;
+    if (href.startsWith(MAILTO_PREFIX)) {
+        shownAddress = href.slice(MAILTO_PREFIX.length);
+    }
+
+    if (!marked && AUTOLINK_ADDRESS.test(href) && text === shownAddress) {
+        return { open: '<', close: '>', literal: true };
+    }
+
+    return { open: '[', close: `](${markdownDestination(href)})` };
 };
 
 /** A stored document may hold anything here (`{}`, `true`), so its shape is not taken on trust. */
@@ -199,9 +221,9 @@ const linkMarkFor = (appearances: readonly LinkAppearance[]): MarkDefinition =>
                     },
                 },
             ],
-            write: ({ href }) => {
+            write: ({ href }, content) => {
                 if (isSafeHref(href)) {
-                    return { open: '[', close: `](${markdownDestination(href)})` };
+                    return writeLink(href, content);
                 }
                 return null;
             },

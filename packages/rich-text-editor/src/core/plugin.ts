@@ -480,6 +480,11 @@ export type MarkdownDelimiters = {
     close: string;
     /** Written as is right after `close`, such as attributes. */
     suffix?: string;
+    /**
+     * The text inside is written as is, never escaped.
+     * @default false
+     */
+    literal?: boolean;
 };
 
 /** Where an item sits in its list, counted from 0. */
@@ -505,16 +510,19 @@ export type MarkdownBlockForm<TValue = Record<string, unknown>> = {
     write: (value: TValue, item: MarkdownListItem) => MarkdownLinePrefix | null;
 };
 
+/** What a mark wraps, as its form reads it to choose its delimiters. */
+export type MarkdownMarkContent = {
+    /** The plain text of the mark's run. */
+    text: string;
+    /** True when other marks or inline elements sit inside this mark's run. */
+    marked: boolean;
+};
+
 /** How a mark reads from and writes to Markdown. */
 export type MarkdownMarkForm<TValue = Record<string, unknown>> = {
     read: readonly MarkdownMarkReadRule<TValue>[];
     /** Null: this value has no Markdown form, which is a loss. */
-    write: (value: TValue, text: string) => MarkdownDelimiters | null;
-    /**
-     * The text inside is written as is, never escaped (inline code).
-     * @default false
-     */
-    literal?: boolean;
+    write: (value: TValue, content: MarkdownMarkContent) => MarkdownDelimiters | null;
 };
 
 /** How an inline reads from and writes to Markdown. */

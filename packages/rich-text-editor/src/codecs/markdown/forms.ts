@@ -214,12 +214,11 @@ const checkedBlockForm = (form: unknown): MarkdownBlockForm => {
 };
 
 const checkedMarkForm = (form: unknown): MarkdownMarkForm => {
-    const { read, write, literal } = formPartsOf(form);
+    const { read, write } = formPartsOf(form);
 
     return {
         read: checkedMarkRules(read),
         write: guarded(write, isDelimiters),
-        literal: literal === true,
     };
 };
 

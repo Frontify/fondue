@@ -60,14 +60,13 @@ export const codeLanguageOverrideOptions: MarkdownOptions = {
                     },
                 ],
                 write: ({ lang }) => {
-                    const delimiters: MarkdownDelimiters = { open: '`', close: '`' };
+                    const delimiters: MarkdownDelimiters = { open: '`', close: '`', literal: true };
                     if (typeof lang === 'string') {
                         delimiters.suffix = `{lang="${lang}"}`;
                     }
 
                     return delimiters;
                 },
-                literal: true,
             },
         },
     },

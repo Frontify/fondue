@@ -380,6 +380,9 @@ const inlineElementsOf = (pieces: readonly Piece[]): MarkdownLoss[] => {
     return elements;
 };
 
+/** Whether the pieces hold a mark or an inline element, which the text of a run does not show. */
+const hasInnerMarkup = (pieces: readonly Piece[]): boolean => pieces.some((piece) => piece.kind !== 'text');
+
 /** The text a mark wraps, as the mark's form reads it to choose its delimiters. */
 const plainTextOf = (pieces: readonly Piece[]): string => {
     let text = '';
@@ -444,17 +447,17 @@ const delimitersOf = (written: MarkdownDelimiters, emphasis: EmphasisDelimiter):
     return written;
 };
 
-const delimiterOf = (text: string, open: boolean, pair: DelimiterPair, form: MarkdownMarkForm): InlineToken => ({
+const delimiterOf = (text: string, open: boolean, pair: DelimiterPair, literal: boolean): InlineToken => ({
     kind: 'delimiter',
     text,
     open,
     pair,
-    emphasis: form.literal !== true && isEmphasisDelimiter(text),
+    emphasis: !literal && isEmphasisDelimiter(text),
 });
 
 const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, context: TokenContext): void => {
     const { mark, paths, pieces } = piece;
-    const written = mark.form.write(mark.value, plainTextOf(pieces));
+    const written = mark.form.write(mark.value, { text: plainTextOf(pieces), marked: hasInnerMarkup(pieces) });
     if (written === null) {
         reportMarkLoss(context.losses, mark.name, paths);
         appendTokens(tokens, pieces, mode, context);
@@ -462,8 +465,9 @@ const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, cont
         return;
     }
 
+    const literal = written.literal === true;
     let innerMode = mode;
-    if (mark.form.literal === true) {
+    if (literal) {
         innerMode = 'literal';
     }
 
@@ -488,9 +492,9 @@ const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, cont
     const delimiters = delimitersOf(written, context.emphasis);
     const pair: DelimiterPair = { mark: mark.name, paths };
     appendAll(tokens, inner.slice(0, start));
-    tokens.push(delimiterOf(delimiters.open, true, pair, mark.form));
+    tokens.push(delimiterOf(delimiters.open, true, pair, literal));
     appendAll(tokens, inner.slice(start, end));
-    tokens.push(delimiterOf(delimiters.close, false, pair, mark.form));
+    tokens.push(delimiterOf(delimiters.close, false, pair, literal));
     if (written.suffix !== undefined && written.suffix !== '') {
         tokens.push({ kind: 'delimiter', text: written.suffix, open: false, pair, emphasis: false });
     }
