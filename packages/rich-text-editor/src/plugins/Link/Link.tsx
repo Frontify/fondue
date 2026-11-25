@@ -106,9 +106,14 @@ type LinkAnchorAttrs = {
 
 const MAILTO_PREFIX = 'mailto:';
 
+const WEB_AUTOLINK = /^https?:[^\s<>]*$/i;
+
+const EMAIL_LOCAL_PART = String.raw`[a-z0-9.!#$%&'*+/=?^_\`{|}~-]+`;
+
+const DOMAIN_LABEL = String.raw`[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?`;
+
 /** CommonMark's email autolink: its local part, then dot-joined domain labels of at most 63 characters. */
-const AUTOLINK_ADDRESS =
-    /^(?:https?:[^\s<>]*|mailto:[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)$/i;
+const EMAIL_AUTOLINK = new RegExp(`^mailto:${EMAIL_LOCAL_PART}@${DOMAIN_LABEL}(?:\\.${DOMAIN_LABEL})*$`, 'i');
 
 /** The Markdown a link writes: `<address>` when its bare text is the address, `[text](address)` otherwise. */
 const writeLink = (href: string, { text, marked }: MarkdownMarkContent): MarkdownDelimiters => {
@@ -117,7 +122,7 @@ const writeLink = (href: string, { text, marked }: MarkdownMarkContent): Markdow
         shownAddress = href.slice(MAILTO_PREFIX.length);
     }
 
-    if (!marked && AUTOLINK_ADDRESS.test(href) && text === shownAddress) {
+    if (!marked && (WEB_AUTOLINK.test(href) || EMAIL_AUTOLINK.test(href)) && text === shownAddress) {
         return { open: '<', close: '>', literal: true };
     }
 
