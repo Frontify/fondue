@@ -4,6 +4,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator } from '@playwright/test';
 
 import { DirectionFrame } from './DirectionFrame';
+import { DirectionSwitchFrame } from './DirectionSwitchFrame';
 
 // An alignment is stored as the end of the line, so it follows the direction the editor reads in.
 
@@ -59,5 +60,31 @@ test.describe('the alignment control in a right to left editor', () => {
         await editor.getByRole('textbox').click();
 
         await expect(editor.getByRole('radiogroup').getByRole('radio').first()).toHaveAccessibleName('Align right');
+    });
+});
+
+test.describe('the alignment control before any interaction', () => {
+    test('shows the start first, named right, on first paint', async ({ mount }) => {
+        const component = await mount(<DirectionFrame />);
+        const radios = component.getByTestId('rtl').getByRole('radiogroup').getByRole('radio');
+
+        await expect(radios).toHaveCount(4);
+        await expect(radios.nth(0)).toHaveAccessibleName('Align right');
+        await expect(radios.nth(1)).toHaveAccessibleName('Align center');
+        await expect(radios.nth(2)).toHaveAccessibleName('Align left');
+        await expect(radios.nth(3)).toHaveAccessibleName('Justify');
+    });
+});
+
+test.describe('the alignment control when the host switches direction', () => {
+    test('renames the start when the direction changes', async ({ mount }) => {
+        const component = await mount(<DirectionSwitchFrame />);
+        const first = component.getByRole('radiogroup').getByRole('radio').first();
+
+        await expect(first).toHaveAccessibleName('Align left');
+
+        await component.getByRole('button', { name: 'Switch to right to left' }).click();
+
+        await expect(first).toHaveAccessibleName('Align right');
     });
 });

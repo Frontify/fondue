@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Divider } from '@frontify/fondue-components';
+import { Divider, useFondueTheme } from '@frontify/fondue-components';
 import {
     Fragment,
     memo,
     type ReactNode,
-    type RefObject,
     useCallback,
     useLayoutEffect,
     useRef,
@@ -19,7 +18,6 @@ import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 import { useTranslate } from '#/ui/translation';
 
 import { type ShownCommand, turnIntoCommands } from '../helpers/blockCommands';
-import { readingDirectionOf } from '../helpers/readingDirection';
 import { type GroupSplit, type SlotGroup, splitGroups } from '../helpers/toolbarFit';
 import { type ShownToolbarEntry, toolbarItemProps } from '../helpers/toolbarItem';
 import { GROUP_ATTRIBUTE, SEPARATOR_ATTRIBUTE, SLOT_ATTRIBUTE } from '../helpers/toolbarMarkers';
@@ -54,8 +52,6 @@ type ToolbarProps = {
     placement: ToolbarPlacement;
     /** The id of the editable element the controls act on. */
     controls: string;
-    /** The editable element, whose reading direction the controls are handed. */
-    editableRef: RefObject<HTMLElement | null>;
     /** The editor asks the toolbar to take focus (Alt+F10); a floating bar takes it on the render it appears in. */
     focusPending: boolean;
     /** The toolbar has taken up the editor's focus request, so the editor can clear it. */
@@ -82,11 +78,11 @@ const ToolbarView = ({
     editorState,
     placement,
     controls,
-    editableRef,
     focusPending,
     onFocusTaken,
 }: ToolbarProps): ReactNode => {
     const translate = useTranslate();
+    const { dir } = useFondueTheme();
     const getSelection = useCallback(() => api.selection.get(), [api]);
     const selection = useSyncExternalStore(editorState.subscribe, getSelection, getSelection);
     const toolbarRef = useRef<HTMLDivElement | null>(null);
@@ -111,7 +107,6 @@ const ToolbarView = ({
     }, [focusPending, onFocusTaken]);
     const roving = useToolbarRoving({ toolbarRef, focusRequestRef, onEscape: () => api.focus() });
     const { row, overflow, more } = layoutOf(groups, fit);
-    const direction = readingDirectionOf(editableRef.current);
 
     const drawGroups = (drawn: readonly SlotGroup<ShownToolbarEntry>[]): ReactNode =>
         drawn.map((group) => (
@@ -119,7 +114,7 @@ const ToolbarView = ({
                 {group.items.map((item) => (
                     // An element per slot, so the row can measure what each plugin drew.
                     <div key={item.key} className={styles.slot} {...{ [SLOT_ATTRIBUTE]: item.key }}>
-                        <ToolbarItemSlot item={item} itemProps={toolbarItemProps(item, api, selection, direction)} />
+                        <ToolbarItemSlot item={item} itemProps={toolbarItemProps(item, api, selection, dir)} />
                     </div>
                 ))}
             </div>

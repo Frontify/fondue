@@ -609,7 +609,7 @@ export type ToolbarItemProps = {
      */
     openEditor: () => void;
     /**
-     * The reading direction of the editable text
+     * The reading direction the editor's Fondue `ThemeProvider` sets
      */
     direction: ReadingDirection;
 };

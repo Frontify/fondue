@@ -10,4 +10,4 @@ Pasted HTML with `text-align: left` reads as `start`, and `text-align: right` as
 
 A stored document that still holds `left` or `right` keeps the value and writes it back unchanged, but the editor gives it no alignment. Map existing data before loading it: `left` → `start`, `right` → `end`.
 
-Toolbar entries get a new `direction` prop (`'ltr'` or `'rtl'`), the reading direction of the editable text.
+Toolbar entries get a new `direction` prop (`'ltr'` or `'rtl'`), the `dir` of the surrounding Fondue `ThemeProvider`. The labels follow it.

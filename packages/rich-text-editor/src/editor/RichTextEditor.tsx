@@ -530,7 +530,6 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
             editorState={editorState}
             placement={toolbarPlacement}
             controls={editableId}
-            editableRef={containerRef}
             focusPending={toolbarFocusPending}
             onFocusTaken={onToolbarFocusTaken}
         />
