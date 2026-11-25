@@ -147,12 +147,12 @@ const blockNodeSpec = (
     return spec;
 };
 
-const inlineNodeSpec = (definition: InlineDefinition, hasEditView: boolean): PmNodeSpec => ({
+const inlineNodeSpec = (definition: InlineDefinition, hasEditView: boolean, hasCodeBlock: boolean): PmNodeSpec => ({
     group: 'inline',
     inline: true,
     atom: true,
-    // Turning a block into a block of code swaps this inline for a new line, and back.
-    linebreakReplacement: definition.lineBreak === true,
+    // Swapped for a new line when a block turns into code, and back; without a code block a raw new line must keep reading as a space.
+    linebreakReplacement: hasCodeBlock && definition.lineBreak === true,
     // With editing UI, a node inserted without a value is a draft (null) the UI
     // completes; without it, it stores the declared defaults.
     attrs: { [VALUE_ATTR]: { default: hasEditView ? null : (definition.defaults ?? {}) } },
@@ -235,6 +235,7 @@ export const buildSchema = (registry: PluginRegistry): Schema => {
     for (const [type, block] of registry.blocks) {
         nodes[type] = blockNodeSpec(type, block, { registry, isHeld: heldTypes.has(type), known, lists });
     }
+    const hasCodeBlock = [...registry.blocks.values()].some((block) => block.content === 'code');
     let lineBreakType: string | undefined;
     for (const [type, inline] of registry.inlines) {
         if (inline.lineBreak === true) {
@@ -244,7 +245,7 @@ export const buildSchema = (registry: PluginRegistry): Schema => {
             }
             lineBreakType = type;
         }
-        nodes[type] = inlineNodeSpec(inline, registry.edits.has(type));
+        nodes[type] = inlineNodeSpec(inline, registry.edits.has(type), hasCodeBlock);
     }
     nodes[UNKNOWN_BLOCK] = unknownBlockSpec;
     nodes[UNKNOWN_INLINE] = unknownInlineSpec;

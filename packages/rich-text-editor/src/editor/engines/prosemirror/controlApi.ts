@@ -3,7 +3,13 @@
 import { chainCommands, setBlockType as pmSetBlockType } from 'prosemirror-commands';
 import { closeHistory, redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
 import { undoInputRule } from 'prosemirror-inputrules';
-import { type Mark as PmMark, type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
+import {
+    type Mark as PmMark,
+    type MarkType as PmMarkType,
+    type Node as PmNode,
+    type NodeType as PmNodeType,
+    type Schema,
+} from 'prosemirror-model';
 import {
     type Command,
     type EditorState,
@@ -398,13 +404,17 @@ const createMarkApi = (
 // --- Blocks ---
 
 /** What a text block of code cannot hold, an inline element but the line break, written as the plain text it gives. */
-const withInlinesAsText = (state: EditorState, registry: PluginRegistry): Transaction => {
+const withInlinesAsText = (state: EditorState, registry: PluginRegistry, nodeType: PmNodeType): Transaction => {
     const transaction = state.tr;
     const replaced: { from: number; to: number; text: string }[] = [];
     for (const { $from, $to } of state.selection.ranges) {
-        state.doc.nodesBetween($from.pos, $to.pos, (block, blockPos) => {
+        state.doc.nodesBetween($from.pos, $to.pos, (block, blockPos, parent, index) => {
             if (!block.isTextblock) {
                 return true;
+            }
+            // Only the blocks the engine's set-type turns, so the others keep their inline elements.
+            if (block.type === nodeType || !parent?.canReplaceWith(index, index + 1, nodeType)) {
+                return false;
             }
             block.forEach((child, offset) => {
                 const value = child.attrs[VALUE_ATTR] as Record<string, unknown> | null | undefined;
@@ -485,7 +495,7 @@ const createBlockApi = (
             // The engine's command only says whether the type can be set here;
             // the change itself keeps each block's carried attributes.
             if (nodeType.spec.code === true) {
-                const written = withInlinesAsText(current, registry);
+                const written = withInlinesAsText(current, registry, nodeType);
                 for (const step of written.steps) {
                     combined.step(step);
                 }

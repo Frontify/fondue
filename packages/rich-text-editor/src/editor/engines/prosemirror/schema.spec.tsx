@@ -318,11 +318,30 @@ describe('buildSchema', () => {
                 }),
             });
 
+        const codeBlock = definePlugin({
+            id: 'verbatim',
+            content: defineContent({
+                blocks: {
+                    verbatim: defineBlock({
+                        content: 'code',
+                        toHtml: () => ({ tag: 'pre', children: true }),
+                        parse: [{ tag: 'pre' }],
+                    }),
+                },
+            }),
+        });
+
         it('is the one the engine swaps for a new line when a block turns into a block of code', () => {
-            const schema = buildSchema([inlineWith('newline', true), inlineWith('chip')]);
+            const schema = buildSchema([inlineWith('newline', true), inlineWith('chip'), codeBlock]);
 
             expect(schema.nodes.newline?.spec.linebreakReplacement).toBe(true);
             expect(schema.nodes.chip?.spec.linebreakReplacement).toBe(false);
+        });
+
+        it('is not swapped where no block holds code, so a raw new line keeps reading as a space', () => {
+            const schema = buildSchema([inlineWith('newline', true)]);
+
+            expect(schema.nodes.newline?.spec.linebreakReplacement).toBe(false);
         });
 
         it('refuses a second one', () => {

@@ -15,7 +15,7 @@ import {
     type RteBlockNode,
     type RtePlugin,
 } from '#/core';
-import { codeBlockPlugin, defaultPlugins } from '#/plugins';
+import { codeBlockPlugin, defaultPlugins, tablePlugin } from '#/plugins';
 
 import { toEngineDocument } from './documentConversion';
 import { destroyEditors, editorWith, paragraph, text, tokenPlugin } from './testEditor';
@@ -717,6 +717,41 @@ describe('blocks.setType to a block of code', () => {
         editor.api.blocks.setType('codeBlock');
 
         expect(editor.stored()).toEqual([{ type: 'codeBlock', children: [{ text: 'hi Ada' }] }]);
+    });
+
+    it('keeps an inline element in a block the code block cannot replace', () => {
+        const cellParagraph = paragraph(text('cell '), { type: 'tag', name: 'Ada' });
+        const editor = editorWith(
+            [...defaultPlugins, codeBlockPlugin(), tablePlugin(), tagPlugin],
+            [
+                paragraph(text('top')),
+                {
+                    type: 'table',
+                    children: [
+                        {
+                            type: 'tableRow',
+                            children: [{ type: 'tableCell', colspan: 1, rowspan: 1, children: [cellParagraph] }],
+                        },
+                    ],
+                },
+            ],
+        );
+        editor.selectBetween('top', 'cell');
+
+        editor.api.blocks.setType('codeBlock');
+
+        expect(editor.stored()).toEqual([
+            { type: 'codeBlock', children: [{ text: 'top' }] },
+            {
+                type: 'table',
+                children: [
+                    {
+                        type: 'tableRow',
+                        children: [{ type: 'tableCell', colspan: 1, rowspan: 1, children: [cellParagraph] }],
+                    },
+                ],
+            },
+        ]);
     });
 
     it('leaves the alignment of the paragraph behind', () => {

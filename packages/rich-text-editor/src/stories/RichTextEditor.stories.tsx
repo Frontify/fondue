@@ -835,7 +835,9 @@ const gap = (size: number) => {
 };
 \`\`\``;
 
-const CODE_BLOCK_MARKDOWN_OPTIONS: MarkdownOptions = { plugins: [...defaultPlugins, codeBlockPlugin()], breaks: true };
+const CODE_BLOCK_PLUGINS = [...defaultPlugins, codeBlockPlugin()];
+
+const CODE_BLOCK_MARKDOWN_OPTIONS: MarkdownOptions = { plugins: CODE_BLOCK_PLUGINS, breaks: true };
 
 /**
  * A fenced block of code in Markdown becomes a code block that keeps its lines, indentation and language.
@@ -849,7 +851,7 @@ export const CodeBlock: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={CODE_BLOCK_MARKDOWN_OPTIONS.plugins} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={CODE_BLOCK_PLUGINS} />
                 </div>
                 <pre className={MARKDOWN_PANEL}>{markdown}</pre>
             </div>
