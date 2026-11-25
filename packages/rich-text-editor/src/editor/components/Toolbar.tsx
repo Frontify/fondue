@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Divider, useFondueTheme } from '@frontify/fondue-components';
+import { Divider } from '@frontify/fondue-components';
 import {
     Fragment,
     memo,
@@ -82,7 +82,6 @@ const ToolbarView = ({
     onFocusTaken,
 }: ToolbarProps): ReactNode => {
     const translate = useTranslate();
-    const { dir } = useFondueTheme();
     const getSelection = useCallback(() => api.selection.get(), [api]);
     const selection = useSyncExternalStore(editorState.subscribe, getSelection, getSelection);
     const toolbarRef = useRef<HTMLDivElement | null>(null);
@@ -114,7 +113,7 @@ const ToolbarView = ({
                 {group.items.map((item) => (
                     // An element per slot, so the row can measure what each plugin drew.
                     <div key={item.key} className={styles.slot} {...{ [SLOT_ATTRIBUTE]: item.key }}>
-                        <ToolbarItemSlot item={item} itemProps={toolbarItemProps(item, api, selection, dir)} />
+                        <ToolbarItemSlot item={item} itemProps={toolbarItemProps(item, api, selection)} />
                     </div>
                 ))}
             </div>

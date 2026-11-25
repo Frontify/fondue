@@ -67,7 +67,6 @@ export {
     type Paste,
     type PasteHandler,
     type PasteSource,
-    type ReadingDirection,
     type RteBlockCommand,
     type RteContent,
     type RteContentDefinition,

@@ -2,7 +2,8 @@
 
 // @vitest-environment happy-dom
 
-import { act } from 'react';
+import { ThemeProvider } from '@frontify/fondue-components';
+import { act, type ComponentProps } from 'react';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -64,7 +65,7 @@ describe('reading the align attribute from a pasted element', () => {
     });
 });
 
-type MountedToolbarOptions = { direction: ToolbarItemProps['direction']; align?: string };
+type MountedToolbarOptions = { direction: ComponentProps<typeof ThemeProvider>['dir']; align?: string };
 
 const mountToolbar = ({ direction, align: blockAlign }: MountedToolbarOptions) => {
     const entry = alignPlugin().toolbar?.[0];
@@ -85,9 +86,14 @@ const mountToolbar = ({ direction, align: blockAlign }: MountedToolbarOptions) =
         isActive: false,
         toggle: () => {},
         openEditor: () => {},
-        direction,
     };
-    act(() => root.render(<Entry {...props} />));
+    act(() =>
+        root.render(
+            <ThemeProvider dir={direction}>
+                <Entry {...props} />
+            </ThemeProvider>,
+        ),
+    );
 
     const radios = [...container.querySelectorAll<HTMLElement>('[role="radiogroup"] [role="radio"]')];
 

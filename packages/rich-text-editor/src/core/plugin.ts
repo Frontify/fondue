@@ -568,11 +568,6 @@ export const RTE_TOOLBAR_GROUPS = [
 export type RteToolbarGroup = (typeof RTE_TOOLBAR_GROUPS)[number];
 
 /**
- * The direction the editable text reads in, which `start` and `end` resolve against
- */
-export type ReadingDirection = 'ltr' | 'rtl';
-
-/**
  * What a toolbar entry's `render` gets: the API, the selection, and commands
  * bound to the entry's toggled type. Anything else goes through `api`.
  */
@@ -608,10 +603,6 @@ export type ToolbarItemProps = {
      * Open the plugin's `edit` view on its node at the selection
      */
     openEditor: () => void;
-    /**
-     * The reading direction the editor's Fondue `ThemeProvider` sets
-     */
-    direction: ReadingDirection;
 };
 
 /**

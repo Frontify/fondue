@@ -6,7 +6,6 @@ import {
     type EditorControlApi,
     isOwnActive,
     type OwnType,
-    type ReadingDirection,
     type RteSelectionSnapshot,
     type SelectedNode,
     toggleOwn,
@@ -30,7 +29,6 @@ export const toolbarItemProps = (
     { own, label, shortcut }: ToolbarItemSource,
     api: EditorControlApi,
     selection: RteSelectionSnapshot,
-    direction: ReadingDirection,
 ): ToolbarItemProps => {
     const selectedNode = selectedNodeOf(own, api, selection);
     const isActive = isOwnActive(own, selection);
@@ -45,7 +43,6 @@ export const toolbarItemProps = (
         selection,
         isActive,
         toggle,
-        direction,
         openEditor: () => {
             if (own.kind !== 'none') {
                 api.editors.open(own.type);

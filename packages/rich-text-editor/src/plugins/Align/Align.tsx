@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useFondueTheme } from '@frontify/fondue-components';
 import {
     type FondueIcon,
     IconTextAlignmentCentre,
@@ -8,13 +9,19 @@ import {
     IconTextAlignmentRight,
 } from '@frontify/fondue-icons';
 
-import { defineContent, definePlugin, type ReadingDirection, type StyleMap, type ToolbarItemProps } from '#/core';
+import { defineContent, definePlugin, type StyleMap, type ToolbarItemProps } from '#/core';
 import { type PlainStringKey } from '#/locales/types';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 import { translatedLabel, useTranslate } from '#/ui/translation';
 
 import styles from './align.module.scss';
+
+const ALIGN_VALUES = ['start', 'center', 'end', 'justify'] as const;
+
+type Alignment = (typeof ALIGN_VALUES)[number];
+
+type ReadingDirection = ReturnType<typeof useFondueTheme>['dir'];
 
 /**
  * Alignment is an attribute on every text block rather than a block type of its
@@ -25,12 +32,8 @@ export type AlignAttribute = {
     /**
      * The text alignment of the block
      */
-    align?: 'start' | 'center' | 'end' | 'justify';
+    align?: Alignment;
 };
-
-type Alignment = NonNullable<AlignAttribute['align']>;
-
-const ALIGN_VALUES: readonly Alignment[] = ['start', 'center', 'end', 'justify'];
 
 const isAlignment = (value: unknown): value is Alignment => ALIGN_VALUES.some((alignment) => alignment === value);
 
@@ -67,33 +70,26 @@ export const alignContent = defineContent({
     },
 });
 
-type AlignmentChoice = { value: Alignment; icon: FondueIcon; title: PlainStringKey };
+type AlignmentLook = { icon: FondueIcon; title: PlainStringKey };
 
-const LEFT_TO_RIGHT_ALIGNMENTS: readonly AlignmentChoice[] = [
-    { value: 'start', icon: IconTextAlignmentLeft, title: 'RichTextEditor_alignLeft' },
-    { value: 'center', icon: IconTextAlignmentCentre, title: 'RichTextEditor_alignCenter' },
-    { value: 'end', icon: IconTextAlignmentRight, title: 'RichTextEditor_alignRight' },
-    { value: 'justify', icon: IconTextAlignmentJustify, title: 'RichTextEditor_alignJustify' },
-];
+const LEFT_LOOK: AlignmentLook = { icon: IconTextAlignmentLeft, title: 'RichTextEditor_alignLeft' };
+const CENTRE_LOOK: AlignmentLook = { icon: IconTextAlignmentCentre, title: 'RichTextEditor_alignCenter' };
+const RIGHT_LOOK: AlignmentLook = { icon: IconTextAlignmentRight, title: 'RichTextEditor_alignRight' };
+const JUSTIFY_LOOK: AlignmentLook = { icon: IconTextAlignmentJustify, title: 'RichTextEditor_alignJustify' };
 
-const RIGHT_TO_LEFT_ALIGNMENTS: readonly AlignmentChoice[] = [
-    { value: 'start', icon: IconTextAlignmentRight, title: 'RichTextEditor_alignRight' },
-    { value: 'center', icon: IconTextAlignmentCentre, title: 'RichTextEditor_alignCenter' },
-    { value: 'end', icon: IconTextAlignmentLeft, title: 'RichTextEditor_alignLeft' },
-    { value: 'justify', icon: IconTextAlignmentJustify, title: 'RichTextEditor_alignJustify' },
-];
-
-const alignmentChoices = (direction: ReadingDirection): readonly AlignmentChoice[] => {
+const looksFor = (direction: ReadingDirection): Record<Alignment, AlignmentLook> => {
     switch (direction) {
         case 'ltr':
-            return LEFT_TO_RIGHT_ALIGNMENTS;
+            return { start: LEFT_LOOK, center: CENTRE_LOOK, end: RIGHT_LOOK, justify: JUSTIFY_LOOK };
         case 'rtl':
-            return RIGHT_TO_LEFT_ALIGNMENTS;
+            return { start: RIGHT_LOOK, center: CENTRE_LOOK, end: LEFT_LOOK, justify: JUSTIFY_LOOK };
     }
 };
 
-const AlignToolbar = ({ api, selection, label, direction }: ToolbarItemProps) => {
+const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
     const translate = useTranslate();
+    const { dir } = useFondueTheme();
+    const looks = looksFor(dir);
     // The block the selection is in carries the attribute this plugin
     // added, which the structural node type does not know about.
     const align = (selection.block as AlignAttribute | null)?.align;
@@ -103,27 +99,31 @@ const AlignToolbar = ({ api, selection, label, direction }: ToolbarItemProps) =>
         // One choice of four, so a radio group: the checked one is the
         // block's alignment.
         <div role="radiogroup" aria-label={label} className={styles.group}>
-            {alignmentChoices(direction).map(({ value, icon: Icon, title }) => (
-                // A <button> underneath, which the toolbar gives its tabIndex.
-                // oxlint-disable-next-line jsx-a11y/interactive-supports-focus
-                <ToolbarButton
-                    key={value}
-                    role="radio"
-                    aria-checked={current === value}
-                    title={translate(title)}
-                    // Choosing the alignment already set clears it, so the
-                    // block inherits the editor's direction again.
-                    onClick={() => {
-                        let next: typeof value | null = value;
-                        if (align === value) {
-                            next = null;
-                        }
-                        api.blocks.updateAttributes({ align: next });
-                    }}
-                >
-                    <Icon size={TOOLBAR_ICON_SIZE} />
-                </ToolbarButton>
-            ))}
+            {ALIGN_VALUES.map((value) => {
+                const { icon: Icon, title } = looks[value];
+
+                return (
+                    // A <button> underneath, which the toolbar gives its tabIndex.
+                    // oxlint-disable-next-line jsx-a11y/interactive-supports-focus
+                    <ToolbarButton
+                        key={value}
+                        role="radio"
+                        aria-checked={current === value}
+                        title={translate(title)}
+                        // Choosing the alignment already set clears it, so the
+                        // block inherits the editor's direction again.
+                        onClick={() => {
+                            let next: typeof value | null = value;
+                            if (align === value) {
+                                next = null;
+                            }
+                            api.blocks.updateAttributes({ align: next });
+                        }}
+                    >
+                        <Icon size={TOOLBAR_ICON_SIZE} />
+                    </ToolbarButton>
+                );
+            })}
         </div>
     );
 };
