@@ -1,0 +1,21 @@
+packages/rich-text-editor/package.json
+  s_7ce755e3e9f9de::t_24230cdc7f2fd4 73
+pnpm-lock.yaml
+  s_7ce755e3e9f9de::t_87657826875379 598
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "013d92769bba977e0ff8af9a3f0e72f9dc676e73",
+  "prompts": {},
+  "sessions": {
+    "s_7ce755e3e9f9de": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7c3b0cf7-00a7-4085-aff1-083ea3f99b10",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

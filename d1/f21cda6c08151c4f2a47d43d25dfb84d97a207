@@ -1,0 +1,19 @@
+packages/rich-text-editor/src/plugins/shared/helpers/href.spec.ts
+  s_a585d10f570924::t_d4ab35b2127922 7-9,81
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d1f21cda6c08151c4f2a47d43d25dfb84d97a207",
+  "prompts": {},
+  "sessions": {
+    "s_a585d10f570924": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12fffd99-7ec0-43c7-a09b-65001cf93f56",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

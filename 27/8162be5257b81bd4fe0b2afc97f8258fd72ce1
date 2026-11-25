@@ -1,0 +1,194 @@
+.github/workflows/icon-generation.yaml
+  s_658c7f1b19f4a8::t_b2192d87801a50 22
+packages/rich-text-editor/src/core/commands.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 48-52
+packages/icons/src/Icon.stories.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 22-37,48,72
+packages/components/src/components/Select/hooks/useSelectData.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 77-78,108-110
+packages/components/src/components/ColorPicker/utils.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 10,28,44,83,98,120-121,146-148
+packages/rich-text-editor/playwright.config.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 1-26
+packages/rich-text-editor/src/editor/warnings.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 1-16
+.github/workflows/fondue-pull-requests.yaml
+  s_658c7f1b19f4a8::t_b2192d87801a50 130
+packages/rte/src/components/Flyout/hooks/useContainScroll.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 18
+packages/components/src/utilities/domUtilities.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 12,44-45,64-65
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.spec.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 1-100
+packages/charts/src/components/Treemap/hooks/helpers/dataGroupingHelper.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 96-102
+packages/icons/package.json
+  s_658c7f1b19f4a8::t_b2192d87801a50 35
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 231-265
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.spec.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 133-184
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 9-15,17-18,80-81,116,124,147,165,184
+packages/tokens/stories/components/Tokens/TokenCollectionOverview.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 86-121
+packages/components/src/hooks/useTextTruncation.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 10
+.github/workflows/continuous-deployment.yaml
+  s_658c7f1b19f4a8::t_b2192d87801a50 119,146
+packages/components/src/components/Textarea/styles/textarea.module.scss
+  s_658c7f1b19f4a8::t_b2192d87801a50 133
+packages/fondue/src/components/Tree/helpers/getMovementAnnouncements.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 137-140
+packages/rich-text-editor/src/__tests__/browser/composition.ct.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 1-168
+packages/rich-text-editor/src/__tests__/formatRegression.spec.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 96,100-106,209-217,221,227-252,328,359,361,376,381,390-391,394
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 27-34,37,227-250,293-320,472-506
+  s_658c7f1b19f4a8::t_d24fc66e4f4286 507-508
+packages/rich-text-editor/src/renderer/documentTree.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 241-255,270
+packages/rich-text-editor/vite.config.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 75
+packages/rich-text-editor/playwright/index.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 1-14
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 15-23,102
+storybook-docs/.storybook/main.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 23
+packages/rich-text-editor/src/editor/engines/prosemirror/documentConversion.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 19,50-51,76,78-80,96-102,115-171,269-276,280-286,292-307,391,406-407,409,412
+.changeset/rte-keep-undeclared-attributes.md
+  s_658c7f1b19f4a8::t_b2192d87801a50 1-4
+packages/fondue/src/components/Tree/helpers/projection.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 53,62
+packages/rich-text-editor/src/core/vocabulary.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 19-23,26-33
+  s_658c7f1b19f4a8::t_cd42543bb3e8a5 34
+packages/fondue/src/components/Badge/helpers.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 96-101
+packages/rich-text-editor/package.json
+  s_658c7f1b19f4a8::t_b2192d87801a50 41,47-48,72,78-79
+packages/rich-text-editor/src/editor/richTextEditor.module.scss
+  s_658c7f1b19f4a8::t_b2192d87801a50 17-21
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 64,66-67
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 6,9,15-16,49-64,168-172
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.spec.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 5-6,9,31-71,91-95,99,101,104-111,113,115-116,118,120,122-132,134-159,162-163,165-166,168-169,172-176,178-180,182-206
+packages/rich-text-editor/src/core/index.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 47
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_658c7f1b19f4a8::t_70989a5620a5ca 390
+  s_658c7f1b19f4a8::t_b2192d87801a50 14,22,30-31,69-103,181-222,287-289,293,386-387,602-603,624-625
+  s_658c7f1b19f4a8::t_a1f8385007ece8 359
+  s_658c7f1b19f4a8::t_d50edb3ebb4931 38
+packages/rte/src/components/Badge/helpers.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 84-89
+.changeset/rte-reader-unknown-list-items.md
+  s_658c7f1b19f4a8::t_b2192d87801a50 1-4
+packages/charts/src/components/common/components/Tooltip/helpers/getFormattedTooltipDate.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 11
+packages/charts/src/components/LineChart/helpers/createBackfilledSeries.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 71
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 97-112,268-313,570-599
+  s_658c7f1b19f4a8::t_ba35ac92301f13 600
+packages/components/package.json
+  s_658c7f1b19f4a8::t_b2192d87801a50 16-18
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 344-366
+  s_658c7f1b19f4a8::t_9af0a31be7d20e 343
+.github/actions/setup/action.yaml
+  s_658c7f1b19f4a8::t_b2192d87801a50 9-10,39,44,51-59,69-81
+packages/fondue/tools/codemod/findDeprecatedImports.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 30
+packages/components/src/hooks/useSyncRefs.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 13-14
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 8,282-481
+  s_658c7f1b19f4a8::t_a79141c9aadbd5 482-483
+.changeset/declare-side-effects.md
+  s_658c7f1b19f4a8::t_b2192d87801a50 1-6
+.changeset/rte-unknown-block-raw-leak.md
+  s_658c7f1b19f4a8::t_b2192d87801a50 1-4
+packages/rich-text-editor/playwright/index.html
+  s_658c7f1b19f4a8::t_b2192d87801a50 1-12
+.changeset/rte-newer-version-read-only.md
+  s_658c7f1b19f4a8::t_b2192d87801a50 1-4
+packages/rich-text-editor/.gitignore
+  s_658c7f1b19f4a8::t_b2192d87801a50 3-6
+packages/rich-text-editor/tsconfig.node.json
+  s_658c7f1b19f4a8::t_b2192d87801a50 24
+packages/rich-text-editor/src/__tests__/browser/editor.ct.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 1-126
+packages/rich-text-editor/src/editor/helpers/toolbarItem.spec.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 59-61
+packages/rte/cypress/support/component.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 13-14
+packages/components/src/components/Badge/utils.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 9
+packages/rich-text-editor/src/editor/engines/prosemirror/warnings.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 23-33
+.changeset/rte-browser-tests.md
+  s_658c7f1b19f4a8::t_b2192d87801a50 1-4
+packages/rich-text-editor/src/__tests__/serializeToHtml.spec.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 32-51
+packages/rich-text-editor/src/editor/labels.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 29-30,44
+packages/rich-text-editor/src/editor/engines/prosemirror/extraAttributes.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 1-90
+.changeset/text-input-native-border.md
+  s_658c7f1b19f4a8::t_b2192d87801a50 1-5
+packages/rich-text-editor/src/editor/engines/prosemirror/extraAttributes.spec.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 1-402
+packages/components/src/components/Select/utils.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 18-19,55-57,75-79
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 16,181-200,241-242
+packages/rte/src/utilities/merge.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 8
+.github/workflows/rich-text-editor-pull-requests.yaml
+  s_658c7f1b19f4a8::t_b2192d87801a50 83-108
+packages/rich-text-editor/src/editor/engines/prosemirror/documentConversion.spec.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 18,81-84,252-371
+  s_658c7f1b19f4a8::t_5786095a93a5b5 372-373
+packages/components/scripts/transforms.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 6,17,25
+.github/workflows/generate-tokens.yaml
+  s_658c7f1b19f4a8::t_b2192d87801a50 24
+packages/charts/src/components/BarChart/components/Bars.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 37
+packages/components/src/components/TextInput/styles/text.module.scss
+  s_658c7f1b19f4a8::t_b2192d87801a50 110
+.changeset/rte-font-color-flyout.md
+  s_658c7f1b19f4a8::t_b2192d87801a50 1-4
+packages/fondue/src/utilities/merge.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 8
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_658c7f1b19f4a8::t_b2192d87801a50 3,16-23,36,77-82,86-87,126,142-150,192-193,200-209,301-308
+packages/rich-text-editor/tsconfig.json
+  s_658c7f1b19f4a8::t_b2192d87801a50 23
+packages/fondue/src/components/Tree/utils/removeFragmentsAndEnrichChildren.ts
+  s_658c7f1b19f4a8::t_b2192d87801a50 14-15,35
+pnpm-lock.yaml
+  s_658c7f1b19f4a8::t_dd090a81e141b6 778-780,796-801,1486-1491,6166-6169,10416-10420,12935-12952,12972-12990,15667-15668
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "278162be5257b81bd4fe0b2afc97f8258fd72ce1",
+  "prompts": {},
+  "sessions": {
+    "s_658c7f1b19f4a8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f3e07995-91f5-44af-8678-aa1487d11fd5",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

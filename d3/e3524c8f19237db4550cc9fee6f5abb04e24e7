@@ -1,0 +1,195 @@
+packages/rich-text-editor/src/__tests__/browser/HostNoHeadingsPair.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 5,14
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 26-34,840-853,974,1025-1037
+  s_c56bde808bb5f7::t_a9248781b37b0a 1038
+packages/rich-text-editor/src/__tests__/serializeToHtml.spec.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 5-6
+packages/rich-text-editor/src/__tests__/serverRendering.node.spec.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 10-11
+packages/charts/src/components/common/hooks/useMargin.spec.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 3,9,158-173
+  s_c56bde808bb5f7::t_d3bea01494f3dd 174-175
+packages/charts/src/components/common/hooks/useMargin.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 20-21,42-56,66,69,90-92,100-110
+packages/charts/src/components/LinearGauge/LinearGauge.spec.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 1-105
+packages/charts/src/utilities/focus.module.scss
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 1-8
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 15-25,53
+  s_c56bde808bb5f7::t_3bbd3872f21464 14
+packages/rich-text-editor/src/plugins/FontColor/components/colorFlyout.module.scss
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 3
+.changeset/charts-gauge-tooltip-monthly-dates.md
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 1-10
+packages/charts/src/components/LineChart/LineChart.stories.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 83-89,454-478
+packages/charts/src/components/common/components/Tooltip/helpers/getHeadingFromDatum.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 5,18,21
+packages/charts/src/components/common/helpers/getDateTickLabel.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 1-25
+packages/components/src/components/Divider/__tests__/Divider.ct.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 113-147
+packages/rich-text-editor/lint-fixtures/src/stories/Fixture.stories.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 15,20
+packages/rich-text-editor/src/__tests__/browser/HostLooksPair.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 5,14,21
+packages/charts/src/components/common/components/Tooltip/TooltipContent.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 12,58,71,74,87
+packages/rich-text-editor/src/__tests__/typeDerivation.spec.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 9-10
+packages/rich-text-editor/package.json
+  s_c56bde808bb5f7::t_a84fb9bb3796ad 27-30
+packages/charts/src/components/AreaStackChart/AreaStackChart.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 8,16,37,40,53,71,77,89
+packages/charts/src/components/LineChart/LineChart.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 6,30,42,70,87
+.changeset/charts-pie-chart-font-token.md
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 1-5
+packages/charts/src/components/LineChart/components/helpers/getXTickValues.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 18-20
+packages/charts/src/components/LinearGauge/LinearGauge.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 4-12,16-21,25-33,40-46,50,52-57,59,63-91,93-94,96,99-137,140-141,143-144,148-155,158-167,169
+.changeset/rte-toolbar-plain-fondue.md
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 1-5
+packages/rich-text-editor/src/__tests__/rendererBundle.spec.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 49-50,59
+packages/rich-text-editor/oxlint.config.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 318-321,395-396
+packages/charts/src/components/LineChart/components/helpers/getXTickValues.spec.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 72-76
+packages/charts/src/components/common/components/Legend.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 3-4,15,18,22
+packages/rich-text-editor/src/editor/components/ToolbarMore.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 207
+packages/rich-text-editor/src/ui/ToolbarButton/ToolbarButton.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 32,62-76,78-80,83,121
+packages/rich-text-editor/src/plugins/defaultPlugins.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 1-53
+packages/rich-text-editor/vite.config.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 109
+packages/charts/src/components/AreaStackChart/components/AreaStack.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 3-5,12-13,39-74
+  s_c56bde808bb5f7::t_73ec19dd7c4b2e 75-76
+packages/rich-text-editor/src/__tests__/formatRegression.spec.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 11,19
+packages/rich-text-editor/src/__tests__/paste/vendorPaste.spec.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 15-16
+packages/charts/src/components/AreaStackChart/AreaStackChart.stories.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 62-67,159-201
+packages/rich-text-editor/README.md
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 12-13
+packages/rich-text-editor/src/editor/helpers/toolbarFit.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 9
+packages/charts/src/components/common/helpers/index.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 4
+packages/charts/src/components/common/helpers/getDateTickLabel.spec.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 1-24
+packages/charts/src/components/common/helpers/getNonZeroLinearStackingScaleDomain.spec.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 81-92
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 17,26
+packages/rich-text-editor/src/editor/richTextEditor.module.scss
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 10-12,74-75,78,81-83,85
+packages/charts/src/components/common/components/Tooltip/helpers/getFormattedTooltipDate.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 3-10,12-15
+packages/charts/src/components/LineChart/components/Axes.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 7-8,17,20,24
+packages/rich-text-editor/lint-fixtures/src/editor/RichTextEditor.spec.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 6,12
+packages/rich-text-editor/src/__tests__/browser/editorWithMentions.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 5-6
+packages/rich-text-editor/src/__tests__/table.spec.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 9-10
+packages/rich-text-editor/src/plugins/index.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 9-11,13-35,37-52
+packages/rich-text-editor/src/plugins/TextStyle/components/textStyleSelect.module.scss
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 3
+packages/rich-text-editor/src/__tests__/htmlParity.spec.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 20
+packages/rich-text-editor/src/__tests__/entryPoints.spec.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 1-53
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 10,30
+packages/charts/src/components/LinearGauge/components/LinearGaugeTooltip.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 7,13
+packages/charts/src/components/PieChart/components/consts.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 5
+packages/components/src/components/Divider/styles/divider.module.scss
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 7
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 13,19
+packages/charts/src/components/common/types.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 6-7
+packages/charts/src/components/common/components/Tooltip/helpers/getFormattedTooltipDate.spec.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 1-17
+packages/rich-text-editor/src/editor/floatingBar.spec.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 12-13
+packages/rich-text-editor/src/__tests__/browser/HostResetPair.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 5
+packages/charts/src/components/common/components/Tooltip/TooltipContent.module.scss
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 77-84
+packages/charts/src/components/LinearGauge/components/Section.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 3,7-9,12-13,16-17,21-28
+.changeset/steady-lines-stand.md
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 1-6
+packages/charts/src/components/LineChart/types.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 3,37
+packages/charts/src/components/LinearGauge/LinearGauge.module.scss
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 4-6,11,15,22-49
+packages/rich-text-editor/src/__tests__/serverRendering.spec.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 7-8
+packages/components/src/components/Divider/Divider.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 74
+packages/rich-text-editor/src/__tests__/browser/HostStylingSections.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 5-6
+.changeset/rte-plugins-entry.md
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 1-5
+packages/charts/src/components/LinearGauge/types.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 7,9-12
+packages/rich-text-editor/src/editor/hooks/useToolbarFit.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 7,48-49,84-88,91-93
+packages/rich-text-editor/src/index.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 26
+packages/charts/src/components/common/components/Legend.module.scss
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 5,16-21
+packages/rich-text-editor/src/__tests__/browser/HostStylingPair.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 5-6
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 6
+packages/rich-text-editor/src/__tests__/browser/hostStylingValues.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 5-6
+packages/charts/src/components/common/components/Tooltip/Tooltip.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 11,39,72,150
+packages/charts/src/components/AreaStackChart/types.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 3,30
+packages/charts/src/components/LinearGauge/LinearGauge.stories.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 21-32,47-94
+packages/rich-text-editor/src/__tests__/documentText.spec.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 5-6
+packages/rich-text-editor/src/editor/components/Toolbar.tsx
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 3-12,29,132-135,137-152,169,174-181
+  s_c56bde808bb5f7::t_a84fb9bb3796ad 136
+  s_c56bde808bb5f7::t_68d89eac840a70 182
+packages/rich-text-editor/src/editor/helpers/toolbarMarkers.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 11-12
+packages/charts/src/components/common/helpers/getNonZeroLinearStackingScaleDomain.ts
+  s_c56bde808bb5f7::t_65a9edb9a83ddd 7-9,33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d3e3524c8f19237db4550cc9fee6f5abb04e24e7",
+  "prompts": {},
+  "sessions": {
+    "s_c56bde808bb5f7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "67ddf8bd-870f-4212-974e-54afa59d04ad",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

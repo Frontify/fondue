@@ -1,0 +1,23 @@
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_9209af244cd592::t_d04815188adbb5 56,78
+packages/rich-text-editor/src/plugins/index.ts
+  s_9209af244cd592::t_d04815188adbb5 52
+packages/rich-text-editor/src/plugins/Link/index.ts
+  s_9209af244cd592::t_d04815188adbb5 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fc5aed13269492ad29d8c07877cfba56bd5a07bd",
+  "prompts": {},
+  "sessions": {
+    "s_9209af244cd592": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2937942f-4fd4-4ace-942d-ce576d430ce1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
