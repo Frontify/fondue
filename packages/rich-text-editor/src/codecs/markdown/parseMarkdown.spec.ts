@@ -215,13 +215,22 @@ describe('parseMarkdown with nothing to read a token by', () => {
         });
     });
 
-    it('reads a code fence as one paragraph per line', () => {
-        expect(parseMarkdown('```\none\ntwo\n```', OPTIONS)).toEqual({
+    it('reads a code fence as one paragraph with its lines joined by breaks', () => {
+        expect(parseMarkdown('```\none\n\ntwo\n```', OPTIONS)).toEqual({
             version: 1,
             blocks: [
-                { type: 'paragraph', children: [{ text: 'one' }] },
-                { type: 'paragraph', children: [{ text: 'two' }] },
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'one' }, { type: 'break' }, { type: 'break' }, { text: 'two' }],
+                },
             ],
+        });
+    });
+
+    it('reads the lines of a code fence joined by a space when no plugin has a break', () => {
+        expect(parseMarkdown('```\none\ntwo\n```', { plugins: [] })).toEqual({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'one two' }] }],
         });
     });
 
