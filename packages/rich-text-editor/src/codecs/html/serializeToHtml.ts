@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { buildContentRegistry, type RteBlockNode, type RteContent, type RteDocumentOf, type RtePlugin } from '#/core';
+import { buildContentRegistry, type RteBlockNode, type RteContent, type RtePlugin } from '#/core';
+import { type RteBlock, type RteDocument } from '#/documentFormat';
+import { documentRootSpec, documentTree } from '#/renderer/documentTree';
 
-import { documentRootSpec, documentTree } from './documentTree';
 import { toHtmlString } from './toHtmlString';
 
 export type SerializeToHtmlOptions = {
@@ -22,15 +23,23 @@ export type SerializeToHtmlOptions = {
 };
 
 /**
- * The document as HTML: each node's `toHtml`, the same markup copying out of
- * the editor produces — never a `render.component`, so it pastes back as it was.
+ * The document as an HTML string: each node's `toHtml`, the same markup copying
+ * out of the editor produces, never a `render.component`, so it pastes back as it
+ * was. No React or browser needed. The host passes the plugins whose content the
+ * document uses; `wrap: false` leaves out the root element.
  *
  * Plugin classes are in the output, so a page showing it wants the package
  * stylesheet (`@frontify/fondue-rich-text-editor/styles`); an email must inline
  * the styles it needs.
+ *
+ * @example
+ * const html = serializeToHtml(
+ *     { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'Hello', bold: true }] }] },
+ *     { plugins: [boldContent], wrap: false },
+ * );
  */
-export const serializeToHtml = <TBlock extends RteBlockNode>(
-    doc: RteDocumentOf<TBlock>,
+export const serializeToHtml = <TBlock extends RteBlockNode = RteBlock>(
+    doc: RteDocument<TBlock>,
     { plugins, wrap = true }: SerializeToHtmlOptions,
 ): string => {
     const registry = buildContentRegistry(plugins);

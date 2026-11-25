@@ -4,8 +4,7 @@
 // React, no DOM — so it runs anywhere, a server included.
 
 import { attributeEntries, type HtmlSpec } from '#/core';
-
-import { type DrawnNode } from './documentTree';
+import { type DrawnNode } from '#/renderer/documentTree';
 
 /** Elements HTML writes without a closing tag. */
 const VOID_ELEMENTS = new Set([

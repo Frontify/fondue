@@ -11,6 +11,8 @@ import { tokenize } from './markdown/markdownIt';
 import { readDocument } from './markdown/read';
 import { type MarkdownLoss, writeDocument } from './markdown/write';
 
+export { serializeToHtml } from './html/serializeToHtml';
+export { toPlainText } from './text/toPlainText';
 export type { MarkdownLoss, MarkdownOverrides };
 
 export type MarkdownOptions = {

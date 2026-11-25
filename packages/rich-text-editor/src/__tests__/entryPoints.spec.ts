@@ -9,6 +9,8 @@ const PACKAGE_ROOT = resolve(__dirname, '../..');
 const ROOT_ENTRY = resolve(PACKAGE_ROOT, 'src/index.ts');
 const PLUGINS_ENTRY = resolve(PACKAGE_ROOT, 'src/plugins/index.ts');
 const CODECS_ENTRY = resolve(PACKAGE_ROOT, 'src/codecs/index.ts');
+// The root shipped these before ./codecs existed and keeps them.
+const SHIPPED_IN_ROOT = ['serializeToHtml', 'toPlainText'];
 
 const readCompilerOptions = (): ts.CompilerOptions => {
     const parsed = ts.getParsedCommandLineOfConfigFile(
@@ -42,7 +44,7 @@ const exportNames = (program: ts.Program, entry: string): string[] => {
 };
 
 describe('package entries', () => {
-    it('export each name from exactly one entry', () => {
+    it('share only the names the root shipped before ./codecs existed', () => {
         const program = ts.createProgram([ROOT_ENTRY, PLUGINS_ENTRY, CODECS_ENTRY], readCompilerOptions());
         const rootNames = exportNames(program, ROOT_ENTRY);
         const pluginNames = exportNames(program, PLUGINS_ENTRY);
@@ -58,6 +60,6 @@ describe('package entries', () => {
         }
         const sharedNames = [...exportCounts].filter(([, count]) => count > 1).map(([name]) => name);
 
-        expect(sharedNames).toEqual([]);
+        expect([...sharedNames].sort()).toEqual(SHIPPED_IN_ROOT);
     });
 });

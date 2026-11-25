@@ -5,6 +5,7 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { serializeToHtml } from '../codecs/html/serializeToHtml';
 import {
     defineBlock,
     defineContent,
@@ -14,7 +15,6 @@ import {
     type RteDocumentOf,
     type RtePlugin,
 } from '../core';
-import { serializeToHtml } from '../renderer/serializeToHtml';
 
 // Serializing where an app does it: on a server, with no page — no engine, no React, no `document`.
 
