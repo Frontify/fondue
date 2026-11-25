@@ -33,10 +33,10 @@ const codeDelimiters = (text: string): MarkdownDelimiters => {
 
     const fence = BACKTICK.repeat(longestRun + 1);
     if (text.startsWith(BACKTICK) || text.endsWith(BACKTICK)) {
-        return { open: `${fence} `, close: ` ${fence}` };
+        return { open: `${fence} `, close: ` ${fence}`, literal: true };
     }
 
-    return { open: fence, close: fence };
+    return { open: fence, close: fence, literal: true };
 };
 
 /**
@@ -54,7 +54,6 @@ export const codeContent = defineContent({
             markdown: {
                 read: [{ token: 'code_inline' }],
                 write: (_value, text) => codeDelimiters(text),
-                literal: true,
             },
         }),
     },

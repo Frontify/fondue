@@ -463,7 +463,15 @@ export type MarkdownTextPattern<TValue> = { pattern: RegExp; value: (match: RegE
 export type MarkdownLinePrefix = { first: string; rest: string | null };
 
 /** What a mark writes before and after its text. */
-export type MarkdownDelimiters = { open: string; close: string };
+export type MarkdownDelimiters = {
+    open: string;
+    close: string;
+    /**
+     * The text inside is written as is, never escaped.
+     * @default false
+     */
+    literal?: boolean;
+};
 
 /** Where an item sits in its list, counted from 0. */
 export type MarkdownListItem = {
@@ -493,11 +501,6 @@ export type MarkdownMarkForm<TValue = Record<string, unknown>> = {
     read: readonly MarkdownReadRule<TValue>[];
     /** Null: this value has no Markdown form, which is a loss. */
     write: (value: TValue, text: string) => MarkdownDelimiters | null;
-    /**
-     * The text inside is written as is, never escaped (inline code).
-     * @default false
-     */
-    literal?: boolean;
 };
 
 /** How an inline reads from and writes to Markdown. */

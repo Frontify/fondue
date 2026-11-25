@@ -442,12 +442,12 @@ const delimitersOf = (written: MarkdownDelimiters, emphasis: EmphasisDelimiter):
     return written;
 };
 
-const delimiterOf = (text: string, open: boolean, pair: DelimiterPair, form: MarkdownMarkForm): InlineToken => ({
+const delimiterOf = (text: string, open: boolean, pair: DelimiterPair, literal: boolean): InlineToken => ({
     kind: 'delimiter',
     text,
     open,
     pair,
-    emphasis: form.literal !== true && isEmphasisDelimiter(text),
+    emphasis: !literal && isEmphasisDelimiter(text),
 });
 
 const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, context: TokenContext): void => {
@@ -460,8 +460,9 @@ const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, cont
         return;
     }
 
+    const literal = written.literal === true;
     let innerMode = mode;
-    if (mark.form.literal === true) {
+    if (literal) {
         innerMode = 'literal';
     }
 
@@ -486,9 +487,9 @@ const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, cont
     const delimiters = delimitersOf(written, context.emphasis);
     const pair: DelimiterPair = { mark: mark.name, paths };
     appendAll(tokens, inner.slice(0, start));
-    tokens.push(delimiterOf(delimiters.open, true, pair, mark.form));
+    tokens.push(delimiterOf(delimiters.open, true, pair, literal));
     appendAll(tokens, inner.slice(start, end));
-    tokens.push(delimiterOf(delimiters.close, false, pair, mark.form));
+    tokens.push(delimiterOf(delimiters.close, false, pair, literal));
     appendAll(tokens, inner.slice(end));
 };
 

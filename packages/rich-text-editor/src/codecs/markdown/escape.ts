@@ -7,8 +7,11 @@ import { ESCAPED_ENTITY_START, MARKDOWN_ENTITY_START, MAX_ORDINAL_DIGITS } from 
 /** Where in a line the text sits: the start also escapes what would begin a block. */
 export type TextPosition = 'lineStart' | 'inline';
 
-/** The characters Markdown reads anywhere in a line: `\ * _ ` [ ] < > ~ |`. */
-const ESCAPED_CHARACTERS = /[\\*_`[\]<>~|]/g;
+/** The characters Markdown reads anywhere in a line: `\ * ` [ ] < > ~ |`, and `_` outside a word. */
+const ESCAPED_CHARACTERS = /[\\*`[\]<>~|]/g;
+
+/** An `_` that is not between two letters or digits, the only place a reader opens or closes emphasis with it. */
+const UNDERSCORE_OUTSIDE_WORD = /(?<![\p{L}\p{N}])_|_(?![\p{L}\p{N}])/gu;
 
 /** What starts a heading, a setext underline, a bullet or a rule at the start of a line, after any indent. */
 const LINE_START_MARKER = /^([ \t]*)(#|=|[-+](?=[ \t]|$)|-+[ \t]*$)/;
@@ -53,6 +56,7 @@ export const escapeTrailingBang = (text: string): string => text.replace(TRAILIN
 export const escapeText = (text: string, position: TextPosition): string => {
     const escaped = text
         .replaceAll(ESCAPED_CHARACTERS, BACKSLASH_MATCH)
+        .replaceAll(UNDERSCORE_OUTSIDE_WORD, BACKSLASH_MATCH)
         .replaceAll(SCHEME_SEPARATOR, BACKSLASH_MATCH)
         .replaceAll(WWW_DOT, BACKSLASH_SECOND_GROUP)
         .replaceAll(EMAIL_AT, BACKSLASH_MATCH)

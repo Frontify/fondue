@@ -8,6 +8,7 @@ import {
     definePlugin,
     LOOK_PROPERTIES,
     lookProperties,
+    type MarkdownDelimiters,
     type RteContent,
     type RteHotkey,
     type TextLook,
@@ -100,6 +101,25 @@ type LinkAnchorAttrs = {
     href?: string;
     target?: string;
     rel?: string;
+};
+
+/** The addresses CommonMark writes in `<…>`: a web address, or a bare mail address that has no query. */
+const AUTOLINK_ADDRESS = /^(?:https?:[^\s<>]*|mailto:[^\s<>?#@]+@[^\s<>?#@]+)$/i;
+
+const MAILTO_PREFIX = 'mailto:';
+
+/** The Markdown a link writes: `<address>` when its text is the address, `[text](address)` otherwise. */
+const writeLink = (href: string, text: string): MarkdownDelimiters => {
+    let shownAddress = href;
+    if (href.toLowerCase().startsWith(MAILTO_PREFIX)) {
+        shownAddress = href.slice(MAILTO_PREFIX.length);
+    }
+
+    if (AUTOLINK_ADDRESS.test(href) && text === shownAddress) {
+        return { open: '<', close: '>', literal: true };
+    }
+
+    return { open: '[', close: `](${markdownDestination(href)})` };
 };
 
 /** A stored document may hold anything here (`{}`, `true`), so its shape is not taken on trust. */
@@ -199,9 +219,9 @@ const linkMarkFor = (appearances: readonly LinkAppearance[]): MarkDefinition =>
                     },
                 },
             ],
-            write: ({ href }) => {
+            write: ({ href }, text) => {
                 if (isSafeHref(href)) {
-                    return { open: '[', close: `](${markdownDestination(href)})` };
+                    return writeLink(href, text);
                 }
                 return null;
             },
