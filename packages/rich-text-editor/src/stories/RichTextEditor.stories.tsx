@@ -18,6 +18,7 @@ import {
     checkListPlugin,
     columnBreakPlugin,
     defaultPlugins,
+    horizontalRulePlugin,
     italicPlugin,
     linkContent,
     linkPlugin,
@@ -768,7 +769,7 @@ export const ControlledValue: Story = {
     },
 };
 
-/** An annotation as a host stored it: a heading, inline formatting, a line break, an empty paragraph, a hand-typed list, a quote and a bare URL. */
+/** An annotation as a host stored it: a heading, inline formatting, a line break, an empty paragraph, a hand-typed list, a quote, a rule and a bare URL. */
 const STORED_ANNOTATION = `## Feedback
 
 The **new logo** is *close*, see the [brand guide](https://example.com/guide).
@@ -781,9 +782,13 @@ The second line stays in the same paragraph.
 
 > Keep the margins as they are.
 
+---
+
 https://example.com`;
 
-const MARKDOWN_OPTIONS: MarkdownOptions = { plugins: defaultPlugins, breaks: true };
+const MARKDOWN_PLUGINS = [...defaultPlugins, horizontalRulePlugin()];
+
+const MARKDOWN_OPTIONS: MarkdownOptions = { plugins: MARKDOWN_PLUGINS, breaks: true };
 
 /** The Markdown and the losses wrap, so a long line shows whole. */
 const MARKDOWN_PANEL = `${JSON_PANEL} tw-whitespace-pre-wrap tw-break-words`;
@@ -814,7 +819,7 @@ export const Markdown: Story = {
                     save.
                 </p>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={defaultPlugins} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={MARKDOWN_PLUGINS} />
                 </div>
                 <div className="tw-flex tw-flex-col tw-gap-4">
                     <pre className={MARKDOWN_PANEL}>{markdown}</pre>

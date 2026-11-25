@@ -38,6 +38,7 @@ import {
     defaultPlugins,
     emojiPlugin,
     fontColorPlugin,
+    horizontalRulePlugin,
     italicPlugin,
     type LinkAppearance,
     type LinkDestination,
@@ -1029,6 +1030,34 @@ export const ColumnBreak: Story = {
                         value={doc}
                         onChange={setDoc}
                         plugins={[columnBreakPlugin({ columns: 2, gap: '24px' })]}
+                    />
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/** A horizontal rule between two paragraphs, inserted from the toolbar or the / menu. */
+export const HorizontalRule: Story = {
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'Logo usage' }] },
+                { type: 'horizontalRule' },
+                { type: 'paragraph', children: [{ text: 'Colour usage' }] },
+            ],
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <p className={HINT}>The Divider button, or Divider in the / menu, inserts a rule where the caret is.</p>
+                <div className={FRAME}>
+                    <RichTextEditor
+                        value={doc}
+                        onChange={setDoc}
+                        plugins={[...defaultPlugins, horizontalRulePlugin()]}
                     />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
