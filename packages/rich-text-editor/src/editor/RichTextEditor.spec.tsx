@@ -893,6 +893,19 @@ describe('the toolbar', () => {
         });
     });
 
+    it('inserts a horizontal rule when the Divider button is clicked', () => {
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor value={paragraph('a')} plugins={defaultPlugins} toolbarPlacement="top" onChange={onChange} />
+        ));
+        ready();
+        const divider = container.querySelector<HTMLButtonElement>('[aria-label="Divider"]');
+        expect(divider).not.toBeNull();
+
+        act(() => divider?.click());
+
+        expect(stored()?.blocks).toContainEqual({ type: 'horizontalRule' });
+    });
+
     it('keeps Undo and Redo current as edits are made and taken back', () => {
         const { container, ready, stored } = mount((onChange) => (
             <RichTextEditor plugins={defaultPlugins} toolbarPlacement="top" onChange={onChange} />

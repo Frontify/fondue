@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { type RteBlock, type RteDocument, type RteDocumentWith } from '../../documentFormat';
-import { bulletListContent, defaultContent } from '../../plugins';
+import { bulletListContent, defaultContent, type HorizontalRuleBlock } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
@@ -11,7 +11,10 @@ import { mentionOverrideOptions } from './mentionOverride.fixture';
 type RoundTripCase = {
     name: string;
     markdown: string;
-    document: RteDocument | RteDocumentWith<{ inline: { type: 'mention'; id: string } }>;
+    document:
+        | RteDocument
+        | RteDocumentWith<{ inline: { type: 'mention'; id: string } }>
+        | RteDocumentWith<{ block: HorizontalRuleBlock }>;
 };
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
@@ -349,6 +352,49 @@ describe('markdown round trip with breaks', () => {
 
         expectRoundTrip({ name: 'breaks', markdown: 'a\nb', document }, { plugins: defaultContent, breaks: true });
     });
+});
+
+const RULE_CASES: readonly RoundTripCase[] = [
+    {
+        name: 'a rule between paragraphs',
+        markdown: 'a\n\n---\n\nb',
+        document: {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'horizontalRule' },
+                { type: 'paragraph', children: [{ text: 'b' }] },
+            ],
+        },
+    },
+    {
+        name: 'a rule first',
+        markdown: '---\n\na',
+        document: {
+            version: 1,
+            blocks: [{ type: 'horizontalRule' }, { type: 'paragraph', children: [{ text: 'a' }] }],
+        },
+    },
+    {
+        name: 'a rule last',
+        markdown: 'a\n\n---',
+        document: {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a' }] }, { type: 'horizontalRule' }],
+        },
+    },
+];
+
+describe('markdown round trip of horizontal rules', () => {
+    for (const ruleCase of RULE_CASES) {
+        it(`gives back the same Markdown and document for ${ruleCase.name}`, () => {
+            expectRoundTrip(ruleCase);
+        });
+
+        it(`gives back the same Markdown and document for ${ruleCase.name} with breaks: true`, () => {
+            expectRoundTrip(ruleCase, { plugins: defaultContent, breaks: true });
+        });
+    }
 });
 
 const ESCAPING_CASES: readonly RoundTripCase[] = [

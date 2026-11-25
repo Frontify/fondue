@@ -11,6 +11,8 @@ import { mentionOverrideOptions } from './mentionOverride.fixture';
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
 
+const ESCAPED_DASHES = String.raw`\---`;
+
 // Declared with an HTML form only, so neither has a Markdown form.
 const sampleContent = defineContent({
     blocks: {
@@ -87,6 +89,71 @@ describe('serializeToMarkdown line breaks', () => {
         expect(serializeToMarkdown(document, { plugins: defaultContent, breaks: true })).toEqual({
             markdown: 'a\nb',
             losses: [],
+        });
+    });
+});
+
+describe('serializeToMarkdown horizontal rules', () => {
+    it('writes a rule between two paragraphs as three dashes on their own line', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'horizontalRule' },
+                { type: 'paragraph', children: [{ text: 'b' }] },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: 'a\n\n---\n\nb', losses: [] });
+    });
+
+    it('writes a rule between two paragraphs the same way with breaks: true', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'horizontalRule' },
+                { type: 'paragraph', children: [{ text: 'b' }] },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, { plugins: defaultContent, breaks: true })).toEqual({
+            markdown: 'a\n\n---\n\nb',
+            losses: [],
+        });
+    });
+
+    it('separates two rules in a row by a blank line', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'horizontalRule' }, { type: 'horizontalRule' }],
+        };
+
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: '---\n\n---', losses: [] });
+    });
+
+    it('writes a paragraph whose text is three dashes with the first one escaped', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: '---' }] }],
+        };
+
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: ESCAPED_DASHES, losses: [] });
+    });
+
+    it('writes nothing for a rule when no plugin has one and reports the block', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'horizontalRule' },
+                { type: 'paragraph', children: [{ text: 'b' }] },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, { plugins: [] })).toEqual({
+            markdown: 'a\n\nb',
+            losses: [{ path: [1], type: 'horizontalRule' }],
         });
     });
 });

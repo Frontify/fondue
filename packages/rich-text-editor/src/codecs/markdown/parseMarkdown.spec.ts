@@ -172,6 +172,32 @@ describe('parseMarkdown lists', () => {
     });
 });
 
+const HORIZONTAL_RULE_DOCUMENT = { version: 1, blocks: [{ type: 'horizontalRule' }] };
+
+describe('parseMarkdown horizontal rules', () => {
+    it('reads a rule between two paragraphs as a horizontal rule block', () => {
+        expect(parseMarkdown('a\n\n---\n\nb', OPTIONS)).toEqual({
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'horizontalRule' },
+                { type: 'paragraph', children: [{ text: 'b' }] },
+            ],
+        });
+    });
+
+    it.each(['---', '***', '___', '* * *'])('reads %s alone as only a horizontal rule block', (markdown) => {
+        expect(parseMarkdown(markdown, OPTIONS)).toEqual(HORIZONTAL_RULE_DOCUMENT);
+    });
+
+    it('reads a dashed line right under a paragraph as a level 2 heading, not a rule', () => {
+        expect(parseMarkdown('a\n---', OPTIONS)).toEqual({
+            version: 1,
+            blocks: [{ type: 'textStyle', style: 'heading2', children: [{ text: 'a' }] }],
+        });
+    });
+});
+
 describe('parseMarkdown with no text to put in a block', () => {
     const EMPTY_ITEM_LIST = {
         version: 1,
@@ -189,10 +215,6 @@ describe('parseMarkdown with no text to put in a block', () => {
 
     it('reads a list marker followed by a space as an item holding one empty paragraph', () => {
         expect(parseMarkdown('- ', OPTIONS)).toEqual(EMPTY_ITEM_LIST);
-    });
-
-    it('reads Markdown that is only a horizontal rule as the empty document', () => {
-        expect(parseMarkdown('---', OPTIONS)).toEqual(EMPTY_DOCUMENT);
     });
 
     it('reads Markdown that is only an empty quote as the empty document', () => {
@@ -225,8 +247,8 @@ describe('parseMarkdown with nothing to read a token by', () => {
         });
     });
 
-    it('drops a horizontal rule', () => {
-        expect(parseMarkdown('a\n\n---\n\nb', OPTIONS)).toEqual({
+    it('drops a horizontal rule when no plugin has one', () => {
+        expect(parseMarkdown('a\n\n---\n\nb', { plugins: [] })).toEqual({
             version: 1,
             blocks: [
                 { type: 'paragraph', children: [{ text: 'a' }] },
