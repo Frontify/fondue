@@ -30,7 +30,7 @@ import {
 } from './helpers/appearance';
 import { type LinkSearch } from './helpers/destination';
 import { openNewLinkForm } from './helpers/newLinkForms';
-import { NEW_TAB_REL, NEW_TAB_TARGET } from './helpers/newTab';
+import { NEW_TAB_REL, NEW_TAB_TARGET, opensInNewTab } from './helpers/newTab';
 import {
     ALL_LINK_APPEARANCES,
     type ButtonLink,
@@ -153,7 +153,7 @@ const linkFromElement = (element: Element, appearances: readonly LinkAppearance[
 
     let textLink: TextLink = { href };
 
-    if (element.getAttribute('target') === NEW_TAB_TARGET) {
+    if (opensInNewTab(element.getAttribute('target'))) {
         textLink = { href, openInNewTab: true };
     }
 

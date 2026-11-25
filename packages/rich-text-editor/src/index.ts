@@ -89,6 +89,8 @@ export { type RteBlock, type RteDocument, type RteDocumentWith } from './documen
 
 export { isEmpty };
 
+export { type RteDocumentIssue, type RteDocumentValidation, validateDocument } from './core';
+
 export { toPlainText } from './codecs/text/toPlainText';
 
 // --- Plugin authoring ---

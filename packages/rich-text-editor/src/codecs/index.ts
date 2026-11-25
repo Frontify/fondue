@@ -3,7 +3,7 @@
 // The `@frontify/fondue-rich-text-editor/codecs` package entry: every export here is public API.
 // It imports no ProseMirror, React or editor code, so it runs in Node with no DOM.
 
-import { buildContentRegistry, type RteBlockNode, type RteContent, type RtePlugin } from '#/core';
+import { buildContentRegistry, emptyDocument, type RteBlockNode, type RteContent, type RtePlugin } from '#/core';
 import { type RteBlock, type RteDocument } from '#/documentFormat';
 
 import { buildForms, type MarkdownOverrides } from './markdown/forms';
@@ -43,10 +43,21 @@ export const parseMarkdown = (
     markdown: string,
     { plugins, breaks = false, overrides }: MarkdownOptions,
 ): RteDocument<RteBlockNode> => {
+    // A JS host can pass any value, and the document of a value that is no Markdown is the empty one.
+    if (typeof markdown !== 'string') {
+        return emptyDocument();
+    }
+
     const registry = buildContentRegistry(plugins);
 
     return readDocument(markdown, { registry, forms: buildForms(registry, overrides), breaks });
 };
+
+const DOCUMENT_TYPE = 'document';
+
+// A JS host can pass any value, so the type of a document is checked at runtime.
+const isDocument = (document: unknown): boolean =>
+    typeof document === 'object' && document !== null && 'blocks' in document && Array.isArray(document.blocks);
 
 /**
  * The document as Markdown. A node with no Markdown form is written as its text and
@@ -59,6 +70,10 @@ export const serializeToMarkdown = <TBlock extends RteBlockNode = RteBlock>(
     document: RteDocument<TBlock>,
     { plugins, breaks = false, overrides }: MarkdownOptions,
 ): SerializeToMarkdownResult => {
+    if (!isDocument(document)) {
+        return { markdown: '', losses: [{ path: [], type: DOCUMENT_TYPE }] };
+    }
+
     const registry = buildContentRegistry(plugins);
 
     return writeDocument(document, { registry, forms: buildForms(registry, overrides), breaks, tokenize });

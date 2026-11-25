@@ -501,6 +501,16 @@ const EDGE_WHITESPACE_CASES: readonly RoundTripCase[] = [
         document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'a\nb' }] }] },
     },
     {
+        name: 'a no-break space at the end',
+        markdown: 'a&#xA0;',
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'a\u00A0' }] }] },
+    },
+    {
+        name: 'a line separator and a zero-width no-break space at the start',
+        markdown: '&#x2028;&#xFEFF;a',
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '\u2028\uFEFFa' }] }] },
+    },
+    {
         name: 'spaces before and after a line break',
         markdown: 'a&#x20;\\\n&#x20;b',
         document: {

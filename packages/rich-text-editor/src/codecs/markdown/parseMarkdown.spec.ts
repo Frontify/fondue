@@ -2,6 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { type MarkdownMarkForm } from '../../core';
 import { bulletListContent, defaultContent, mentionContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown } from '../index';
 
@@ -306,6 +307,64 @@ describe('parseMarkdown with a form that throws', () => {
         expect(parseMarkdown('Hi @[user:1]', options)).toEqual({
             version: 1,
             blocks: [{ type: 'paragraph', children: [{ text: 'Hi @[user:1]' }] }],
+        });
+    });
+});
+
+describe('parseMarkdown with a host that sends no usable value', () => {
+    it.each([undefined, null, 5, {}])('returns the empty document for %j', (markdown) => {
+        expect(parseMarkdown(markdown as unknown as string, OPTIONS)).toEqual(EMPTY_DOCUMENT);
+    });
+
+    it('reads a mark whose override has no read rules as text', () => {
+        const withoutRead = { write: () => ({ open: '**', close: '**' }) } as unknown as MarkdownMarkForm;
+
+        expect(
+            parseMarkdown('a **b**', { plugins: defaultContent, overrides: { marks: { bold: withoutRead } } }),
+        ).toEqual({ version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'a b' }] }] });
+    });
+
+    it('reads a mark whose read value is undefined as if the rule did not match', () => {
+        const options: MarkdownOptions = {
+            plugins: defaultContent,
+            overrides: {
+                marks: {
+                    bold: {
+                        read: [{ token: 'strong_open', value: () => undefined as unknown as null }],
+                        write: () => ({ open: '**', close: '**' }),
+                    },
+                },
+            },
+        };
+
+        expect(parseMarkdown('a **b**', options)).toEqual({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a b' }] }],
+        });
+    });
+
+    it('skips a read rule that has neither a token nor a pattern', () => {
+        const options: MarkdownOptions = {
+            plugins: defaultContent,
+            overrides: {
+                marks: {
+                    bold: {
+                        read: [
+                            null,
+                            5,
+                            {},
+                            { token: 5 },
+                            { token: 'strong_open' },
+                        ] as unknown as MarkdownMarkForm['read'],
+                        write: () => ({ open: '**', close: '**' }),
+                    },
+                },
+            },
+        };
+
+        expect(parseMarkdown('a **b**', options)).toEqual({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a ' }, { text: 'b', bold: true }] }],
         });
     });
 });

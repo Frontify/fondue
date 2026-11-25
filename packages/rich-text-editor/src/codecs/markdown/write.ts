@@ -17,6 +17,7 @@ import {
     type RteTextNode,
 } from '#/core';
 
+import { MAX_DEPTH, sameValue } from './canonical';
 import { entityOf, escapeClosingHashes, escapeText, escapeTrailingBang, type TextPosition } from './escape';
 import { fixFlanking, isEmphasisDelimiter } from './flanking';
 import { type MarkdownForms } from './forms';
@@ -93,7 +94,7 @@ type CarriedMark = { name: string; value: NodeValue; form: MarkdownMarkForm };
 type Piece =
     | { kind: 'text'; text: string }
     | { kind: 'output'; output: MarkdownInlineOutput; path: Path; type: string; value: NodeValue }
-    | { kind: 'mark'; mark: CarriedMark; path: Path; pieces: Piece[] };
+    | { kind: 'mark'; mark: CarriedMark; path: Path; paths: Path[]; pieces: Piece[] };
 
 type OpenMark = Extract<Piece, { kind: 'mark' }>;
 
@@ -130,6 +131,23 @@ const typeNameOf = (node: unknown): string => {
     return UNKNOWN_TYPE;
 };
 
+const samePath = (left: Path, right: Path): boolean =>
+    left.length === right.length && left.every((step, index) => step === right[index]);
+
+/** Adds the loss unless the node is already in `losses`, so a node is reported once however many rules find it. */
+const reportLoss = (losses: MarkdownLoss[], loss: MarkdownLoss): void => {
+    if (!losses.some((reported) => reported.type === loss.type && samePath(reported.path, loss.path))) {
+        losses.push(loss);
+    }
+};
+
+/** A mark lost is reported at every text it covered, as a mark with no form is. */
+const reportMarkLoss = (losses: MarkdownLoss[], mark: string, paths: readonly Path[]): void => {
+    for (const path of paths) {
+        reportLoss(losses, { path, type: mark });
+    }
+};
+
 const isTextRun = (inline: RteInlineNode): inline is RteTextNode => typeof inline.text === 'string';
 
 const isInlineElement = (inline: RteInlineNode): inline is RteInlineElementNode =>
@@ -153,7 +171,7 @@ const carriedMarks = (text: RteTextNode, path: Path, state: WriteState): Carried
 
         const form = state.forms.marks.get(name);
         if (form === undefined) {
-            state.losses.push({ path, type: name });
+            reportLoss(state.losses, { path, type: name });
         } else {
             carried.push({ name, value: markValueOf(text[name]), form });
         }
@@ -161,7 +179,7 @@ const carriedMarks = (text: RteTextNode, path: Path, state: WriteState): Carried
 
     for (const name of Object.keys(text)) {
         if (name !== 'text' && name !== 'type' && isCarried(text[name]) && !state.registry.marks.has(name)) {
-            state.losses.push({ path, type: name });
+            reportLoss(state.losses, { path, type: name });
         }
     }
 
@@ -169,7 +187,7 @@ const carriedMarks = (text: RteTextNode, path: Path, state: WriteState): Carried
 };
 
 const sameMark = (left: CarriedMark, right: CarriedMark): boolean =>
-    left.name === right.name && JSON.stringify(left.value) === JSON.stringify(right.value);
+    left.name === right.name && sameValue(left.value, right.value);
 
 /** How many of the open marks the run carries too, in the same order and with the same values. */
 const sharedMarkCount = (open: readonly OpenMark[], marks: readonly CarriedMark[]): number => {
@@ -206,12 +224,12 @@ const inlinePieceOf = (
     const { type, text: _text, ...value } = inline;
     const output = state.forms.inlines.get(type)?.write(value) ?? null;
     if (output === null) {
-        state.losses.push({ path, type });
+        reportLoss(state.losses, { path, type });
 
         return null;
     }
     if (output.kind === 'lineBreak' && lineMode === 'singleLine') {
-        state.losses.push({ path, type });
+        reportLoss(state.losses, { path, type });
 
         return { kind: 'text', text: SPACE };
     }
@@ -232,7 +250,7 @@ const withoutTrailingBreaks = (pieces: Piece[], state: WriteState): Piece[] => {
 
     for (const piece of pieces.slice(end)) {
         if (piece.kind === 'output') {
-            state.losses.push({ path: piece.path, type: piece.type });
+            reportLoss(state.losses, { path: piece.path, type: piece.type });
         }
     }
 
@@ -251,7 +269,7 @@ const piecesOf = (inlines: readonly unknown[], parentPath: Path, lineMode: LineM
         const path = [...parentPath, index];
 
         if (!isNode<RteInlineNode>(inline)) {
-            state.losses.push({ path, type: typeNameOf(inline) });
+            reportLoss(state.losses, { path, type: typeNameOf(inline) });
             continue;
         }
 
@@ -265,7 +283,7 @@ const piecesOf = (inlines: readonly unknown[], parentPath: Path, lineMode: LineM
         }
 
         if (!isTextRun(inline)) {
-            state.losses.push({ path, type: typeNameOf(inline) });
+            reportLoss(state.losses, { path, type: typeNameOf(inline) });
             continue;
         }
 
@@ -278,7 +296,10 @@ const piecesOf = (inlines: readonly unknown[], parentPath: Path, lineMode: LineM
 
         closeMarks(root, open, keep);
         for (const mark of marks.slice(keep)) {
-            open.push({ kind: 'mark', mark, path, pieces: [] });
+            open.push({ kind: 'mark', mark, path, paths: [], pieces: [] });
+        }
+        for (const mark of open) {
+            mark.paths.push(path);
         }
 
         (open[open.length - 1]?.pieces ?? root).push({ kind: 'text', text: inline.text });
@@ -288,9 +309,6 @@ const piecesOf = (inlines: readonly unknown[], parentPath: Path, lineMode: LineM
 
     return withoutTrailingBreaks(root, state);
 };
-
-const samePath = (left: Path, right: Path): boolean =>
-    left.length === right.length && left.every((step, index) => step === right[index]);
 
 const isDropped = ({ mark, path }: OpenMark, dropped: readonly MarkdownLoss[]): boolean =>
     dropped.some((loss) => loss.type === mark.name && samePath(loss.path, path));
@@ -316,7 +334,7 @@ const addRuns = (
                     addRuns(
                         runs,
                         piece.pieces,
-                        [...marks, { name: piece.mark.name, value: piece.mark.value, path: piece.path }],
+                        [...marks, { name: piece.mark.name, value: piece.mark.value, paths: piece.paths }],
                         dropped,
                     );
                 }
@@ -425,10 +443,10 @@ const delimiterOf = (text: string, open: boolean, pair: DelimiterPair, form: Mar
 });
 
 const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, context: TokenContext): void => {
-    const { mark, path, pieces } = piece;
+    const { mark, paths, pieces } = piece;
     const written = mark.form.write(mark.value, plainTextOf(pieces));
     if (written === null) {
-        context.losses.push({ path, type: mark.name });
+        reportMarkLoss(context.losses, mark.name, paths);
         appendTokens(tokens, pieces, mode, context);
 
         return;
@@ -458,7 +476,7 @@ const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, cont
     }
 
     const delimiters = delimitersOf(written, context.emphasis);
-    const pair: DelimiterPair = { mark: mark.name, path };
+    const pair: DelimiterPair = { mark: mark.name, paths };
     appendAll(tokens, inner.slice(0, start));
     tokens.push(delimiterOf(delimiters.open, true, pair, mark.form));
     appendAll(tokens, inner.slice(start, end));
@@ -593,8 +611,8 @@ const attemptOf = (
     encodeLineEdges(laidOut);
 
     const { tokens, dropped } = fixFlanking(laidOut);
-    for (const { path, mark } of dropped) {
-        losses.push({ path, type: mark });
+    for (const { paths, mark } of dropped) {
+        reportMarkLoss(losses, mark, paths);
     }
     const marks = tokens.filter(isOpeningDelimiter).map(({ pair }) => pair);
     const writesAsterisks = marks.some((pair) => isAsteriskPair(tokens, pair));
@@ -629,7 +647,10 @@ const unreadableLosses = (
         return [...lost];
     }
 
-    const losses = marks.map(({ path: markPath, mark }) => ({ path: markPath, type: mark }));
+    const losses: MarkdownLoss[] = [];
+    for (const { mark, paths } of marks) {
+        reportMarkLoss(losses, mark, paths);
+    }
     losses.push(...inlineElements);
     if (losses.length === 0) {
         return [{ path, type: typeNameOf(block) }];
@@ -650,7 +671,7 @@ const writeInlines = (block: RteBlockNode, path: Path, lineMode: LineMode, state
     }
 
     for (const loss of chosen.losses) {
-        state.losses.push(loss);
+        reportLoss(state.losses, loss);
     }
     if (chosen.readBack.kind === 'differs') {
         for (const loss of unreadableLosses(
@@ -660,7 +681,7 @@ const writeInlines = (block: RteBlockNode, path: Path, lineMode: LineMode, state
             block,
             path,
         )) {
-            state.losses.push(loss);
+            reportLoss(state.losses, loss);
         }
     }
 
@@ -759,7 +780,7 @@ const prefixOf = (block: RteBlockNode, path: Path, state: WriteState): MarkdownL
         }
     }
 
-    state.losses.push({ path, type: typeNameOf(block) });
+    reportLoss(state.losses, { path, type: typeNameOf(block) });
 
     return NO_PREFIX;
 };
@@ -769,7 +790,7 @@ const reportBlockAttributes = (block: RteBlockNode, path: Path, state: WriteStat
     for (const name of state.registry.blockAttributes.keys()) {
         const value = (block as NodeValue)[name];
         if (typeof value === 'string' && value !== '') {
-            state.losses.push({ path, type: name });
+            reportLoss(state.losses, { path, type: name });
         }
     }
 };
@@ -840,7 +861,7 @@ const writeBlocks = (blocks: readonly unknown[], parentPath: Path, gap: BlockGap
     for (const [index, block] of blocks.entries()) {
         const path = [...parentPath, index];
         if (!isNode<RteBlockNode>(block)) {
-            state.losses.push({ path, type: typeNameOf(block) });
+            reportLoss(state.losses, { path, type: typeNameOf(block) });
             continue;
         }
 
@@ -903,9 +924,15 @@ const itemPrefixesOf = (
 /** A list: each item's lines carry the item's own prefix. Without one for every item, the items are written as blocks. */
 const writeList = (block: RteBlockNode, path: Path, alternate: boolean, state: WriteState): string[] => {
     const items = childrenOf(block);
+    if (items.length === 0) {
+        reportLoss(state.losses, { path, type: typeNameOf(block) });
+
+        return [];
+    }
+
     const entries = itemPrefixesOf(block, items, alternate, state);
     if (entries === null) {
-        state.losses.push({ path, type: typeNameOf(block) });
+        reportLoss(state.losses, { path, type: typeNameOf(block) });
 
         return writeBlocks(items, path, 'blankLine', state);
     }
@@ -913,7 +940,7 @@ const writeList = (block: RteBlockNode, path: Path, alternate: boolean, state: W
     const lines: string[] = [];
     for (const [index, { item, prefix }] of entries.entries()) {
         if (!isNode<RteBlockNode>(item)) {
-            state.losses.push({ path: [...path, index], type: typeNameOf(item) });
+            reportLoss(state.losses, { path: [...path, index], type: typeNameOf(item) });
             continue;
         }
 
@@ -932,6 +959,16 @@ const writeList = (block: RteBlockNode, path: Path, alternate: boolean, state: W
 };
 
 const writeBlock = (block: RteBlockNode, path: Path, alternate: boolean, state: WriteState): string[] => {
+    if (path.length > MAX_DEPTH) {
+        reportLoss(state.losses, { path, type: typeNameOf(block) });
+
+        return [];
+    }
+
+    if (block.children !== undefined && !Array.isArray(block.children)) {
+        reportLoss(state.losses, { path, type: typeNameOf(block) });
+    }
+
     switch (kindOf(block, state.registry)) {
         case 'text':
             return writeTextBlock(block, path, state);
@@ -940,7 +977,7 @@ const writeBlock = (block: RteBlockNode, path: Path, alternate: boolean, state: 
         case 'container':
             return writeContainer(block, path, state);
         case 'void':
-            state.losses.push({ path, type: typeNameOf(block) });
+            reportLoss(state.losses, { path, type: typeNameOf(block) });
 
             return [];
     }
