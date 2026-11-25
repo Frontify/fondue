@@ -54,3 +54,5 @@ const nodeOf = (token: Token): MarkdownTokenNode => ({
 /** The Markdown as a flat token stream: block tokens, each `inline` one holding its inline tokens. */
 export const tokenize = (markdown: string, { breaks }: TokenizeOptions): MarkdownTokenNode[] =>
     parserFor(breaks).parse(markdown, {}).map(nodeOf);
+
+export type Tokenize = typeof tokenize;

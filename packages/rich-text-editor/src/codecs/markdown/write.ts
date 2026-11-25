@@ -6,6 +6,7 @@
 import {
     blockValueOf,
     type ContentRegistry,
+    type MarkdownDelimiters,
     type MarkdownInlineOutput,
     type MarkdownLinePrefix,
     type MarkdownMarkForm,
@@ -16,8 +17,18 @@ import {
     type RteTextNode,
 } from '#/core';
 
-import { escapeClosingHashes, escapeText, type TextPosition } from './escape';
+import { entityOf, escapeClosingHashes, escapeText, escapeTrailingBang, type TextPosition } from './escape';
+import { fixFlanking, isEmphasisDelimiter } from './flanking';
 import { type MarkdownForms } from './forms';
+import {
+    type DelimiterPair,
+    type DelimiterToken,
+    encodeLineEdges,
+    type InlineToken,
+    isSpaceToken,
+} from './inlineTokens';
+import { type Tokenize } from './markdownIt';
+import { readsBack } from './readBack';
 
 /** What a node lost on write: `path` is the index of each block, child and inline from `document.blocks` down to it. */
 export type MarkdownLoss = {
@@ -30,6 +41,8 @@ export type WriteContext = {
     registry: ContentRegistry;
     forms: MarkdownForms;
     breaks: boolean;
+    /** Reads what a text block wrote back, to check that it reads as the block. */
+    tokenize: Tokenize;
 };
 
 export type WriteResult = {
@@ -46,6 +59,7 @@ type Path = readonly number[];
 const NBSP_ENTITY = '&nbsp;';
 
 const LINE_SEPARATOR = '\n';
+const CARRIAGE_RETURN = '\r';
 const HARD_BREAK = '\\\n';
 
 const NO_PREFIX: MarkdownLinePrefix = { first: '', rest: '' };
@@ -75,11 +89,23 @@ type Piece =
 
 type OpenMark = Extract<Piece, { kind: 'mark' }>;
 
+type OutputPiece = Extract<Piece, { kind: 'output' }>;
+
 /** Whether the text a mark wraps is escaped, or written as is (inline code). */
 type TextMode = 'escaped' | 'literal';
 
-/** Whether anything has been written on the current line yet, which decides how text at its start is escaped. */
-type LineCursor = { atLineStart: boolean };
+/** The delimiter a mark that writes `*` is written with: `*`, or `_` on the retry where `*` did not read back. */
+type EmphasisDelimiter = '*' | '_';
+
+type TokenContext = {
+    /** Where the marks that give no delimiters are lost. */
+    losses: MarkdownLoss[];
+    emphasis: EmphasisDelimiter;
+};
+
+const ASTERISK = '*';
+const UNDERSCORE = '_';
+const LINK_OPEN = '[';
 
 /** A stored mark value that puts the mark on: `false` and `null` say it is off, as if left out. */
 const isCarried = (stored: unknown): boolean => stored !== undefined && stored !== null && stored !== false;
@@ -277,68 +303,189 @@ const plainTextOf = (pieces: readonly Piece[]): string => {
     return text;
 };
 
-const renderText = (text: string, mode: TextMode, cursor: LineCursor): string => {
-    if (text === '') {
-        return text;
+const appendAll = (tokens: InlineToken[], added: readonly InlineToken[]): void => {
+    for (const token of added) {
+        tokens.push(token);
     }
-
-    // The text after a newline is at the start of a line, so it is escaped as one.
-    const lines = text.split(LINE_SEPARATOR);
-    if (mode === 'escaped') {
-        for (const [index, line] of lines.entries()) {
-            let position: TextPosition = 'lineStart';
-            if (index === 0 && !cursor.atLineStart) {
-                position = 'inline';
-            }
-            lines[index] = escapeText(line, position);
-        }
-    }
-    cursor.atLineStart = lines[lines.length - 1] === '';
-
-    return lines.join(LINE_SEPARATOR);
 };
 
-const renderOutput = (output: MarkdownInlineOutput, mode: TextMode, cursor: LineCursor, state: WriteState): string => {
+const appendChars = (tokens: InlineToken[], text: string, mode: TextMode): void => {
+    for (const char of text) {
+        // A line separator is a reference, so it never ends a line of the Markdown.
+        const entity = mode === 'escaped' && (char === LINE_SEPARATOR || char === CARRIAGE_RETURN);
+        tokens.push({ kind: 'char', char, entity, verbatim: mode === 'literal' });
+    }
+};
+
+const appendOutput = (tokens: InlineToken[], { output, type }: OutputPiece, mode: TextMode): void => {
     switch (output.kind) {
         case 'text':
-            return renderText(output.text, mode, cursor);
+            appendChars(tokens, output.text, mode);
+            break;
         case 'markdown':
             if (output.markdown !== '') {
-                cursor.atLineStart = false;
+                tokens.push({ kind: 'literal', text: output.markdown, type });
             }
-            return output.markdown;
+            break;
         case 'lineBreak':
-            cursor.atLineStart = true;
-            if (state.breaks) {
-                return LINE_SEPARATOR;
-            }
-            return HARD_BREAK;
+            tokens.push({ kind: 'break', type });
+            break;
     }
 };
 
-/** The marked text with the whitespace at its edges outside the delimiters, where Markdown reads them as emphasis. */
-const wrapped = (inner: string, open: string, close: string): string => {
-    const start = inner.length - inner.trimStart().length;
-    const end = inner.trimEnd().length;
-    if (start >= end) {
-        return inner;
+/**
+ * The delimiters the mark's form writes, except that a mark writing `*` and `*` is written with `_` and `_` on the
+ * retry, where `*` did not read back.
+ */
+const delimitersOf = (written: MarkdownDelimiters, emphasis: EmphasisDelimiter): MarkdownDelimiters => {
+    if (emphasis === UNDERSCORE && written.open === ASTERISK && written.close === ASTERISK) {
+        return { open: UNDERSCORE, close: UNDERSCORE };
     }
 
-    return `${inner.slice(0, start)}${open}${inner.slice(start, end)}${close}${inner.slice(end)}`;
+    return written;
 };
 
-const renderPieces = (pieces: readonly Piece[], mode: TextMode, cursor: LineCursor, state: WriteState): string => {
-    let written = '';
+const delimiterOf = (text: string, open: boolean, pair: DelimiterPair, form: MarkdownMarkForm): InlineToken => ({
+    kind: 'delimiter',
+    text,
+    open,
+    pair,
+    emphasis: form.literal !== true && isEmphasisDelimiter(text),
+});
+
+const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, context: TokenContext): void => {
+    const { mark, path, pieces } = piece;
+    const written = mark.form.write(mark.value, plainTextOf(pieces));
+    if (written === null) {
+        context.losses.push({ path, type: mark.name });
+        appendTokens(tokens, pieces, mode, context);
+
+        return;
+    }
+
+    let innerMode = mode;
+    if (mark.form.literal === true) {
+        innerMode = 'literal';
+    }
+
+    const inner: InlineToken[] = [];
+    appendTokens(inner, pieces, innerMode, context);
+
+    // The whitespace at the edges of the marked text goes outside the delimiters, where Markdown reads them as emphasis.
+    let start = 0;
+    while (start < inner.length && isSpaceToken(inner[start])) {
+        start++;
+    }
+    let end = inner.length;
+    while (end > start && isSpaceToken(inner[end - 1])) {
+        end--;
+    }
+    if (start === end) {
+        appendAll(tokens, inner);
+
+        return;
+    }
+
+    const delimiters = delimitersOf(written, context.emphasis);
+    const pair: DelimiterPair = { mark: mark.name, path };
+    appendAll(tokens, inner.slice(0, start));
+    tokens.push(delimiterOf(delimiters.open, true, pair, mark.form));
+    appendAll(tokens, inner.slice(start, end));
+    tokens.push(delimiterOf(delimiters.close, false, pair, mark.form));
+    appendAll(tokens, inner.slice(end));
+};
+
+const appendTokens = (tokens: InlineToken[], pieces: readonly Piece[], mode: TextMode, context: TokenContext): void => {
     for (const piece of pieces) {
         switch (piece.kind) {
             case 'text':
-                written += renderText(piece.text, mode, cursor);
+                appendChars(tokens, piece.text, mode);
                 break;
             case 'output':
-                written += renderOutput(piece.output, mode, cursor, state);
+                appendOutput(tokens, piece, mode);
                 break;
             case 'mark':
-                written += renderMark(piece, mode, cursor, state);
+                appendMark(tokens, piece, mode, context);
+                break;
+        }
+    }
+};
+
+/** What is escaped as one stretch of text, or written as is, or the end of a line. */
+type Segment = { kind: 'text'; text: string } | { kind: 'written'; text: string } | { kind: 'break' };
+
+const writtenTextOf = (token: Exclude<InlineToken, { kind: 'break' }>): string => {
+    switch (token.kind) {
+        case 'char':
+            if (token.entity) {
+                return entityOf(token.char);
+            }
+
+            return token.char;
+        case 'literal':
+        case 'delimiter':
+            return token.text;
+    }
+};
+
+const segmentsOf = (tokens: readonly InlineToken[]): Segment[] => {
+    const segments: Segment[] = [];
+    let text = '';
+    for (const token of tokens) {
+        if (token.kind === 'char' && !token.entity && !token.verbatim) {
+            text += token.char;
+            continue;
+        }
+
+        if (text !== '') {
+            segments.push({ kind: 'text', text });
+            text = '';
+        }
+        if (token.kind === 'break') {
+            segments.push({ kind: 'break' });
+        } else {
+            segments.push({ kind: 'written', text: writtenTextOf(token) });
+        }
+    }
+
+    if (text !== '') {
+        segments.push({ kind: 'text', text });
+    }
+
+    return segments;
+};
+
+const writeSegments = (segments: readonly Segment[], state: WriteState): string => {
+    let written = '';
+    let atLineStart = true;
+    for (const [index, segment] of segments.entries()) {
+        switch (segment.kind) {
+            case 'text': {
+                let position: TextPosition = 'inline';
+                if (atLineStart) {
+                    position = 'lineStart';
+                }
+
+                let text = escapeText(segment.text, position);
+                const next = segments[index + 1];
+                if (next?.kind === 'written' && next.text.startsWith(LINK_OPEN)) {
+                    text = escapeTrailingBang(text);
+                }
+                written += text;
+                atLineStart = false;
+                break;
+            }
+            case 'written':
+                written += segment.text;
+                atLineStart = false;
+                break;
+            case 'break':
+                if (state.breaks) {
+                    written += LINE_SEPARATOR;
+                } else {
+                    written += HARD_BREAK;
+                }
+                atLineStart = true;
                 break;
         }
     }
@@ -346,29 +493,90 @@ const renderPieces = (pieces: readonly Piece[], mode: TextMode, cursor: LineCurs
     return written;
 };
 
-const renderMark = (piece: OpenMark, mode: TextMode, cursor: LineCursor, state: WriteState): string => {
-    const { mark, path, pieces } = piece;
-    const delimiters = mark.form.write(mark.value, plainTextOf(pieces));
-    if (delimiters === null) {
-        state.losses.push({ path, type: mark.name });
-
-        return renderPieces(pieces, mode, cursor, state);
-    }
-
-    let innerMode = mode;
-    if (mark.form.literal === true) {
-        innerMode = 'literal';
-    }
-    // The opening delimiter comes first, so the text inside does not start the line.
-    cursor.atLineStart = false;
-
-    return wrapped(renderPieces(pieces, innerMode, cursor, state), delimiters.open, delimiters.close);
+/** One way of writing a text block's inlines, and whether the Markdown reads back as they were meant to. */
+type Attempt = {
+    text: string;
+    /** What the attempt lost that the pieces did not: a mark whose form gave no delimiters, or no reference could fix. */
+    losses: MarkdownLoss[];
+    /** The marks written with delimiters. */
+    marks: DelimiterPair[];
+    /** Whether a mark is written with `*` and `*`, which the retry writes with `_`. */
+    writesAsterisks: boolean;
+    readsBack: boolean;
 };
 
-const writeInlines = (inlines: readonly unknown[], path: Path, lineMode: LineMode, state: WriteState): string => {
-    const cursor: LineCursor = { atLineStart: true };
+const isOpeningDelimiter = (token: InlineToken): token is DelimiterToken => token.kind === 'delimiter' && token.open;
 
-    return renderPieces(piecesOf(inlines, path, lineMode, state), 'escaped', cursor, state);
+const isAsteriskPair = (tokens: readonly InlineToken[], pair: DelimiterPair): boolean =>
+    tokens.every((token) => token.kind !== 'delimiter' || token.pair !== pair || token.text === ASTERISK);
+
+const attemptOf = (
+    pieces: readonly Piece[],
+    emphasis: EmphasisDelimiter,
+    lineMode: LineMode,
+    state: WriteState,
+): Attempt => {
+    const losses: MarkdownLoss[] = [];
+    const laidOut: InlineToken[] = [];
+    appendTokens(laidOut, pieces, 'escaped', { losses, emphasis });
+    encodeLineEdges(laidOut);
+
+    const { tokens, dropped } = fixFlanking(laidOut);
+    for (const { path, mark } of dropped) {
+        losses.push({ path, type: mark });
+    }
+    const marks = tokens.filter(isOpeningDelimiter).map(({ pair }) => pair);
+    const writesAsterisks = marks.some((pair) => isAsteriskPair(tokens, pair));
+
+    // A block of whitespace only has nothing to read back: it is the empty block.
+    if (tokens.every((token) => isSpaceToken(token))) {
+        return { text: NBSP_ENTITY, losses, marks, writesAsterisks, readsBack: true };
+    }
+
+    let text = writeSegments(segmentsOf(tokens), state);
+    if (lineMode === 'singleLine') {
+        text = escapeClosingHashes(text);
+    }
+
+    return {
+        text,
+        losses,
+        marks,
+        writesAsterisks,
+        readsBack: readsBack(text, tokens, state, state.tokenize),
+    };
+};
+
+/** What a block lost when its Markdown does not read back as written: each mark it holds, or the block itself. */
+const unreadableLosses = (marks: readonly DelimiterPair[], block: RteBlockNode, path: Path): MarkdownLoss[] => {
+    if (marks.length === 0) {
+        return [{ path, type: typeNameOf(block) }];
+    }
+
+    return marks.map(({ path: markPath, mark }) => ({ path: markPath, type: mark }));
+};
+
+const writeInlines = (block: RteBlockNode, path: Path, lineMode: LineMode, state: WriteState): string => {
+    const pieces = piecesOf(childrenOf(block), path, lineMode, state);
+    const first = attemptOf(pieces, ASTERISK, lineMode, state);
+    let chosen = first;
+    if (!first.readsBack && first.writesAsterisks) {
+        const retry = attemptOf(pieces, UNDERSCORE, lineMode, state);
+        if (retry.readsBack) {
+            chosen = retry;
+        }
+    }
+
+    for (const loss of chosen.losses) {
+        state.losses.push(loss);
+    }
+    if (!chosen.readsBack) {
+        for (const loss of unreadableLosses(chosen.marks, block, path)) {
+            state.losses.push(loss);
+        }
+    }
+
+    return chosen.text;
 };
 
 // --- Blocks ---
@@ -457,7 +665,7 @@ const prefixOf = (block: RteBlockNode, path: Path, state: WriteState): MarkdownL
     const definition = state.registry.blocks.get(block.type);
     const form = state.forms.blocks.get(block.type);
     if (definition !== undefined && form !== undefined) {
-        const prefix = form.write(blockValueOf(definition, block as NodeValue), { index: 0 });
+        const prefix = form.write(blockValueOf(definition, block as NodeValue), { index: 0, alternate: false });
         if (prefix !== null) {
             return prefix;
         }
@@ -487,13 +695,7 @@ const writeTextBlock = (block: RteBlockNode, path: Path, state: WriteState): str
         lineMode = 'singleLine';
     }
 
-    let text = writeInlines(childrenOf(block), path, lineMode, state);
-    if (lineMode === 'singleLine') {
-        text = escapeClosingHashes(text);
-    }
-    if (text.trim() === '') {
-        text = NBSP_ENTITY;
-    }
+    const text = writeInlines(block, path, lineMode, state);
 
     return prefixed(text.split(LINE_SEPARATOR), prefix);
 };
@@ -533,9 +735,20 @@ const linesBetween = (
     }
 };
 
+type WrittenBlock = { block: RteBlockNode; alternate: boolean };
+
+/** A list that directly follows a list of the same type writes with the other marker, and the one after it switches back. */
+const isAlternate = (block: RteBlockNode, previous: WrittenBlock | null, state: WriteState): boolean => {
+    if (previous === null || previous.block.type !== block.type || kindOf(block, state.registry) !== 'list') {
+        return false;
+    }
+
+    return !previous.alternate;
+};
+
 const writeBlocks = (blocks: readonly unknown[], parentPath: Path, gap: BlockGap, state: WriteState): string[] => {
     const lines: string[] = [];
-    let previous: RteBlockNode | null = null;
+    let previous: WrittenBlock | null = null;
     for (const [index, block] of blocks.entries()) {
         const path = [...parentPath, index];
         if (!isNode<RteBlockNode>(block)) {
@@ -543,17 +756,18 @@ const writeBlocks = (blocks: readonly unknown[], parentPath: Path, gap: BlockGap
             continue;
         }
 
-        const blockLines = writeBlock(block, path, state);
+        const alternate = isAlternate(block, previous, state);
+        const blockLines = writeBlock(block, path, alternate, state);
         if (blockLines.length === 0) {
             continue;
         }
         if (previous !== null) {
-            lines.push(...linesBetween(gap, previous, { block, lines: blockLines }, state));
+            lines.push(...linesBetween(gap, previous.block, { block, lines: blockLines }, state));
         }
         for (const line of blockLines) {
             lines.push(line);
         }
-        previous = block;
+        previous = { block, alternate };
     }
 
     return lines;
@@ -573,7 +787,12 @@ const writeContainer = (block: RteBlockNode, path: Path, state: WriteState): str
 type ListItemLines = { item: unknown; prefix: MarkdownLinePrefix };
 
 /** The prefix of every item, or null when the list or any of its items has none. */
-const itemPrefixesOf = (block: RteBlockNode, items: readonly unknown[], state: WriteState): ListItemLines[] | null => {
+const itemPrefixesOf = (
+    block: RteBlockNode,
+    items: readonly unknown[],
+    alternate: boolean,
+    state: WriteState,
+): ListItemLines[] | null => {
     const definition = state.registry.blocks.get(block.type);
     const form = state.forms.blocks.get(block.type);
     if (definition === undefined || form === undefined) {
@@ -583,7 +802,7 @@ const itemPrefixesOf = (block: RteBlockNode, items: readonly unknown[], state: W
     const value = blockValueOf(definition, block as NodeValue);
     const entries: ListItemLines[] = [];
     for (const [index, item] of items.entries()) {
-        const prefix = form.write(value, { index });
+        const prefix = form.write(value, { index, alternate });
         if (prefix === null) {
             return null;
         }
@@ -594,9 +813,9 @@ const itemPrefixesOf = (block: RteBlockNode, items: readonly unknown[], state: W
 };
 
 /** A list: each item's lines carry the item's own prefix. Without one for every item, the items are written as blocks. */
-const writeList = (block: RteBlockNode, path: Path, state: WriteState): string[] => {
+const writeList = (block: RteBlockNode, path: Path, alternate: boolean, state: WriteState): string[] => {
     const items = childrenOf(block);
-    const entries = itemPrefixesOf(block, items, state);
+    const entries = itemPrefixesOf(block, items, alternate, state);
     if (entries === null) {
         state.losses.push({ path, type: typeNameOf(block) });
 
@@ -610,7 +829,7 @@ const writeList = (block: RteBlockNode, path: Path, state: WriteState): string[]
             continue;
         }
 
-        for (const line of prefixed(writeBlock(item, [...path, index], state), prefix)) {
+        for (const line of prefixed(writeBlock(item, [...path, index], false, state), prefix)) {
             lines.push(line);
         }
     }
@@ -618,12 +837,12 @@ const writeList = (block: RteBlockNode, path: Path, state: WriteState): string[]
     return lines;
 };
 
-const writeBlock = (block: RteBlockNode, path: Path, state: WriteState): string[] => {
+const writeBlock = (block: RteBlockNode, path: Path, alternate: boolean, state: WriteState): string[] => {
     switch (kindOf(block, state.registry)) {
         case 'text':
             return writeTextBlock(block, path, state);
         case 'list':
-            return writeList(block, path, state);
+            return writeList(block, path, alternate, state);
         case 'container':
             return writeContainer(block, path, state);
         case 'void':

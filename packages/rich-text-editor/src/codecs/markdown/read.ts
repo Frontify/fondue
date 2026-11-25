@@ -197,7 +197,7 @@ const readSelfClosing = (state: InlineState, token: MarkdownTokenNode, context: 
     }
 };
 
-const readInlines = (tokens: readonly MarkdownTokenNode[], context: ReadContext): RteInlineNode[] => {
+export const readInlines = (tokens: readonly MarkdownTokenNode[], context: ReadContext): RteInlineNode[] => {
     const state: InlineState = { nodes: [], open: [] };
     for (const token of tokens) {
         switch (token.nesting) {

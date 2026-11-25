@@ -3,10 +3,9 @@
 import { describe, expect, it } from 'vitest';
 
 import { bulletListContent, defaultContent, mentionContent } from '../../plugins';
+import { type MarkdownOptions, parseMarkdown } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
-
-import { type MarkdownOptions, parseMarkdown } from '../index';
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
 
@@ -253,6 +252,60 @@ describe('parseMarkdown mentions', () => {
         expect(parseMarkdown('`@[user:1]`', mentionOverrideOptions)).toEqual({
             version: 1,
             blocks: [{ type: 'paragraph', children: [{ text: '@[user:1]', code: true }] }],
+        });
+    });
+});
+
+describe('parseMarkdown with a form that throws', () => {
+    it('reads a mark whose read value throws as if the rule did not match', () => {
+        const options: MarkdownOptions = {
+            plugins: defaultContent,
+            overrides: {
+                marks: {
+                    bold: {
+                        read: [
+                            {
+                                token: 'strong_open',
+                                value: () => {
+                                    throw new Error('mark read');
+                                },
+                            },
+                        ],
+                        write: () => ({ open: '**', close: '**' }),
+                    },
+                },
+            },
+        };
+
+        expect(parseMarkdown('a **b**', options)).toEqual({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a b' }] }],
+        });
+    });
+
+    it('reads text whose pattern value throws as text', () => {
+        const options: MarkdownOptions = {
+            plugins: [...defaultContent, mentionContent()],
+            overrides: {
+                inlines: {
+                    mention: {
+                        read: [
+                            {
+                                pattern: /@\[user:(\d+)\]/,
+                                value: () => {
+                                    throw new Error('pattern value');
+                                },
+                            },
+                        ],
+                        write: () => null,
+                    },
+                },
+            },
+        };
+
+        expect(parseMarkdown('Hi @[user:1]', options)).toEqual({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'Hi @[user:1]' }] }],
         });
     });
 });

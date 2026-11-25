@@ -59,7 +59,15 @@ const bulletList = defineBlock({
     content: { items: 'listItem' },
     toHtml: () => ({ tag: 'ul', attrs: { class: styles.bulletList }, children: true }),
     parse: [{ tag: 'ul' }],
-    markdown: { read: [{ token: 'bullet_list_open' }], write: () => ({ first: '- ', rest: '  ' }) },
+    markdown: {
+        read: [{ token: 'bullet_list_open' }],
+        write: (_value, { alternate }) => {
+            if (alternate) {
+                return { first: '+ ', rest: '  ' };
+            }
+            return { first: '- ', rest: '  ' };
+        },
+    },
 });
 
 /**
@@ -148,12 +156,16 @@ const numberedList = defineBlock<NumberedListValue>({
                 },
             },
         ],
-        write: ({ start }, { index }) => {
+        write: ({ start }, { index, alternate }) => {
             const number = (storedStart(start) ?? 1) + index;
             if (number < MIN_MARKDOWN_NUMBER || number > MAX_MARKDOWN_NUMBER) {
                 return null;
             }
-            const marker = `${number}. `;
+            let terminator = '.';
+            if (alternate) {
+                terminator = ')';
+            }
+            const marker = `${number}${terminator} `;
             return { first: marker, rest: ' '.repeat(marker.length) };
         },
     },

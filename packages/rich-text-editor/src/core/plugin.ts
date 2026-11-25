@@ -466,7 +466,11 @@ export type MarkdownLinePrefix = { first: string; rest: string | null };
 export type MarkdownDelimiters = { open: string; close: string };
 
 /** Where an item sits in its list, counted from 0. */
-export type MarkdownListItem = { index: number };
+export type MarkdownListItem = {
+    index: number;
+    /** True for a list that directly follows a list of the same type, which must use its other marker to stay apart. */
+    alternate: boolean;
+};
 
 /**
  * What an inline writes: `text` is escaped, `markdown` is written as is, and

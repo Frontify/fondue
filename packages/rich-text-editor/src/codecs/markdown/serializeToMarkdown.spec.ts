@@ -3,12 +3,11 @@
 import { describe, expect, it } from 'vitest';
 
 import { defineBlock, defineContent, defineMark, type RteDocumentOf } from '../../core';
-import { type RteDocument } from '../../documentFormat';
+import { type RteDocument, type RteDocumentWith } from '../../documentFormat';
 import { columnBreakContent, defaultContent, mentionContent } from '../../plugins';
+import { type MarkdownOptions, serializeToMarkdown } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
-
-import { type MarkdownOptions, serializeToMarkdown } from '../index';
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
 
@@ -376,5 +375,164 @@ describe('serializeToMarkdown mentions', () => {
             markdown: 'Hi @[user:123]',
             losses: [],
         });
+    });
+});
+
+describe('serializeToMarkdown emphasis no character reference can fix', () => {
+    const MENTION_AS_Z: MarkdownOptions = {
+        plugins: [...defaultContent, mentionContent()],
+        overrides: {
+            inlines: {
+                mention: {
+                    read: [{ pattern: /Z/, value: () => ({}) }],
+                    write: () => ({ kind: 'markdown', markdown: 'Z' }),
+                },
+            },
+        },
+    };
+
+    it('writes no delimiters for bold next to written Markdown and reports the mark', () => {
+        const document: RteDocumentWith<{ inline: { type: 'mention'; id: string } }> = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { type: 'mention', id: '1' },
+                        { text: '(a)', bold: true },
+                    ],
+                },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, MENTION_AS_Z)).toEqual({
+            markdown: 'Z(a)',
+            losses: [{ path: [0, 1], type: 'bold' }],
+        });
+    });
+});
+
+describe('serializeToMarkdown text that does not read back', () => {
+    const ITALIC_AS_PLUSES: MarkdownOptions = {
+        plugins: defaultContent,
+        overrides: {
+            marks: {
+                italic: { read: [{ token: 'em_open' }], write: () => ({ open: '++', close: '++' }) },
+            },
+        },
+    };
+
+    it('keeps the first attempt and reports each mark in the block when no italic delimiter reads back', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a' }, { text: 'b', italic: true }] }],
+        };
+
+        expect(serializeToMarkdown(document, ITALIC_AS_PLUSES)).toEqual({
+            markdown: 'a++b++',
+            losses: [{ path: [0, 1], type: 'italic' }],
+        });
+    });
+
+    it('reports the block when it holds no mark and its Markdown does not read back', () => {
+        const document: RteDocumentWith<{ inline: { type: 'mention'; id: string } }> = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ type: 'mention', id: '1' }] }],
+        };
+
+        expect(
+            serializeToMarkdown(document, {
+                plugins: [...defaultContent, mentionContent()],
+                overrides: {
+                    inlines: { mention: { read: [], write: () => ({ kind: 'markdown', markdown: '<b>' }) } },
+                },
+            }),
+        ).toEqual({ markdown: '<b>', losses: [{ path: [0], type: 'paragraph' }] });
+    });
+
+    it('does not throw on text with unpaired surrogates, controls and every escaped character', () => {
+        const text = '\uD800 \u0000 \\ * _ ` [ ] < > ~ | & # = - + 1. :// www.';
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text, bold: true }, { text }] }],
+        };
+
+        expect(() => serializeToMarkdown(document, OPTIONS)).not.toThrow();
+    });
+});
+
+describe('serializeToMarkdown with a form that throws', () => {
+    it('keeps the text of a mark whose write throws and reports the mark', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a' }, { text: 'b', bold: true }] }],
+        };
+
+        expect(
+            serializeToMarkdown(document, {
+                plugins: defaultContent,
+                overrides: {
+                    marks: {
+                        bold: {
+                            read: [{ token: 'strong_open' }],
+                            write: () => {
+                                throw new Error('mark write');
+                            },
+                        },
+                    },
+                },
+            }),
+        ).toEqual({ markdown: 'ab', losses: [{ path: [0, 1], type: 'bold' }] });
+    });
+
+    it('keeps the text of a block whose write throws and reports the block', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a' }] }],
+        };
+
+        expect(
+            serializeToMarkdown(document, {
+                plugins: defaultContent,
+                overrides: {
+                    blocks: {
+                        paragraph: {
+                            read: [],
+                            write: () => {
+                                throw new Error('block write');
+                            },
+                        },
+                    },
+                },
+            }),
+        ).toEqual({ markdown: 'a', losses: [{ path: [0], type: 'paragraph' }] });
+    });
+
+    it('writes nothing for an inline whose write throws and reports the inline', () => {
+        const document: RteDocumentWith<{ inline: { type: 'mention'; id: string } }> = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'a' }, { type: 'mention', id: '1' }, { text: 'b' }],
+                },
+            ],
+        };
+
+        expect(
+            serializeToMarkdown(document, {
+                plugins: [...defaultContent, mentionContent()],
+                overrides: {
+                    inlines: {
+                        mention: {
+                            read: [],
+                            write: () => {
+                                throw new Error('inline write');
+                            },
+                        },
+                    },
+                },
+            }),
+        ).toEqual({ markdown: 'ab', losses: [{ path: [0, 1], type: 'mention' }] });
     });
 });

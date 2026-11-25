@@ -19,14 +19,40 @@ const LINE_START_ORDINAL = /^([ \t]*\d{1,9})([.)])(?=[ \t]|$)/;
 /** A run of `#` that ends a single line after a space, or is all of it, which an ATX heading reads as its closing run. */
 const CLOSING_HASHES = /(^|[ \t])(#+)(?=[ \t]*$)/;
 
+/** A `:` or `/` before a `/`, which makes `scheme://` and `//` an address a reader links. */
+const SCHEME_SEPARATOR = /[:/](?=\/)/g;
+
+/** The `.` after `www` in any case, which starts an address a reader links. */
+const WWW_DOT = /(www)(\.)/gi;
+
+/** A `!` that ends the text, which would make a link written right after it an image. */
+const TRAILING_BANG = /!$/;
+
+const WHITESPACE = /^\s$/u;
+
 const BACKSLASH_AMPERSAND = String.raw`\&`;
 /** Keeps the first group and puts a backslash before the second. */
 const BACKSLASH_SECOND_GROUP = String.raw`$1\$2`;
 const BACKSLASH_MATCH = String.raw`\$&`;
 
+export const isWhitespace = (char: string): boolean => WHITESPACE.test(char);
+
+/** The numeric character reference of a character, which Markdown reads back as that character and as punctuation. */
+export const entityOf = (char: string): string => {
+    // A character here always holds one code point.
+    const codePoint = char.codePointAt(0) as number;
+
+    return `&#x${codePoint.toString(16).toUpperCase()};`;
+};
+
+/** The text before a link, with a `!` at its end escaped. */
+export const escapeTrailingBang = (text: string): string => text.replace(TRAILING_BANG, String.raw`\!`);
+
 export const escapeText = (text: string, position: TextPosition): string => {
     const escaped = text
         .replaceAll(ESCAPED_CHARACTERS, BACKSLASH_MATCH)
+        .replaceAll(SCHEME_SEPARATOR, BACKSLASH_MATCH)
+        .replaceAll(WWW_DOT, BACKSLASH_SECOND_GROUP)
         .replaceAll(MARKDOWN_ENTITY_START, BACKSLASH_AMPERSAND);
 
     switch (position) {

@@ -4,10 +4,9 @@ import { describe, expect, it } from 'vitest';
 
 import { type RteDocument, type RteDocumentWith } from '../../documentFormat';
 import { bulletListContent, defaultContent } from '../../plugins';
+import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
-
-import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
 type RoundTripCase = {
     name: string;
@@ -402,6 +401,266 @@ describe('markdown round trip of text that looks like Markdown', () => {
     for (const escapingCase of ESCAPING_CASES) {
         it(`gives back the same text for ${escapingCase.name}`, () => {
             expectRoundTrip(escapingCase);
+        });
+    }
+});
+
+const FLANKING_CASES: readonly RoundTripCase[] = [
+    {
+        name: 'bold opening before punctuation after a letter',
+        markdown: 'se&#x65;**(a)**',
+        document: {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'see' }, { text: '(a)', bold: true }] }],
+        },
+    },
+    {
+        name: 'bold closing after punctuation before a letter',
+        markdown: '**Note:**&#x74;ext',
+        document: {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'Note:', bold: true }, { text: 'text' }] }],
+        },
+    },
+    {
+        name: 'italic opening before punctuation after a letter',
+        markdown: 'fo&#x6F;*(x)*',
+        document: {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'foo' }, { text: '(x)', italic: true }] }],
+        },
+    },
+    {
+        name: 'bold closing after a quote before a letter',
+        markdown: '**"x"**&#x79;',
+        document: {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: '"x"', bold: true }, { text: 'y' }] }],
+        },
+    },
+    {
+        name: 'bold glued to the text after it',
+        markdown: '**a**b',
+        document: {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a', bold: true }, { text: 'b' }] }],
+        },
+    },
+    {
+        name: 'italic glued to the text after it',
+        markdown: '*a*b',
+        document: {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a', italic: true }, { text: 'b' }] }],
+        },
+    },
+];
+
+describe('markdown round trip of emphasis next to punctuation', () => {
+    for (const flankingCase of FLANKING_CASES) {
+        it(`gives back the same document for ${flankingCase.name}`, () => {
+            expectRoundTrip(flankingCase);
+        });
+    }
+});
+
+describe('markdown round trip of italic that asterisks do not read back', () => {
+    it('writes italic with underscores when the asterisks of italic and bold would read as other marks', () => {
+        const document: RteDocument = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'a', italic: true },
+                        { text: 'a', bold: true, italic: true },
+                        { text: 'b', bold: true },
+                    ],
+                },
+            ],
+        };
+
+        expectRoundTrip({ name: 'italic and bold', markdown: '_a_**_a_&#x62;**', document });
+    });
+});
+
+const EDGE_WHITESPACE_CASES: readonly RoundTripCase[] = [
+    {
+        name: 'a paragraph with a space at both ends',
+        markdown: '&#x20;&#x20;foo&#x20;',
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '  foo ' }] }] },
+    },
+    {
+        name: 'a tab at the start',
+        markdown: '&#x9;foo',
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '\tfoo' }] }] },
+    },
+    {
+        name: 'a newline inside a text run',
+        markdown: 'a&#xA;b',
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'a\nb' }] }] },
+    },
+    {
+        name: 'spaces before and after a line break',
+        markdown: 'a&#x20;\\\n&#x20;b',
+        document: {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a ' }, { type: 'break' }, { text: ' b' }] }],
+        },
+    },
+];
+
+describe('markdown round trip of whitespace at the edge of a line', () => {
+    for (const edgeCase of EDGE_WHITESPACE_CASES) {
+        it(`gives back the same text for ${edgeCase.name}`, () => {
+            expectRoundTrip(edgeCase);
+        });
+    }
+});
+
+const LINK_LOOKALIKE_CASES: readonly RoundTripCase[] = [
+    {
+        name: 'a URL with a scheme',
+        markdown: 'see https\\:\\//example.com',
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'see https://example.com' }] }] },
+    },
+    {
+        name: 'a URL with a scheme and no dot',
+        markdown: 'see http\\:\\//x',
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'see http://x' }] }] },
+    },
+    {
+        name: 'an address starting with www',
+        markdown: 'www\\.x.com',
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'www.x.com' }] }] },
+    },
+    {
+        name: 'an address starting with WWW in capitals',
+        markdown: 'WWW\\.x.com',
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'WWW.x.com' }] }] },
+    },
+];
+
+describe('markdown round trip of text that looks like a link', () => {
+    for (const lookalikeCase of LINK_LOOKALIKE_CASES) {
+        it(`gives back the same text for ${lookalikeCase.name}`, () => {
+            expectRoundTrip(lookalikeCase);
+        });
+    }
+});
+
+const BANG_CASES: readonly RoundTripCase[] = [
+    {
+        name: 'an exclamation mark before a link',
+        markdown: String.raw`wow\![x](https://example.com)`,
+        document: {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'wow!' }, { text: 'x', link: { href: 'https://example.com' } }],
+                },
+            ],
+        },
+    },
+    {
+        name: 'image syntax typed as text',
+        markdown: String.raw`!\[x\](y)`,
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '![x](y)' }] }] },
+    },
+    {
+        name: 'a link definition typed as text',
+        markdown: String.raw`\[x\]: y`,
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '[x]: y' }] }] },
+    },
+];
+
+describe('markdown round trip of text that looks like an image or a link definition', () => {
+    for (const bangCase of BANG_CASES) {
+        it(`gives back the same text for ${bangCase.name}`, () => {
+            expectRoundTrip(bangCase);
+        });
+    }
+});
+
+const ITEM_ONE = { type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'one' }] }] };
+const ITEM_TWO = { type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'two' }] }] };
+const ITEM_THREE = { type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'three' }] }] };
+
+const ADJACENT_LIST_CASES: readonly RoundTripCase[] = [
+    {
+        name: 'two bullet lists',
+        markdown: '- one\n\n+ two',
+        document: {
+            version: 1,
+            blocks: [
+                { type: 'bulletList', children: [ITEM_ONE] },
+                { type: 'bulletList', children: [ITEM_TWO] },
+            ],
+        },
+    },
+    {
+        name: 'three bullet lists, the third back on the first marker',
+        markdown: '- one\n\n+ two\n\n- three',
+        document: {
+            version: 1,
+            blocks: [
+                { type: 'bulletList', children: [ITEM_ONE] },
+                { type: 'bulletList', children: [ITEM_TWO] },
+                { type: 'bulletList', children: [ITEM_THREE] },
+            ],
+        },
+    },
+    {
+        name: 'two numbered lists',
+        markdown: '1. one\n\n1) two',
+        document: {
+            version: 1,
+            blocks: [
+                { type: 'numberedList', children: [ITEM_ONE] },
+                { type: 'numberedList', children: [ITEM_TWO] },
+            ],
+        },
+    },
+    {
+        name: 'a bullet list followed by a numbered list',
+        markdown: '- one\n\n1. two',
+        document: {
+            version: 1,
+            blocks: [
+                { type: 'bulletList', children: [ITEM_ONE] },
+                { type: 'numberedList', children: [ITEM_TWO] },
+            ],
+        },
+    },
+    {
+        name: 'two lists in one list item',
+        markdown: '- a\n  - one\n\n  + two',
+        document: {
+            version: 1,
+            blocks: [
+                {
+                    type: 'bulletList',
+                    children: [
+                        {
+                            type: 'listItem',
+                            children: [
+                                { type: 'paragraph', children: [{ text: 'a' }] },
+                                { type: 'bulletList', children: [ITEM_ONE] },
+                                { type: 'bulletList', children: [ITEM_TWO] },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+    },
+];
+
+describe('markdown round trip of a list right after a list', () => {
+    for (const listCase of ADJACENT_LIST_CASES) {
+        it(`gives back the same document for ${listCase.name}`, () => {
+            expectRoundTrip(listCase);
         });
     }
 });

@@ -7,6 +7,7 @@ import { buildContentRegistry, type RteBlockNode, type RteContent, type RtePlugi
 import { type RteBlock, type RteDocument } from '#/documentFormat';
 
 import { buildForms, type MarkdownOverrides } from './markdown/forms';
+import { tokenize } from './markdown/markdownIt';
 import { readDocument } from './markdown/read';
 import { type MarkdownLoss, writeDocument } from './markdown/write';
 
@@ -58,5 +59,5 @@ export const serializeToMarkdown = <TBlock extends RteBlockNode = RteBlock>(
 ): SerializeToMarkdownResult => {
     const registry = buildContentRegistry(plugins);
 
-    return writeDocument(document, { registry, forms: buildForms(registry, overrides), breaks });
+    return writeDocument(document, { registry, forms: buildForms(registry, overrides), breaks, tokenize });
 };
