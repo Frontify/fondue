@@ -1057,7 +1057,7 @@ const guidelineNumberedLevel = (level: number): NumberedLevelLook => ({
     color: `var(--f-theme-settings-list-numbered${level}-color)`,
 });
 
-// The third levels read variables no section defines, so they keep Fondue's look.
+// The third levels read variables no section defines, so they keep Fondue's marker.
 const GUIDELINE_BULLET_LOOK = [guidelineBulletLevel(1), guidelineBulletLevel(2), guidelineBulletLevel(3)] as const;
 const GUIDELINE_NUMBERED_LOOK = [
     guidelineNumberedLevel(1),
@@ -1119,7 +1119,7 @@ const HOST_STYLING_DOCUMENT: RteDocument = {
                                                     children: [
                                                         {
                                                             type: 'paragraph',
-                                                            children: [{ text: 'A third-level item, Fondue look' }],
+                                                            children: [{ text: 'A third-level item, Fondue marker' }],
                                                         },
                                                     ],
                                                 },

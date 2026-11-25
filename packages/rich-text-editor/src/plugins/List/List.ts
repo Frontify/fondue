@@ -137,7 +137,7 @@ export type BulletLevelLook = {
     /**
      * A `list-style-type`, such as `square`, or a quoted string, such as `'–'`, drawn as written. A string gets no
      * room of its own, so set `gap` for room before the item text. With `gap` set, leave the trailing space out of the
-     * string: both apply, so the room doubles.
+     * string: the space adds to the gap.
      */
     marker?: string;
     /**
@@ -153,8 +153,7 @@ export type BulletLevelLook = {
      */
     indent?: string;
     /**
-     * Room between the marker and the item text, on top of any the marker draws itself, so the text starts at the
-     * indent plus the gap
+     * Room between the marker and the item text, on top of any the marker draws itself
      */
     gap?: string;
 };
