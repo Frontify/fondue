@@ -370,6 +370,17 @@ describe('validateDocument, on hostile input', () => {
         expect(validateDocument({ version: 1, blocks: [block, block] }).valid).toBe(true);
     });
 
+    it('returns promptly on subtrees shared at every level', () => {
+        const SHARED_LEVELS = 40;
+        let node: { type: string; children: unknown[] } = { type: 'p', children: [] };
+        for (let level = 0; level < SHARED_LEVELS; level++) {
+            node = { type: 'p', children: [node, node] };
+        }
+        const document = { version: 1, blocks: [node] };
+
+        expect(validateDocument(document)).toEqual({ valid: true, document });
+    });
+
     it('reports a text node reused as a root block', () => {
         const text = { text: 'a' };
 

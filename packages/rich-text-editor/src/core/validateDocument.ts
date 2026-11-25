@@ -39,7 +39,7 @@ type NodeKind = 'block' | 'child';
 type PendingNode =
     | { kind: NodeKind; node: unknown; path: string }
     // Popped once every descendant of `node` is done, which takes it off the ancestor path.
-    | { kind: 'leave'; node: object };
+    | { kind: 'leave'; node: object; issueCount: number };
 
 /** What is wrong with a node holding `text`: a text node must have string `text` and no `type`, and cannot be a root block. */
 const textNodeIssue = (node: Record<string, unknown>, kind: NodeKind): RteDocumentIssue['reason'] | null => {
@@ -64,6 +64,8 @@ type CheckNodeParams = {
 };
 
 type NodeChildren = {
+    /** The node itself, which holds the children. */
+    node: Record<string, unknown>;
     childrenPath: string;
     children: unknown[];
 };
@@ -93,7 +95,37 @@ const checkNode = ({ node, path, kind }: CheckNodeParams, issues: RteDocumentIss
         return null;
     }
 
-    return { childrenPath, children: node.children };
+    return { node, childrenPath, children: node.children };
+};
+
+type EnterNodeParams = {
+    node: unknown;
+    path: string;
+    kind: NodeKind;
+    onPath: ReadonlySet<object>;
+    clean: WeakSet<object>;
+};
+
+/** Runs the checks before a node is walked, and returns its children to walk next, or null when it is skipped, failed or has none. */
+const enterNode = (
+    { node, path, kind, onPath, clean }: EnterNodeParams,
+    issues: RteDocumentIssue[],
+): NodeChildren | null => {
+    if (!isRecord(node)) {
+        issues.push({ reason: 'not-an-object', path });
+        return null;
+    }
+
+    if (clean.has(node)) {
+        return null;
+    }
+
+    if (onPath.has(node)) {
+        issues.push({ reason: 'cycle', path });
+        return null;
+    }
+
+    return checkNode({ node, path, kind }, issues);
 };
 
 const validateBlocks = (blocks: unknown[], blocksPath: string, issues: RteDocumentIssue[]): void => {
@@ -102,13 +134,17 @@ const validateBlocks = (blocks: unknown[], blocksPath: string, issues: RteDocume
         pending.push({ node: blocks[index], path: pointer(blocksPath, index), kind: 'block' });
     }
 
-    // Repeated nodes are legal and checked at every path; only a node inside itself would never end the walk.
+    // A node inside itself would never end the walk (onPath); a node found clean is valid at every path, so a shared subtree is walked once (clean).
     const onPath = new Set<object>();
+    const clean = new WeakSet<object>();
 
     for (let next = pending.pop(); next !== undefined && issues.length < MAX_ISSUES; next = pending.pop()) {
         switch (next.kind) {
             case 'leave': {
                 onPath.delete(next.node);
+                if (issues.length === next.issueCount) {
+                    clean.add(next.node);
+                }
                 continue;
             }
             case 'block':
@@ -117,25 +153,13 @@ const validateBlocks = (blocks: unknown[], blocksPath: string, issues: RteDocume
             }
         }
 
-        const { node, path, kind } = next;
-
-        if (!isRecord(node)) {
-            issues.push({ reason: 'not-an-object', path });
-            continue;
-        }
-
-        if (onPath.has(node)) {
-            issues.push({ reason: 'cycle', path });
-            continue;
-        }
-
-        const checked = checkNode({ node, path, kind }, issues);
+        const checked = enterNode({ node: next.node, path: next.path, kind: next.kind, onPath, clean }, issues);
         if (checked === null) {
             continue;
         }
 
-        onPath.add(node);
-        pending.push({ kind: 'leave', node });
+        onPath.add(checked.node);
+        pending.push({ kind: 'leave', node: checked.node, issueCount: issues.length });
 
         // Pushed in reverse so the first child is popped first and issues stay in document order.
         for (let index = checked.children.length - 1; index >= 0; index--) {
