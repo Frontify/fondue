@@ -1105,3 +1105,33 @@ describe('markdown round trip with list content only', () => {
         expectRoundTrip({ name: 'bullet list', markdown: '- one', document }, { plugins: [bulletListContent()] });
     });
 });
+
+const DELIMITER_ROW_MARKERS = ['-:', ':-', ':-:', '--:', '| --- |', '-:|:-'] as const;
+const DELIMITER_ROW_OPTIONS: readonly MarkdownOptions[] = [OPTIONS, BREAKS_OPTIONS];
+
+describe('markdown round trip of text that looks like a table delimiter row', () => {
+    for (const options of DELIMITER_ROW_OPTIONS) {
+        for (const marker of DELIMITER_ROW_MARKERS) {
+            it(`keeps '${marker}' after a break with breaks ${String(options.breaks)}`, () => {
+                const document: RteDocument = {
+                    version: 1,
+                    blocks: [
+                        { type: 'paragraph', children: [{ text: 'a|b' }, { type: 'break' }, { text: marker }] },
+                    ],
+                };
+                const { markdown, losses } = serializeToMarkdown(document, options);
+
+                expect(losses).toEqual([]);
+                expect(parseMarkdown(markdown, options)).toEqual(document);
+            });
+        }
+    }
+
+    it('keeps a paragraph whose whole text is a delimiter row', () => {
+        const document: RteDocument = { version: 1, blocks: [{ type: 'paragraph', children: [{ text: ':-:' }] }] };
+        const { markdown, losses } = serializeToMarkdown(document, OPTIONS);
+
+        expect(losses).toEqual([]);
+        expect(parseMarkdown(markdown, OPTIONS)).toEqual(document);
+    });
+});
