@@ -53,7 +53,6 @@ const toolbarDrawingOf = async (page: Page): Promise<ToolbarDrawing> =>
 test.describe('toolbar dividers', () => {
     test('draws dividers only between groups that show a control', async ({ mount, page }) => {
         await mount(<ToolbarDividersHost />);
-        await page.getByRole('textbox').getByText('Before').click();
 
         await expect(page.getByRole('toolbar').getByRole('button').first()).toBeVisible();
 

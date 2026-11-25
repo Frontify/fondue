@@ -22,10 +22,7 @@ const PARAGRAPH_DOCUMENT: RteDocument = {
     blocks: [{ type: 'paragraph', children: [{ text: 'Before' }] }],
 };
 
-type ControlPluginOptions = {
-    id: string;
-    toolbarGroup: RteToolbarGroup;
-};
+type ControlPluginOptions = Required<Pick<RtePlugin, 'id' | 'toolbarGroup'>>;
 
 const fillerPlugin = ({ id, toolbarGroup }: ControlPluginOptions): RtePlugin =>
     definePlugin({
