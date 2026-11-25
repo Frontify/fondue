@@ -43,7 +43,18 @@ const LINE_BREAK_TEXT = ' ';
 
 const LINE_SEPARATOR = '\n';
 
+/** The one line break a block of code's token ends with. */
 const TRAILING_NEWLINE = /\n$/;
+
+/** The text without the newlines that end it. A loop, as a `\n+$` pattern backtracks on long runs. */
+const withoutTrailingNewlines = (text: string): string => {
+    let end = text.length;
+    while (end > 0 && text[end - 1] === LINE_SEPARATOR) {
+        end -= 1;
+    }
+
+    return text.slice(0, end);
+};
 
 type NodeValue = Record<string, unknown>;
 
@@ -397,14 +408,6 @@ const readInline = (frame: Frame, token: MarkdownTokenNode, context: ReadContext
     emitText(frame, block, withoutPlaceholder(readInlines(token.children, context)), context);
 };
 
-const lineInlines = (line: string): RteInlineNode[] => {
-    if (line === '') {
-        return [];
-    }
-
-    return [{ text: line }];
-};
-
 /** The block of code's text, which has the line break the token ends with dropped, or no text at all when it is empty. */
 const codeChildrenOf = (token: MarkdownTokenNode): RteTextNode[] => {
     const text = token.content.replace(TRAILING_NEWLINE, '');
@@ -415,7 +418,10 @@ const codeChildrenOf = (token: MarkdownTokenNode): RteTextNode[] => {
     return [{ text }];
 };
 
-/** A block of code: a block of its own where a plugin reads it and the place allows it, else one paragraph per line. */
+/**
+ * A block of code: a block of its own where a plugin reads it and the place allows it, else one paragraph with its
+ * lines joined by breaks, or by spaces when no plugin has a break.
+ */
 const readCode = (frame: Frame, token: MarkdownTokenNode, context: ReadContext): void => {
     const match = matchToken(context.forms.codeReaders, token);
     if (match !== null && allowedIn(frame, match.name, context)) {
@@ -423,13 +429,20 @@ const readCode = (frame: Frame, token: MarkdownTokenNode, context: ReadContext):
         return;
     }
 
-    if (token.content === '') {
+    const content = withoutTrailingNewlines(token.content);
+    if (content === '') {
         return;
     }
 
-    for (const line of token.content.replace(TRAILING_NEWLINE, '').split(LINE_SEPARATOR)) {
-        emitText(frame, PARAGRAPH_BLOCK, lineInlines(line), context);
+    const state: InlineState = { nodes: [], open: [] };
+    for (const [index, line] of content.split(LINE_SEPARATOR).entries()) {
+        if (index > 0) {
+            readLeaf(state, { ...token, type: HARD_BREAK }, context.forms);
+        }
+        addText(state.nodes, line, {});
     }
+
+    emitText(frame, PARAGRAPH_BLOCK, withoutPlaceholder(state.nodes), context);
 };
 
 /** A token standing alone: its text, or a block of code. A rule (`hr`) is dropped, as no plugin reads it. */
