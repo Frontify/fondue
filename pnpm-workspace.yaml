@@ -25,7 +25,6 @@ minimumReleaseAgeExclude:
     - "electron-to-chromium"
     - "figma-api"
     - "ignore"
-    - "prosemirror-view"
     - "storybook"
     - "systeminformation"
     - "tinyexec"
