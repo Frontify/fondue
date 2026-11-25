@@ -763,7 +763,12 @@ test.describe('host styling of button links', () => {
             }
 
             for (const property of HOST_LINK_BOX_PROPERTIES) {
-                await expect(button).not.toHaveCSS(property, HOST_LINK_BOX_COMPUTED[property] ?? '');
+                const hostValue = HOST_LINK_BOX_COMPUTED[property];
+                if (hostValue === undefined) {
+                    throw new Error(`HOST_LINK_BOX_COMPUTED has no value for ${property}`);
+                }
+
+                await expect(button).not.toHaveCSS(property, hostValue);
             }
         }
     });
@@ -845,9 +850,10 @@ test.describe('the document next to a host page stylesheet', () => {
             const textLink = section.getByRole('link', { name: PLAIN_LINK_TEXT, exact: true });
             const button = section.getByRole('link', { name: BUTTON_LINK_TEXT, exact: true });
 
-            await expect(textLink).toHaveCSS('padding-left', '0px');
-            await expect(textLink).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-            await expect(textLink).toHaveCSS('border-top-style', 'none');
+            for (const [property, value] of Object.entries(FONDUE_LINK_BOX_COMPUTED)) {
+                await expect(textLink).toHaveCSS(property, value);
+            }
+
             await expect(button).toHaveCSS('margin-top', '0px');
             await expect(button).toHaveCSS('margin-bottom', '0px');
         }
