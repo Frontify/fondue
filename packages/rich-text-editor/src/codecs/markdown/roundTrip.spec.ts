@@ -21,6 +21,8 @@ const expectRoundTrip = ({ markdown, document }: RoundTripCase, options: Markdow
     expect(serializeToMarkdown(document, options)).toEqual({ markdown, losses: [] });
 };
 
+const BREAKS_OPTIONS: MarkdownOptions = { plugins: defaultContent, breaks: true };
+
 const FORM_CASES: readonly RoundTripCase[] = [
     {
         name: 'a paragraph',
@@ -347,7 +349,66 @@ describe('markdown round trip with breaks', () => {
             blocks: [{ type: 'paragraph', children: [{ text: 'a' }, { type: 'break' }, { text: 'b' }] }],
         };
 
-        expectRoundTrip({ name: 'breaks', markdown: 'a\nb', document }, { plugins: defaultContent, breaks: true });
+        expectRoundTrip({ name: 'breaks', markdown: 'a\nb', document }, BREAKS_OPTIONS);
+    });
+
+    it('writes a break that follows a break as a hard break', () => {
+        const document: RteDocument = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'one' }, { type: 'break' }, { type: 'break' }, { text: 'two' }],
+                },
+            ],
+        };
+
+        expectRoundTrip({ name: 'two breaks', markdown: 'one\n\\\ntwo', document }, BREAKS_OPTIONS);
+    });
+
+    it('writes a break that starts a paragraph as a hard break', () => {
+        const document: RteDocument = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ type: 'break' }, { text: 'foo' }] }],
+        };
+
+        expectRoundTrip({ name: 'leading break', markdown: '\\\nfoo', document }, BREAKS_OPTIONS);
+    });
+
+    it('writes a break that starts a list item as a hard break', () => {
+        const document: RteDocument = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'bulletList',
+                    children: [
+                        {
+                            type: 'listItem',
+                            children: [{ type: 'paragraph', children: [{ type: 'break' }, { text: 'foo' }] }],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        expectRoundTrip({ name: 'leading break in a list item', markdown: '- \\\n  foo', document }, BREAKS_OPTIONS);
+    });
+
+    it('writes a break that starts a quote as a hard break', () => {
+        const document: RteDocument = {
+            version: 1,
+            blocks: [{ type: 'quote', children: [{ type: 'break' }, { text: 'foo' }] }],
+        };
+
+        expectRoundTrip({ name: 'leading break in a quote', markdown: '> \\\n> foo', document }, BREAKS_OPTIONS);
+    });
+
+    it('gives back the same document for a code block with an empty line', () => {
+        const document = parseMarkdown('```\none\n\ntwo\n```', BREAKS_OPTIONS);
+        const { markdown, losses } = serializeToMarkdown(document, BREAKS_OPTIONS);
+
+        expect(losses).toEqual([]);
+        expect(parseMarkdown(markdown, BREAKS_OPTIONS)).toEqual(document);
     });
 });
 

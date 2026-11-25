@@ -43,7 +43,7 @@ const LINE_BREAK_TEXT = ' ';
 
 const LINE_SEPARATOR = '\n';
 
-const TRAILING_NEWLINE = /\n$/;
+const TRAILING_NEWLINES = /\n+$/;
 
 type NodeValue = Record<string, unknown>;
 
@@ -399,19 +399,20 @@ const readInline = (frame: Frame, token: MarkdownTokenNode, context: ReadContext
 
 /** A block of code is one paragraph: its lines joined by breaks, or by spaces when no plugin has a break. */
 const readCode = (frame: Frame, token: MarkdownTokenNode, context: ReadContext): void => {
-    if (token.content === '') {
+    const content = token.content.replace(TRAILING_NEWLINES, '');
+    if (content === '') {
         return;
     }
 
     const state: InlineState = { nodes: [], open: [] };
-    for (const [index, line] of token.content.replace(TRAILING_NEWLINE, '').split(LINE_SEPARATOR).entries()) {
+    for (const [index, line] of content.split(LINE_SEPARATOR).entries()) {
         if (index > 0) {
             readLeaf(state, { ...token, type: HARD_BREAK }, context.forms);
         }
         addText(state.nodes, line, {});
     }
 
-    emitText(frame, PARAGRAPH_BLOCK, state.nodes, context);
+    emitText(frame, PARAGRAPH_BLOCK, withoutPlaceholder(state.nodes), context);
 };
 
 /** A token standing alone: its text, or a block of code. A rule (`hr`) is dropped, as no plugin reads it. */
