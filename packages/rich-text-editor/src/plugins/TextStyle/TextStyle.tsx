@@ -50,7 +50,7 @@ export type TextStyleContentOptions = {
     /**
      * How each kind of text looks, by name: a text style, `body` for plain paragraphs and `quote`.
      * A kind left out, and a field left out of one, keeps Fondue's look.
-     * A value that is empty or can end its CSS declaration early throws an error that names the look and the
+     * A value that is blank or that `isSafeCssValue` rejects throws an error that names the look and the
      * field, so a mistake in the host's configuration never passes silently.
      */
     look?: TextStyleLook;

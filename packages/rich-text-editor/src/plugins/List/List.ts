@@ -216,7 +216,7 @@ const listLookProperties = <TLevel extends Partial<Record<string, string>>>(
 export type BulletListPluginOptions = {
     /**
      * How the list looks at its first three nesting levels, outermost first. A level or a field left out keeps
-     * Fondue's look. A value that is empty or can end its CSS declaration early throws an error naming the level.
+     * Fondue's look. A value that is blank or that `isSafeCssValue` rejects throws an error naming the level.
      * @default []
      */
     look?: BulletListLook;
@@ -225,7 +225,7 @@ export type BulletListPluginOptions = {
 export type NumberedListPluginOptions = {
     /**
      * How the list looks at its first three nesting levels, outermost first. A level or a field left out keeps
-     * Fondue's look. A value that is empty or can end its CSS declaration early throws an error naming the level.
+     * Fondue's look. A value that is blank or that `isSafeCssValue` rejects throws an error naming the level.
      * @default []
      */
     look?: NumberedListLook;

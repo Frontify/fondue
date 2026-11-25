@@ -100,7 +100,7 @@ export const BUTTON_HOVER_LOOK_FIELDS = {
 /**
  * The custom properties the buttons' looks set, which `link.module.scss` reads with Fondue's look as the fallback.
  *
- * @throws When a value is empty or could break out of its declaration, naming the appearance and the field.
+ * @throws When a value is blank or `isSafeCssValue` rejects it, naming the appearance and the field.
  */
 export const buttonLookProperties = (
     looks: Readonly<Partial<Record<LinkAppearance, ButtonLook>>>,
