@@ -1,0 +1,21 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_3288b399cd1bff::t_2bb6a1023f413d 97-112
+packages/rich-text-editor/src/editor/engines/prosemirror/documentConversion.ts
+  s_3288b399cd1bff::t_19b7a663511ae3 92-98
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5da95057d2f39078745eeb1bd5f27c3a16a0280a",
+  "prompts": {},
+  "sessions": {
+    "s_3288b399cd1bff": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e683c699-5ba4-4ce0-b454-a9d5b5a33819",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

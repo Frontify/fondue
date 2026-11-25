@@ -1,0 +1,52 @@
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.tsx
+  s_53de767222940a::t_3f899b6f9bede6 7,11,26,35-36,95-103,121-153
+packages/rich-text-editor/src/index.ts
+  s_53de767222940a::t_3f899b6f9bede6 126
+packages/rich-text-editor/src/plugins/Link/hooks/useDestinationSearch.spec.tsx
+  s_53de767222940a::t_9c5fb69027fe85 67,77,90,107,110,112,117,134,138-139,148
+  s_53de767222940a::t_90db066d64016c 147
+  s_53de767222940a::t_1051e6aad56fe2 1-66,68-76,78-89,91-106,108-109,111,113-116,118-133,135-137,140-146,149-155
+packages/rich-text-editor/src/plugins/Link/components/LinkToolbarButton.tsx
+  s_53de767222940a::t_3f899b6f9bede6 11,30-31,79
+packages/rich-text-editor/src/plugins/Link/helpers/destination.ts
+  s_53de767222940a::t_d2cc61170496a2 1-12
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_53de767222940a::t_3f899b6f9bede6 9,20-23,102-106
+packages/rich-text-editor/src/plugins/Link/index.ts
+  s_53de767222940a::t_3f899b6f9bede6 4
+packages/rich-text-editor/src/plugins/Link/hooks/useDestinationSearch.ts
+  s_53de767222940a::t_bc3cc7412f94fd 1-37,49,51-68
+  s_53de767222940a::t_9c5fb69027fe85 38-48,50
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_53de767222940a::t_51114de797335b 422-477
+  s_53de767222940a::t_9dbdcc1e8866fd 30
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.tsx
+  s_53de767222940a::t_b1201293882802 8
+  s_53de767222940a::t_a9541085dea509 13
+  s_53de767222940a::t_5716115248eaba 1-7,9-12,14-89,92-157,161-173
+  s_53de767222940a::t_9c5fb69027fe85 158-160
+  s_53de767222940a::t_925943a3e07d4c 90-91
+packages/rich-text-editor/src/plugins/Link/components/linkForm.module.scss
+  s_53de767222940a::t_925943a3e07d4c 39-70
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_53de767222940a::t_3f899b6f9bede6 9,61-62,176
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.spec.tsx
+  s_53de767222940a::t_9c5fb69027fe85 104-105,140,142-143,145,147,223-226,230-233,237-240,244-247
+  s_53de767222940a::t_a484d9b7eaed3b 1-103,106-139,141,144,146,148-222,227-229,234-236,241-243,248-283
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1f9c46c04747f72d3b3340e1c4674a2760999b3b",
+  "prompts": {},
+  "sessions": {
+    "s_53de767222940a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f9b7337-8455-4b7f-ac95-dde194f54be3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

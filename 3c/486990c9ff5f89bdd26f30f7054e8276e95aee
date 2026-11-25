@@ -1,0 +1,39 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_53de767222940a::t_186573591af763 358
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_53de767222940a::t_186573591af763 535-539
+packages/rich-text-editor/src/index.ts
+  s_53de767222940a::t_186573591af763 207-211,219-221
+packages/rich-text-editor/src/plugins/defaultContent.ts
+  s_53de767222940a::t_186573591af763 36
+packages/rich-text-editor/src/plugins/Link/helpers/policy.ts
+  s_53de767222940a::t_186573591af763 83-85
+packages/rich-text-editor/src/plugins/shared/helpers/href.ts
+  s_53de767222940a::t_186573591af763 33
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.ts
+  s_53de767222940a::t_186573591af763 58,86
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.spec.tsx
+  s_53de767222940a::t_186573591af763 306,311,330
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_53de767222940a::t_186573591af763 243-246
+packages/rich-text-editor/src/plugins/Mention/hooks/usePeople.ts
+  s_53de767222940a::t_186573591af763 47-49
+packages/rich-text-editor/src/plugins/Typography/Typography.ts
+  s_53de767222940a::t_186573591af763 124
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3c486990c9ff5f89bdd26f30f7054e8276e95aee",
+  "prompts": {},
+  "sessions": {
+    "s_53de767222940a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f9b7337-8455-4b7f-ac95-dde194f54be3",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

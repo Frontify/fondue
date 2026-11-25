@@ -1,0 +1,19 @@
+.changeset/rte-font-color-unfinished-hex.md
+  s_f14f850d92b8d2::t_6667be18999910 1-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a5bbd19f5bc446f3bea4d7fd97547a9e877c7f15",
+  "prompts": {},
+  "sessions": {
+    "s_f14f850d92b8d2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b6405031-b112-4a5e-8b9d-72a1169049db",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

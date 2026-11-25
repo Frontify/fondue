@@ -1,0 +1,45 @@
+.changeset/tree-handle-inside-row.md
+  s_17e6325854cf61::t_8214e6807ae7ac 1-5
+.changeset/tree-row-geometry.md
+  s_17e6325854cf61::t_89dffe3d92dce9 1-7
+packages/components/src/components/Tree/components/TreeDragLine.ct.tsx
+  s_17e6325854cf61::t_7d1e266b32ebbc 5,20,27,36,41-42,44,49-50,52-72
+packages/components/src/components/Tree/components/TreeLoadingRow.tsx
+  s_17e6325854cf61::t_ca867d0999f0be 20-24
+packages/components/src/components/Tree/components/TreeRoot.ct.tsx
+  s_ea90b709d5035d::t_b0ba027af77fb7 8,1690-1727,1745-1779
+packages/components/src/components/Tree/components/TreeRoot.tsx
+  s_17e6325854cf61::t_f74b26f5cd02e4 13,19,145-146,149,151
+packages/components/src/components/Tree/components/TreeRow.tsx
+  s_17e6325854cf61::t_a57ebfbb6772c4 196
+packages/components/src/components/Tree/components/testutils/DragLineHarness.tsx
+  s_17e6325854cf61::t_d30a7f6931ba3a 1-19
+packages/components/src/components/Tree/constants.ts
+  s_17e6325854cf61::t_3bd84d6c8bde0a 14
+packages/components/src/components/Tree/styles/tree.module.scss
+  s_17e6325854cf61::t_29f363e2a47f12 7-17,68-69,72,115,119-123,127-128,134-138,226-227,229-235,243,245,251,257,259,276-277,279
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bf5131ef0c7a25ef4f32f76c7ae745e0a0979505",
+  "prompts": {},
+  "sessions": {
+    "s_17e6325854cf61": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5dd182d0-d7de-40a0-8dd8-b9746fb93e26",
+        "model": "unknown"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_ea90b709d5035d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1428986e-53c5-4148-bc0d-2fe370854309",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

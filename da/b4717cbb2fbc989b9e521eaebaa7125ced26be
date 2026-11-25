@@ -1,0 +1,402 @@
+packages/rich-text-editor/src/__tests__/serializeToHtml.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 5-6,82-93
+  s_1d85cf4cd0f49c::t_6c5321669dcee0 94
+packages/rich-text-editor/src/plugins/Emoji/Emoji.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 63
+packages/rich-text-editor/src/plugins/Link/components/LinkToolbarButton.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 12,14,18-38,40-43,52-54,81,100-113
+packages/rich-text-editor/src/plugins/Link/helpers/destination.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-18
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3-14,17,21-30,32-40,50-89,98-113,115,117-127,129-181,183-253,257-269,271,277-290,292-296,298-307,309-324,331,334-347,355
+packages/rich-text-editor/src/__tests__/typeDerivation.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 9-10,158,161,164-170,197-198
+packages/rich-text-editor/src/plugins/Mention/helpers/display.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-60
+packages/rich-text-editor/src/plugins/Mention/hooks/usePeople.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-74
+packages/charts/src/components/LinearGauge/LinearGauge.stories.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 21-32,47-94
+packages/rich-text-editor/src/plugins/Link/index.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3-14
+packages/rich-text-editor/src/plugins/FontColor/components/colorFlyout.module.scss
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3
+.changeset/feat-rte-link-flows.md
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-5
+packages/rich-text-editor/src/plugins/Link/helpers/appearance.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-123
+packages/rich-text-editor/src/plugins/shared/helpers/keys.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-11
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 9,14,30,43-44,49,102,163,165,170-173
+packages/rich-text-editor/src/plugins/defaultContent.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 25,37
+packages/charts/src/components/LinearGauge/LinearGauge.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-105
+packages/charts/src/components/AreaStackChart/types.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3,30
+packages/rich-text-editor/README.md
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 12-13
+storybook-docs/.storybook/preview.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 109
+packages/rich-text-editor/src/plugins/Link/helpers/newTab.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-8
+packages/charts/src/components/LinearGauge/types.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 7,9-12
+packages/rich-text-editor/vite.config.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 109
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 6,14-15,21,294,369,390,511-590
+  s_1d85cf4cd0f49c::t_f4bc6fb92a5a39 591-592
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 15,24-25,403-430,446-447,469,484,497-500,513-516,526-529,536-594,753-756,835-849
+  s_1d85cf4cd0f49c::t_91662a378c332f 850
+packages/rich-text-editor/src/plugins/shared/helpers/href.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 14,16,19,21-26,35
+packages/rich-text-editor/src/plugins/TextStyle/components/textStyleSelect.module.scss
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3
+packages/rich-text-editor/src/editor/hooks/useToolbarFit.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 7,48-49,84-88,91-93
+packages/rich-text-editor/src/plugins/BlurOnBreak/index.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3
+packages/rich-text-editor/src/docs/authoringExcerpts.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-13
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 13,19-21,50-54,152-158
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 13,19,293-322
+  s_1d85cf4cd0f49c::t_a0d9f46da0baea 323
+packages/rich-text-editor/src/plugins/Mention/components/MentionLink.spec.tsx
+  s_1d85cf4cd0f49c::t_2eadf87b34494c 47-49,65-67,122,126-127
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 11,16,45-46,50-64,116-121,123-125
+packages/rich-text-editor/src/docs/keyboardReference.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-48
+packages/charts/src/components/common/components/Legend.module.scss
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 5,16-21
+packages/rich-text-editor/src/__tests__/entryPoints.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-53
+.changeset/charts-pie-chart-font-token.md
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-5
+packages/charts/src/components/LineChart/components/Axes.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 7-8,17,20,24
+packages/rich-text-editor/src/__tests__/lookStylesheets.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 10-11,20-24,105-149
+  s_1d85cf4cd0f49c::t_bf41cde2a2a291 150-151
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 12,27-28
+packages/charts/src/components/common/components/Tooltip/TooltipContent.module.scss
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 77-84
+packages/rich-text-editor/package.json
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 27-30,85
+packages/rich-text-editor/src/editor/hooks/useToolbarRoving.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 166,177,182-183
+packages/rich-text-editor/src/docs/keyboardReference.mdx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-19
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 9-13,18-24,42-44,90,102-106,112-120,136,162-164,182-188,190
+packages/rich-text-editor/src/editor/floatingBar.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 9-10,88-102,265-276
+  s_1d85cf4cd0f49c::t_4e3acb6cfd0ccd 277
+packages/rich-text-editor/src/__tests__/browser/HostNoHeadingsPair.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 5,14
+packages/rich-text-editor/src/editor/helpers/toolbarMarkers.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 11-12
+packages/rich-text-editor/src/plugins/Link/helpers/address.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-11
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 6-7,21-22,51-60,70-73,77-81,311-324,518-613,679-693,698-699,753-821,1082-1136,1180-1262
+packages/charts/src/components/common/components/Tooltip/helpers/getFormattedTooltipDate.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-17
+packages/charts/src/components/LinearGauge/LinearGauge.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 4-12,16-21,25-33,40-46,50,52-57,59,63-91,93-94,96,99-137,140-141,143-144,148-155,158-167,169
+.changeset/feat-rte-mention-names.md
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-5
+packages/rich-text-editor/src/__tests__/browser/HostStylingSections.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 5-6
+packages/rich-text-editor/src/editor/engines/prosemirror/testFixtures.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-103
+.changeset/fix-rte-toolbar-keeps-selection.md
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-5
+packages/charts/src/components/common/components/Tooltip/Tooltip.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 11,39,72,150
+packages/rich-text-editor/src/plugins/Mention/helpers/image.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-17
+packages/rich-text-editor/src/editor/components/ToolbarMore.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 207
+packages/charts/src/components/AreaStackChart/AreaStackChart.stories.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 62-67,159-201
+packages/charts/src/components/common/helpers/getNonZeroLinearStackingScaleDomain.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 81-92
+packages/rich-text-editor/src/plugins/Link/hooks/useDestinationSearch.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-156
+packages/rich-text-editor/src/plugins/Mention/components/MentionLink.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 7,13,18-19,29-30,33,36-37,40-42,44-47,50-51
+  s_1d85cf4cd0f49c::t_250b604c5041bc 21,43
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-194
+packages/rich-text-editor/src/__tests__/browser/HostStylingPair.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 5-6
+.changeset/rte-link-plugin-look.md
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-16
+packages/rich-text-editor/src/plugins/Mention/helpers/text.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-30
+packages/rich-text-editor/src/plugins/Mention/Mention.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 7,45,47,49-51,54,111-113,116
+  s_1d85cf4cd0f49c::t_250b604c5041bc 66
+packages/charts/src/components/LinearGauge/LinearGauge.module.scss
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 4-6,11,15,22-49
+packages/charts/src/components/LinearGauge/components/LinearGaugeTooltip.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 7,13
+packages/rich-text-editor/src/core/look.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 5,9-11,18-20,24-31,36-38
+packages/rich-text-editor/src/core/registry.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3,7-9,26,76-79,81,83-87,98-101,255-256,262,264-266,276,361-365,370,406,408,446-450,469,473,488,498,503
+packages/rich-text-editor/src/core/registry.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 5,485,492-573
+.changeset/feat-rte-shortcuts-submit.md
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-5
+packages/rich-text-editor/src/editor/engines/prosemirror/testEditor.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 8-18,168-227
+packages/charts/src/utilities/focus.module.scss
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-8
+packages/rich-text-editor/src/plugins/SoftBreak/SoftBreak.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 29
+packages/charts/src/components/common/hooks/useMargin.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3,9,158-173
+  s_1d85cf4cd0f49c::t_58467eb7784d11 174-175
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 31,76
+packages/rich-text-editor/src/plugins/Emoji/Emoji.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 31
+packages/rich-text-editor/src/plugins/Link/Link.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3,5-19,35-419
+packages/rich-text-editor/src/__tests__/rendererBundle.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 12,15-17,51,57-66,69
+packages/rich-text-editor/src/core/contentRegistry.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-51
+packages/rich-text-editor/src/core/plugin.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 118,377-380,382-386,631-638,642-667,684-697
+packages/charts/src/components/common/helpers/getDateTickLabel.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-25
+packages/rich-text-editor/src/core/contentRegistry.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-322
+.changeset/charts-gauge-tooltip-monthly-dates.md
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-10
+packages/charts/src/components/LineChart/types.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3,37
+packages/rich-text-editor/src/plugins/BlurOnBreak/BlurOnBreak.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 5-20,24-30,32,36-45
+packages/rich-text-editor/src/plugins/defaultPlugins.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-53
+packages/rich-text-editor/src/ui/shortcut.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-72
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 4,7-12,16-19,24-42,47,49,53-54,56-84,86-135,137-138,140-151,153-257,295-306,323,337-341,343,351,359-366,368-371,374-375,377,381-388,396,424,426,428-429,438,443-454
+packages/charts/src/components/common/helpers/getNonZeroLinearStackingScaleDomain.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 7-9,33
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3,7-11,13,16-27,29,31,33-40,44-82,85-89,91-104,107,109-110,114,116,118-124,129-133,137-146,150-152,159-175,178-190,192-193,195,198-201,204-205,212-234,241,246,250,253
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 4,18-19,28,286-301,303-308,316,336,354,357,359-376,407,427,465,502-507,516,535,545-549,551-553,555-570,572-587,589-593,595-605,607-608,610-631,633-634,636-665,667-668,670-684
+packages/rich-text-editor/src/plugins/Mention/Mention.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 30,49-65
+packages/charts/src/components/common/types.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 6-7
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 15,20,24,37,73,86-88,95,124-126,181,183-188,195-205,209
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 10,26,31,903-907,915,924,1002-1003,1032,1034,1043-1052,1056-1057,1061-1067,1078,1083-1085,1109,1112,1118,1125-1126,1132-1133,1136-1140,1145-1146
+packages/rich-text-editor/src/docs/keyboardReference.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-41
+packages/rich-text-editor/src/plugins/Mention/helpers/display.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-70
+packages/rich-text-editor/src/plugins/Mention/helpers/strings.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-26
+packages/rich-text-editor/lint-fixtures/src/stories/Fixture.stories.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 15,20
+packages/charts/src/components/LineChart/LineChart.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 6,30,42,70,87
+packages/rich-text-editor/src/__tests__/browser/editorWithMentions.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 5-6
+packages/rich-text-editor/src/core/commands.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 13-26,65-82,110-113,125-126,145-147,210-215,255-268
+packages/charts/src/components/common/hooks/useMargin.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 20-21,42-56,66,69,90-92,100-110
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-338
+packages/rich-text-editor/src/ui/ToolbarButton/ToolbarButton.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 4-6,27,29,32,34-41,45-47,50,83
+packages/charts/src/components/LineChart/LineChart.stories.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 83-89,454-478
+packages/rich-text-editor/src/plugins/Mention/components/MentionEditor.tsx
+  s_1d85cf4cd0f49c::t_250b604c5041bc 57
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 5-6
+packages/rich-text-editor/src/__tests__/serverRendering.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 7-8
+packages/rich-text-editor/src/editor/engines/prosemirror/textRules.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 506
+packages/rich-text-editor/src/plugins/Mention/helpers/text.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-20
+packages/charts/src/components/LineChart/components/helpers/getXTickValues.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 18-20
+packages/rich-text-editor/oxlint.config.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 294-297,371-372
+packages/rich-text-editor/src/__tests__/htmlParity.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 20
+packages/rich-text-editor/src/plugins/Link/components/linkForm.module.scss
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 39-83
+packages/rich-text-editor/lint-fixtures/src/editor/RichTextEditor.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 6,12
+packages/rich-text-editor/src/plugins/Link/helpers/strings.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-24
+packages/rich-text-editor/src/docs/keyboardReference.module.scss
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-26
+packages/rich-text-editor/src/renderer/RichTextRenderer.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 6-7,34,40,64
+packages/charts/src/components/common/helpers/getDateTickLabel.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-24
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 16,18,21,27,29,44-48,64-71,81-111,174,179,186,189-214,246
+packages/rich-text-editor/src/core/hotkeys.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-89
+.changeset/feat-rte-button-links.md
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-5
+packages/rich-text-editor/src/index.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 16,27,75-79,126
+packages/charts/src/components/AreaStackChart/AreaStackChart.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 8,16,37,40,53,71,77,89
+packages/rich-text-editor/src/core/hotkeys.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-75
+packages/rich-text-editor/src/__tests__/paste/vendorPaste.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 15-16
+packages/rich-text-editor/src/__tests__/table.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 9-10
+packages/charts/src/components/common/components/Tooltip/helpers/getHeadingFromDatum.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 5,18,21
+packages/rich-text-editor/src/__tests__/browser/HostResetPair.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 5
+packages/rich-text-editor/src/editor/engines/prosemirror/dispatch.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-8
+packages/rich-text-editor/src/docs/authoring.mdx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-114
+packages/charts/src/components/common/helpers/index.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 4
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 20,22,534
+storybook-docs/.storybook/main.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 29
+packages/rich-text-editor/src/editor/engines/prosemirror/paste.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 5,11,45-48,59-72,242-245,293-390
+  s_1d85cf4cd0f49c::t_a8056a29aa6187 391
+packages/rich-text-editor/src/__tests__/formatRegression.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 11,19
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 7,9,19-22,27-31,36-37,47-52,62,87,89,93,120-122,126-132,164-479
+packages/rich-text-editor/src/plugins/Mention/types.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3-5,7
+.changeset/rte-toolbar-plain-fondue.md
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-5
+.changeset/rte-renderer-content-registry.md
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-5
+packages/rich-text-editor/src/docs/PluginKeyboardReference.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-58
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 4,14-26,30,32,41-42,58,79-89,104,115,292,303,452-585,761-762,768,904-905,933-936,956-960,963-981,985-988,993-995,998-1002,1210,1213-1228,1230,1234-1245,1250-1252,1266,1277-1283,1293,1297-1313,1315,1319-1330,1346,1355,1369,1395,1410,1413-1421,1423-1449,1462-1463,1472-1473,1476
+packages/rich-text-editor/src/renderer/serializeToHtml.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3,37
+packages/charts/src/components/LinearGauge/components/Section.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3,7-9,12-13,16-17,21-28
+packages/rich-text-editor/src/core/look.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 60,63-68,70-71
+packages/rich-text-editor/src/plugins/Link/link.module.scss
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3-4,39-120
+  s_1d85cf4cd0f49c::t_ddf5c57eb9b8ea 121-123
+packages/charts/src/components/PieChart/components/consts.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 5
+packages/rich-text-editor/src/__tests__/serverRendering.node.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 10-11
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 8,23-38,40-44,47,51-55,65,82,90-93,103-107
+packages/rich-text-editor/src/renderer/documentTree.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 16,92-93,103,137,157,205,220,229,245,259,280,288
+packages/rich-text-editor/src/ui/shortcut.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-24
+.changeset/rte-plugins-entry.md
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-5
+packages/rich-text-editor/src/core/index.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 7-9,11-13,19-25,36-43,46,67,69,75,78,96-97
+packages/charts/src/components/AreaStackChart/components/AreaStack.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3-5,12-13,39-74
+  s_1d85cf4cd0f49c::t_953c933ef0a2d3 75-76
+packages/rich-text-editor/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 10-13,16,30
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 12-21,48-55,122-204,315-321,390-393,424-429
+packages/rich-text-editor/src/plugins/index.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 9-11,13-35,37-66
+packages/rich-text-editor/src/plugins/Link/helpers/value.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3-22
+packages/rich-text-editor/src/__tests__/browser/HostLooksPair.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 5,7,14,19,23,30-31,39-40,45,49-50,55
+packages/rich-text-editor/src/plugins/Link/hooks/useDestinationSearch.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-66
+packages/rich-text-editor/src/editor/richTextEditor.module.scss
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 10-12,74-75,78,81-83,85
+packages/charts/src/components/LineChart/components/helpers/getXTickValues.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 72-76
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-311
+packages/rich-text-editor/src/docs/excerptOf.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-18
+packages/charts/src/components/common/components/Legend.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3-4,15,18,22
+packages/rich-text-editor/src/plugins/Mention/helpers/image.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-32
+packages/rich-text-editor/src/editor/engines/prosemirror/lists.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 12-13,19,141,151,167,189,195-204,230,242-281,284-287,296,299-300,305-307,310-313,405-406
+packages/rich-text-editor/src/editor/helpers/toolbarFit.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 9
+packages/rich-text-editor/src/editor/linkFlows.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-340
+packages/charts/src/components/common/components/Tooltip/TooltipContent.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 12,58,71,74,87
+packages/rich-text-editor/src/__tests__/browser/hostStylingValues.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 5-6,91-102
+  s_1d85cf4cd0f49c::t_a7c900b03ab72f 103-105
+packages/charts/src/components/common/components/Tooltip/helpers/getFormattedTooltipDate.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3-10,12-15
+packages/rich-text-editor/src/__tests__/documentText.spec.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 5-6
+packages/rich-text-editor/src/docs/authoringExcerpts.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-41
+packages/rich-text-editor/src/editor/components/Toolbar.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 3-12,28,134-154,171,176-183
+  s_1d85cf4cd0f49c::t_ef38481ac38701 184
+packages/rich-text-editor/.storybook/main.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 8-9
+.changeset/docs-rte-keyboard-reference.md
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 1-5
+packages/rich-text-editor/src/core/documentText.ts
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 7,51,67,76,103
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_1d85cf4cd0f49c::t_a81bd9cd5f1a43 25-33,129-139,684-741,800-810,833-846,854,856,860,967,1018-1031,1050-1051,1054,1058,2491-2528,2726-2742
+  s_1d85cf4cd0f49c::t_b7706aadea1974 2743-2744
+pnpm-lock.yaml
+  s_1d85cf4cd0f49c::t_a73e3994441717 625-627
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dab4717cbb2fbc989b9e521eaebaa7125ced26be",
+  "prompts": {},
+  "sessions": {
+    "s_1d85cf4cd0f49c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "228bb293-31f9-44a8-bc1c-8d56de76d646",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

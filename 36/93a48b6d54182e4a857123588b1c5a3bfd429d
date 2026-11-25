@@ -1,0 +1,72 @@
+packages/rich-text-editor/src/__tests__/browser/TablePasteFrame.tsx
+  s_0036b8a555aa69::t_528e8ba94368e6 16,19
+.changeset/table-paste-frame-test-id.md
+  s_0036b8a555aa69::t_90e1c43a744176 1-5
+packages/components/src/components/Select/components/ComboboxBase.tsx
+  s_7d531087615ec5::t_32ef3c3cadb91a 432
+packages/components/src/components/Select/components/SelectMenu.tsx
+  s_7d531087615ec5::t_086284ad770bd1 81-84,101,135-136,151
+  s_7d531087615ec5::t_3d160684314f8d 9
+  s_7d531087615ec5::t_82172e06aa154e 85
+.changeset/select-list-names-and-selection.md
+  s_7d531087615ec5::t_5448d3776c8962 1-5
+packages/components/src/components/Select/__tests__/Select.ct.tsx
+  s_7d531087615ec5::t_fdcdb7db4b9f98 637-671
+  s_89185d9ca8fbaf::t_841426400fbbfd 575-636
+  s_7d531087615ec5::t_734c8cf3c30bf0 529
+  s_e5729440019c3f::t_dee6be99d2b956 672-691
+packages/components/src/components/Select/components/SelectBase.tsx
+  s_89185d9ca8fbaf::t_514e5b424b73a8 164-168
+  s_7d531087615ec5::t_5f6aeb43f9553d 169,177,187-192,196-225,311
+packages/rich-text-editor/src/__tests__/browser/editor.ct.tsx
+  s_89185d9ca8fbaf::t_57a2e9a84d15de 4,394,400,469-478,480-574
+  s_7d531087615ec5::t_8dcbe65ebf5880 479
+  s_89185d9ca8fbaf::t_2ffd9d855c219e 575
+packages/rich-text-editor/src/editor/hooks/useToolbarRoving.ts
+  s_89185d9ca8fbaf::t_a2e44cc0b39288 32-35,211-212
+  s_89185d9ca8fbaf::t_23f937cca97de1 213
+  s_7d531087615ec5::t_9d257c94364812 208-210
+  s_7d531087615ec5::t_128a5463056017 104-105,108-119,122
+.changeset/rte-text-style-list-keys.md
+  s_7d531087615ec5::t_f384e6f0bff6ab 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3693a48b6d54182e4a857123588b1c5a3bfd429d",
+  "prompts": {},
+  "sessions": {
+    "s_0036b8a555aa69": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b96c94ba-99f3-4817-89f1-64e206fe9f49",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_7d531087615ec5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7c3ccc75-362b-4b44-9c1b-d677654d1ae0",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_89185d9ca8fbaf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "15b18d6c-628e-431e-af65-c7164fcfd682",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_e5729440019c3f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0d18152d-a028-445d-a0fa-d13e10d34317",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

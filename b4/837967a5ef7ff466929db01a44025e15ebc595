@@ -1,0 +1,63 @@
+.changeset/calm-cards-hover.md
+  s_f4bd8cfbf36733::t_bb58017e75e7de 1-7
+.changeset/lemon-sides-throw.md
+  s_f4bd8cfbf36733::t_fea735bf22ae55 1-6
+.changeset/pretty-falcons-dream.md
+  s_f4bd8cfbf36733::t_d93a73437996a1 1-7
+.changeset/update-icons-20261028124456.md
+  s_f4bd8cfbf36733::t_06932daf3a0c37 1-5
+packages/components/src/components/Card/__tests__/Card.ct.tsx
+  s_f4bd8cfbf36733::t_e3d9ee1a012b2d 181-261
+packages/components/src/components/Card/styles/card.module.scss
+  s_f4bd8cfbf36733::t_6a5bee917c5de8 21,26-31,88-106,133,144,148,150
+packages/components/src/components/Select/Select.stories.tsx
+  s_f4bd8cfbf36733::t_06b52cc43de6c3 43
+packages/components/src/components/Select/__tests__/ComboboxMultiple.spec.tsx
+  s_f4bd8cfbf36733::t_2e4ab84f5afef9 227-256
+packages/components/src/components/Select/__tests__/SelectMultiple.spec.tsx
+  s_f4bd8cfbf36733::t_945504c19a9eed 166-207
+packages/components/src/components/Select/components/ComboboxBase.tsx
+  s_f4bd8cfbf36733::t_c12efe85d561ce 89-93,138,216,219
+packages/components/src/components/Select/components/SelectBase.tsx
+  s_f4bd8cfbf36733::t_215178664b9443 73-77,121,173,175
+packages/icons/icons/facial-recognition/facial-recognition-12.svg
+  s_f4bd8cfbf36733::t_08d78ed3bef5a1 1
+packages/icons/icons/facial-recognition/facial-recognition-16.svg
+  s_f4bd8cfbf36733::t_c960b7dea3867b 1
+packages/icons/icons/facial-recognition/facial-recognition-20.svg
+  s_f4bd8cfbf36733::t_bd1cc197d623be 1
+packages/icons/icons/facial-recognition/facial-recognition-24.svg
+  s_f4bd8cfbf36733::t_5471d56b0e9603 1
+packages/icons/icons/facial-recognition/facial-recognition-32.svg
+  s_f4bd8cfbf36733::t_8d8a134f6cbaeb 1
+packages/icons/icons/snapshot.json
+  s_f4bd8cfbf36733::t_9f171829090403 1
+packages/icons/icons/variables/variables-12.svg
+  s_f4bd8cfbf36733::t_3e792b4cdd03a4 1
+packages/icons/icons/variables/variables-16.svg
+  s_f4bd8cfbf36733::t_93ab15f0283d98 1
+packages/icons/icons/variables/variables-20.svg
+  s_f4bd8cfbf36733::t_331534fe4fb147 1
+packages/icons/icons/variables/variables-24.svg
+  s_f4bd8cfbf36733::t_fbc8fc9b8fd983 1
+packages/icons/icons/variables/variables-32.svg
+  s_f4bd8cfbf36733::t_0dd5624127f8e3 1
+packages/rte/src/components/RichTextEditor/components/Toolbar/FloatingToolbar.tsx
+  s_f4bd8cfbf36733::t_0ffd7864154d59 44-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b4837967a5ef7ff466929db01a44025e15ebc595",
+  "prompts": {},
+  "sessions": {
+    "s_f4bd8cfbf36733": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "957f9406-1dc3-4ef8-8f4e-f3f47b88741e",
+        "model": "grok-4.7"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

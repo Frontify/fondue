@@ -1,0 +1,25 @@
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_9c5820968824fa::t_99e7a05c72603e 41,504-505,507-508,534,601,626,628-629,633-656
+  s_9c5820968824fa::t_b08574dad991d0 627
+  s_9c5820968824fa::t_91a6b889c4d1d6 535
+packages/rich-text-editor/src/editor/components/EditorFallback.tsx
+  s_9c5820968824fa::t_99e7a05c72603e 14,16,17-18,33
+  s_9c5820968824fa::t_ea94d7ced6a809 4
+  s_9c5820968824fa::t_0537bd7e146405 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "80802191832359ac9f64ad712d16ee7d19484c39",
+  "prompts": {},
+  "sessions": {
+    "s_9c5820968824fa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b466da8e-922e-4acb-a304-ade9985e1ac5",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": null
+    }
+  }
+}

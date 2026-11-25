@@ -1,0 +1,19 @@
+packages/rich-text-editor/src/docs/PluginKeyboardReference.tsx
+  s_3da29b36b0ad36::t_e1a23356b1ff54 43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6034935ba323b1b5702c947bdbc2744aebaed1fb",
+  "prompts": {},
+  "sessions": {
+    "s_3da29b36b0ad36": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52275dbb-cfd4-472c-b295-02ca60ef0ab1",
+        "model": "unknown"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
