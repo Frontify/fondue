@@ -459,23 +459,21 @@ const readInline = (frame: Frame, token: MarkdownTokenNode, context: ReadContext
     emitText(frame, block, withoutPlaceholder(readInlines(token.children, context)), context);
 };
 
-const lineInlines = (line: string): RteInlineNode[] => {
-    if (line === '') {
-        return [];
-    }
-
-    return [{ text: line }];
-};
-
-/** A block of code is one paragraph per line, as no plugin reads it. */
+/** A block of code is one paragraph: its lines joined by breaks, or by spaces when no plugin has a break. */
 const readCode = (frame: Frame, token: MarkdownTokenNode, context: ReadContext): void => {
     if (token.content === '') {
         return;
     }
 
-    for (const line of token.content.replace(TRAILING_NEWLINE, '').split(LINE_SEPARATOR)) {
-        emitText(frame, PARAGRAPH_BLOCK, lineInlines(line), context);
+    const state: InlineState = { nodes: [], open: [] };
+    for (const [index, line] of token.content.replace(TRAILING_NEWLINE, '').split(LINE_SEPARATOR).entries()) {
+        if (index > 0) {
+            readLeaf(state, { ...token, type: HARD_BREAK }, context.forms);
+        }
+        addText(state.nodes, line, {});
     }
+
+    emitText(frame, PARAGRAPH_BLOCK, state.nodes, context);
 };
 
 /** A token standing alone: its text, or a block of code. A rule (`hr`) is dropped, as no plugin reads it. */
