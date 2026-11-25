@@ -2,10 +2,10 @@
 
 // A text block's inlines laid out as the tokens of one stretch of Markdown, before any of it is written.
 
-import { canBeReferenced, isMarkdownSpace, isMarkdownWhitespace } from './markdownIt';
+import { canBeReferenced, isMarkdownWhitespace } from './markdownIt';
 
-/** The open and the close delimiter of one mark, which share it: `path` is where the mark starts. */
-export type DelimiterPair = { mark: string; path: readonly number[] };
+/** The open and the close delimiter of one mark, which share it: `paths` is every text the mark covers. */
+export type DelimiterPair = { mark: string; paths: readonly (readonly number[])[] };
 
 export type CharToken = {
     kind: 'char';
@@ -46,27 +46,28 @@ export const isReferenceable = (token: CharToken): boolean => {
     return canBeReferenced(codePoint);
 };
 
-const isEdgeSpaceToken = (token: InlineToken | undefined): token is CharToken =>
-    token?.kind === 'char' && isMarkdownSpace(token.char);
+/** Whether a reader strips the character at the edge of a line: markdown-it trims it with `String.prototype.trim`. */
+const isTrimmedToken = (token: InlineToken | undefined): token is CharToken =>
+    token?.kind === 'char' && token.char.trim() === '';
 
-const encodeEdgesOf = (line: readonly InlineToken[]): void => {
-    for (const token of line) {
-        if (!isEdgeSpaceToken(token)) {
+// A trimmed character no reference can spell stays as it is: nothing makes it survive.
+const encodeTrimmedRun = (run: readonly InlineToken[]): void => {
+    for (const token of run) {
+        if (!isTrimmedToken(token)) {
             break;
         }
-        token.entity = true;
-    }
-
-    for (let index = line.length - 1; index >= 0; index--) {
-        const token = line[index];
-        if (!isEdgeSpaceToken(token)) {
-            break;
+        if (isReferenceable(token)) {
+            token.entity = true;
         }
-        token.entity = true;
     }
 };
 
-/** Marks the spaces and tabs at the start and end of every line as a reference, as a reader strips them otherwise. */
+const encodeEdgesOf = (line: readonly InlineToken[]): void => {
+    encodeTrimmedRun(line);
+    encodeTrimmedRun([...line].reverse());
+};
+
+/** Marks the whitespace at the start and end of every line as a reference, as a reader trims it otherwise. */
 export const encodeLineEdges = (tokens: readonly InlineToken[]): void => {
     let lineStart = 0;
     for (const [index, token] of tokens.entries()) {

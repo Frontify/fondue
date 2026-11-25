@@ -4,6 +4,7 @@
 
 import { INLINE_PLACEHOLDER, type RteInlineNode } from '#/core';
 
+import { canonicalOf, sameValue } from './canonical';
 import { isWhitespace } from './escape';
 import { type Tokenize } from './markdownIt';
 import { readInlines, type ReadContext, withoutPlaceholder } from './read';
@@ -14,8 +15,8 @@ type Path = readonly number[];
 export type RunMark = {
     name: string;
     value: unknown;
-    /** Where the mark starts in the document, and empty for what is read back. */
-    path: Path;
+    /** Where each text the mark covers is in the document, and empty for what is read back. */
+    paths: readonly Path[];
 };
 
 /**
@@ -37,21 +38,7 @@ const NO_MARKS: readonly RunMark[] = [];
 
 const NO_PATH: Path = [];
 
-/** The value with its keys in order at every depth, so two equal values give the same JSON. */
-const canonicalOf = (value: unknown): unknown => {
-    if (Array.isArray(value)) {
-        return value.map((item) => canonicalOf(item));
-    }
-    if (typeof value === 'object' && value !== null) {
-        const entries = Object.entries(value).sort(([left], [right]) => left.localeCompare(right));
-
-        return Object.fromEntries(entries.map(([key, item]) => [key, canonicalOf(item)]));
-    }
-
-    return value;
-};
-
-const sameValue = (left: unknown, right: unknown): boolean => JSON.stringify(left) === JSON.stringify(right);
+const NO_PATHS: readonly Path[] = [];
 
 const sameMark = (left: RunMark, right: RunMark): boolean =>
     left.name === right.name && sameValue(left.value, right.value);
@@ -61,19 +48,19 @@ const sameMarks = (left: readonly RunMark[], right: readonly RunMark[]): boolean
 
 const canonicalMarksOf = (marks: readonly RunMark[]): RunMark[] =>
     marks
-        .map(({ name, value, path }) => {
+        .map(({ name, value, paths }) => {
             if (typeof value === 'object' && value !== null) {
-                return { name, value: canonicalOf(value), path };
+                return { name, value: canonicalOf(value), paths };
             }
 
-            return { name, value: {}, path };
+            return { name, value: {}, paths };
         })
         .sort((left, right) => left.name.localeCompare(right.name));
 
 export const addTextRun = (runs: Run[], text: string, marks: readonly RunMark[]): void => {
     const carried = canonicalMarksOf(marks);
     for (const [stretch] of text.matchAll(STRETCH)) {
-        let stretchMarks = carried;
+        let stretchMarks: readonly RunMark[] = carried;
         if (isWhitespace(stretch.charAt(0))) {
             stretchMarks = NO_MARKS;
         }
@@ -105,7 +92,7 @@ const runsOfNodes = (nodes: readonly RteInlineNode[]): Run[] => {
         addTextRun(
             runs,
             text,
-            Object.entries(stored).map(([name, value]) => ({ name, value, path: NO_PATH })),
+            Object.entries(stored).map(([name, value]) => ({ name, value, paths: NO_PATHS })),
         );
     }
 
@@ -210,7 +197,9 @@ const lostOf = (reference: readonly Run[], read: readonly Run[]): Lost[] => {
 
         for (const mark of run.marks) {
             if (!carriesMark(readPositions[index], mark)) {
-                report(mark.name, mark.path);
+                for (const path of mark.paths) {
+                    report(mark.name, path);
+                }
             }
         }
     }

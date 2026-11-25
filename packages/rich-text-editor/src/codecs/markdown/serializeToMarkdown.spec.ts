@@ -162,7 +162,7 @@ describe('serializeToMarkdown whitespace-only text', () => {
         };
 
         expect(serializeToMarkdown(document, OPTIONS)).toEqual({
-            markdown: ' ',
+            markdown: '&#xA0;',
             losses: [{ path: [0], type: 'paragraph' }],
         });
     });
@@ -235,6 +235,207 @@ describe('serializeToMarkdown with nodes a host may send malformed', () => {
                 { path: [1, 0], type: 'unknown' },
             ],
         });
+    });
+});
+
+describe('serializeToMarkdown with a document or a block a host may send malformed', () => {
+    it.each([
+        null,
+        undefined,
+        5,
+        'text',
+        [],
+        { version: 1 },
+        { version: 1, blocks: 'text' },
+        { version: 1, blocks: {} },
+    ])('writes nothing and reports the document for %j', (document) => {
+        expect(serializeToMarkdown(document as unknown as RteDocumentOf, OPTIONS)).toEqual({
+            markdown: '',
+            losses: [{ path: [], type: 'document' }],
+        });
+    });
+
+    it('reports a block whose children are not an array at its path, and writes it empty', () => {
+        const document = {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'paragraph', children: 'text' },
+                { type: 'weird', children: null },
+            ],
+        } as unknown as RteDocumentOf;
+
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({
+            markdown: 'a\n\n&nbsp;',
+            losses: [
+                { path: [1], type: 'paragraph' },
+                { path: [2], type: 'weird' },
+            ],
+        });
+    });
+
+    it('reports a list with no items at its path', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'bulletList', children: [] },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({
+            markdown: 'a',
+            losses: [{ path: [1], type: 'bulletList' }],
+        });
+    });
+
+    it('reports the block nested deeper than the limit and does not descend into it', () => {
+        const DEPTH = 1000;
+        let block: unknown = { type: 'paragraph', children: [{ text: 'deep' }] };
+        for (let level = 0; level < DEPTH; level++) {
+            block = { type: 'wrapper', children: [block] };
+        }
+        const document = { version: 1, blocks: [block] } as unknown as RteDocumentOf;
+
+        const { markdown, losses } = serializeToMarkdown(document, OPTIONS);
+
+        expect(markdown).toBe('');
+        expect(losses).toHaveLength(101);
+        expect(losses[losses.length - 1]).toEqual({ path: Array.from({ length: 101 }, () => 0), type: 'wrapper' });
+    });
+
+    it('reports a mark in a mark value nested far deeper than the limit and does not throw', () => {
+        const DEPTH = 100_000;
+        let value: unknown = {};
+        for (let level = 0; level < DEPTH; level++) {
+            value = { value };
+        }
+        const document = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a', bold: value }] }],
+        } as unknown as RteDocumentOf;
+
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({
+            markdown: '**a**',
+            losses: [{ path: [0, 0], type: 'bold' }],
+        });
+    });
+});
+
+describe('serializeToMarkdown with neighbouring text nodes sharing a mark value nested far deeper than the limit', () => {
+    it('does not throw and reports the mark at both text nodes', () => {
+        const DEPTH = 100_000;
+        let value: unknown = {};
+        for (let level = 0; level < DEPTH; level++) {
+            value = { value };
+        }
+        const document = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'a', bold: value },
+                        { text: 'b', bold: value },
+                    ],
+                },
+            ],
+        } as unknown as RteDocumentOf;
+
+        const { losses } = serializeToMarkdown(document, OPTIONS);
+
+        expect(losses).toEqual([
+            { path: [0, 0], type: 'bold' },
+            { path: [0, 1], type: 'bold' },
+        ]);
+    });
+});
+
+describe('serializeToMarkdown with a form that returns nothing', () => {
+    const returnsNothing = () => undefined as unknown as null;
+
+    it('keeps the text of a block whose write returns undefined and reports the block', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a' }] }],
+        };
+
+        expect(
+            serializeToMarkdown(document, {
+                plugins: defaultContent,
+                overrides: { blocks: { paragraph: { read: [], write: returnsNothing } } },
+            }),
+        ).toEqual({ markdown: 'a', losses: [{ path: [0], type: 'paragraph' }] });
+    });
+
+    it('keeps the text of a mark whose write returns undefined and reports the mark', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a' }, { text: 'b', bold: true }] }],
+        };
+
+        expect(
+            serializeToMarkdown(document, {
+                plugins: defaultContent,
+                overrides: { marks: { bold: { read: [{ token: 'strong_open' }], write: returnsNothing } } },
+            }),
+        ).toEqual({ markdown: 'ab', losses: [{ path: [0, 1], type: 'bold' }] });
+    });
+
+    it('writes nothing for an inline whose write returns undefined and reports the inline', () => {
+        const document: RteDocumentWith<{ inline: { type: 'mention'; id: string } }> = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'a' }, { type: 'mention', id: '1' }, { text: 'b' }],
+                },
+            ],
+        };
+
+        expect(
+            serializeToMarkdown(document, {
+                plugins: [...defaultContent, mentionContent()],
+                overrides: { inlines: { mention: { read: [], write: returnsNothing } } },
+            }),
+        ).toEqual({ markdown: 'ab', losses: [{ path: [0, 1], type: 'mention' }] });
+    });
+});
+
+describe('serializeToMarkdown losses of a mark across text nodes', () => {
+    const UNSAFE_LINK = { href: 'javascript:alert(1)' };
+
+    it('reports a mark with no safe write at every text node it covers', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'a', link: UNSAFE_LINK }, { text: 'b', link: UNSAFE_LINK }, { text: 'c' }],
+                },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({
+            markdown: 'abc',
+            losses: [
+                { path: [0, 0], type: 'link' },
+                { path: [0, 1], type: 'link' },
+            ],
+        });
+    });
+});
+
+describe('serializeToMarkdown reports a node once', () => {
+    it('reports the type of a block with no form once when its text does not read back either', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'sampleBlock', children: [{ text: 'a\u000B' }] }],
+        };
+
+        const { losses } = serializeToMarkdown(document, { plugins: [...defaultContent, sampleContent] });
+
+        expect(losses).toEqual([{ path: [0], type: 'sampleBlock' }]);
     });
 });
 
@@ -579,6 +780,23 @@ describe('serializeToMarkdown text that does not read back', () => {
             markdown: 'a++b++',
             losses: [{ path: [0, 1], type: 'italic' }],
         });
+    });
+
+    it('reports a mark that does not read back at every text node it covers', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'a', italic: true }, { text: 'b', italic: true }, { text: 'c' }],
+                },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, ITALIC_AS_PLUSES).losses).toEqual([
+            { path: [0, 0], type: 'italic' },
+            { path: [0, 1], type: 'italic' },
+        ]);
     });
 
     it('reports the inline element when the block holds no mark and its Markdown does not read back', () => {
