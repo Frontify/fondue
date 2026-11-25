@@ -42,7 +42,7 @@ const bundleInputs = async (exportLine: string): Promise<string[]> => {
 };
 
 describe('validateDocument, a valid document', () => {
-    it('accepts every kind the shipped plugins write', () => {
+    it('accepts paragraphs, lists, tables, column breaks, marks and mentions', () => {
         const document = {
             version: 1,
             blocks: [
@@ -370,7 +370,7 @@ describe('validateDocument, on hostile input', () => {
         expect(validateDocument({ version: 1, blocks: [block, block] }).valid).toBe(true);
     });
 
-    it('returns promptly on subtrees shared at every level', () => {
+    it('validates subtrees shared at every level', () => {
         const SHARED_LEVELS = 40;
         let node: { type: string; children: unknown[] } = { type: 'p', children: [] };
         for (let level = 0; level < SHARED_LEVELS; level++) {

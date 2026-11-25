@@ -2,7 +2,6 @@
 
 // Whether a stored value has the shape of a document, read off its JSON alone.
 // No DOM, no engine, so it runs on a server beside the stored value.
-// Each node is classified by its own shape, never by its siblings, and walked with a stack so depth cannot overflow.
 
 import { type RteDocumentOf } from './document';
 import { DOCUMENT_VERSION } from './vocabulary';
@@ -10,17 +9,20 @@ import { DOCUMENT_VERSION } from './vocabulary';
 /** One structural problem in a stored value. */
 export type RteDocumentIssue = {
     /**
-     * What is wrong with the value at `path`: it is not an object, a block or inline lacks a string `type`,
-     * a list is not an array, a text node's `text` is not a string (or it also has a `type`),
-     * the document `version` is not the one this package reads,
-     * or a node contains itself, which only an in-memory value can do.
+     * What is wrong with the value at `path`:
+     * - `not-an-object`: the value is not an object.
+     * - `unsupported-version`: the `version` is not 1.
+     * - `not-an-array`: `blocks` or a node's `children` is not an array.
+     * - `missing-type`: a node has no string `type` (a text node directly in `blocks` reports this too).
+     * - `malformed-text`: a text node's `text` is not a string, or it also has a `type`.
+     * - `cycle`: a node contains itself, which only an in-memory value can do.
      */
     reason: 'not-an-object' | 'unsupported-version' | 'not-an-array' | 'missing-type' | 'malformed-text' | 'cycle';
     /** The offending value as an RFC 6901 JSON Pointer: `''` for the root, `/blocks/0/children/2` deeper. */
     path: string;
 };
 
-/** The outcome of `validateDocument`: the document, typed, or every issue found. */
+/** The outcome of `validateDocument`: the document, typed, or the first issues found, at most 100. */
 export type RteDocumentValidation =
     | { valid: true; document: RteDocumentOf }
     | { valid: false; issues: RteDocumentIssue[] };
@@ -64,7 +66,6 @@ type CheckNodeParams = {
 };
 
 type NodeChildren = {
-    /** The node itself, which holds the children. */
     node: Record<string, unknown>;
     childrenPath: string;
     children: unknown[];
@@ -176,7 +177,7 @@ const validateBlocks = (blocks: unknown[], blocksPath: string, issues: RteDocume
  * Checks a stored value's structure, without the editor, the DOM or ProseMirror, so it runs in Node.
  * Unknown block, inline and mark types and extra keys pass, because the editor keeps them.
  * Every node with a `type` reserves `children` for an array and never carries `text`, as the format's text nodes never carry `type`.
- * Reports at most `MAX_ISSUES` issues, the first ones in document order.
+ * Reports at most 100 issues, the first ones in document order; a repeated node's issues are reported at every path.
  * Never throws on parsed JSON, however deeply nested.
  *
  * @example
