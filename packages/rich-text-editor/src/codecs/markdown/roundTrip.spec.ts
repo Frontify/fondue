@@ -2,12 +2,12 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type RteDocument, type RteDocumentWith } from '../documentFormat';
-import { bulletListContent, defaultContent } from '../plugins';
+import { type RteDocument, type RteDocumentWith } from '../../documentFormat';
+import { bulletListContent, defaultContent } from '../../plugins';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
 
-import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from './index';
+import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
 type RoundTripCase = {
     name: string;

@@ -28,9 +28,9 @@
             "types": "./dist/plugins.d.ts",
             "import": "./dist/plugins.es.js"
         },
-        "./markdown": {
-            "types": "./dist/markdown.d.ts",
-            "import": "./dist/markdown.es.js"
+        "./codecs": {
+            "types": "./dist/codecs.d.ts",
+            "import": "./dist/codecs.es.js"
         },
         "./styles": "./dist/style.css"
     },

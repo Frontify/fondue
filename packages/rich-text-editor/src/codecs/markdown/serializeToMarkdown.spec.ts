@@ -2,13 +2,13 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { defineBlock, defineContent, defineMark, type RteDocumentOf } from '../core';
-import { type RteDocument } from '../documentFormat';
-import { columnBreakContent, defaultContent, mentionContent } from '../plugins';
+import { defineBlock, defineContent, defineMark, type RteDocumentOf } from '../../core';
+import { type RteDocument } from '../../documentFormat';
+import { columnBreakContent, defaultContent, mentionContent } from '../../plugins';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
 
-import { type MarkdownOptions, serializeToMarkdown } from './index';
+import { type MarkdownOptions, serializeToMarkdown } from '../index';
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
 

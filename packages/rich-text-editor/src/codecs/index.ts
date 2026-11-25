@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// The `@frontify/fondue-rich-text-editor/markdown` package entry: every export here is public API.
+// The `@frontify/fondue-rich-text-editor/codecs` package entry: every export here is public API.
 // It imports no ProseMirror, React or editor code, so it runs in Node with no DOM.
 
 import { buildContentRegistry, type RteBlockNode, type RteContent, type RtePlugin } from '#/core';
 import { type RteBlock, type RteDocument } from '#/documentFormat';
 
-import { buildForms, type MarkdownOverrides } from './forms';
-import { readDocument } from './read';
-import { type MarkdownLoss, writeDocument } from './write';
+import { buildForms, type MarkdownOverrides } from './markdown/forms';
+import { readDocument } from './markdown/read';
+import { type MarkdownLoss, writeDocument } from './markdown/write';
 
 export type { MarkdownLoss, MarkdownOverrides };
 

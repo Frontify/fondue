@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defaultContent, mentionContent } from '../plugins';
+import { defaultContent, mentionContent } from '../../plugins';
 
-import { type MarkdownOptions } from './index';
+import { type MarkdownOptions } from '../index';
 
 /** A mention written as `@[user:<id>]`, the way a host with its own Markdown syntax would override the default. */
 export const mentionOverrideOptions: MarkdownOptions = {

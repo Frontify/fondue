@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 
 const PACKAGE_ROOT = fileURLToPath(new URL('../..', import.meta.url));
 const ROOT_ENTRY = `export * from './src/index.ts';`;
-const MARKDOWN_ENTRY = `export * from './src/markdown/index.ts';`;
+const CODECS_ENTRY = `export * from './src/codecs/index.ts';`;
 const MARKDOWN_IT = /node_modules\/markdown-it\//;
 const PROSEMIRROR = /node_modules\/prosemirror-/;
 const REACT = /node_modules\/react(-dom)?\//;
@@ -56,19 +56,19 @@ describe('the bundles', () => {
 
     // Proves the matchers can match, so the checks below cannot pass by matching nothing
     it('bundles markdown-it', { timeout: BUNDLE_TIMEOUT }, async () => {
-        const inputs = await bundleInputs(MARKDOWN_ENTRY, { external: [] });
+        const inputs = await bundleInputs(CODECS_ENTRY, { external: [] });
 
         expect(inputs.filter((path) => MARKDOWN_IT.test(path)).length).toBeGreaterThan(0);
     });
 
     it('bundles without ProseMirror', { timeout: BUNDLE_TIMEOUT }, async () => {
-        const inputs = await bundleInputs(MARKDOWN_ENTRY, { external: [] });
+        const inputs = await bundleInputs(CODECS_ENTRY, { external: [] });
 
         expect(inputs.filter((path) => PROSEMIRROR.test(path))).toEqual([]);
     });
 
     it('bundles without React or the editor', { timeout: BUNDLE_TIMEOUT }, async () => {
-        const inputs = await bundleInputs(MARKDOWN_ENTRY, { external: [] });
+        const inputs = await bundleInputs(CODECS_ENTRY, { external: [] });
 
         expect(inputs.filter((path) => REACT.test(path) || EDITOR_LAYER.test(path))).toEqual([]);
     });

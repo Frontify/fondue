@@ -109,7 +109,7 @@ export default defineConfig({
             entry: {
                 index: './src/index.ts',
                 plugins: './src/plugins/index.ts',
-                markdown: './src/markdown/index.ts',
+                codecs: './src/codecs/index.ts',
             },
             fileName: (format: string) => `[name].${format}.js`,
             formats: ['es'],

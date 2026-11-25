@@ -1,5 +1,5 @@
 {
     "exclude": ["node_modules", "dist", "**/*.stories.tsx"],
     "extends": "./tsconfig.json",
-    "include": ["src/subpackages/rich-text-editor-markdown.ts", "src/global.d.ts"]
+    "include": ["src/subpackages/rich-text-editor-codecs.ts", "src/global.d.ts"]
 }

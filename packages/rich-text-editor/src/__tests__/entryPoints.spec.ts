@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 const PACKAGE_ROOT = resolve(__dirname, '../..');
 const ROOT_ENTRY = resolve(PACKAGE_ROOT, 'src/index.ts');
 const PLUGINS_ENTRY = resolve(PACKAGE_ROOT, 'src/plugins/index.ts');
-const MARKDOWN_ENTRY = resolve(PACKAGE_ROOT, 'src/markdown/index.ts');
+const CODECS_ENTRY = resolve(PACKAGE_ROOT, 'src/codecs/index.ts');
 
 const readCompilerOptions = (): ts.CompilerOptions => {
     const parsed = ts.getParsedCommandLineOfConfigFile(
@@ -43,17 +43,17 @@ const exportNames = (program: ts.Program, entry: string): string[] => {
 
 describe('package entries', () => {
     it('export each name from exactly one entry', () => {
-        const program = ts.createProgram([ROOT_ENTRY, PLUGINS_ENTRY, MARKDOWN_ENTRY], readCompilerOptions());
+        const program = ts.createProgram([ROOT_ENTRY, PLUGINS_ENTRY, CODECS_ENTRY], readCompilerOptions());
         const rootNames = exportNames(program, ROOT_ENTRY);
         const pluginNames = exportNames(program, PLUGINS_ENTRY);
-        const markdownNames = exportNames(program, MARKDOWN_ENTRY);
+        const codecsNames = exportNames(program, CODECS_ENTRY);
 
         expect(rootNames).not.toHaveLength(0);
         expect(pluginNames).not.toHaveLength(0);
-        expect(markdownNames).not.toHaveLength(0);
+        expect(codecsNames).not.toHaveLength(0);
 
         const exportCounts = new Map<string, number>();
-        for (const name of [...rootNames, ...pluginNames, ...markdownNames]) {
+        for (const name of [...rootNames, ...pluginNames, ...codecsNames]) {
             exportCounts.set(name, (exportCounts.get(name) ?? 0) + 1);
         }
         const sharedNames = [...exportCounts].filter(([, count]) => count > 1).map(([name]) => name);

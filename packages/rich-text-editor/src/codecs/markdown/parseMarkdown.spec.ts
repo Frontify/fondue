@@ -2,11 +2,11 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { bulletListContent, defaultContent, mentionContent } from '../plugins';
+import { bulletListContent, defaultContent, mentionContent } from '../../plugins';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
 
-import { type MarkdownOptions, parseMarkdown } from './index';
+import { type MarkdownOptions, parseMarkdown } from '../index';
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
 
