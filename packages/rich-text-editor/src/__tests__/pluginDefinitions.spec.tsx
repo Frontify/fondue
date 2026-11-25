@@ -15,7 +15,7 @@ import {
     type RtePlugin,
     type ToolbarItemProps,
 } from '../core';
-import { RichTextRenderer, serializeToHtml } from '../index';
+import { parseHtml, RichTextRenderer, type RteDocument, serializeToHtml } from '../index';
 import { enUS, ENGLISH } from '../locales/en-US';
 import {
     blurOnBreakPlugin,
@@ -23,6 +23,7 @@ import {
     bulletListPlugin,
     columnBreakPlugin,
     defaultPlugins,
+    horizontalRulePlugin,
     mentionPlugin,
     numberedListPlugin,
     resetFormattingPlugin,
@@ -30,6 +31,9 @@ import {
 } from '../plugins';
 import { searchIn } from '../plugins/Mention/Mention';
 import { labelContextOf, resolveLabel, translatorFor } from '../ui/translation';
+
+/** An `<hr>` start tag, with or without attributes and self-closing slash. */
+const HR_ELEMENT = /<hr[\s/>]/;
 
 /**
  * The plugin definitions that hold behaviour of their own — what they declare,
@@ -288,6 +292,26 @@ describe('columnBreakPlugin', () => {
 
         expect(html).toContain('role="separator"');
         expect(html).toContain('aria-label="Column break"');
+    });
+});
+
+describe('horizontalRulePlugin', () => {
+    const plugins = [horizontalRulePlugin()];
+    const document: RteDocument = {
+        version: 1,
+        blocks: [
+            { type: 'paragraph', children: [{ text: 'a' }] },
+            { type: 'horizontalRule' },
+            { type: 'paragraph', children: [{ text: 'b' }] },
+        ],
+    };
+
+    it('writes a horizontal rule block as an hr', () => {
+        expect(serializeToHtml(document, { plugins, wrap: false })).toMatch(HR_ELEMENT);
+    });
+
+    it('reads an hr between two paragraphs as a horizontal rule block', () => {
+        expect(parseHtml('<p>a</p><hr><p>b</p>', { plugins })).toEqual(document);
     });
 });
 
