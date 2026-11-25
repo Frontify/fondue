@@ -18,6 +18,7 @@ import {
 } from '#/core';
 
 import { MAX_DEPTH, sameValue } from './canonical';
+import { EMPTY_BLOCK_ENTITY } from './emptyBlock';
 import { entityOf, escapeClosingHashes, escapeText, escapeTrailingBang, type TextPosition } from './escape';
 import { fixFlanking, isEmphasisDelimiter } from './flanking';
 import { type MarkdownForms } from './forms';
@@ -28,7 +29,6 @@ import {
     type InlineToken,
     isSpaceToken,
 } from './inlineTokens';
-import { EMPTY_BLOCK_ENTITY } from './emptyBlock';
 import { type Tokenize } from './markdownIt';
 import {
     addInlineRun,
@@ -65,7 +65,6 @@ type WriteState = WriteContext & { losses: MarkdownLoss[] };
 type NodeValue = Record<string, unknown>;
 
 type Path = readonly number[];
-
 
 const LINE_SEPARATOR = '\n';
 const CARRIAGE_RETURN = '\r';
@@ -313,6 +312,15 @@ const piecesOf = (inlines: readonly unknown[], parentPath: Path, lineMode: LineM
 const isDropped = ({ mark, path }: OpenMark, dropped: readonly MarkdownLoss[]): boolean =>
     dropped.some((loss) => loss.type === mark.name && samePath(loss.path, path));
 
+/** The text an inline element wrote when its form writes plain text, which reads back as text and not as the element. */
+const plainTextOutputOf = (output: MarkdownInlineOutput): string | null => {
+    if (output.kind === 'text') {
+        return output.text;
+    }
+
+    return null;
+};
+
 const addRuns = (
     runs: Run[],
     pieces: readonly Piece[],
@@ -325,7 +333,7 @@ const addRuns = (
                 addTextRun(runs, piece.text, marks);
                 break;
             case 'output':
-                addInlineRun(runs, piece.type, piece.value, piece.path);
+                addInlineRun(runs, piece.type, piece.value, piece.path, plainTextOutputOf(piece.output));
                 break;
             case 'mark':
                 if (isDropped(piece, dropped)) {

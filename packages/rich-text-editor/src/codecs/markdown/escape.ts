@@ -25,6 +25,9 @@ const SCHEME_SEPARATOR = /[:/](?=\/)/g;
 /** The `.` after `www` in any case, which starts an address a reader links. */
 const WWW_DOT = /(www)(\.)/gi;
 
+/** An `@` after a character of an email's local part, which makes an address a reader links. */
+const EMAIL_AT = /(?<=[A-Za-z0-9._+-])@/g;
+
 /** A `!` that ends the text, which would make a link written right after it an image. */
 const TRAILING_BANG = /!$/;
 
@@ -52,6 +55,7 @@ export const escapeText = (text: string, position: TextPosition): string => {
         .replaceAll(ESCAPED_CHARACTERS, BACKSLASH_MATCH)
         .replaceAll(SCHEME_SEPARATOR, BACKSLASH_MATCH)
         .replaceAll(WWW_DOT, BACKSLASH_SECOND_GROUP)
+        .replaceAll(EMAIL_AT, BACKSLASH_MATCH)
         .replaceAll(MARKDOWN_ENTITY_START, ESCAPED_ENTITY_START);
 
     switch (position) {

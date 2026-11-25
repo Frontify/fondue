@@ -20,13 +20,15 @@ export type RunMark = {
 };
 
 /**
- * Text with the marks it carries, or an inline element with its type and values. Whitespace carries no marks, and
- * neighbouring text with the same marks is one run, so two sides compare equal when they read the same.
+ * Text with the marks it carries, or an inline element with its type and values, and the text its form wrote when
+ * that is plain text. Whitespace carries no marks, and neighbouring text with the same marks is one run, so two
+ * sides compare equal when they read the same.
  */
 export type Run =
     | { kind: 'text'; text: string; marks: readonly RunMark[] }
-    | { kind: 'inline'; type: string; value: unknown; path: Path };
+    | { kind: 'inline'; type: string; value: unknown; path: Path; written: string | null };
 
+type InlineRun = Extract<Run, { kind: 'inline' }>;
 
 /** A stretch of whitespace, or of anything else. */
 const STRETCH = /\s+|\S+/gu;
@@ -72,8 +74,8 @@ export const addTextRun = (runs: Run[], text: string, marks: readonly RunMark[])
     }
 };
 
-export const addInlineRun = (runs: Run[], type: string, value: unknown, path: Path): void => {
-    runs.push({ kind: 'inline', type, value: canonicalOf(value), path });
+export const addInlineRun = (runs: Run[], type: string, value: unknown, path: Path, written: string | null): void => {
+    runs.push({ kind: 'inline', type, value: canonicalOf(value), path, written });
 };
 
 const runsOfNodes = (nodes: readonly RteInlineNode[]): Run[] => {
@@ -81,7 +83,7 @@ const runsOfNodes = (nodes: readonly RteInlineNode[]): Run[] => {
     for (const node of nodes) {
         if (node.text === undefined) {
             const { type, ...value } = node;
-            addInlineRun(runs, type, value, NO_PATH);
+            addInlineRun(runs, type, value, NO_PATH, null);
             continue;
         }
 
@@ -118,19 +120,28 @@ export type Lost = { type: string; path: Path };
 /** Either the Markdown reads back as the document, or it differs, with what is known to be lost: none when that cannot be told. */
 export type ReadBackResult = { kind: 'same' } | { kind: 'differs'; lost: readonly Lost[] };
 
-const plainTextOf = (runs: readonly Run[]): string =>
-    runs.map((run) => (run.kind === 'text' ? run.text : INLINE_PLACEHOLDER)).join('');
+/** What an inline element stands for in the plain text of its runs. */
+type StandIn = (run: InlineRun) => string;
+
+const placeholder: StandIn = () => INLINE_PLACEHOLDER;
+
+const writtenTextOrPlaceholder: StandIn = ({ written }) => written ?? INLINE_PLACEHOLDER;
+
+const plainTextOf = (runs: readonly Run[], standIn: StandIn): string =>
+    runs.map((run) => (run.kind === 'text' ? run.text : standIn(run))).join('');
 
 /** The run each position of the plain text belongs to. */
-const runsByPosition = (runs: readonly Run[]): Run[] => {
+const runsByPosition = (runs: readonly Run[], standIn: StandIn): Run[] => {
     const positions: Run[] = [];
     for (const run of runs) {
+        let length = 0;
         if (run.kind === 'inline') {
-            positions.push(run);
-            continue;
+            length = standIn(run).length;
+        } else {
+            length = run.text.length;
         }
 
-        for (let index = 0; index < run.text.length; index++) {
+        for (let index = 0; index < length; index++) {
             positions.push(run);
         }
     }
@@ -159,16 +170,22 @@ const sameRuns = (left: readonly Run[], right: readonly Run[]): boolean =>
 
 /**
  * What the document holds that the Markdown does not read back, by position: a mark that is missing or has another
- * value on a character that is not whitespace, and an inline element that is not the one read. None when the plain
- * texts differ, as the two sides cannot be lined up then.
+ * value on a character that is not whitespace, and an inline element that is not the one read. When the plain texts
+ * differ, an inline element that wrote plain text stands for that text, so it is lost by itself and the marks around it
+ * still line up. None when they differ still, as the two sides cannot be lined up then.
  */
 const lostOf = (reference: readonly Run[], read: readonly Run[]): Lost[] => {
-    const plain = plainTextOf(reference);
-    if (plain !== plainTextOf(read)) {
+    let standIn = placeholder;
+    if (plainTextOf(reference, placeholder) !== plainTextOf(read, placeholder)) {
+        standIn = writtenTextOrPlaceholder;
+    }
+
+    const plain = plainTextOf(reference, standIn);
+    if (plain !== plainTextOf(read, standIn)) {
         return [];
     }
 
-    const readPositions = runsByPosition(read);
+    const readPositions = runsByPosition(read, standIn);
     const lost: Lost[] = [];
     const reported = new Set<string>();
     const report = (type: string, path: Path): void => {
@@ -179,7 +196,7 @@ const lostOf = (reference: readonly Run[], read: readonly Run[]): Lost[] => {
         }
     };
 
-    for (const [index, run] of runsByPosition(reference).entries()) {
+    for (const [index, run] of runsByPosition(reference, standIn).entries()) {
         if (run.kind === 'inline') {
             const read = readPositions[index];
             if (read === undefined || !sameRun(run, read)) {
