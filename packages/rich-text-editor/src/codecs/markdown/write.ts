@@ -481,6 +481,9 @@ const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, cont
     tokens.push(delimiterOf(delimiters.open, true, pair, mark.form));
     appendAll(tokens, inner.slice(start, end));
     tokens.push(delimiterOf(delimiters.close, false, pair, mark.form));
+    if (written.suffix !== undefined && written.suffix !== '') {
+        tokens.push({ kind: 'delimiter', text: written.suffix, open: false, pair, emphasis: false });
+    }
     appendAll(tokens, inner.slice(end));
 };
 

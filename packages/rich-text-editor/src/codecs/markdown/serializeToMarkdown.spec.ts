@@ -698,31 +698,38 @@ describe('serializeToMarkdown mark suffixes', () => {
                     type: 'paragraph',
                     children: [
                         { text: 'a', italic: true },
-                        { text: 'a', bold: true, italic: true },
+                        { text: 'c', bold: true, italic: true },
                         { text: 'b', bold: true },
                     ],
                 },
             ],
         };
 
-        const { markdown } = serializeToMarkdown(document, {
-            plugins: defaultContent,
-            overrides: {
-                marks: {
-                    italic: {
-                        read: [
-                            {
-                                token: 'em_open',
-                                suffix: { pattern: /\{\.note\}/, value: (value) => value },
+        expect(
+            serializeToMarkdown(document, {
+                plugins: defaultContent,
+                overrides: {
+                    marks: {
+                        italic: {
+                            read: [
+                                {
+                                    token: 'em_open',
+                                    suffix: { pattern: /\{\.note\}/, value: (value) => value },
+                                },
+                            ],
+                            // Only the second italic has a suffix, so the first still touches the bold that follows it.
+                            write: (_value, text) => {
+                                if (text === 'c') {
+                                    return { open: '*', close: '*', suffix: '{.note}' };
+                                }
+
+                                return { open: '*', close: '*' };
                             },
-                        ],
-                        write: () => ({ open: '*', close: '*', suffix: '{.note}' }),
+                        },
                     },
                 },
-            },
-        });
-
-        expect(markdown).toContain('_a_{.note}');
+            }),
+        ).toEqual({ markdown: '_a_**_c_{.note}b**', losses: [] });
     });
 });
 

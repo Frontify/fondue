@@ -11,7 +11,9 @@ import {
     type MarkdownInlineOutput,
     type MarkdownLinePrefix,
     type MarkdownMarkForm,
+    type MarkdownMarkReadRule,
     type MarkdownReadRule,
+    type MarkdownSuffixPattern,
     type MarkdownTextPattern,
     type MarkdownToken,
 } from '#/core';
@@ -27,27 +29,29 @@ type NodeValue = Record<string, unknown>;
 
 type ReadRule = MarkdownReadRule<NodeValue>;
 
+export type MarkRule = MarkdownMarkReadRule<NodeValue>;
+
 type TextRule = MarkdownTextPattern<NodeValue>;
 
-type FormWithRules = { read: readonly (ReadRule | TextRule)[] };
+type FormWithRules<TRule extends ReadRule> = { read: readonly (TRule | TextRule)[] };
 
 /** A node that reads from a token type, and how. */
-type Reader = { name: string; rule: ReadRule };
+type Reader<TRule extends ReadRule> = { name: string; rule: TRule };
 
 /** A node that reads from text matching a pattern. `pattern` is global, so every match in a text is found. */
 export type TextReader = { name: string; pattern: RegExp; value: TextRule['value'] };
 
-/** What a token read as: the node's name, and its value. */
-export type ReadMatch = { name: string; value: NodeValue };
+/** What a token read as: the node's name, its value, and the rule that read it. */
+export type ReadMatch<TRule extends ReadRule = ReadRule> = { name: string; value: NodeValue; rule: TRule };
 
-export type ReadersByToken = ReadonlyMap<string, readonly Reader[]>;
+export type ReadersByToken<TRule extends ReadRule = ReadRule> = ReadonlyMap<string, readonly Reader<TRule>[]>;
 
 export type MarkdownForms = {
     blocks: ReadonlyMap<string, MarkdownBlockForm>;
     marks: ReadonlyMap<string, MarkdownMarkForm>;
     inlines: ReadonlyMap<string, MarkdownInlineForm>;
     blockReaders: ReadersByToken;
-    markReaders: ReadersByToken;
+    markReaders: ReadersByToken<MarkRule>;
     inlineReaders: ReadersByToken;
     /** In registry order, which is the order a pattern wins a tie. */
     textReaders: readonly TextReader[];
@@ -59,7 +63,9 @@ type FormedDefinition<TForm> = { markdown?: TForm };
 
 const GLOBAL_FLAG = 'g';
 
-const isTokenRule = (rule: ReadRule | TextRule): rule is ReadRule => 'token' in rule;
+const STICKY_FLAG = 'y';
+
+const isTokenRule = <TRule extends ReadRule>(rule: TRule | TextRule): rule is TRule => 'token' in rule;
 
 const isRecord = (value: unknown): value is NodeValue =>
     typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -68,7 +74,10 @@ const isLinePrefix = (value: unknown): value is MarkdownLinePrefix =>
     isRecord(value) && typeof value.first === 'string' && (typeof value.rest === 'string' || value.rest === null);
 
 const isDelimiters = (value: unknown): value is MarkdownDelimiters =>
-    isRecord(value) && typeof value.open === 'string' && typeof value.close === 'string';
+    isRecord(value) &&
+    typeof value.open === 'string' &&
+    typeof value.close === 'string' &&
+    (value.suffix === undefined || typeof value.suffix === 'string');
 
 const isInlineOutput = (value: unknown): value is MarkdownInlineOutput => {
     if (!isRecord(value)) {
@@ -112,7 +121,7 @@ const guarded = <TArguments extends unknown[], TResult>(
     };
 };
 
-const hasToken = (rule: unknown): rule is { token: string; value?: unknown } =>
+const hasToken = (rule: unknown): rule is { token: string; value?: unknown; suffix?: unknown } =>
     isRecord(rule) && typeof rule.token === 'string';
 
 const hasPattern = (rule: unknown): rule is { pattern: RegExp; value?: unknown } =>
@@ -130,6 +139,36 @@ const checkedTextRule = ({ pattern, value }: { pattern: RegExp; value?: unknown 
     pattern,
     value: guarded<[match: RegExpExecArray], NodeValue>(value, isRecord),
 });
+
+/** A suffix needs a pattern, which is sticky so it only reads at the start of the text after the mark. */
+const checkedSuffix = (suffix: unknown): MarkdownSuffixPattern<NodeValue> | undefined => {
+    if (!hasPattern(suffix)) {
+        return undefined;
+    }
+
+    const { pattern, value } = suffix;
+    const flags = pattern.flags.replace(GLOBAL_FLAG, '').replace(STICKY_FLAG, '');
+
+    return {
+        pattern: new RegExp(pattern.source, `${flags}${STICKY_FLAG}`),
+        value: guarded<[value: NodeValue, match: RegExpExecArray], NodeValue>(value, isRecord),
+    };
+};
+
+const checkedMarkRules = (rules: unknown): MarkRule[] => {
+    if (!Array.isArray(rules)) {
+        return [];
+    }
+
+    const checked: MarkRule[] = [];
+    for (const rule of rules) {
+        if (hasToken(rule)) {
+            checked.push({ ...checkedTokenRule(rule), suffix: checkedSuffix(rule.suffix) });
+        }
+    }
+
+    return checked;
+};
 
 /** The rules that have a token or a pattern, each with a value that never throws or returns a non-object. */
 const checkedReadRules = (rules: unknown): (ReadRule | TextRule)[] => {
@@ -167,7 +206,7 @@ const checkedMarkForm = (form: unknown): MarkdownMarkForm => {
     const { read, write, literal } = formPartsOf(form);
 
     return {
-        read: checkedReadRules(read).filter(isTokenRule),
+        read: checkedMarkRules(read),
         write: guarded(write, isDelimiters),
         literal: literal === true,
     };
@@ -200,8 +239,10 @@ const formsOf = <TForm>(
     return forms;
 };
 
-const readersByToken = (forms: ReadonlyMap<string, FormWithRules>): Map<string, Reader[]> => {
-    const index = new Map<string, Reader[]>();
+const readersByToken = <TRule extends ReadRule>(
+    forms: ReadonlyMap<string, FormWithRules<TRule>>,
+): Map<string, Reader<TRule>[]> => {
+    const index = new Map<string, Reader<TRule>[]>();
     for (const [name, form] of forms) {
         for (const rule of form.read.filter(isTokenRule)) {
             const readers = index.get(rule.token) ?? [];
@@ -255,11 +296,14 @@ const ruleValueOf = (rule: ReadRule, token: MarkdownToken): NodeValue | null => 
 };
 
 /** The first node, in registry order, whose rule reads the token. */
-export const matchToken = (readers: ReadersByToken, token: MarkdownToken): ReadMatch | null => {
+export const matchToken = <TRule extends ReadRule>(
+    readers: ReadersByToken<TRule>,
+    token: MarkdownToken,
+): ReadMatch<TRule> | null => {
     for (const { name, rule } of readers.get(token.type) ?? []) {
         const value = ruleValueOf(rule, token);
         if (value !== null) {
-            return { name, value };
+            return { name, value, rule };
         }
     }
 

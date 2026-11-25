@@ -453,6 +453,18 @@ export type MarkdownToken = {
 /** Reads a token as a node. `value` returns null for a token that is not this node, and the next rule is tried. */
 export type MarkdownReadRule<TValue> = { token: string; value?: (token: MarkdownToken) => TValue | null };
 
+/**
+ * Reads the start of the text right after a mark. The match is taken out of that text, and `value` gives the mark's
+ * new value; null keeps the text and the value.
+ */
+export type MarkdownSuffixPattern<TValue> = {
+    pattern: RegExp;
+    value: (value: TValue, match: RegExpExecArray) => TValue | null;
+};
+
+/** A read rule for a mark, which can also take attributes written right after it, such as `{target="_blank"}`. */
+export type MarkdownMarkReadRule<TValue> = MarkdownReadRule<TValue> & { suffix?: MarkdownSuffixPattern<TValue> };
+
 /** Reads text the writer did not escape as an inline, by pattern. */
 export type MarkdownTextPattern<TValue> = { pattern: RegExp; value: (match: RegExpExecArray) => TValue | null };
 
@@ -463,7 +475,12 @@ export type MarkdownTextPattern<TValue> = { pattern: RegExp; value: (match: RegE
 export type MarkdownLinePrefix = { first: string; rest: string | null };
 
 /** What a mark writes before and after its text. */
-export type MarkdownDelimiters = { open: string; close: string };
+export type MarkdownDelimiters = {
+    open: string;
+    close: string;
+    /** Written as is right after `close`, such as attributes. */
+    suffix?: string;
+};
 
 /** Where an item sits in its list, counted from 0. */
 export type MarkdownListItem = {
@@ -490,7 +507,7 @@ export type MarkdownBlockForm<TValue = Record<string, unknown>> = {
 
 /** How a mark reads from and writes to Markdown. */
 export type MarkdownMarkForm<TValue = Record<string, unknown>> = {
-    read: readonly MarkdownReadRule<TValue>[];
+    read: readonly MarkdownMarkReadRule<TValue>[];
     /** Null: this value has no Markdown form, which is a loss. */
     write: (value: TValue, text: string) => MarkdownDelimiters | null;
     /**

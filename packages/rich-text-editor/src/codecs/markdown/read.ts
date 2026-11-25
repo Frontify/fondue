@@ -17,7 +17,7 @@ import {
 } from '#/core';
 
 import { sameValue } from './canonical';
-import { matchToken, type MarkdownForms, type TextReader } from './forms';
+import { matchToken, type MarkdownForms, type MarkRule, type ReadMatch, type TextReader } from './forms';
 import { type MarkdownTokenNode, tokenize } from './markdownIt';
 
 export type ReadContext = {
@@ -63,6 +63,9 @@ type InlineState = {
 };
 
 type PatternHit = { index: number; length: number; node: RteInlineNode };
+
+/** Where the reader is in its own copy of an inline token stream, so a suffix can be taken out of a later token. */
+type InlineCursor = { tokens: MarkdownTokenNode[]; index: number };
 
 const isTextNode = (node: RteInlineNode): node is RteTextNode => node.text !== undefined;
 
@@ -113,13 +116,59 @@ const storedMarkOf = (value: NodeValue): StoredMarkValue => {
     return value;
 };
 
-const openMark = (token: MarkdownTokenNode, forms: MarkdownForms): OpenMark => {
+/** The index of the token that closes the one at `openIndex`, or past the end when none does. */
+const closingIndexOf = (tokens: readonly MarkdownTokenNode[], openIndex: number): number => {
+    let depth = 0;
+    for (let index = openIndex; index < tokens.length; index++) {
+        depth += tokens[index]?.nesting ?? SELF_CLOSING;
+        if (depth === 0) {
+            return index;
+        }
+    }
+
+    return tokens.length;
+};
+
+/**
+ * The mark's value with the suffix read off the start of the text token at `index`. The match is cut out of the
+ * cursor's copy of that token; a value of null, or no text there, leaves both as they are.
+ */
+const suffixedValueOf = (match: ReadMatch<MarkRule>, cursor: InlineCursor, index: number): NodeValue => {
+    const { suffix } = match.rule;
+    const candidate = cursor.tokens[index];
+    if (suffix === undefined || candidate?.type !== TEXT) {
+        return match.value;
+    }
+
+    suffix.pattern.lastIndex = 0;
+    const found = suffix.pattern.exec(candidate.content);
+    if (found === null || found[0].length === 0) {
+        return match.value;
+    }
+
+    const suffixed = suffix.value(match.value, found);
+    if (suffixed === null) {
+        return match.value;
+    }
+
+    cursor.tokens[index] = { ...candidate, content: candidate.content.slice(found[0].length) };
+
+    return suffixed;
+};
+
+const openMark = (token: MarkdownTokenNode, forms: MarkdownForms, cursor: InlineCursor): OpenMark => {
     const match = matchToken(forms.markReaders, token);
     if (match === null) {
         return { kind: 'ignored' };
     }
 
-    return { kind: 'mark', name: match.name, stored: storedMarkOf(match.value) };
+    if (match.rule.suffix === undefined) {
+        return { kind: 'mark', name: match.name, stored: storedMarkOf(match.value) };
+    }
+
+    const value = suffixedValueOf(match, cursor, closingIndexOf(cursor.tokens, cursor.index) + 1);
+
+    return { kind: 'mark', name: match.name, stored: storedMarkOf(value) };
 };
 
 const patternHitsIn = (text: string, readers: readonly TextReader[]): PatternHit[] => {
@@ -162,7 +211,12 @@ const plainTextOf = (token: MarkdownTokenNode): string => {
 };
 
 /** A token standing alone that is not text: an inline element, a mark on its own content (code), or its content. */
-const readLeaf = (state: InlineState, token: MarkdownTokenNode, forms: MarkdownForms): void => {
+const readLeaf = (
+    state: InlineState,
+    token: MarkdownTokenNode,
+    forms: MarkdownForms,
+    cursor: InlineCursor,
+): void => {
     const inline = matchToken(forms.inlineReaders, token);
     if (inline !== null) {
         state.nodes.push({ type: inline.name, ...inline.value });
@@ -171,14 +225,21 @@ const readLeaf = (state: InlineState, token: MarkdownTokenNode, forms: MarkdownF
 
     const mark = matchToken(forms.markReaders, token);
     if (mark !== null) {
-        addText(state.nodes, token.content, { ...marksOf(state.open), [mark.name]: storedMarkOf(mark.value) });
+        const value = suffixedValueOf(mark, cursor, cursor.index + 1);
+
+        addText(state.nodes, token.content, { ...marksOf(state.open), [mark.name]: storedMarkOf(value) });
         return;
     }
 
     addText(state.nodes, plainTextOf(token), marksOf(state.open));
 };
 
-const readSelfClosing = (state: InlineState, token: MarkdownTokenNode, context: ReadContext): void => {
+const readSelfClosing = (
+    state: InlineState,
+    token: MarkdownTokenNode,
+    context: ReadContext,
+    cursor: InlineCursor,
+): void => {
     switch (token.type) {
         case TEXT:
             readText(state, token.content, context.forms.textReaders);
@@ -188,28 +249,35 @@ const readSelfClosing = (state: InlineState, token: MarkdownTokenNode, context: 
             break;
         case SOFT_BREAK:
             if (context.breaks) {
-                readLeaf(state, { ...token, type: HARD_BREAK }, context.forms);
+                readLeaf(state, { ...token, type: HARD_BREAK }, context.forms, cursor);
             } else {
                 addText(state.nodes, LINE_BREAK_TEXT, marksOf(state.open));
             }
             break;
         default:
-            readLeaf(state, token, context.forms);
+            readLeaf(state, token, context.forms, cursor);
     }
 };
 
 export const readInlines = (tokens: readonly MarkdownTokenNode[], context: ReadContext): RteInlineNode[] => {
     const state: InlineState = { nodes: [], open: [] };
-    for (const token of tokens) {
+    const copy = [...tokens];
+    for (let index = 0; index < copy.length; index++) {
+        const token = copy[index];
+        if (token === undefined) {
+            continue;
+        }
+
+        const cursor: InlineCursor = { tokens: copy, index };
         switch (token.nesting) {
             case OPENING:
-                state.open.push(openMark(token, context.forms));
+                state.open.push(openMark(token, context.forms, cursor));
                 break;
             case CLOSING:
                 state.open.pop();
                 break;
             case SELF_CLOSING:
-                readSelfClosing(state, token, context);
+                readSelfClosing(state, token, context, cursor);
                 break;
         }
     }
