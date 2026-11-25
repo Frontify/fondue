@@ -596,7 +596,8 @@ const writeSegments = (segments: readonly Segment[], state: WriteState): string 
                 atLineStart = false;
                 break;
             case 'break':
-                if (state.breaks) {
+                // A bare newline at a line start would make a blank line, so it is the hard break.
+                if (state.breaks && !atLineStart) {
                     written += LINE_SEPARATOR;
                 } else {
                     written += HARD_BREAK;

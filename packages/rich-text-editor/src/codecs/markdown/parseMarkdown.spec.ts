@@ -217,13 +217,40 @@ describe('parseMarkdown with nothing to read a token by', () => {
         });
     });
 
-    it('reads a code fence as one paragraph per line', () => {
-        expect(parseMarkdown('```\none\ntwo\n```', OPTIONS)).toEqual({
+    it('reads a code fence as one paragraph with its lines joined by breaks', () => {
+        expect(parseMarkdown('```\none\n\ntwo\n```', OPTIONS)).toEqual({
             version: 1,
             blocks: [
-                { type: 'paragraph', children: [{ text: 'one' }] },
-                { type: 'paragraph', children: [{ text: 'two' }] },
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'one' }, { type: 'break' }, { type: 'break' }, { text: 'two' }],
+                },
             ],
+        });
+    });
+
+    it('drops the empty lines at the end of a code fence', () => {
+        expect(parseMarkdown('```\nfoo\n\n```', OPTIONS)).toEqual({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'foo' }] }],
+        });
+    });
+
+    it('reads a code fence of empty lines as the empty document', () => {
+        expect(parseMarkdown('```\n\n\n```', OPTIONS)).toEqual(EMPTY_DOCUMENT);
+    });
+
+    it('reads a code fence holding only a non-breaking space as an empty paragraph', () => {
+        expect(parseMarkdown('```\n\u00A0\n```', OPTIONS)).toEqual({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [] }],
+        });
+    });
+
+    it('reads the lines of a code fence joined by a space when no plugin has a break', () => {
+        expect(parseMarkdown('```\none\ntwo\n```', { plugins: [] })).toEqual({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'one two' }] }],
         });
     });
 
