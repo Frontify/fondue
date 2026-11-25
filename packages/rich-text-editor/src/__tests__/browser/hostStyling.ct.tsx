@@ -35,6 +35,8 @@ import {
     SECTION_A_H1_COLOR,
     SECTION_B_H1_COLOR,
     UNKNOWN_STYLE_DOCUMENT,
+    WRAPPING_LINK_DOCUMENT,
+    WRAPPING_LINK_TEXT,
 } from './hostStylingValues';
 
 // Hosts set the look of each text style with `textStylePlugin({ look })`. Without a
@@ -429,6 +431,44 @@ const FONDUE_LINK_BOX_COMPUTED: Record<string, string> = {
     'border-top-left-radius': '0px',
 };
 
+/** The left and right edge of a box or a line of text, in viewport pixels. */
+type HorizontalSpan = { left: number; right: number };
+
+type LinkSpans = { text: HorizontalSpan[]; box: HorizontalSpan[] };
+
+/** The lines of text a link holds and the fragments of its box, one per line, each top line first. */
+const lineSpansOf = (link: Locator): Promise<LinkSpans> =>
+    link.evaluate((element) => {
+        const range = document.createRange();
+        range.selectNodeContents(element);
+
+        const textLines = new Map<number, HorizontalSpan>();
+        for (const rect of range.getClientRects()) {
+            if (rect.width === 0) {
+                continue;
+            }
+
+            const top = Math.round(rect.top);
+            const line = textLines.get(top);
+            if (line === undefined) {
+                textLines.set(top, { left: rect.left, right: rect.right });
+                continue;
+            }
+
+            line.left = Math.min(line.left, rect.left);
+            line.right = Math.max(line.right, rect.right);
+        }
+
+        const text = [...textLines.entries()].sort(([topA], [topB]) => topA - topB).map(([, line]) => line);
+        const box = [...element.getClientRects()]
+            .sort((a, b) => a.top - b.top)
+            .map((fragment) => ({ left: fragment.left, right: fragment.right }));
+
+        return { text, box };
+    });
+
+const INSET_TOLERANCE_PX = 1;
+
 const HOST_LINK_COMPUTED_LOOK: ComputedLook = {
     ...HOST_COMPUTED_LOOK,
     'text-decoration-line': 'underline',
@@ -559,6 +599,29 @@ test.describe('host styling of body text, quotes and links', () => {
 
             for (const [property, value] of Object.entries(HOST_LINK_BOX_COMPUTED)) {
                 await expect(link).toHaveCSS(property, value);
+            }
+        }
+    });
+
+    test('draws the text link box on each line of a link that wraps', async ({ mount }) => {
+        const component = await mount(<HostLooksPair link={HOST_LINK_BOX_LOOK} value={WRAPPING_LINK_DOCUMENT} />);
+        const boxInset =
+            parseFloat(HOST_LINK_BOX_LOOK.paddingLeft ?? '') + parseFloat(HOST_LINK_BOX_LOOK.borderWidth ?? '');
+
+        for (const surface of SURFACES) {
+            const link = component.getByTestId(surface).getByRole('link', { name: WRAPPING_LINK_TEXT, exact: true });
+            const { text, box } = await lineSpansOf(link);
+
+            expect(box.length).toBeGreaterThanOrEqual(2);
+            expect(text).toHaveLength(box.length);
+            for (const [index, fragment] of box.entries()) {
+                const line = text[index];
+                if (line === undefined) {
+                    throw new Error(`The link has no line of text for box fragment ${index}`);
+                }
+
+                expect(Math.abs(line.left - fragment.left - boxInset)).toBeLessThanOrEqual(INSET_TOLERANCE_PX);
+                expect(Math.abs(fragment.right - line.right - boxInset)).toBeLessThanOrEqual(INSET_TOLERANCE_PX);
             }
         }
     });

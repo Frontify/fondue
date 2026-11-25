@@ -88,6 +88,15 @@ export const BODY_QUOTE_LINK_DOCUMENT: RteDocument = {
     ],
 };
 
+export const WRAPPING_LINK_TEXT =
+    'Read the whole guideline before you change any of the brand colours, type scales or spacing rules, because every team that ships a page depends on the same shared values and a small edit here reaches all of their work';
+
+/** One paragraph that is a single text link, long enough to wrap onto several lines in both surfaces. */
+export const WRAPPING_LINK_DOCUMENT: RteDocument = {
+    version: 1,
+    blocks: [{ type: 'paragraph', children: [{ text: WRAPPING_LINK_TEXT, link: { href: 'https://example.com' } }] }],
+};
+
 export const BUTTON_LINK_TEXT = 'Buy now';
 export const PLAIN_LINK_TEXT = 'Read more';
 

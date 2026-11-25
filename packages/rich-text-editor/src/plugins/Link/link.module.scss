@@ -33,6 +33,10 @@ $border-width: 1px;
         border-width: var(--rte-link-border-width, #{$border-width});
         border-radius: var(--rte-link-border-radius, 0);
         border-style: var(--rte-link-border-style, none);
+
+        // A link that wraps draws its box, padding and border on each line.
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
     }
 
     @include link.underline;
