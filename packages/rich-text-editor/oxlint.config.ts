@@ -435,8 +435,9 @@ export default defineConfig({
                             NO_SERVER_RENDER,
                             NO_ENGINE,
                             {
-                                group: ['#/**', './**', '../**', '!../index', '!../plugins'],
-                                message: 'Stories may only import the package public API (../index, ../plugins).',
+                                group: ['#/**', './**', '../**', '!../index', '!../plugins', '!../codecs'],
+                                message:
+                                    'Stories may only import the package public API (../index, ../plugins, ../codecs).',
                             },
                         ],
                     },
