@@ -44,5 +44,10 @@ export const serializeToHtml = <TBlock extends RteBlockNode = RteBlock>(
 ): string => {
     const registry = buildContentRegistry(plugins);
     const blocks = documentTree(doc, registry, { useComponents: false });
-    return toHtmlString(wrap ? [{ kind: 'html', spec: documentRootSpec(registry), content: blocks }] : blocks);
+
+    if (!wrap) {
+        return toHtmlString(blocks);
+    }
+
+    return toHtmlString([{ kind: 'html', spec: documentRootSpec(registry), content: blocks }]);
 };

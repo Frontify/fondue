@@ -14,7 +14,13 @@ import {
 } from '#/core';
 import { type RteBlock, type RteDocument } from '#/documentFormat';
 
-type AnyNode = RteBlockNode | RteInlineNode;
+const childText = (child: HtmlSpec | string): string => {
+    if (typeof child === 'string') {
+        return child;
+    }
+
+    return specText(child);
+};
 
 /**
  * The text an inline element's markup holds — a mention's `@jane`. A `<br>`
@@ -24,15 +30,20 @@ const specText = (spec: HtmlSpec): string => {
     if (spec.tag === 'br') {
         return '\n';
     }
+
     if (spec.tag === 'img') {
         return spec.attrs?.alt ?? '';
     }
+
     if (typeof spec.children === 'string') {
         return spec.children;
     }
-    return typeof spec.children === 'object'
-        ? spec.children.map((child) => (typeof child === 'string' ? child : specText(child))).join('')
-        : '';
+
+    if (spec.children === undefined || spec.children === true) {
+        return '';
+    }
+
+    return spec.children.map(childText).join('');
 };
 
 /** A text block's runs as one line; an inline no plugin defines has no text to give. */
@@ -42,9 +53,15 @@ const inlineText = (inlines: readonly RteInlineNode[], registry: ContentRegistry
             if (inline.text !== undefined) {
                 return inline.text;
             }
+
             const definition = registry.inlines.get(inline.type);
+            if (definition === undefined) {
+                return '';
+            }
+
             const { type: _type, text: _text, ...value } = inline;
-            return definition ? specText(definition.toHtml(value)) : '';
+
+            return specText(definition.toHtml(value));
         })
         .join('');
 
@@ -57,7 +74,12 @@ const holdsBlocks = (block: RteBlockNode, registry: ContentRegistry): boolean =>
     if (definition) {
         return typeof definition.content === 'object';
     }
-    return (block.children ?? []).some((child) => Array.isArray((child as AnyNode).children));
+
+    if (block.children === undefined) {
+        return false;
+    }
+
+    return block.children.some((child) => 'children' in child && Array.isArray(child.children));
 };
 
 /** One line per text block, lists flattened; a void block (a column break) adds none. */
@@ -66,9 +88,13 @@ const blockLines = (blocks: readonly RteBlockNode[], registry: ContentRegistry):
         if (block.children === undefined) {
             return [];
         }
-        return holdsBlocks(block, registry)
-            ? blockLines(block.children as RteBlockNode[], registry)
-            : [inlineText(block.children as RteInlineNode[], registry)];
+
+        // `children` is inlines or blocks; the block's plugin definition decides which, not the type.
+        if (holdsBlocks(block, registry)) {
+            return blockLines(block.children as RteBlockNode[], registry);
+        }
+
+        return [inlineText(block.children as RteInlineNode[], registry)];
     });
 
 export type ToPlainTextOptions = {

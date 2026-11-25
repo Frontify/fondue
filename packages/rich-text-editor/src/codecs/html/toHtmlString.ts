@@ -32,12 +32,15 @@ const specToString = (spec: HtmlSpec, content: string): string => {
     const attributes = attributeEntries(spec.attrs)
         .map(([name, value]) => ` ${name}="${escapeAttribute(value)}"`)
         .join('');
+
     if (VOID_ELEMENTS.has(spec.tag)) {
         // Self-closed: read by HTML and XHTML-minded email clients alike.
         return `<${spec.tag}${attributes}/>`;
     }
+
     const open = `<${spec.tag}${attributes}>`;
     const { children } = spec;
+
     let inner = '';
     if (children === true) {
         inner = content;
@@ -45,9 +48,16 @@ const specToString = (spec: HtmlSpec, content: string): string => {
         inner = escapeText(children);
     } else if (children) {
         inner = children
-            .map((child) => (typeof child === 'string' ? escapeText(child) : specToString(child, content)))
+            .map((child) => {
+                if (typeof child === 'string') {
+                    return escapeText(child);
+                }
+
+                return specToString(child, content);
+            })
             .join('');
     }
+
     return `${open}${inner}</${spec.tag}>`;
 };
 
@@ -55,9 +65,11 @@ const nodeToString = (node: DrawnNode): string => {
     if (typeof node === 'string') {
         return escapeText(node);
     }
+
     if (node.kind === 'component') {
         throw new Error('Export draws from `toHtml` only; a `render.component` cannot be written as HTML.');
     }
+
     return specToString(node.spec, node.content.map(nodeToString).join(''));
 };
 
