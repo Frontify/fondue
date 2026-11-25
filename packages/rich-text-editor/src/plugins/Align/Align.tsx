@@ -38,17 +38,15 @@ export type AlignAttribute = {
 const isAlignment = (value: unknown): value is Alignment => ALIGN_VALUES.some((alignment) => alignment === value);
 
 const alignmentOf = (textAlign: string): Alignment | null => {
+    if (isAlignment(textAlign)) {
+        return textAlign;
+    }
+
     switch (textAlign) {
         case 'left':
-        case 'start':
             return 'start';
         case 'right':
-        case 'end':
             return 'end';
-        case 'center':
-            return 'center';
-        case 'justify':
-            return 'justify';
         default:
             // Other values such as `-webkit-center` are ones no control shows.
             return null;

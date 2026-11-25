@@ -3,7 +3,7 @@
 // Mounted by direction.ct.tsx: a component test mounts imported components, so the switch lives in the frame.
 
 import { ThemeProvider } from '@frontify/fondue-components';
-import { useState } from 'react';
+import { type ComponentProps, useState } from 'react';
 
 import { RichTextEditor } from '../../index';
 import { alignPlugin } from '../../plugins';
@@ -14,7 +14,7 @@ const PLUGINS = [alignPlugin()];
 
 /** One editor whose host switches its reading direction after mount, from a button outside the editor. */
 export const DirectionSwitchFrame = () => {
-    const [dir, setDir] = useState<'ltr' | 'rtl'>('ltr');
+    const [dir, setDir] = useState<NonNullable<ComponentProps<typeof ThemeProvider>['dir']>>('ltr');
 
     return (
         <div>

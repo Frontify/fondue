@@ -11,7 +11,7 @@ import { type EditorControlApi, type RteSelectionSnapshot, type ToolbarItemProps
 import { ENGLISH, enUS } from '#/locales/en-US';
 import { labelContextOf, resolveLabel, translatorFor } from '#/ui/translation';
 
-import { alignPlugin } from './Align';
+import { type AlignAttribute, alignPlugin } from './Align';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -65,7 +65,7 @@ describe('reading the align attribute from a pasted element', () => {
     });
 });
 
-type MountedToolbarOptions = { direction: ComponentProps<typeof ThemeProvider>['dir']; align?: string };
+type MountedToolbarOptions = { direction: ComponentProps<typeof ThemeProvider>['dir']; align?: AlignAttribute['align'] };
 
 const mountToolbar = ({ direction, align: blockAlign }: MountedToolbarOptions) => {
     const entry = alignPlugin().toolbar?.[0];
