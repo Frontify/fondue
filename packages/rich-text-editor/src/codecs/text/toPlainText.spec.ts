@@ -26,6 +26,7 @@ const list = (...items: RteBlockNode[][]): RteBlockNode => ({
     children: items.map((content) => ({ type: 'item', children: content })),
 });
 const mention = { type: 'mention', id: '1', username: 'jane' };
+const STRAY_TEXT = 'stray';
 
 const plugins: RtePlugin[] = [
     definePlugin({
@@ -120,5 +121,12 @@ describe('toPlainText', () => {
                 plugins: [],
             }),
         ).toBe('a\nb');
+    });
+
+    it('gives nothing for a stray string inside a block no plugin defines', () => {
+        // Malformed on purpose: a stored value the types cannot describe.
+        const stray = { type: 'unknown', children: [STRAY_TEXT] } as unknown as RteBlockNode;
+
+        expect(toPlainText(doc(stray), { plugins: [] })).toBe('');
     });
 });

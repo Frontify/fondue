@@ -79,7 +79,7 @@ const holdsBlocks = (block: RteBlockNode, registry: ContentRegistry): boolean =>
         return false;
     }
 
-    return block.children.some((child) => 'children' in child && Array.isArray(child.children));
+    return block.children.some((child) => Array.isArray(child.children));
 };
 
 /** One line per text block, lists flattened; a void block (a column break) adds none. */
