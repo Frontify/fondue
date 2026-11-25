@@ -106,6 +106,8 @@ export { type RteBlock, type RteDocument, type RteDocumentWith } from './documen
 
 export { isEmpty };
 
+export { type RteDocumentIssue, type RteDocumentValidation, validateDocument } from './core';
+
 /**
  * The document's text, one line per text block. Inlines read as their plugin's
  * markup (a mention as `@jane`). The host passes the plugins whose content the document uses.

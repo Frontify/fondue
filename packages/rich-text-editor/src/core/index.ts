@@ -100,6 +100,7 @@ export {
     type ToolbarEntry,
     toggleOwn,
 } from './registry';
+export { type RteDocumentIssue, type RteDocumentValidation, validateDocument } from './validateDocument';
 export {
     ANY_LIST,
     DOCUMENT_VERSION,
