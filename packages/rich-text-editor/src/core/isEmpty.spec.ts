@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { type RteBlockNode, type RteDocumentOf } from './document';
-import { isEmpty } from './documentText';
+import { isEmpty } from './isEmpty';
 import { emptyDocument } from './vocabulary';
 
 // `isEmpty` reads the stored JSON alone and needs no plugins.

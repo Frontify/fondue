@@ -12,7 +12,19 @@ const isBlank = (node: AnyNode): boolean => {
     if ('text' in node && typeof node.text === 'string') {
         return !/\S/.test(node.text);
     }
-    return Array.isArray(node.children) && (node.children as AnyNode[]).every(isBlank);
+
+    if (!Array.isArray(node.children)) {
+        return false;
+    }
+
+    // An inline element's open attributes type `children` as unknown; a stored document nests only nodes.
+    for (const child of node.children as AnyNode[]) {
+        if (!isBlank(child)) {
+            return false;
+        }
+    }
+
+    return true;
 };
 
 /**

@@ -32,7 +32,7 @@ export {
     type RteTextNode,
     type StoredMarkValue,
 } from './document';
-export { isEmpty } from './documentText';
+export { isEmpty } from './isEmpty';
 export {
     type HotkeyEvent,
     type HotkeyModifier,
