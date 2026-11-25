@@ -21,7 +21,7 @@ const addText = (runs: Run[], text: string, marks: readonly string[]): void => {
         return;
     }
 
-    const sorted = [...marks].sort();
+    const sorted = [...marks].sort((left, right) => left.localeCompare(right));
     const previous = runs[runs.length - 1];
     if (previous?.kind === 'text' && JSON.stringify(previous.marks) === JSON.stringify(sorted)) {
         previous.text += text;

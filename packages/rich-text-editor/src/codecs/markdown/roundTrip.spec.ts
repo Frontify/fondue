@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type RteDocument, type RteDocumentWith } from '../../documentFormat';
+import { type RteBlock, type RteDocument, type RteDocumentWith } from '../../documentFormat';
 import { bulletListContent, defaultContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
@@ -583,9 +583,11 @@ describe('markdown round trip of text that looks like an image or a link definit
     }
 });
 
-const ITEM_ONE = { type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'one' }] }] };
-const ITEM_TWO = { type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'two' }] }] };
-const ITEM_THREE = { type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'three' }] }] };
+type ListItem = Extract<RteBlock, { type: 'bulletList' }>['children'][number];
+
+const ITEM_ONE: ListItem = { type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'one' }] }] };
+const ITEM_TWO: ListItem = { type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'two' }] }] };
+const ITEM_THREE: ListItem = { type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'three' }] }] };
 
 const ADJACENT_LIST_CASES: readonly RoundTripCase[] = [
     {

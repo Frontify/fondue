@@ -739,7 +739,7 @@ type WrittenBlock = { block: RteBlockNode; alternate: boolean };
 
 /** A list that directly follows a list of the same type writes with the other marker, and the one after it switches back. */
 const isAlternate = (block: RteBlockNode, previous: WrittenBlock | null, state: WriteState): boolean => {
-    if (previous === null || previous.block.type !== block.type || kindOf(block, state.registry) !== 'list') {
+    if (previous?.block.type !== block.type || kindOf(block, state.registry) !== 'list') {
         return false;
     }
 

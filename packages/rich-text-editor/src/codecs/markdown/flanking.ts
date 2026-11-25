@@ -59,7 +59,7 @@ const classNextTo = (token: InlineToken | undefined, side: Side): CharClass => {
 };
 
 const isSameRun = (token: InlineToken | undefined, first: DelimiterToken): token is DelimiterToken =>
-    token?.kind === 'delimiter' && token.emphasis && token.text[0] === first.text[0];
+    token?.kind === 'delimiter' && token.emphasis && token.text.startsWith(first.text.charAt(0));
 
 const runsOf = (tokens: readonly InlineToken[]): DelimiterRun[] => {
     const runs: DelimiterRun[] = [];
