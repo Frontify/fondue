@@ -973,7 +973,7 @@ const LIGHT_GUIDELINE: GuidelineVariables = {
     '--f-theme-settings-quote-color': 'rgb(90, 50, 110)',
     '--f-theme-settings-link-color': 'rgb(190, 40, 90)',
     '--f-theme-settings-link-font-weight': '600',
-    '--f-theme-settings-list-bullet1-shape': "'– '",
+    '--f-theme-settings-list-bullet1-shape': "'–'",
     '--f-theme-settings-list-bullet1-color': 'rgb(190, 40, 90)',
     '--f-theme-settings-list-bullet2-color': 'rgb(30, 90, 60)',
     '--f-theme-settings-list-bullet2-size': '1.4em',
@@ -997,7 +997,7 @@ const DARK_GUIDELINE: GuidelineVariables = {
     '--f-theme-settings-quote-color': 'rgb(210, 170, 235)',
     '--f-theme-settings-link-color': 'rgb(255, 150, 190)',
     '--f-theme-settings-link-font-weight': '600',
-    '--f-theme-settings-list-bullet1-shape': "'– '",
+    '--f-theme-settings-list-bullet1-shape': "'–'",
     '--f-theme-settings-list-bullet1-color': 'rgb(255, 150, 190)',
     '--f-theme-settings-list-bullet2-color': 'rgb(150, 230, 190)',
     '--f-theme-settings-list-bullet2-size': '1.4em',
@@ -1041,11 +1041,15 @@ const GUIDELINE_LINK_LOOK: TextLinkLook = {
     color: 'var(--f-theme-settings-link-color)',
 };
 
+/** The room between a marker and its text, which guideline settings do not hold, so the host sets it. */
+const GUIDELINE_MARKER_GAP = '0.5em';
+
 /** A bullet level read from the guideline's list variables, as the brand SDK names them. */
 const guidelineBulletLevel = (level: number): BulletLevelLook => ({
     marker: `var(--f-theme-settings-list-bullet${level}-shape)`,
     color: `var(--f-theme-settings-list-bullet${level}-color)`,
     size: `var(--f-theme-settings-list-bullet${level}-size)`,
+    gap: GUIDELINE_MARKER_GAP,
 });
 
 const guidelineNumberedLevel = (level: number): NumberedLevelLook => ({
@@ -1053,7 +1057,7 @@ const guidelineNumberedLevel = (level: number): NumberedLevelLook => ({
     color: `var(--f-theme-settings-list-numbered${level}-color)`,
 });
 
-// The third levels read variables no section defines, so they keep Fondue's look.
+// The third levels read variables no section defines, so they keep Fondue's marker.
 const GUIDELINE_BULLET_LOOK = [guidelineBulletLevel(1), guidelineBulletLevel(2), guidelineBulletLevel(3)] as const;
 const GUIDELINE_NUMBERED_LOOK = [
     guidelineNumberedLevel(1),
@@ -1115,7 +1119,7 @@ const HOST_STYLING_DOCUMENT: RteDocument = {
                                                     children: [
                                                         {
                                                             type: 'paragraph',
-                                                            children: [{ text: 'A third-level item, Fondue look' }],
+                                                            children: [{ text: 'A third-level item, Fondue marker' }],
                                                         },
                                                     ],
                                                 },
