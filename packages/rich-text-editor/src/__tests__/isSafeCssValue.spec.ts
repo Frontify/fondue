@@ -5,6 +5,7 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { lookProperties } from '../core';
 import { isSafeCssValue } from '../index';
 
 const ACCEPTED_VALUES = [
@@ -14,10 +15,11 @@ const ACCEPTED_VALUES = [
     '"Helvetica Neue", sans-serif',
     'rgb(0 0 0 / 50%)',
     'calc(1em + 2px)',
-    '',
 ];
 
 const REJECTED_VALUES = [
+    '',
+    '   ',
     'red; background: blue',
     'red}',
     '{',
@@ -29,6 +31,9 @@ const REJECTED_VALUES = [
     'Expression(x)',
 ];
 
+const PROBE_KEY = 'probe';
+const PROBE_FIELDS = { color: 'color' };
+
 describe('isSafeCssValue', () => {
     it.each(ACCEPTED_VALUES)('returns true for %s', (value) => {
         expect(isSafeCssValue(value)).toBe(true);
@@ -36,5 +41,13 @@ describe('isSafeCssValue', () => {
 
     it.each(REJECTED_VALUES)('returns false for %s', (value) => {
         expect(isSafeCssValue(value)).toBe(false);
+    });
+
+    it.each([...ACCEPTED_VALUES, ...REJECTED_VALUES])('agrees with what a look accepts for %s', (value) => {
+        if (isSafeCssValue(value)) {
+            expect(() => lookProperties(PROBE_KEY, { color: value }, PROBE_FIELDS)).not.toThrow();
+        } else {
+            expect(() => lookProperties(PROBE_KEY, { color: value }, PROBE_FIELDS)).toThrow();
+        }
     });
 });

@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { isSafeCssValue } from './htmlSpec';
+import { staysInDeclaration } from './htmlSpec';
 
 /**
  * How a text style looks. Each value is any CSS value, a guideline variable
  * (`var(--f-theme-settings-heading1-font-size)`) included. A field left out keeps Fondue's look.
- * A blank value, or one `isSafeCssValue` rejects, throws; check values you don't control with it first.
+ * A value `isSafeCssValue` rejects throws; check values you don't control with it first.
  */
 export type TextLook = {
     fontFamily?: string;
@@ -55,11 +55,23 @@ export const lookVariableName = (key: string, property: string): string =>
     `${LOOK_VARIABLE_PREFIX}${kebabCase(key)}-${property}`;
 
 /**
+ * Whether a look accepts a CSS value: it is not blank, and holds none of `;`, `{`, `}`, `\`, `<`, `url(` or
+ * `expression(` in any letter case. Any other value passes, a guideline variable included.
+ *
+ * @example
+ * let color: string | undefined;
+ * if (isSafeCssValue(setting)) {
+ *     color = setting;
+ * }
+ */
+export const isSafeCssValue = (value: string): boolean => value.trim() !== '' && staysInDeclaration(value);
+
+/**
  * The custom properties a style's look sets, which the stylesheet reads with Fondue's look as the fallback.
  *
  * @param key - The style's name, such as `imageTitle`.
  * @param fields - The name each field's variable ends in, such as `LOOK_PROPERTIES` for a text look.
- * @throws When a value is blank or `isSafeCssValue` rejects it, rather than dropping it silently.
+ * @throws When `isSafeCssValue` rejects a value, rather than dropping it silently.
  */
 export const lookProperties = <TLook extends Partial<Record<string, string>>>(
     key: string,
@@ -73,7 +85,7 @@ export const lookProperties = <TLook extends Partial<Record<string, string>>>(
         if (value === undefined) {
             continue;
         }
-        if (value.trim() === '' || !isSafeCssValue(value)) {
+        if (!isSafeCssValue(value)) {
             throw new Error(`The "${field}" of the "${key}" look is not a usable CSS value: ${JSON.stringify(value)}`);
         }
         properties[lookVariableName(key, property)] = value;

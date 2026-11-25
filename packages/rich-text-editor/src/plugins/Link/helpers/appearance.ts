@@ -55,7 +55,7 @@ export type ButtonHoverLook = {
 /**
  * How a button link looks. Each value is any CSS value, a guideline variable
  * (`var(--f-theme-settings-button-primary-color)`) included. A field left out keeps Fondue's look.
- * A blank value, or one `isSafeCssValue` rejects, throws; check values you don't control with it first.
+ * A value `isSafeCssValue` rejects throws; check values you don't control with it first.
  */
 export type ButtonLook = Omit<TextLook, 'marginTop' | 'marginBottom'> & {
     paddingTop?: string;
@@ -100,7 +100,7 @@ export const BUTTON_HOVER_LOOK_FIELDS = {
 /**
  * The custom properties the buttons' looks set, which `link.module.scss` reads with Fondue's look as the fallback.
  *
- * @throws When a value is blank or `isSafeCssValue` rejects it, naming the appearance and the field.
+ * @throws When `isSafeCssValue` rejects a value, naming the appearance and the field.
  */
 export const buttonLookProperties = (
     looks: Readonly<Partial<Record<LinkAppearance, ButtonLook>>>,
