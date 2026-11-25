@@ -74,7 +74,7 @@ export const presetsFor = (options: readonly TextStyleOption[]): Preset[] =>
     options.map(findPreset).filter((preset) => preset !== undefined);
 
 /** The heading level each heading tag stands for; the presets rendering as `p` have none. */
-const HEADING_LEVEL: Partial<Record<Preset['tag'], number>> = {
+export const HEADING_LEVEL: Partial<Record<Preset['tag'], number>> = {
     h1: 1,
     h2: 2,
     h3: 3,

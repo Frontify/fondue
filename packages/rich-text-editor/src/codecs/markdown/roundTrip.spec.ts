@@ -605,6 +605,75 @@ describe('markdown round trip of text that looks like a link', () => {
     }
 });
 
+const linkDocument = (href: string): RteDocument => ({
+    version: 1,
+    blocks: [{ type: 'paragraph', children: [{ text: 'x', link: { href } }] }],
+});
+
+describe('markdown round trip of link addresses', () => {
+    for (const href of ['https://example.com/caf\u00E9', 'HTTPS://Example.com', 'https://a.com/x|y']) {
+        it(`gives back the address ${href} as written`, () => {
+            const document = linkDocument(href);
+
+            const { markdown, losses } = serializeToMarkdown(document, OPTIONS);
+
+            expect(losses).toEqual([]);
+            expect(parseMarkdown(markdown, OPTIONS)).toEqual(document);
+        });
+    }
+});
+
+const AUTOLINK_CASES: readonly RoundTripCase[] = [
+    {
+        name: 'a bare domain',
+        markdown: 'see example.com',
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'see example.com' }] }] },
+    },
+    {
+        name: 'a file name that ends in a top level domain',
+        markdown: 'readme.md',
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'readme.md' }] }] },
+    },
+    {
+        name: 'an email address',
+        markdown: String.raw`ana\@example.com`,
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'ana@example.com' }] }] },
+    },
+    {
+        name: 'an email address after a semicolon',
+        markdown: String.raw`;\@example.com`,
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: ';@example.com' }] }] },
+    },
+    {
+        name: 'an email address after an ampersand',
+        markdown: String.raw`a&\@example.com`,
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'a&@example.com' }] }] },
+    },
+    {
+        name: 'an email address after a dollar sign',
+        markdown: String.raw`$\@example.com`,
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '$@example.com' }] }] },
+    },
+    {
+        name: 'an email address in parentheses',
+        markdown: String.raw`(ana\@x.com)`,
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '(ana@x.com)' }] }] },
+    },
+    {
+        name: 'a mention-like word after a space',
+        markdown: 'Hi @ana',
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'Hi @ana' }] }] },
+    },
+];
+
+describe('markdown round trip of text a reader could take for an autolink', () => {
+    for (const autolinkCase of AUTOLINK_CASES) {
+        it(`gives back the same text for ${autolinkCase.name}`, () => {
+            expectRoundTrip(autolinkCase);
+        });
+    }
+});
+
 const BANG_CASES: readonly RoundTripCase[] = [
     {
         name: 'an exclamation mark before a link',

@@ -13,7 +13,7 @@ export default defineConfig({
     build: {
         lib: {
             entry: 'src/subpackages/rich-text-editor-codecs.ts',
-            name: 'FondueRichTextEditorMarkdown',
+            name: 'FondueRichTextEditorCodecs',
             fileName: 'fondue-rich-text-editor-codecs',
         },
         rollupOptions: {

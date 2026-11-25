@@ -606,18 +606,6 @@ describe('serializeToMarkdown links that do not read back as they were', () => {
             losses: [{ path: [0, 0], type: 'link' }],
         });
     });
-
-    it('writes a link and reports the mark when its address reads back percent-encoded', () => {
-        const document: RteDocumentOf = {
-            version: 1,
-            blocks: [{ type: 'paragraph', children: [{ text: 'a', link: { href: 'https://example.com/\u00E9' } }] }],
-        };
-
-        expect(serializeToMarkdown(document, OPTIONS)).toEqual({
-            markdown: '[a](https://example.com/\u00E9)',
-            losses: [{ path: [0, 0], type: 'link' }],
-        });
-    });
 });
 
 describe('serializeToMarkdown mentions', () => {
@@ -635,6 +623,27 @@ describe('serializeToMarkdown mentions', () => {
         expect(serializeToMarkdown(document, { plugins: [...defaultContent, mentionContent()] })).toEqual({
             markdown: 'Hi @ana',
             losses: [{ path: [0, 1], type: 'mention' }],
+        });
+    });
+
+    it('reports only the mention when the text next to it keeps its mark but the mention writes plain text', () => {
+        const marked: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'Hi', bold: true },
+                        { text: ' ' },
+                        { type: 'mention', id: '1', username: 'ana', name: 'Ana' },
+                    ],
+                },
+            ],
+        };
+
+        expect(serializeToMarkdown(marked, { plugins: [...defaultContent, mentionContent()] })).toEqual({
+            markdown: '**Hi** @ana',
+            losses: [{ path: [0, 2], type: 'mention' }],
         });
     });
 

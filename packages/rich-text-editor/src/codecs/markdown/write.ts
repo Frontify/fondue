@@ -18,6 +18,7 @@ import {
 } from '#/core';
 
 import { MAX_DEPTH, sameValue } from './canonical';
+import { EMPTY_BLOCK_ENTITY } from './emptyBlock';
 import { entityOf, escapeClosingHashes, escapeText, escapeTrailingBang, type TextPosition } from './escape';
 import { fixFlanking, isEmphasisDelimiter } from './flanking';
 import { type MarkdownForms, suffixMatchOf } from './forms';
@@ -66,8 +67,6 @@ type WriteState = WriteContext & { losses: MarkdownLoss[] };
 type NodeValue = Record<string, unknown>;
 
 type Path = readonly number[];
-
-const NBSP_ENTITY = '&nbsp;';
 
 const LINE_SEPARATOR = '\n';
 const CARRIAGE_RETURN = '\r';
@@ -315,6 +314,15 @@ const piecesOf = (inlines: readonly unknown[], parentPath: Path, lineMode: LineM
 const isDropped = ({ mark, path }: OpenMark, dropped: readonly MarkdownLoss[]): boolean =>
     dropped.some((loss) => loss.type === mark.name && samePath(loss.path, path));
 
+/** The text an inline element wrote when its form writes plain text, which reads back as text and not as the element. */
+const plainTextOutputOf = (output: MarkdownInlineOutput): string | null => {
+    if (output.kind === 'text') {
+        return output.text;
+    }
+
+    return null;
+};
+
 const addRuns = (
     runs: Run[],
     pieces: readonly Piece[],
@@ -327,7 +335,7 @@ const addRuns = (
                 addTextRun(runs, piece.text, marks);
                 break;
             case 'output':
-                addInlineRun(runs, piece.type, piece.value, piece.path);
+                addInlineRun(runs, piece.type, piece.value, piece.path, plainTextOutputOf(piece.output));
                 break;
             case 'mark':
                 if (isDropped(piece, dropped)) {
@@ -673,7 +681,7 @@ const attemptOf = (
     const writesAsterisks = marks.some((pair) => isAsteriskPair(tokens, pair));
 
     // A block with no text at all is the empty block, which is its only spelling.
-    let text = NBSP_ENTITY;
+    let text = EMPTY_BLOCK_ENTITY;
     if (tokens.length > 0) {
         text = writeSegments(segmentsOf(tokens), state);
         if (lineMode === 'singleLine') {
@@ -1002,7 +1010,7 @@ const writeList = (block: RteBlockNode, path: Path, alternate: boolean, state: W
         // A bare marker would read as a setext underline under a paragraph line, so an item with no lines holds the empty block.
         let itemLines = writeBlock(item, [...path, index], false, state);
         if (itemLines.length === 0) {
-            itemLines = [NBSP_ENTITY];
+            itemLines = [EMPTY_BLOCK_ENTITY];
         }
 
         for (const line of prefixed(itemLines, prefix)) {
@@ -1046,7 +1054,7 @@ export const writeDocument = <TBlock extends RteBlockNode>(
     const markdown = writeBlocks(document.blocks, [], 'blankLine', state).join(LINE_SEPARATOR);
 
     // The empty document is one empty paragraph, which is the empty string, not an empty-paragraph entity.
-    if (document.blocks.length === 1 && markdown === NBSP_ENTITY) {
+    if (document.blocks.length === 1 && markdown === EMPTY_BLOCK_ENTITY) {
         return { markdown: '', losses: state.losses };
     }
 

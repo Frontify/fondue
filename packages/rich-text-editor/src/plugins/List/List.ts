@@ -8,6 +8,7 @@ import {
     defineContent,
     definePlugin,
     lookProperties,
+    MAX_ORDINAL_DIGITS,
     PARAGRAPH,
     type RteBlockNode,
     type RteContent,
@@ -110,7 +111,7 @@ const storedStart = (value: unknown): number | null => {
  * The numbers Markdown can start an ordered list item with: at most nine digits, never negative
  */
 const MIN_MARKDOWN_NUMBER = 0;
-const MAX_MARKDOWN_NUMBER = 999_999_999;
+const MAX_MARKDOWN_NUMBER = 10 ** MAX_ORDINAL_DIGITS - 1;
 
 /**
  * The numbered list, which stores where its numbering starts only when that is not 1
