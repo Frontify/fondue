@@ -12,4 +12,9 @@
     font-size: 0.9em;
     font-family: var(--typography-font-family-monospace);
     white-space: pre;
+
+    // A host rule that sets the font on every element would otherwise reach the `code` inside.
+    & > code {
+        font-family: inherit;
+    }
 }
