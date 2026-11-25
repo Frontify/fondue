@@ -35,6 +35,8 @@ const translations = {
     Table_sortByAscending: 'Sort by ${column} ascending',
     Table_sortByDescending: 'Sort by ${column} descending',
     Table_sortDescending: 'Sort descending',
+    Tag_add: 'Add ${label}',
+    Tag_dismiss: 'Dismiss ${label}',
     Tree_checkboxHint: 'Selectable, press Tab to focus the checkbox.',
     Tree_loading: 'Loading…',
     Tree_renameInputLabel: 'New name',

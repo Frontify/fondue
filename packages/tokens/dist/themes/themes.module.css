@@ -42,7 +42,7 @@
   --color-neutral-05: rgba(248, 248, 245, 1);
   --color-neutral-10: rgba(245, 245, 241, 1);
   --color-neutral-100: rgba(0, 0, 0, 1);
-  --color-neutral-15: rgba(240, 240, 235, 1);
+  --color-neutral-15: rgba(237, 237, 233, 1);
   --color-neutral-20: rgba(234, 234, 228, 1);
   --color-neutral-25: rgba(225, 225, 219, 1);
   --color-neutral-30: rgba(215, 215, 208, 1);
@@ -333,6 +333,11 @@
   --color-container-secondary-hover: var(--color-neutral-70);
   --color-container-secondary-on-secondary-container: var(--color-neutral-05);
   --color-container-secondary-on-secondary-container-variant: var(--color-neutral-25);
+  --color-container-subtle-active: var(--color-neutral-60);
+  --color-container-subtle-default: var(--color-neutral-90);
+  --color-container-subtle-hover: var(--color-neutral-70);
+  --color-container-subtle-on-subtle-container: var(--color-neutral-05);
+  --color-container-subtle-on-subtle-container-variant: var(--color-neutral-25);
   --color-container-success-active: var(--color-success-90);
   --color-container-success-default: var(--color-success-70);
   --color-container-success-hover: var(--color-success-80);
@@ -415,6 +420,11 @@
   --color-container-secondary-hover: var(--color-neutral-30);
   --color-container-secondary-on-secondary-container: var(--color-neutral-95);
   --color-container-secondary-on-secondary-container-variant: var(--color-neutral-75);
+  --color-container-subtle-active: var(--color-neutral-40);
+  --color-container-subtle-default: var(--color-neutral-15);
+  --color-container-subtle-hover: var(--color-neutral-30);
+  --color-container-subtle-on-subtle-container: var(--color-neutral-95);
+  --color-container-subtle-on-subtle-container-variant: var(--color-neutral-75);
   --color-container-success-active: var(--color-success-05);
   --color-container-success-default: var(--color-success-30);
   --color-container-success-hover: var(--color-success-10);

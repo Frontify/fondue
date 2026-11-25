@@ -528,6 +528,36 @@ test.describe('accessibility', () => {
 
         expect(await violationsOf(page)).toEqual([]);
     });
+
+    test('the emoji flyout announces how many emoji match the search', async ({ mount, page }) => {
+        await mount(<RichTextEditor />);
+        await page.getByRole('textbox').click();
+        await page.getByRole('button', { name: 'Emoji' }).click();
+        const flyout = page.getByRole('dialog', { name: 'Emoji' });
+        const search = flyout.getByRole('searchbox', { name: 'Search emoji' });
+        const status = flyout.getByRole('status');
+
+        await search.fill('cat');
+        await expect(status).toHaveText('2 results');
+
+        await search.fill('zzzzqx');
+        await expect(status).toHaveText('No matches');
+
+        await search.fill('');
+        await expect(status).toHaveText('');
+    });
+
+    test('the emoji flyout has no axe violations while searching', async ({ mount, page }) => {
+        test.slow();
+        await mount(<RichTextEditor />);
+        await page.getByRole('textbox').click();
+        await page.getByRole('button', { name: 'Emoji' }).click();
+        const flyout = page.getByRole('dialog', { name: 'Emoji' });
+        await flyout.getByRole('searchbox', { name: 'Search emoji' }).fill('cat');
+        await expect(flyout.getByRole('status')).toHaveText('2 results');
+
+        expect(await violationsOf(page)).toEqual([]);
+    });
 });
 
 const headingThreeDocument: RteDocument = {
