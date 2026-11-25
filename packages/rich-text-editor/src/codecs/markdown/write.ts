@@ -1070,7 +1070,8 @@ const gridCellsOf = (row: RteBlockNode, rowPath: Path, losses: MarkdownLoss[], s
 const gridShapeOf = (table: RteBlockNode, path: Path, state: WriteState): GridShape => {
     const rows: GridRow[] = [];
     const losses: MarkdownLoss[] = [];
-    if (formPrefixOf(table, state) === null) {
+    const prefix = formPrefixOf(table, state);
+    if (prefix === null || prefix.rest === null) {
         losses.push({ path, type: typeNameOf(table) });
     }
 

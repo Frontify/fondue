@@ -345,6 +345,21 @@ describe('serializeToMarkdown tables', () => {
         });
     });
 
+    it('writes the cells of a table as paragraphs and reports the table when its host form has a one-line prefix', () => {
+        const document = documentOf(tableOf(rowOf(headerOf('a'), headerOf('b')), rowOf(cell('c'), cell('d'))));
+        const options: MarkdownOptions = {
+            plugins: [...defaultContent, tableContent],
+            overrides: {
+                blocks: { table: { read: [{ token: 'table_open' }], write: () => ({ first: '> ', rest: null }) } },
+            },
+        };
+
+        expect(serializeToMarkdown(document, options)).toEqual({
+            markdown: 'a\n\nb\n\nc\n\nd',
+            losses: [{ path: [0], type: 'table' }],
+        });
+    });
+
     it('writes a table unchanged and reports each body cell whose form has a prefix', () => {
         const document = documentOf(tableOf(rowOf(headerOf('a'), headerOf('b')), rowOf(cell('c'), cell('d'))));
         const options: MarkdownOptions = {
