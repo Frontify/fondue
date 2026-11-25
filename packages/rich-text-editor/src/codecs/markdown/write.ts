@@ -602,10 +602,11 @@ type Attempt = {
 const isOpeningDelimiter = (token: InlineToken): token is DelimiterToken => token.kind === 'delimiter' && token.open;
 
 // Only the emphasis delimiters decide: a suffix is a delimiter token of the pair too, and is never `*`.
-const isAsteriskPair = (tokens: readonly InlineToken[], pair: DelimiterPair): boolean =>
-    tokens.every(
-        (token) => token.kind !== 'delimiter' || token.pair !== pair || !token.emphasis || token.text === ASTERISK,
-    );
+const isAsteriskPair = (tokens: readonly InlineToken[], pair: DelimiterPair): boolean => {
+    const emphasis = tokens.filter((token) => token.kind === 'delimiter' && token.pair === pair && token.emphasis);
+
+    return emphasis.length > 0 && emphasis.every((token) => token.kind === 'delimiter' && token.text === ASTERISK);
+};
 
 const isCharToken = (token: InlineToken | undefined): token is CharToken => token?.kind === 'char';
 
