@@ -3,12 +3,14 @@
 import { describe, expect, it } from 'vitest';
 
 import { type MarkdownMarkForm } from '../../core';
-import { bulletListContent, defaultContent, mentionContent } from '../../plugins';
+import { bulletListContent, defaultContent, mentionContent, tableContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
+
+const TABLE_OPTIONS: MarkdownOptions = { plugins: [...defaultContent, tableContent] };
 
 const EMPTY_DOCUMENT = { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '' }] }] };
 
@@ -242,7 +244,7 @@ describe('parseMarkdown with nothing to read a token by', () => {
         });
     });
 
-    it('reads a table as one paragraph per cell', () => {
+    it('reads a table as one paragraph per cell without the table plugin', () => {
         expect(parseMarkdown('| a | b |\n| - | - |\n| c | d |', OPTIONS)).toEqual({
             version: 1,
             blocks: [
@@ -259,6 +261,53 @@ describe('parseMarkdown with nothing to read a token by', () => {
             version: 1,
             blocks: [{ type: 'paragraph', children: [{ text: 'a <b>c</b>' }] }],
         });
+    });
+});
+
+describe('parseMarkdown tables', () => {
+    const cellOf = (type: 'tableHeader' | 'tableCell', children: object[]) => ({
+        type,
+        children: [{ type: 'paragraph', children }],
+    });
+    const headerRow = {
+        type: 'tableRow',
+        children: [cellOf('tableHeader', [{ text: 'a' }]), cellOf('tableHeader', [{ text: 'b' }])],
+    };
+    const tableOf = (bodyCells: object[]) => ({
+        version: 1,
+        blocks: [{ type: 'table', children: [headerRow, { type: 'tableRow', children: bodyCells }] }],
+    });
+
+    it('reads a table with a header row and a body row', () => {
+        expect(parseMarkdown('| a | b |\n| - | - |\n| c | d |', TABLE_OPTIONS)).toEqual(
+            tableOf([cellOf('tableCell', [{ text: 'c' }]), cellOf('tableCell', [{ text: 'd' }])]),
+        );
+    });
+
+    it('reads an empty cell as a paragraph with no children', () => {
+        expect(parseMarkdown('| a | b |\n| - | - |\n| c |  |', TABLE_OPTIONS)).toEqual(
+            tableOf([cellOf('tableCell', [{ text: 'c' }]), cellOf('tableCell', [])]),
+        );
+    });
+
+    it('reads an escaped pipe as text inside a cell', () => {
+        const markdown = '| a | b |\n| - | - |\n' + String.raw`| a \| b | d |`;
+
+        expect(parseMarkdown(markdown, TABLE_OPTIONS)).toEqual(
+            tableOf([cellOf('tableCell', [{ text: 'a | b' }]), cellOf('tableCell', [{ text: 'd' }])]),
+        );
+    });
+
+    it('reads emphasis as a mark inside a cell', () => {
+        expect(parseMarkdown('| a | b |\n| - | - |\n| c | **x** |', TABLE_OPTIONS)).toEqual(
+            tableOf([cellOf('tableCell', [{ text: 'c' }]), cellOf('tableCell', [{ text: 'x', bold: true }])]),
+        );
+    });
+
+    it('pads a body row shorter than the header with an empty cell', () => {
+        expect(parseMarkdown('| a | b |\n| - | - |\n| c |', TABLE_OPTIONS)).toEqual(
+            tableOf([cellOf('tableCell', [{ text: 'c' }]), cellOf('tableCell', [])]),
+        );
     });
 });
 
