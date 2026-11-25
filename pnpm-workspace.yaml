@@ -15,19 +15,6 @@ blockExoticSubdeps: true
 minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
     - "@frontify/*"
-    # This bump takes in-range releases that are still inside the age cutoff.
-    - "@axe-core/playwright"
-    - "@storybook/*"
-    - "@types/estree"
-    - "@types/node"
-    - "@types/react"
-    - "caniuse-lite"
-    - "electron-to-chromium"
-    - "figma-api"
-    - "ignore"
-    - "storybook"
-    - "systeminformation"
-    - "tinyexec"
 
 publicHoistPattern:
     - "*eslint*"

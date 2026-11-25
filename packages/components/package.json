@@ -82,7 +82,7 @@
         "react-day-picker": "^9.14.0"
     },
     "devDependencies": {
-        "@axe-core/playwright": "^4.14.1",
+        "@axe-core/playwright": "^4.14.0",
         "@babel/core": "^7.29.13",
         "@frontify/fondue-icons": "workspace:^",
         "@frontify/fondue-tokens": "workspace:^",
@@ -97,8 +97,8 @@
         "@testing-library/react": "^16.3.3",
         "@testing-library/user-event": "^14.6.13",
         "@tony.ganchev/eslint-plugin-header": "^3.4.4",
-        "@types/node": "^24.19.3",
-        "@types/react": "^18.3.32",
+        "@types/node": "^24.19.2",
+        "@types/react": "^18.3.31",
         "@types/react-dom": "^18.3.7",
         "@types/sinon": "^22.0.2",
         "@typescript/native-preview": "7.0.0-dev.20260707.2",
