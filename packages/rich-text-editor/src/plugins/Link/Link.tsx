@@ -110,10 +110,10 @@ const WEB_AUTOLINK = /^https?:[^\s<>]*$/i;
 
 const EMAIL_LOCAL_PART = String.raw`[a-z0-9.!#$%&'*+/=?^_\`{|}~-]+`;
 
-const DOMAIN_LABEL = String.raw`[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?`;
+const DOMAIN_LABEL = '[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?';
 
 /** CommonMark's email autolink: its local part, then dot-joined domain labels of at most 63 characters. */
-const EMAIL_AUTOLINK = new RegExp(`^mailto:${EMAIL_LOCAL_PART}@${DOMAIN_LABEL}(?:\\.${DOMAIN_LABEL})*$`, 'i');
+const EMAIL_AUTOLINK = new RegExp(String.raw`^mailto:${EMAIL_LOCAL_PART}@${DOMAIN_LABEL}(?:\.${DOMAIN_LABEL})*$`, 'i');
 
 /** The Markdown a link writes: `<address>` when its bare text is the address, `[text](address)` otherwise. */
 const writeLink = (href: string, { text, marked }: MarkdownMarkContent): MarkdownDelimiters => {
