@@ -14,6 +14,7 @@ const ACCEPTED_VALUES = [
     '"Helvetica Neue", sans-serif',
     'rgb(0 0 0 / 50%)',
     'calc(1em + 2px)',
+    '',
 ];
 
 const REJECTED_VALUES = [

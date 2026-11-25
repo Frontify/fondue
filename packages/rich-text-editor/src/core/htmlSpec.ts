@@ -60,11 +60,12 @@ const UNSAFE_CSS_VALUE = /[;{}\\<]|url\(|expression\(/i;
 /**
  * Whether a CSS value cannot end its declaration, open a rule, load a resource or leave the style attribute. It
  * rejects a value holding `;`, `{`, `}`, `\`, `<`, `url(` or `expression(` in any letter case, and accepts any other
- * value, a guideline variable included. A look throws on a value it rejects.
+ * value, a guideline variable included. A look throws on a value it rejects, and on a blank one, which this check
+ * accepts.
  *
  * @example
  * let color: string | undefined;
- * if (isSafeCssValue(setting)) {
+ * if (setting.trim() !== '' && isSafeCssValue(setting)) {
  *     color = setting;
  * }
  */
