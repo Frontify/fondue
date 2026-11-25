@@ -17,8 +17,9 @@ import {
 } from '#/core';
 
 import { sameValue } from './canonical';
+import { EMPTY_BLOCK_TEXT } from './emptyBlock';
 import { matchToken, type MarkdownForms, type TextReader } from './forms';
-import { type MarkdownTokenNode, tokenize } from './markdownIt';
+import { INLINE_TOKEN, type MarkdownTokenNode, tokenize } from './markdownIt';
 
 export type ReadContext = {
     registry: ContentRegistry;
@@ -30,16 +31,12 @@ const OPENING = 1;
 const CLOSING = -1;
 const SELF_CLOSING = 0;
 
-const INLINE = 'inline';
 const TEXT = 'text';
 const TEXT_SPECIAL = 'text_special';
 const SOFT_BREAK = 'softbreak';
 const HARD_BREAK = 'hardbreak';
 const FENCE = 'fence';
 const CODE_BLOCK = 'code_block';
-
-/** What `&nbsp;` decodes to, and what an empty text block is written as. */
-const NBSP = '\u00A0';
 
 /** What a line break reads as when no plugin has a break. */
 const LINE_BREAK_TEXT = ' ';
@@ -220,7 +217,7 @@ export const readInlines = (tokens: readonly MarkdownTokenNode[], context: ReadC
 /** A text block holding only a non-breaking space is the empty one, as the writer spells it. */
 export const withoutPlaceholder = (nodes: RteInlineNode[]): RteInlineNode[] => {
     const texts = nodes.filter(isTextNode);
-    if (texts.length === nodes.length && texts.map((node) => node.text).join('') === NBSP) {
+    if (texts.length === nodes.length && texts.map((node) => node.text).join('') === EMPTY_BLOCK_TEXT) {
         return [];
     }
 
@@ -311,7 +308,7 @@ const openFrame = (
     next: MarkdownTokenNode | undefined,
     context: ReadContext,
 ): Frame => {
-    const holdsInline = next?.type === INLINE;
+    const holdsInline = next?.type === INLINE_TOKEN;
     const block = resolveBlock(token, context);
 
     if (block === null) {
@@ -422,7 +419,7 @@ const readCode = (frame: Frame, token: MarkdownTokenNode, context: ReadContext):
 /** A token standing alone: its text, or a block of code. A rule (`hr`) is dropped, as no plugin reads it. */
 const readSelfClosingBlock = (frame: Frame, token: MarkdownTokenNode, context: ReadContext): void => {
     switch (token.type) {
-        case INLINE:
+        case INLINE_TOKEN:
             readInline(frame, token, context);
             break;
         case FENCE:

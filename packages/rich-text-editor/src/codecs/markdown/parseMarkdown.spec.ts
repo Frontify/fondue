@@ -84,6 +84,41 @@ describe('parseMarkdown links', () => {
     });
 });
 
+describe('parseMarkdown autolinks', () => {
+    const linkOf = (text: string, href: string) => ({
+        version: 1,
+        blocks: [{ type: 'paragraph', children: [{ text, link: { href } }] }],
+    });
+
+    it('reads an address with a scheme as a link', () => {
+        expect(parseMarkdown('https://x.com', OPTIONS)).toEqual(linkOf('https://x.com', 'https://x.com'));
+    });
+
+    it('reads an address starting with www as a link to https', () => {
+        expect(parseMarkdown('www.x.com', OPTIONS)).toEqual(linkOf('www.x.com', 'http://www.x.com'));
+    });
+
+    it('reads an email address in angle brackets as a mailto link', () => {
+        expect(parseMarkdown('<ana@example.com>', OPTIONS)).toEqual(
+            linkOf('ana@example.com', 'mailto:ana@example.com'),
+        );
+    });
+
+    it('reads a protocol relative address as text', () => {
+        expect(parseMarkdown('see //evil.com', OPTIONS)).toEqual({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'see //evil.com' }] }],
+        });
+    });
+
+    it('reads a bare domain as text', () => {
+        expect(parseMarkdown('see example.com', OPTIONS)).toEqual({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'see example.com' }] }],
+        });
+    });
+});
+
 describe('parseMarkdown lists', () => {
     const TWO_ITEMS = '- a\n- b';
 

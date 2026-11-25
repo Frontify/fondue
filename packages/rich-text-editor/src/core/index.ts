@@ -44,7 +44,7 @@ export {
 export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
 export { DOCUMENT_GAP_VARIABLES, OWN_MARGIN_VARIABLES } from './documentContract';
 export { LOOK_PROPERTIES, lookProperties, type TextLook } from './look';
-export { MARKDOWN_ENTITY_START } from './markdownEscape';
+export { ESCAPED_ENTITY_START, MARKDOWN_ENTITY_START, MAX_ORDINAL_DIGITS } from './markdownEscape';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,
@@ -66,6 +66,7 @@ export {
     type MarkdownInlineOutput,
     type MarkdownLinePrefix,
     type MarkdownListItem,
+    type MarkdownMarkContent,
     type MarkdownMarkForm,
     type MarkdownReadRule,
     type MarkdownTextPattern,

@@ -18,6 +18,7 @@ import {
 } from '#/core';
 
 import { MAX_DEPTH, sameValue } from './canonical';
+import { EMPTY_BLOCK_ENTITY } from './emptyBlock';
 import { entityOf, escapeClosingHashes, escapeText, escapeTrailingBang, type TextPosition } from './escape';
 import { fixFlanking, isEmphasisDelimiter } from './flanking';
 import { type MarkdownForms } from './forms';
@@ -64,8 +65,6 @@ type WriteState = WriteContext & { losses: MarkdownLoss[] };
 type NodeValue = Record<string, unknown>;
 
 type Path = readonly number[];
-
-const NBSP_ENTITY = '&nbsp;';
 
 const LINE_SEPARATOR = '\n';
 const CARRIAGE_RETURN = '\r';
@@ -257,6 +256,29 @@ const withoutTrailingBreaks = (pieces: Piece[], state: WriteState): Piece[] => {
     return pieces.slice(0, end);
 };
 
+type AddTextPieceParams = {
+    root: Piece[];
+    open: OpenMark[];
+    inline: RteTextNode;
+    path: Path;
+    state: WriteState;
+};
+
+const addTextPiece = ({ root, open, inline, path, state }: AddTextPieceParams): void => {
+    const marks = carriedMarks(inline, path, state);
+    const keep = sharedMarkCount(open, marks);
+
+    closeMarks(root, open, keep);
+    for (const mark of marks.slice(keep)) {
+        open.push({ kind: 'mark', mark, path, paths: [], pieces: [] });
+    }
+    for (const mark of open) {
+        mark.paths.push(path);
+    }
+
+    (open[open.length - 1]?.pieces ?? root).push({ kind: 'text', text: inline.text });
+};
+
 /**
  * A text block's inlines, with each mark opened once around the whole stretch of neighbours sharing it, as the
  * renderer does, so a bold link that is partly italic is still one link.
@@ -291,18 +313,7 @@ const piecesOf = (inlines: readonly unknown[], parentPath: Path, lineMode: LineM
             continue;
         }
 
-        const marks = carriedMarks(inline, path, state);
-        const keep = sharedMarkCount(open, marks);
-
-        closeMarks(root, open, keep);
-        for (const mark of marks.slice(keep)) {
-            open.push({ kind: 'mark', mark, path, paths: [], pieces: [] });
-        }
-        for (const mark of open) {
-            mark.paths.push(path);
-        }
-
-        (open[open.length - 1]?.pieces ?? root).push({ kind: 'text', text: inline.text });
+        addTextPiece({ root, open, inline, path, state });
     }
 
     closeMarks(root, open, 0);
@@ -312,6 +323,15 @@ const piecesOf = (inlines: readonly unknown[], parentPath: Path, lineMode: LineM
 
 const isDropped = ({ mark, path }: OpenMark, dropped: readonly MarkdownLoss[]): boolean =>
     dropped.some((loss) => loss.type === mark.name && samePath(loss.path, path));
+
+/** The text an inline element wrote when its form writes plain text, which reads back as text and not as the element. */
+const plainTextOutputOf = (output: MarkdownInlineOutput): string | null => {
+    if (output.kind === 'text') {
+        return output.text;
+    }
+
+    return null;
+};
 
 const addRuns = (
     runs: Run[],
@@ -325,7 +345,7 @@ const addRuns = (
                 addTextRun(runs, piece.text, marks);
                 break;
             case 'output':
-                addInlineRun(runs, piece.type, piece.value, piece.path);
+                addInlineRun(runs, piece.type, piece.value, piece.path, plainTextOutputOf(piece.output));
                 break;
             case 'mark':
                 if (isDropped(piece, dropped)) {
@@ -369,6 +389,9 @@ const inlineElementsOf = (pieces: readonly Piece[]): MarkdownLoss[] => {
 
     return elements;
 };
+
+/** Whether the pieces hold a mark or an inline element, which the text of a run does not show. */
+const hasInnerMarkup = (pieces: readonly Piece[]): boolean => pieces.some((piece) => piece.kind !== 'text');
 
 /** The text a mark wraps, as the mark's form reads it to choose its delimiters. */
 const plainTextOf = (pieces: readonly Piece[]): string => {
@@ -434,17 +457,17 @@ const delimitersOf = (written: MarkdownDelimiters, emphasis: EmphasisDelimiter):
     return written;
 };
 
-const delimiterOf = (text: string, open: boolean, pair: DelimiterPair, form: MarkdownMarkForm): InlineToken => ({
+const delimiterOf = (text: string, open: boolean, pair: DelimiterPair, literal: boolean): InlineToken => ({
     kind: 'delimiter',
     text,
     open,
     pair,
-    emphasis: form.literal !== true && isEmphasisDelimiter(text),
+    emphasis: !literal && isEmphasisDelimiter(text),
 });
 
 const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, context: TokenContext): void => {
     const { mark, paths, pieces } = piece;
-    const written = mark.form.write(mark.value, plainTextOf(pieces));
+    const written = mark.form.write(mark.value, { text: plainTextOf(pieces), marked: hasInnerMarkup(pieces) });
     if (written === null) {
         reportMarkLoss(context.losses, mark.name, paths);
         appendTokens(tokens, pieces, mode, context);
@@ -452,8 +475,9 @@ const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, cont
         return;
     }
 
+    const literal = written.literal === true;
     let innerMode = mode;
-    if (mark.form.literal === true) {
+    if (literal) {
         innerMode = 'literal';
     }
 
@@ -478,9 +502,9 @@ const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, cont
     const delimiters = delimitersOf(written, context.emphasis);
     const pair: DelimiterPair = { mark: mark.name, paths };
     appendAll(tokens, inner.slice(0, start));
-    tokens.push(delimiterOf(delimiters.open, true, pair, mark.form));
+    tokens.push(delimiterOf(delimiters.open, true, pair, literal));
     appendAll(tokens, inner.slice(start, end));
-    tokens.push(delimiterOf(delimiters.close, false, pair, mark.form));
+    tokens.push(delimiterOf(delimiters.close, false, pair, literal));
     appendAll(tokens, inner.slice(end));
 };
 
@@ -618,7 +642,7 @@ const attemptOf = (
     const writesAsterisks = marks.some((pair) => isAsteriskPair(tokens, pair));
 
     // A block with no text at all is the empty block, which is its only spelling.
-    let text = NBSP_ENTITY;
+    let text = EMPTY_BLOCK_ENTITY;
     if (tokens.length > 0) {
         text = writeSegments(segmentsOf(tokens), state);
         if (lineMode === 'singleLine') {
@@ -947,7 +971,7 @@ const writeList = (block: RteBlockNode, path: Path, alternate: boolean, state: W
         // A bare marker would read as a setext underline under a paragraph line, so an item with no lines holds the empty block.
         let itemLines = writeBlock(item, [...path, index], false, state);
         if (itemLines.length === 0) {
-            itemLines = [NBSP_ENTITY];
+            itemLines = [EMPTY_BLOCK_ENTITY];
         }
 
         for (const line of prefixed(itemLines, prefix)) {
@@ -991,7 +1015,7 @@ export const writeDocument = <TBlock extends RteBlockNode>(
     const markdown = writeBlocks(document.blocks, [], 'blankLine', state).join(LINE_SEPARATOR);
 
     // The empty document is one empty paragraph, which is the empty string, not an empty-paragraph entity.
-    if (document.blocks.length === 1 && markdown === NBSP_ENTITY) {
+    if (document.blocks.length === 1 && markdown === EMPTY_BLOCK_ENTITY) {
         return { markdown: '', losses: state.losses };
     }
 

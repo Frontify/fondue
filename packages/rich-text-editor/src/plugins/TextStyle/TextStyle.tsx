@@ -28,6 +28,7 @@ import {
     ALL_TEXT_STYLES,
     findPreset,
     FIRST_PRESET,
+    HEADING_LEVEL,
     isTextStyle,
     labelOf,
     markdownFormFor,
@@ -136,8 +137,6 @@ export const textStyleContent = ({ look }: TextStyleContentOptions = {}): RteCon
     }
     return textStyleContentFor(ALL_TEXT_STYLES, look);
 };
-
-const HEADING_LEVEL: Partial<Record<string, number>> = { h1: 1, h2: 2, h3: 3, h4: 4 };
 
 /** Words the `/` menu also finds a heading by. */
 const HEADING_KEYWORDS: Partial<Record<number, readonly string[]>> = {

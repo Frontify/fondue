@@ -8,6 +8,8 @@ import {
     definePlugin,
     LOOK_PROPERTIES,
     lookProperties,
+    type MarkdownDelimiters,
+    type MarkdownMarkContent,
     type RteContent,
     type RteHotkey,
     type TextLook,
@@ -100,6 +102,31 @@ type LinkAnchorAttrs = {
     href?: string;
     target?: string;
     rel?: string;
+};
+
+const MAILTO_PREFIX = 'mailto:';
+
+const WEB_AUTOLINK = /^https?:[^\s<>]*$/i;
+
+const EMAIL_LOCAL_PART = String.raw`[a-z0-9.!#$%&'*+/=?^_\`{|}~-]+`;
+
+const DOMAIN_LABEL = String.raw`[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?`;
+
+/** CommonMark's email autolink: its local part, then dot-joined domain labels of at most 63 characters. */
+const EMAIL_AUTOLINK = new RegExp(`^mailto:${EMAIL_LOCAL_PART}@${DOMAIN_LABEL}(?:\\.${DOMAIN_LABEL})*$`, 'i');
+
+/** The Markdown a link writes: `<address>` when its bare text is the address, `[text](address)` otherwise. */
+const writeLink = (href: string, { text, marked }: MarkdownMarkContent): MarkdownDelimiters => {
+    let shownAddress = href;
+    if (href.startsWith(MAILTO_PREFIX)) {
+        shownAddress = href.slice(MAILTO_PREFIX.length);
+    }
+
+    if (!marked && (WEB_AUTOLINK.test(href) || EMAIL_AUTOLINK.test(href)) && text === shownAddress) {
+        return { open: '<', close: '>', literal: true };
+    }
+
+    return { open: '[', close: `](${markdownDestination(href)})` };
 };
 
 /** A stored document may hold anything here (`{}`, `true`), so its shape is not taken on trust. */
@@ -199,9 +226,9 @@ const linkMarkFor = (appearances: readonly LinkAppearance[]): MarkDefinition =>
                     },
                 },
             ],
-            write: ({ href }) => {
+            write: ({ href }, content) => {
                 if (isSafeHref(href)) {
-                    return { open: '[', close: `](${markdownDestination(href)})` };
+                    return writeLink(href, content);
                 }
                 return null;
             },

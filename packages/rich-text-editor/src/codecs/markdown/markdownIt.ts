@@ -20,6 +20,11 @@ export type TokenizeOptions = {
     breaks: boolean;
 };
 
+/** The markdown-it token names the codec reads by. */
+export const INLINE_TOKEN = 'inline';
+export const PARAGRAPH_OPEN = 'paragraph_open';
+export const PARAGRAPH_CLOSE = 'paragraph_close';
+
 const PRESET = 'commonmark';
 
 const ENABLED_RULES = ['table', 'strikethrough', 'linkify'];
@@ -66,12 +71,47 @@ export const canBeReferenced = (codePoint: number): boolean => isValidEntityCode
 
 const parsers = new Map<boolean, MarkdownIt>();
 
+type LinkMatch = NonNullable<ReturnType<MarkdownIt['linkify']['matchAtStart']>>;
+
+/** An address that starts with `www.`, which GFM autolinks without a scheme. */
+const WWW_ADDRESS = /^www\./i;
+
+/** The schemes GFM's autolink extension links: web addresses and email addresses. */
+const AUTOLINK_SCHEMAS: ReadonlySet<string> = new Set(['http:', 'https:', 'mailto:']);
+
+/** Whether GFM's autolink extension links the match: it has a web or email scheme, or starts with `www.`. */
+const isAutolink = ({ schema, raw }: LinkMatch): boolean => AUTOLINK_SCHEMAS.has(schema) || WWW_ADDRESS.test(raw);
+
+// By the time the reader gets an address, markdown-it has decoded its escapes and entities, so it is kept as written.
+const asWritten = (url: string): string => url;
+
+const configureLinks = (parser: MarkdownIt): void => {
+    parser.linkify.set({ fuzzyLink: true });
+
+    const match = parser.linkify.match.bind(parser.linkify);
+    parser.linkify.match = (text) => (match(text) ?? []).filter(isAutolink);
+
+    const matchAtStart = parser.linkify.matchAtStart.bind(parser.linkify);
+    parser.linkify.matchAtStart = (text) => {
+        const found = matchAtStart(text);
+        if (found === null || !isAutolink(found)) {
+            return null;
+        }
+
+        return found;
+    };
+
+    parser.normalizeLink = asWritten;
+    parser.normalizeLinkText = asWritten;
+};
+
 const parserFor = (breaks: boolean): MarkdownIt => {
     let parser = parsers.get(breaks);
     if (parser === undefined) {
         parser = new MarkdownItParser(PRESET, { html: false, linkify: true, breaks })
             .enable(ENABLED_RULES)
             .disable(DISABLED_RULES);
+        configureLinks(parser);
         parsers.set(breaks, parser);
     }
 
