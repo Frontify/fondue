@@ -6,7 +6,10 @@
 import {
     type ContentRegistry,
     type MarkdownBlockForm,
+    type MarkdownDelimiters,
     type MarkdownInlineForm,
+    type MarkdownInlineOutput,
+    type MarkdownLinePrefix,
     type MarkdownMarkForm,
     type MarkdownReadRule,
     type MarkdownTextPattern,
@@ -58,69 +61,134 @@ const GLOBAL_FLAG = 'g';
 
 const isTokenRule = (rule: ReadRule | TextRule): rule is ReadRule => 'token' in rule;
 
+const isRecord = (value: unknown): value is NodeValue =>
+    typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const isLinePrefix = (value: unknown): value is MarkdownLinePrefix =>
+    isRecord(value) && typeof value.first === 'string' && (typeof value.rest === 'string' || value.rest === null);
+
+const isDelimiters = (value: unknown): value is MarkdownDelimiters =>
+    isRecord(value) && typeof value.open === 'string' && typeof value.close === 'string';
+
+const isInlineOutput = (value: unknown): value is MarkdownInlineOutput => {
+    if (!isRecord(value)) {
+        return false;
+    }
+
+    switch (value.kind) {
+        case 'text':
+            return typeof value.text === 'string';
+        case 'markdown':
+            return typeof value.markdown === 'string';
+        case 'lineBreak':
+            return true;
+    }
+
+    return false;
+};
+
+const isFunction = (value: unknown): value is (...parameters: unknown[]) => unknown => typeof value === 'function';
+
+/** A form is host code, so it is checked once here: what it is not, throws or returns wrongly is no form for the value. */
 const guarded = <TArguments extends unknown[], TResult>(
-    form: (...parameters: TArguments) => TResult | null,
+    form: unknown,
+    isResult: (result: unknown) => result is TResult,
 ): ((...parameters: TArguments) => TResult | null) => {
+    if (!isFunction(form)) {
+        return () => null;
+    }
+
     return (...parameters) => {
         try {
-            return form(...parameters);
+            const result: unknown = form(...parameters);
+            if (isResult(result)) {
+                return result;
+            }
+
+            return null;
         } catch {
-            // A form is host code: a write that throws is no form for the value (a loss), a read value that throws is no match.
             return null;
         }
     };
 };
 
-const guardedReadRule = <TValue>(rule: MarkdownReadRule<TValue>): MarkdownReadRule<TValue> => {
-    if (rule.value === undefined) {
-        return rule;
+const hasToken = (rule: unknown): rule is { token: string; value?: unknown } =>
+    isRecord(rule) && typeof rule.token === 'string';
+
+const hasPattern = (rule: unknown): rule is { pattern: RegExp; value?: unknown } =>
+    isRecord(rule) && rule.pattern instanceof RegExp;
+
+const checkedTokenRule = ({ token, value }: { token: string; value?: unknown }): ReadRule => {
+    if (value === undefined) {
+        return { token };
     }
 
-    return { token: rule.token, value: guarded(rule.value) };
+    return { token, value: guarded(value, isRecord) };
 };
 
-const guardedReadRules = <TValue>(
-    rules: readonly (MarkdownReadRule<TValue> | MarkdownTextPattern<TValue>)[],
-): (MarkdownReadRule<TValue> | MarkdownTextPattern<TValue>)[] =>
-    rules.map((rule) => {
-        if ('token' in rule) {
-            return guardedReadRule(rule);
+/** The rules that have a token or a pattern, each with a value that never throws or returns a non-object. */
+const checkedReadRules = (rules: unknown): (ReadRule | TextRule)[] => {
+    if (!Array.isArray(rules)) {
+        return [];
+    }
+
+    const checked: (ReadRule | TextRule)[] = [];
+    for (const rule of rules) {
+        if (hasToken(rule)) {
+            checked.push(checkedTokenRule(rule));
+        } else if (hasPattern(rule)) {
+            checked.push({ pattern: rule.pattern, value: guarded(rule.value, isRecord) });
         }
+    }
 
-        return { pattern: rule.pattern, value: guarded(rule.value) };
-    });
+    return checked;
+};
 
-const guardedBlockForm = (form: MarkdownBlockForm): MarkdownBlockForm => ({
-    read: form.read.map((rule) => guardedReadRule(rule)),
-    write: guarded(form.write),
-});
+const formPartsOf = (form: unknown): Record<string, unknown> => {
+    if (isRecord(form)) {
+        return form;
+    }
 
-const guardedMarkForm = (form: MarkdownMarkForm): MarkdownMarkForm => ({
-    read: form.read.map((rule) => guardedReadRule(rule)),
-    write: guarded(form.write),
-    literal: form.literal,
-});
+    return {};
+};
 
-const guardedInlineForm = (form: MarkdownInlineForm): MarkdownInlineForm => ({
-    read: guardedReadRules(form.read),
-    write: guarded(form.write),
-});
+const checkedBlockForm = (form: unknown): MarkdownBlockForm => {
+    const { read, write } = formPartsOf(form);
+
+    return { read: checkedReadRules(read).filter(isTokenRule), write: guarded(write, isLinePrefix) };
+};
+
+const checkedMarkForm = (form: unknown): MarkdownMarkForm => {
+    const { read, write, literal } = formPartsOf(form);
+
+    return {
+        read: checkedReadRules(read).filter(isTokenRule),
+        write: guarded(write, isDelimiters),
+        literal: literal === true,
+    };
+};
+
+const checkedInlineForm = (form: unknown): MarkdownInlineForm => {
+    const { read, write } = formPartsOf(form);
+
+    return { read: checkedReadRules(read), write: guarded(write, isInlineOutput) };
+};
 
 /**
  * An override replaces the definition's form for the node of that name; a name no definition has is ignored.
- * Each form comes back guarded, so a form that throws never reaches the reader or the writer.
+ * Each form comes back checked, so a form that throws or returns the wrong shape never reaches the reader or the writer.
  */
 const formsOf = <TForm>(
     definitions: ReadonlyMap<string, FormedDefinition<TForm>>,
     overrides: Readonly<Record<string, TForm>> | undefined,
-    guard: (form: TForm) => TForm,
+    check: (form: unknown) => TForm,
 ): Map<string, TForm> => {
     const replaced = new Map(Object.entries(overrides ?? {}));
     const forms = new Map<string, TForm>();
     for (const [name, definition] of definitions) {
         const form = replaced.get(name) ?? definition.markdown;
         if (form !== undefined) {
-            forms.set(name, guard(form));
+            forms.set(name, check(form));
         }
     }
 
@@ -156,9 +224,9 @@ const textReadersOf = (forms: ReadonlyMap<string, MarkdownInlineForm>): TextRead
 };
 
 export const buildForms = (registry: ContentRegistry, overrides: MarkdownOverrides | undefined): MarkdownForms => {
-    const blocks = formsOf(registry.blocks, overrides?.blocks, guardedBlockForm);
-    const marks = formsOf(registry.marks, overrides?.marks, guardedMarkForm);
-    const inlines = formsOf(registry.inlines, overrides?.inlines, guardedInlineForm);
+    const blocks = formsOf(registry.blocks, overrides?.blocks, checkedBlockForm);
+    const marks = formsOf(registry.marks, overrides?.marks, checkedMarkForm);
+    const inlines = formsOf(registry.inlines, overrides?.inlines, checkedInlineForm);
 
     return {
         blocks,

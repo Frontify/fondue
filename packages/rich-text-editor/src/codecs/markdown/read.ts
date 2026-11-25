@@ -16,6 +16,7 @@ import {
     type StoredMarkValue,
 } from '#/core';
 
+import { sameValue } from './canonical';
 import { matchToken, type MarkdownForms, type TextReader } from './forms';
 import { type MarkdownTokenNode, tokenize } from './markdownIt';
 
@@ -81,7 +82,7 @@ const sameMarks = (left: NodeValue, right: NodeValue): boolean => {
 
     return (
         names.length === Object.keys(right).length &&
-        names.every((name) => name in right && JSON.stringify(left[name]) === JSON.stringify(right[name]))
+        names.every((name) => name in right && sameValue(left[name], right[name]))
     );
 };
 

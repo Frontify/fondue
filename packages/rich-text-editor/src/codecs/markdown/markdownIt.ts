@@ -28,7 +28,7 @@ const ENABLED_RULES = ['table', 'strikethrough', 'linkify'];
 // so a text pattern could match what the writer escaped.
 const DISABLED_RULES = ['text_join'];
 
-const { isMdAsciiPunct, isPunctCharCode, isSpace, isValidEntityCode, isWhiteSpace } = new MarkdownItParser().utils;
+const { isMdAsciiPunct, isPunctCharCode, isValidEntityCode, isWhiteSpace } = new MarkdownItParser().utils;
 
 const REPLACEMENT_CHARACTER_CODE = 0xff_fd;
 
@@ -60,9 +60,6 @@ export const isMarkdownWhitespace = (char: string): boolean => scannedCodeIs(cha
 
 /** Whether the reader counts the character as punctuation when it decides where emphasis opens and closes. */
 export const isMarkdownPunctuation = (char: string): boolean => scannedCodeIs(char, isPunctuationCode);
-
-/** Whether the character is a space or a tab, which the reader strips at the edge of a line. */
-export const isMarkdownSpace = (char: string): boolean => scannedCodeIs(char, isSpace);
 
 /** Whether a numeric character reference reads back as this code point, and not as U+FFFD. */
 export const canBeReferenced = (codePoint: number): boolean => isValidEntityCode(codePoint);
