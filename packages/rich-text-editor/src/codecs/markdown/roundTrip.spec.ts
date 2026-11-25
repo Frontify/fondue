@@ -860,6 +860,39 @@ describe('markdown round trip of a mark suffix override', () => {
             codeLanguageOverrideOptions,
         );
     });
+
+    it('gives back text after code that the language suffix pattern would read', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'x', code: true }, { text: '{lang="ts"}' }] }],
+        };
+
+        expectRoundTrip(
+            { name: 'code before suffix-like text', markdown: '`x`&#x7B;lang="ts"}', document },
+            codeLanguageOverrideOptions,
+        );
+    });
+
+    it('gives back text after a link that the target suffix pattern would read', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'a', link: { href: 'https://example.test' } }, { text: '{target="_blank"}' }],
+                },
+            ],
+        };
+
+        expectRoundTrip(
+            {
+                name: 'link before suffix-like text',
+                markdown: '[a](https://example.test)&#x7B;target="\\_blank"}',
+                document,
+            },
+            linkTargetOverrideOptions,
+        );
+    });
 });
 
 describe('markdown round trip with list content only', () => {

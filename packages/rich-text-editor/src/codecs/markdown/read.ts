@@ -17,7 +17,7 @@ import {
 } from '#/core';
 
 import { sameValue } from './canonical';
-import { matchToken, type MarkdownForms, type MarkRule, type ReadMatch, type TextReader } from './forms';
+import { matchToken, type MarkdownForms, type MarkRule, type ReadMatch, suffixMatchOf, type TextReader } from './forms';
 import { type MarkdownTokenNode, tokenize } from './markdownIt';
 
 export type ReadContext = {
@@ -140,9 +140,8 @@ const suffixedValueOf = (match: ReadMatch<MarkRule>, cursor: InlineCursor, index
         return match.value;
     }
 
-    suffix.pattern.lastIndex = 0;
-    const found = suffix.pattern.exec(candidate.content);
-    if (found === null || found[0].length === 0) {
+    const found = suffixMatchOf(suffix, candidate.content);
+    if (found === null) {
         return match.value;
     }
 
@@ -211,12 +210,7 @@ const plainTextOf = (token: MarkdownTokenNode): string => {
 };
 
 /** A token standing alone that is not text: an inline element, a mark on its own content (code), or its content. */
-const readLeaf = (
-    state: InlineState,
-    token: MarkdownTokenNode,
-    forms: MarkdownForms,
-    cursor: InlineCursor,
-): void => {
+const readLeaf = (state: InlineState, token: MarkdownTokenNode, forms: MarkdownForms, cursor: InlineCursor): void => {
     const inline = matchToken(forms.inlineReaders, token);
     if (inline !== null) {
         state.nodes.push({ type: inline.name, ...inline.value });

@@ -20,12 +20,14 @@ import {
 import { MAX_DEPTH, sameValue } from './canonical';
 import { entityOf, escapeClosingHashes, escapeText, escapeTrailingBang, type TextPosition } from './escape';
 import { fixFlanking, isEmphasisDelimiter } from './flanking';
-import { type MarkdownForms } from './forms';
+import { type MarkdownForms, suffixMatchOf } from './forms';
 import {
+    type CharToken,
     type DelimiterPair,
     type DelimiterToken,
     encodeLineEdges,
     type InlineToken,
+    isReferenceable,
     isSpaceToken,
 } from './inlineTokens';
 import { type Tokenize } from './markdownIt';
@@ -599,8 +601,56 @@ type Attempt = {
 
 const isOpeningDelimiter = (token: InlineToken): token is DelimiterToken => token.kind === 'delimiter' && token.open;
 
+// Only the emphasis delimiters decide: a suffix is a delimiter token of the pair too, and is never `*`.
 const isAsteriskPair = (tokens: readonly InlineToken[], pair: DelimiterPair): boolean =>
-    tokens.every((token) => token.kind !== 'delimiter' || token.pair !== pair || token.text === ASTERISK);
+    tokens.every(
+        (token) => token.kind !== 'delimiter' || token.pair !== pair || !token.emphasis || token.text === ASTERISK,
+    );
+
+const isCharToken = (token: InlineToken | undefined): token is CharToken => token?.kind === 'char';
+
+/** Whether one of the mark's read rules has a suffix pattern that reads the text. */
+const isReadAsSuffix = (form: MarkdownMarkForm, text: string): boolean => {
+    for (const { suffix } of form.read) {
+        if (suffix === undefined) {
+            continue;
+        }
+
+        if (suffixMatchOf(suffix, text) !== null) {
+            return true;
+        }
+    }
+
+    return false;
+};
+
+/** The text of the characters from `start` on that are written as they are, up to the next token that is not one. */
+const plainCharsFrom = (tokens: readonly InlineToken[], start: number): string => {
+    let text = '';
+    for (const token of tokens.slice(start)) {
+        if (!isCharToken(token) || token.entity) {
+            break;
+        }
+        text += token.char;
+    }
+
+    return text;
+};
+
+/** Writes the first character after a mark as a reference where the mark's suffix pattern would read the text as its suffix. */
+const protectFromSuffixes = (tokens: readonly InlineToken[], state: WriteState): void => {
+    for (const [index, token] of tokens.entries()) {
+        const next = tokens[index + 1];
+        if (token.kind !== 'delimiter' || token.open || !isCharToken(next) || !isReferenceable(next)) {
+            continue;
+        }
+
+        const form = state.forms.marks.get(token.pair.mark);
+        if (form !== undefined && isReadAsSuffix(form, plainCharsFrom(tokens, index + 1))) {
+            next.entity = true;
+        }
+    }
+};
 
 const attemptOf = (
     pieces: readonly Piece[],
@@ -611,6 +661,7 @@ const attemptOf = (
     const losses: MarkdownLoss[] = [];
     const laidOut: InlineToken[] = [];
     appendTokens(laidOut, pieces, 'escaped', { losses, emphasis });
+    protectFromSuffixes(laidOut, state);
     encodeLineEdges(laidOut);
 
     const { tokens, dropped } = fixFlanking(laidOut);

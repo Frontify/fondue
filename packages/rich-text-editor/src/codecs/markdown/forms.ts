@@ -155,6 +155,17 @@ const checkedSuffix = (suffix: unknown): MarkdownSuffixPattern<NodeValue> | unde
     };
 };
 
+/** What the suffix pattern reads at the start of the text, or null where it reads nothing there. */
+export const suffixMatchOf = (suffix: MarkdownSuffixPattern<NodeValue>, text: string): RegExpExecArray | null => {
+    suffix.pattern.lastIndex = 0;
+    const found = suffix.pattern.exec(text);
+    if (found === null || found[0].length === 0) {
+        return null;
+    }
+
+    return found;
+};
+
 const checkedMarkRules = (rules: unknown): MarkRule[] => {
     if (!Array.isArray(rules)) {
         return [];

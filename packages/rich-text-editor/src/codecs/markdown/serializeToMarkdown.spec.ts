@@ -731,6 +731,58 @@ describe('serializeToMarkdown mark suffixes', () => {
             }),
         ).toEqual({ markdown: '_a_**_c_{.note}b**', losses: [] });
     });
+
+    it('retries an italic with a suffix with underscores when asterisks do not read back', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'a', bold: true, italic: true },
+                        { text: 'b', bold: true },
+                        { text: 'c', bold: true, italic: true },
+                    ],
+                },
+            ],
+        };
+
+        expect(
+            serializeToMarkdown(document, {
+                plugins: defaultContent,
+                overrides: {
+                    marks: {
+                        italic: {
+                            read: [
+                                {
+                                    token: 'em_open',
+                                    suffix: { pattern: /\{\.note\}/, value: (value) => value },
+                                },
+                            ],
+                            write: () => ({ open: '*', close: '*', suffix: '{.note}' }),
+                        },
+                    },
+                },
+            }),
+        ).toEqual({ markdown: '**_a_{.note}&#x62;_c_{.note}**', losses: [] });
+    });
+
+    it('writes text that the code suffix pattern reads as a reference, so it stays text', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'x', code: true }, { text: '{lang="ts"}' }],
+                },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, codeLanguageOverrideOptions)).toEqual({
+            markdown: '`x`&#x7B;lang="ts"}',
+            losses: [],
+        });
+    });
 });
 
 describe('serializeToMarkdown emphasis no character reference can fix', () => {
