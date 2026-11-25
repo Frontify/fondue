@@ -1021,6 +1021,10 @@ const cellParagraphOf = (cell: RteBlockNode): RteBlockNode | null => {
         return null;
     }
 
+    if (only.children !== undefined && !Array.isArray(only.children)) {
+        return null;
+    }
+
     return only;
 };
 
@@ -1089,6 +1093,10 @@ const gridShapeOf = (table: RteBlockNode, path: Path, state: WriteState): GridSh
 /** A cell's text on one line, with each pipe escaped once more, which GFM's cell splitter removes on read. */
 const writeGridCell = ({ paragraph, path }: GridCell, state: WriteState): string => {
     const paragraphPath = [...path, 0];
+    if (formPrefixOf(paragraph, state) === null) {
+        reportLoss(state.losses, { path: paragraphPath, type: typeNameOf(paragraph) });
+    }
+
     reportBlockAttributes(paragraph, paragraphPath, state);
 
     const text = writeInlines(paragraph, paragraphPath, 'singleLine', state);

@@ -299,6 +299,36 @@ describe('serializeToMarkdown tables', () => {
             losses: [{ path: [0, 1, 0, 0], type: 'align' }],
         });
     });
+
+    it('reports a cell paragraph whose children are not a list', () => {
+        const lostCell = { type: 'tableCell', children: [{ type: 'paragraph', children: 'lost' }] };
+        const document = documentOf(tableOf(rowOf(headerOf('h')), rowOf(lostCell)));
+
+        expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({
+            markdown: 'h\n\n&nbsp;',
+            losses: [
+                { path: [0], type: 'table' },
+                { path: [0, 1, 0], type: 'tableCell' },
+                { path: [0, 1, 0, 0], type: 'paragraph' },
+            ],
+        });
+    });
+
+    it('reports a cell paragraph that a host override gives no form', () => {
+        const document = documentOf(tableOf(rowOf(headerOf('h')), rowOf(cell('c'))));
+        const options: MarkdownOptions = {
+            plugins: [...defaultContent, tableContent],
+            overrides: { blocks: { paragraph: { read: [{ token: 'paragraph_open' }], write: () => null } } },
+        };
+
+        expect(serializeToMarkdown(document, options)).toEqual({
+            markdown: '| h |\n| --- |\n| c |',
+            losses: [
+                { path: [0, 0, 0, 0], type: 'paragraph' },
+                { path: [0, 1, 0, 0], type: 'paragraph' },
+            ],
+        });
+    });
 });
 
 describe('serializeToMarkdown trailing breaks', () => {
