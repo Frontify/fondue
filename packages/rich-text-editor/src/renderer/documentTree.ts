@@ -216,6 +216,23 @@ const textBlockContent = (block: RteBlockNode, registry: ContentRegistry, option
     return content;
 };
 
+/** A block of code's content: its text as written, with no marks and no break held open. */
+const codeBlockContent = (block: RteBlockNode): DrawnNode[] => {
+    if (!Array.isArray(block.children)) {
+        return [];
+    }
+
+    const lines: DrawnNode[] = [];
+    for (const child of block.children as unknown[]) {
+        const { text } = child as Partial<RteTextNode>;
+        if (typeof text === 'string') {
+            lines.push(text);
+        }
+    }
+
+    return lines;
+};
+
 /** A child stored as a block (it has a type the plugins know, or children of its own) rather than an inline. */
 const isBlockLike = (node: unknown, registry: ContentRegistry): boolean => {
     const { type, children } = node as { type?: unknown; children?: unknown };
@@ -265,6 +282,8 @@ export const blockNode = (block: RteBlockNode, registry: ContentRegistry, option
     let content: DrawnNode[] = [];
     if (definition.content === 'text') {
         content = textBlockContent(block, registry, options);
+    } else if (definition.content === 'code') {
+        content = codeBlockContent(block);
     } else if (definition.content !== undefined) {
         content = ((block.children as RteBlockNode[] | undefined) ?? []).flatMap(
             (child) => childNode(child, block, registry, options) ?? [],

@@ -12,6 +12,7 @@ export const plPL: RichTextStrings = {
     RichTextEditor_bulletedList: 'Lista punktowana',
     RichTextEditor_cancel: 'Anuluj',
     RichTextEditor_code: 'Kod',
+    RichTextEditor_codeBlock: 'Blok kodu',
     RichTextEditor_colorBlue: 'Niebieski',
     RichTextEditor_colorGray: 'Szary',
     RichTextEditor_colorGreen: 'Zielony',

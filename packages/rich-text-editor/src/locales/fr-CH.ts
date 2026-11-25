@@ -12,6 +12,7 @@ export const frCH: RichTextStrings = {
     RichTextEditor_bulletedList: 'Liste à puces',
     RichTextEditor_cancel: 'Annuler',
     RichTextEditor_code: 'Code',
+    RichTextEditor_codeBlock: 'Bloc de code',
     RichTextEditor_colorBlue: 'Bleu',
     RichTextEditor_colorGray: 'Gris',
     RichTextEditor_colorGreen: 'Vert',

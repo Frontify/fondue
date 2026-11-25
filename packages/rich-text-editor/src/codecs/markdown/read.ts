@@ -405,8 +405,24 @@ const lineInlines = (line: string): RteInlineNode[] => {
     return [{ text: line }];
 };
 
-/** A block of code is one paragraph per line, as no plugin reads it. */
+/** The block of code's text, which has the line break the token ends with dropped, or no text at all when it is empty. */
+const codeChildrenOf = (token: MarkdownTokenNode): RteTextNode[] => {
+    const text = token.content.replace(TRAILING_NEWLINE, '');
+    if (text === '') {
+        return [];
+    }
+
+    return [{ text }];
+};
+
+/** A block of code: a block of its own where a plugin reads it and the place allows it, else one paragraph per line. */
 const readCode = (frame: Frame, token: MarkdownTokenNode, context: ReadContext): void => {
+    const match = matchToken(context.forms.codeReaders, token);
+    if (match !== null && allowedIn(frame, match.name, context)) {
+        frame.blocks.push({ type: match.name, ...match.value, children: codeChildrenOf(token) });
+        return;
+    }
+
     if (token.content === '') {
         return;
     }

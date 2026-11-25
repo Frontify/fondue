@@ -188,6 +188,28 @@ describe('a code block in a reading view and in export', () => {
             expect(container.querySelector('pre > code')?.textContent).toBe('');
         }
     });
+
+    it('draws only the children that hold text', () => {
+        const odd = {
+            version: 1,
+            blocks: [{ type: 'codeBlock', children: [{ text: 5 }, { type: 'mention' }, { text: 'ok' }] }],
+        } as unknown as RteDocument;
+
+        for (const container of [
+            rendered(<RichTextRenderer value={odd} plugins={defaultContent} />),
+            exported(serializeToHtml(odd, { plugins: defaultPlugins })),
+        ]) {
+            expect(container.querySelector('pre > code')?.textContent).toBe('ok');
+        }
+    });
+
+    it('draws an empty code element when the children are not a list', () => {
+        const odd = { version: 1, blocks: [{ type: 'codeBlock', children: 'x' }] } as unknown as RteDocument;
+
+        expect(
+            exported(serializeToHtml(odd, { plugins: defaultPlugins })).querySelector('pre > code')?.textContent,
+        ).toBe('');
+    });
 });
 
 describe('the element a document sits in', () => {

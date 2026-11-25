@@ -12,6 +12,7 @@ export const itIT: RichTextStrings = {
     RichTextEditor_bulletedList: 'Elenco puntato',
     RichTextEditor_cancel: 'Annulla',
     RichTextEditor_code: 'Codice',
+    RichTextEditor_codeBlock: 'Blocco di codice',
     RichTextEditor_colorBlue: 'Blu',
     RichTextEditor_colorGray: 'Grigio',
     RichTextEditor_colorGreen: 'Verde',

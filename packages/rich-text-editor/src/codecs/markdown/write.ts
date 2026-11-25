@@ -715,7 +715,7 @@ const writeInlines = (block: RteBlockNode, path: Path, lineMode: LineMode, state
 // --- Blocks ---
 
 /** How a block is written, from what its plugin declares or, for a block no plugin declares, what it holds. */
-type BlockKind = 'text' | 'list' | 'container' | 'void';
+type BlockKind = 'text' | 'code' | 'list' | 'container' | 'void';
 
 const childrenOf = (block: RteBlockNode): unknown[] => {
     if (Array.isArray(block.children)) {
@@ -757,6 +757,9 @@ const kindOf = (block: RteBlockNode, registry: ContentRegistry): BlockKind => {
     const { content } = definition;
     if (content === 'text') {
         return 'text';
+    }
+    if (content === 'code') {
+        return 'code';
     }
     if (content === undefined) {
         return 'void';
@@ -831,6 +834,40 @@ const writeTextBlock = (block: RteBlockNode, path: Path, state: WriteState): str
     const text = writeInlines(block, path, lineMode, state);
 
     return prefixed(text.split(LINE_SEPARATOR), prefix);
+};
+
+/** The text of a block of code, which is all its children's text and nothing else. */
+const codeTextOf = (block: RteBlockNode): string => {
+    let text = '';
+    for (const child of childrenOf(block)) {
+        if (isNode<RteTextNode>(child) && typeof child.text === 'string') {
+            text += child.text;
+        }
+    }
+
+    return text;
+};
+
+/** A fenced block, its text written as it is. Without a fence for its value, it is an escaped paragraph and a loss. */
+const writeCodeBlock = (block: RteBlockNode, path: Path, state: WriteState): string[] => {
+    const definition = state.registry.blocks.get(block.type);
+    const form = state.forms.codeBlocks.get(block.type);
+    if (definition !== undefined && form !== undefined) {
+        const text = codeTextOf(block);
+        const fence = form.write(blockValueOf(definition, block as NodeValue), text);
+        if (fence !== null) {
+            let lines: string[] = [];
+            if (text !== '') {
+                lines = text.split(LINE_SEPARATOR);
+            }
+
+            return [fence.open, ...lines, fence.close];
+        }
+    }
+
+    reportLoss(state.losses, { path, type: typeNameOf(block) });
+
+    return writeInlines(block, path, 'multiline', state).split(LINE_SEPARATOR);
 };
 
 /** The first number of an ordered list's marker, which decides whether the list can interrupt a paragraph. */
@@ -996,6 +1033,8 @@ const writeBlock = (block: RteBlockNode, path: Path, alternate: boolean, state: 
     switch (kindOf(block, state.registry)) {
         case 'text':
             return writeTextBlock(block, path, state);
+        case 'code':
+            return writeCodeBlock(block, path, state);
         case 'list':
             return writeList(block, path, alternate, state);
         case 'container':

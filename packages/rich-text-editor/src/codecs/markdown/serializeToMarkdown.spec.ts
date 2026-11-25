@@ -594,7 +594,7 @@ describe('serializeToMarkdown losses', () => {
 });
 
 describe('serializeToMarkdown code blocks', () => {
-    const documentOf = (...blocks: RteDocumentOf['blocks']): RteDocumentOf => ({ version: 1, blocks });
+    const documentOf = (...blocks: unknown[]): RteDocumentOf => ({ version: 1, blocks }) as unknown as RteDocumentOf;
 
     // Generic fixtures: a code block with no way into Markdown, one that refuses its value, and a quote that holds blocks.
     const unwrittenCodeContent = defineContent({
@@ -628,6 +628,18 @@ describe('serializeToMarkdown code blocks', () => {
 
         expect(serializeToMarkdown(document, OPTIONS)).toEqual({
             markdown: '```ts\nlet a;\n  let b;\n```',
+            losses: [],
+        });
+    });
+
+    it('writes the fence a host override gives the code block', () => {
+        const document = documentOf({ type: 'codeBlock', children: [{ text: 'x' }] });
+        const overrides: MarkdownOptions['overrides'] = {
+            blocks: { codeBlock: { read: [], write: () => ({ open: '~~~', close: '~~~' }) } },
+        };
+
+        expect(serializeToMarkdown(document, { ...OPTIONS, overrides })).toEqual({
+            markdown: '~~~\nx\n~~~',
             losses: [],
         });
     });

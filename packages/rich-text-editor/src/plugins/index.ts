@@ -17,6 +17,7 @@ export { blurOnBreakPlugin } from './BlurOnBreak';
 export { boldContent, boldPlugin } from './Bold';
 export { checkListContent, checkListPlugin } from './CheckList';
 export { codeContent, codePlugin } from './Code';
+export { codeBlockContent, codeBlockPlugin } from './CodeBlock';
 export { columnBreakContent, columnBreakPlugin } from './ColumnBreak';
 export { defaultEmojis, emojiPlugin } from './Emoji';
 export { fontColorContent, fontColorPlugin } from './FontColor';

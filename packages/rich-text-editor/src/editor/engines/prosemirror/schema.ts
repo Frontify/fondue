@@ -66,6 +66,9 @@ const contentExpression = (
     if (content === 'text') {
         return 'inline*';
     }
+    if (content === 'code') {
+        return 'text*';
+    }
     if ('items' in content) {
         // Thrown, as with `blocks` below: left out, the list would lose its items on the way out.
         if (!known.has(content.items)) {
@@ -112,7 +115,7 @@ const blockNodeSpec = (
     // Attributes every text block carries are engine attributes of each one.
     const carried = definition.content === 'text' ? [...registry.blockAttributes] : [];
 
-    return {
+    const spec: PmNodeSpec = {
         content: contentExpression(type, definition, known, lists),
         atom: isVoid,
         // Mod-click selects the innermost selectable node whole; for a block of
@@ -134,6 +137,14 @@ const blockNodeSpec = (
         parseDOM: blockParseRules(definition, carried),
         toDOM: (node) => htmlSpecToDom(blockHtml(registry, definition, node.attrs)),
     };
+    if (definition.content === 'code') {
+        // Plain text that keeps its spaces and line breaks, and takes the marks off what is turned into it.
+        spec.marks = '';
+        spec.code = true;
+        spec.whitespace = 'pre';
+    }
+
+    return spec;
 };
 
 const inlineNodeSpec = (definition: InlineDefinition, hasEditView: boolean): PmNodeSpec => ({
