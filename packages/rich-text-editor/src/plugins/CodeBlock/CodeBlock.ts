@@ -43,14 +43,26 @@ const LANGUAGE_CLASS_PREFIXES = ['language-', 'lang-'] as const;
 const WHITESPACE = /\s+/;
 
 /**
+ * The token when it names a language, otherwise undefined
+ */
+const languageOf = (token: string | null | undefined): string | undefined => {
+    if (token === undefined || token === null || !LANGUAGE_PATTERN.test(token)) {
+        return undefined;
+    }
+
+    return token;
+};
+
+/**
  * The language to store for a token, or nothing when the token is not a language
  */
 const languageValueOf = (token: string | undefined): Partial<CodeBlockValue> => {
-    if (token === undefined || !LANGUAGE_PATTERN.test(token)) {
+    const language = languageOf(token);
+    if (language === undefined) {
         return {};
     }
 
-    return { language: token };
+    return { language };
 };
 
 /**
@@ -72,7 +84,8 @@ const classLanguageOf = (code: Element | null): string | undefined => {
 };
 
 /**
- * A fence one backtick longer than any run in the code, and at least three, so the code never closes it
+ * A fence one backtick longer than any run in the code, and at least three, so the code never closes it.
+ * The info string names the language only when it is a language token, so a stored value cannot end the fence line.
  */
 const fenceOf = (code: string, language: string | null): MarkdownFence => {
     let longestRun = 0;
@@ -82,7 +95,7 @@ const fenceOf = (code: string, language: string | null): MarkdownFence => {
 
     const fence = BACKTICK.repeat(Math.max(MIN_FENCE_LENGTH, longestRun + 1));
 
-    return { open: `${fence}${language ?? ''}`, close: fence };
+    return { open: `${fence}${languageOf(language) ?? ''}`, close: fence };
 };
 
 /**

@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { type RteBlock, type RteDocument, type RteDocumentWith } from '../../documentFormat';
-import { bulletListContent, defaultContent } from '../../plugins';
+import { bulletListContent, codeBlockContent, defaultContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
@@ -14,7 +14,7 @@ type RoundTripCase = {
     document: RteDocument | RteDocumentWith<{ inline: { type: 'mention'; id: string } }>;
 };
 
-const OPTIONS: MarkdownOptions = { plugins: defaultContent };
+const OPTIONS: MarkdownOptions = { plugins: [...defaultContent, codeBlockContent] };
 
 const expectRoundTrip = ({ markdown, document }: RoundTripCase, options: MarkdownOptions = OPTIONS) => {
     expect(parseMarkdown(markdown, options)).toEqual(document);

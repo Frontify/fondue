@@ -6,7 +6,6 @@ import { alignPlugin } from './Align';
 import { boldPlugin } from './Bold';
 import { checkListPlugin } from './CheckList';
 import { codePlugin } from './Code';
-import { codeBlockPlugin } from './CodeBlock';
 import { emojiPlugin } from './Emoji';
 import { fontColorPlugin } from './FontColor';
 import { historyPlugin } from './History';
@@ -26,8 +25,8 @@ import { underlinePlugin } from './Underline';
  * The built-in plugins that need no configuration, which `RichTextEditor` mounts when given no `plugins`.
  * The toolbar draws them by `toolbarGroup` in the fixed group order, list order within a group, ungrouped plugins last.
  * Pass a subset, or spread it into your own list to add more.
- * Left out because they need arguments or change how the editor behaves: `mentionPlugin`, `columnBreakPlugin`,
- * `blurOnBreakPlugin` and `typographyPlugin`.
+ * Left out because they need arguments, change how the editor behaves, or are a new control the old editor's
+ * defaults did not have: `mentionPlugin`, `columnBreakPlugin`, `blurOnBreakPlugin`, `typographyPlugin` and `codeBlockPlugin`.
  */
 export const defaultPlugins: readonly RtePlugin[] = Object.freeze([
     historyPlugin(),
@@ -46,7 +45,6 @@ export const defaultPlugins: readonly RtePlugin[] = Object.freeze([
     numberedListPlugin(),
     checkListPlugin(),
     quotePlugin(),
-    codeBlockPlugin(),
     resetFormattingPlugin(),
     // Default in the old editor too; it adds no node, only text.
     emojiPlugin(),

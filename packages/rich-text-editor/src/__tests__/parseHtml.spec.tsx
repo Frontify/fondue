@@ -5,13 +5,21 @@
 import { describe, expect, it } from 'vitest';
 
 import { parseHtml, type RteDocument, type RteDocumentWith, serializeToHtml } from '../index';
-import { columnBreakPlugin, defaultContent, defaultPlugins, mentionPlugin } from '../plugins';
+import {
+    codeBlockContent,
+    codeBlockPlugin,
+    columnBreakPlugin,
+    defaultContent,
+    defaultPlugins,
+    mentionPlugin,
+} from '../plugins';
 
 // A host that stores HTML opens it with `parseHtml` and saves it with
 // `serializeToHtml`: each save and open must give back the document it saved.
 
 const plugins = [
     ...defaultPlugins,
+    codeBlockPlugin(),
     mentionPlugin({ items: [], href: (mention) => (mention.kind === 'all' ? undefined : `/people/${mention.id}`) }),
     columnBreakPlugin(),
 ];
@@ -104,7 +112,7 @@ describe('parseHtml', () => {
 });
 
 describe('parseHtml code blocks', () => {
-    const codeBlockOf = (html: string) => parseHtml(html, { plugins: defaultContent }).blocks;
+    const codeBlockOf = (html: string) => parseHtml(html, { plugins: [...defaultContent, codeBlockContent] }).blocks;
 
     it('reads the language from the class of the code element', () => {
         expect(codeBlockOf('<pre><code class="language-ts">const a = 1;\nconst b = 2;</code></pre>')).toEqual([

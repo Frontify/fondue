@@ -401,3 +401,38 @@ describe('a mark switched off in the document', () => {
         });
     });
 });
+
+describe('a block of code stored with more than text', () => {
+    const preformatted = definePlugin({
+        id: 'preformatted',
+        content: defineContent({
+            blocks: {
+                preformatted: defineBlock({
+                    content: 'code',
+                    toHtml: () => ({ tag: 'pre', children: true }),
+                    parse: [{ tag: 'pre' }],
+                }),
+            },
+        }),
+    });
+    const codeSchema = buildSchema(buildPluginRegistry([...plugins, preformatted]));
+
+    it('keeps only the text of its children, with no marks and no inline elements', () => {
+        const stored = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'preformatted',
+                    children: [
+                        { text: 'a', bold: true },
+                        { type: 'mention', id: 'jane' },
+                    ],
+                },
+            ],
+        } as RteDocumentOf;
+
+        expect(toRteDocument(toEngineDocument(stored, codeSchema)).blocks).toEqual([
+            { type: 'preformatted', children: [{ text: 'a' }] },
+        ]);
+    });
+});

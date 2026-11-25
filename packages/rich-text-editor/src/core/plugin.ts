@@ -277,6 +277,7 @@ type DefaultsWhenValued<TValue> = [keyof TValue] extends [never]
  *     parse: [{ tag: 'blockquote' }],
  * });
  */
+// The overloads of `DefineBlock` check each content model; the implementation only erases the value type.
 export const defineBlock: DefineBlock = (definition: unknown) => definition as BlockDefinition;
 
 /**
@@ -466,6 +467,11 @@ export type InlineDefinition<TValue = Record<string, unknown>> = {
     parse: readonly ParseRule<TValue>[];
     /** How the inline reads from and writes to Markdown. Without it, the inline is a loss on write. */
     markdown?: MarkdownInlineForm<TValue>;
+    /**
+     * The inline is a line break, which a block of `'code'` holds as `\n`. At most one inline is.
+     * @default false
+     */
+    lineBreak?: boolean;
     render?: {
         /** Readonly view in place of `toHtml`. */
         component?: ComponentType<{ value: TValue }>;

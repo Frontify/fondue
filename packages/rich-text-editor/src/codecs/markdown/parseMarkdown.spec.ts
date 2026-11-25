@@ -8,11 +8,9 @@ import { type MarkdownOptions, parseMarkdown } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
 
-const OPTIONS: MarkdownOptions = { plugins: defaultContent };
+const OPTIONS: MarkdownOptions = { plugins: [...defaultContent, codeBlockContent] };
 
-const WITHOUT_CODE_BLOCK: MarkdownOptions = {
-    plugins: defaultContent.filter((content) => content !== codeBlockContent),
-};
+const WITHOUT_CODE_BLOCK: MarkdownOptions = { plugins: defaultContent };
 
 const EMPTY_DOCUMENT = { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '' }] }] };
 
@@ -233,6 +231,14 @@ describe('parseMarkdown code blocks', () => {
             { type: 'paragraph', children: [{ text: 'a' }] },
             { type: 'codeBlock', children: [{ text: 'x' }] },
             { type: 'paragraph', children: [{ text: 'b' }] },
+        ]);
+    });
+
+    it('reads a fence inside a quote as a code block between two quotes, in order', () => {
+        expect(parseMarkdown('> a\n>\n> ```\n> x\n> ```\n>\n> b', OPTIONS).blocks).toEqual([
+            { type: 'quote', children: [{ text: 'a' }] },
+            { type: 'codeBlock', children: [{ text: 'x' }] },
+            { type: 'quote', children: [{ text: 'b' }] },
         ]);
     });
 

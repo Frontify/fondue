@@ -20,7 +20,9 @@ import {
 
 /** Replaces a node's Markdown form, by the name the node is stored under. */
 export type MarkdownOverrides = {
-    blocks?: Record<string, MarkdownBlockForm | MarkdownCodeForm>;
+    blocks?: Record<string, MarkdownBlockForm>;
+    /** Replaces the fence a block of code writes and the tokens it reads. */
+    codeBlocks?: Record<string, MarkdownCodeForm>;
     marks?: Record<string, MarkdownMarkForm>;
     inlines?: Record<string, MarkdownInlineForm>;
 };
@@ -197,7 +199,7 @@ const checkedInlineForm = (form: unknown): MarkdownInlineForm => {
  */
 const formsOf = <TForm>(
     definitions: ReadonlyMap<string, FormedDefinition<TForm>>,
-    overrides: Readonly<Record<string, unknown>> | undefined,
+    overrides: Readonly<Record<string, TForm>> | undefined,
     check: (form: unknown) => TForm,
 ): Map<string, TForm> => {
     const replaced = new Map(Object.entries(overrides ?? {}));
@@ -258,7 +260,7 @@ const splitByContent = (registry: ContentRegistry) => {
 export const buildForms = (registry: ContentRegistry, overrides: MarkdownOverrides | undefined): MarkdownForms => {
     const definitions = splitByContent(registry);
     const blocks = formsOf(definitions.lines, overrides?.blocks, checkedBlockForm);
-    const codeBlocks = formsOf(definitions.code, overrides?.blocks, checkedCodeForm);
+    const codeBlocks = formsOf(definitions.code, overrides?.codeBlocks, checkedCodeForm);
     const marks = formsOf(registry.marks, overrides?.marks, checkedMarkForm);
     const inlines = formsOf(registry.inlines, overrides?.inlines, checkedInlineForm);
 

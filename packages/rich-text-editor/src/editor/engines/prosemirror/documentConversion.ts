@@ -13,6 +13,7 @@ import {
     type RteBlockNode,
     type RteDocumentOf,
     type RteInlineNode,
+    type RteTextNode,
     type StoredMarkValue,
 } from '#/core';
 
@@ -243,6 +244,25 @@ const inlinesToEngine = (children: RteInlineNode[], schema: Schema): PmNode[] =>
     return nodes;
 };
 
+/** A block of code holds the text of the children that have any, as written: no marks, no inline elements. */
+const codeToEngine = (children: unknown, schema: Schema): PmNode[] => {
+    if (!Array.isArray(children)) {
+        return [];
+    }
+
+    let code = '';
+    for (const child of children as Partial<RteTextNode>[]) {
+        if (typeof child.text === 'string') {
+            code += child.text;
+        }
+    }
+    if (code === '') {
+        return [];
+    }
+
+    return [schema.text(code)];
+};
+
 /**
  * A block's children are inlines or blocks depending on what the block type
  * declared — the schema decides, so the document format needs no marker.
@@ -251,10 +271,16 @@ const childrenToEngine = (
     nodeType: PmNodeType,
     children: RteInlineNode[] | RteBlockNode[],
     schema: Schema,
-): PmNode[] =>
-    nodeType.isTextblock
-        ? inlinesToEngine(children as RteInlineNode[], schema)
-        : (children as RteBlockNode[]).map((child) => blockToEngine(child, schema));
+): PmNode[] => {
+    if (nodeType.spec.code === true) {
+        return codeToEngine(children, schema);
+    }
+    if (nodeType.isTextblock) {
+        return inlinesToEngine(children as RteInlineNode[], schema);
+    }
+
+    return (children as RteBlockNode[]).map((child) => blockToEngine(child, schema));
+};
 
 export const blockToEngine = (block: RteBlockNode, schema: Schema): PmNode => {
     // A block this editor handed out: reuse the node it came from (see `engineNodeOf`).

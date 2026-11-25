@@ -16,7 +16,15 @@ import {
     type RtePlugin,
     serializeToHtml,
 } from '../index';
-import { columnBreakPlugin, defaultContent, defaultPlugins, linkPlugin, textStyleContent } from '../plugins';
+import {
+    codeBlockContent,
+    codeBlockPlugin,
+    columnBreakPlugin,
+    defaultContent,
+    defaultPlugins,
+    linkPlugin,
+    textStyleContent,
+} from '../plugins';
 
 // The readonly view and export draw the same tree, so they are tested side by
 // side: the renderer as React in the test DOM, export as the string it returns.
@@ -161,6 +169,9 @@ describe('a line break at the end of a block', () => {
 });
 
 describe('a code block in a reading view and in export', () => {
+    const withCodeBlockContent = [...defaultContent, codeBlockContent];
+    const withCodeBlockPlugins = [...defaultPlugins, codeBlockPlugin()];
+
     const doc: RteDocument = {
         version: 1,
         blocks: [{ type: 'codeBlock', language: 'ts', children: [{ text: 'const a = "<b>" && *c*;\n  b' }] }],
@@ -168,8 +179,8 @@ describe('a code block in a reading view and in export', () => {
 
     it('draws a pre holding a code element with the language class and the text as written', () => {
         for (const container of [
-            rendered(<RichTextRenderer value={doc} plugins={defaultContent} />),
-            exported(serializeToHtml(doc, { plugins: defaultPlugins })),
+            rendered(<RichTextRenderer value={doc} plugins={withCodeBlockContent} />),
+            exported(serializeToHtml(doc, { plugins: withCodeBlockPlugins })),
         ]) {
             const code = container.querySelector('pre > code');
             expect(code?.className).toBe('language-ts');
@@ -182,8 +193,8 @@ describe('a code block in a reading view and in export', () => {
         const empty: RteDocument = { version: 1, blocks: [{ type: 'codeBlock', children: [] }] };
 
         for (const container of [
-            rendered(<RichTextRenderer value={empty} plugins={defaultContent} />),
-            exported(serializeToHtml(empty, { plugins: defaultPlugins })),
+            rendered(<RichTextRenderer value={empty} plugins={withCodeBlockContent} />),
+            exported(serializeToHtml(empty, { plugins: withCodeBlockPlugins })),
         ]) {
             expect(container.querySelector('pre > code')?.textContent).toBe('');
         }
@@ -196,8 +207,8 @@ describe('a code block in a reading view and in export', () => {
         } as unknown as RteDocument;
 
         for (const container of [
-            rendered(<RichTextRenderer value={odd} plugins={defaultContent} />),
-            exported(serializeToHtml(odd, { plugins: defaultPlugins })),
+            rendered(<RichTextRenderer value={odd} plugins={withCodeBlockContent} />),
+            exported(serializeToHtml(odd, { plugins: withCodeBlockPlugins })),
         ]) {
             expect(container.querySelector('pre > code')?.textContent).toBe('ok');
         }
@@ -207,7 +218,7 @@ describe('a code block in a reading view and in export', () => {
         const odd = { version: 1, blocks: [{ type: 'codeBlock', children: 'x' }] } as unknown as RteDocument;
 
         expect(
-            exported(serializeToHtml(odd, { plugins: defaultPlugins })).querySelector('pre > code')?.textContent,
+            exported(serializeToHtml(odd, { plugins: withCodeBlockPlugins })).querySelector('pre > code')?.textContent,
         ).toBe('');
     });
 });

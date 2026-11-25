@@ -15,7 +15,7 @@ import {
     type RteBlockNode,
     type RtePlugin,
 } from '#/core';
-import { defaultPlugins } from '#/plugins';
+import { codeBlockPlugin, defaultPlugins } from '#/plugins';
 
 import { toEngineDocument } from './documentConversion';
 import { destroyEditors, editorWith, paragraph, text, tokenPlugin } from './testEditor';
@@ -67,7 +67,7 @@ const emphasisPlugin: RtePlugin = definePlugin({
     }),
 });
 
-const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin, tokenPlugin()];
+const plugins: RtePlugin[] = [...defaultPlugins, codeBlockPlugin(), dividerPlugin, tagPlugin, tokenPlugin()];
 
 /** The engine's own fixtures, never a shipped plugin. */
 const fixtures: RtePlugin[] = [...fixturePlugins, dividerPlugin, tagPlugin, pinPlugin];
@@ -695,6 +695,19 @@ describe('blocks.setType to a block of code', () => {
         editor.api.blocks.setType('codeBlock');
 
         expect(editor.stored()).toEqual([{ type: 'codeBlock', children: [{ text: 'abc' }] }]);
+    });
+
+    it('writes a line break as a new line, and a new line back as a line break', () => {
+        const editor = editorWith(plugins, [paragraph(text('a'), { type: 'break' }, text('b'))]);
+        editor.caretAfter('a');
+
+        editor.api.blocks.setType('codeBlock');
+
+        expect(editor.stored()).toEqual([{ type: 'codeBlock', children: [{ text: 'a\nb' }] }]);
+
+        editor.api.blocks.setType('paragraph');
+
+        expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('b'))]);
     });
 
     it('leaves the alignment of the paragraph behind', () => {

@@ -309,6 +309,29 @@ describe('buildSchema', () => {
         });
     });
 
+    describe('an inline that is a line break', () => {
+        const inlineWith = (id: string, lineBreak?: boolean) =>
+            definePlugin({
+                id,
+                content: defineContent({
+                    inlines: { [id]: defineInline({ lineBreak, toHtml: () => ({ tag: 'br' }), parse: [] }) },
+                }),
+            });
+
+        it('is the one the engine swaps for a new line when a block turns into a block of code', () => {
+            const schema = buildSchema([inlineWith('newline', true), inlineWith('chip')]);
+
+            expect(schema.nodes.newline?.spec.linebreakReplacement).toBe(true);
+            expect(schema.nodes.chip?.spec.linebreakReplacement).toBe(false);
+        });
+
+        it('refuses a second one', () => {
+            expect(() => buildSchema([inlineWith('first', true), inlineWith('second', true)])).toThrow(
+                'Inlines "first" and "second" are both a line break; a document has one.',
+            );
+        });
+    });
+
     it('refuses a mark style rule whose property is not a CSS property name', () => {
         expect(() =>
             buildSchema([

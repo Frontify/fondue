@@ -151,6 +151,8 @@ const inlineNodeSpec = (definition: InlineDefinition, hasEditView: boolean): PmN
     group: 'inline',
     inline: true,
     atom: true,
+    // Turning a block into a block of code swaps this inline for a new line, and back.
+    linebreakReplacement: definition.lineBreak === true,
     // With editing UI, a node inserted without a value is a draft (null) the UI
     // completes; without it, it stores the declared defaults.
     attrs: { [VALUE_ATTR]: { default: hasEditView ? null : (definition.defaults ?? {}) } },
@@ -233,7 +235,15 @@ export const buildSchema = (registry: PluginRegistry): Schema => {
     for (const [type, block] of registry.blocks) {
         nodes[type] = blockNodeSpec(type, block, { registry, isHeld: heldTypes.has(type), known, lists });
     }
+    let lineBreakType: string | undefined;
     for (const [type, inline] of registry.inlines) {
+        if (inline.lineBreak === true) {
+            // One only: the engine swaps a single node type for a new line.
+            if (lineBreakType !== undefined) {
+                throw new Error(`Inlines "${lineBreakType}" and "${type}" are both a line break; a document has one.`);
+            }
+            lineBreakType = type;
+        }
         nodes[type] = inlineNodeSpec(inline, registry.edits.has(type));
     }
     nodes[UNKNOWN_BLOCK] = unknownBlockSpec;
