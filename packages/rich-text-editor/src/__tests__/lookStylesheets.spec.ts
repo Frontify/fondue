@@ -10,6 +10,7 @@ import { LOOK_PROPERTIES, lookVariableName } from '../core/look';
 import {
     BUTTON_HOVER_LOOK_FIELDS,
     BUTTON_LOOK_FIELDS,
+    BUTTON_PHYSICAL_PADDING_FIELDS,
     TEXT_LINK_LOOK_FIELDS,
 } from '../plugins/Link/helpers/appearance';
 import { ALL_LINK_APPEARANCES, type LinkAppearance } from '../plugins/Link/helpers/value';
@@ -23,7 +24,7 @@ const STYLES_DIRECTORY = fileURLToPath(new URL('../styles/', import.meta.url));
 const TEXT_STYLE_STYLESHEET = fileURLToPath(new URL('../plugins/TextStyle/textStyle.module.scss', import.meta.url));
 
 /** The characters of a selector that a regular expression reads as more than themselves. */
-const SELECTOR_PUNCTUATION = /[.:]/g;
+const SELECTOR_PUNCTUATION = /[.:()]/g;
 
 const LINK_STYLESHEET = fileURLToPath(new URL('../plugins/Link/link.module.scss', import.meta.url));
 
@@ -135,6 +136,15 @@ describe('the link stylesheet', () => {
             variable: lookVariableName(kind, property),
         }));
 
+    /** The variable a declaration of `property` falls back to when the host's own variable is unset. */
+    const fallbackVariableOf = (body: string, property: string): string | undefined =>
+        new RegExp(`${property}:\\s*var\\(--[a-z0-9-]+,\\s*var\\((--[a-z0-9-]+),`).exec(body)?.[1];
+
+    /** A button's own fields, without the physical paddings that its look keeps only for compatibility. */
+    const BUTTON_OWN_LOOK_FIELDS = Object.fromEntries(
+        Object.entries(BUTTON_LOOK_FIELDS).filter(([field]) => !(field in BUTTON_PHYSICAL_PADDING_FIELDS)),
+    );
+
     it('reads the text link look from the variables the link plugin sets', () => {
         expect(lookDeclarationsIn(ruleBodyForSelector('.link, .link:link, .link:visited'))).toEqual(
             declarationsOf('link', TEXT_LINK_LOOK_FIELDS),
@@ -148,7 +158,31 @@ describe('the link stylesheet', () => {
             const selector = `.${className}, .${className}:link, .${className}:visited`;
 
             expect(lookDeclarationsIn(ruleBodyForSelector(selector))).toEqual(
-                declarationsOf(`button-${appearance}`, BUTTON_LOOK_FIELDS),
+                declarationsOf(`button-${appearance}`, BUTTON_OWN_LOOK_FIELDS),
+            );
+        });
+
+        it(`falls back to the ${appearance} button's left padding at the start and its right padding at the end`, () => {
+            const selector = `.${className}, .${className}:link, .${className}:visited`;
+            const body = ruleBodyForSelector(selector);
+
+            expect(fallbackVariableOf(body, 'padding-inline-start')).toBe(
+                lookVariableName(`button-${appearance}`, BUTTON_PHYSICAL_PADDING_FIELDS.paddingLeft),
+            );
+            expect(fallbackVariableOf(body, 'padding-inline-end')).toBe(
+                lookVariableName(`button-${appearance}`, BUTTON_PHYSICAL_PADDING_FIELDS.paddingRight),
+            );
+        });
+
+        it(`falls back to the ${appearance} button's right padding at the start and its left padding at the end in right-to-left text`, () => {
+            const selector = `.${className}:dir(rtl), .${className}:link:dir(rtl), .${className}:visited:dir(rtl)`;
+            const body = ruleBodyForSelector(selector);
+
+            expect(fallbackVariableOf(body, 'padding-inline-start')).toBe(
+                lookVariableName(`button-${appearance}`, BUTTON_PHYSICAL_PADDING_FIELDS.paddingRight),
+            );
+            expect(fallbackVariableOf(body, 'padding-inline-end')).toBe(
+                lookVariableName(`button-${appearance}`, BUTTON_PHYSICAL_PADDING_FIELDS.paddingLeft),
             );
         });
 

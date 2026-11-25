@@ -55,9 +55,11 @@ export type ButtonHoverLook = {
 /** The box drawn around a link's text: its padding, background and border. */
 export type LinkBoxLook = {
     paddingTop?: string;
-    paddingRight?: string;
     paddingBottom?: string;
-    paddingLeft?: string;
+    /** Padding where a line of text starts: the left in left-to-right text, the right in right-to-left text. */
+    paddingInlineStart?: string;
+    /** Padding where a line of text ends: the right in left-to-right text, the left in right-to-left text. */
+    paddingInlineEnd?: string;
     backgroundColor?: string;
     borderColor?: string;
     borderWidth?: string;
@@ -66,25 +68,50 @@ export type LinkBoxLook = {
 
 const LINK_BOX_LOOK_FIELDS = {
     paddingTop: 'padding-top',
-    paddingRight: 'padding-right',
     paddingBottom: 'padding-bottom',
-    paddingLeft: 'padding-left',
+    paddingInlineStart: 'padding-inline-start',
+    paddingInlineEnd: 'padding-inline-end',
     backgroundColor: 'background-color',
     borderColor: 'border-color',
     borderWidth: 'border-width',
     borderRadius: 'border-radius',
 } as const satisfies Record<keyof LinkBoxLook, string>;
 
+/** The paddings a button look took before the inline ones, which stay on their side in either text direction. */
+type ButtonPhysicalPaddingLook = {
+    /**
+     * Padding on the left, whatever the text direction. A `paddingInlineStart` or `paddingInlineEnd` that lands on
+     * the same side wins.
+     *
+     * @deprecated Use paddingInlineStart instead.
+     */
+    paddingLeft?: string;
+    /**
+     * Padding on the right, whatever the text direction. A `paddingInlineStart` or `paddingInlineEnd` that lands on
+     * the same side wins.
+     *
+     * @deprecated Use paddingInlineEnd instead.
+     */
+    paddingRight?: string;
+};
+
+/** The CSS property each physical padding of a button's look sets. */
+export const BUTTON_PHYSICAL_PADDING_FIELDS = {
+    paddingLeft: 'padding-left',
+    paddingRight: 'padding-right',
+} as const satisfies Record<keyof ButtonPhysicalPaddingLook, string>;
+
 /**
  * How a button link looks. Each value is any CSS value, a guideline variable
  * (`var(--f-theme-settings-button-primary-color)`) included. A field left out keeps Fondue's look.
  */
-export type ButtonLook = TextLook & LinkBoxLook & { hover?: ButtonHoverLook };
+export type ButtonLook = TextLook & LinkBoxLook & ButtonPhysicalPaddingLook & { hover?: ButtonHoverLook };
 
 /** The CSS property each field of a button's look sets. `link.module.scss` spells the same names. */
 export const BUTTON_LOOK_FIELDS = {
     ...LOOK_PROPERTIES,
     ...LINK_BOX_LOOK_FIELDS,
+    ...BUTTON_PHYSICAL_PADDING_FIELDS,
 } as const satisfies Record<keyof Omit<ButtonLook, 'hover'>, string>;
 
 /**

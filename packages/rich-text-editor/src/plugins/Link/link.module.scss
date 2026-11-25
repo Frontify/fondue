@@ -25,9 +25,9 @@ $border-width: 1px;
             $except: (text-decoration, margin-top, margin-bottom)
         );
         padding-top: var(--rte-link-padding-top, 0);
-        padding-right: var(--rte-link-padding-right, 0);
         padding-bottom: var(--rte-link-padding-bottom, 0);
-        padding-left: var(--rte-link-padding-left, 0);
+        padding-inline-start: var(--rte-link-padding-inline-start, 0);
+        padding-inline-end: var(--rte-link-padding-inline-end, 0);
         background-color: var(--rte-link-background-color, transparent);
         border-color: var(--rte-link-border-color, currentcolor);
         border-width: var(--rte-link-border-width, #{$border-width});
@@ -105,13 +105,31 @@ $buttons: (
             margin-bottom: var(--rte-button-#{$kind}-margin-bottom, 0);
             color: var(--rte-button-#{$kind}-color, #{map.get($button, color)});
             padding-top: var(--rte-button-#{$kind}-padding-top, var(--spacing-x-small));
-            padding-right: var(--rte-button-#{$kind}-padding-right, var(--spacing-small));
             padding-bottom: var(--rte-button-#{$kind}-padding-bottom, var(--spacing-x-small));
-            padding-left: var(--rte-button-#{$kind}-padding-left, var(--spacing-small));
+            padding-inline-start: var(
+                --rte-button-#{$kind}-padding-inline-start,
+                var(--rte-button-#{$kind}-padding-left, var(--spacing-small))
+            );
+            padding-inline-end: var(
+                --rte-button-#{$kind}-padding-inline-end,
+                var(--rte-button-#{$kind}-padding-right, var(--spacing-small))
+            );
             background-color: var(--rte-button-#{$kind}-background-color, #{map.get($button, background)});
             border-color: var(--rte-button-#{$kind}-border-color, transparent);
             border-width: var(--rte-button-#{$kind}-border-width, #{$border-width});
             border-radius: var(--rte-button-#{$kind}-border-radius, var(--border-radius-medium));
+
+            // In right-to-left text the left padding is the end side, so the old fields stay on their side.
+            &:dir(rtl) {
+                padding-inline-start: var(
+                    --rte-button-#{$kind}-padding-inline-start,
+                    var(--rte-button-#{$kind}-padding-right, var(--spacing-small))
+                );
+                padding-inline-end: var(
+                    --rte-button-#{$kind}-padding-inline-end,
+                    var(--rte-button-#{$kind}-padding-left, var(--spacing-small))
+                );
+            }
         }
 
         // Under the pointer a field the host left out keeps what the button has at rest, not Fondue's hover.
