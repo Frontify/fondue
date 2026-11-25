@@ -1,5 +1,5 @@
 {
-    "$schema": "https://unpkg.com/knip@5/schema.json",
+    "$schema": "https://unpkg.com/knip@6/schema.json",
     "entry": ["src/subpackages/*.ts"],
     "ignoreDependencies": ["@frontify/fondue-icons", "@tony.ganchev/eslint-plugin-header", "fast-glob"],
     "ignoreExportsUsedInFile": {
