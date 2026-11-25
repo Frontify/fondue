@@ -7,6 +7,7 @@ import {
     defineContent,
     defineInline,
     definePlugin,
+    type HtmlSpec,
     type RteBlockNode,
     type RteDocumentOf,
     type RtePlugin,
@@ -128,5 +129,22 @@ describe('toPlainText', () => {
         const stray = { type: 'unknown', children: [STRAY_TEXT] } as unknown as RteBlockNode;
 
         expect(toPlainText(doc(stray), { plugins: [] })).toBe('');
+    });
+
+    it('gives nothing for an inline whose untyped markup holds children that are neither text nor a list', () => {
+        const flag = definePlugin({
+            id: 'flag',
+            content: defineContent({
+                inlines: {
+                    // Untyped on purpose: a JavaScript plugin can return any `children`.
+                    flag: defineInline({
+                        toHtml: () => ({ tag: 'span', children: false }) as unknown as HtmlSpec,
+                        parse: [],
+                    }),
+                },
+            }),
+        });
+
+        expect(toPlainText(doc(paragraph({ text: 'a' }, { type: 'flag' })), { plugins: [flag] })).toBe('a');
     });
 });

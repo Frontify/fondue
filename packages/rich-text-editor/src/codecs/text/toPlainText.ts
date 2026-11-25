@@ -39,7 +39,7 @@ const specText = (spec: HtmlSpec): string => {
         return spec.children;
     }
 
-    if (spec.children === undefined || spec.children === true) {
+    if (typeof spec.children !== 'object') {
         return '';
     }
 
