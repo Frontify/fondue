@@ -15,7 +15,11 @@ export type HostRecord = {
     supersededThrough: number;
 };
 
-export type HostDocAction = { kind: 'unchanged' } | { kind: 'echo'; order: number } | { kind: 'apply' };
+export type HostDocAction =
+    | { kind: 'unchanged' }
+    | { kind: 'echo'; order: number }
+    | { kind: 'wait' }
+    | { kind: 'apply' };
 
 export const createHostRecord = (initialDoc: RteDocumentOf): HostRecord => ({
     agreed: initialDoc,
@@ -28,15 +32,21 @@ export type HostDocActionParams = {
     doc: RteDocumentOf;
     /** The order `doc` was reported in, when the editor reported it. */
     reportOrder: number | undefined;
+    composing: boolean;
 };
 
-export const hostDocAction = ({ record, doc, reportOrder }: HostDocActionParams): HostDocAction => {
+export const hostDocAction = ({ record, doc, reportOrder, composing }: HostDocActionParams): HostDocAction => {
     if (doc === record.agreed) {
         return { kind: 'unchanged' };
     }
 
     if (reportOrder !== undefined && reportOrder > record.supersededThrough) {
         return { kind: 'echo', order: reportOrder };
+    }
+
+    // Replacing text mid-composition breaks the word being composed, so the change waits for it to end.
+    if (composing) {
+        return { kind: 'wait' };
     }
 
     return { kind: 'apply' };

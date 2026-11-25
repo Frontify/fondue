@@ -76,11 +76,15 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      */
     id?: string;
     /**
-     * The document to show. One handed back from `onChange` changes nothing;
-     * any other is shown, an earlier one included. Never mutate a document
-     * once passed.
+     * The document to show: one handed back from `onChange` changes nothing,
+     * any other is applied as a change that keeps the caret and undo history.
+     * Never mutate a document once passed.
      */
     value?: RteDocumentOf<TBlock>;
+    /**
+     * Called with the new document after each edit. Unchanged blocks are the
+     * same objects as before, so replace a block to change it, never mutate it.
+     */
     onChange?: (value: RteDocumentOf<TBlock>) => void;
     /**
      * The plugins to mount (e.g. `defaultPlugins`, extended or reduced as
@@ -157,7 +161,8 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * The editor lost focus, handed the document as it stands: the hook to
      * commit on instead of every keystroke. Fires once focus has left the
      * editor: moving into its toolbar or a plugin's UI (the link flyout's
-     * fields, a mention being typed) is still inside.
+     * fields, a mention being typed) is still inside. Never mutate the
+     * document, as with `onChange`.
      */
     onBlur?: (value: RteDocumentOf<TBlock>) => void;
     /**

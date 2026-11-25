@@ -4,7 +4,6 @@ import { dropCursor } from 'prosemirror-dropcursor';
 import { EditorState, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { type RteDocumentOf } from '#/core';
 import { type ElementAttributes, type MountedDocument, type MountDocument, type MountOptions } from '#/editor/port';
 
 import {
@@ -16,31 +15,41 @@ import {
     pastedWithoutExtras,
 } from './clipboard';
 import { createControlApi, type OpenEditors } from './controlApi';
-import { rootExtrasOf, toEngineDocument, toRteDocument, withoutDrafts } from './documentConversion';
+import { toEngineDocument } from './documentConversion';
 import { copiedExtrasPlugin } from './extraAttributes';
-import { createHostRecord, hostDocAction, recordAgreed, recordEcho, recordHandOver, recordReport } from './hostRecord';
+import { createHostSync, type FrameScheduler } from './hostSync';
 import { keystrokePipeline } from './keystrokes';
 import { createMarkViews, createNodeViews, LiveViews } from './nodeViews';
 import { placeholderPlugin } from './placeholder';
 import { buildSchema } from './schema';
 import { createSelectionRectReader } from './selectionRect';
 import { HOST_DOC } from './transactionMeta';
+import { userEditsPlugin } from './userEdits';
 import './engine.scss';
+
+const browserFrames: FrameScheduler = {
+    request: (callback) => requestAnimationFrame(callback),
+    cancel: (frame) => {
+        cancelAnimationFrame(frame);
+    },
+};
 
 /**
  * The live editor: `mountDocument` assembles everything in this folder over
  * one ProseMirror view. Readonly display does not come through here; that is
  * `RichTextRenderer`.
  */
-export const mountDocument: MountDocument = (options) => mount(options).mounted;
+export const mountDocument: MountDocument = (options) => mount(options, browserFrames).mounted;
 
 /**
  * Test-only: `mountDocument`'s editor plus its view, so specs can place the
  * selection and type the way the engine's input handling does. The view never
  * leaves this folder otherwise.
  */
-export const mountEditorForTests = (options: MountOptions): { mounted: MountedDocument; view: EditorView } =>
-    mount(options);
+export const mountEditorForTests = (
+    options: MountOptions,
+    frames: FrameScheduler = browserFrames,
+): { mounted: MountedDocument; view: EditorView } => mount(options, frames);
 
 /**
  * Set on the editable element, so engine.scss can scope the engine's own
@@ -67,25 +76,23 @@ const editableAttributes = (attributes: ElementAttributes): Record<string, strin
  * So: live views and open-editor state, then api (view behind a getter), then
  * the view, then the handle the host talks to.
  */
-const mount = ({
-    container,
-    registry,
-    initialDoc,
-    placeholder,
-    attributes,
-    placeholderClassName,
-    onDocChange,
-    onDocApplied,
-    onStateChange,
-    viewPortals,
-}: MountOptions): { mounted: MountedDocument; view: EditorView } => {
+const mount = (
+    {
+        container,
+        registry,
+        initialDoc,
+        placeholder,
+        attributes,
+        placeholderClassName,
+        onDocChange,
+        onDocApplied,
+        onStateChange,
+        viewPortals,
+    }: MountOptions,
+    frames: FrameScheduler,
+): { mounted: MountedDocument; view: EditorView } => {
     const schema = buildSchema(registry);
     let currentPlaceholder = placeholder;
-    let record = createHostRecord(initialDoc);
-    // The order each document was reported in, which tells an echo from a reset.
-    const reportOrders = new WeakMap<RteDocumentOf, number>();
-    // The document's own undeclared keys: only the host changes them, so they live here, not in the engine document.
-    let rootExtras = rootExtrasOf(initialDoc);
 
     // 1. Views with editing UI (blocks, inline elements, link-like marks) follow
     //    the selection, since `isFocused` does. Each state change is offered to
@@ -111,6 +118,15 @@ const mount = ({
         return view;
     };
     const api = createControlApi(getView, schema, registry, openEditors);
+    const hostSync = createHostSync({
+        getView,
+        schema,
+        initialDoc,
+        frames,
+        onDocChange,
+        onDocApplied,
+        onStateChange,
+    });
 
     // 3. The view: node/mark views, clipboard, the initial state, and the
     //    transaction loop that feeds the host.
@@ -130,6 +146,7 @@ const mount = ({
             plugins: [
                 ...keystrokePipeline(registry, schema, api),
                 copiedExtrasPlugin(),
+                userEditsPlugin(),
                 placeholderPlugin(() => currentPlaceholder, placeholderClassName),
                 // Drawn in the view's offset parent, outside the text, so `currentColor` would be the host's colour.
                 dropCursor({ color: 'var(--color-primary-default)', width: 2 }),
@@ -150,13 +167,12 @@ const mount = ({
         dispatchTransaction(transaction) {
             editorView.updateState(editorView.state.apply(transaction));
             repaintViews();
+
             // Host-originated changes are not reported back to the host.
             if (transaction.docChanged && transaction.getMeta(HOST_DOC) !== true) {
-                const emitted = toRteDocument(editorView.state.doc, rootExtras);
-                record = recordReport(record);
-                reportOrders.set(emitted, record.reportCount);
-                onDocChange(emitted);
+                hostSync.report();
             }
+
             onStateChange();
         },
     });
@@ -164,44 +180,6 @@ const mount = ({
     onDocApplied(initialDoc);
 
     // 4. What the host gets back.
-    const applyDoc = (doc: RteDocumentOf): void => {
-        const next = toEngineDocument(doc, schema);
-        // Drafts (an inline still being made) are in no document the host holds,
-        // though a block reused from one handed out may bring one along; an
-        // echo of what is there must leave them, and the caret, alone.
-        rootExtras = rootExtrasOf(doc);
-        if (withoutDrafts(next).eq(withoutDrafts(editorView.state.doc))) {
-            record = recordAgreed(record, doc);
-            onDocApplied(doc);
-            return;
-        }
-        // Different content: the old caret position means nothing in it, so the
-        // caret goes to the end rather than mid-word somewhere.
-        const transaction = editorView.state.tr.replaceWith(0, editorView.state.doc.content.size, next.content);
-        transaction.setSelection(Selection.atEnd(transaction.doc));
-        transaction.setMeta(HOST_DOC, true);
-        transaction.setMeta('addToHistory', false);
-        editorView.dispatch(transaction);
-        record = recordAgreed(record, doc);
-        onDocApplied(doc);
-    };
-
-    const setDoc = (doc: RteDocumentOf): void => {
-        const action = hostDocAction({ record, doc, reportOrder: reportOrders.get(doc) });
-
-        switch (action.kind) {
-            case 'unchanged':
-                return;
-            case 'echo':
-                record = recordEcho(record, action.order);
-                return;
-            case 'apply':
-                record = recordHandOver(record);
-                applyDoc(doc);
-                return;
-        }
-    };
-
     const mounted: MountedDocument = {
         handle: {
             api,
@@ -215,13 +193,13 @@ const mount = ({
                 }
             },
             selectionRect: createSelectionRectReader(editorView),
-            document: () => toRteDocument(editorView.state.doc, rootExtras),
+            document: hostSync.document,
             focusAtEnd: () => {
                 editorView.dispatch(editorView.state.tr.setSelection(Selection.atEnd(editorView.state.doc)));
                 editorView.focus();
             },
         },
-        setDoc,
+        setDoc: hostSync.setDoc,
         setPlaceholder(next) {
             currentPlaceholder = next;
             // An empty props update makes the placeholder decoration be read again.
@@ -231,6 +209,7 @@ const mount = ({
             editorView.setProps({ attributes: editableAttributes(next) });
         },
         destroy() {
+            hostSync.destroy();
             editorView.destroy();
         },
     };
