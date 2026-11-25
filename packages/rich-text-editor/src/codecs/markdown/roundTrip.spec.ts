@@ -637,6 +637,31 @@ const AUTOLINK_CASES: readonly RoundTripCase[] = [
         markdown: String.raw`ana\@example.com`,
         document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'ana@example.com' }] }] },
     },
+    {
+        name: 'an email address after a semicolon',
+        markdown: String.raw`;\@example.com`,
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: ';@example.com' }] }] },
+    },
+    {
+        name: 'an email address after an ampersand',
+        markdown: String.raw`a&\@example.com`,
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'a&@example.com' }] }] },
+    },
+    {
+        name: 'an email address after a dollar sign',
+        markdown: String.raw`$\@example.com`,
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '$@example.com' }] }] },
+    },
+    {
+        name: 'an email address in parentheses',
+        markdown: String.raw`(ana\@x.com)`,
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '(ana@x.com)' }] }] },
+    },
+    {
+        name: 'a mention-like word after a space',
+        markdown: 'Hi @ana',
+        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'Hi @ana' }] }] },
+    },
 ];
 
 describe('markdown round trip of text a reader could take for an autolink', () => {

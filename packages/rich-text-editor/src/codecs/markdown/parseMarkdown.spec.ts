@@ -104,6 +104,13 @@ describe('parseMarkdown autolinks', () => {
         );
     });
 
+    it('reads a protocol relative address as text', () => {
+        expect(parseMarkdown('see //evil.com', OPTIONS)).toEqual({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'see //evil.com' }] }],
+        });
+    });
+
     it('reads a bare domain as text', () => {
         expect(parseMarkdown('see example.com', OPTIONS)).toEqual({
             version: 1,

@@ -25,8 +25,8 @@ const SCHEME_SEPARATOR = /[:/](?=\/)/g;
 /** The `.` after `www` in any case, which starts an address a reader links. */
 const WWW_DOT = /(www)(\.)/gi;
 
-/** An `@` after a character of an email's local part, which makes an address a reader links. */
-const EMAIL_AT = /(?<=[A-Za-z0-9._+-])@/g;
+/** An `@` that is not at the start of a line or right after whitespace, where a reader may link an email address. */
+const EMAIL_AT = /(?<!^|\s)@/g;
 
 /** A `!` that ends the text, which would make a link written right after it an image. */
 const TRAILING_BANG = /!$/;

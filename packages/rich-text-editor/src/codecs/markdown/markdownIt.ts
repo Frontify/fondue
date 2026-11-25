@@ -76,8 +76,11 @@ type LinkMatch = NonNullable<ReturnType<MarkdownIt['linkify']['matchAtStart']>>;
 /** An address that starts with `www.`, which GFM autolinks without a scheme. */
 const WWW_ADDRESS = /^www\./i;
 
-/** Whether GFM's autolink extension links the match: it has a scheme, is an email address, or starts with `www.`. */
-const isAutolink = ({ schema, raw }: LinkMatch): boolean => schema !== '' || WWW_ADDRESS.test(raw);
+/** The schemes GFM's autolink extension links: web addresses and email addresses. */
+const AUTOLINK_SCHEMAS: ReadonlySet<string> = new Set(['http:', 'https:', 'mailto:']);
+
+/** Whether GFM's autolink extension links the match: it has a web or email scheme, or starts with `www.`. */
+const isAutolink = ({ schema, raw }: LinkMatch): boolean => AUTOLINK_SCHEMAS.has(schema) || WWW_ADDRESS.test(raw);
 
 // By the time the reader gets an address, markdown-it has decoded its escapes and entities, so it is kept as written.
 const asWritten = (url: string): string => url;
