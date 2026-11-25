@@ -624,42 +624,52 @@ const readTransitionTiming = (card: Locator) =>
 // WebKit can dispatch transitionrun after a 150ms transition has ended; a long one is still running when frozen.
 const STRETCHED_TRANSITION_MS = 1_000_000;
 
+const BANNER_RADIUS_PROPERTY = 'border-bottom-left-radius';
+
 type BannerMidpoint = { radius: string; overlayRadius: string };
 
+type FreezeAtBannerRadiusMidpointParams = { durationMs: number; property: string };
+
+// Evaluate callbacks share state only through the page window, so they cast it to this shape.
 type BannerMidpointWindow = { bannerMidpoint?: Promise<BannerMidpoint> };
 
 const freezeAtBannerRadiusMidpoint = (card: Locator) =>
-    card.evaluate((root: HTMLElement, durationMs: number) => {
-        const state = window as unknown as BannerMidpointWindow;
-        delete state.bannerMidpoint;
-        const banner = root.querySelector('[data-test-id="fondue-card-banner"]') as HTMLElement;
-        banner.style.transitionDuration = `${durationMs}ms`;
-        const onRun = (event: TransitionEvent) => {
-            if (event.target !== banner || event.pseudoElement || event.propertyName !== 'border-bottom-left-radius') {
-                return;
-            }
-            root.removeEventListener('transitionrun', onRun);
-            const transition = banner
-                .getAnimations()
-                .find(
-                    (animation): animation is CSSTransition =>
-                        animation instanceof CSSTransition &&
-                        animation.transitionProperty === 'border-bottom-left-radius',
-                );
-            if (!transition) {
-                throw new Error('The banner has no border-bottom-left-radius transition to freeze');
-            }
+    card.evaluate(
+        (root: HTMLElement, { durationMs, property }: FreezeAtBannerRadiusMidpointParams) => {
+            const state = window as unknown as BannerMidpointWindow;
+            delete state.bannerMidpoint;
+            const banner = root.querySelector('[data-test-id="fondue-card-banner"]') as HTMLElement;
+            banner.style.transitionDuration = `${durationMs}ms`;
+            const onRun = (event: TransitionEvent) => {
+                if (event.target !== banner || event.pseudoElement || event.propertyName !== property) {
+                    return;
+                }
+                root.removeEventListener('transitionrun', onRun);
+                const transition = banner
+                    .getAnimations()
+                    .find(
+                        (animation): animation is CSSTransition =>
+                            animation instanceof CSSTransition && animation.transitionProperty === property,
+                    );
+                if (!transition) {
+                    state.bannerMidpoint = Promise.reject(
+                        new Error(`The banner has no ${property} transition to freeze`),
+                    );
+                    return;
+                }
 
-            transition.pause();
-            transition.currentTime = durationMs / 2;
+                transition.pause();
+                transition.currentTime = durationMs / 2;
 
-            state.bannerMidpoint = transition.ready.then(() => ({
-                radius: getComputedStyle(banner).borderBottomLeftRadius,
-                overlayRadius: getComputedStyle(banner, '::after').borderBottomLeftRadius,
-            }));
-        };
-        root.addEventListener('transitionrun', onRun);
-    }, STRETCHED_TRANSITION_MS);
+                state.bannerMidpoint = transition.ready.then(() => ({
+                    radius: getComputedStyle(banner).borderBottomLeftRadius,
+                    overlayRadius: getComputedStyle(banner, '::after').borderBottomLeftRadius,
+                }));
+            };
+            root.addEventListener('transitionrun', onRun);
+        },
+        { durationMs: STRETCHED_TRANSITION_MS, property: BANNER_RADIUS_PROPERTY },
+    );
 
 const readBannerMidpoint = (card: Locator) =>
     card.evaluate(() => (window as unknown as BannerMidpointWindow).bannerMidpoint);
