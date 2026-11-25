@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type RteDocumentOf } from '../../core';
+import { type RteBlockNode, type RteDocumentOf } from '../../core';
 import { type RteBlock, type RteDocument, type RteDocumentWith } from '../../documentFormat';
 import { bulletListContent, defaultContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
@@ -10,15 +10,18 @@ import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../ind
 import { codeLanguageOverrideOptions, linkTargetOverrideOptions } from './markSuffixOverride.fixture';
 import { mentionOverrideOptions } from './mentionOverride.fixture';
 
-type RoundTripCase = {
+type RoundTripCase<TBlock extends RteBlockNode = RteBlock> = {
     name: string;
     markdown: string;
-    document: RteDocument | RteDocumentWith<{ inline: { type: 'mention'; id: string } }> | RteDocumentOf;
+    document: RteDocument<TBlock>;
 };
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
 
-const expectRoundTrip = ({ markdown, document }: RoundTripCase, options: MarkdownOptions = OPTIONS) => {
+const expectRoundTrip = <TBlock extends RteBlockNode>(
+    { markdown, document }: RoundTripCase<TBlock>,
+    options: MarkdownOptions = OPTIONS,
+) => {
     expect(parseMarkdown(markdown, options)).toEqual(document);
     expect(serializeToMarkdown(document, options)).toEqual({ markdown, losses: [] });
 };
