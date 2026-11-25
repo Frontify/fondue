@@ -24,6 +24,9 @@ export type RteDocumentValidation =
     | { valid: true; document: RteDocumentOf }
     | { valid: false; issues: RteDocumentIssue[] };
 
+/** The most issues `validateDocument` reports; it stops walking once it has this many, so a hostile value costs bounded output. */
+export const MAX_ISSUES = 100;
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
     typeof value === 'object' && value !== null && !Array.isArray(value);
 
@@ -65,7 +68,7 @@ type NodeChildren = {
 
 /** Checks one node, pushes its issues, and returns the children to walk next, or null when it has none or failed. */
 const checkNode = ({ node, path, kind }: CheckNodeParams, issues: RteDocumentIssue[]): NodeChildren | null => {
-    if ('text' in node) {
+    if (Object.prototype.hasOwnProperty.call(node, 'text')) {
         const reason = textNodeIssue(node, kind);
         if (reason !== null) {
             issues.push({ reason, path });
@@ -100,7 +103,7 @@ const validateBlocks = (blocks: unknown[], blocksPath: string, issues: RteDocume
     // Repeated blocks are legal and checked once; it also ends a walk over an in-memory cycle.
     const seen = new WeakSet<object>();
 
-    for (let next = pending.pop(); next !== undefined; next = pending.pop()) {
+    for (let next = pending.pop(); next !== undefined && issues.length < MAX_ISSUES; next = pending.pop()) {
         const { node, path, kind } = next;
 
         if (!isRecord(node)) {
@@ -133,6 +136,7 @@ const validateBlocks = (blocks: unknown[], blocksPath: string, issues: RteDocume
  * Checks a stored value's structure, without the editor, the DOM or ProseMirror, so it runs in Node.
  * Unknown block, inline and mark types and extra keys pass, because the editor keeps them.
  * Every node with a `type` reserves `children` for an array and never carries `text`, as the format's text nodes never carry `type`.
+ * Reports at most `MAX_ISSUES` issues, the first ones in document order.
  * Never throws on parsed JSON, however deeply nested.
  *
  * @example

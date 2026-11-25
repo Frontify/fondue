@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import { assert, describe, expect, it } from 'vitest';
 
+import { MAX_ISSUES } from '../core/validateDocument';
 import { validateDocument } from '../index';
 
 const PACKAGE_ROOT = fileURLToPath(new URL('../..', import.meta.url));
@@ -312,6 +313,45 @@ describe('validateDocument, on hostile input', () => {
         json += ']}';
 
         expect(validateDocument(JSON.parse(json)).valid).toBe(true);
+    });
+
+    it('stops at MAX_ISSUES issues, keeping the first ones in document order', () => {
+        const document = { version: 1, blocks: Array.from({ length: MAX_ISSUES * 10 }, () => 'x') };
+
+        const result = validateDocument(document);
+
+        assert(!result.valid);
+        expect(result.issues).toHaveLength(MAX_ISSUES);
+        expect(result.issues[0]?.path).toBe('/blocks/0');
+        expect(result.issues[result.issues.length - 1]?.path).toBe(`/blocks/${MAX_ISSUES - 1}`);
+    });
+
+    it('accepts a text node with an own __proto__ and constructor key', () => {
+        const json =
+            '{"version":1,"blocks":[{"type":"paragraph","children":[{"text":"a","__proto__":{"type":"x"},"constructor":1}]}]}';
+
+        expect(validateDocument(JSON.parse(json)).valid).toBe(true);
+    });
+
+    it('reads an inline whose text key is only inherited as an inline element', () => {
+        const mention = Object.assign(Object.create({ text: 'x' }) as object, { type: 'mention' });
+
+        expect(validateDocument({ version: 1, blocks: [{ type: 'p', children: [mention] }] }).valid).toBe(true);
+    });
+
+    it('accepts a block with an own __proto__ key holding text', () => {
+        const json = '{"version":1,"blocks":[{"type":"p","__proto__":{"text":"x"}}]}';
+
+        expect(validateDocument(JSON.parse(json)).valid).toBe(true);
+    });
+
+    it('reports an inline whose own constructor key holds text as missing a type', () => {
+        const json = '{"version":1,"blocks":[{"type":"p","children":[{"constructor":{"text":"x"}}]}]}';
+
+        expect(validateDocument(JSON.parse(json))).toEqual({
+            valid: false,
+            issues: [{ reason: 'missing-type', path: '/blocks/0/children/0' }],
+        });
     });
 
     it('terminates on a node whose children contain itself', () => {
