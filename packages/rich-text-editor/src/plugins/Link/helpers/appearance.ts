@@ -80,17 +80,17 @@ const LINK_BOX_LOOK_FIELDS = {
 /** The paddings a button look took before the inline ones, which stay on their side in either text direction. */
 type ButtonPhysicalPaddingLook = {
     /**
-     * Padding on the left, whatever the text direction. A `paddingInlineStart` or `paddingInlineEnd` that lands on
-     * the same side wins.
+     * Padding on the left in either text direction, as set by a `dir` attribute. A `paddingInlineStart` or
+     * `paddingInlineEnd` that lands on the same side wins.
      *
-     * @deprecated Use paddingInlineStart instead.
+     * @deprecated Use paddingInlineStart instead, or paddingInlineEnd for right-to-left text.
      */
     paddingLeft?: string;
     /**
-     * Padding on the right, whatever the text direction. A `paddingInlineStart` or `paddingInlineEnd` that lands on
-     * the same side wins.
+     * Padding on the right in either text direction, as set by a `dir` attribute. A `paddingInlineStart` or
+     * `paddingInlineEnd` that lands on the same side wins.
      *
-     * @deprecated Use paddingInlineEnd instead.
+     * @deprecated Use paddingInlineEnd instead, or paddingInlineStart for right-to-left text.
      */
     paddingRight?: string;
 };
