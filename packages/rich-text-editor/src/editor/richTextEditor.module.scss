@@ -10,6 +10,9 @@
 // 4px shorter than the regular Button, as the design draws it.
 $separator-size: 2rem;
 
+// How far a focus outline inside the content reaches past its element: the table's 2px offset plus its border width.
+$focus-outline-reach: calc(2px + var(--border-width-default));
+
 /**
  * Wraps the toolbar, the content and the floating bar so the editor has one
  * element to watch focus and keys on. `display: contents` keeps it out of layout.
@@ -26,6 +29,16 @@ $separator-size: 2rem;
  */
 .body {
     isolation: isolate;
+}
+
+/** With `maxRows`, the content scrolls below the toolbar; `lh` here is the document's line height. */
+.body[data-max-rows='true'] .content {
+    // Room for a focus outline at the edge, taken back by the margin.
+    box-sizing: content-box;
+    padding: $focus-outline-reach;
+    margin: calc(-1 * #{$focus-outline-reach});
+    max-block-size: calc(var(--max-rows) * 1lh);
+    overflow-y: auto;
 }
 
 /** Why the content cannot be edited, kept off its first line like the toolbar. */
@@ -159,6 +172,11 @@ $separator-size: 2rem;
 
     &.editable {
         cursor: text;
+    }
+
+    // Host stylesheets such as Tailwind's preflight set `:-moz-focusring`, which beats the class alone.
+    &:focus-visible {
+        outline: none;
     }
 
     /** Forced colours flatten a host's border change on focus; a transparent outline turns visible there. */

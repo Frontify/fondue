@@ -36,7 +36,7 @@ import {
     type CardThumbnailImageProps,
     type CardTitleProps,
 } from './CardContent';
-import { CardRoot, type CardRootProps } from './CardRoot';
+import { CardRoot, type CardActionsVisibility, type CardRootProps } from './CardRoot';
 
 export {
     CardAction,
@@ -56,6 +56,7 @@ export {
 
 export type {
     CardActionButtonProps,
+    CardActionsVisibility,
     CardActionProps,
     CardBadgesProps,
     CardBannerDescriptionProps,

@@ -467,6 +467,86 @@
     },
     {
       "category": "colors",
+      "cssVariable": "var(--color-container-subtle-active)",
+      "id": "color-container-subtle-active",
+      "keyPath": [
+        "colors",
+        "container",
+        "subtle",
+        "active"
+      ],
+      "output": "variable",
+      "tailwindClass": "*-container-subtle-active",
+      "themeable": true,
+      "type": "color",
+      "value": "var(--color-container-subtle-active)"
+    },
+    {
+      "category": "colors",
+      "cssVariable": "var(--color-container-subtle-default)",
+      "id": "color-container-subtle-default",
+      "keyPath": [
+        "colors",
+        "container",
+        "subtle",
+        "default"
+      ],
+      "output": "variable",
+      "tailwindClass": "*-container-subtle",
+      "themeable": true,
+      "type": "color",
+      "value": "var(--color-container-subtle-default)"
+    },
+    {
+      "category": "colors",
+      "cssVariable": "var(--color-container-subtle-hover)",
+      "id": "color-container-subtle-hover",
+      "keyPath": [
+        "colors",
+        "container",
+        "subtle",
+        "hover"
+      ],
+      "output": "variable",
+      "tailwindClass": "*-container-subtle-hover",
+      "themeable": true,
+      "type": "color",
+      "value": "var(--color-container-subtle-hover)"
+    },
+    {
+      "category": "colors",
+      "cssVariable": "var(--color-container-subtle-on-subtle-container)",
+      "id": "color-container-subtle-on-subtle-container",
+      "keyPath": [
+        "colors",
+        "container",
+        "subtle",
+        "on-subtle-container"
+      ],
+      "output": "variable",
+      "tailwindClass": "*-container-subtle-on-subtle-container",
+      "themeable": true,
+      "type": "color",
+      "value": "var(--color-container-subtle-on-subtle-container)"
+    },
+    {
+      "category": "colors",
+      "cssVariable": "var(--color-container-subtle-on-subtle-container-variant)",
+      "id": "color-container-subtle-on-subtle-container-variant",
+      "keyPath": [
+        "colors",
+        "container",
+        "subtle",
+        "on-subtle-container-variant"
+      ],
+      "output": "variable",
+      "tailwindClass": "*-container-subtle-on-subtle-container-variant",
+      "themeable": true,
+      "type": "color",
+      "value": "var(--color-container-subtle-on-subtle-container-variant)"
+    },
+    {
+      "category": "colors",
       "cssVariable": "var(--color-container-success-active)",
       "id": "color-container-success-active",
       "keyPath": [

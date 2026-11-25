@@ -62,7 +62,7 @@
 }
 
 @mixin selection-mark-selected {
-    border: none;
+    border: var(--border-width-default) solid var(--color-primary-default);
     background-color: var(--color-primary-default);
     color: var(--color-primary-on-primary);
 }
@@ -203,7 +203,10 @@
     overflow: hidden;
     background-color: var(--color-surface-dim);
     pointer-events: none;
-    @include transitions.transition-colors;
+    // border-radius eases with the root's hover tint so the corners never square off ahead of it.
+    @include transitions.transition(
+        (color, background-color, border-color, text-decoration-color, outline-color, fill, stroke, border-radius)
+    );
 
     &::after {
         @include border-overlay($z-index: 1);
@@ -498,6 +501,17 @@ $selection-mark-clearance: calc(var(--spacing-medium) + #{sizeToken.get(5)} + va
     align-self: stretch;
     gap: var(--spacing-xx-small);
     padding: var(--spacing-small);
+    @include transitions.transition-opacity;
+
+    // Collapsed rather than display:none so the buttons stay in the tab order.
+    @media (hover: hover) {
+        .root[data-actions-visibility='hover']:not(:hover, :has([data-state='open']), :has(:focus-visible)) > & {
+            width: 0;
+            padding-inline: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+    }
 }
 
 .action {

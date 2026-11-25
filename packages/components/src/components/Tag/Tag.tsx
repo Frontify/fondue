@@ -4,6 +4,7 @@ import { IconCross, IconPlus } from '@frontify/fondue-icons';
 import { Children, forwardRef, isValidElement, useState, type MouseEvent, type ReactNode } from 'react';
 
 import { type CommonGlobalProps } from '#/helpers/aria';
+import { useTranslation } from '#/hooks/useTranslation';
 
 import styles from './styles/tag.module.scss';
 
@@ -42,6 +43,14 @@ type TagProps = CommonGlobalProps & {
      * Click handler on add click - providing this will show the add button
      */
     onAddClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    /**
+     * Accessible name of the dismiss button. Falls back to the translated "Dismiss" followed by `aria-label` or `title`.
+     */
+    dismissLabel?: string;
+    /**
+     * Accessible name of the add button. Falls back to the translated "Add" followed by `aria-label` or `title`.
+     */
+    addLabel?: string;
     title?: string;
     'aria-label'?: string;
     'data-test-id'?: string;
@@ -69,8 +78,10 @@ const TagRoot = forwardRef<HTMLButtonElement | HTMLDivElement, TagProps>(
         {
             'aria-label': ariaLabel,
             'data-test-id': dataTestId = 'tag',
+            addLabel,
             children,
             disabled = false,
+            dismissLabel,
             emphasis = 'strong',
             lang,
             onAddClick,
@@ -124,6 +135,8 @@ const TagRoot = forwardRef<HTMLButtonElement | HTMLDivElement, TagProps>(
                 </TagMainContent>
                 <TagActionButtons
                     aria-label={ariaLabel || title}
+                    addLabel={addLabel}
+                    dismissLabel={dismissLabel}
                     disabled={disabled}
                     onAddClick={onAddClick}
                     onDismiss={onDismiss}
@@ -236,16 +249,28 @@ type TagActionButtonsProps = {
      * Click handler on add click
      */
     onAddClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    dismissLabel?: string;
+    addLabel?: string;
     'aria-label'?: string;
 };
 
-const TagActionButtons = ({ 'aria-label': ariaLabel, disabled, onAddClick, onDismiss }: TagActionButtonsProps) => {
+const TagActionButtons = ({
+    'aria-label': ariaLabel,
+    addLabel,
+    disabled,
+    dismissLabel,
+    onAddClick,
+    onDismiss,
+}: TagActionButtonsProps) => {
+    const { t } = useTranslation();
+    const label = ariaLabel || '';
+
     return (
         <>
             {onAddClick && (
                 <button
                     type="button"
-                    aria-label={`Add ${ariaLabel || ''}`}
+                    aria-label={addLabel || t('Tag_add', { label }).trim()}
                     className={styles.actionButton}
                     disabled={disabled}
                     onClick={onAddClick}
@@ -256,7 +281,7 @@ const TagActionButtons = ({ 'aria-label': ariaLabel, disabled, onAddClick, onDis
             {onDismiss && (
                 <button
                     type="button"
-                    aria-label={`Dismiss ${ariaLabel || ''}`}
+                    aria-label={dismissLabel || t('Tag_dismiss', { label }).trim()}
                     className={styles.actionButton}
                     disabled={disabled}
                     onClick={onDismiss}

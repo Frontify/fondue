@@ -2,13 +2,15 @@
 
 // @vitest-environment happy-dom
 
-import { Dialog } from '@frontify/fondue-components';
+import { Dialog, ThemeProvider } from '@frontify/fondue-components';
+import { deDE as fondueDeDE } from '@frontify/fondue-components/locales/de-DE';
 import { act, Profiler, type ReactNode, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type RteToolbarGroup } from '#/core';
+import { deDE } from '#/locales/de-DE';
 
 // Driven through the package's public API, the way a host does: the props are
 // the whole conversation between a host and a mounted editor.
@@ -336,14 +338,16 @@ describe('a document from a newer format version', () => {
         expect(container.querySelector('[role="status"]')).not.toBeNull();
     });
 
-    it('says so in the words the host gives', () => {
+    it('says so in the language of its locale', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         teardown.push(() => warn.mockRestore());
         const { container } = mount(() => (
-            <RichTextEditor value={newer} plugins={defaultPlugins} labels={{ newerVersion: 'Nur lesbar' }} />
+            <ThemeProvider locale={fondueDeDE}>
+                <RichTextEditor value={newer} plugins={defaultPlugins} />
+            </ThemeProvider>
         ));
 
-        expect(container.querySelector('[role="status"]')?.textContent).toBe('Nur lesbar');
+        expect(container.querySelector('[role="status"]')?.textContent).toBe(deDE.RichTextEditor_newerVersion);
     });
 
     it('shows no notice when the host already shows it read-only', () => {
@@ -530,6 +534,32 @@ describe('a page of editors', () => {
         expect(container.textContent).toContain('edited');
         expect(onChange).not.toHaveBeenCalled();
     });
+
+    it('does not redraw its toolbar when the host re-renders with the same props', () => {
+        let draws = 0;
+        const Counted = (): ReactNode => {
+            draws += 1;
+            return <span>counted</span>;
+        };
+        const plugins = [
+            ...defaultPlugins,
+            definePlugin({ id: 'counted', toolbar: [{ label: 'Counted', render: Counted }] }),
+        ];
+        const value = paragraph('editor');
+        const onChange = vi.fn<(doc: RteDocument) => void>();
+        const editor = (): ReactNode => (
+            <RichTextEditor value={value} onChange={onChange} plugins={plugins} toolbarPlacement="top" />
+        );
+
+        const { rerender, ready } = mount(editor);
+        ready();
+        const drawsBefore = draws;
+
+        rerender(editor());
+
+        expect(drawsBefore).toBeGreaterThan(0);
+        expect(draws).toBe(drawsBefore);
+    });
 });
 
 describe('the editable element', () => {
@@ -566,6 +596,70 @@ describe('the editable element', () => {
         expect(editable.getAttribute('aria-label')).toBe('Comment');
         expect(editable.getAttribute('aria-describedby')).toBe('help');
         expect(editable.getAttribute('aria-placeholder')).toBe('Say something');
+    });
+
+    it('marks the editable element required only when the host says so', () => {
+        const required = mount(() => <RichTextEditor plugins={defaultPlugins} required />);
+        required.ready();
+        expect(editableIn(required.container).getAttribute('aria-required')).toBe('true');
+
+        const optional = mount(() => <RichTextEditor plugins={defaultPlugins} />);
+        optional.ready();
+        expect(editableIn(optional.container).hasAttribute('aria-required')).toBe(false);
+    });
+
+    it('marks the editable element invalid and points at the error text while the status is error', () => {
+        const { container, ready } = mount(() => (
+            <RichTextEditor plugins={defaultPlugins} status="error" aria-errormessage="field-error" />
+        ));
+        ready();
+
+        const editable = editableIn(container);
+        expect(editable.getAttribute('aria-invalid')).toBe('true');
+        expect(editable.getAttribute('aria-errormessage')).toBe('field-error');
+    });
+
+    it('marks nothing invalid while the status is neutral, even with an error message id', () => {
+        const { container, ready } = mount(() => (
+            <RichTextEditor plugins={defaultPlugins} aria-errormessage="field-error" />
+        ));
+        ready();
+
+        const editable = editableIn(container);
+        expect(editable.hasAttribute('aria-invalid')).toBe(false);
+        expect(editable.hasAttribute('aria-errormessage')).toBe(false);
+    });
+
+    it('drops the invalid marks when the status goes from error to neutral, without a remount', () => {
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor plugins={defaultPlugins} status="error" aria-errormessage="field-error" />
+        ));
+        ready();
+        const editable = editableIn(container);
+
+        rerender(<RichTextEditor plugins={defaultPlugins} status="neutral" aria-errormessage="field-error" />);
+
+        expect(editableIn(container)).toBe(editable);
+        expect(editable.hasAttribute('aria-invalid')).toBe(false);
+        expect(editable.hasAttribute('aria-errormessage')).toBe(false);
+    });
+
+    it('puts neither required nor invalid marks on the readonly view', () => {
+        const { container } = mount(() => (
+            <RichTextEditor
+                value={paragraph('for reading')}
+                plugins={defaultPlugins}
+                aria-label="Comment"
+                aria-errormessage="field-error"
+                readonly
+                required
+                status="error"
+            />
+        ));
+
+        expect(container.querySelector('[aria-required]')).toBeNull();
+        expect(container.querySelector('[aria-invalid]')).toBeNull();
+        expect(container.querySelector('[aria-errormessage]')).toBeNull();
     });
 
     it('does not re-render the editor around the text for an edit', () => {
@@ -719,6 +813,26 @@ describe('the toolbar', () => {
         const group = container.querySelector('[data-testid="unknown-group"]')?.parentElement;
         expect(group).toBeTruthy();
         expect(group?.parentElement?.lastElementChild).toBe(group);
+    });
+
+    it("names a host plugin's control by its label function, called with the editor's language", () => {
+        const hostPlugin = definePlugin({
+            id: 'host-label',
+            toolbar: [
+                {
+                    label: ({ lang }) => `Host control ${lang}`,
+                    render: ({ label }) => <span data-testid="host-label">{label}</span>,
+                },
+            ],
+        });
+        const { container, ready } = mount(() => (
+            <ThemeProvider locale={fondueDeDE}>
+                <RichTextEditor plugins={[hostPlugin]} toolbarPlacement="top" />
+            </ThemeProvider>
+        ));
+        ready();
+
+        expect(container.querySelector('[data-testid="host-label"]')?.textContent).toBe('Host control de-DE');
     });
 
     describe('a press inside a toolbar slot', () => {
@@ -2166,21 +2280,19 @@ describe('an editor that crashes', () => {
         expect(message?.getAttribute('role')).toBe('alert');
     });
 
-    it('says what the host translated its crash texts to', () => {
+    it('says its crash texts in the language of its locale', () => {
         silenceReact();
         const { container } = mount(() => (
-            <RichTextEditor
-                value={paragraph('still here')}
-                plugins={[throwingPlugin()]}
-                labels={{ editorFailed: 'Der Editor ist ausgefallen.', retry: 'Erneut versuchen' }}
-            />
+            <ThemeProvider locale={fondueDeDE}>
+                <RichTextEditor value={paragraph('still here')} plugins={[throwingPlugin()]} />
+            </ThemeProvider>
         ));
 
         const button = [...container.querySelectorAll('button')].find(
-            (candidate) => candidate.textContent === 'Erneut versuchen',
+            (candidate) => candidate.textContent === deDE.RichTextEditor_retry,
         );
         const messageId = button?.getAttribute('aria-describedby') ?? '';
-        expect(window.document.getElementById(messageId)?.textContent).toBe('Der Editor ist ausgefallen.');
+        expect(window.document.getElementById(messageId)?.textContent).toBe(deDE.RichTextEditor_editorFailed);
     });
 
     it('names the fallback by a visible label, and only when the host named the editor', () => {

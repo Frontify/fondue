@@ -1,5 +1,21 @@
 # @frontify/fondue-sdk
 
+## 1.0.0-rc.3
+
+### Patch Changes
+
+- Updated dependencies [[`64301ce`](https://github.com/Frontify/fondue/commit/64301ceb88436477fe8bf8d1243b11a68ca2019b)]:
+    - @frontify/fondue-components@37.0.0-rc.3
+    - @frontify/fondue-tokens@6.0.0-rc.1
+
+## 1.0.0-rc.2
+
+### Patch Changes
+
+- Updated dependencies [[`697f5ad`](https://github.com/Frontify/fondue/commit/697f5ad3ed29ebd9e8338039707a4de9888f7ac0), [`e90d1bf`](https://github.com/Frontify/fondue/commit/e90d1bf5928b85014c35b825a216651b4ecfb85f), [`ab677bc`](https://github.com/Frontify/fondue/commit/ab677bc458458f81ed256d1367334fa1d30e2798), [`13a5be5`](https://github.com/Frontify/fondue/commit/13a5be559ec82d81270617911daa77676a634aed), [`a541057`](https://github.com/Frontify/fondue/commit/a541057c61d9e9803a21c9d4b89041a7f547af99), [`e737498`](https://github.com/Frontify/fondue/commit/e737498f217159d8e83fc0860e1d7469012f8dd1), [`4f5626d`](https://github.com/Frontify/fondue/commit/4f5626d9639b4a81558c0c92119cddf1af566791), [`2809824`](https://github.com/Frontify/fondue/commit/2809824f273f4cbd1c4d8b109429076aaf4a3723), [`3693a48`](https://github.com/Frontify/fondue/commit/3693a48b6d54182e4a857123588b1c5a3bfd429d)]:
+    - @frontify/fondue-tokens@6.0.0-rc.1
+    - @frontify/fondue-components@37.0.0-rc.2
+
 ## 1.0.0-rc.1
 
 ### Patch Changes

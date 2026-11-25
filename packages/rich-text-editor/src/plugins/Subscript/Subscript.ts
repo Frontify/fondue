@@ -3,6 +3,7 @@
 import { IconSubscript } from '@frontify/fondue-icons';
 
 import { defineContent, defineMark, definePlugin } from '#/core';
+import { translatedLabel } from '#/ui/translation';
 
 import { isVerticalAlign, markWhen } from '../shared/helpers/declaredStyle';
 
@@ -40,5 +41,5 @@ export const subscriptPlugin = () =>
     definePlugin({
         content: subscriptContent,
         toolbarGroup: 'marks',
-        toolbar: [{ label: 'Subscript', icon: IconSubscript, shortcut: 'Mod-,' }],
+        toolbar: [{ label: translatedLabel('RichTextEditor_subscript'), icon: IconSubscript, shortcut: 'Mod-,' }],
     });

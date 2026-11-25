@@ -67,6 +67,14 @@ describe('the emoji picker', () => {
         expect(buttons()).toEqual(['😄', '😏', '🐶']);
     });
 
+    it('names the search results with the legend of their group', () => {
+        const { container, type } = mountPicker();
+
+        type('dog');
+
+        expect(container.querySelector('fieldset > legend:first-child')?.textContent).toBe('Search results');
+    });
+
     it('narrows to the matches as the search is typed, and Enter picks the first', () => {
         const { search, type, buttons, onPick } = mountPicker();
 
@@ -85,7 +93,35 @@ describe('the emoji picker', () => {
         type('zz');
 
         expect(buttons()).toEqual([]);
-        expect(container.textContent).toContain('No matches');
+        expect(container.textContent).toContain('No results');
+    });
+
+    it('announces the result count once typing pauses', () => {
+        vi.useFakeTimers();
+        teardown.push(() => vi.useRealTimers());
+        const { container, type } = mountPicker();
+        const status = (): string => container.querySelector('output')?.textContent ?? '';
+
+        type('s');
+        type('sm');
+        expect(status()).toBe('');
+
+        act(() => {
+            vi.advanceTimersByTime(300);
+        });
+        expect(status()).toBe('2 results');
+
+        type('dog');
+        act(() => {
+            vi.advanceTimersByTime(300);
+        });
+        expect(status()).toBe('1 result');
+
+        type('zz');
+        act(() => {
+            vi.advanceTimersByTime(300);
+        });
+        expect(status()).toBe('No matches');
     });
 
     it('picks an emoji on a click', () => {

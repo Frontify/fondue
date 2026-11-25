@@ -169,7 +169,7 @@ describe('the colour flyout', () => {
     });
 
     it.each<[string, string]>([
-        ['Grey', '#5f6368'],
+        ['Gray', '#5f6368'],
         ['Red', '#c5221f'],
         ['Orange', '#b45309'],
         ['Green', '#188038'],
@@ -231,6 +231,12 @@ describe('the colour flyout', () => {
         const titleId = content?.getAttribute('aria-labelledby') ?? '';
 
         expect(document.getElementById(titleId)?.textContent).toBe('Text colour');
+    });
+
+    it('names the suggested colours with the legend of their group', () => {
+        mount({}, false);
+
+        expect(document.querySelector('fieldset > legend:first-child')?.textContent).toBe('Suggested colors');
     });
 
     it('applies nothing for a typed value the hex field does not take', () => {

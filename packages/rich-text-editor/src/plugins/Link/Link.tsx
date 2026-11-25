@@ -12,6 +12,7 @@ import {
     type RteHotkey,
     type TextLook,
 } from '#/core';
+import { translatedLabel } from '#/ui/translation';
 
 import { withoutDecorationLine } from '../shared/helpers/declaredStyle';
 import { isLinkablePaste, isSafeHref, LINKABLE_ADDRESS, toHref } from '../shared/helpers/href';
@@ -29,7 +30,7 @@ import {
 } from './helpers/appearance';
 import { type LinkSearch } from './helpers/destination';
 import { openNewLinkForm } from './helpers/newLinkForms';
-import { NEW_TAB_REL, NEW_TAB_TARGET } from './helpers/newTab';
+import { NEW_TAB_REL, NEW_TAB_TARGET, opensInNewTab } from './helpers/newTab';
 import {
     ALL_LINK_APPEARANCES,
     type ButtonLink,
@@ -152,7 +153,7 @@ const linkFromElement = (element: Element, appearances: readonly LinkAppearance[
 
     let textLink: TextLink = { href };
 
-    if (element.getAttribute('target') === NEW_TAB_TARGET) {
+    if (opensInNewTab(element.getAttribute('target'))) {
         textLink = { href, openInNewTab: true };
     }
 
@@ -297,7 +298,7 @@ export const linkPlugin = ({ search, kinds = DEFAULT_LINK_KINDS, look }: LinkPlu
         toolbarGroup: 'link',
         toolbar: [
             {
-                label: 'Link',
+                label: translatedLabel('RichTextEditor_link'),
                 shortcut: HOTKEY,
                 render: (props) => <LinkToolbarButton {...props} search={search} appearances={appearances} />,
             },
