@@ -149,11 +149,12 @@ export type BulletLevelLook = {
      */
     size?: string;
     /**
-     * The room before the item text, where the marker hangs
+     * The room the marker hangs in, before the item text and its `gap`
      */
     indent?: string;
     /**
-     * The room between the marker and the item text, added to the indent so the text starts at the indent plus the gap
+     * Room between the marker and the item text, on top of any the marker draws itself, so the text starts at the
+     * indent plus the gap
      */
     gap?: string;
 };
