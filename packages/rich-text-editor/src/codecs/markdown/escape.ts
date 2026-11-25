@@ -16,6 +16,9 @@ const UNDERSCORE_OUTSIDE_WORD = /(?<![\p{L}\p{N}])_|_(?![\p{L}\p{N}])/gu;
 /** What starts a heading, a setext underline, a bullet or a rule at the start of a line, after any indent. */
 const LINE_START_MARKER = /^([ \t]*)(#|=|[-+](?=[ \t]|$)|-+[ \t]*$)/;
 
+/** A line of only `|`, `:`, `-`, spaces and tabs with a `-`, the shape of a table delimiter row; the group before the second is what comes ahead of the first `-` or `:`. */
+const LINE_START_DELIMITER_ROW = /^(?=[|:\t -]*-[|:\t -]*$)([|\t ]*)([-:])/;
+
 /** An ordinal that starts a numbered list (`1.`, `2)`), whose `.` or `)` is the character to escape. */
 const LINE_START_ORDINAL = new RegExp(String.raw`^([ \t]*\d{1,${MAX_ORDINAL_DIGITS}})([.)])(?=[ \t]|$)`);
 
@@ -68,6 +71,7 @@ export const escapeText = (text: string, position: TextPosition): string => {
         case 'lineStart':
             return escaped
                 .replace(LINE_START_MARKER, BACKSLASH_SECOND_GROUP)
+                .replace(LINE_START_DELIMITER_ROW, BACKSLASH_SECOND_GROUP)
                 .replace(LINE_START_ORDINAL, BACKSLASH_SECOND_GROUP);
     }
 };
