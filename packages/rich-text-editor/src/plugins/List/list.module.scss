@@ -56,12 +56,12 @@ $slots: this, next, after-next;
 // cut off by a host that clips its overflow.
 $bullet-indent: 1.5em;
 
-// A length rather than 0, so `calc()` takes it; zero keeps Fondue's look.
-$no-gap: 0px;
+// No room past the marker's own, which keeps Fondue's look.
+$no-gap: 0;
 
 .bulletList {
     margin: 0;
-    padding-inline-start: calc(var(--_bullet-list-this-indent) + var(--_bullet-list-this-gap));
+    padding-inline-start: var(--_bullet-list-this-indent);
 
     @include level-looks(
         'bullet-list',
@@ -90,9 +90,7 @@ $numbered-indent: 2em;
     --rte-list-extra-digits: 0;
 
     margin: 0;
-    padding-inline-start: calc(
-        var(--_numbered-list-this-indent) + var(--_numbered-list-this-gap) + var(--rte-list-extra-digits) * 1ch
-    );
+    padding-inline-start: calc(var(--_numbered-list-this-indent) + var(--rte-list-extra-digits) * 1ch);
 
     @include level-looks(
         'numbered-list',

@@ -722,6 +722,11 @@ const FONDUE_BULLET_TEXT_OFFSET = 21;
 const HOST_GAP_PX = 12;
 const GAP_TOLERANCE_PX = 1;
 
+/** The text of an item starts at the list's indent plus the item's gap, and no further. */
+const TEXT_OFFSET_INDENT_PX = 30;
+const TEXT_OFFSET_GAP_PX = 8;
+const INDENT_AND_GAP_TEXT_OFFSET = TEXT_OFFSET_INDENT_PX + TEXT_OFFSET_GAP_PX;
+
 /** A string marker gets no gap of its own, so without one it sits against the text. */
 const FLUSH_MARKER_LIMIT_PX = 4;
 
@@ -866,7 +871,7 @@ test.describe('host styling of list markers', () => {
             marker: '"– "',
             color: 'rgb(200, 0, 0)',
             size: '20px',
-            indent: '38px',
+            indent: '30px',
             gap: '8px',
         };
         const secondBullet: ComputedMarkerLook = { ...BULLET_MARKER, marker: 'square', color: 'rgb(0, 120, 0)' };
@@ -942,6 +947,20 @@ test.describe('host styling of list markers', () => {
         for (const surface of SURFACES) {
             const offset = await textOffsetOf(component.getByTestId(surface), BULLET_ITEMS[0]);
             expect(offset).toBeCloseTo(FONDUE_BULLET_TEXT_OFFSET, 1);
+        }
+    });
+
+    test('starts the item text at the indent plus the gap', async ({ mount }) => {
+        const component = await mount(
+            <HostLooksPair
+                value={NESTED_LISTS_DOCUMENT}
+                bulletLook={[{ indent: `${TEXT_OFFSET_INDENT_PX}px`, gap: `${TEXT_OFFSET_GAP_PX}px` }]}
+            />,
+        );
+
+        for (const surface of SURFACES) {
+            const offset = await textOffsetOf(component.getByTestId(surface), BULLET_ITEMS[0]);
+            expect(offset).toBeCloseTo(INDENT_AND_GAP_TEXT_OFFSET, 1);
         }
     });
 
