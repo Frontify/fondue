@@ -135,6 +135,9 @@ export const HOST_RESET_CSS = 'p, blockquote { margin: 0; }';
 /** A host rule scoped to a class, as a prose stylesheet writes it. */
 export const HOST_SCOPED_CSS = `.${HOST_PAGE_CLASS} p { margin-bottom: 50px; }`;
 
+/** A host rule for anchors, which sets the box and the margins a link look owns. */
+export const HOST_ANCHOR_CSS = `.${HOST_PAGE_CLASS} a { padding: 5px; background-color: rgb(0, 200, 0); border: 3px solid rgb(200, 0, 0); margin: 7px; }`;
+
 /** A bulleted list five levels deep and a numbered list four deep, past the three levels whose looks repeat. */
 export const NESTED_LISTS_DOCUMENT: RteDocument = {
     version: 1,

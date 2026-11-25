@@ -24,6 +24,7 @@ import {
     BUTTON_LINK_TEXT,
     BUTTON_LINKS_DOCUMENT,
     H1_COLOR_VARIABLE,
+    HOST_ANCHOR_CSS,
     HOST_RESET_CSS,
     HOST_SCOPED_CSS,
     LAST_QUOTE_TEXT,
@@ -403,7 +404,7 @@ const HOST_LINK_BOX_LOOK: TextLinkLook = {
     borderColor: 'rgb(0, 0, 100)',
     borderWidth: '2px',
     borderStyle: 'dashed',
-    borderRadius: '4px',
+    borderRadius: '7px',
 };
 
 const HOST_LINK_BOX_COMPUTED: Record<string, string> = {
@@ -415,9 +416,20 @@ const HOST_LINK_BOX_COMPUTED: Record<string, string> = {
     'border-top-color': 'rgb(0, 0, 100)',
     'border-top-width': '2px',
     'border-top-style': 'dashed',
-    'border-top-left-radius': '4px',
+    'border-top-left-radius': '7px',
     'text-decoration-line': 'underline',
 };
+
+/** The parts of the host's text link box that a button link must not take. */
+const HOST_LINK_BOX_PROPERTIES = [
+    'background-color',
+    'border-top-left-radius',
+    'border-top-style',
+    'padding-top',
+    'padding-right',
+    'padding-bottom',
+    'padding-left',
+] as const;
 
 /** What a text link draws where the host sets no box: nothing around the text. */
 const FONDUE_LINK_BOX_COMPUTED: Record<string, string> = {
@@ -468,9 +480,6 @@ const lineSpansOf = (link: Locator): Promise<LinkSpans> =>
     });
 
 const INSET_TOLERANCE_PX = 1;
-
-/** The computed colour of a border or a background that is not drawn. */
-const TRANSPARENT = 'rgba(0, 0, 0, 0)';
 
 /** A host that sets only the border style, leaving the width and the colour to Fondue's fallbacks. */
 const HOST_LINK_BORDER_STYLE_ONLY_LOOK: TextLinkLook = { borderStyle: 'solid' };
@@ -737,11 +746,9 @@ test.describe('host styling of button links', () => {
 
             await expect(button).toHaveCSS('border-top-style', 'solid');
             await expect(button).not.toHaveCSS('border-top-width', '0px');
-            await expect(button).not.toHaveCSS('border-top-color', TRANSPARENT);
             await expect(textLink).toHaveCSS('text-decoration-line', 'underline');
             await expect(textLink).toHaveCSS('border-top-style', 'dashed');
             await expect(textLink).not.toHaveCSS('border-top-width', '0px');
-            await expect(textLink).not.toHaveCSS('border-top-color', TRANSPARENT);
         }
     });
 
@@ -755,7 +762,9 @@ test.describe('host styling of button links', () => {
                 await expect(button).toHaveCSS(property, value);
             }
 
-            await expect(button).not.toHaveCSS('padding-left', HOST_LINK_BOX_LOOK.paddingLeft ?? '');
+            for (const property of HOST_LINK_BOX_PROPERTIES) {
+                await expect(button).not.toHaveCSS(property, HOST_LINK_BOX_COMPUTED[property] ?? '');
+            }
         }
     });
 
@@ -825,6 +834,22 @@ test.describe('the document next to a host page stylesheet', () => {
             const body = blockIn(component.getByTestId(surface), 'body');
             await expect(body).toHaveCSS('margin-top', HOST_COMPUTED_LOOK['margin-top']);
             await expect(body).toHaveCSS('margin-bottom', HOST_COMPUTED_LOOK['margin-bottom']);
+        }
+    });
+
+    test("keeps Fondue's link box and button margins under a host rule for anchors", async ({ mount }) => {
+        const component = await mount(<HostResetPair hostCss={HOST_ANCHOR_CSS} value={BUTTON_LINKS_DOCUMENT} />);
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            const textLink = section.getByRole('link', { name: PLAIN_LINK_TEXT, exact: true });
+            const button = section.getByRole('link', { name: BUTTON_LINK_TEXT, exact: true });
+
+            await expect(textLink).toHaveCSS('padding-left', '0px');
+            await expect(textLink).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+            await expect(textLink).toHaveCSS('border-top-style', 'none');
+            await expect(button).toHaveCSS('margin-top', '0px');
+            await expect(button).toHaveCSS('margin-bottom', '0px');
         }
     });
 });
