@@ -3,12 +3,16 @@
 import { describe, expect, it } from 'vitest';
 
 import { type MarkdownMarkForm } from '../../core';
-import { bulletListContent, defaultContent, mentionContent } from '../../plugins';
+import { bulletListContent, codeBlockContent, defaultContent, mentionContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
+
+const WITHOUT_CODE_BLOCK: MarkdownOptions = {
+    plugins: defaultContent.filter((content) => content !== codeBlockContent),
+};
 
 const EMPTY_DOCUMENT = { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '' }] }] };
 
@@ -172,6 +176,97 @@ describe('parseMarkdown lists', () => {
     });
 });
 
+describe('parseMarkdown code blocks', () => {
+    const FENCE = '```';
+
+    const plain = (text: string) => ({ version: 1, blocks: [{ type: 'codeBlock', children: [{ text }] }] });
+    const inLanguage = (text: string, language: string) => ({
+        version: 1,
+        blocks: [{ type: 'codeBlock', language, children: [{ text }] }],
+    });
+
+    it('reads a fence as a code block holding its lines', () => {
+        expect(parseMarkdown('```\none\ntwo\n```', OPTIONS)).toEqual(plain('one\ntwo'));
+    });
+
+    it('reads the first word of the info string as the language', () => {
+        expect(parseMarkdown('```ts title="a.ts"\nlet a;\n```', OPTIONS)).toEqual(inLanguage('let a;', 'ts'));
+    });
+
+    it('reads a tilde fence like a backtick fence', () => {
+        expect(parseMarkdown('~~~py\nx = 1\n~~~', OPTIONS)).toEqual(inLanguage('x = 1', 'py'));
+    });
+
+    it.each(['c++', 'c#', 'objective-c', 'x.y', 'a_b'])('keeps the language %s', (language) => {
+        expect(parseMarkdown(`${FENCE}${language}\nx\n${FENCE}`, OPTIONS)).toEqual(inLanguage('x', language));
+    });
+
+    it.each([['{r}'], ['a/b'], ['a'.repeat(65)]])('stores no language for the info string %s', (info) => {
+        expect(parseMarkdown(`${FENCE}${info}\nx\n${FENCE}`, OPTIONS)).toEqual(plain('x'));
+    });
+
+    it('reads a fence with no lines as a code block with no text', () => {
+        expect(parseMarkdown('```ts\n```', OPTIONS)).toEqual({
+            version: 1,
+            blocks: [{ type: 'codeBlock', language: 'ts', children: [] }],
+        });
+    });
+
+    it('reads a fence that is never closed up to the end of the document', () => {
+        expect(parseMarkdown('```\na\nb', OPTIONS)).toEqual(plain('a\nb'));
+    });
+
+    it('reads blank lines, indentation and Markdown characters as they are', () => {
+        expect(parseMarkdown('```\n  *a* _b_\n\n# c\n```', OPTIONS)).toEqual(plain('  *a* _b_\n\n# c'));
+    });
+
+    it('reads a longer fence around a shorter one', () => {
+        expect(parseMarkdown('````\n```\nx\n```\n````', OPTIONS)).toEqual(plain('```\nx\n```'));
+    });
+
+    it('reads an indented code block as a code block with no language', () => {
+        expect(parseMarkdown('    one\n    two', OPTIONS)).toEqual(plain('one\ntwo'));
+    });
+
+    it('keeps the blocks around it', () => {
+        expect(parseMarkdown('a\n\n```\nx\n```\n\nb', OPTIONS).blocks).toEqual([
+            { type: 'paragraph', children: [{ text: 'a' }] },
+            { type: 'codeBlock', children: [{ text: 'x' }] },
+            { type: 'paragraph', children: [{ text: 'b' }] },
+        ]);
+    });
+
+    it('reads a fence as one paragraph per line where a list item holds no code block', () => {
+        expect(parseMarkdown('- ```ts\n  a\n  b\n  ```', OPTIONS)).toEqual({
+            version: 1,
+            blocks: [
+                {
+                    type: 'bulletList',
+                    children: [
+                        {
+                            type: 'listItem',
+                            children: [
+                                { type: 'paragraph', children: [{ text: 'a' }] },
+                                { type: 'paragraph', children: [{ text: 'b' }] },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        });
+    });
+
+    it('reads a fence as one paragraph per line with no code block content given', () => {
+        expect(parseMarkdown('```ts\na\nb\n```', { plugins: [bulletListContent()] })).toEqual({
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'paragraph', children: [{ text: 'b' }] },
+            ],
+        });
+    });
+});
+
 describe('parseMarkdown with no text to put in a block', () => {
     const EMPTY_ITEM_LIST = {
         version: 1,
@@ -216,7 +311,7 @@ describe('parseMarkdown with nothing to read a token by', () => {
     });
 
     it('reads a code fence as one paragraph per line', () => {
-        expect(parseMarkdown('```\none\ntwo\n```', OPTIONS)).toEqual({
+        expect(parseMarkdown('```\none\ntwo\n```', WITHOUT_CODE_BLOCK)).toEqual({
             version: 1,
             blocks: [
                 { type: 'paragraph', children: [{ text: 'one' }] },

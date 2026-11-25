@@ -40,6 +40,13 @@ describe('resolveLabel', () => {
     });
 });
 
+describe('the code block label', () => {
+    it('is said in English and in French', () => {
+        expect(enUS.RichTextEditor_codeBlock).toBe('Code block');
+        expect(frFR.RichTextEditor_codeBlock).toBe('Bloc de code');
+    });
+});
+
 describe('translatedLabel', () => {
     it('throws when something other than the editor reads it', () => {
         const label = translatedLabel('RichTextEditor_quote');

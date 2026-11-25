@@ -676,6 +676,37 @@ describe('blocks.setType', () => {
     });
 });
 
+describe('blocks.setType to a block of code', () => {
+    it('turns a paragraph into a code block, with its text', () => {
+        const editor = editorWith(plugins, [paragraph(text('const a = 1;'))]);
+        editor.caretAfter('const');
+
+        editor.api.blocks.setType('codeBlock', { language: 'ts' });
+
+        expect(editor.stored()).toEqual([{ type: 'codeBlock', language: 'ts', children: [{ text: 'const a = 1;' }] }]);
+    });
+
+    it('takes the marks off the text, which a code block cannot hold', () => {
+        const editor = editorWith(plugins, [
+            paragraph(text('a', { bold: true }), text('b', { code: true }), text('c')),
+        ]);
+        editor.caretAfter('a');
+
+        editor.api.blocks.setType('codeBlock');
+
+        expect(editor.stored()).toEqual([{ type: 'codeBlock', children: [{ text: 'abc' }] }]);
+    });
+
+    it('leaves the alignment of the paragraph behind', () => {
+        const editor = editorWith(plugins, [{ type: 'paragraph', align: 'center', children: [{ text: 'a' }] }]);
+        editor.caretAfter('a');
+
+        editor.api.blocks.setType('codeBlock');
+
+        expect(editor.stored()).toEqual([{ type: 'codeBlock', children: [{ text: 'a' }] }]);
+    });
+});
+
 describe('lists.split', () => {
     const item = (...children: RteBlockNode[]): RteBlockNode => ({ type: 'listItem', children }) as RteBlockNode;
     const bullets = (...children: RteBlockNode[]): RteBlockNode => ({ type: 'bulletList', children }) as RteBlockNode;

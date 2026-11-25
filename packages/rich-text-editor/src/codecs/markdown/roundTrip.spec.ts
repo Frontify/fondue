@@ -311,6 +311,49 @@ const FORM_CASES: readonly RoundTripCase[] = [
         document: { version: 1, blocks: [{ type: 'quote', children: [{ text: 'quoted' }] }] },
     },
     {
+        name: 'a code block',
+        markdown: '```\nconst a = 1;\n```',
+        document: { version: 1, blocks: [{ type: 'codeBlock', children: [{ text: 'const a = 1;' }] }] },
+    },
+    {
+        name: 'a code block with a language',
+        markdown: '```ts\nconst a = 1;\nconst b = 2;\n```',
+        document: {
+            version: 1,
+            blocks: [{ type: 'codeBlock', language: 'ts', children: [{ text: 'const a = 1;\nconst b = 2;' }] }],
+        },
+    },
+    {
+        name: 'an empty code block',
+        markdown: '```\n```',
+        document: { version: 1, blocks: [{ type: 'codeBlock', children: [] }] },
+    },
+    {
+        name: 'a code block holding Markdown, blank lines and indentation',
+        markdown: '```md\n# a\n\n  *b* _c_\n1. d\n> e\n```',
+        document: {
+            version: 1,
+            blocks: [{ type: 'codeBlock', language: 'md', children: [{ text: '# a\n\n  *b* _c_\n1. d\n> e' }] }],
+        },
+    },
+    {
+        name: 'a code block holding a fence',
+        markdown: '````\n```\nx\n```\n````',
+        document: { version: 1, blocks: [{ type: 'codeBlock', children: [{ text: '```\nx\n```' }] }] },
+    },
+    {
+        name: 'a code block between paragraphs',
+        markdown: 'before\n\n```\ncode\n```\n\nafter',
+        document: {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'before' }] },
+                { type: 'codeBlock', children: [{ text: 'code' }] },
+                { type: 'paragraph', children: [{ text: 'after' }] },
+            ],
+        },
+    },
+    {
         name: 'a hard break',
         markdown: 'one\\\ntwo',
         document: {

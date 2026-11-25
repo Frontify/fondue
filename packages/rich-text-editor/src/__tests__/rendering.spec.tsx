@@ -160,6 +160,36 @@ describe('a line break at the end of a block', () => {
     });
 });
 
+describe('a code block in a reading view and in export', () => {
+    const doc: RteDocument = {
+        version: 1,
+        blocks: [{ type: 'codeBlock', language: 'ts', children: [{ text: 'const a = "<b>" && *c*;\n  b' }] }],
+    };
+
+    it('draws a pre holding a code element with the language class and the text as written', () => {
+        for (const container of [
+            rendered(<RichTextRenderer value={doc} plugins={defaultContent} />),
+            exported(serializeToHtml(doc, { plugins: defaultPlugins })),
+        ]) {
+            const code = container.querySelector('pre > code');
+            expect(code?.className).toBe('language-ts');
+            expect(code?.textContent).toBe('const a = "<b>" && *c*;\n  b');
+            expect(code?.children).toHaveLength(0);
+        }
+    });
+
+    it('draws an empty block as an empty code element', () => {
+        const empty: RteDocument = { version: 1, blocks: [{ type: 'codeBlock', children: [] }] };
+
+        for (const container of [
+            rendered(<RichTextRenderer value={empty} plugins={defaultContent} />),
+            exported(serializeToHtml(empty, { plugins: defaultPlugins })),
+        ]) {
+            expect(container.querySelector('pre > code')?.textContent).toBe('');
+        }
+    });
+});
+
 describe('the element a document sits in', () => {
     const plugins = [...defaultPlugins, columnBreakPlugin({ columns: 3, gap: '24px' })];
     const doc = paragraph([{ text: 'Hello' }]);

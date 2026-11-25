@@ -35,6 +35,25 @@ describe('toPlainText', () => {
     });
 });
 
+describe('toPlainText of a code block', () => {
+    it('reads its text as written, line breaks and spaces included', () => {
+        const code: RteDocument = {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'before' }] },
+                { type: 'codeBlock', language: 'ts', children: [{ text: 'if (a) {\n  *b*\n}' }] },
+            ],
+        };
+
+        expect(toPlainText(code, { plugins: defaultContent })).toBe('before\nif (a) {\n  *b*\n}');
+    });
+
+    it('counts a code block with text as content and an empty one as empty', () => {
+        expect(isEmpty({ version: 1, blocks: [{ type: 'codeBlock', children: [{ text: 'a' }] }] })).toBe(false);
+        expect(isEmpty({ version: 1, blocks: [{ type: 'codeBlock', children: [] }] })).toBe(true);
+    });
+});
+
 describe('isEmpty', () => {
     it('is true for an empty list and false for a document with text', () => {
         const emptyList: RteDocument = {

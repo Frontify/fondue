@@ -126,3 +126,39 @@ describe('a numbered list serialized to HTML', () => {
         );
     });
 });
+
+describe('a code block serialized to HTML', () => {
+    const documentOf = (block: RteDocument['blocks'][number]): RteDocument => ({ version: 1, blocks: [block] });
+
+    it('writes a pre holding a code element that names the language in its class', () => {
+        const document = documentOf({ type: 'codeBlock', language: 'ts', children: [{ text: 'const a = 1;' }] });
+
+        expect(serializeToHtml(document, { plugins: defaultContent, wrap: false })).toMatch(
+            /^<pre[^>]*><code class="language-ts">const a = 1;<\/code><\/pre>$/,
+        );
+    });
+
+    it('writes no class on the code element without a language', () => {
+        const document = documentOf({ type: 'codeBlock', children: [{ text: 'a' }] });
+
+        expect(serializeToHtml(document, { plugins: defaultContent, wrap: false })).toMatch(
+            /^<pre[^>]*><code>a<\/code><\/pre>$/,
+        );
+    });
+
+    it('keeps line breaks and spaces, and escapes only what HTML escapes', () => {
+        const document = documentOf({ type: 'codeBlock', children: [{ text: '*a* <b>\n  two' }] });
+
+        expect(serializeToHtml(document, { plugins: defaultContent, wrap: false })).toContain(
+            '<code>*a* &lt;b&gt;\n  two</code>',
+        );
+    });
+
+    it('writes an empty block as an empty code element', () => {
+        const document = documentOf({ type: 'codeBlock', children: [] });
+
+        expect(serializeToHtml(document, { plugins: defaultContent, wrap: false })).toMatch(
+            /^<pre[^>]*><code><\/code><\/pre>$/,
+        );
+    });
+});

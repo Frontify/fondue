@@ -131,6 +131,38 @@ describe('typing a block shortcut at the start of a line', () => {
     it('does nothing in the middle of a line', () => {
         expect(typed('a ## b')).toEqual([paragraph(text('a ## b'))]);
     });
+
+    it('turns a fence of three backticks and a space into an empty code block', () => {
+        expect(typed('``` ')).toEqual([{ type: 'codeBlock', children: [] }]);
+    });
+
+    it('does not read the backticks of that fence as inline code', () => {
+        expect(typed('``` const a = 1;')).toEqual([{ type: 'codeBlock', children: [{ text: 'const a = 1;' }] }]);
+    });
+});
+
+describe('typing in a code block', () => {
+    it('keeps backticks and emphasis as typed', () => {
+        expect(typed('``` `a` **b** *c*')).toEqual([{ type: 'codeBlock', children: [{ text: '`a` **b** *c*' }] }]);
+    });
+
+    it('starts a new line on Enter', () => {
+        const editor = editorWith(defaultPlugins, [{ type: 'codeBlock', children: [{ text: 'ab' }] }]);
+        editor.caretAfter('a');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([{ type: 'codeBlock', children: [{ text: 'a\nb' }] }]);
+    });
+
+    it('leaves the block for a new paragraph after it on Mod-Enter', () => {
+        const editor = editorWith(defaultPlugins, [{ type: 'codeBlock', children: [{ text: 'ab' }] }]);
+        editor.caretAfter('ab');
+
+        expect(press(editor.view, 'Enter', mod)).toBe(true);
+
+        expect(editor.stored()).toEqual([{ type: 'codeBlock', children: [{ text: 'ab' }] }, paragraph()]);
+    });
 });
 
 describe('typing a list shortcut at the start of a line', () => {

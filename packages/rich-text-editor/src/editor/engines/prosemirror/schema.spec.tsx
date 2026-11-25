@@ -262,6 +262,53 @@ describe('buildSchema', () => {
         });
     });
 
+    describe('a block of code', () => {
+        // Generic names: a block that keeps its text as written.
+        const verbatim = definePlugin({
+            id: 'verbatim',
+            content: defineContent({
+                blocks: {
+                    verbatim: defineBlock({
+                        content: 'code',
+                        toHtml: () => ({ tag: 'pre', children: true }),
+                        parse: [{ tag: 'pre' }],
+                    }),
+                },
+            }),
+        });
+
+        it('holds plain text that keeps its whitespace, and stays a block of its own', () => {
+            const schema = buildSchema([verbatim]);
+
+            expect(schema.nodes.verbatim?.spec.content).toBe('text*');
+            expect(schema.nodes.verbatim?.spec.marks).toBe('');
+            expect(schema.nodes.verbatim?.spec.code).toBe(true);
+            expect(schema.nodes.verbatim?.spec.whitespace).toBe('pre');
+            expect(schema.nodes.verbatim?.spec.defining).toBe(true);
+            expect(schema.nodes.verbatim?.spec.group).toBe('block');
+        });
+
+        it('carries no block attribute of the plugins around it, such as alignment', () => {
+            const schema = buildSchema([...shipped('align'), verbatim]);
+
+            expect(Object.keys(schema.nodes.paragraph?.spec.attrs ?? {})).toContain('align');
+            expect(Object.keys(schema.nodes.verbatim?.spec.attrs ?? {})).not.toContain('align');
+        });
+
+        it('round-trips its text through the engine, line breaks and empty block included', () => {
+            const schema = buildSchema([verbatim]);
+            const stored = {
+                version: 1,
+                blocks: [
+                    { type: 'verbatim', children: [{ text: 'one\n  two\n' }] },
+                    { type: 'verbatim', children: [] },
+                ],
+            } as RteDocumentOf;
+
+            expect(toRteDocument(toEngineDocument(stored, schema))).toEqual(stored);
+        });
+    });
+
     it('refuses a mark style rule whose property is not a CSS property name', () => {
         expect(() =>
             buildSchema([
