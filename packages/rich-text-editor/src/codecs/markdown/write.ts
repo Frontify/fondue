@@ -28,6 +28,7 @@ import {
     type InlineToken,
     isSpaceToken,
 } from './inlineTokens';
+import { EMPTY_BLOCK_ENTITY } from './emptyBlock';
 import { type Tokenize } from './markdownIt';
 import {
     addInlineRun,
@@ -65,7 +66,6 @@ type NodeValue = Record<string, unknown>;
 
 type Path = readonly number[];
 
-const NBSP_ENTITY = '&nbsp;';
 
 const LINE_SEPARATOR = '\n';
 const CARRIAGE_RETURN = '\r';
@@ -618,7 +618,7 @@ const attemptOf = (
     const writesAsterisks = marks.some((pair) => isAsteriskPair(tokens, pair));
 
     // A block with no text at all is the empty block, which is its only spelling.
-    let text = NBSP_ENTITY;
+    let text = EMPTY_BLOCK_ENTITY;
     if (tokens.length > 0) {
         text = writeSegments(segmentsOf(tokens), state);
         if (lineMode === 'singleLine') {
@@ -947,7 +947,7 @@ const writeList = (block: RteBlockNode, path: Path, alternate: boolean, state: W
         // A bare marker would read as a setext underline under a paragraph line, so an item with no lines holds the empty block.
         let itemLines = writeBlock(item, [...path, index], false, state);
         if (itemLines.length === 0) {
-            itemLines = [NBSP_ENTITY];
+            itemLines = [EMPTY_BLOCK_ENTITY];
         }
 
         for (const line of prefixed(itemLines, prefix)) {
@@ -991,7 +991,7 @@ export const writeDocument = <TBlock extends RteBlockNode>(
     const markdown = writeBlocks(document.blocks, [], 'blankLine', state).join(LINE_SEPARATOR);
 
     // The empty document is one empty paragraph, which is the empty string, not an empty-paragraph entity.
-    if (document.blocks.length === 1 && markdown === NBSP_ENTITY) {
+    if (document.blocks.length === 1 && markdown === EMPTY_BLOCK_ENTITY) {
         return { markdown: '', losses: state.losses };
     }
 

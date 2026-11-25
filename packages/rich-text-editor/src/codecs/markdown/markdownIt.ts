@@ -20,6 +20,11 @@ export type TokenizeOptions = {
     breaks: boolean;
 };
 
+/** The markdown-it token names the codec reads by. */
+export const INLINE_TOKEN = 'inline';
+export const PARAGRAPH_OPEN = 'paragraph_open';
+export const PARAGRAPH_CLOSE = 'paragraph_close';
+
 const PRESET = 'commonmark';
 
 const ENABLED_RULES = ['table', 'strikethrough', 'linkify'];

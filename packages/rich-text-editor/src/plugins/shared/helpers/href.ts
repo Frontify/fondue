@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MARKDOWN_ENTITY_START } from '#/core';
+import { ESCAPED_ENTITY_START, MARKDOWN_ENTITY_START } from '#/core';
 
 /** The schemes a link may use. Everything else — `javascript:`, `data:` — never becomes one. */
 const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
@@ -64,7 +64,7 @@ const DESTINATION_ESCAPED = /[\\<>]/g;
 export const markdownDestination = (href: string): string => {
     const escaped = href
         .replaceAll(DESTINATION_ESCAPED, (character) => `\\${character}`)
-        .replaceAll(MARKDOWN_ENTITY_START, String.raw`\&`);
+        .replaceAll(MARKDOWN_ENTITY_START, ESCAPED_ENTITY_START);
     if (DESTINATION_NEEDS_BRACKETS.test(href)) {
         return `<${escaped}>`;
     }

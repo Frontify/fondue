@@ -2,7 +2,7 @@
 
 // What the writer escapes in text so that reading it back gives the same text.
 
-import { MARKDOWN_ENTITY_START } from '#/core';
+import { ESCAPED_ENTITY_START, MARKDOWN_ENTITY_START, MAX_ORDINAL_DIGITS } from '#/core';
 
 /** Where in a line the text sits: the start also escapes what would begin a block. */
 export type TextPosition = 'lineStart' | 'inline';
@@ -14,7 +14,7 @@ const ESCAPED_CHARACTERS = /[\\*_`[\]<>~|]/g;
 const LINE_START_MARKER = /^([ \t]*)(#|=|[-+](?=[ \t]|$)|-+[ \t]*$)/;
 
 /** An ordinal that starts a numbered list (`1.`, `2)`), whose `.` or `)` is the character to escape. */
-const LINE_START_ORDINAL = /^([ \t]*\d{1,9})([.)])(?=[ \t]|$)/;
+const LINE_START_ORDINAL = new RegExp(String.raw`^([ \t]*\d{1,${MAX_ORDINAL_DIGITS}})([.)])(?=[ \t]|$)`);
 
 /** A run of `#` that ends a single line after a space, or is all of it, which an ATX heading reads as its closing run. */
 const CLOSING_HASHES = /(^|[ \t])(#+)(?=[ \t]*$)/;
@@ -30,7 +30,6 @@ const TRAILING_BANG = /!$/;
 
 const WHITESPACE = /^\s$/u;
 
-const BACKSLASH_AMPERSAND = String.raw`\&`;
 /** Keeps the first group and puts a backslash before the second. */
 const BACKSLASH_SECOND_GROUP = String.raw`$1\$2`;
 const BACKSLASH_MATCH = String.raw`\$&`;
@@ -53,7 +52,7 @@ export const escapeText = (text: string, position: TextPosition): string => {
         .replaceAll(ESCAPED_CHARACTERS, BACKSLASH_MATCH)
         .replaceAll(SCHEME_SEPARATOR, BACKSLASH_MATCH)
         .replaceAll(WWW_DOT, BACKSLASH_SECOND_GROUP)
-        .replaceAll(MARKDOWN_ENTITY_START, BACKSLASH_AMPERSAND);
+        .replaceAll(MARKDOWN_ENTITY_START, ESCAPED_ENTITY_START);
 
     switch (position) {
         case 'inline':

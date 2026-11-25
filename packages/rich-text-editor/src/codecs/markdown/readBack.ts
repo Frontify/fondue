@@ -6,7 +6,7 @@ import { INLINE_PLACEHOLDER, type RteInlineNode } from '#/core';
 
 import { canonicalOf, sameValue } from './canonical';
 import { isWhitespace } from './escape';
-import { type Tokenize } from './markdownIt';
+import { INLINE_TOKEN, PARAGRAPH_CLOSE, PARAGRAPH_OPEN, type Tokenize } from './markdownIt';
 import { readInlines, type ReadContext, withoutPlaceholder } from './read';
 
 type Path = readonly number[];
@@ -27,9 +27,6 @@ export type Run =
     | { kind: 'text'; text: string; marks: readonly RunMark[] }
     | { kind: 'inline'; type: string; value: unknown; path: Path };
 
-const PARAGRAPH_OPEN = 'paragraph_open';
-const PARAGRAPH_CLOSE = 'paragraph_close';
-const INLINE = 'inline';
 
 /** A stretch of whitespace, or of anything else. */
 const STRETCH = /\s+|\S+/gu;
@@ -106,7 +103,7 @@ const readRuns = (markdown: string, context: ReadContext, tokenize: Tokenize): R
     if (
         blocks.length !== 3 ||
         open?.type !== PARAGRAPH_OPEN ||
-        inline?.type !== INLINE ||
+        inline?.type !== INLINE_TOKEN ||
         close?.type !== PARAGRAPH_CLOSE
     ) {
         return null;
