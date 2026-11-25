@@ -1,0 +1,54 @@
+packages/rich-text-editor/src/__tests__/browser/HostNoHeadingsPair.tsx
+  s_22527a1a684ccf::t_c96c2576a01bdc 28
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_22527a1a684ccf::t_c96c2576a01bdc 28
+  s_22527a1a684ccf::t_7f8a24d318026b 833,876,908,978,991,1003,1017-1018,1020,1026-1028,1030-1031,1033,1036,1040,1050-1051,1056-1057,1062,1080-1081,1084,1090,1092-1093,1097-1098,1103-1104,1108-1109,1111-1116,1121,1125-1126
+  s_22527a1a684ccf::t_17979f9b64f7da 873
+packages/rich-text-editor/src/plugins/TextStyle/index.ts
+  s_22527a1a684ccf::t_c96c2576a01bdc 10
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.spec.ts
+  s_22527a1a684ccf::t_17979f9b64f7da 10,16
+  s_22527a1a684ccf::t_c96c2576a01bdc 9,11,18,27,33,52,63,68-69
+  s_22527a1a684ccf::t_e30956eabe1b42 48
+packages/rich-text-editor/src/__tests__/browser/HostLooksPair.tsx
+  s_22527a1a684ccf::t_c96c2576a01bdc 34
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_22527a1a684ccf::t_e30956eabe1b42 225-227
+  s_22527a1a684ccf::t_7f8a24d318026b 25,102,218,228,239,265,273,280-281,293
+packages/rich-text-editor/src/plugins/TextStyle/textStyle.module.scss
+  s_22527a1a684ccf::t_17979f9b64f7da 8
+  s_22527a1a684ccf::t_7f8a24d318026b 117
+.changeset/rte-paragraph-quote-link-looks.md
+  s_22527a1a684ccf::t_7f8aed518f8895 5
+packages/rich-text-editor/src/__tests__/browser/HostStylingPair.tsx
+  s_22527a1a684ccf::t_c96c2576a01bdc 13,16,19,24-25,28,31
+.changeset/rte-text-style-looks.md
+  s_22527a1a684ccf::t_7f8aed518f8895 5
+packages/rich-text-editor/src/__tests__/typeDerivation.spec.ts
+  s_22527a1a684ccf::t_c96c2576a01bdc 164,167,170
+packages/rich-text-editor/src/index.ts
+  s_22527a1a684ccf::t_c96c2576a01bdc 150
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_22527a1a684ccf::t_7f8a24d318026b 47,59,62,97,99,142,185-186
+packages/rich-text-editor/src/__tests__/browser/HostStylingSections.tsx
+  s_22527a1a684ccf::t_c96c2576a01bdc 7,10,14,17,20
+packages/rich-text-editor/src/__tests__/browser/hostStylingValues.ts
+  s_22527a1a684ccf::t_17979f9b64f7da 49
+  s_22527a1a684ccf::t_c96c2576a01bdc 16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ee6d3b5ce7251c91f1e5181bbcb6913392e50f38",
+  "prompts": {},
+  "sessions": {
+    "s_22527a1a684ccf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2a5abef-0d60-4dfb-93a0-af8f62c61098",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

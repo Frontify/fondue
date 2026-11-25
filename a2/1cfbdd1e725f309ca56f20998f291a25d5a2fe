@@ -1,0 +1,14 @@
+packages/rich-text-editor/src/docs/keyboardReference.spec.ts
+  h_1228e573df1f42 30-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a21cfbdd1e725f309ca56f20998f291a25d5a2fe",
+  "prompts": {},
+  "humans": {
+    "h_1228e573df1f42": {
+      "author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

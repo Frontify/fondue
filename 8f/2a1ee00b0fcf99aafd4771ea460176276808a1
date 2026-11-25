@@ -1,0 +1,296 @@
+packages/rich-text-editor/src/plugins/Mention/Mention.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 7,45,47,49-51,54,64,107-109,112
+packages/rich-text-editor/src/docs/excerptOf.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-18
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 9,14,31,44-45,50,103,164,166,171-174
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 6-7,21-22,51-60,70-73,77-81,311-324,518-613,679-693,698-699,753-821,1082-1136,1180-1262
+packages/rich-text-editor/src/editor/engines/prosemirror/dispatch.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-8
+.changeset/rte-link-plugin-look.md
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-16
+packages/rich-text-editor/src/locales/pt-PT.ts
+  s_c56bde808bb5f7::t_fef9b364dada38 47-49,54,57,59,61,77,79
+packages/rich-text-editor/src/plugins/Link/hooks/useDestinationSearch.spec.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-156
+packages/rich-text-editor/src/core/contentRegistry.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-322
+packages/rich-text-editor/src/plugins/Mention/components/MentionLink.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 7,18-22,24-25,27,29-30,33,36-37,40-47,50-51
+packages/rich-text-editor/src/plugins/Link/helpers/address.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-11
+packages/rich-text-editor/src/__tests__/typeDerivation.spec.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 10,158,161,164-170,197-198
+packages/rich-text-editor/src/plugins/BlurOnBreak/BlurOnBreak.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 5-20,24-30,32,36-45
+packages/rich-text-editor/src/plugins/Link/index.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 3-14
+packages/rich-text-editor/src/plugins/Mention/helpers/display.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-42,51-55,57,59,61-77
+  s_c56bde808bb5f7::t_c95b2c2c58ebfe 43-50,56,58,60
+packages/rich-text-editor/src/plugins/Link/helpers/appearance.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-13,18-126
+  s_c56bde808bb5f7::t_2839996a0f080a 14-17
+packages/rich-text-editor/src/core/documentText.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 7,51,67,76,103
+packages/rich-text-editor/src/core/registry.spec.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 5,485,492-573
+packages/rich-text-editor/src/plugins/defaultContent.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 25,37
+packages/rich-text-editor/src/plugins/shared/helpers/href.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 14,16,19,21-26,35
+packages/rich-text-editor/src/docs/authoringExcerpts.spec.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-13
+packages/rich-text-editor/src/locales/nl-NL.ts
+  s_c56bde808bb5f7::t_fef9b364dada38 47-49,53,56,58,60,76,78
+packages/rich-text-editor/src/__tests__/browser/hostStylingValues.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 91-105
+packages/rich-text-editor/src/docs/keyboardReference.ts
+  s_c56bde808bb5f7::t_5980387182ef1b 4-5,7-9,50
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-3,6,10-49,51-53
+packages/rich-text-editor/src/locales/en-US.ts
+  s_c56bde808bb5f7::t_fef9b364dada38 48-50,54,57,59,61,77,79
+packages/rich-text-editor/src/__tests__/lookStylesheets.spec.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 10-11,20-24,105-149
+  s_c56bde808bb5f7::t_dca622c558086c 150-151
+packages/rich-text-editor/src/plugins/Link/components/LinkEditor.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 10-13,18-24,42-44,91,103-107,113-121,137,165-167,185-191
+  s_c56bde808bb5f7::t_6e39eb3ba2b089 199,209
+packages/rich-text-editor/src/locales/it-CH.ts
+  s_c56bde808bb5f7::t_fef9b364dada38 47-49,54,57,59,61,77,79
+.changeset/feat-rte-mention-names.md
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-5
+.changeset/feat-rte-link-flows.md
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-5
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.spec.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 12-21,48-55,122-204,315-321,390-393,424-429
+packages/rich-text-editor/src/plugins/Emoji/Emoji.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 69
+packages/rich-text-editor/src/editor/floatingBar.spec.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 92-106,264-275
+  s_c56bde808bb5f7::t_f6cb4ba59957a6 276
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.spec.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 31,76
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 19,293-322
+  s_c56bde808bb5f7::t_20f92604ceb556 323
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 6,14-15,21,294,369,390,511-590
+  s_c56bde808bb5f7::t_153ccabbfe212c 591-592
+packages/rich-text-editor/src/plugins/Emoji/Emoji.spec.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 31
+packages/rich-text-editor/src/core/registry.ts
+  s_c56bde808bb5f7::t_ac3c84969b4c29 266,269
+  s_c56bde808bb5f7::t_c5ace177ba3edc 3,7-9,27,77-80,82,84,86-88,99-102,256-257,268,270,280,365-369,374,410,412,450-454,473,477,492,502,507
+  s_c56bde808bb5f7::t_5980387182ef1b 85
+packages/rich-text-editor/src/locales/de-DE.ts
+  s_c56bde808bb5f7::t_fef9b364dada38 47-49,54,57,59,61,77,79
+packages/rich-text-editor/src/__tests__/rendererBundle.spec.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 12,15-17,51,57-63
+  s_c56bde808bb5f7::t_9b759c0fddbb5a 64-66
+.changeset/feat-rte-button-links.md
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-5
+packages/rich-text-editor/src/locales/de-CH.ts
+  s_c56bde808bb5f7::t_fef9b364dada38 47-49,54,57,59,61,77,79
+packages/rich-text-editor/src/locales/fr-FR.ts
+  s_c56bde808bb5f7::t_fef9b364dada38 47-49,54,57,59,61,77,79
+packages/rich-text-editor/src/index.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 18,77-81,130
+packages/rich-text-editor/src/__tests__/browser/HostLooksPair.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 7,14,19,30-31,39-40,45,49-50,55
+.changeset/fix-rte-toolbar-keeps-selection.md
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-5
+packages/rich-text-editor/src/plugins/Mention/types.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 3-5,7
+packages/rich-text-editor/src/plugins/index.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 41,44-57
+packages/rich-text-editor/src/editor/engines/prosemirror/testFixtures.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-103
+packages/rich-text-editor/src/editor/hooks/useToolbarRoving.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 166,177,182-183
+packages/rich-text-editor/src/plugins/SoftBreak/SoftBreak.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 29
+packages/rich-text-editor/src/ui/shortcut.spec.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-24
+.changeset/rte-renderer-content-registry.md
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-5
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 15,24-25,403-430,446-447,469,484,497-500,513-516,526-529,536-594,753-756,835-849
+  s_c56bde808bb5f7::t_8ce8127ed73bb8 850
+packages/rich-text-editor/src/locales/es-ES.ts
+  s_c56bde808bb5f7::t_fef9b364dada38 47-49,54,57,59,61,77,79
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.spec.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 12,27-28
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 20,22,535
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 3-14,18,22-31,33-41,51-90,99-114,116,118-128,130-182,184-254,258-270,272,278-291,293-297,299-300,302-308,310-325,332,335-348,356
+  s_c56bde808bb5f7::t_2f6dded8c9106b 301
+packages/rich-text-editor/src/renderer/serializeToHtml.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 3,37
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.spec.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-259,261-266,268-308,310-311
+  s_c56bde808bb5f7::t_f4a211a3c6f454 260,267,309
+packages/rich-text-editor/src/core/commands.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 13-26,65-82,110-113,125-126,145-147,210-215,255-268
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 13,19-21,50-54,152-158
+packages/rich-text-editor/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 11-14,17,31
+packages/rich-text-editor/src/core/contentRegistry.spec.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-51
+packages/rich-text-editor/src/plugins/Mention/helpers/display.spec.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-60
+packages/rich-text-editor/src/locales/pl-PL.ts
+  s_c56bde808bb5f7::t_fef9b364dada38 47-49,53,56,58,60,75,77
+packages/rich-text-editor/src/core/hotkeys.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-89
+.changeset/docs-rte-keyboard-reference.md
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-5
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_c56bde808bb5f7::t_c81d5a4ff4093b 19,32,97
+  s_c56bde808bb5f7::t_c5ace177ba3edc 16,22,28,46-50,66-73,83-96,98-113,176,181,188,191-216,248
+packages/rich-text-editor/src/plugins/BlurOnBreak/index.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 3
+packages/rich-text-editor/src/plugins/Mention/Mention.spec.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 30,49-65
+packages/rich-text-editor/src/plugins/Link/helpers/value.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 3-22
+packages/rich-text-editor/src/plugins/Mention/hooks/usePeople.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-74
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 130-140,709-766,825-835,879,881,885,1075-1076,1079,1083,2516-2553,2751-2767
+  s_c56bde808bb5f7::t_cc0f4180367429 2768-2769
+packages/rich-text-editor/.storybook/main.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 8-9
+packages/rich-text-editor/src/core/hotkeys.spec.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-75
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.tsx
+  s_c56bde808bb5f7::t_1ff5bd3e479a87 209-214
+  s_c56bde808bb5f7::t_375a91f5f5ab5d 7,115,121,123,125,199,204,208,226,232,235,446
+  s_c56bde808bb5f7::t_c5ace177ba3edc 4,9-13,17-20,25-43,48,50,54-55,57-85,87-114,116-120,122,124,126-136,138-139,141-185,187-198,200-203,205-207,215-225,227-231,233-234,236-264,302-313,330,345-349,351,359,367-374,376-379,382-383,385,389-396,404,432,434,436,451-462
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 3,9-12,14,17-19,21,23,25-32,36-72,74-75,78-82,84-97,100,102-103,107,109,111-117,122,124,126,130-139,143-145,152-168,171-172,174-183,186,188,191-194,197-198,205-207,209-216,219-220,223-227
+  s_c56bde808bb5f7::t_a52cdce97158fd 123,125,173,208,217-218,221-222
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.spec.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 7,9,19-22,27-31,36-37,47-48,50-52,62,87,89,93,120-122,126-132,164-189,191-275,278-293,295-359,361-401,403-476,478-479
+  s_c56bde808bb5f7::t_f4a211a3c6f454 49,190,276-277,294,360,402,477
+packages/rich-text-editor/src/editor/engines/prosemirror/textRules.spec.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 506
+packages/rich-text-editor/src/plugins/Mention/components/MentionEditor.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 5-6,56
+packages/rich-text-editor/src/core/look.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 60,63-68,70-71
+packages/rich-text-editor/src/docs/keyboardReference.module.scss
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-26
+packages/rich-text-editor/src/docs/PluginKeyboardReference.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-58
+packages/rich-text-editor/src/__tests__/serializeToHtml.spec.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 6,82-93
+  s_c56bde808bb5f7::t_2f6b0157f946ab 94
+packages/rich-text-editor/package.json
+  s_c56bde808bb5f7::t_c5ace177ba3edc 93
+packages/rich-text-editor/src/core/look.spec.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 5,9-11,18-20,24-31,36-38
+packages/rich-text-editor/src/editor/engines/prosemirror/lists.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 12-13,19,141,151,167,189,195-204,230,242-281,284-287,296,299-300,305-307,310-313,405-406
+storybook-docs/.storybook/preview.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 109
+.changeset/feat-rte-shortcuts-submit.md
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-5
+packages/rich-text-editor/src/plugins/Link/components/linkForm.module.scss
+  s_c56bde808bb5f7::t_c5ace177ba3edc 39-83
+packages/rich-text-editor/src/ui/shortcut.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-72
+storybook-docs/.storybook/main.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 29
+packages/rich-text-editor/src/plugins/Link/components/LinkToolbarButton.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 13,15,19-39,41-44,53-55,106-119
+packages/rich-text-editor/src/core/plugin.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 118,391-394,396-400,643-650,654-679,696-709
+packages/rich-text-editor/src/core/index.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 7-9,11-13,19-25,36-43,46,67,69,75,80,98-99
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 15,20,24,37,73,86-88,95,124-126,181,183-188,195-205,209
+packages/rich-text-editor/src/locales/it-IT.ts
+  s_c56bde808bb5f7::t_fef9b364dada38 47-49,54,57,59,61,77,79
+packages/rich-text-editor/src/locales/fr-CH.ts
+  s_c56bde808bb5f7::t_fef9b364dada38 47-49,54,57,59,61,77,79
+packages/rich-text-editor/src/docs/keyboardReference.mdx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-19
+packages/rich-text-editor/src/plugins/Link/link.module.scss
+  s_c56bde808bb5f7::t_c5ace177ba3edc 3-4,39-120
+  s_c56bde808bb5f7::t_29be05484448bf 121-123
+packages/rich-text-editor/src/plugins/Link/helpers/newTab.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-8
+packages/rich-text-editor/src/plugins/Link/components/LinkTargetForm.spec.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-338
+packages/rich-text-editor/src/editor/linkFlows.spec.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-340
+packages/rich-text-editor/src/docs/authoringExcerpts.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-41
+packages/rich-text-editor/src/plugins/Link/helpers/destination.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-18
+packages/rich-text-editor/src/plugins/Mention/helpers/image.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-17
+packages/rich-text-editor/src/plugins/Mention/helpers/text.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-20
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 4,25,30,32,41-42,79-89,104,115,292,303,452-585,761-762,768,904-905,933-936,956-960,963-981,985-988,993-995,998-1002,1210,1213-1228,1230,1234-1245,1250-1252,1266,1277-1283,1293,1297-1313,1315,1319-1330,1346,1355,1369,1395,1410,1413-1421,1423-1449,1462-1463,1472-1473,1476
+packages/rich-text-editor/src/editor/engines/prosemirror/testEditor.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 8-18,168-227
+packages/rich-text-editor/src/editor/engines/prosemirror/paste.spec.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 5,11,45-48,59-72,242-245,293-390
+  s_c56bde808bb5f7::t_efeee1183ca9e4 391
+packages/rich-text-editor/src/docs/keyboardReference.spec.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-41
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 8,23-38,40-44,47,51-55,65,82,90-93,103-107
+packages/rich-text-editor/src/plugins/Link/hooks/useDestinationSearch.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-66
+packages/rich-text-editor/src/renderer/RichTextRenderer.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 6-7,34,40,64
+packages/rich-text-editor/src/docs/authoring.mdx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-114
+packages/rich-text-editor/src/plugins/Mention/components/MentionLink.spec.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-73
+packages/rich-text-editor/src/plugins/Mention/helpers/text.spec.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-30
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 26,903-907,915,924,1002-1003,1032,1034,1043-1052,1056-1057,1061-1067,1078,1083-1085,1109,1112,1118,1125-1126,1132-1133,1136-1140,1145-1146
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 4,18-19,28,286-301,303-308,316,336,354,357,359-376,407,427,465,502-507,516,535,545-549,551-553,555-570,572-587,589-593,595-605,607-608,610-631,633-634,636-665,667-668,670-684
+packages/rich-text-editor/src/ui/ToolbarButton/ToolbarButton.tsx
+  s_c56bde808bb5f7::t_c5ace177ba3edc 4-6
+packages/rich-text-editor/src/plugins/Link/Link.spec.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 3,5-19,35-419
+packages/rich-text-editor/src/plugins/Link/components/DestinationField.tsx
+  s_c56bde808bb5f7::t_1ff5bd3e479a87 183-188
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-16,18-21,23,25-26,28,30-120,122-182,189-196,198-201
+  s_c56bde808bb5f7::t_1dc72c69764104 17,22,24,27,29,121,197
+packages/rich-text-editor/src/plugins/Mention/helpers/image.spec.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-32
+packages/rich-text-editor/src/renderer/documentTree.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 16,92-93,103,137,157,205,220,229,245,259,280,288
+packages/rich-text-editor/src/plugins/shared/helpers/keys.ts
+  s_c56bde808bb5f7::t_c5ace177ba3edc 1-11
+pnpm-lock.yaml
+  s_c56bde808bb5f7::t_51ce8a1a6136a6 625-627
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8f2a1ee00b0fcf99aafd4771ea460176276808a1",
+  "prompts": {},
+  "sessions": {
+    "s_c56bde808bb5f7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "67ddf8bd-870f-4212-974e-54afa59d04ad",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

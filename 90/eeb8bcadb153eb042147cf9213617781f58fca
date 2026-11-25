@@ -1,0 +1,32 @@
+packages/components/src/components/Card/__tests__/Card.ct.tsx
+  s_d2fc6bab6d0fea::t_f4e4a07a36b07f 671
+  s_d2fc6bab6d0fea::t_8c2718f31d66f7 637,639-640,642-643,645-646,648-651,653-655,657-665,667-668,670,672
+  s_d2fc6bab6d0fea::t_6a690a3ac36c50 631
+  s_d2fc6bab6d0fea::t_a0a645b7bb0eb8 627,638,641,644,647,652,656,666,669
+  s_d2fc6bab6d0fea::t_b4af29bd7ef685 628,633
+  s_f34b0ca5476063::t_a59f480b428146 632
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "90eeb8bcadb153eb042147cf9213617781f58fca",
+  "prompts": {},
+  "sessions": {
+    "s_d2fc6bab6d0fea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "49eacef2-852d-488f-9a68-c17eefa11a39",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_f34b0ca5476063": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b5c0e584-7f93-4177-ba8e-1509f9e6eaaf",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

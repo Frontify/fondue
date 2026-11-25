@@ -1,0 +1,19 @@
+.changeset/table-paste-frame-test-id.md
+  s_0036b8a555aa69::t_90e1c43a744176 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "226015326bc42aaf824ccc6f0ca9e5f3d754d579",
+  "prompts": {},
+  "sessions": {
+    "s_0036b8a555aa69": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b96c94ba-99f3-4817-89f1-64e206fe9f49",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
