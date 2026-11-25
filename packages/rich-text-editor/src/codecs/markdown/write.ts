@@ -833,6 +833,16 @@ const writeTextBlock = (block: RteBlockNode, path: Path, state: WriteState): str
     return prefixed(text.split(LINE_SEPARATOR), prefix);
 };
 
+/** A void block writes only its prefix; a form that writes no line, or children it cannot hold, are a loss. */
+const writeVoidBlock = (block: RteBlockNode, path: Path, state: WriteState): string[] => {
+    const lines = prefixed([], prefixOf(block, path, state));
+    if (lines.length === 0 || childrenOf(block).length > 0) {
+        reportLoss(state.losses, { path, type: typeNameOf(block) });
+    }
+
+    return lines;
+};
+
 /** The first number of an ordered list's marker, which decides whether the list can interrupt a paragraph. */
 const ORDINAL_MARKER = /^(\d+)[.)]/;
 
@@ -1001,7 +1011,7 @@ const writeBlock = (block: RteBlockNode, path: Path, alternate: boolean, state: 
         case 'container':
             return writeContainer(block, path, state);
         case 'void':
-            return prefixed([], prefixOf(block, path, state));
+            return writeVoidBlock(block, path, state);
     }
 };
 

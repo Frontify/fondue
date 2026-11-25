@@ -144,6 +144,15 @@ describe('serializeToMarkdown horizontal rules', () => {
         expect(serializeToMarkdown(document, RULE_OPTIONS)).toEqual({ markdown: ESCAPED_DASHES, losses: [] });
     });
 
+    it.each(['-- -', '--- -', '-- --'])('writes a paragraph whose text is %s with the first dash escaped', (text) => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text }] }],
+        };
+
+        expect(serializeToMarkdown(document, RULE_OPTIONS)).toEqual({ markdown: `\\${text}`, losses: [] });
+    });
+
     it('writes nothing for a rule when no plugin has one and reports the block', () => {
         const document: RteDocumentOf = {
             version: 1,
@@ -176,6 +185,52 @@ describe('serializeToMarkdown a void block with a Markdown form', () => {
             markdown: 'a\n\n***\n\nb',
             losses: [],
         });
+    });
+});
+
+describe('serializeToMarkdown a void block that loses content', () => {
+    it('reports a void block that holds children, which the Markdown cannot hold', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'starBreak', children: [{ text: 'a' }] }],
+        };
+
+        expect(serializeToMarkdown(document, { plugins: [...defaultContent, starBreakContent] })).toEqual({
+            markdown: '***',
+            losses: [{ path: [0], type: 'starBreak' }],
+        });
+    });
+
+    it('reports a void block whose form writes an empty line', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a' }] }, { type: 'starBreak' }],
+        };
+
+        expect(
+            serializeToMarkdown(document, {
+                plugins: [...defaultContent, starBreakContent],
+                overrides: {
+                    blocks: { starBreak: { read: [], write: () => ({ first: '', rest: null }) } },
+                },
+            }),
+        ).toEqual({ markdown: 'a', losses: [{ path: [1], type: 'starBreak' }] });
+    });
+
+    it('reports a void block that holds children and whose form writes an empty line once', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'starBreak', children: [{ text: 'a' }] }],
+        };
+
+        expect(
+            serializeToMarkdown(document, {
+                plugins: [...defaultContent, starBreakContent],
+                overrides: {
+                    blocks: { starBreak: { read: [], write: () => ({ first: '', rest: null }) } },
+                },
+            }),
+        ).toEqual({ markdown: '', losses: [{ path: [0], type: 'starBreak' }] });
     });
 });
 

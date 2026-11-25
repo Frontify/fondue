@@ -396,6 +396,20 @@ describe('markdown round trip of horizontal rules', () => {
     }
 });
 
+describe('markdown round trip of a paragraph that looks like a horizontal rule', () => {
+    it.each([
+        ['-- -', String.raw`\-- -`],
+        ['--- -', String.raw`\--- -`],
+        ['-- --', String.raw`\-- --`],
+        ['** *', String.raw`\*\* \*`],
+        ['__ _', String.raw`\_\_ \_`],
+    ])('keeps %s a paragraph', (text, markdown) => {
+        const document: RteDocument = { version: 1, blocks: [{ type: 'paragraph', children: [{ text }] }] };
+
+        expectRoundTrip({ name: text, markdown, document }, RULE_OPTIONS);
+    });
+});
+
 const ESCAPING_CASES: readonly RoundTripCase[] = [
     {
         name: 'asterisks that are not emphasis',
