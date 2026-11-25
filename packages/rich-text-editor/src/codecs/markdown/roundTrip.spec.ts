@@ -2,6 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { type RteDocumentOf } from '../../core';
 import { type RteBlock, type RteDocument, type RteDocumentWith } from '../../documentFormat';
 import { bulletListContent, defaultContent, tableContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
@@ -1029,17 +1030,20 @@ describe('markdown round trip of tables', () => {
             },
         ],
     };
-    const tableMarkdown = '| a | b |\n| --- | --- |\n| **bold** | `x\\|y` |\n' + String.raw`| p\\|q |  |`;
+    const tableMarkdown = `| a | b |
+| --- | --- |
+| **bold** | \`x\\|y\` |
+| p\\\\|q |  |`;
 
     it('gives back a table with marks, pipes and an empty cell', () => {
-        const document = { version: 1, blocks: [tableBlock] };
+        const document: RteDocumentOf = { version: 1, blocks: [tableBlock] };
 
         expect(parseMarkdown(tableMarkdown, TABLE_OPTIONS)).toEqual(document);
         expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({ markdown: tableMarkdown, losses: [] });
     });
 
     it('gives back a table between two paragraphs', () => {
-        const document = {
+        const document: RteDocumentOf = {
             version: 1,
             blocks: [
                 { type: 'paragraph', children: [{ text: 'before' }] },

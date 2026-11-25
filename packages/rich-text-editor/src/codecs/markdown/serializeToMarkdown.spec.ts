@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { defineBlock, defineContent, defineMark, type RteDocumentOf } from '../../core';
+import { defineBlock, defineContent, defineMark, type RteBlockNode, type RteDocumentOf, type RteInlineNode } from '../../core';
 import { type RteDocument, type RteDocumentWith } from '../../documentFormat';
 import { columnBreakContent, defaultContent, mentionContent, tableContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
@@ -117,17 +117,17 @@ describe('serializeToMarkdown single-line blocks', () => {
 describe('serializeToMarkdown tables', () => {
     type CellType = 'tableHeader' | 'tableCell';
 
-    const paragraphOf = (children: object[]) => ({ type: 'paragraph', children });
-    const cellOf = (type: CellType, children: object[], attributes: object = {}) => ({
+    const paragraphOf = (children: RteInlineNode[]): RteBlockNode => ({ type: 'paragraph', children });
+    const cellOf = (type: CellType, children: RteInlineNode[], attributes: object = {}): RteBlockNode => ({
         type,
         ...attributes,
         children: [paragraphOf(children)],
     });
     const headerOf = (text: string) => cellOf('tableHeader', [{ text }]);
     const cell = (text: string) => cellOf('tableCell', [{ text }]);
-    const rowOf = (...cells: object[]) => ({ type: 'tableRow', children: cells });
-    const documentOf = (...blocks: object[]): RteDocumentOf => ({ version: 1, blocks });
-    const tableOf = (...rows: object[]) => ({ type: 'table', children: rows });
+    const rowOf = (...cells: RteBlockNode[]): RteBlockNode => ({ type: 'tableRow', children: cells });
+    const documentOf = (...blocks: RteBlockNode[]): RteDocumentOf => ({ version: 1, blocks });
+    const tableOf = (...rows: RteBlockNode[]): RteBlockNode => ({ type: 'table', children: rows });
 
     it('writes a header row, a delimiter row and a body row', () => {
         const document = documentOf(tableOf(rowOf(headerOf('a'), headerOf('b')), rowOf(cell('c'), cell('d'))));
@@ -147,7 +147,9 @@ describe('serializeToMarkdown tables', () => {
         );
 
         expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({
-            markdown: String.raw`| a | b |` + '\n| --- | --- |\n' + String.raw`| a\\|b | ` + '`x\\|y`' + ' |',
+            markdown: `| a | b |
+| --- | --- |
+| a\\\\|b | \`x\\|y\` |`,
             losses: [],
         });
     });

@@ -291,7 +291,9 @@ describe('parseMarkdown tables', () => {
     });
 
     it('reads an escaped pipe as text inside a cell', () => {
-        const markdown = '| a | b |\n| - | - |\n' + String.raw`| a \| b | d |`;
+        const markdown = String.raw`| a | b |
+| - | - |
+| a \| b | d |`;
 
         expect(parseMarkdown(markdown, TABLE_OPTIONS)).toEqual(
             tableOf([cellOf('tableCell', [{ text: 'a | b' }]), cellOf('tableCell', [{ text: 'd' }])]),
