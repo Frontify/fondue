@@ -16,8 +16,10 @@ const UNDERSCORE_OUTSIDE_WORD = /(?<![\p{L}\p{N}])_|_(?![\p{L}\p{N}])/gu;
 /** What starts a heading, a setext underline, a bullet or a rule at the start of a line, after any indent. */
 const LINE_START_MARKER = /^([ \t]*)(#|=|[-+](?=[ \t]|$)|-+[ \t]*$)/;
 
-/** A line of only `|`, `:`, `-`, spaces and tabs with a `-`, the shape of a table delimiter row; the group before the second is what comes ahead of the first `-` or `:`. */
-const LINE_START_DELIMITER_ROW = /^(?=[|:\t -]*-[|:\t -]*$)([|\t ]*)([-:])/;
+/** A line of only `|`, `:`, `-`, spaces and tabs; with a `-` it is the shape of a table delimiter row. */
+const DELIMITER_ROW_CHARACTERS = /^[|:\t -]*$/;
+
+const FIRST_DELIMITER_MARK = /[-:]/;
 
 /** An ordinal that starts a numbered list (`1.`, `2)`), whose `.` or `)` is the character to escape. */
 const LINE_START_ORDINAL = new RegExp(String.raw`^([ \t]*\d{1,${MAX_ORDINAL_DIGITS}})([.)])(?=[ \t]|$)`);
@@ -42,6 +44,14 @@ const WHITESPACE = /^\s$/u;
 /** Keeps the first group and puts a backslash before the second. */
 const BACKSLASH_SECOND_GROUP = String.raw`$1\$2`;
 const BACKSLASH_MATCH = String.raw`\$&`;
+
+const escapeDelimiterRow = (line: string): string => {
+    if (line.includes('-') && DELIMITER_ROW_CHARACTERS.test(line)) {
+        return line.replace(FIRST_DELIMITER_MARK, BACKSLASH_MATCH);
+    }
+
+    return line;
+};
 
 export const isWhitespace = (char: string): boolean => WHITESPACE.test(char);
 
@@ -69,10 +79,10 @@ export const escapeText = (text: string, position: TextPosition): string => {
         case 'inline':
             return escaped;
         case 'lineStart':
-            return escaped
-                .replace(LINE_START_MARKER, BACKSLASH_SECOND_GROUP)
-                .replace(LINE_START_DELIMITER_ROW, BACKSLASH_SECOND_GROUP)
-                .replace(LINE_START_ORDINAL, BACKSLASH_SECOND_GROUP);
+            return escapeDelimiterRow(escaped.replace(LINE_START_MARKER, BACKSLASH_SECOND_GROUP)).replace(
+                LINE_START_ORDINAL,
+                BACKSLASH_SECOND_GROUP,
+            );
     }
 };
 
