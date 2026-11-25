@@ -12,9 +12,10 @@ export type RteDocumentIssue = {
     /**
      * What is wrong with the value at `path`: it is not an object, a block or inline lacks a string `type`,
      * a list is not an array, a text node's `text` is not a string (or it also has a `type`),
-     * or the document `version` is not the one this package reads.
+     * the document `version` is not the one this package reads,
+     * or a node contains itself, which only an in-memory value can do.
      */
-    reason: 'not-an-object' | 'unsupported-version' | 'not-an-array' | 'missing-type' | 'malformed-text';
+    reason: 'not-an-object' | 'unsupported-version' | 'not-an-array' | 'missing-type' | 'malformed-text' | 'cycle';
     /** The offending value as an RFC 6901 JSON Pointer: `''` for the root, `/blocks/0/children/2` deeper. */
     path: string;
 };
@@ -32,15 +33,16 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const pointer = (parent: string, segment: string | number): string => `${parent}/${segment}`;
 
-type PendingNode = {
-    node: unknown;
-    path: string;
-    /** A root `blocks` member must be a block; any other node may be a text node instead. */
-    kind: 'block' | 'child';
-};
+/** A root `blocks` member must be a block; any other node may be a text node instead. */
+type NodeKind = 'block' | 'child';
+
+type PendingNode =
+    | { kind: NodeKind; node: unknown; path: string }
+    // Popped once every descendant of `node` is done, which takes it off the ancestor path.
+    | { kind: 'leave'; node: object };
 
 /** What is wrong with a node holding `text`: a text node must have string `text` and no `type`, and cannot be a root block. */
-const textNodeIssue = (node: Record<string, unknown>, kind: PendingNode['kind']): RteDocumentIssue['reason'] | null => {
+const textNodeIssue = (node: Record<string, unknown>, kind: NodeKind): RteDocumentIssue['reason'] | null => {
     if (typeof node.text !== 'string' || node.type !== undefined) {
         return 'malformed-text';
     }
@@ -58,7 +60,7 @@ const textNodeIssue = (node: Record<string, unknown>, kind: PendingNode['kind'])
 type CheckNodeParams = {
     node: Record<string, unknown>;
     path: string;
-    kind: PendingNode['kind'];
+    kind: NodeKind;
 };
 
 type NodeChildren = {
@@ -100,10 +102,21 @@ const validateBlocks = (blocks: unknown[], blocksPath: string, issues: RteDocume
         pending.push({ node: blocks[index], path: pointer(blocksPath, index), kind: 'block' });
     }
 
-    // Repeated blocks are legal and checked once; it also ends a walk over an in-memory cycle.
-    const seen = new WeakSet<object>();
+    // Repeated nodes are legal and checked at every path; only a node inside itself would never end the walk.
+    const onPath = new Set<object>();
 
     for (let next = pending.pop(); next !== undefined && issues.length < MAX_ISSUES; next = pending.pop()) {
+        switch (next.kind) {
+            case 'leave': {
+                onPath.delete(next.node);
+                continue;
+            }
+            case 'block':
+            case 'child': {
+                break;
+            }
+        }
+
         const { node, path, kind } = next;
 
         if (!isRecord(node)) {
@@ -111,15 +124,18 @@ const validateBlocks = (blocks: unknown[], blocksPath: string, issues: RteDocume
             continue;
         }
 
-        if (seen.has(node)) {
+        if (onPath.has(node)) {
+            issues.push({ reason: 'cycle', path });
             continue;
         }
-        seen.add(node);
 
         const checked = checkNode({ node, path, kind }, issues);
         if (checked === null) {
             continue;
         }
+
+        onPath.add(node);
+        pending.push({ kind: 'leave', node });
 
         // Pushed in reverse so the first child is popped first and issues stay in document order.
         for (let index = checked.children.length - 1; index >= 0; index--) {

@@ -354,11 +354,41 @@ describe('validateDocument, on hostile input', () => {
         });
     });
 
-    it('terminates on a node whose children contain itself', () => {
+    it('reports a node whose children contain itself as a cycle', () => {
         const node: { type: string; children: unknown[] } = { type: 'a', children: [] };
         node.children.push(node);
 
-        expect(validateDocument({ version: 1, blocks: [node] }).valid).toBe(true);
+        expect(validateDocument({ version: 1, blocks: [node] })).toEqual({
+            valid: false,
+            issues: [{ reason: 'cycle', path: '/blocks/0/children/0' }],
+        });
+    });
+
+    it('accepts the same valid block twice in blocks', () => {
+        const block = { type: 'p', children: [{ text: 'a' }] };
+
+        expect(validateDocument({ version: 1, blocks: [block, block] }).valid).toBe(true);
+    });
+
+    it('reports a text node reused as a root block', () => {
+        const text = { text: 'a' };
+
+        expect(validateDocument({ version: 1, blocks: [{ type: 'p', children: [text] }, text] })).toEqual({
+            valid: false,
+            issues: [{ reason: 'missing-type', path: '/blocks/1' }],
+        });
+    });
+
+    it('reports a malformed block at every path it is repeated', () => {
+        const bad = { type: 'p', children: 'x' };
+
+        expect(validateDocument({ version: 1, blocks: [bad, bad] })).toEqual({
+            valid: false,
+            issues: [
+                { reason: 'not-an-array', path: '/blocks/0/children' },
+                { reason: 'not-an-array', path: '/blocks/1/children' },
+            ],
+        });
     });
 });
 
