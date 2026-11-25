@@ -21,7 +21,7 @@ export { columnBreakContent, columnBreakPlugin } from './ColumnBreak';
 export { defaultEmojis, emojiPlugin } from './Emoji';
 export { fontColorContent, fontColorPlugin } from './FontColor';
 export { historyPlugin } from './History';
-export { type HorizontalRuleBlock, horizontalRuleContent, horizontalRulePlugin } from './HorizontalRule';
+export { horizontalRuleContent, horizontalRulePlugin } from './HorizontalRule';
 export { italicContent, italicPlugin } from './Italic';
 export { linkContent, linkPlugin } from './Link';
 export { bulletListContent, bulletListPlugin, numberedListContent, numberedListPlugin } from './List';

@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { type RteBlock, type RteDocument, type RteDocumentWith } from '../../documentFormat';
-import { bulletListContent, defaultContent, type HorizontalRuleBlock } from '../../plugins';
+import { bulletListContent, defaultContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
@@ -11,10 +11,7 @@ import { mentionOverrideOptions } from './mentionOverride.fixture';
 type RoundTripCase = {
     name: string;
     markdown: string;
-    document:
-        | RteDocument
-        | RteDocumentWith<{ inline: { type: 'mention'; id: string } }>
-        | RteDocumentWith<{ block: HorizontalRuleBlock }>;
+    document: RteDocument | RteDocumentWith<{ inline: { type: 'mention'; id: string } }>;
 };
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
