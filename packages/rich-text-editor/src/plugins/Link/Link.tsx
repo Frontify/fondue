@@ -9,6 +9,7 @@ import {
     LOOK_PROPERTIES,
     lookProperties,
     type MarkdownDelimiters,
+    type MarkdownMarkContent,
     type RteContent,
     type RteHotkey,
     type TextLook,
@@ -103,19 +104,20 @@ type LinkAnchorAttrs = {
     rel?: string;
 };
 
-/** The addresses CommonMark writes in `<…>`: a web address, or a bare mail address that has no query. */
-const AUTOLINK_ADDRESS = /^(?:https?:[^\s<>]*|mailto:[^\s<>?#@]+@[^\s<>?#@]+)$/i;
-
 const MAILTO_PREFIX = 'mailto:';
 
-/** The Markdown a link writes: `<address>` when its text is the address, `[text](address)` otherwise. */
-const writeLink = (href: string, text: string): MarkdownDelimiters => {
+/** CommonMark's email autolink: its local part, then dot-joined domain labels of at most 63 characters. */
+const AUTOLINK_ADDRESS =
+    /^(?:https?:[^\s<>]*|mailto:[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)$/i;
+
+/** The Markdown a link writes: `<address>` when its bare text is the address, `[text](address)` otherwise. */
+const writeLink = (href: string, { text, marked }: MarkdownMarkContent): MarkdownDelimiters => {
     let shownAddress = href;
-    if (href.toLowerCase().startsWith(MAILTO_PREFIX)) {
+    if (href.startsWith(MAILTO_PREFIX)) {
         shownAddress = href.slice(MAILTO_PREFIX.length);
     }
 
-    if (AUTOLINK_ADDRESS.test(href) && text === shownAddress) {
+    if (!marked && AUTOLINK_ADDRESS.test(href) && text === shownAddress) {
         return { open: '<', close: '>', literal: true };
     }
 
@@ -219,9 +221,9 @@ const linkMarkFor = (appearances: readonly LinkAppearance[]): MarkDefinition =>
                     },
                 },
             ],
-            write: ({ href }, text) => {
+            write: ({ href }, content) => {
                 if (isSafeHref(href)) {
-                    return writeLink(href, text);
+                    return writeLink(href, content);
                 }
                 return null;
             },

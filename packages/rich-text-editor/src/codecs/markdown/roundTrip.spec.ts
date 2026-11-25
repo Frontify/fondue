@@ -697,6 +697,37 @@ describe('markdown round trip of links whose text is their address', () => {
         });
     }
 
+    it('keeps a bold link whose text is its address as a Markdown link', () => {
+        const document: RteDocument = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'https://x', bold: true, link: { href: 'https://x' } }] }],
+        };
+
+        const { markdown, losses } = serializeToMarkdown(document, OPTIONS);
+
+        expect(losses).toEqual([]);
+        expect(markdown).not.toContain('<');
+        expect(parseMarkdown(markdown, OPTIONS)).toEqual(document);
+    });
+
+    it('keeps a mail address with a non-ASCII domain as a Markdown link', () => {
+        const document = linkedTextDocument('ana@müller.de', 'mailto:ana@müller.de');
+
+        const { markdown, losses } = serializeToMarkdown(document, OPTIONS);
+
+        expect(losses).toEqual([]);
+        expect(parseMarkdown(markdown, OPTIONS)).toEqual(document);
+    });
+
+    it('keeps a mail address whose scheme is not lowercase as a Markdown link', () => {
+        const document = linkedTextDocument('a@b.c', 'MAILTO:a@b.c');
+
+        const { markdown, losses } = serializeToMarkdown(document, OPTIONS);
+
+        expect(losses).toEqual([]);
+        expect(parseMarkdown(markdown, OPTIONS)).toEqual(document);
+    });
+
     it('gives the same document after a second write when the Markdown holds a bare address', () => {
         const first = parseMarkdown('see https://x.com/a?b=1&c=2 now', OPTIONS);
 

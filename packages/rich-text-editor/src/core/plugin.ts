@@ -496,11 +496,19 @@ export type MarkdownBlockForm<TValue = Record<string, unknown>> = {
     write: (value: TValue, item: MarkdownListItem) => MarkdownLinePrefix | null;
 };
 
+/** What a mark wraps, as its form reads it to choose its delimiters. */
+export type MarkdownMarkContent = {
+    /** The plain text of the mark's run. */
+    text: string;
+    /** True when other marks or inline elements sit inside this mark's run. */
+    marked: boolean;
+};
+
 /** How a mark reads from and writes to Markdown. */
 export type MarkdownMarkForm<TValue = Record<string, unknown>> = {
     read: readonly MarkdownReadRule<TValue>[];
     /** Null: this value has no Markdown form, which is a loss. */
-    write: (value: TValue, text: string) => MarkdownDelimiters | null;
+    write: (value: TValue, content: MarkdownMarkContent) => MarkdownDelimiters | null;
 };
 
 /** How an inline reads from and writes to Markdown. */

@@ -378,6 +378,9 @@ const inlineElementsOf = (pieces: readonly Piece[]): MarkdownLoss[] => {
     return elements;
 };
 
+/** Whether the pieces hold a mark or an inline element, which the text of a run does not show. */
+const hasInnerMarkup = (pieces: readonly Piece[]): boolean => pieces.some((piece) => piece.kind !== 'text');
+
 /** The text a mark wraps, as the mark's form reads it to choose its delimiters. */
 const plainTextOf = (pieces: readonly Piece[]): string => {
     let text = '';
@@ -452,7 +455,7 @@ const delimiterOf = (text: string, open: boolean, pair: DelimiterPair, literal: 
 
 const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, context: TokenContext): void => {
     const { mark, paths, pieces } = piece;
-    const written = mark.form.write(mark.value, plainTextOf(pieces));
+    const written = mark.form.write(mark.value, { text: plainTextOf(pieces), marked: hasInnerMarkup(pieces) });
     if (written === null) {
         reportMarkLoss(context.losses, mark.name, paths);
         appendTokens(tokens, pieces, mode, context);

@@ -66,6 +66,7 @@ export {
     type MarkdownInlineOutput,
     type MarkdownLinePrefix,
     type MarkdownListItem,
+    type MarkdownMarkContent,
     type MarkdownMarkForm,
     type MarkdownReadRule,
     type MarkdownTextPattern,

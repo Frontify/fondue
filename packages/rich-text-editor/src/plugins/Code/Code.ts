@@ -53,7 +53,7 @@ export const codeContent = defineContent({
             parse: [{ tag: 'code' }],
             markdown: {
                 read: [{ token: 'code_inline' }],
-                write: (_value, text) => codeDelimiters(text),
+                write: (_value, content) => codeDelimiters(content.text),
             },
         }),
     },
