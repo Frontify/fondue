@@ -60,7 +60,7 @@ const canonicalMarksOf = (marks: readonly RunMark[]): RunMark[] =>
 export const addTextRun = (runs: Run[], text: string, marks: readonly RunMark[]): void => {
     const carried = canonicalMarksOf(marks);
     for (const [stretch] of text.matchAll(STRETCH)) {
-        let stretchMarks = carried;
+        let stretchMarks: readonly RunMark[] = carried;
         if (isWhitespace(stretch.charAt(0))) {
             stretchMarks = NO_MARKS;
         }

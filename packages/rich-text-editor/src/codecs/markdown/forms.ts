@@ -126,6 +126,11 @@ const checkedTokenRule = ({ token, value }: { token: string; value?: unknown }):
     return { token, value: guarded(value, isRecord) };
 };
 
+const checkedTextRule = ({ pattern, value }: { pattern: RegExp; value?: unknown }): TextRule => ({
+    pattern,
+    value: guarded<[match: RegExpExecArray], NodeValue>(value, isRecord),
+});
+
 /** The rules that have a token or a pattern, each with a value that never throws or returns a non-object. */
 const checkedReadRules = (rules: unknown): (ReadRule | TextRule)[] => {
     if (!Array.isArray(rules)) {
@@ -137,7 +142,7 @@ const checkedReadRules = (rules: unknown): (ReadRule | TextRule)[] => {
         if (hasToken(rule)) {
             checked.push(checkedTokenRule(rule));
         } else if (hasPattern(rule)) {
-            checked.push({ pattern: rule.pattern, value: guarded(rule.value, isRecord) });
+            checked.push(checkedTextRule(rule));
         }
     }
 
