@@ -171,11 +171,13 @@ const BULLET_LOOK = {
     color: SAMPLE_VALUE,
     size: SAMPLE_VALUE,
     indent: SAMPLE_VALUE,
+    gap: SAMPLE_VALUE,
 };
 const NUMBERED_LOOK = {
     marker: SAMPLE_VALUE,
     color: SAMPLE_VALUE,
     indent: SAMPLE_VALUE,
+    gap: SAMPLE_VALUE,
 };
 
 describe('the list stylesheet', () => {

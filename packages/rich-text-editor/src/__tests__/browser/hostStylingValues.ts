@@ -258,3 +258,16 @@ export const NESTED_LISTS_DOCUMENT: RteDocument = {
 /** The item text at each depth of `NESTED_LISTS_DOCUMENT`, outermost first. */
 export const BULLET_ITEMS = ['Bullet 1', 'Bullet 2', 'Bullet 3', 'Bullet 4', 'Bullet 5'] as const;
 export const NUMBERED_ITEMS = ['Number 1', 'Number 2', 'Number 3', 'Number 4'] as const;
+
+export const GAP_ITEM_TEXT = 'Gap item';
+
+/** A bulleted list of one item, for measuring the room between its marker and its text. */
+export const GAP_DOCUMENT: RteDocument = {
+    version: 1,
+    blocks: [
+        {
+            type: 'bulletList',
+            children: [{ type: 'listItem', children: [{ type: 'paragraph', children: [{ text: GAP_ITEM_TEXT }] }] }],
+        },
+    ],
+};

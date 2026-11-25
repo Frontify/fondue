@@ -12,7 +12,11 @@ describe('list looks', () => {
 
     it('names each field of a bullet level after the list and the level, skipping a level left out', () => {
         const plugin = bulletListPlugin({
-            look: [{ marker: "'–'", color: 'red', size: '1.2em', indent: '1em' }, undefined, { marker: 'square' }],
+            look: [
+                { marker: "'–'", color: 'red', size: '1.2em', indent: '1em', gap: '0.5em' },
+                undefined,
+                { marker: 'square' },
+            ],
         });
 
         expect(plugin.content?.contentProperties).toEqual({
@@ -20,19 +24,21 @@ describe('list looks', () => {
             '--rte-bullet-list1-color': 'red',
             '--rte-bullet-list1-size': '1.2em',
             '--rte-bullet-list1-indent': '1em',
+            '--rte-bullet-list1-gap': '0.5em',
             '--rte-bullet-list3-marker': 'square',
         });
     });
 
     it('names each field of a numbered level after the list and the level', () => {
         const plugin = numberedListPlugin({
-            look: [{}, { marker: 'upper-roman', color: 'blue', indent: '3em' }],
+            look: [{}, { marker: 'upper-roman', color: 'blue', indent: '3em', gap: '1em' }],
         });
 
         expect(plugin.content?.contentProperties).toEqual({
             '--rte-numbered-list2-marker': 'upper-roman',
             '--rte-numbered-list2-color': 'blue',
             '--rte-numbered-list2-indent': '3em',
+            '--rte-numbered-list2-gap': '1em',
         });
     });
 

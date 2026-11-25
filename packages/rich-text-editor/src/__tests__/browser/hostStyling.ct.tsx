@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { expect, test } from '@playwright/experimental-ct-react';
-import { type Locator } from '@playwright/test';
+import { type Locator, type Page } from '@playwright/test';
 
 import {
     type BulletLevelLook,
@@ -23,6 +23,8 @@ import {
     BULLET_ITEMS,
     BUTTON_LINK_TEXT,
     BUTTON_LINKS_DOCUMENT,
+    GAP_DOCUMENT,
+    GAP_ITEM_TEXT,
     H1_COLOR_VARIABLE,
     HOST_ANCHOR_CSS,
     HOST_RESET_CSS,
@@ -860,8 +862,8 @@ test.describe('the document next to a host page stylesheet', () => {
     });
 });
 
-/** A list level as drawn: the list's marker type and indent, and its item's marker colour and size. */
-type ComputedMarkerLook = { marker: string; color: string; size: string; indent: string };
+/** A list level as drawn: the list's marker type and indent, and its item's marker colour, size and gap. */
+type ComputedMarkerLook = { marker: string; color: string; size: string; indent: string; gap: string };
 
 /** The look of the list level holding the item with `text`. */
 const markerLookOf = (surface: Locator, text: string): Promise<ComputedMarkerLook> =>
@@ -880,7 +882,8 @@ const markerLookOf = (surface: Locator, text: string): Promise<ComputedMarkerLoo
                 marker: listStyle.listStyleType,
                 color: marker.color,
                 size: marker.fontSize,
-                indent: listStyle.paddingLeft,
+                indent: listStyle.paddingInlineStart,
+                gap: getComputedStyle(item).paddingInlineStart,
             };
         });
 
@@ -898,6 +901,7 @@ const BULLET_MARKER: ComputedMarkerLook = {
     color: PLAIN.color,
     size: '14px',
     indent: '21px',
+    gap: '0px',
 };
 const NUMBER_MARKER: ComputedMarkerLook = { ...BULLET_MARKER, marker: 'decimal', indent: '28px' };
 
@@ -917,7 +921,7 @@ const FONDUE_NUMBER_MARKERS: ComputedMarkerLook[] = [
 ];
 
 const HOST_BULLET_LOOK: BulletListLook = [
-    { marker: "'– '", color: 'rgb(200, 0, 0)', size: '20px', indent: '30px' },
+    { marker: "'– '", color: 'rgb(200, 0, 0)', size: '20px', indent: '30px', gap: '8px' },
     { marker: 'square', color: 'rgb(0, 120, 0)' },
     { marker: 'disc', indent: '10px' },
 ];
@@ -928,12 +932,146 @@ const UNSET_BULLET_LEVEL: BulletLevelLook = {
     color: UNSET_VARIABLE,
     size: UNSET_VARIABLE,
     indent: UNSET_VARIABLE,
+    gap: UNSET_VARIABLE,
 };
 const UNSET_NUMBERED_LEVEL: NumberedLevelLook = {
     marker: UNSET_VARIABLE,
     color: UNSET_VARIABLE,
     indent: UNSET_VARIABLE,
+    gap: UNSET_VARIABLE,
 };
+
+/** The text of a first-level item starts this far from the start edge of its list. */
+const FONDUE_BULLET_TEXT_OFFSET = 21;
+
+/** The room between marker and text the host asks for in the pixel tests, and how far a pixel count may be off. */
+const HOST_GAP_PX = 12;
+const GAP_TOLERANCE_PX = 1;
+
+/** The text of an item starts at the list's indent plus the item's gap, and no further. */
+const TEXT_OFFSET_INDENT_PX = 30;
+const TEXT_OFFSET_GAP_PX = 8;
+const INDENT_AND_GAP_TEXT_OFFSET = TEXT_OFFSET_INDENT_PX + TEXT_OFFSET_GAP_PX;
+
+/** A string marker gets no gap of its own, so without one it sits against the text. */
+const FLUSH_MARKER_LIMIT_PX = 4;
+
+const MARKER_RED = 'rgb(255, 0, 0)';
+const GAP_MARKER_LOOK: BulletLevelLook = { marker: "'•'", color: MARKER_RED, size: '20px' };
+
+const DIRECTIONS = ['ltr', 'rtl'] as const;
+type TextDirection = (typeof DIRECTIONS)[number];
+
+const MARKER_RED_MIN = 180;
+const MARKER_OTHER_MAX = 80;
+const TEXT_DARK_MAX = 100;
+const BYTES_PER_PIXEL = 4;
+
+/** The cut-offs, per channel, that tell a marker pixel and a text pixel from the rest. */
+type PixelThresholds = { markerRedMin: number; markerOtherMax: number; textDarkMax: number };
+
+const PIXEL_THRESHOLDS: PixelThresholds = {
+    markerRedMin: MARKER_RED_MIN,
+    markerOtherMax: MARKER_OTHER_MAX,
+    textDarkMax: TEXT_DARK_MAX,
+};
+
+/** The columns, in CSS px, from the first to the last pixel of a kind. */
+type ColumnSpan = { first: number; last: number };
+
+type DrawnSpans = { marker: ColumnSpan; text: ColumnSpan };
+
+type DrawnSpansArgs = { base64: string; thresholds: PixelThresholds; bytesPerPixel: number };
+
+/** Decodes the screenshot and scans it in the page, so only the two spans cross back to Node. */
+const drawnSpansOf = (page: Page, png: Buffer): Promise<DrawnSpans> =>
+    page.evaluate(
+        async ({ base64, thresholds, bytesPerPixel }: DrawnSpansArgs) => {
+            const response = await fetch(`data:image/png;base64,${base64}`);
+            const blob = await response.blob();
+            const bitmap = await createImageBitmap(blob);
+            const context = new OffscreenCanvas(bitmap.width, bitmap.height).getContext('2d');
+            if (context === null) {
+                throw new Error('No 2d context to read the screenshot with');
+            }
+            context.drawImage(bitmap, 0, 0);
+            const { data } = context.getImageData(0, 0, bitmap.width, bitmap.height);
+
+            const marker = { first: Number.POSITIVE_INFINITY, last: Number.NEGATIVE_INFINITY };
+            const text = { first: Number.POSITIVE_INFINITY, last: Number.NEGATIVE_INFINITY };
+
+            for (let index = 0; index < data.length; index += bytesPerPixel) {
+                const red = data[index];
+                const green = data[index + 1];
+                const blue = data[index + 2];
+                if (red === undefined || green === undefined || blue === undefined) {
+                    throw new Error(`The screenshot has no pixel at ${index}`);
+                }
+                const column = (index / bytesPerPixel) % bitmap.width;
+
+                if (
+                    red > thresholds.markerRedMin &&
+                    green < thresholds.markerOtherMax &&
+                    blue < thresholds.markerOtherMax
+                ) {
+                    marker.first = Math.min(marker.first, column);
+                    marker.last = Math.max(marker.last, column);
+                }
+                if (red < thresholds.textDarkMax && green < thresholds.textDarkMax && blue < thresholds.textDarkMax) {
+                    text.first = Math.min(text.first, column);
+                    text.last = Math.max(text.last, column);
+                }
+            }
+
+            if (marker.first === Number.POSITIVE_INFINITY || text.first === Number.POSITIVE_INFINITY) {
+                throw new Error('The screenshot holds no marker or no text');
+            }
+            const ratio = window.devicePixelRatio;
+            return {
+                marker: { first: marker.first / ratio, last: marker.last / ratio },
+                text: { first: text.first / ratio, last: text.last / ratio },
+            };
+        },
+        { base64: png.toString('base64'), thresholds: PIXEL_THRESHOLDS, bytesPerPixel: BYTES_PER_PIXEL },
+    );
+
+/** The distance in CSS px between the drawn marker and the drawn text of the item with `text`, as the pixels show it. */
+const drawnGapOf = async (section: Locator, text: string, direction: TextDirection): Promise<number> => {
+    // The marker hangs outside its item, in the padding of the list holding it.
+    const list = section.getByText(text, { exact: true }).locator('xpath=../..');
+    const { marker, text: drawnText } = await drawnSpansOf(section.page(), await list.screenshot());
+
+    if (direction === 'rtl') {
+        return marker.first - drawnText.last;
+    }
+    return drawnText.first - marker.last;
+};
+
+type SurfaceGaps = Record<(typeof SURFACES)[number], number>;
+
+/** The drawn gap on each surface, with the document in `direction`. */
+const drawnGapsIn = async (component: Locator, direction: TextDirection): Promise<SurfaceGaps> => {
+    const gaps: SurfaceGaps = { renderer: 0, editor: 0 };
+    for (const surface of SURFACES) {
+        const section = component.getByTestId(surface);
+        await section.evaluate((element, value) => element.setAttribute('dir', value), direction);
+        gaps[surface] = await drawnGapOf(section, GAP_ITEM_TEXT, direction);
+    }
+    return gaps;
+};
+
+/** Where the text of an item starts, in px from the start edge of the list holding it. */
+const textOffsetOf = (surface: Locator, text: string): Promise<number> =>
+    surface.getByText(text, { exact: true }).evaluate((paragraph) => {
+        const list = paragraph.parentElement?.parentElement;
+        const textNode = document.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT).nextNode();
+        if (!list || !textNode) {
+            throw new Error('An item text outside a list');
+        }
+        const range = document.createRange();
+        range.selectNodeContents(textNode);
+        return range.getBoundingClientRect().left - list.getBoundingClientRect().left;
+    });
 
 test.describe('host styling of list markers', () => {
     test('keeps Fondue markers when the host sets none, in the renderer and the editor', async ({ mount }) => {
@@ -960,6 +1098,7 @@ test.describe('host styling of list markers', () => {
             color: 'rgb(200, 0, 0)',
             size: '20px',
             indent: '30px',
+            gap: '8px',
         };
         const secondBullet: ComputedMarkerLook = { ...BULLET_MARKER, marker: 'square', color: 'rgb(0, 120, 0)' };
         const firstNumber: ComputedMarkerLook = {
@@ -1027,4 +1166,53 @@ test.describe('host styling of list markers', () => {
             expect(await markerLookOf(section, NUMBERED_ITEMS[0])).toMatchObject(body);
         }
     });
+
+    test('starts the text of a bullet item at Fondue indent when the host sets no look', async ({ mount }) => {
+        const component = await mount(<HostLooksPair value={NESTED_LISTS_DOCUMENT} />);
+
+        for (const surface of SURFACES) {
+            const offset = await textOffsetOf(component.getByTestId(surface), BULLET_ITEMS[0]);
+            expect(offset).toBeCloseTo(FONDUE_BULLET_TEXT_OFFSET, 1);
+        }
+    });
+
+    test('starts the item text at the indent plus the gap', async ({ mount }) => {
+        const component = await mount(
+            <HostLooksPair
+                value={NESTED_LISTS_DOCUMENT}
+                bulletLook={[{ indent: `${TEXT_OFFSET_INDENT_PX}px`, gap: `${TEXT_OFFSET_GAP_PX}px` }]}
+            />,
+        );
+
+        for (const surface of SURFACES) {
+            const offset = await textOffsetOf(component.getByTestId(surface), BULLET_ITEMS[0]);
+            expect(offset).toBeCloseTo(INDENT_AND_GAP_TEXT_OFFSET, 1);
+        }
+    });
+
+    for (const direction of DIRECTIONS) {
+        test(`draws the gap the host asks for between a marker and its text, in ${direction}`, async ({ mount }) => {
+            const component = await mount(<HostLooksPair value={GAP_DOCUMENT} bulletLook={[GAP_MARKER_LOOK]} />);
+            const gapsWithout = await drawnGapsIn(component, direction);
+            await component.update(
+                <HostLooksPair value={GAP_DOCUMENT} bulletLook={[{ ...GAP_MARKER_LOOK, gap: `${HOST_GAP_PX}px` }]} />,
+            );
+            // The editor applies a new look after the update returns, so wait for it before taking the pixels.
+            for (const surface of SURFACES) {
+                const item = component
+                    .getByTestId(surface)
+                    .getByText(GAP_ITEM_TEXT, { exact: true })
+                    .locator('xpath=..');
+                await expect(item).toHaveCSS('padding-inline-start', `${HOST_GAP_PX}px`);
+            }
+            const gapsWith = await drawnGapsIn(component, direction);
+
+            for (const surface of SURFACES) {
+                expect(gapsWithout[surface]).toBeLessThan(FLUSH_MARKER_LIMIT_PX);
+                expect(Math.abs(gapsWith[surface] - gapsWithout[surface] - HOST_GAP_PX)).toBeLessThanOrEqual(
+                    GAP_TOLERANCE_PX,
+                );
+            }
+        });
+    }
 });
