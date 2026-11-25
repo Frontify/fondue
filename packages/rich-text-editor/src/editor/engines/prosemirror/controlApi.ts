@@ -404,7 +404,7 @@ const createMarkApi = (
 // --- Blocks ---
 
 /** What a text block of code cannot hold, an inline element but the line break, written as the plain text it gives. */
-const withInlinesAsText = (state: EditorState, registry: PluginRegistry, nodeType: PmNodeType): Transaction => {
+export const withInlinesAsText = (state: EditorState, registry: PluginRegistry, nodeType: PmNodeType): Transaction => {
     const transaction = state.tr;
     const replaced: { from: number; to: number; text: string }[] = [];
     for (const { $from, $to } of state.selection.ranges) {

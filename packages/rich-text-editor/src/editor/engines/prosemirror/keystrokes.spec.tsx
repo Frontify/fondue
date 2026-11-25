@@ -888,6 +888,32 @@ describe('a block shortcut on a block with attributes every text block carries',
     });
 });
 
+describe('a block shortcut for a code block before an inline element', () => {
+    const tagPlugin: RtePlugin = definePlugin({
+        id: 'tag',
+        content: defineContent({
+            inlines: {
+                tag: defineInline<{ name: string }>({
+                    toHtml: ({ name }) => ({ tag: 'span', children: name }),
+                    parse: [],
+                }),
+            },
+        }),
+    });
+
+    it('writes the inline element as the plain text it gives', () => {
+        const editor = editorWith(
+            [...defaultPlugins, codeBlockPlugin(), tagPlugin],
+            [paragraph(text('``'), { type: 'tag', name: 'Ada' }, text(' rest'))],
+        );
+        editor.caretAfter('``');
+
+        editor.type('` ');
+
+        expect(editor.stored()).toEqual([{ type: 'codeBlock', children: [{ text: 'Ada rest' }] }]);
+    });
+});
+
 describe('Enter in a list over a range across items', () => {
     it('is left to the baseline keymap rather than lifting both items out', () => {
         const editor = editorWith(defaultPlugins, [

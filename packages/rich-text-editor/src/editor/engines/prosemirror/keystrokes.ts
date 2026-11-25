@@ -29,7 +29,7 @@ import {
 
 import { autolinkOnEnter, markPatternRule } from './autolink';
 import { keepCarriedAttrs, withCarriedAttrs } from './carriedAttrs';
-import { undoStep } from './controlApi';
+import { undoStep, withInlinesAsText } from './controlApi';
 import { EXTRA_ATTR } from './documentConversion';
 import { gridEditing, gridKeys, hasGrids, outsideGrids } from './grid';
 import { deleteEmptyBlockBesideList, listKeys } from './lists';
@@ -372,8 +372,10 @@ const blockRule = (rule: RuleOfKind<'block'>, { schema, registry }: RuleContext)
         if (!$start.node(-1).canReplaceWith($start.index(-1), $start.indexAfter(-1), nodeType)) {
             return null;
         }
-        return state.tr
-            .delete(start, end)
+        // A code block cannot hold an inline element, and the engine's set-type would drop it.
+        const transaction = nodeType.spec.code === true ? withInlinesAsText(state, registry, nodeType) : state.tr;
+        return transaction
+            .delete(transaction.mapping.map(start), transaction.mapping.map(end))
             .setBlockType(start, start, nodeType, keepCarriedAttrs(registry, nodeType, rule.attributes));
     });
 };
