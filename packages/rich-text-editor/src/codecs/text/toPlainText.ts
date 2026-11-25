@@ -55,7 +55,7 @@ const inlineText = (inlines: readonly RteInlineNode[], registry: ContentRegistry
             }
 
             const definition = registry.inlines.get(inline.type);
-            if (definition === undefined) {
+            if (!definition) {
                 return '';
             }
 
