@@ -47,18 +47,19 @@ const specText = (spec: HtmlSpec): string => {
         : '';
 };
 
-/** A text block's runs as one line; an inline no plugin defines has no text to give. */
+/** One run as text; an inline no plugin defines has no text to give. */
+export const inlinePlainText = (inline: RteInlineNode, registry: ContentRegistry): string => {
+    if (inline.text !== undefined) {
+        return inline.text;
+    }
+    const definition = registry.inlines.get(inline.type);
+    const { type: _type, text: _text, ...value } = inline;
+    return definition ? specText(definition.toHtml(value)) : '';
+};
+
+/** A text block's runs as one line. */
 const inlineText = (inlines: readonly RteInlineNode[], registry: ContentRegistry): string =>
-    inlines
-        .map((inline) => {
-            if (inline.text !== undefined) {
-                return inline.text;
-            }
-            const definition = registry.inlines.get(inline.type);
-            const { type: _type, text: _text, ...value } = inline;
-            return definition ? specText(definition.toHtml(value)) : '';
-        })
-        .join('');
+    inlines.map((inline) => inlinePlainText(inline, registry)).join('');
 
 /**
  * Whether a block holds other blocks, by its declared `content`; for a block

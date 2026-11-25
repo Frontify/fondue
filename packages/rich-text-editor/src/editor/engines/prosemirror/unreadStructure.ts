@@ -5,6 +5,9 @@ import { type Schema } from 'prosemirror-model';
 const LINE_BREAK = /\r?\n/;
 /** What stands between a table row's cells once the row is one line. */
 const CELL_SEPARATOR = ' ';
+/** The blocks some highlighters write one line each inside a `<pre>`. */
+const LINE_BLOCKS = 'div, p';
+const NEW_LINE = '\n';
 
 /** The selectors of every parse rule the schema's blocks declare. */
 const readTags = (schema: Schema): string[] => {
@@ -19,13 +22,25 @@ const readTags = (schema: Schema): string[] => {
     return tags;
 };
 
+/** Each line block becomes its content and a new line, except the last, innermost first. */
+const flattenLineBlocks = (pre: Element): void => {
+    for (const block of [...pre.querySelectorAll(LINE_BLOCKS)].reverse()) {
+        const content: (Node | string)[] = [...block.childNodes];
+        if (block.nextSibling !== null) {
+            content.push(NEW_LINE);
+        }
+        block.replaceWith(...content);
+    }
+};
+
 /**
  * Keeps text from running together in a table or `<pre>` no registered block
  * reads, for paste and for stored HTML alike; the engine reads the rest by the
  * schema's own rules. Table cells are not blocks to the engine
  * (`<td>a</td><td>b</td>` would read as `ab`), so each row becomes a block with
  * cells joined by a space. A `<pre>`'s newlines collapse as whitespace, so each
- * line becomes a block.
+ * line becomes a block. A `<pre>` the schema reads keeps its lines as new lines
+ * in its one block, where a line was written as a block.
  */
 export const keepUnreadStructureApart = (dom: HTMLElement, schema: Schema): void => {
     const document = dom.ownerDocument;
@@ -59,6 +74,7 @@ export const keepUnreadStructureApart = (dom: HTMLElement, schema: Schema): void
     }
     for (const pre of dom.querySelectorAll('pre')) {
         if (isRead(pre)) {
+            flattenLineBlocks(pre);
             continue;
         }
 

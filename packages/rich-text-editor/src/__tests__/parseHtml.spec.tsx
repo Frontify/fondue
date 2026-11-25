@@ -142,6 +142,24 @@ describe('parseHtml code blocks', () => {
         ]);
     });
 
+    it('reads a line written as a block inside the pre as a line of the one code block', () => {
+        expect(codeBlockOf('<pre><code><div>a</div><div>b</div></code></pre>')).toEqual([
+            { type: 'codeBlock', children: [{ text: 'a\nb' }] },
+        ]);
+    });
+
+    it('reads a break inside the pre as a new line', () => {
+        expect(codeBlockOf('<pre><code>a<br>b</code></pre>')).toEqual([
+            { type: 'codeBlock', children: [{ text: 'a\nb' }] },
+        ]);
+    });
+
+    it('reads the language from the class of the pre when the code element has none', () => {
+        expect(codeBlockOf('<pre class="language-ts">x</pre>')).toEqual([
+            { type: 'codeBlock', language: 'ts', children: [{ text: 'x' }] },
+        ]);
+    });
+
     it('reads markup inside as plain text with no marks', () => {
         expect(codeBlockOf('<pre><code>a <strong>b</strong> *c*</code></pre>')).toEqual([
             { type: 'codeBlock', children: [{ text: 'a b *c*' }] },

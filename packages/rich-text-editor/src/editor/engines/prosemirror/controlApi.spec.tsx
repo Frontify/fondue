@@ -710,6 +710,15 @@ describe('blocks.setType to a block of code', () => {
         expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('b'))]);
     });
 
+    it('writes an inline element as the plain text it gives, where a code block cannot hold it', () => {
+        const editor = editorWith(plugins, [paragraph(text('hi '), { type: 'tag', name: 'Ada' })]);
+        editor.caretAfter('hi');
+
+        editor.api.blocks.setType('codeBlock');
+
+        expect(editor.stored()).toEqual([{ type: 'codeBlock', children: [{ text: 'hi Ada' }] }]);
+    });
+
     it('leaves the alignment of the paragraph behind', () => {
         const editor = editorWith(plugins, [{ type: 'paragraph', align: 'center', children: [{ text: 'a' }] }]);
         editor.caretAfter('a');

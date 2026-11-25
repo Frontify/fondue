@@ -36,7 +36,7 @@ const MIN_FENCE_LENGTH = 3;
 const LANGUAGE_PATTERN = /^[\w#+.-]{1,64}$/;
 
 /**
- * What the class of a `code` element starts with before the language. CommonMark, GitHub, highlight.js and Prism write the first.
+ * What the class of a `code` or `pre` element starts with before the language. CommonMark, GitHub, highlight.js and Prism write the first.
  */
 const LANGUAGE_CLASS_PREFIXES = ['language-', 'lang-'] as const;
 
@@ -66,14 +66,14 @@ const languageValueOf = (token: string | undefined): Partial<CodeBlockValue> => 
 };
 
 /**
- * The language the first class with a language prefix names, or undefined when none has one
+ * The language the first class of an element with a language prefix names, or undefined when none has one
  */
-const classLanguageOf = (code: Element | null): string | undefined => {
-    if (code === null) {
+const classLanguageOf = (element: Element | null): string | undefined => {
+    if (element === null) {
         return undefined;
     }
 
-    for (const name of code.classList) {
+    for (const name of element.classList) {
         const prefix = LANGUAGE_CLASS_PREFIXES.find((candidate) => name.startsWith(candidate));
         if (prefix !== undefined) {
             return name.slice(prefix.length);
@@ -119,7 +119,11 @@ export const codeBlockContent = defineContent({
                 };
             },
             parse: [
-                { tag: 'pre', value: (element) => languageValueOf(classLanguageOf(element.querySelector('code'))) },
+                {
+                    tag: 'pre',
+                    value: (element) =>
+                        languageValueOf(classLanguageOf(element.querySelector('code')) ?? classLanguageOf(element)),
+                },
             ],
             markdown: {
                 read: [

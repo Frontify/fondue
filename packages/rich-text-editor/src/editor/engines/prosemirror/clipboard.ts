@@ -77,7 +77,8 @@ export const clipboardSerializer = (schema: Schema): DOMSerializer => {
     const nodes = DOMSerializer.nodesFromSchema(schema);
     for (const [name, nodeType] of Object.entries(schema.nodes)) {
         const toDom = nodes[name];
-        if (!nodeType.isTextblock || !toDom) {
+        // A block of code keeps its spaces and lines as written, so an extra `<br>` would paste back as a line.
+        if (!nodeType.isTextblock || nodeType.spec.code === true || !toDom) {
             continue;
         }
         nodes[name] = (node: PmNode) => {

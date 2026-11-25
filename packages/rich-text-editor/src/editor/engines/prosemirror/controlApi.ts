@@ -19,6 +19,7 @@ import {
     type ClearMarksScope,
     type EditorControlApi,
     INLINE_PLACEHOLDER,
+    inlinePlainText,
     type PluginRegistry,
     type RteMarkState,
     type RteSelectionSnapshot,
@@ -26,7 +27,7 @@ import {
 
 import { keepCarriedAttrs } from './carriedAttrs';
 import { type Dispatch } from './dispatch';
-import { blockToEngine, markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
+import { blockToEngine, markValueOf, shallowBlock, VALUE_ATTR, valueAttrsFor } from './documentConversion';
 import { createGridApi, gridOfSelection, textOfSelectedSlots } from './grid';
 import { createListApi, liftOutOfLists } from './lists';
 import { warnUnknownType } from './warnings';
@@ -396,6 +397,39 @@ const createMarkApi = (
 
 // --- Blocks ---
 
+/** What a text block of code cannot hold, an inline element but the line break, written as the plain text it gives. */
+const withInlinesAsText = (state: EditorState, registry: PluginRegistry): Transaction => {
+    const transaction = state.tr;
+    const replaced: { from: number; to: number; text: string }[] = [];
+    for (const { $from, $to } of state.selection.ranges) {
+        state.doc.nodesBetween($from.pos, $to.pos, (block, blockPos) => {
+            if (!block.isTextblock) {
+                return true;
+            }
+            block.forEach((child, offset) => {
+                const value = child.attrs[VALUE_ATTR] as Record<string, unknown> | null | undefined;
+                // A draft has no value to read yet, and the engine drops it as it does any other it cannot keep.
+                if (child.isText || child.type.spec.linebreakReplacement === true || value === null) {
+                    return;
+                }
+                const from = blockPos + 1 + offset;
+                const text = inlinePlainText({ type: child.type.name, ...value }, registry);
+                replaced.push({ from, to: from + child.nodeSize, text });
+            });
+            return false;
+        });
+    }
+    // Last first, so an earlier position is not moved by a later change.
+    for (const { from, to, text } of replaced.reverse()) {
+        if (text === '') {
+            transaction.delete(from, to);
+        } else {
+            transaction.replaceWith(from, to, state.schema.text(text));
+        }
+    }
+    return transaction;
+};
+
 /**
  * Block types and the attributes on them. Which block the selection is in is
  * not here: features read that off the selection snapshot.
@@ -450,6 +484,13 @@ const createBlockApi = (
             }
             // The engine's command only says whether the type can be set here;
             // the change itself keeps each block's carried attributes.
+            if (nodeType.spec.code === true) {
+                const written = withInlinesAsText(current, registry);
+                for (const step of written.steps) {
+                    combined.step(step);
+                }
+                current = current.apply(written);
+            }
             const applied = pmSetBlockType(nodeType, value ?? {})(current);
             if (applied) {
                 const typed = current.tr;
