@@ -416,16 +416,20 @@ export const withInlinesAsText = (state: EditorState, registry: PluginRegistry, 
             if (block.type === nodeType || !parent?.canReplaceWith(index, index + 1, nodeType)) {
                 return false;
             }
-            block.forEach((child, offset) => {
+            let offset = 0;
+            for (let childIndex = 0; childIndex < block.childCount; childIndex++) {
+                const child = block.child(childIndex);
+                const from = blockPos + 1 + offset;
+                offset += child.nodeSize;
                 const value = child.attrs[VALUE_ATTR] as Record<string, unknown> | null | undefined;
                 // A draft has no value to read yet, and the engine drops it as it does any other it cannot keep.
                 if (child.isText || child.type.spec.linebreakReplacement === true || value === null) {
-                    return;
+                    continue;
                 }
-                const from = blockPos + 1 + offset;
                 const text = inlinePlainText({ type: child.type.name, ...value }, registry);
                 replaced.push({ from, to: from + child.nodeSize, text });
-            });
+            }
+
             return false;
         });
     }
