@@ -811,6 +811,9 @@ const formPrefixOf = (block: RteBlockNode, state: WriteState): MarkdownLinePrefi
     return form.write(blockValueOf(definition, block as NodeValue), { index: 0, alternate: false });
 };
 
+const isEmptyPrefix = (prefix: MarkdownLinePrefix): boolean =>
+    prefix.first === '' && (prefix.rest === '' || prefix.rest === null);
+
 /** The block's prefix, or none and a loss when the block has no form or its form has none for this value. */
 const prefixOf = (block: RteBlockNode, path: Path, state: WriteState): MarkdownLinePrefix => {
     const prefix = formPrefixOf(block, state);
@@ -996,7 +999,7 @@ const writeList = (block: RteBlockNode, path: Path, alternate: boolean, state: W
     return lines;
 };
 
-type GridCell = { cell: RteBlockNode; path: Path; paragraph: RteBlockNode };
+type GridCell = { cell: RteBlockNode; path: Path; paragraph: RteBlockNode; paragraphPath: Path };
 
 type GridRow = { row: RteBlockNode; path: Path; cells: GridCell[] };
 
@@ -1040,7 +1043,7 @@ const isMerged = (cell: RteBlockNode, state: WriteState): boolean => {
     return gridSpanOf(colspan) > 1 || gridSpanOf(rowspan) > 1;
 };
 
-/** The cells of a row, each with its paragraph; a cell that GFM cannot hold is reported in `losses`. */
+/** The cells of a row; a cell that GFM cannot hold is reported in `losses`. */
 const gridCellsOf = (row: RteBlockNode, rowPath: Path, losses: MarkdownLoss[], state: WriteState): GridCell[] => {
     const cells: GridCell[] = [];
     for (const [index, cell] of childrenOf(row).entries()) {
@@ -1050,19 +1053,20 @@ const gridCellsOf = (row: RteBlockNode, rowPath: Path, losses: MarkdownLoss[], s
             continue;
         }
 
+        // A block that is no slot cannot be a cell, so the table falls back; a slot in the wrong row stays in the table and `reportMisplacedCells` reports it.
         const paragraph = cellParagraphOf(cell);
         if (!isSlotRole(roleOf(cell, state)) || paragraph === null || isMerged(cell, state)) {
             losses.push({ path, type: typeNameOf(cell) });
             continue;
         }
 
-        cells.push({ cell, path, paragraph });
+        cells.push({ cell, path, paragraph, paragraphPath: [...path, 0] });
     }
 
     return cells;
 };
 
-/** The rows and cells of a table that GFM holds, and what it cannot hold: a table with no form, a row or cell of the wrong role, a merged cell, or a cell of anything but one paragraph. */
+/** The rows and cells of a table that GFM holds, and what it cannot hold. */
 const gridShapeOf = (table: RteBlockNode, path: Path, state: WriteState): GridShape => {
     const rows: GridRow[] = [];
     const losses: MarkdownLoss[] = [];
@@ -1091,12 +1095,8 @@ const gridShapeOf = (table: RteBlockNode, path: Path, state: WriteState): GridSh
 };
 
 /** A cell's text on one line, with each pipe escaped once more, which GFM's cell splitter removes on read. */
-const writeGridCell = ({ paragraph, path }: GridCell, state: WriteState): string => {
-    const paragraphPath = [...path, 0];
-    if (formPrefixOf(paragraph, state) === null) {
-        reportLoss(state.losses, { path: paragraphPath, type: typeNameOf(paragraph) });
-    }
-
+const writeGridCell = ({ paragraph, paragraphPath }: GridCell, state: WriteState): string => {
+    reportGridForm(paragraph, paragraphPath, state);
     reportBlockAttributes(paragraph, paragraphPath, state);
 
     const text = writeInlines(paragraph, paragraphPath, 'singleLine', state);
@@ -1109,17 +1109,19 @@ const writeGridCell = ({ paragraph, path }: GridCell, state: WriteState): string
 
 const gridLineOf = (cells: readonly string[]): string => `${ROW_EDGE} ${cells.join(CELL_SEPARATOR)} ${ROW_EDGE}`;
 
-/** A row or cell whose form has no prefix for its value is written all the same, and reported. */
-const reportUnwrittenForms = (rows: readonly GridRow[], state: WriteState): void => {
+/** A GFM row, cell or cell paragraph carries no prefix, so a form with none, or a non-empty one, is a loss. */
+const reportGridForm = (block: RteBlockNode, path: Path, state: WriteState): void => {
+    if (!isEmptyPrefix(prefixOf(block, path, state))) {
+        reportLoss(state.losses, { path, type: typeNameOf(block) });
+    }
+};
+
+const reportGridForms = (rows: readonly GridRow[], state: WriteState): void => {
     for (const { row, path, cells } of rows) {
-        if (formPrefixOf(row, state) === null) {
-            reportLoss(state.losses, { path, type: typeNameOf(row) });
-        }
+        reportGridForm(row, path, state);
 
         for (const cell of cells) {
-            if (formPrefixOf(cell.cell, state) === null) {
-                reportLoss(state.losses, { path: cell.path, type: typeNameOf(cell.cell) });
-            }
+            reportGridForm(cell.cell, cell.path, state);
         }
     }
 };
@@ -1158,7 +1160,7 @@ const writeGrid = (block: RteBlockNode, path: Path, state: WriteState): string[]
         return writeBlocks(childrenOf(block), path, 'blankLine', state);
     }
 
-    reportUnwrittenForms(rows, state);
+    reportGridForms(rows, state);
     reportMisplacedCells(rows, state);
 
     let columns = 0;
@@ -1182,7 +1184,7 @@ const writeGrid = (block: RteBlockNode, path: Path, state: WriteState): string[]
         }
     }
 
-    return lines;
+    return prefixed(lines, prefixOf(block, path, state));
 };
 
 const writeBlock = (block: RteBlockNode, path: Path, alternate: boolean, state: WriteState): string[] => {

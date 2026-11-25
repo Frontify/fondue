@@ -329,6 +329,41 @@ describe('serializeToMarkdown tables', () => {
             ],
         });
     });
+
+    it('prefixes each line of a table with the prefix of its host form', () => {
+        const document = documentOf(tableOf(rowOf(headerOf('a'), headerOf('b')), rowOf(cell('c'), cell('d'))));
+        const options: MarkdownOptions = {
+            plugins: [...defaultContent, tableContent],
+            overrides: {
+                blocks: { table: { read: [{ token: 'table_open' }], write: () => ({ first: '> ', rest: '> ' }) } },
+            },
+        };
+
+        expect(serializeToMarkdown(document, options)).toEqual({
+            markdown: '> | a | b |\n> | --- | --- |\n> | c | d |',
+            losses: [],
+        });
+    });
+
+    it('writes a table unchanged and reports each body cell whose form has a prefix', () => {
+        const document = documentOf(tableOf(rowOf(headerOf('a'), headerOf('b')), rowOf(cell('c'), cell('d'))));
+        const options: MarkdownOptions = {
+            plugins: [...defaultContent, tableContent],
+            overrides: {
+                blocks: {
+                    tableCell: { read: [{ token: 'td_open' }], write: () => ({ first: '- ', rest: '  ' }) },
+                },
+            },
+        };
+
+        expect(serializeToMarkdown(document, options)).toEqual({
+            markdown: '| a | b |\n| --- | --- |\n| c | d |',
+            losses: [
+                { path: [0, 1, 0], type: 'tableCell' },
+                { path: [0, 1, 1], type: 'tableCell' },
+            ],
+        });
+    });
 });
 
 describe('serializeToMarkdown trailing breaks', () => {
