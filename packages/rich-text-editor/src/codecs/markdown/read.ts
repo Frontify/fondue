@@ -43,7 +43,15 @@ const LINE_BREAK_TEXT = ' ';
 
 const LINE_SEPARATOR = '\n';
 
-const TRAILING_NEWLINES = /\n+$/;
+/** The text without the newlines that end it. A loop, as a `\n+$` pattern backtracks on long runs. */
+const withoutTrailingNewlines = (text: string): string => {
+    let end = text.length;
+    while (end > 0 && text[end - 1] === LINE_SEPARATOR) {
+        end -= 1;
+    }
+
+    return text.slice(0, end);
+};
 
 type NodeValue = Record<string, unknown>;
 
@@ -399,7 +407,7 @@ const readInline = (frame: Frame, token: MarkdownTokenNode, context: ReadContext
 
 /** A block of code is one paragraph: its lines joined by breaks, or by spaces when no plugin has a break. */
 const readCode = (frame: Frame, token: MarkdownTokenNode, context: ReadContext): void => {
-    const content = token.content.replace(TRAILING_NEWLINES, '');
+    const content = withoutTrailingNewlines(token.content);
     if (content === '') {
         return;
     }
