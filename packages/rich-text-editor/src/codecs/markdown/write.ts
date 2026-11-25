@@ -6,10 +6,13 @@
 import {
     blockValueOf,
     type ContentRegistry,
+    type GridRole,
+    gridSpanOf,
     type MarkdownDelimiters,
     type MarkdownInlineOutput,
     type MarkdownLinePrefix,
     type MarkdownMarkForm,
+    PARAGRAPH,
     type RteBlockNode,
     type RteDocumentOf,
     type RteInlineElementNode,
@@ -715,7 +718,7 @@ const writeInlines = (block: RteBlockNode, path: Path, lineMode: LineMode, state
 // --- Blocks ---
 
 /** How a block is written, from what its plugin declares or, for a block no plugin declares, what it holds. */
-type BlockKind = 'text' | 'list' | 'container' | 'void';
+type BlockKind = 'text' | 'list' | 'grid' | 'container' | 'void';
 
 const childrenOf = (block: RteBlockNode): unknown[] => {
     if (Array.isArray(block.children)) {
@@ -752,6 +755,10 @@ const kindOf = (block: RteBlockNode, registry: ContentRegistry): BlockKind => {
     const definition = registry.blocks.get(block.type);
     if (definition === undefined) {
         return unknownKindOf(block, registry);
+    }
+
+    if (definition.gridRole === 'grid') {
+        return 'grid';
     }
 
     const { content } = definition;
@@ -793,15 +800,22 @@ const prefixed = (lines: readonly string[], prefix: MarkdownLinePrefix): string[
     });
 };
 
-/** The block's prefix, or none and a loss when the block has no form or its form has none for this value. */
-const prefixOf = (block: RteBlockNode, path: Path, state: WriteState): MarkdownLinePrefix => {
+/** The block's prefix, or null when the block has no form or its form has none for this value. */
+const formPrefixOf = (block: RteBlockNode, state: WriteState): MarkdownLinePrefix | null => {
     const definition = state.registry.blocks.get(block.type);
     const form = state.forms.blocks.get(block.type);
-    if (definition !== undefined && form !== undefined) {
-        const prefix = form.write(blockValueOf(definition, block as NodeValue), { index: 0, alternate: false });
-        if (prefix !== null) {
-            return prefix;
-        }
+    if (definition === undefined || form === undefined) {
+        return null;
+    }
+
+    return form.write(blockValueOf(definition, block as NodeValue), { index: 0, alternate: false });
+};
+
+/** The block's prefix, or none and a loss when the block has no form or its form has none for this value. */
+const prefixOf = (block: RteBlockNode, path: Path, state: WriteState): MarkdownLinePrefix => {
+    const prefix = formPrefixOf(block, state);
+    if (prefix !== null) {
+        return prefix;
     }
 
     reportLoss(state.losses, { path, type: typeNameOf(block) });
@@ -982,6 +996,187 @@ const writeList = (block: RteBlockNode, path: Path, alternate: boolean, state: W
     return lines;
 };
 
+type GridCell = { cell: RteBlockNode; path: Path; paragraph: RteBlockNode };
+
+type GridRow = { row: RteBlockNode; path: Path; cells: GridCell[] };
+
+type GridShape = { rows: GridRow[]; losses: MarkdownLoss[] };
+
+const PIPE = '|';
+const ESCAPED_PIPE = '\\|';
+const CELL_SEPARATOR = ' | ';
+const ROW_EDGE = '|';
+const DELIMITER_CELL = '---';
+
+const roleOf = (block: RteBlockNode, state: WriteState): GridRole | undefined =>
+    state.registry.blocks.get(block.type)?.gridRole;
+
+const isSlotRole = (role: GridRole | undefined): boolean => role === 'slot' || role === 'headerSlot';
+
+/** The cell's paragraph, or null when the cell holds anything else. */
+const cellParagraphOf = (cell: RteBlockNode): RteBlockNode | null => {
+    const children = childrenOf(cell);
+    const [only] = children;
+    if (children.length !== 1 || !isNode<RteBlockNode>(only) || only.type !== PARAGRAPH) {
+        return null;
+    }
+
+    return only;
+};
+
+/** Whether the cell reaches past its own column or row, which a GFM cell cannot. */
+const isMerged = (cell: RteBlockNode, state: WriteState): boolean => {
+    const definition = state.registry.blocks.get(cell.type);
+    if (definition === undefined) {
+        return false;
+    }
+
+    const { colspan, rowspan } = blockValueOf(definition, cell as NodeValue);
+
+    return gridSpanOf(colspan) > 1 || gridSpanOf(rowspan) > 1;
+};
+
+/** The cells of a row, each with its paragraph; a cell that GFM cannot hold is reported in `losses`. */
+const gridCellsOf = (row: RteBlockNode, rowPath: Path, losses: MarkdownLoss[], state: WriteState): GridCell[] => {
+    const cells: GridCell[] = [];
+    for (const [index, cell] of childrenOf(row).entries()) {
+        const path = [...rowPath, index];
+        if (!isNode<RteBlockNode>(cell)) {
+            losses.push({ path, type: typeNameOf(cell) });
+            continue;
+        }
+
+        const paragraph = cellParagraphOf(cell);
+        if (!isSlotRole(roleOf(cell, state)) || paragraph === null || isMerged(cell, state)) {
+            losses.push({ path, type: typeNameOf(cell) });
+            continue;
+        }
+
+        cells.push({ cell, path, paragraph });
+    }
+
+    return cells;
+};
+
+/** The rows and cells of a table that GFM holds, and what it cannot hold: a table with no form, a row or cell of the wrong role, a merged cell, or a cell of anything but one paragraph. */
+const gridShapeOf = (table: RteBlockNode, path: Path, state: WriteState): GridShape => {
+    const rows: GridRow[] = [];
+    const losses: MarkdownLoss[] = [];
+    if (formPrefixOf(table, state) === null) {
+        losses.push({ path, type: typeNameOf(table) });
+    }
+
+    for (const [index, row] of childrenOf(table).entries()) {
+        const rowPath = [...path, index];
+        if (!isNode<RteBlockNode>(row) || roleOf(row, state) !== 'row') {
+            losses.push({ path: rowPath, type: typeNameOf(row) });
+            continue;
+        }
+
+        // A row with no cell has no column to write.
+        if (childrenOf(row).length === 0) {
+            losses.push({ path: rowPath, type: typeNameOf(row) });
+            continue;
+        }
+
+        const cells = gridCellsOf(row, rowPath, losses, state);
+        rows.push({ row, path: rowPath, cells });
+    }
+
+    return { rows, losses };
+};
+
+/** A cell's text on one line, with each pipe escaped once more, which GFM's cell splitter removes on read. */
+const writeGridCell = ({ paragraph, path }: GridCell, state: WriteState): string => {
+    const paragraphPath = [...path, 0];
+    reportBlockAttributes(paragraph, paragraphPath, state);
+
+    const text = writeInlines(paragraph, paragraphPath, 'singleLine', state);
+    if (text === EMPTY_BLOCK_ENTITY) {
+        return '';
+    }
+
+    return text.replaceAll(PIPE, ESCAPED_PIPE);
+};
+
+const gridLineOf = (cells: readonly string[]): string => `${ROW_EDGE} ${cells.join(CELL_SEPARATOR)} ${ROW_EDGE}`;
+
+/** A row or cell whose form has no prefix for its value is written all the same, and reported. */
+const reportUnwrittenForms = (rows: readonly GridRow[], state: WriteState): void => {
+    for (const { row, path, cells } of rows) {
+        if (formPrefixOf(row, state) === null) {
+            reportLoss(state.losses, { path, type: typeNameOf(row) });
+        }
+
+        for (const cell of cells) {
+            if (formPrefixOf(cell.cell, state) === null) {
+                reportLoss(state.losses, { path: cell.path, type: typeNameOf(cell.cell) });
+            }
+        }
+    }
+};
+
+/** The first row holds header cells and every later row body cells, as GFM reads them. */
+const reportMisplacedCells = (rows: readonly GridRow[], state: WriteState): void => {
+    for (const [rowIndex, { cells }] of rows.entries()) {
+        let expected: GridRole = 'slot';
+        if (rowIndex === 0) {
+            expected = 'headerSlot';
+        }
+
+        for (const { cell, path } of cells) {
+            if (roleOf(cell, state) !== expected) {
+                reportLoss(state.losses, { path, type: typeNameOf(cell) });
+            }
+        }
+    }
+};
+
+/** A table as GFM lines, or, where the table has no GFM form, the blocks of its cells with a loss. */
+const writeGrid = (block: RteBlockNode, path: Path, state: WriteState): string[] => {
+    if (childrenOf(block).length === 0) {
+        reportLoss(state.losses, { path, type: typeNameOf(block) });
+
+        return [];
+    }
+
+    const { rows, losses } = gridShapeOf(block, path, state);
+    if (losses.length > 0) {
+        reportLoss(state.losses, { path, type: typeNameOf(block) });
+        for (const loss of losses) {
+            reportLoss(state.losses, loss);
+        }
+
+        return writeBlocks(childrenOf(block), path, 'blankLine', state);
+    }
+
+    reportUnwrittenForms(rows, state);
+    reportMisplacedCells(rows, state);
+
+    let columns = 0;
+    for (const { cells } of rows) {
+        columns = Math.max(columns, cells.length);
+    }
+
+    const lines: string[] = [];
+    for (const [rowIndex, { row, cells, path: rowPath }] of rows.entries()) {
+        const written = cells.map((cell) => writeGridCell(cell, state));
+        if (written.length < columns) {
+            reportLoss(state.losses, { path: rowPath, type: typeNameOf(row) });
+        }
+        while (written.length < columns) {
+            written.push('');
+        }
+
+        lines.push(gridLineOf(written));
+        if (rowIndex === 0) {
+            lines.push(gridLineOf(Array.from({ length: columns }, () => DELIMITER_CELL)));
+        }
+    }
+
+    return lines;
+};
+
 const writeBlock = (block: RteBlockNode, path: Path, alternate: boolean, state: WriteState): string[] => {
     if (path.length > MAX_DEPTH) {
         reportLoss(state.losses, { path, type: typeNameOf(block) });
@@ -998,6 +1193,8 @@ const writeBlock = (block: RteBlockNode, path: Path, alternate: boolean, state: 
             return writeTextBlock(block, path, state);
         case 'list':
             return writeList(block, path, alternate, state);
+        case 'grid':
+            return writeGrid(block, path, state);
         case 'container':
             return writeContainer(block, path, state);
         case 'void':

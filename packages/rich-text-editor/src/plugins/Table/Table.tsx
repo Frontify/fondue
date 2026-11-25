@@ -10,6 +10,7 @@ import {
     definePlugin,
     type EditorControlApi,
     gridSpanOf,
+    type MarkdownLinePrefix,
     PARAGRAPH,
     type RteBlockNode,
     type ToolbarItemProps,
@@ -89,6 +90,16 @@ const spansOfElement = (element: HTMLElement): SpanValue => ({
     rowspan: gridSpanOf(element.getAttribute('rowspan')),
 });
 
+const MARKDOWN_PREFIX: MarkdownLinePrefix = { first: '', rest: '' };
+
+const writeMarkdownHeader = (value: HeaderValue): MarkdownLinePrefix | null => {
+    if (value.scope === 'row') {
+        return null;
+    }
+
+    return MARKDOWN_PREFIX;
+};
+
 const scopeOf = (element: HTMLElement): HeaderScope => (element.getAttribute('scope') === 'row' ? 'row' : 'col');
 
 type ReadonlyTableProps = { children?: ReactNode };
@@ -122,12 +133,14 @@ export const tableContent = defineContent({
             }),
             parse: [{ tag: 'table' }],
             render: { component: ReadonlyTable },
+            markdown: { read: [{ token: 'table_open' }], write: () => MARKDOWN_PREFIX },
         }),
         tableRow: defineBlock({
             content: { parts: ['tableCell', 'tableHeader'] },
             gridRole: 'row',
             toHtml: () => ({ tag: 'tr', children: true }),
             parse: [{ tag: 'tr' }],
+            markdown: { read: [{ token: 'tr_open' }], write: () => MARKDOWN_PREFIX },
         }),
         tableCell: defineBlock<SpanValue>({
             content: { blocks: [PARAGRAPH, ANY_LIST] },
@@ -139,6 +152,7 @@ export const tableContent = defineContent({
                 children: true,
             }),
             parse: [{ tag: 'td', value: spansOfElement }],
+            markdown: { read: [{ token: 'td_open' }], write: () => MARKDOWN_PREFIX },
         }),
         tableHeader: defineBlock<HeaderValue>({
             content: { blocks: [PARAGRAPH, ANY_LIST] },
@@ -150,6 +164,7 @@ export const tableContent = defineContent({
                 children: true,
             }),
             parse: [{ tag: 'th', value: (element) => ({ ...spansOfElement(element), scope: scopeOf(element) }) }],
+            markdown: { read: [{ token: 'th_open' }], write: writeMarkdownHeader },
         }),
     },
 });
