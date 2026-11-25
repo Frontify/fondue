@@ -132,6 +132,7 @@ const numberedList = defineBlock<NumberedListValue>({
 /**
  * How a bulleted list looks at one nesting level. Each value is any CSS value, a guideline variable
  * (`var(--f-theme-settings-list-bullet1-color)`) included. A field left out keeps Fondue's look.
+ * A blank value, or one `isSafeCssValue` rejects, throws; check values you don't control with it first.
  */
 export type BulletLevelLook = {
     /**

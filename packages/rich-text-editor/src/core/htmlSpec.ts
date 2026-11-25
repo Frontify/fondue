@@ -57,7 +57,18 @@ const CSS_PROPERTY = /^-{0,2}[a-zA-Z][a-zA-Z0-9-]*$/;
  */
 const UNSAFE_CSS_VALUE = /[;{}\\<]|url\(|expression\(/i;
 
-/** Whether a value cannot break out of its declaration. */
+/**
+ * Whether a CSS value cannot break out of its declaration. It rejects a value
+ * holding `;`, `{`, `}`, `\`, `<`, `url(` or `expression(` in any letter case,
+ * and accepts any other value, a guideline variable included. A look throws on
+ * a value it rejects.
+ *
+ * @example
+ * let color: string | undefined;
+ * if (isSafeCssValue(setting)) {
+ *     color = setting;
+ * }
+ */
 export const isSafeCssValue = (value: string): boolean => !UNSAFE_CSS_VALUE.test(value);
 
 /**

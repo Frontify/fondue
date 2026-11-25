@@ -5,6 +5,7 @@ import { isSafeCssValue } from './htmlSpec';
 /**
  * How a text style looks. Each value is any CSS value, a guideline variable
  * (`var(--f-theme-settings-heading1-font-size)`) included. A field left out keeps Fondue's look.
+ * A blank value, or one `isSafeCssValue` rejects, throws; check values you don't control with it first.
  */
 export type TextLook = {
     fontFamily?: string;
@@ -58,7 +59,7 @@ export const lookVariableName = (key: string, property: string): string =>
  *
  * @param key - The style's name, such as `imageTitle`.
  * @param fields - The name each field's variable ends in, such as `LOOK_PROPERTIES` for a text look.
- * @throws When a value is empty or could break out of its declaration, rather than dropping it silently.
+ * @throws When a value is blank or `isSafeCssValue` rejects it, rather than dropping it silently.
  */
 export const lookProperties = <TLook extends Partial<Record<string, string>>>(
     key: string,

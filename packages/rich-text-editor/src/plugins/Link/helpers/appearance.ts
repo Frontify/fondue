@@ -55,6 +55,7 @@ export type ButtonHoverLook = {
 /**
  * How a button link looks. Each value is any CSS value, a guideline variable
  * (`var(--f-theme-settings-button-primary-color)`) included. A field left out keeps Fondue's look.
+ * A blank value, or one `isSafeCssValue` rejects, throws; check values you don't control with it first.
  */
 export type ButtonLook = Omit<TextLook, 'marginTop' | 'marginBottom'> & {
     paddingTop?: string;
