@@ -46,7 +46,7 @@ const BACKSLASH_SECOND_GROUP = String.raw`$1\$2`;
 const BACKSLASH_MATCH = String.raw`\$&`;
 
 const escapeDelimiterRow = (line: string): string => {
-    if (line.includes('-') && DELIMITER_ROW_CHARACTERS.test(line)) {
+    if (line.includes(DELIMITER_ROW_DASH) && DELIMITER_ROW_CHARACTERS.test(line)) {
         return line.replace(FIRST_DELIMITER_MARK, BACKSLASH_MATCH);
     }
 
