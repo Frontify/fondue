@@ -26,6 +26,8 @@ const expectRoundTrip = <TBlock extends RteBlockNode>(
     expect(serializeToMarkdown(document, options)).toEqual({ markdown, losses: [] });
 };
 
+const BREAKS_OPTIONS: MarkdownOptions = { plugins: defaultContent, breaks: true };
+
 const FORM_CASES: readonly RoundTripCase[] = [
     {
         name: 'a paragraph',
@@ -352,7 +354,66 @@ describe('markdown round trip with breaks', () => {
             blocks: [{ type: 'paragraph', children: [{ text: 'a' }, { type: 'break' }, { text: 'b' }] }],
         };
 
-        expectRoundTrip({ name: 'breaks', markdown: 'a\nb', document }, { plugins: defaultContent, breaks: true });
+        expectRoundTrip({ name: 'breaks', markdown: 'a\nb', document }, BREAKS_OPTIONS);
+    });
+
+    it('writes a break that follows a break as a hard break', () => {
+        const document: RteDocument = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'one' }, { type: 'break' }, { type: 'break' }, { text: 'two' }],
+                },
+            ],
+        };
+
+        expectRoundTrip({ name: 'two breaks', markdown: 'one\n\\\ntwo', document }, BREAKS_OPTIONS);
+    });
+
+    it('writes a break that starts a paragraph as a hard break', () => {
+        const document: RteDocument = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ type: 'break' }, { text: 'foo' }] }],
+        };
+
+        expectRoundTrip({ name: 'leading break', markdown: '\\\nfoo', document }, BREAKS_OPTIONS);
+    });
+
+    it('writes a break that starts a list item as a hard break', () => {
+        const document: RteDocument = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'bulletList',
+                    children: [
+                        {
+                            type: 'listItem',
+                            children: [{ type: 'paragraph', children: [{ type: 'break' }, { text: 'foo' }] }],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        expectRoundTrip({ name: 'leading break in a list item', markdown: '- \\\n  foo', document }, BREAKS_OPTIONS);
+    });
+
+    it('writes a break that starts a quote as a hard break', () => {
+        const document: RteDocument = {
+            version: 1,
+            blocks: [{ type: 'quote', children: [{ type: 'break' }, { text: 'foo' }] }],
+        };
+
+        expectRoundTrip({ name: 'leading break in a quote', markdown: '> \\\n> foo', document }, BREAKS_OPTIONS);
+    });
+
+    it('gives back the same document for a code block with an empty line', () => {
+        const document = parseMarkdown('```\none\n\ntwo\n```', BREAKS_OPTIONS);
+        const { markdown, losses } = serializeToMarkdown(document, BREAKS_OPTIONS);
+
+        expect(losses).toEqual([]);
+        expect(parseMarkdown(markdown, BREAKS_OPTIONS)).toEqual(document);
     });
 });
 
@@ -1087,5 +1148,35 @@ describe('markdown round trip with list content only', () => {
         };
 
         expectRoundTrip({ name: 'bullet list', markdown: '- one', document }, { plugins: [bulletListContent()] });
+    });
+});
+
+const DELIMITER_ROW_MARKERS = ['-:', ':-', ':-:', '--:', '| --- |', '-:|:-'] as const;
+const DELIMITER_ROW_OPTIONS: readonly MarkdownOptions[] = [OPTIONS, BREAKS_OPTIONS];
+
+describe('markdown round trip of text that looks like a table delimiter row', () => {
+    for (const options of DELIMITER_ROW_OPTIONS) {
+        for (const marker of DELIMITER_ROW_MARKERS) {
+            it(`keeps '${marker}' after a break with breaks ${String(options.breaks)}`, () => {
+                const document: RteDocument = {
+                    version: 1,
+                    blocks: [
+                        { type: 'paragraph', children: [{ text: 'a|b' }, { type: 'break' }, { text: marker }] },
+                    ],
+                };
+                const { markdown, losses } = serializeToMarkdown(document, options);
+
+                expect(losses).toEqual([]);
+                expect(parseMarkdown(markdown, options)).toEqual(document);
+            });
+        }
+    }
+
+    it('keeps a paragraph whose whole text is a delimiter row', () => {
+        const document: RteDocument = { version: 1, blocks: [{ type: 'paragraph', children: [{ text: ':-:' }] }] };
+        const { markdown, losses } = serializeToMarkdown(document, OPTIONS);
+
+        expect(losses).toEqual([]);
+        expect(parseMarkdown(markdown, OPTIONS)).toEqual(document);
     });
 });
