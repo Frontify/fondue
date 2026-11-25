@@ -21,6 +21,8 @@ const DELIMITER_ROW_CHARACTERS = /^[|:\t -]*$/;
 
 const FIRST_DELIMITER_MARK = /[-:]/;
 
+const DELIMITER_ROW_DASH = '-';
+
 /** An ordinal that starts a numbered list (`1.`, `2)`), whose `.` or `)` is the character to escape. */
 const LINE_START_ORDINAL = new RegExp(String.raw`^([ \t]*\d{1,${MAX_ORDINAL_DIGITS}})([.)])(?=[ \t]|$)`);
 
