@@ -26,6 +26,7 @@ export const nlNL: RichTextStrings = {
     RichTextEditor_custom1: 'Aangepast 1',
     RichTextEditor_custom2: 'Aangepast 2',
     RichTextEditor_custom3: 'Aangepast 3',
+    RichTextEditor_divider: 'Scheidingslijn',
     RichTextEditor_edit: 'Bewerken',
     RichTextEditor_editor: 'Editor voor opgemaakte tekst',
     RichTextEditor_editorFailed: 'De editor werkt niet meer. Probeer hem opnieuw te laden.',

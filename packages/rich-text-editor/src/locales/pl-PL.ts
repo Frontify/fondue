@@ -26,6 +26,7 @@ export const plPL: RichTextStrings = {
     RichTextEditor_custom1: 'Niestandardowy 1',
     RichTextEditor_custom2: 'Niestandardowy 2',
     RichTextEditor_custom3: 'Niestandardowy 3',
+    RichTextEditor_divider: 'Separator',
     RichTextEditor_edit: 'Edytuj',
     RichTextEditor_editor: 'Edytor tekstu sformatowanego',
     RichTextEditor_editorFailed: 'Edytor przestał działać. Spróbuj załadować go ponownie.',

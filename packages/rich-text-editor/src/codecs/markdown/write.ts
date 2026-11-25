@@ -1001,9 +1001,7 @@ const writeBlock = (block: RteBlockNode, path: Path, alternate: boolean, state: 
         case 'container':
             return writeContainer(block, path, state);
         case 'void':
-            reportLoss(state.losses, { path, type: typeNameOf(block) });
-
-            return [];
+            return prefixed([], prefixOf(block, path, state));
     }
 };
 

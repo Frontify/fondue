@@ -1,0 +1,27 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "above"
+                }
+            ]
+        },
+        {
+            "type": "horizontalRule"
+        },
+        {
+            "type": "horizontalRule"
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "below"
+                }
+            ]
+        }
+    ]
+}

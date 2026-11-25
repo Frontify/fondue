@@ -9,6 +9,7 @@ import { codePlugin } from './Code';
 import { emojiPlugin } from './Emoji';
 import { fontColorPlugin } from './FontColor';
 import { historyPlugin } from './History';
+import { horizontalRulePlugin } from './HorizontalRule';
 import { italicPlugin } from './Italic';
 import { linkPlugin } from './Link';
 import { bulletListPlugin, numberedListPlugin } from './List';
@@ -45,6 +46,7 @@ export const defaultPlugins: readonly RtePlugin[] = Object.freeze([
     numberedListPlugin(),
     checkListPlugin(),
     quotePlugin(),
+    horizontalRulePlugin(),
     resetFormattingPlugin(),
     // Default in the old editor too; it adds no node, only text.
     emojiPlugin(),

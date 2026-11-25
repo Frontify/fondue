@@ -416,7 +416,20 @@ const readCode = (frame: Frame, token: MarkdownTokenNode, context: ReadContext):
     }
 };
 
-/** A token standing alone: its text, or a block of code. A rule (`hr`) is dropped, as no plugin reads it. */
+/** A token that a plugin reads as a block with no content is that block; any other is dropped. */
+const readVoid = (frame: Frame, token: MarkdownTokenNode, context: ReadContext): void => {
+    const block = resolveBlock(token, context);
+    if (block === null) {
+        return;
+    }
+
+    const definition = context.registry.blocks.get(block.type);
+    if (definition !== undefined && definition.content === undefined && allowedIn(frame, block.type, context)) {
+        frame.blocks.push({ type: block.type, ...block.attributes });
+    }
+};
+
+/** A token standing alone: its text, a block of code, or a block with no content. */
 const readSelfClosingBlock = (frame: Frame, token: MarkdownTokenNode, context: ReadContext): void => {
     switch (token.type) {
         case INLINE_TOKEN:
@@ -426,6 +439,8 @@ const readSelfClosingBlock = (frame: Frame, token: MarkdownTokenNode, context: R
         case CODE_BLOCK:
             readCode(frame, token, context);
             break;
+        default:
+            readVoid(frame, token, context);
     }
 };
 

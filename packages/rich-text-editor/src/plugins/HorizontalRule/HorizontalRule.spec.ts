@@ -10,6 +10,9 @@ import { type HorizontalRuleBlock, horizontalRulePlugin } from './HorizontalRule
 
 const PLUGINS = [horizontalRulePlugin()];
 
+/** An `<hr>` start tag, with or without attributes and self-closing slash. */
+const HR_ELEMENT = /<hr[\s/>]/;
+
 const DOCUMENT: RteDocumentWith<{ block: HorizontalRuleBlock }> = {
     version: 1,
     blocks: [
@@ -21,7 +24,7 @@ const DOCUMENT: RteDocumentWith<{ block: HorizontalRuleBlock }> = {
 
 describe('horizontalRulePlugin', () => {
     it('writes a horizontal rule block as an hr', () => {
-        expect(serializeToHtml(DOCUMENT, { plugins: PLUGINS, wrap: false })).toContain('<hr>');
+        expect(serializeToHtml(DOCUMENT, { plugins: PLUGINS, wrap: false })).toMatch(HR_ELEMENT);
     });
 
     it('reads an hr between two paragraphs as a horizontal rule block', () => {

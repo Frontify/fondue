@@ -26,6 +26,7 @@ export const itIT: RichTextStrings = {
     RichTextEditor_custom1: 'Personalizzato 1',
     RichTextEditor_custom2: 'Personalizzato 2',
     RichTextEditor_custom3: 'Personalizzato 3',
+    RichTextEditor_divider: 'Divisore',
     RichTextEditor_edit: 'Modifica',
     RichTextEditor_editor: 'Editor di testo formattato',
     RichTextEditor_editorFailed: 'L’editor ha smesso di funzionare. Riprova a caricarlo.',

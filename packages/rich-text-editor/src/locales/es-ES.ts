@@ -26,6 +26,7 @@ export const esES: RichTextStrings = {
     RichTextEditor_custom1: 'Personalizado 1',
     RichTextEditor_custom2: 'Personalizado 2',
     RichTextEditor_custom3: 'Personalizado 3',
+    RichTextEditor_divider: 'Separador',
     RichTextEditor_edit: 'Editar',
     RichTextEditor_editor: 'Editor de texto enriquecido',
     RichTextEditor_editorFailed: 'El editor dejó de funcionar. Vuelve a intentar cargarlo.',

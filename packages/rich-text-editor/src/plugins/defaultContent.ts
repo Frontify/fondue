@@ -7,6 +7,7 @@ import { boldContent } from './Bold/Bold';
 import { checkListContent } from './CheckList/CheckList';
 import { codeContent } from './Code/Code';
 import { fontColorContent } from './FontColor/FontColor';
+import { horizontalRuleContent } from './HorizontalRule/HorizontalRule';
 import { italicContent } from './Italic/Italic';
 import { linkContent } from './Link/Link';
 import { bulletListContent, numberedListContent } from './List/List';
@@ -41,5 +42,6 @@ export const defaultContent: readonly RteContent[] = Object.freeze([
     numberedListContent(),
     checkListContent,
     quoteContent,
+    horizontalRuleContent,
     softBreakContent,
 ]);
