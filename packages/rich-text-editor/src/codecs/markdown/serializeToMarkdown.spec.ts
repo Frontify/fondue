@@ -7,6 +7,7 @@ import { type RteDocument, type RteDocumentWith } from '../../documentFormat';
 import { columnBreakContent, defaultContent, mentionContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
+import { codeLanguageOverrideOptions, linkTargetOverrideOptions } from './markSuffixOverride.fixture';
 import { mentionOverrideOptions } from './mentionOverride.fixture';
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
@@ -441,6 +442,86 @@ describe('serializeToMarkdown mentions', () => {
             markdown: 'Hi @[user:123]',
             losses: [{ path: [0, 1], type: 'mention' }],
         });
+    });
+});
+
+describe('serializeToMarkdown mark suffixes', () => {
+    const HREF = 'https://example.test';
+
+    it('writes the suffix of a link right after its close, with no loss', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'a', link: { href: HREF, openInNewTab: true } }, { text: ' after' }],
+                },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, linkTargetOverrideOptions)).toEqual({
+            markdown: `[a](${HREF}){target="_blank"} after`,
+            losses: [],
+        });
+    });
+
+    it('writes no suffix for a link the override gives none', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a', link: { href: HREF } }] }],
+        };
+
+        expect(serializeToMarkdown(document, linkTargetOverrideOptions)).toEqual({
+            markdown: `[a](${HREF})`,
+            losses: [],
+        });
+    });
+
+    it('writes the suffix of a leaf mark right after its close, with no loss', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'x', code: { lang: 'ts' } }] }],
+        };
+
+        expect(serializeToMarkdown(document, codeLanguageOverrideOptions)).toEqual({
+            markdown: '`x`{lang="ts"}',
+            losses: [],
+        });
+    });
+
+    it('writes the suffix after the underscore close of italic that asterisks do not read back', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'a', italic: true },
+                        { text: 'a', bold: true, italic: true },
+                        { text: 'b', bold: true },
+                    ],
+                },
+            ],
+        };
+
+        const { markdown } = serializeToMarkdown(document, {
+            plugins: defaultContent,
+            overrides: {
+                marks: {
+                    italic: {
+                        read: [
+                            {
+                                token: 'em_open',
+                                suffix: { pattern: /\{\.note\}/, value: (value) => value },
+                            },
+                        ],
+                        write: () => ({ open: '*', close: '*', suffix: '{.note}' }),
+                    },
+                },
+            },
+        });
+
+        expect(markdown).toContain('_a_{.note}');
     });
 });
 

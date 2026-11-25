@@ -2,16 +2,18 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { type RteDocumentOf } from '../../core';
 import { type RteBlock, type RteDocument, type RteDocumentWith } from '../../documentFormat';
 import { bulletListContent, defaultContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
+import { codeLanguageOverrideOptions, linkTargetOverrideOptions } from './markSuffixOverride.fixture';
 import { mentionOverrideOptions } from './mentionOverride.fixture';
 
 type RoundTripCase = {
     name: string;
     markdown: string;
-    document: RteDocument | RteDocumentWith<{ inline: { type: 'mention'; id: string } }>;
+    document: RteDocument | RteDocumentWith<{ inline: { type: 'mention'; id: string } }> | RteDocumentOf;
 };
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
@@ -796,6 +798,56 @@ describe('markdown round trip of a mention override', () => {
         expectRoundTrip(
             { name: 'escaped mention', markdown: String.raw`@\[user:1\]`, document },
             mentionOverrideOptions,
+        );
+    });
+});
+
+describe('markdown round trip of a mark suffix override', () => {
+    it('gives back a link that opens in a new tab written with its suffix', () => {
+        const document: RteDocument = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'a', link: { href: 'https://example.test', openInNewTab: true } },
+                        { text: ' after' },
+                    ],
+                },
+            ],
+        };
+
+        expectRoundTrip(
+            {
+                name: 'link in a new tab',
+                markdown: '[a](https://example.test){target="_blank"} after',
+                document,
+            },
+            linkTargetOverrideOptions,
+        );
+    });
+
+    it('gives back a link without a suffix as a link without openInNewTab', () => {
+        const document: RteDocument = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a', link: { href: 'https://example.test' } }] }],
+        };
+
+        expectRoundTrip(
+            { name: 'link in the same tab', markdown: '[a](https://example.test)', document },
+            linkTargetOverrideOptions,
+        );
+    });
+
+    it('gives back inline code written with its language suffix', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'x', code: { lang: 'ts' } }] }],
+        };
+
+        expectRoundTrip(
+            { name: 'code with a language', markdown: '`x`{lang="ts"}', document },
+            codeLanguageOverrideOptions,
         );
     });
 });
