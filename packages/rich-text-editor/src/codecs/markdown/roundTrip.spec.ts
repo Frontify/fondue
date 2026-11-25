@@ -709,6 +709,15 @@ describe('markdown round trip of empty text', () => {
         expectRoundTrip({ name: 'empty paragraph', markdown: 'a\n\n&nbsp;\n\nb', document });
     });
 
+    it('gives back a paragraph of spaces', () => {
+        const document: RteDocument = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: '   ' }] }],
+        };
+
+        expectRoundTrip({ name: 'spaces', markdown: '&#x20;&#x20;&#x20;', document });
+    });
+
     it('gives back the empty document for an empty string', () => {
         const document: RteDocument = {
             version: 1,

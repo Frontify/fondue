@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { defineBlock, defineContent, defineMark, type RteDocumentOf } from '../../core';
 import { type RteDocument, type RteDocumentWith } from '../../documentFormat';
 import { columnBreakContent, defaultContent, mentionContent } from '../../plugins';
-import { type MarkdownOptions, serializeToMarkdown } from '../index';
+import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
 
@@ -142,7 +142,7 @@ describe('serializeToMarkdown trailing breaks', () => {
 });
 
 describe('serializeToMarkdown whitespace-only text', () => {
-    it('writes a text block of spaces as a non-breaking space entity', () => {
+    it('writes a text block of spaces as numeric references, not as the empty block', () => {
         const document: RteDocumentOf = {
             version: 1,
             blocks: [
@@ -151,7 +151,47 @@ describe('serializeToMarkdown whitespace-only text', () => {
             ],
         };
 
-        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: 'a\n\n&nbsp;', losses: [] });
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: 'a\n\n&#x20;&#x20;', losses: [] });
+    });
+
+    it('reports the block when its text is only a non-breaking space, which reads back as the empty block', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: '\u00A0' }] }],
+        };
+
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({
+            markdown: '&#xA0;',
+            losses: [{ path: [0], type: 'paragraph' }],
+        });
+    });
+});
+
+describe('serializeToMarkdown list items with no lines', () => {
+    it('writes an item holding a non-breaking space, so a nested empty item is no setext underline', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'bulletList',
+                    children: [
+                        {
+                            type: 'listItem',
+                            children: [
+                                { type: 'paragraph', children: [{ text: 'a' }] },
+                                { type: 'bulletList', children: [{ type: 'listItem', children: [] }] },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const { markdown, losses } = serializeToMarkdown(document, OPTIONS);
+
+        expect(markdown).toBe('- a\n  - &nbsp;');
+        expect(losses).toEqual([]);
+        expect(JSON.stringify(parseMarkdown(markdown, OPTIONS))).not.toContain('textStyle');
     });
 });
 
@@ -352,6 +392,32 @@ describe('serializeToMarkdown losses', () => {
     });
 });
 
+describe('serializeToMarkdown links that do not read back as they were', () => {
+    it('writes a link and reports the mark when it holds a value the Markdown cannot carry', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a', link: { href: 'x', openInNewTab: true } }] }],
+        };
+
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({
+            markdown: '[a](x)',
+            losses: [{ path: [0, 0], type: 'link' }],
+        });
+    });
+
+    it('writes a link and reports the mark when its address reads back percent-encoded', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a', link: { href: 'https://example.com/\u00E9' } }] }],
+        };
+
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({
+            markdown: '[a](https://example.com/\u00E9)',
+            losses: [{ path: [0, 0], type: 'link' }],
+        });
+    });
+});
+
 describe('serializeToMarkdown mentions', () => {
     const document: RteDocumentOf = {
         version: 1,
@@ -363,17 +429,17 @@ describe('serializeToMarkdown mentions', () => {
         ],
     };
 
-    it('writes a mention as the text it shows', () => {
+    it('writes a mention as the text it shows and reports it, as the text reads back as text', () => {
         expect(serializeToMarkdown(document, { plugins: [...defaultContent, mentionContent()] })).toEqual({
             markdown: 'Hi @ana',
-            losses: [],
+            losses: [{ path: [0, 1], type: 'mention' }],
         });
     });
 
-    it('writes a mention as the override gives it', () => {
+    it('writes a mention as the override gives it and reports the fields the override does not read back', () => {
         expect(serializeToMarkdown(document, mentionOverrideOptions)).toEqual({
             markdown: 'Hi @[user:123]',
-            losses: [],
+            losses: [{ path: [0, 1], type: 'mention' }],
         });
     });
 });
@@ -384,7 +450,7 @@ describe('serializeToMarkdown emphasis no character reference can fix', () => {
         overrides: {
             inlines: {
                 mention: {
-                    read: [{ pattern: /Z/, value: () => ({}) }],
+                    read: [{ pattern: /Z/, value: () => ({ id: '1' }) }],
                     write: () => ({ kind: 'markdown', markdown: 'Z' }),
                 },
             },
@@ -434,7 +500,7 @@ describe('serializeToMarkdown text that does not read back', () => {
         });
     });
 
-    it('reports the block when it holds no mark and its Markdown does not read back', () => {
+    it('reports the inline element when the block holds no mark and its Markdown does not read back', () => {
         const document: RteDocumentWith<{ inline: { type: 'mention'; id: string } }> = {
             version: 1,
             blocks: [{ type: 'paragraph', children: [{ type: 'mention', id: '1' }] }],
@@ -447,7 +513,34 @@ describe('serializeToMarkdown text that does not read back', () => {
                     inlines: { mention: { read: [], write: () => ({ kind: 'markdown', markdown: '<b>' }) } },
                 },
             }),
-        ).toEqual({ markdown: '<b>', losses: [{ path: [0], type: 'paragraph' }] });
+        ).toEqual({ markdown: '<b>', losses: [{ path: [0, 0], type: 'mention' }] });
+    });
+
+    it('reports only the mark that does not read back when the mention beside it reads back exactly', () => {
+        const NO_DELIMITERS_FOR_BOLD: MarkdownOptions = {
+            plugins: [...defaultContent, mentionContent()],
+            overrides: {
+                marks: { bold: { read: [{ token: 'strong_open' }], write: () => ({ open: '', close: '' }) } },
+                inlines: mentionOverrideOptions.overrides?.inlines,
+            },
+        };
+        const document: RteDocumentWith<{ inline: { type: 'mention'; id: string } }> = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'a', bold: true },
+                        { type: 'mention', id: '1' },
+                    ],
+                },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, NO_DELIMITERS_FOR_BOLD)).toEqual({
+            markdown: 'a@[user:1]',
+            losses: [{ path: [0, 0], type: 'bold' }],
+        });
     });
 
     it('does not throw on text with unpaired surrogates, controls and every escaped character', () => {

@@ -217,7 +217,7 @@ export const readInlines = (tokens: readonly MarkdownTokenNode[], context: ReadC
 };
 
 /** A text block holding only a non-breaking space is the empty one, as the writer spells it. */
-const withoutPlaceholder = (nodes: RteInlineNode[]): RteInlineNode[] => {
+export const withoutPlaceholder = (nodes: RteInlineNode[]): RteInlineNode[] => {
     const texts = nodes.filter(isTextNode);
     if (texts.length === nodes.length && texts.map((node) => node.text).join('') === NBSP) {
         return [];

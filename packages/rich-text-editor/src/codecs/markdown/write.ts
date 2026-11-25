@@ -28,7 +28,15 @@ import {
     isSpaceToken,
 } from './inlineTokens';
 import { type Tokenize } from './markdownIt';
-import { readsBack } from './readBack';
+import {
+    addInlineRun,
+    addTextRun,
+    type Lost,
+    readBackOf,
+    type ReadBackResult,
+    type Run,
+    type RunMark,
+} from './readBack';
 
 /** What a node lost on write: `path` is the index of each block, child and inline from `document.blocks` down to it. */
 export type MarkdownLoss = {
@@ -84,7 +92,7 @@ type CarriedMark = { name: string; value: NodeValue; form: MarkdownMarkForm };
 /** What a text block's inlines are once the runs sharing a mark sit inside one piece, as the marks nest. */
 type Piece =
     | { kind: 'text'; text: string }
-    | { kind: 'output'; output: MarkdownInlineOutput; path: Path; type: string }
+    | { kind: 'output'; output: MarkdownInlineOutput; path: Path; type: string; value: NodeValue }
     | { kind: 'mark'; mark: CarriedMark; path: Path; pieces: Piece[] };
 
 type OpenMark = Extract<Piece, { kind: 'mark' }>;
@@ -189,12 +197,12 @@ const closeMarks = (root: Piece[], open: OpenMark[], keep: number): void => {
 };
 
 /** What an inline element writes, or null for one that has no Markdown form: a loss, written as nothing. */
-const outputOf = (
+const inlinePieceOf = (
     inline: RteInlineElementNode,
     path: Path,
     lineMode: LineMode,
     state: WriteState,
-): MarkdownInlineOutput | null => {
+): Piece | null => {
     const { type, text: _text, ...value } = inline;
     const output = state.forms.inlines.get(type)?.write(value) ?? null;
     if (output === null) {
@@ -208,7 +216,7 @@ const outputOf = (
         return { kind: 'text', text: SPACE };
     }
 
-    return output;
+    return { kind: 'output', output, path, type, value };
 };
 
 /** A break that ends the block, or is followed only by breaks, would start a line that holds nothing: it is left out. */
@@ -249,9 +257,9 @@ const piecesOf = (inlines: readonly unknown[], parentPath: Path, lineMode: LineM
 
         if (isInlineElement(inline)) {
             closeMarks(root, open, 0);
-            const output = outputOf(inline, path, lineMode, state);
-            if (output !== null) {
-                root.push({ kind: 'output', output, path, type: inline.type });
+            const piece = inlinePieceOf(inline, path, lineMode, state);
+            if (piece !== null) {
+                root.push(piece);
             }
             continue;
         }
@@ -279,6 +287,69 @@ const piecesOf = (inlines: readonly unknown[], parentPath: Path, lineMode: LineM
     closeMarks(root, open, 0);
 
     return withoutTrailingBreaks(root, state);
+};
+
+const samePath = (left: Path, right: Path): boolean =>
+    left.length === right.length && left.every((step, index) => step === right[index]);
+
+const isDropped = ({ mark, path }: OpenMark, dropped: readonly MarkdownLoss[]): boolean =>
+    dropped.some((loss) => loss.type === mark.name && samePath(loss.path, path));
+
+const addRuns = (
+    runs: Run[],
+    pieces: readonly Piece[],
+    marks: readonly RunMark[],
+    dropped: readonly MarkdownLoss[],
+) => {
+    for (const piece of pieces) {
+        switch (piece.kind) {
+            case 'text':
+                addTextRun(runs, piece.text, marks);
+                break;
+            case 'output':
+                addInlineRun(runs, piece.type, piece.value, piece.path);
+                break;
+            case 'mark':
+                if (isDropped(piece, dropped)) {
+                    addRuns(runs, piece.pieces, marks, dropped);
+                } else {
+                    addRuns(
+                        runs,
+                        piece.pieces,
+                        [...marks, { name: piece.mark.name, value: piece.mark.value, path: piece.path }],
+                        dropped,
+                    );
+                }
+                break;
+        }
+    }
+};
+
+/** What the document holds once the marks the writer reported lost are taken off: what its Markdown should read back as. */
+const referenceOf = (pieces: readonly Piece[], dropped: readonly MarkdownLoss[]): Run[] => {
+    const runs: Run[] = [];
+    addRuns(runs, pieces, [], dropped);
+
+    return runs;
+};
+
+/** The inline elements the pieces write, which are the ones a block's Markdown may not read back. */
+const inlineElementsOf = (pieces: readonly Piece[]): MarkdownLoss[] => {
+    const elements: MarkdownLoss[] = [];
+    for (const piece of pieces) {
+        switch (piece.kind) {
+            case 'output':
+                elements.push({ path: piece.path, type: piece.type });
+                break;
+            case 'mark':
+                elements.push(...inlineElementsOf(piece.pieces));
+                break;
+            case 'text':
+                break;
+        }
+    }
+
+    return elements;
 };
 
 /** The text a mark wraps, as the mark's form reads it to choose its delimiters. */
@@ -502,7 +573,7 @@ type Attempt = {
     marks: DelimiterPair[];
     /** Whether a mark is written with `*` and `*`, which the retry writes with `_`. */
     writesAsterisks: boolean;
-    readsBack: boolean;
+    readBack: ReadBackResult;
 };
 
 const isOpeningDelimiter = (token: InlineToken): token is DelimiterToken => token.kind === 'delimiter' && token.open;
@@ -528,14 +599,13 @@ const attemptOf = (
     const marks = tokens.filter(isOpeningDelimiter).map(({ pair }) => pair);
     const writesAsterisks = marks.some((pair) => isAsteriskPair(tokens, pair));
 
-    // A block of whitespace only has nothing to read back: it is the empty block.
-    if (tokens.every((token) => isSpaceToken(token))) {
-        return { text: NBSP_ENTITY, losses, marks, writesAsterisks, readsBack: true };
-    }
-
-    let text = writeSegments(segmentsOf(tokens), state);
-    if (lineMode === 'singleLine') {
-        text = escapeClosingHashes(text);
+    // A block with no text at all is the empty block, which is its only spelling.
+    let text = NBSP_ENTITY;
+    if (tokens.length > 0) {
+        text = writeSegments(segmentsOf(tokens), state);
+        if (lineMode === 'singleLine') {
+            text = escapeClosingHashes(text);
+        }
     }
 
     return {
@@ -543,26 +613,38 @@ const attemptOf = (
         losses,
         marks,
         writesAsterisks,
-        readsBack: readsBack(text, tokens, state, state.tokenize),
+        readBack: readBackOf(text, referenceOf(pieces, losses), state, state.tokenize),
     };
 };
 
-/** What a block lost when its Markdown does not read back as written: each mark it holds, or the block itself. */
-const unreadableLosses = (marks: readonly DelimiterPair[], block: RteBlockNode, path: Path): MarkdownLoss[] => {
-    if (marks.length === 0) {
+/** What a block lost when its Markdown does not read back as written: what differs where that is known, else each mark and inline element it holds, or the block itself. */
+const unreadableLosses = (
+    lost: readonly Lost[],
+    marks: readonly DelimiterPair[],
+    inlineElements: readonly MarkdownLoss[],
+    block: RteBlockNode,
+    path: Path,
+): MarkdownLoss[] => {
+    if (lost.length > 0) {
+        return [...lost];
+    }
+
+    const losses = marks.map(({ path: markPath, mark }) => ({ path: markPath, type: mark }));
+    losses.push(...inlineElements);
+    if (losses.length === 0) {
         return [{ path, type: typeNameOf(block) }];
     }
 
-    return marks.map(({ path: markPath, mark }) => ({ path: markPath, type: mark }));
+    return losses;
 };
 
 const writeInlines = (block: RteBlockNode, path: Path, lineMode: LineMode, state: WriteState): string => {
     const pieces = piecesOf(childrenOf(block), path, lineMode, state);
     const first = attemptOf(pieces, ASTERISK, lineMode, state);
     let chosen = first;
-    if (!first.readsBack && first.writesAsterisks) {
+    if (first.readBack.kind === 'differs' && first.writesAsterisks) {
         const retry = attemptOf(pieces, UNDERSCORE, lineMode, state);
-        if (retry.readsBack) {
+        if (retry.readBack.kind === 'same') {
             chosen = retry;
         }
     }
@@ -570,8 +652,14 @@ const writeInlines = (block: RteBlockNode, path: Path, lineMode: LineMode, state
     for (const loss of chosen.losses) {
         state.losses.push(loss);
     }
-    if (!chosen.readsBack) {
-        for (const loss of unreadableLosses(chosen.marks, block, path)) {
+    if (chosen.readBack.kind === 'differs') {
+        for (const loss of unreadableLosses(
+            chosen.readBack.lost,
+            chosen.marks,
+            inlineElementsOf(pieces),
+            block,
+            path,
+        )) {
             state.losses.push(loss);
         }
     }
@@ -829,7 +917,13 @@ const writeList = (block: RteBlockNode, path: Path, alternate: boolean, state: W
             continue;
         }
 
-        for (const line of prefixed(writeBlock(item, [...path, index], false, state), prefix)) {
+        // A bare marker would read as a setext underline under a paragraph line, so an item with no lines holds the empty block.
+        let itemLines = writeBlock(item, [...path, index], false, state);
+        if (itemLines.length === 0) {
+            itemLines = [NBSP_ENTITY];
+        }
+
+        for (const line of prefixed(itemLines, prefix)) {
             lines.push(line);
         }
     }
