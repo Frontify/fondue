@@ -1,0 +1,117 @@
+packages/rich-text-editor/src/__tests__/browser/MaxRowsFrame.tsx
+  s_e826509e9365cb::t_738b576043599c 1-4,9-10,13,43-45,57-59
+  s_e826509e9365cb::t_562ff356f4d606 8,12,14-20,47-50,53-55
+  s_e826509e9365cb::t_ed8d3638abe6fa 11,50-56
+  s_e826509e9365cb::t_f192fe5f957527 57-59
+  s_e826509e9365cb::t_212029967c65e8 21-22
+  s_e826509e9365cb::t_d9aa85614dfa3c 5-7,23-39
+.changeset/rte-max-rows-keyboard-focus.md
+  s_e826509e9365cb::t_0d3790010b6d4d 5
+  s_e826509e9365cb::t_f876873a51a667 1-4
+packages/rich-text-editor/src/__tests__/browser/MaxRowsFrame.module.scss
+  s_e826509e9365cb::t_46ccc679a7b764 8
+  s_e826509e9365cb::t_e10409ac1d246d 1-7,9-17
+packages/rich-text-editor/src/__tests__/browser/axeScan.ts
+  s_e826509e9365cb::t_649387d828bddc 1-17
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_e826509e9365cb::t_7c696772f28dbb 114
+  s_e826509e9365cb::t_ef1aadeba040b8 113
+packages/rich-text-editor/src/editor/hooks/useKeyboardFocus.ts
+  s_e826509e9365cb::t_f495dc8643a379 1-2,4,15,19,64
+  s_e826509e9365cb::t_b6d8f979de2bc2 46-47,56
+  s_e826509e9365cb::t_af4c9131f26c3d 10-11,39
+  s_e826509e9365cb::t_b58824184d07c8 5-9,12-14,20,25-30,31-32,34-35,37-38,40-41,43-45,48-55,57-63
+  s_e826509e9365cb::t_a2e947eb310d3c 3,21-22,24,33,36,42
+  s_e826509e9365cb::t_6fc0988d1eaf69 16-18,23
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_e826509e9365cb::t_f495dc8643a379 49,121-126,316,514,516-517,539-540,588-589
+  s_7d531087615ec5::t_d719a2fdcb0a85 590
+  s_e826509e9365cb::t_3f6cc622ef2cc0 405,555
+  s_e826509e9365cb::t_a2e947eb310d3c 513,515,591-592
+  s_e826509e9365cb::t_e761078a4432e1 593
+  s_e826509e9365cb::t_ef1aadeba040b8 115-116
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_e826509e9365cb::t_f876873a51a667 179-184,186-206
+  s_e826509e9365cb::t_846495b490e7ef 66
+  s_7d531087615ec5::t_3b9efcae1ff268 174-178
+  s_e826509e9365cb::t_ef1aadeba040b8 65,185
+packages/rich-text-editor/src/__tests__/browser/maxRows.ct.tsx
+  s_e826509e9365cb::t_ea6b4d321810f3 135,150,180,233
+  s_e826509e9365cb::t_1e1ab304c3f0aa 156
+  s_e826509e9365cb::t_a8efee9e252cc2 319-320,322,326
+  s_e826509e9365cb::t_d13cf3b16216e9 1-6,9-12,14-15,51-66,81-82,84-103,105-111,116-134,136-137,139-142,144-149,152-155,175-179,181-185,187-189,230-232,234-236,321,344-352,355-356,358,361-362
+  s_e826509e9365cb::t_fefc4d7735422c 353-354,359-360
+  s_e826509e9365cb::t_4f0f636fcd2b19 20-21
+  s_e826509e9365cb::t_562ff356f4d606 13,19,67-68,73-77,79-80,83,138,143,151,157-174,186,237-241,316-318,323-325,332-338,340-341,357
+  s_e826509e9365cb::t_ed8d3638abe6fa 7-8,16-18,190-194,196,198-209,211-228
+  s_e826509e9365cb::t_dfc7f00ecc2e8e 210
+  s_e826509e9365cb::t_1a90b82e263ace 229
+  s_e826509e9365cb::t_212029967c65e8 242-259,262-263,278-285,287-298,300-303,306,309-310,312-313
+  s_e826509e9365cb::t_86919db1eca592 264-277,286,305
+  s_e826509e9365cb::t_636acd5cb914c9 304,307-308,311
+  s_e826509e9365cb::t_cc38d28bc288f4 34-37,46-50,104,299
+  s_e826509e9365cb::t_42244e80043cff 314-315
+  s_e826509e9365cb::t_2ef38e71687047 30
+  s_e826509e9365cb::t_6b984eff15e2b0 28
+  s_9c5820968824fa::t_5276f665c46580 22-27,29,31-33,38-45,69-72,78,112-115,195,197,260-261,327-331,339,342-343
+packages/rich-text-editor/src/editor/richTextEditor.module.scss
+  s_e826509e9365cb::t_4d4003e53efdf4 13-15,37-39
+  s_e826509e9365cb::t_f495dc8643a379 35,40-43
+  s_e826509e9365cb::t_ef1aadeba040b8 34,36
+packages/rich-text-editor/src/__tests__/browser/maxRowsValues.ts
+  s_e826509e9365cb::t_5770e057601636 1-20
+  s_e826509e9365cb::t_ed8d3638abe6fa 21-33
+packages/rich-text-editor/src/editor/hooks/useKeyboardFocus.spec.tsx
+  s_e826509e9365cb::t_68f5358d66bed5 110,112,121,144,154,164
+  s_e826509e9365cb::t_0b3540d0b04e9d 1-4,6,8-23,27,53,61,69-74,81,85-87,96-97,103,105-109,111,113-114,117,120,122-123,126,143,145-146,151,153,155-156,161,163,175,188
+  s_e826509e9365cb::t_96b7a42970ef30 100-101,165-166,171,173-174
+  s_e826509e9365cb::t_c13f6ca7b02f4e 89,95
+  s_e826509e9365cb::t_95f0d8d015a0da 7,24-26,28-42,54,60,62-63,66,68,84,88,90-94,98-99,102,104,115-123,130-131,133,138-139,141-142,147-150,152,157-160,162,167-170,172,176-186
+  s_e826509e9365cb::t_07b27d626f61c6 49,64-65,67
+  s_e826509e9365cb::t_04c3b3d3048a19 75-80,82
+  s_e826509e9365cb::t_e81e706e7fda3b 43,83,187
+  s_e826509e9365cb::t_ff28bdcda59c6a 5,44-48,50-52,55-59,124-125
+  s_e826509e9365cb::t_923d99822f3017 126-129
+packages/rich-text-editor/src/__tests__/browser/editor.ct.tsx
+  s_e826509e9365cb::t_7b5e9529b19d74 8
+  s_e826509e9365cb::t_c13f6ca7b02f4e 11
+  s_e826509e9365cb::t_44fe0c29ee7559 12
+packages/rich-text-editor/src/editor/hooks/useSelectionAnchor.ts
+  s_e826509e9365cb::t_8a8e81153335a9 48
+  s_e826509e9365cb::t_d0df8d6769ee5e 57
+  s_e826509e9365cb::t_d49966b1735f27 25-29,40,49-56
+  s_e826509e9365cb::t_ff45994a557859 24
+  s_e826509e9365cb::t_a4ad2ed923cee0 11-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8d5be35210180c9ba62519d93b052be122a4a98c",
+  "prompts": {},
+  "sessions": {
+    "s_7d531087615ec5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7c3ccc75-362b-4b44-9c1b-d677654d1ae0",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_9c5820968824fa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b466da8e-922e-4acb-a304-ade9985e1ac5",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_e826509e9365cb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5e17720d-1b00-4d27-b558-fdbc1d470de0",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

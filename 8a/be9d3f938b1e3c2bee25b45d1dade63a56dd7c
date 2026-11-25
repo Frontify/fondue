@@ -1,0 +1,37 @@
+packages/rich-text-editor/src/editor/hooks/useKeyboardFocus.ts
+  s_e826509e9365cb::t_a2e947eb310d3c 3,27-29,32-35,44,47,53
+packages/rich-text-editor/src/editor/hooks/useKeyboardFocus.spec.tsx
+  s_e826509e9365cb::t_ff28bdcda59c6a 5,44-48,50-52,55-59,124-125
+  s_e826509e9365cb::t_923d99822f3017 126-129
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_e826509e9365cb::t_a2e947eb310d3c 500,502,584-585
+  s_e826509e9365cb::t_e761078a4432e1 586
+packages/rich-text-editor/src/__tests__/browser/maxRows.ct.tsx
+  s_e826509e9365cb::t_2ef38e71687047 30
+  s_e826509e9365cb::t_6b984eff15e2b0 28
+  s_9c5820968824fa::t_5276f665c46580 22-27,29,31-33,38-45,69-72,78,112-115,195,197,260-261,327-331,339,342-343
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8abe9d3f938b1e3c2bee25b45d1dade63a56dd7c",
+  "prompts": {},
+  "sessions": {
+    "s_9c5820968824fa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b466da8e-922e-4acb-a304-ade9985e1ac5",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_e826509e9365cb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5e17720d-1b00-4d27-b558-fdbc1d470de0",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

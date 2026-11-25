@@ -1,0 +1,23 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_53de767222940a::t_5c0c967fe995e7 626-665
+packages/rich-text-editor/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_53de767222940a::t_fa430afb046dfe 22
+  s_53de767222940a::t_e210177c992592 21
+  s_53de767222940a::t_8de6414c3f12f4 23-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b81acc29d9b7a2b5ba90e55ad67b98582d7abf3e",
+  "prompts": {},
+  "sessions": {
+    "s_53de767222940a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f9b7337-8455-4b7f-ac95-dde194f54be3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

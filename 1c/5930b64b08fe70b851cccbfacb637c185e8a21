@@ -1,0 +1,50 @@
+packages/rich-text-editor/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_ea2f21f7c5681f::t_30998a469a16ec 47-50,56-57
+packages/rich-text-editor/src/plugins/shared/helpers/href.ts
+  s_ea2f21f7c5681f::t_30998a469a16ec 47
+packages/rich-text-editor/src/plugins/Mention/helpers/image.spec.ts
+  s_ea2f21f7c5681f::t_30998a469a16ec 1-32
+packages/rich-text-editor/src/plugins/Mention/helpers/image.ts
+  s_ea2f21f7c5681f::t_30998a469a16ec 1-17
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_ea2f21f7c5681f::t_add90795e8fcd5 561-565
+  s_ea2f21f7c5681f::t_30998a469a16ec 400-412,558,566
+packages/rich-text-editor/src/__tests__/formatRegression.spec.tsx
+  s_ea2f21f7c5681f::t_30998a469a16ec 34
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.spec.tsx
+  s_ea2f21f7c5681f::t_30998a469a16ec 42-45,240,258,283,287,293,296,310,314,320-326,329,331,334,336-344,388,480,486-487
+.changeset/feat-rte-mention-names.md
+  s_ea2f21f7c5681f::t_30998a469a16ec 5
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_ea2f21f7c5681f::t_30998a469a16ec 51,67-68,446,451,456-465,502,514,524,533,546-547,552,558-559,562,567,571,577,821-822,824
+packages/rich-text-editor/src/plugins/Mention/helpers/display.ts
+  s_ea2f21f7c5681f::t_30998a469a16ec 16
+packages/rich-text-editor/src/plugins/BlurOnBreak/BlurOnBreak.tsx
+  s_ea2f21f7c5681f::t_30998a469a16ec 72,75-77
+packages/rich-text-editor/src/plugins/shared/helpers/href.spec.ts
+  s_ea2f21f7c5681f::t_30998a469a16ec 5
+packages/rich-text-editor/src/plugins/Mention/helpers/text.spec.ts
+  s_ea2f21f7c5681f::t_30998a469a16ec 1-30
+packages/rich-text-editor/src/plugins/Mention/helpers/text.ts
+  s_ea2f21f7c5681f::t_30998a469a16ec 1-28
+packages/rich-text-editor/src/plugins/Mention/components/MentionDraft.tsx
+  s_ea2f21f7c5681f::t_30998a469a16ec 8,138,169-200,207,216,224,238-255,379,387,414-418,457,459,461,482
+packages/rich-text-editor/src/editor/engines/prosemirror/testFixtures.ts
+  s_ea2f21f7c5681f::t_30998a469a16ec 27,30-31,34,36-37,89-90,98-99,106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1c5930b64b08fe70b851cccbfacb637c185e8a21",
+  "prompts": {},
+  "sessions": {
+    "s_ea2f21f7c5681f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d419d63e-7548-4781-aa3e-b5ac225be4e2",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

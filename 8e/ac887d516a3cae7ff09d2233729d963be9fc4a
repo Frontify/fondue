@@ -1,0 +1,58 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_d9c0469efce250::t_dad2e6259602ce 529
+  s_d9c0469efce250::t_574e42e18102f6 126
+  s_d9c0469efce250::t_26b1759eb3a40a 147
+  s_d9c0469efce250::t_ebab1482fee873 138
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_d9c0469efce250::t_8dc18f9d561bf5 904,906-907
+  s_d9c0469efce250::t_5d31c9cfe3d32a 22
+  s_d9c0469efce250::t_724aa48d9cf27c 5
+  s_d9c0469efce250::t_61eefa91cd6f61 850,857-859
+  s_d9c0469efce250::t_fdb5ddfcb4b81e 1140-1156,1159-1162,1164-1167
+  s_d9c0469efce250::t_975125e971ae2e 1157-1158,1163
+packages/rich-text-editor/src/plugins/index.ts
+  s_d9c0469efce250::t_aed3d166fd3140 49
+  s_d9c0469efce250::t_b10ed34bd81fc2 61,65
+  s_d9c0469efce250::t_f03ffdfd0ad8e8 54
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_d9c0469efce250::t_a819ae72e35361 303-312
+packages/rich-text-editor/src/index.ts
+  s_d9c0469efce250::t_9275b1e69ff48b 149
+  s_d9c0469efce250::t_9dd4f06832e2ae 167
+packages/rich-text-editor/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_d9c0469efce250::t_d68b4e098a3ea0 9-28,42-44,48,60-83
+packages/rich-text-editor/src/plugins/Align/index.ts
+  s_d9c0469efce250::t_f1f74d9e20c4fb 3
+packages/rich-text-editor/src/plugins/Align/Align.tsx
+  s_d9c0469efce250::t_ff5d906228deea 60-64,66,69,102-106,108-141,144-173,175-176,179-183,186,198,209,211-239
+packages/rich-text-editor/src/plugins/Align/Align.spec.ts
+  s_d9c0469efce250::t_3df8f8d7feff35 5,7
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_d9c0469efce250::t_ced1f3915d78e2 538,881
+  s_d9c0469efce250::t_d8daa737644bfa 882-887
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_d9c0469efce250::t_5372da37619bc1 1111,1670
+  s_d9c0469efce250::t_219050955682ee 1276,1279-1285,1293-1295,1297-1299,1301-1302
+  s_d9c0469efce250::t_14e7b0f15b57eb 1277-1278,1286-1292,1296,1300
+packages/rich-text-editor/src/plugins/ResetFormatting/index.ts
+  s_d9c0469efce250::t_9c3aa7beb47340 3
+packages/rich-text-editor/src/plugins/BlurOnBreak/BlurOnBreak.tsx
+  s_d9c0469efce250::t_392d47f17e5f2d 73-74,77
+  s_d9c0469efce250::t_258908a2fc3a1b 15-16,21-27,31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8eac887d516a3cae7ff09d2233729d963be9fc4a",
+  "prompts": {},
+  "sessions": {
+    "s_d9c0469efce250": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "548bafad-28bd-4e36-949b-abe6993012cf",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
