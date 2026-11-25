@@ -16,8 +16,12 @@ const UNDERSCORE_OUTSIDE_WORD = /(?<![\p{L}\p{N}])_|_(?![\p{L}\p{N}])/gu;
 /** What starts a heading, a setext underline, a bullet or a rule at the start of a line, after any indent. */
 const LINE_START_MARKER = /^([ \t]*)(#|=|[-+](?=[ \t]|$)|-+[ \t]*$)/;
 
-/** The first `-` of a line of three or more with blanks between them, which reads as a rule. */
-const LINE_START_SPACED_DASHES = /^([ \t]*)(-)(?=(?:[ \t]*-){2,}[ \t]*$)/;
+/** A line of only `|`, `:`, `-`, spaces and tabs; with a `-` it is the shape of a table delimiter row. */
+const DELIMITER_ROW_CHARACTERS = /^[|:\t -]*$/;
+
+const FIRST_DELIMITER_MARK = /[-:]/;
+
+const DELIMITER_ROW_DASH = '-';
 
 /** An ordinal that starts a numbered list (`1.`, `2)`), whose `.` or `)` is the character to escape. */
 const LINE_START_ORDINAL = new RegExp(String.raw`^([ \t]*\d{1,${MAX_ORDINAL_DIGITS}})([.)])(?=[ \t]|$)`);
@@ -42,6 +46,14 @@ const WHITESPACE = /^\s$/u;
 /** Keeps the first group and puts a backslash before the second. */
 const BACKSLASH_SECOND_GROUP = String.raw`$1\$2`;
 const BACKSLASH_MATCH = String.raw`\$&`;
+
+const escapeDelimiterRow = (line: string): string => {
+    if (line.includes(DELIMITER_ROW_DASH) && DELIMITER_ROW_CHARACTERS.test(line)) {
+        return line.replace(FIRST_DELIMITER_MARK, BACKSLASH_MATCH);
+    }
+
+    return line;
+};
 
 export const isWhitespace = (char: string): boolean => WHITESPACE.test(char);
 
@@ -69,10 +81,10 @@ export const escapeText = (text: string, position: TextPosition): string => {
         case 'inline':
             return escaped;
         case 'lineStart':
-            return escaped
-                .replace(LINE_START_MARKER, BACKSLASH_SECOND_GROUP)
-                .replace(LINE_START_SPACED_DASHES, BACKSLASH_SECOND_GROUP)
-                .replace(LINE_START_ORDINAL, BACKSLASH_SECOND_GROUP);
+            return escapeDelimiterRow(escaped.replace(LINE_START_MARKER, BACKSLASH_SECOND_GROUP)).replace(
+                LINE_START_ORDINAL,
+                BACKSLASH_SECOND_GROUP,
+            );
     }
 };
 
