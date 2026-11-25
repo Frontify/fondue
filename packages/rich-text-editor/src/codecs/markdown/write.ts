@@ -1006,7 +1006,7 @@ type GridRow = { row: RteBlockNode; path: Path; cells: GridCell[] };
 type GridShape = { rows: GridRow[]; losses: MarkdownLoss[] };
 
 const PIPE = '|';
-const ESCAPED_PIPE = '\\|';
+const ESCAPED_PIPE = String.raw`\|`;
 const CELL_SEPARATOR = ' | ';
 const ROW_EDGE = '|';
 const DELIMITER_CELL = '---';
@@ -1071,7 +1071,8 @@ const gridShapeOf = (table: RteBlockNode, path: Path, state: WriteState): GridSh
     const rows: GridRow[] = [];
     const losses: MarkdownLoss[] = [];
     const prefix = formPrefixOf(table, state);
-    if (prefix === null || prefix.rest === null) {
+    // A table has many lines, so its form needs a prefix for every line; none, or one for a single line, falls back.
+    if (typeof prefix?.rest !== 'string') {
         losses.push({ path, type: typeNameOf(table) });
     }
 
