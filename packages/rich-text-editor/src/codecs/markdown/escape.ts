@@ -13,8 +13,11 @@ const ESCAPED_CHARACTERS = /[\\*`[\]<>~|]/g;
 /** An `_` that is not between two letters or digits, the only place a reader opens or closes emphasis with it. */
 const UNDERSCORE_OUTSIDE_WORD = /(?<![\p{L}\p{N}])_|_(?![\p{L}\p{N}])/gu;
 
-/** What starts a heading, a setext underline, a bullet or a rule, even one with blanks between its dashes, at the start of a line, after any indent. */
-const LINE_START_MARKER = /^([ \t]*)(#|=|[-+](?=[ \t]|$)|-+[ \t]*$|-(?=(?:[ \t]*-){2,}[ \t]*$))/;
+/** What starts a heading, a setext underline, a bullet or a rule at the start of a line, after any indent. */
+const LINE_START_MARKER = /^([ \t]*)(#|=|[-+](?=[ \t]|$)|-+[ \t]*$)/;
+
+/** The first `-` of a line of three or more with blanks between them, which reads as a rule. */
+const LINE_START_SPACED_DASHES = /^([ \t]*)(-)(?=(?:[ \t]*-){2,}[ \t]*$)/;
 
 /** An ordinal that starts a numbered list (`1.`, `2)`), whose `.` or `)` is the character to escape. */
 const LINE_START_ORDINAL = new RegExp(String.raw`^([ \t]*\d{1,${MAX_ORDINAL_DIGITS}})([.)])(?=[ \t]|$)`);
@@ -68,6 +71,7 @@ export const escapeText = (text: string, position: TextPosition): string => {
         case 'lineStart':
             return escaped
                 .replace(LINE_START_MARKER, BACKSLASH_SECOND_GROUP)
+                .replace(LINE_START_SPACED_DASHES, BACKSLASH_SECOND_GROUP)
                 .replace(LINE_START_ORDINAL, BACKSLASH_SECOND_GROUP);
     }
 };
