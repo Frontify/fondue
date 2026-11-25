@@ -1,0 +1,25 @@
+.changeset/fix-rte-toolbar-keeps-selection.md
+  s_22527a1a684ccf::t_ceca29a478e964 1-5
+packages/rich-text-editor/src/ui/ToolbarButton/ToolbarButton.tsx
+  s_22527a1a684ccf::t_ceca29a478e964 4
+packages/rich-text-editor/src/editor/hooks/useToolbarRoving.ts
+  s_22527a1a684ccf::t_ae27fa8bacc38e 166,177,182-183
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_22527a1a684ccf::t_b060756cfd072b 1040-1097
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "70cfd0ee88e3365657fec099051579bf5dc262e9",
+  "prompts": {},
+  "sessions": {
+    "s_22527a1a684ccf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2a5abef-0d60-4dfb-93a0-af8f62c61098",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

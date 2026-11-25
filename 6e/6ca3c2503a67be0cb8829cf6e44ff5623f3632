@@ -1,0 +1,21 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.ts
+  s_578d4f4cfbdb16::t_adaa6b6d3abb36 123
+packages/rich-text-editor/src/editor/engines/prosemirror/extraAttributes.ts
+  s_578d4f4cfbdb16::t_f71997c8966312 5,57-58,60,66
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6e6ca3c2503a67be0cb8829cf6e44ff5623f3632",
+  "prompts": {},
+  "sessions": {
+    "s_578d4f4cfbdb16": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "b9ece22e-b392-4e5e-b56f-a5f2edc08065",
+        "model": "claude-opus-5-5-medium"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
