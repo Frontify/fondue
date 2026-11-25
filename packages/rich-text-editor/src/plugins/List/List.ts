@@ -136,7 +136,8 @@ const numberedList = defineBlock<NumberedListValue>({
 export type BulletLevelLook = {
     /**
      * A `list-style-type`, such as `square`, or a quoted string, such as `'–'`, drawn as written. A string gets no
-     * room of its own, so set `gap` for room before the item text
+     * room of its own, so set `gap` for room before the item text. With `gap` set, leave the trailing space out of the
+     * string: both apply, so the room doubles.
      */
     marker?: string;
     /**
