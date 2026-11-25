@@ -75,6 +75,11 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * pointing at the label.
      */
     id?: string;
+    /**
+     * The document to show. One handed back from `onChange` changes nothing;
+     * any other is shown, an earlier one included. Never mutate a document
+     * once passed.
+     */
     value?: RteDocumentOf<TBlock>;
     onChange?: (value: RteDocumentOf<TBlock>) => void;
     /**

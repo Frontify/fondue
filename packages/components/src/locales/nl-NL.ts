@@ -38,6 +38,8 @@ const translations = {
     Table_sortByAscending: 'Sorteer op ${column} oplopend',
     Table_sortByDescending: 'Sorteer op ${column} aflopend',
     Table_sortDescending: 'Sorteer aflopend',
+    Tag_add: '${label} toevoegen',
+    Tag_dismiss: 'Sluit ${label}',
     Tree_checkboxHint: 'Selecteerbaar, druk op Tab om het selectievakje te focussen.',
     Tree_loading: 'Bezig met laden…',
     Tree_renameInputLabel: 'Nieuwe naam',

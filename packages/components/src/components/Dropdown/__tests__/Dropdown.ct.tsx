@@ -5,6 +5,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import * as sinon from 'sinon';
 
 import { Button } from '#/components/Button/Button';
+import { resolveToken } from '#/testutils/resolveToken';
 import { MAX_HEIGHT_MARGIN } from '#/utilities/domUtilities';
 
 import { Dropdown } from '../Dropdown';
@@ -301,11 +302,20 @@ test('should open submenu by mouse', async ({ mount, page, browserName }) => {
     await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).click();
     await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
     await page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID).hover();
-    await expect(page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await expect(page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID)).toHaveCSS(
+        'background-color',
+        await resolveToken(page, '--color-surface-hover'),
+    );
     await expect(page.getByTestId(DROPDOWN_SUB_CONTENT_TEST_ID)).toBeVisible();
     await page.getByTestId(DROPDOWN_ITEM_TEST_ID).hover();
-    await expect(page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID)).toHaveCSS('background-color', 'rgb(225, 225, 219)');
-    await expect(page.getByTestId(DROPDOWN_ITEM_TEST_ID)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await expect(page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID)).toHaveCSS(
+        'background-color',
+        await resolveToken(page, '--color-container-secondary-default'),
+    );
+    await expect(page.getByTestId(DROPDOWN_ITEM_TEST_ID)).toHaveCSS(
+        'background-color',
+        await resolveToken(page, '--color-surface-hover'),
+    );
     await page.getByTestId(DROPDOWN_ITEM_TEST_ID).click();
     expect(onSelect.calledOnce).toBe(true);
 });
