@@ -2,7 +2,7 @@
 
 // A text block's inlines laid out as the tokens of one stretch of Markdown, before any of it is written.
 
-import { isWhitespace } from './escape';
+import { canBeReferenced, isMarkdownSpace, isMarkdownWhitespace } from './markdownIt';
 
 /** The open and the close delimiter of one mark, which share it: `path` is where the mark starts. */
 export type DelimiterPair = { mark: string; path: readonly number[] };
@@ -32,12 +32,26 @@ export type InlineToken =
     | DelimiterToken
     | { kind: 'break'; type: string };
 
+/** Whether the character is whitespace to the reader's emphasis rules. */
 export const isSpaceToken = (token: InlineToken | undefined): token is CharToken =>
-    token?.kind === 'char' && isWhitespace(token.char);
+    token?.kind === 'char' && isMarkdownWhitespace(token.char);
+
+/** Whether a reference reads back as the character: a reader turns one for a control or a noncharacter into U+FFFD. */
+export const isReferenceable = (token: CharToken): boolean => {
+    const codePoint = token.char.codePointAt(0);
+    if (codePoint === undefined) {
+        return false;
+    }
+
+    return canBeReferenced(codePoint);
+};
+
+const isEdgeSpaceToken = (token: InlineToken | undefined): token is CharToken =>
+    token?.kind === 'char' && isMarkdownSpace(token.char);
 
 const encodeEdgesOf = (line: readonly InlineToken[]): void => {
     for (const token of line) {
-        if (!isSpaceToken(token)) {
+        if (!isEdgeSpaceToken(token)) {
             break;
         }
         token.entity = true;
@@ -45,14 +59,14 @@ const encodeEdgesOf = (line: readonly InlineToken[]): void => {
 
     for (let index = line.length - 1; index >= 0; index--) {
         const token = line[index];
-        if (!isSpaceToken(token)) {
+        if (!isEdgeSpaceToken(token)) {
             break;
         }
         token.entity = true;
     }
 };
 
-/** Marks the whitespace at the start and end of every line as a reference, as a reader strips it otherwise. */
+/** Marks the spaces and tabs at the start and end of every line as a reference, as a reader strips them otherwise. */
 export const encodeLineEdges = (tokens: readonly InlineToken[]): void => {
     let lineStart = 0;
     for (const [index, token] of tokens.entries()) {

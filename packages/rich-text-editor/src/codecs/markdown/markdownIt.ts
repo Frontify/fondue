@@ -28,6 +28,45 @@ const ENABLED_RULES = ['table', 'strikethrough', 'linkify'];
 // so a text pattern could match what the writer escaped.
 const DISABLED_RULES = ['text_join'];
 
+const { isMdAsciiPunct, isPunctCharCode, isSpace, isValidEntityCode, isWhiteSpace } = new MarkdownItParser().utils;
+
+const REPLACEMENT_CHARACTER_CODE = 0xff_fd;
+
+const isSurrogateCode = (code: number): boolean => code >= 0xd8_00 && code <= 0xdf_ff;
+
+// The reader sees a lone surrogate as U+FFFD when it scans for emphasis delimiters.
+const scannedCodeOf = (char: string): number | undefined => {
+    const code = char.codePointAt(0);
+    if (code !== undefined && isSurrogateCode(code)) {
+        return REPLACEMENT_CHARACTER_CODE;
+    }
+
+    return code;
+};
+
+const isPunctuationCode = (code: number): boolean => isMdAsciiPunct(code) || isPunctCharCode(code);
+
+const scannedCodeIs = (char: string, test: (code: number) => boolean): boolean => {
+    const code = scannedCodeOf(char);
+    if (code === undefined) {
+        return false;
+    }
+
+    return test(code);
+};
+
+/** Whether the reader counts the character as whitespace when it decides where emphasis opens and closes. */
+export const isMarkdownWhitespace = (char: string): boolean => scannedCodeIs(char, isWhiteSpace);
+
+/** Whether the reader counts the character as punctuation when it decides where emphasis opens and closes. */
+export const isMarkdownPunctuation = (char: string): boolean => scannedCodeIs(char, isPunctuationCode);
+
+/** Whether the character is a space or a tab, which the reader strips at the edge of a line. */
+export const isMarkdownSpace = (char: string): boolean => scannedCodeIs(char, isSpace);
+
+/** Whether a numeric character reference reads back as this code point, and not as U+FFFD. */
+export const canBeReferenced = (codePoint: number): boolean => isValidEntityCode(codePoint);
+
 const parsers = new Map<boolean, MarkdownIt>();
 
 const parserFor = (breaks: boolean): MarkdownIt => {

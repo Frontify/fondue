@@ -161,7 +161,7 @@ describe('serializeToMarkdown whitespace-only text', () => {
         };
 
         expect(serializeToMarkdown(document, OPTIONS)).toEqual({
-            markdown: '&#xA0;',
+            markdown: ' ',
             losses: [{ path: [0], type: 'paragraph' }],
         });
     });

@@ -518,6 +518,50 @@ describe('markdown round trip of whitespace at the edge of a line', () => {
     }
 });
 
+type CharacterRoundTripCase = {
+    name: string;
+    children: Extract<RteBlock, { type: 'paragraph' }>['children'];
+};
+
+const MARKDOWN_CHARACTER_CASES: readonly CharacterRoundTripCase[] = [
+    {
+        name: 'a space before bold punctuation',
+        children: [{ text: 'a ' }, { text: '(x)', bold: true }],
+    },
+    {
+        name: 'a vertical tab',
+        children: [{ text: '\u000Bx' }],
+    },
+];
+
+describe('markdown round trip of characters that Markdown classifies on its own terms', () => {
+    for (const { name, children } of MARKDOWN_CHARACTER_CASES) {
+        it(`gives back the same document for ${name}`, () => {
+            const document: RteDocument = { version: 1, blocks: [{ type: 'paragraph', children }] };
+
+            const { markdown, losses } = serializeToMarkdown(document, OPTIONS);
+
+            expect(losses).toEqual([]);
+            expect(parseMarkdown(markdown, OPTIONS)).toEqual(document);
+        });
+    }
+
+    it('keeps a delete character next to bold punctuation, and drops the bold rather than the character', () => {
+        const document: RteDocument = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a\u007F' }, { text: '(x)', bold: true }] }],
+        };
+
+        const { markdown, losses } = serializeToMarkdown(document, OPTIONS);
+
+        expect(losses).toEqual([{ path: [0, 1], type: 'bold' }]);
+        expect(parseMarkdown(markdown, OPTIONS)).toEqual({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a\u007F(x)' }] }],
+        });
+    });
+});
+
 const LINK_LOOKALIKE_CASES: readonly RoundTripCase[] = [
     {
         name: 'a URL with a scheme',

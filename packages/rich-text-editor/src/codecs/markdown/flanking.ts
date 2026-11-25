@@ -3,8 +3,8 @@
 // Where an emphasis delimiter opens or closes, by CommonMark's flanking rules, and what makes it do so: a
 // character next to it written as a numeric reference, which counts as punctuation and reads back as itself.
 
-import { isWhitespace } from './escape';
-import { type DelimiterPair, type DelimiterToken, type InlineToken } from './inlineTokens';
+import { type DelimiterPair, type DelimiterToken, type InlineToken, isReferenceable } from './inlineTokens';
+import { isMarkdownPunctuation, isMarkdownWhitespace } from './markdownIt';
 
 type CharClass = 'space' | 'punctuation' | 'other';
 
@@ -17,9 +17,6 @@ type DelimiterRun = {
     after: InlineToken | undefined;
 };
 
-/** Unicode punctuation and symbols, which flank like the punctuation of CommonMark. */
-const PUNCTUATION = /^[\p{P}\p{S}]$/u;
-
 const EMPHASIS_DELIMITER = /^([*_~])\1*$/;
 
 const UNDERSCORE = '_';
@@ -27,10 +24,10 @@ const UNDERSCORE = '_';
 export const isEmphasisDelimiter = (text: string): boolean => EMPHASIS_DELIMITER.test(text);
 
 const classOf = (char: string | undefined): CharClass => {
-    if (char === undefined || isWhitespace(char)) {
+    if (char === undefined || isMarkdownWhitespace(char)) {
         return 'space';
     }
-    if (PUNCTUATION.test(char)) {
+    if (isMarkdownPunctuation(char)) {
         return 'punctuation';
     }
 
@@ -141,7 +138,7 @@ const neighboursToEncode = (run: DelimiterRun): (InlineToken | undefined)[] => {
 };
 
 const encode = (token: InlineToken | undefined): boolean => {
-    if (token?.kind === 'char' && !token.entity) {
+    if (token?.kind === 'char' && !token.entity && isReferenceable(token)) {
         token.entity = true;
 
         return true;
