@@ -4,7 +4,13 @@ import { ThemeProvider } from '@frontify/fondue-components';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type CSSProperties, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
-import { type MarkdownLoss, parseMarkdown, serializeToMarkdown, type MarkdownOptions } from '../codecs';
+import {
+    type MarkdownLoss,
+    type MarkdownOptions,
+    type MarkdownReadLoss,
+    parseMarkdownWithLosses,
+    serializeToMarkdown,
+} from '../codecs';
 // Stories import only the package public API. The plugins have their own story
 // file (`PluginExamples.stories.tsx`); this one is about the editor itself — the props
 // that are its own rather than a plugin's.
@@ -793,6 +799,8 @@ const NO_LOSSES = 'No losses';
 
 const formatLoss = ({ type, path }: MarkdownLoss): string => `${type} at ${path.join('.')}`;
 
+const formatReadLoss = ({ type, line }: MarkdownReadLoss): string => `${type} on source line ${line}`;
+
 type MarkdownRoundTripProps = {
     markdown: string;
     options: MarkdownOptions;
@@ -800,12 +808,14 @@ type MarkdownRoundTripProps = {
 };
 
 const MarkdownRoundTrip = ({ markdown: stored, options, plugins }: MarkdownRoundTripProps) => {
-    const [doc, setDoc] = useState(() => parseMarkdown(stored, options));
+    const [{ document, losses: readLosses }] = useState(() => parseMarkdownWithLosses(stored, options));
+    const [doc, setDoc] = useState(document);
     const { markdown, losses } = useMemo(() => serializeToMarkdown(doc, options), [doc, options]);
+    const lossMessages = [...readLosses.map(formatReadLoss), ...losses.map(formatLoss)];
 
     let lossesText = NO_LOSSES;
-    if (losses.length > 0) {
-        lossesText = losses.map(formatLoss).join('\n');
+    if (lossMessages.length > 0) {
+        lossesText = lossMessages.join('\n');
     }
 
     return (
@@ -814,7 +824,7 @@ const MarkdownRoundTrip = ({ markdown: stored, options, plugins }: MarkdownRound
                 Stored Markdown is read into the editor. Edit it: the Markdown on the right is what a host would save.
             </p>
             <div className={FRAME}>
-                <RichTextEditor value={doc} onChange={setDoc} plugins={plugins} />
+                <RichTextEditor value={doc} onChange={setDoc} plugins={plugins} readonly={readLosses.length > 0} />
             </div>
             <div className="tw-flex tw-flex-col tw-gap-4">
                 <pre className={MARKDOWN_PANEL}>{markdown}</pre>
@@ -826,8 +836,8 @@ const MarkdownRoundTrip = ({ markdown: stored, options, plugins }: MarkdownRound
 
 /**
  * Markdown in, an editable document, Markdown out. The stored Markdown is read into the editor with
- * `parseMarkdown`, and `serializeToMarkdown` writes the document back as you edit, listing in `losses`
- * what the Markdown could not keep.
+ * `parseMarkdownWithLosses`. The editor stays read-only if the source contains features it cannot keep.
+ * `serializeToMarkdown` lists any losses when the document is written.
  */
 export const Markdown: Story = {
     render: () => (

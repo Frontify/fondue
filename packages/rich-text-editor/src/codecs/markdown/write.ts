@@ -38,11 +38,9 @@ import {
     type DelimiterToken,
     encodeLineEdges,
     type InlineToken,
-    isBlank,
     isSpaceToken,
-    withoutBlockEdgeSpace,
 } from './inlineTokens';
-import { type Tokenize } from './markdownIt';
+import { isMarkdownWhitespace, type Tokenize } from './markdownIt';
 import {
     addInlineRun,
     addTextRun,
@@ -404,7 +402,7 @@ const addOverrideRuns = (runs: Run[], { output }: OutputPiece, marks: readonly R
 
 /** Whether the mark writes no delimiters, as the text it wraps is only whitespace. */
 const wrapsOnlySpace = (pieces: readonly Piece[]): boolean =>
-    !hasInnerMarkup(pieces) && [...plainTextOf(pieces)].every(isBlank);
+    !hasInnerMarkup(pieces) && [...plainTextOf(pieces)].every(isMarkdownWhitespace);
 
 /**
  * What a mark an override wrote reads back as on its own: the runs its delimiters read as around the text they wrap,
@@ -790,10 +788,9 @@ const attemptOf = (
     const losses: MarkdownLoss[] = [];
     const laidOut: InlineToken[] = [];
     appendTokens(laidOut, pieces, 'escaped', { losses, emphasis });
-    const trimmed = withoutBlockEdgeSpace(laidOut);
-    encodeLineEdges(trimmed);
+    encodeLineEdges(laidOut);
 
-    const { tokens, dropped } = fixFlanking(trimmed);
+    const { tokens, dropped } = fixFlanking(laidOut);
     for (const { paths, mark } of dropped) {
         reportMarkLoss(losses, mark, paths);
     }
