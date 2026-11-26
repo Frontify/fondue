@@ -46,6 +46,12 @@ export type ReadMatch<TRule extends ReadRule = ReadRule> = { name: string; value
 
 export type ReadersByToken<TRule extends ReadRule = ReadRule> = ReadonlyMap<string, readonly Reader<TRule>[]>;
 
+/** The names of the marks and inline elements whose Markdown form a host's override replaced. */
+export type OverriddenForms = {
+    marks: ReadonlySet<string>;
+    inlines: ReadonlySet<string>;
+};
+
 export type MarkdownForms = {
     blocks: ReadonlyMap<string, MarkdownBlockForm>;
     marks: ReadonlyMap<string, MarkdownMarkForm>;
@@ -57,6 +63,8 @@ export type MarkdownForms = {
     textReaders: readonly TextReader[];
     /** The block types that are a list's items, which only a list holds. */
     itemTypes: ReadonlySet<string>;
+    /** What a host's override writes, so what it does not read back is the host's to answer for. */
+    overridden: OverriddenForms;
 };
 
 type FormedDefinition<TForm> = { markdown?: TForm };
@@ -228,6 +236,9 @@ const checkedInlineForm = (form: unknown): MarkdownInlineForm => {
     return { read: checkedReadRules(read), write: guarded(write, isInlineOutput) };
 };
 
+/** Whether a host's override is there: a `null` or missing form leaves the definition's own form in use. */
+const isOverridePresent = <TForm>(form: TForm | null | undefined): form is TForm => form !== undefined && form !== null;
+
 /**
  * An override replaces the definition's form for the node of that name; a name no definition has is ignored.
  * Each form comes back checked, so a form that throws or returns the wrong shape never reaches the reader or the writer.
@@ -240,13 +251,33 @@ const formsOf = <TForm>(
     const replaced = new Map(Object.entries(overrides ?? {}));
     const forms = new Map<string, TForm>();
     for (const [name, definition] of definitions) {
-        const form = replaced.get(name) ?? definition.markdown;
+        let form = definition.markdown;
+        const override = replaced.get(name);
+        if (isOverridePresent(override)) {
+            form = override;
+        }
+
         if (form !== undefined) {
             forms.set(name, check(form));
         }
     }
 
     return forms;
+};
+
+/** The names an override replaces the form of: those a definition declares, as a name no definition has is ignored. */
+const overriddenNamesOf = (
+    definitions: ReadonlyMap<string, FormedDefinition<unknown>>,
+    overrides: Readonly<Record<string, unknown>> | undefined,
+): Set<string> => {
+    const names = new Set<string>();
+    for (const [name, form] of Object.entries(overrides ?? {})) {
+        if (isOverridePresent(form) && definitions.has(name)) {
+            names.add(name);
+        }
+    }
+
+    return names;
 };
 
 const readersByToken = <TRule extends ReadRule>(
@@ -264,14 +295,22 @@ const readersByToken = <TRule extends ReadRule>(
     return index;
 };
 
+/** The pattern with the global flag, so every match in a text is found. */
+const globalPatternOf = (pattern: RegExp): RegExp => {
+    if (pattern.flags.includes(GLOBAL_FLAG)) {
+        return new RegExp(pattern.source, pattern.flags);
+    }
+
+    return new RegExp(pattern.source, `${pattern.flags}${GLOBAL_FLAG}`);
+};
+
 const textReadersOf = (forms: ReadonlyMap<string, MarkdownInlineForm>): TextReader[] => {
     const readers: TextReader[] = [];
     for (const [name, form] of forms) {
         for (const rule of form.read) {
             if (!isTokenRule(rule)) {
                 const { pattern, value } = rule;
-                const flags = pattern.flags.includes(GLOBAL_FLAG) ? pattern.flags : `${pattern.flags}${GLOBAL_FLAG}`;
-                readers.push({ name, pattern: new RegExp(pattern.source, flags), value });
+                readers.push({ name, pattern: globalPatternOf(pattern), value });
             }
         }
     }
@@ -293,6 +332,10 @@ export const buildForms = (registry: ContentRegistry, overrides: MarkdownOverrid
         inlineReaders: readersByToken(inlines),
         textReaders: textReadersOf(inlines),
         itemTypes: new Set(registry.itemTypeByList.values()),
+        overridden: {
+            marks: overriddenNamesOf(registry.marks, overrides?.marks),
+            inlines: overriddenNamesOf(registry.inlines, overrides?.inlines),
+        },
     };
 };
 
