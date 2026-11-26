@@ -1044,7 +1044,7 @@ describe('markdown round trip of empty text', () => {
         expectRoundTrip({ name: 'empty paragraph', markdown: 'a\n\n&nbsp;\n\nb', document });
     });
 
-    it('writes a paragraph of spaces as the empty block', () => {
+    it('gives back a paragraph of spaces after another paragraph', () => {
         const document: RteDocument = {
             version: 1,
             blocks: [
@@ -1053,23 +1053,21 @@ describe('markdown round trip of empty text', () => {
             ],
         };
 
-        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: 'a\n\n&nbsp;', losses: [] });
-        expect(parseMarkdown('a\n\n&nbsp;', OPTIONS)).toEqual({
-            version: 1,
-            blocks: [
-                { type: 'paragraph', children: [{ text: 'a' }] },
-                { type: 'paragraph', children: [] },
-            ],
+        expectRoundTrip({ name: 'a paragraph of spaces', markdown: 'a\n\n&#x20;&#x20;&#x20;', document });
+    });
+
+    it('gives back a document of one paragraph of spaces', () => {
+        expectRoundTrip({
+            name: 'one paragraph of spaces',
+            markdown: '&#x20;&#x20;&#x20;',
+            document: textDocument({ text: '   ' }),
         });
     });
 
-    it('writes a document of one paragraph of spaces as the empty document', () => {
-        const document: RteDocument = {
-            version: 1,
-            blocks: [{ type: 'paragraph', children: [{ text: '   ' }] }],
-        };
+    it('gives back a literal non-breaking space on its own line', () => {
+        const text = '\u00A0';
 
-        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: '', losses: [] });
+        expectRoundTrip({ name: 'a literal non-breaking space', markdown: text, document: textDocument({ text }) });
     });
 
     it('gives back the empty document for an empty string', () => {
@@ -1206,25 +1204,30 @@ describe('markdown round trip of text inside a link', () => {
 });
 
 describe('markdown round trip of whitespace at the edge of a block', () => {
-    const readBackWithoutEdges = (document: RteDocument, markdown: string, trimmed: RteDocument) => {
-        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown, losses: [] });
-        expect(parseMarkdown(markdown, OPTIONS)).toEqual(trimmed);
-    };
-
-    it('drops the spaces at both ends of a paragraph', () => {
-        readBackWithoutEdges(textDocument({ text: '  foo ' }), 'foo', textDocument({ text: 'foo' }));
+    it('gives back the spaces at both ends of a paragraph', () => {
+        expectRoundTrip({
+            name: 'spaces at the edges of a paragraph',
+            markdown: '&#x20;&#x20;foo&#x20;',
+            document: textDocument({ text: '  foo ' }),
+        });
     });
 
-    it('drops the spaces next to the delimiters of a mark at the ends of a paragraph', () => {
-        readBackWithoutEdges(
-            textDocument({ text: ' ' }, { text: ' x ', bold: true }, { text: ' ' }),
-            '**x**',
-            textDocument({ text: 'x', bold: true }),
+    it('keeps spaces outside a mark at the ends of a paragraph', () => {
+        const document = textDocument({ text: ' ' }, { text: ' x ', bold: true }, { text: ' ' });
+        const markdown = '&#x20;&#x20;**x**&#x20;&#x20;';
+
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown, losses: [] });
+        expect(parseMarkdown(markdown, OPTIONS)).toEqual(
+            textDocument({ text: '  ' }, { text: 'x', bold: true }, { text: '  ' }),
         );
     });
 
-    it('writes a line that read as a block start once its leading space is gone as text', () => {
-        readBackWithoutEdges(textDocument({ text: ' - x' }), String.raw`\- x`, textDocument({ text: '- x' }));
+    it('keeps text after an encoded leading space from starting a list', () => {
+        expectRoundTrip({
+            name: 'space before a list marker',
+            markdown: '&#x20;- x',
+            document: textDocument({ text: ' - x' }),
+        });
     });
 
     it.each([
@@ -1239,21 +1242,21 @@ describe('markdown round trip of whitespace at the edge of a block', () => {
         expect(parseMarkdown(markdown, OPTIONS)).toEqual(document);
     });
 
-    it('drops the spaces at the ends of a heading', () => {
-        const heading = (text: string): RteDocument => ({
+    it('gives back the spaces at the ends of a heading', () => {
+        const document: RteDocument = {
             version: 1,
-            blocks: [{ type: 'textStyle', style: 'heading1', children: [{ text }] }],
-        });
+            blocks: [{ type: 'textStyle', style: 'heading1', children: [{ text: ' Title ' }] }],
+        };
 
-        readBackWithoutEdges(heading(' Title '), '# Title', heading('Title'));
+        expectRoundTrip({ name: 'spaces at the edges of a heading', markdown: '# &#x20;Title&#x20;', document });
     });
 
-    it('drops the space before the first line break only at the start of the block', () => {
-        readBackWithoutEdges(
-            textDocument({ text: ' ' }, { type: 'break' }, { text: 'b ' }),
-            '\\\nb',
-            textDocument({ type: 'break' }, { text: 'b' }),
-        );
+    it('gives back a space before the first line break', () => {
+        expectRoundTrip({
+            name: 'space before the first line break',
+            markdown: '&#x20;\\\nb&#x20;',
+            document: textDocument({ text: ' ' }, { type: 'break' }, { text: 'b ' }),
+        });
     });
 });
 

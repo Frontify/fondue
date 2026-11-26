@@ -206,7 +206,7 @@ describe('serializeToMarkdown trailing breaks', () => {
 });
 
 describe('serializeToMarkdown whitespace-only text', () => {
-    it('writes a text block of spaces as the empty block', () => {
+    it('writes a text block of spaces as character references', () => {
         const document: RteDocumentOf = {
             version: 1,
             blocks: [
@@ -215,10 +215,10 @@ describe('serializeToMarkdown whitespace-only text', () => {
             ],
         };
 
-        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: 'a\n\n&nbsp;', losses: [] });
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: 'a\n\n&#x20;&#x20;', losses: [] });
     });
 
-    it('writes a block of only a non-breaking space as the empty block', () => {
+    it('writes a literal non-breaking space on its own line', () => {
         const document: RteDocumentOf = {
             version: 1,
             blocks: [
@@ -227,7 +227,7 @@ describe('serializeToMarkdown whitespace-only text', () => {
             ],
         };
 
-        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: 'a\n\n&nbsp;', losses: [] });
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: 'a\n\n\u00A0', losses: [] });
     });
 });
 
@@ -894,7 +894,7 @@ describe('serializeToMarkdown mentions', () => {
         };
 
         expect(serializeToMarkdown(document, options)).toEqual({
-            markdown: 'Hi',
+            markdown: 'Hi&#x20;',
             losses: [{ path: [0, 1], type: 'mention' }],
         });
     });
@@ -915,7 +915,7 @@ describe('serializeToMarkdown mentions', () => {
         };
 
         expect(serializeToMarkdown(document, options)).toEqual({
-            markdown: 'Hi',
+            markdown: 'Hi&#x20;',
             losses: [{ path: [0, 1], type: 'mention' }],
         });
     });

@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { type MarkdownMarkForm } from '../../core';
 import { bulletListContent, codeBlockContent, defaultContent, mentionContent } from '../../plugins';
-import { type MarkdownOptions, parseMarkdown } from '../index';
+import { type MarkdownOptions, parseMarkdown, parseMarkdownWithLosses } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
 
@@ -23,11 +23,54 @@ describe('parseMarkdown', () => {
         expect(parseMarkdown('  \n\n \n', OPTIONS)).toEqual(EMPTY_DOCUMENT);
     });
 
-    it('reads a paragraph holding only a non-breaking space as an empty paragraph', () => {
+    it('reads the empty paragraph entity as an empty paragraph', () => {
         expect(parseMarkdown('&nbsp;', OPTIONS)).toEqual({
             version: 1,
             blocks: [{ type: 'paragraph', children: [] }],
         });
+    });
+});
+
+describe('parseMarkdownWithLosses', () => {
+    it('returns the parsed document without losses for supported Markdown', () => {
+        const markdown = '# Title\n\n> **Quote**\n\n[Guide](/guide)\n\n&nbsp;';
+
+        expect(parseMarkdownWithLosses(markdown, OPTIONS)).toEqual({
+            document: parseMarkdown(markdown, OPTIONS),
+            losses: [],
+        });
+    });
+
+    it('reports lost image sources and link titles by source line', () => {
+        const markdown = 'Intro\n\n![Logo](/logo.png)\n\n[Guide](/guide "A guide")';
+
+        expect(parseMarkdownWithLosses(markdown, OPTIONS)).toEqual({
+            document: parseMarkdown(markdown, OPTIONS),
+            losses: [
+                { type: 'image', line: 3 },
+                { type: 'link_title', line: 5 },
+            ],
+        });
+    });
+
+    it.each(['> # Heading', '> - Item', '> > Nested quote', '> First\n>\n> Second'])(
+        'reports quote structure that the document cannot keep in %j',
+        (markdown) => {
+            expect(parseMarkdownWithLosses(markdown, OPTIONS).losses).toContainEqual({
+                type: 'blockquote_open',
+                line: 1,
+            });
+        },
+    );
+
+    it('reports the loss of formatting without a reader', () => {
+        const markdown = '**Bold**\n\n---\n\n```ts\nlet x = 1;\n```';
+
+        expect(parseMarkdownWithLosses(markdown, { plugins: [] }).losses).toEqual([
+            { type: 'strong_open', line: 1 },
+            { type: 'hr', line: 3 },
+            { type: 'fence', line: 5 },
+        ]);
     });
 });
 
@@ -184,7 +227,10 @@ describe('parseMarkdown code blocks', () => {
     });
 
     it('reads a fence as a code block holding its lines', () => {
-        expect(parseMarkdown('```\none\ntwo\n```', OPTIONS)).toEqual(plain('one\ntwo'));
+        expect(parseMarkdownWithLosses('```\none\ntwo\n```', OPTIONS)).toEqual({
+            document: plain('one\ntwo'),
+            losses: [],
+        });
     });
 
     it('reads the first word of the info string as the language', () => {
@@ -335,10 +381,10 @@ describe('parseMarkdown with nothing to read a token by', () => {
         expect(parseMarkdown('```\n\n\n```', WITHOUT_CODE_BLOCK)).toEqual(EMPTY_DOCUMENT);
     });
 
-    it('reads a code fence holding only a non-breaking space as an empty paragraph', () => {
+    it('keeps a literal non-breaking space from a code fence', () => {
         expect(parseMarkdown('```\n\u00A0\n```', WITHOUT_CODE_BLOCK)).toEqual({
             version: 1,
-            blocks: [{ type: 'paragraph', children: [] }],
+            blocks: [{ type: 'paragraph', children: [{ text: '\u00A0' }] }],
         });
     });
 
