@@ -56,9 +56,9 @@ export type ButtonHoverLook = {
 export type LinkBoxLook = {
     paddingTop?: string;
     paddingBottom?: string;
-    /** Padding where a line of text starts: the left in left-to-right text, the right in right-to-left text. */
+    /** Padding where a line of text starts: the left, or the right under a `dir="rtl"` attribute. */
     paddingInlineStart?: string;
-    /** Padding where a line of text ends: the right in left-to-right text, the left in right-to-left text. */
+    /** Padding where a line of text ends: the right, or the left under a `dir="rtl"` attribute. */
     paddingInlineEnd?: string;
     backgroundColor?: string;
     borderColor?: string;
@@ -80,15 +80,15 @@ const LINK_BOX_LOOK_FIELDS = {
 /** The paddings a button look took before the inline ones, which stay on their side in either text direction. */
 type ButtonPhysicalPaddingLook = {
     /**
-     * Padding on the left in either text direction, as set by a `dir` attribute. A `paddingInlineStart` or
-     * `paddingInlineEnd` that lands on the same side wins.
+     * Padding on the left, whatever the text direction. A `paddingInlineStart` or `paddingInlineEnd` that lands on
+     * the same side wins.
      *
      * @deprecated Use paddingInlineStart instead, or paddingInlineEnd for right-to-left text.
      */
     paddingLeft?: string;
     /**
-     * Padding on the right in either text direction, as set by a `dir` attribute. A `paddingInlineStart` or
-     * `paddingInlineEnd` that lands on the same side wins.
+     * Padding on the right, whatever the text direction. A `paddingInlineStart` or `paddingInlineEnd` that lands on
+     * the same side wins.
      *
      * @deprecated Use paddingInlineEnd instead, or paddingInlineStart for right-to-left text.
      */

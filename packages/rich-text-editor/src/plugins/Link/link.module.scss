@@ -26,8 +26,8 @@ $border-width: 1px;
         );
         padding-top: var(--rte-link-padding-top, 0);
         padding-bottom: var(--rte-link-padding-bottom, 0);
-        padding-inline-start: var(--rte-link-padding-inline-start, 0);
-        padding-inline-end: var(--rte-link-padding-inline-end, 0);
+        padding-left: var(--rte-link-padding-inline-start, 0);
+        padding-right: var(--rte-link-padding-inline-end, 0);
         background-color: var(--rte-link-background-color, transparent);
         border-color: var(--rte-link-border-color, currentcolor);
         border-width: var(--rte-link-border-width, #{$border-width});
@@ -37,6 +37,12 @@ $border-width: 1px;
         // A link that wraps draws its box, padding and border on each line.
         -webkit-box-decoration-break: clone;
         box-decoration-break: clone;
+
+        // The start and end fields follow the `dir` attribute, not the CSS `direction` property.
+        &:dir(rtl) {
+            padding-left: var(--rte-link-padding-inline-end, 0);
+            padding-right: var(--rte-link-padding-inline-start, 0);
+        }
     }
 
     @include link.underline;
@@ -106,11 +112,11 @@ $buttons: (
             color: var(--rte-button-#{$kind}-color, #{map.get($button, color)});
             padding-top: var(--rte-button-#{$kind}-padding-top, var(--spacing-x-small));
             padding-bottom: var(--rte-button-#{$kind}-padding-bottom, var(--spacing-x-small));
-            padding-inline-start: var(
+            padding-left: var(
                 --rte-button-#{$kind}-padding-inline-start,
                 var(--rte-button-#{$kind}-padding-left, var(--spacing-small))
             );
-            padding-inline-end: var(
+            padding-right: var(
                 --rte-button-#{$kind}-padding-inline-end,
                 var(--rte-button-#{$kind}-padding-right, var(--spacing-small))
             );
@@ -119,15 +125,15 @@ $buttons: (
             border-width: var(--rte-button-#{$kind}-border-width, #{$border-width});
             border-radius: var(--rte-button-#{$kind}-border-radius, var(--border-radius-medium));
 
-            // In right-to-left text the left padding is the end side, so the old fields stay on their side.
+            // The start and end fields follow the `dir` attribute; the left and right fields stay on their side.
             &:dir(rtl) {
-                padding-inline-start: var(
-                    --rte-button-#{$kind}-padding-inline-start,
-                    var(--rte-button-#{$kind}-padding-right, var(--spacing-small))
-                );
-                padding-inline-end: var(
+                padding-left: var(
                     --rte-button-#{$kind}-padding-inline-end,
                     var(--rte-button-#{$kind}-padding-left, var(--spacing-small))
+                );
+                padding-right: var(
+                    --rte-button-#{$kind}-padding-inline-start,
+                    var(--rte-button-#{$kind}-padding-right, var(--spacing-small))
                 );
             }
         }

@@ -1234,6 +1234,15 @@ const setDirection = async (component: Locator, direction: TextDirection): Promi
     }
 };
 
+/** Makes both surfaces right-to-left through CSS `direction` alone, as a page does that sets no `dir` attribute. */
+const setCssDirectionRightToLeft = async (component: Locator): Promise<void> => {
+    for (const surface of SURFACES) {
+        await component.getByTestId(surface).evaluate((element) => {
+            element.style.direction = 'rtl';
+        });
+    }
+};
+
 const expectPaddings = async (component: Locator, linkName: string, expected: SidePaddings): Promise<void> => {
     for (const surface of SURFACES) {
         const link = component.getByTestId(surface).getByRole('link', { name: linkName, exact: true });
@@ -1295,6 +1304,20 @@ test.describe('host styling of link padding in both text directions', () => {
             await expectPaddings(component, BUTTON_LINK_TEXT, { left: PADDING_LEFT, right: PADDING_RIGHT });
         });
     }
+
+    test('keeps the left and right padding of a button link on their sides under CSS direction with no dir attribute', async ({
+        mount,
+    }) => {
+        const component = await mount(
+            <HostLooksPair
+                value={BUTTON_LINKS_DOCUMENT}
+                buttons={{ primary: { paddingLeft: PADDING_LEFT, paddingRight: PADDING_RIGHT } }}
+            />,
+        );
+        await setCssDirectionRightToLeft(component);
+
+        await expectPaddings(component, BUTTON_LINK_TEXT, { left: PADDING_LEFT, right: PADDING_RIGHT });
+    });
 
     test('lets the start padding win over the left padding of a button link in left-to-right text', async ({
         mount,
