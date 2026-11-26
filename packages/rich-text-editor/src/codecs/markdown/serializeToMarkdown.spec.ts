@@ -216,7 +216,7 @@ describe('serializeToMarkdown trailing breaks', () => {
 });
 
 describe('serializeToMarkdown whitespace-only text', () => {
-    it('writes a text block of spaces as the empty block', () => {
+    it('writes a text block of spaces as character references', () => {
         const document: RteDocumentOf = {
             version: 1,
             blocks: [
@@ -225,10 +225,10 @@ describe('serializeToMarkdown whitespace-only text', () => {
             ],
         };
 
-        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: 'a\n\n&nbsp;', losses: [] });
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: 'a\n\n&#x20;&#x20;', losses: [] });
     });
 
-    it('writes a block of only a non-breaking space as the empty block', () => {
+    it('writes a literal non-breaking space on its own line', () => {
         const document: RteDocumentOf = {
             version: 1,
             blocks: [
@@ -237,7 +237,7 @@ describe('serializeToMarkdown whitespace-only text', () => {
             ],
         };
 
-        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: 'a\n\n&nbsp;', losses: [] });
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: 'a\n\n\u00A0', losses: [] });
     });
 });
 
@@ -734,7 +734,7 @@ describe('serializeToMarkdown mentions', () => {
         };
 
         expect(serializeToMarkdown(document, options)).toEqual({
-            markdown: 'Hi',
+            markdown: 'Hi&#x20;',
             losses: [{ path: [0, 1], type: 'mention' }],
         });
     });
@@ -755,7 +755,7 @@ describe('serializeToMarkdown mentions', () => {
         };
 
         expect(serializeToMarkdown(document, options)).toEqual({
-            markdown: 'Hi',
+            markdown: 'Hi&#x20;',
             losses: [{ path: [0, 1], type: 'mention' }],
         });
     });
@@ -872,7 +872,9 @@ describe('serializeToMarkdown text that does not read back', () => {
     });
 
     it('reports only the mark that does not read back when the inline beside it reads back exactly', () => {
-        const document: RteDocumentWith<{ inline: { type: 'userInline'; id: string } }> = {
+        const document: RteDocumentWith<
+            { mark: { emptyMark: boolean } } | { inline: { type: 'userInline'; id: string } }
+        > = {
             version: 1,
             blocks: [
                 {
@@ -892,18 +894,19 @@ describe('serializeToMarkdown text that does not read back', () => {
     });
 
     it('reports a mark that does not read back although an overridden mention sits beside it', () => {
-        const document: RteDocumentWith<{ inline: { type: 'mention'; id: string } }> = {
-            version: 1,
-            blocks: [
-                {
-                    type: 'paragraph',
-                    children: [
-                        { text: 'a', plusMark: true },
-                        { type: 'mention', id: '1' },
-                    ],
-                },
-            ],
-        };
+        const document: RteDocumentWith<{ mark: { plusMark: boolean } } | { inline: { type: 'mention'; id: string } }> =
+            {
+                version: 1,
+                blocks: [
+                    {
+                        type: 'paragraph',
+                        children: [
+                            { text: 'a', plusMark: true },
+                            { type: 'mention', id: '1' },
+                        ],
+                    },
+                ],
+            };
 
         expect(
             serializeToMarkdown(document, {

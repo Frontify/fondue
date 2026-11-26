@@ -36,7 +36,6 @@ import {
     encodeLineEdges,
     type InlineToken,
     isSpaceToken,
-    withoutBlockEdgeSpace,
 } from './inlineTokens';
 import { type Tokenize } from './markdownIt';
 import {
@@ -485,24 +484,32 @@ const addRuns = (
             case 'output':
                 if (state.forms.overridden.inlines.has(piece.type)) {
                     addOverrideRuns(runs, piece, marks, state);
-                } else {
-                    addInlineRun(runs, piece.type, piece.value, piece.path, plainTextOutputOf(piece.output));
+
+                    break;
                 }
+
+                addInlineRun(runs, piece.type, piece.value, piece.path, plainTextOutputOf(piece.output));
                 break;
             case 'mark':
                 if (isDropped(piece, dropped)) {
                     addRuns(runs, piece.pieces, marks, dropped, state);
-                } else if (state.forms.overridden.marks.has(piece.mark.name)) {
-                    addOverrideMarkRuns(runs, piece, marks, dropped, state);
-                } else {
-                    addRuns(
-                        runs,
-                        piece.pieces,
-                        [...marks, { name: piece.mark.name, value: piece.mark.value, paths: piece.paths }],
-                        dropped,
-                        state,
-                    );
+
+                    break;
                 }
+
+                if (state.forms.overridden.marks.has(piece.mark.name)) {
+                    addOverrideMarkRuns(runs, piece, marks, dropped, state);
+
+                    break;
+                }
+
+                addRuns(
+                    runs,
+                    piece.pieces,
+                    [...marks, { name: piece.mark.name, value: piece.mark.value, paths: piece.paths }],
+                    dropped,
+                    state,
+                );
                 break;
         }
     }
@@ -814,10 +821,9 @@ const attemptOf = (
     const losses: MarkdownLoss[] = [];
     const laidOut: InlineToken[] = [];
     appendTokens(laidOut, pieces, 'escaped', { losses, emphasis });
-    const trimmed = withoutBlockEdgeSpace(laidOut);
-    encodeLineEdges(trimmed);
+    encodeLineEdges(laidOut);
 
-    const { tokens, dropped } = fixFlanking(trimmed);
+    const { tokens, dropped } = fixFlanking(laidOut);
     for (const { paths, mark } of dropped) {
         reportMarkLoss(losses, mark, paths);
     }
