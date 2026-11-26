@@ -2873,6 +2873,32 @@ describe('pasting', () => {
     });
 });
 
+describe('a mention with no username', () => {
+    const GERMAN_LABELS = {
+        user: 'Unbekannte Person',
+        group: 'Unbekannte Gruppe',
+        all: 'Unbekannte Erwähnung',
+    } as const;
+    const plugins = [...defaultPlugins, mentionPlugin({ items: [], unknownLabels: GERMAN_LABELS })];
+    const unnamed: RteDocument = {
+        version: 1,
+        blocks: [{ type: 'paragraph', children: [{ type: 'mention', id: 'x', username: '', name: '' }] }],
+    };
+
+    it('shows the label the host gave, in the readonly view', () => {
+        const container = render(<RichTextRenderer value={unnamed} plugins={plugins} />);
+
+        expect(container.textContent).toContain(GERMAN_LABELS.user);
+    });
+
+    it('shows the label the host gave, in the editor', () => {
+        const { container, ready } = mount(() => <RichTextEditor value={unnamed} plugins={plugins} />);
+        ready();
+
+        expect(container.textContent).toContain(GERMAN_LABELS.user);
+    });
+});
+
 describe('exported links', () => {
     it('drop a target that could run script', () => {
         const html = serializeToHtml(

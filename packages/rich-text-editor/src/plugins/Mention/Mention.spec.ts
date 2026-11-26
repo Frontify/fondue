@@ -11,6 +11,9 @@ const JANE = { id: 'jane', username: 'jane', name: 'Jane Doe' };
 const DESIGN = { id: 'design', username: 'design', name: 'Design team', kind: 'group' } as const;
 const ALL = { id: 'all', username: 'all', name: 'Everyone', kind: 'all' } as const;
 
+const ENGLISH_LABELS = { user: 'Unknown person', group: 'Unknown group', all: 'Unknown mention' } as const;
+const GERMAN_LABELS = { user: 'Unbekannte Person', group: 'Unbekannte Gruppe', all: 'Unbekannte Erwähnung' } as const;
+
 const mentionFor = (href?: string) =>
     mentionPlugin({ items: [JANE], href: href === undefined ? undefined : () => href }).content?.inlines?.mention;
 
@@ -62,5 +65,47 @@ describe('a stored mention that is missing a field', () => {
         expect(() => mention?.toHtml(wrongType)).not.toThrow();
         expect(mention?.toHtml(wrongType).children).toEqual([{ tag: 'bdi', children: 'Unknown person' }]);
         expect(mention?.toHtml(wrongType).attrs?.['data-mention-kind']).toBeUndefined();
+    });
+});
+
+describe('the labels for a stored mention with no username', () => {
+    const emptyOf = (kind: 'user' | 'group' | 'all') => ({ id: 'x', username: '', name: '', kind });
+    const labelsIn = (mention: ReturnType<typeof mentionContent>['inlines']['mention']) => ({
+        user: mention?.toHtml(emptyOf('user')).children,
+        group: mention?.toHtml(emptyOf('group')).children,
+        all: mention?.toHtml(emptyOf('all')).children,
+    });
+    const shown = (label: string) => [{ tag: 'bdi', children: label }];
+
+    it('are the ones the host gave to mentionContent, one per kind', () => {
+        const labels = labelsIn(mentionContent({ unknownLabels: GERMAN_LABELS }).inlines?.mention);
+
+        expect(labels).toEqual({
+            user: shown(GERMAN_LABELS.user),
+            group: shown(GERMAN_LABELS.group),
+            all: shown(GERMAN_LABELS.all),
+        });
+    });
+
+    it('keep their English label for a kind the host left out', () => {
+        const labels = labelsIn(mentionContent({ unknownLabels: { group: GERMAN_LABELS.group } }).inlines?.mention);
+
+        expect(labels).toEqual({
+            user: shown(ENGLISH_LABELS.user),
+            group: shown(GERMAN_LABELS.group),
+            all: shown(ENGLISH_LABELS.all),
+        });
+    });
+
+    it('are the ones the host gave to mentionPlugin', () => {
+        const labels = labelsIn(
+            mentionPlugin({ items: [JANE], unknownLabels: GERMAN_LABELS }).content?.inlines?.mention,
+        );
+
+        expect(labels).toEqual({
+            user: shown(GERMAN_LABELS.user),
+            group: shown(GERMAN_LABELS.group),
+            all: shown(GERMAN_LABELS.all),
+        });
     });
 });
