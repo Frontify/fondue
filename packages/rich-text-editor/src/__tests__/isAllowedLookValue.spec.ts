@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// A host filters values on a server before building a look, so this runs without a browser.
+// A host can filter values before building a look without a browser.
 // @vitest-environment node
 
 import { describe, expect, it } from 'vitest';
 
 import { lookProperties } from '../core';
-import { isSafeCssValue } from '../index';
+import { isAllowedLookValue } from '../index';
 
 const ACCEPTED_VALUES = [
     '16px',
@@ -34,17 +34,17 @@ const REJECTED_VALUES = [
 const PROBE_KEY = 'probe';
 const PROBE_FIELDS = { color: 'color' };
 
-describe('isSafeCssValue', () => {
+describe('isAllowedLookValue', () => {
     it.each(ACCEPTED_VALUES)('returns true for %s', (value) => {
-        expect(isSafeCssValue(value)).toBe(true);
+        expect(isAllowedLookValue(value)).toBe(true);
     });
 
     it.each(REJECTED_VALUES)('returns false for %s', (value) => {
-        expect(isSafeCssValue(value)).toBe(false);
+        expect(isAllowedLookValue(value)).toBe(false);
     });
 
     it.each([...ACCEPTED_VALUES, ...REJECTED_VALUES])('agrees with what a look accepts for %s', (value) => {
-        if (isSafeCssValue(value)) {
+        if (isAllowedLookValue(value)) {
             expect(() => lookProperties(PROBE_KEY, { color: value }, PROBE_FIELDS)).not.toThrow();
         } else {
             expect(() => lookProperties(PROBE_KEY, { color: value }, PROBE_FIELDS)).toThrow();

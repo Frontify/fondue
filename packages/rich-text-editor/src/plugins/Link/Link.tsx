@@ -69,7 +69,7 @@ export type LinkContentOptions = {
     /**
      * How each kind of link looks in the editor, the readonly view and the HTML export. Values are CSS strings, so
      * `var(--f-theme-settings-button-primary-color)` works and wrapper overrides keep working. A kind, button style or
-     * field left out keeps Fondue's look. A value that `isSafeCssValue` rejects throws an error that
+     * field left out keeps Fondue's look. A value that `isAllowedLookValue` rejects throws an error that
      * names the field. A look never offers a kind: `look.button` alone only styles buttons already stored.
      */
     look?: LinkLook;

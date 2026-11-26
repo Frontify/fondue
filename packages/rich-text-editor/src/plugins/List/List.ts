@@ -132,7 +132,7 @@ const numberedList = defineBlock<NumberedListValue>({
 /**
  * How a bulleted list looks at one nesting level. Each value is any CSS value, a guideline variable
  * (`var(--f-theme-settings-list-bullet1-color)`) included. A field left out keeps Fondue's look.
- * A value `isSafeCssValue` rejects throws; check values you don't control with it first.
+ * A look throws if `isAllowedLookValue` rejects a value. Use the check before passing values from external sources.
  */
 export type BulletLevelLook = {
     /**
@@ -216,7 +216,7 @@ const listLookProperties = <TLevel extends Partial<Record<string, string>>>(
 export type BulletListPluginOptions = {
     /**
      * How the list looks at its first three nesting levels, outermost first. A level or a field left out keeps
-     * Fondue's look. A value that `isSafeCssValue` rejects throws an error naming the level.
+     * Fondue's look. A value that `isAllowedLookValue` rejects throws an error naming the level.
      * @default []
      */
     look?: BulletListLook;
@@ -225,7 +225,7 @@ export type BulletListPluginOptions = {
 export type NumberedListPluginOptions = {
     /**
      * How the list looks at its first three nesting levels, outermost first. A level or a field left out keeps
-     * Fondue's look. A value that `isSafeCssValue` rejects throws an error naming the level.
+     * Fondue's look. A value that `isAllowedLookValue` rejects throws an error naming the level.
      * @default []
      */
     look?: NumberedListLook;

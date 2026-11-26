@@ -94,7 +94,7 @@ const LINK_BOX_LOOK_FIELDS = {
 /**
  * How a button link looks. Each value is any CSS value, a host variable
  * (`var(--brand-button-color)`) included. A field left out keeps Fondue's look.
- * A value `isSafeCssValue` rejects throws; check values you don't control with it first.
+ * A look throws if `isAllowedLookValue` rejects a value. Use the check before passing values from external sources.
  */
 export type ButtonLook = TextLook & LinkBoxLook & { hover?: ButtonHoverLook };
 
@@ -141,7 +141,7 @@ export const BUTTON_HOVER_LOOK_FIELDS = {
 /**
  * The custom properties the buttons' looks set, which `link.module.scss` reads with Fondue's look as the fallback.
  *
- * @throws When `isSafeCssValue` rejects a value, naming the appearance and the field.
+ * @throws When `isAllowedLookValue` rejects a value, naming the appearance and the field.
  */
 export const buttonLookProperties = (
     looks: Readonly<Partial<Record<LinkAppearance, ButtonLook>>>,
