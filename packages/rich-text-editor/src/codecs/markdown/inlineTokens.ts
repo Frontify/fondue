@@ -2,8 +2,9 @@
 
 // A text block's inlines laid out as the tokens of one stretch of Markdown, before any of it is written.
 
+import { EMPTY_BLOCK_TEXT } from './emptyBlock';
 import { type TextScope } from './escape';
-import { canBeReferenced, isMarkdownWhitespace } from './markdownIt';
+import { canBeReferenced, isMarkdownWhitespace, isTrimmedAtBlockEdge } from './markdownIt';
 
 /** The open and the close delimiter of one mark, which share it: `paths` is every text the mark covers. */
 export type DelimiterPair = { mark: string; paths: readonly (readonly number[])[] };
@@ -48,9 +49,6 @@ export const isReferenceable = (token: CharToken): boolean => {
     return canBeReferenced(codePoint);
 };
 
-/** Whether a reader strips the character at the edge of a line: markdown-it trims it with `String.prototype.trim`. */
-export const isTrimmed = (char: string): boolean => char.trim() === '';
-
 /** Whether the character is trimmed at the edge of a block and a reference could spell it, so the writer leaves it out there. */
 export const isEdgeSpace = (char: string): boolean => {
     const codePoint = char.codePointAt(0);
@@ -58,11 +56,11 @@ export const isEdgeSpace = (char: string): boolean => {
         return false;
     }
 
-    return isTrimmed(char) && canBeReferenced(codePoint);
+    return isTrimmedAtBlockEdge(char) && canBeReferenced(codePoint);
 };
 
 const isTrimmedToken = (token: InlineToken | undefined): token is CharToken =>
-    token?.kind === 'char' && isTrimmed(token.char);
+    token?.kind === 'char' && isTrimmedAtBlockEdge(token.char);
 
 // A trimmed character no reference can spell stays as it is: nothing makes it survive.
 const encodeTrimmedRun = (run: readonly InlineToken[]): void => {
@@ -96,8 +94,18 @@ export const encodeLineEdges = (tokens: readonly InlineToken[]): void => {
 
 const isEdgeSpaceToken = (token: InlineToken): boolean => token.kind === 'char' && isEdgeSpace(token.char);
 
+/** Whether the character counts as empty in a block: what the reader trims, and the character that spells the empty block. */
+export const isBlank = (char: string): boolean => isTrimmedAtBlockEdge(char) || char === EMPTY_BLOCK_TEXT;
+
+const isBlankToken = (token: InlineToken): boolean => token.kind === 'char' && isBlank(token.char);
+
 /** The tokens without the whitespace at the start of the first line and the end of the last, which a reader trims. */
 export const withoutBlockEdgeSpace = (tokens: readonly InlineToken[]): InlineToken[] => {
+    // A block of only blanks is the empty block, which the reader gives back for the empty block character too.
+    if (tokens.every(isBlankToken)) {
+        return [];
+    }
+
     let start = 0;
     while (isTrimmedToken(tokens[start])) {
         start++;

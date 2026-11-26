@@ -68,6 +68,9 @@ const WWW_DOT = /(?<=www)\./gi;
 /** An `@` that is not at the start of a line or right after whitespace, where a reader may link an email address. */
 const EMAIL_AT = /(?<!^|\s)@/g;
 
+/** A run of non-whitespace, which is as far as a reader's autolink reaches. */
+const WORD = /\S+/gu;
+
 /** A `!` that ends the text, which would make a link written right after it an image. */
 const TRAILING_BANG = /!$/;
 
@@ -108,6 +111,26 @@ const indexesOf = (text: string, patterns: readonly RegExp[]): Set<number> => {
     }
 
     return indexes;
+};
+
+const isWithin = (index: number, start: number, end: number): boolean => index >= start && index < end;
+
+/** In a link's text a reader takes a backslash into an address, so a word that has an escape also needs its address escapes. */
+const addAddressEscapesInEscapedWords = (text: string, indexes: Set<number>): void => {
+    const addressIndexes = indexesOf(text, ADDRESS_PATTERNS);
+    for (const match of text.matchAll(WORD)) {
+        const start = match.index;
+        const end = start + match[0].length;
+        if (![...indexes].some((index) => isWithin(index, start, end))) {
+            continue;
+        }
+
+        for (const index of addressIndexes) {
+            if (isWithin(index, start, end)) {
+                indexes.add(index);
+            }
+        }
+    }
 };
 
 /** The `~` of the text that sits next to another, in the text or in the Markdown written right beside it. */
@@ -166,6 +189,10 @@ export const escapeText = (
     const indexes = indexesOf(text, [...patternsOf(scope), BACKSLASH_BEFORE_ESCAPABLE]);
     for (const index of tildeIndexesOf(text, neighbours)) {
         indexes.add(index);
+    }
+
+    if (scope === 'linkText') {
+        addAddressEscapesInEscapedWords(text, indexes);
     }
 
     const escaped = escapeAt(text, indexes);

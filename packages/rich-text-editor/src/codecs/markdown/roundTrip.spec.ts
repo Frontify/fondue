@@ -553,7 +553,7 @@ const EDGE_WHITESPACE_CASES: readonly RoundTripCase[] = [
     },
     {
         name: 'a line separator and a zero-width no-break space at the start of a line after a break',
-        markdown: 'a\\\n&#x2028;&#xFEFF;b',
+        markdown: 'a\\\n\u2028\uFEFFb',
         document: {
             version: 1,
             blocks: [
@@ -566,7 +566,7 @@ const EDGE_WHITESPACE_CASES: readonly RoundTripCase[] = [
     },
     {
         name: 'a tab and a no-break space next to a line break',
-        markdown: 'a&#xA0;\\\n&#x9;b',
+        markdown: 'a\u00A0\\\n&#x9;b',
         document: {
             version: 1,
             blocks: [{ type: 'paragraph', children: [{ text: 'a\u00A0' }, { type: 'break' }, { text: '\tb' }] }],
@@ -1133,6 +1133,21 @@ const LINK_TEXT_CASES: readonly RoundTripCase[] = [
         document: textDocument({ text: 'a*b]c[d', link: { href: 'https://example.com' } }),
     },
     {
+        name: 'a link whose text ends an address with a closing bracket',
+        markdown: String.raw`see [http\:\//x.com/a\]](u)`,
+        document: textDocument({ text: 'see ' }, { text: 'http://x.com/a]', link: { href: 'u' } }),
+    },
+    {
+        name: 'a link whose text is an address with an asterisk',
+        markdown: String.raw`[http\:\//x.com/a\*b](u)`,
+        document: textDocument({ text: 'http://x.com/a*b', link: { href: 'u' } }),
+    },
+    {
+        name: 'a link whose text holds an address and another word with a closing bracket',
+        markdown: String.raw`[http://x.com a\]](u)`,
+        document: textDocument({ text: 'http://x.com a]', link: { href: 'u' } }),
+    },
+    {
         name: 'an address next to a link, outside its text',
         markdown: String.raw`www\.x.com [www.x.com](https://example.com)`,
         document: textDocument({ text: 'www.x.com ' }, { text: 'www.x.com', link: { href: 'https://example.com' } }),
@@ -1167,6 +1182,18 @@ describe('markdown round trip of whitespace at the edge of a block', () => {
 
     it('writes a line that read as a block start once its leading space is gone as text', () => {
         readBackWithoutEdges(textDocument({ text: ' - x' }), String.raw`\- x`, textDocument({ text: '- x' }));
+    });
+
+    it.each([
+        { name: 'a no-break space at the start', text: '\u00A0Hello' },
+        { name: 'an ideographic space at the end', text: 'x\u3000' },
+        { name: 'an em space at the start', text: '\u2003y' },
+    ])('keeps $name, which the reader does not trim', ({ text }) => {
+        const document = textDocument({ text });
+        const { markdown, losses } = serializeToMarkdown(document, OPTIONS);
+
+        expect(losses).toEqual([]);
+        expect(parseMarkdown(markdown, OPTIONS)).toEqual(document);
     });
 
     it('drops the spaces at the ends of a heading', () => {

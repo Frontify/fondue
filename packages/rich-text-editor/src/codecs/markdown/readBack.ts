@@ -7,8 +7,8 @@ import { INLINE_PLACEHOLDER, type RteInlineNode } from '#/core';
 import { canonicalOf, sameValue } from './canonical';
 import { isWhitespace } from './escape';
 import { type OverriddenForms } from './forms';
-import { isEdgeSpace, isTrimmed } from './inlineTokens';
-import { INLINE_TOKEN, PARAGRAPH_CLOSE, PARAGRAPH_OPEN, type Tokenize } from './markdownIt';
+import { isBlank, isEdgeSpace } from './inlineTokens';
+import { INLINE_TOKEN, isTrimmedAtBlockEdge, PARAGRAPH_CLOSE, PARAGRAPH_OPEN, type Tokenize } from './markdownIt';
 import { readInlines, type ReadContext, withoutPlaceholder } from './read';
 
 type Path = readonly number[];
@@ -122,7 +122,7 @@ type Edge = 'start' | 'end';
 const withoutLeadingEdgeSpace = (chars: readonly string[]): string[] => {
     let start = 0;
     for (const char of chars) {
-        if (!isTrimmed(char)) {
+        if (!isTrimmedAtBlockEdge(char)) {
             break;
         }
         start++;
@@ -161,6 +161,11 @@ const trimEdgeRun = (runs: Run[], edge: Edge): void => {
 
 /** The runs of a block without the whitespace the writer leaves out at the start of its first line and the end of its last. */
 const withoutBlockEdgeSpace = (runs: readonly Run[]): Run[] => {
+    // A block of only blanks is the empty block.
+    if (runs.every((run) => run.kind === 'text' && [...run.text].every(isBlank))) {
+        return [];
+    }
+
     const trimmed = [...runs];
     trimEdgeRun(trimmed, 'start');
     trimEdgeRun(trimmed, 'end');
