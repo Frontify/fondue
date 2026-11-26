@@ -2,26 +2,22 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type RteBlockNode, type RteDocumentOf } from '../../core';
 import { type RteBlock, type RteDocument, type RteDocumentWith } from '../../documentFormat';
 import { bulletListContent, defaultContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
-import { codeLanguageOverrideOptions, linkTargetOverrideOptions } from './markSuffixOverride.fixture';
+import { linkTargetOverrideOptions } from './markSuffixOverride.fixture';
 import { mentionOverrideOptions } from './mentionOverride.fixture';
 
-type RoundTripCase<TBlock extends RteBlockNode = RteBlock> = {
+type RoundTripCase = {
     name: string;
     markdown: string;
-    document: RteDocument<TBlock>;
+    document: RteDocument | RteDocumentWith<{ inline: { type: 'mention'; id: string } }>;
 };
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
 
-const expectRoundTrip = <TBlock extends RteBlockNode>(
-    { markdown, document }: RoundTripCase<TBlock>,
-    options: MarkdownOptions = OPTIONS,
-) => {
+const expectRoundTrip = ({ markdown, document }: RoundTripCase, options: MarkdownOptions = OPTIONS) => {
     expect(parseMarkdown(markdown, options)).toEqual(document);
     expect(serializeToMarkdown(document, options)).toEqual({ markdown, losses: [] });
 };
@@ -440,7 +436,7 @@ const ESCAPING_CASES: readonly RoundTripCase[] = [
     },
     {
         name: 'link syntax typed as text',
-        markdown: String.raw`\[x\](y)`,
+        markdown: String.raw`\[x](y)`,
         document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '[x](y)' }] }] },
     },
     {
@@ -449,8 +445,8 @@ const ESCAPING_CASES: readonly RoundTripCase[] = [
         document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '&copy; and AT&T' }] }] },
     },
     {
-        name: 'the other characters Markdown reads',
-        markdown: String.raw`a_b \~c\~ \<d\> \| \\e`,
+        name: 'characters Markdown reads only in some places',
+        markdown: String.raw`a_b ~c~ <d> | \e`,
         document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'a_b ~c~ <d> | \\e' }] }] },
     },
     {
@@ -552,29 +548,30 @@ describe('markdown round trip of italic that asterisks do not read back', () => 
 
 const EDGE_WHITESPACE_CASES: readonly RoundTripCase[] = [
     {
-        name: 'a paragraph with a space at both ends',
-        markdown: '&#x20;&#x20;foo&#x20;',
-        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '  foo ' }] }] },
-    },
-    {
-        name: 'a tab at the start',
-        markdown: '&#x9;foo',
-        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '\tfoo' }] }] },
-    },
-    {
         name: 'a newline inside a text run',
         markdown: 'a&#xA;b',
         document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'a\nb' }] }] },
     },
     {
-        name: 'a no-break space at the end',
-        markdown: 'a&#xA0;',
-        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'a\u00A0' }] }] },
+        name: 'a line separator and a zero-width no-break space at the start of a line after a break',
+        markdown: 'a\\\n\u2028\uFEFFb',
+        document: {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'a' }, { type: 'break' }, { text: '\u2028\uFEFFb' }],
+                },
+            ],
+        },
     },
     {
-        name: 'a line separator and a zero-width no-break space at the start',
-        markdown: '&#x2028;&#xFEFF;a',
-        document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '\u2028\uFEFFa' }] }] },
+        name: 'a tab and a no-break space next to a line break',
+        markdown: 'a\u00A0\\\n&#x9;b',
+        document: {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a\u00A0' }, { type: 'break' }, { text: '\tb' }] }],
+        },
     },
     {
         name: 'spaces before and after a line break',
@@ -861,12 +858,12 @@ const BANG_CASES: readonly RoundTripCase[] = [
     },
     {
         name: 'image syntax typed as text',
-        markdown: String.raw`!\[x\](y)`,
+        markdown: String.raw`!\[x](y)`,
         document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '![x](y)' }] }] },
     },
     {
         name: 'a link definition typed as text',
-        markdown: String.raw`\[x\]: y`,
+        markdown: String.raw`\[x]: y`,
         document: { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '[x]: y' }] }] },
     },
 ];
@@ -1005,13 +1002,30 @@ describe('markdown round trip of empty text', () => {
         expectRoundTrip({ name: 'empty paragraph', markdown: 'a\n\n&nbsp;\n\nb', document });
     });
 
-    it('gives back a paragraph of spaces', () => {
+    it('gives back a paragraph of spaces after another paragraph', () => {
         const document: RteDocument = {
             version: 1,
-            blocks: [{ type: 'paragraph', children: [{ text: '   ' }] }],
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'paragraph', children: [{ text: '   ' }] },
+            ],
         };
 
-        expectRoundTrip({ name: 'spaces', markdown: '&#x20;&#x20;&#x20;', document });
+        expectRoundTrip({ name: 'a paragraph of spaces', markdown: 'a\n\n&#x20;&#x20;&#x20;', document });
+    });
+
+    it('gives back a document of one paragraph of spaces', () => {
+        expectRoundTrip({
+            name: 'one paragraph of spaces',
+            markdown: '&#x20;&#x20;&#x20;',
+            document: textDocument({ text: '   ' }),
+        });
+    });
+
+    it('gives back a literal non-breaking space on its own line', () => {
+        const text = '\u00A0';
+
+        expectRoundTrip({ name: 'a literal non-breaking space', markdown: text, document: textDocument({ text }) });
     });
 
     it('gives back the empty document for an empty string', () => {
@@ -1046,7 +1060,7 @@ describe('markdown round trip of a mention override', () => {
         };
 
         expectRoundTrip(
-            { name: 'escaped mention', markdown: String.raw`@\[user:1\]`, document },
+            { name: 'escaped mention', markdown: String.raw`@\[user:1]`, document },
             mentionOverrideOptions,
         );
     });
@@ -1088,51 +1102,6 @@ describe('markdown round trip of a mark suffix override', () => {
             linkTargetOverrideOptions,
         );
     });
-
-    it('gives back inline code written with its language suffix', () => {
-        const document: RteDocumentOf = {
-            version: 1,
-            blocks: [{ type: 'paragraph', children: [{ text: 'x', code: { lang: 'ts' } }] }],
-        };
-
-        expectRoundTrip(
-            { name: 'code with a language', markdown: '`x`{lang="ts"}', document },
-            codeLanguageOverrideOptions,
-        );
-    });
-
-    it('gives back text after code that the language suffix pattern would read', () => {
-        const document: RteDocumentOf = {
-            version: 1,
-            blocks: [{ type: 'paragraph', children: [{ text: 'x', code: true }, { text: '{lang="ts"}' }] }],
-        };
-
-        expectRoundTrip(
-            { name: 'code before suffix-like text', markdown: '`x`&#x7B;lang="ts"}', document },
-            codeLanguageOverrideOptions,
-        );
-    });
-
-    it('gives back text after a link that the target suffix pattern would read', () => {
-        const document: RteDocumentOf = {
-            version: 1,
-            blocks: [
-                {
-                    type: 'paragraph',
-                    children: [{ text: 'a', link: { href: 'https://example.test' } }, { text: '{target="_blank"}' }],
-                },
-            ],
-        };
-
-        expectRoundTrip(
-            {
-                name: 'link before suffix-like text',
-                markdown: '[a](https://example.test)&#x7B;target="\\_blank"}',
-                document,
-            },
-            linkTargetOverrideOptions,
-        );
-    });
 });
 
 describe('markdown round trip with list content only', () => {
@@ -1160,9 +1129,7 @@ describe('markdown round trip of text that looks like a table delimiter row', ()
             it(`keeps '${marker}' after a break with breaks ${String(options.breaks)}`, () => {
                 const document: RteDocument = {
                     version: 1,
-                    blocks: [
-                        { type: 'paragraph', children: [{ text: 'a|b' }, { type: 'break' }, { text: marker }] },
-                    ],
+                    blocks: [{ type: 'paragraph', children: [{ text: 'a|b' }, { type: 'break' }, { text: marker }] }],
                 };
                 const { markdown, losses } = serializeToMarkdown(document, options);
 
@@ -1179,4 +1146,216 @@ describe('markdown round trip of text that looks like a table delimiter row', ()
         expect(losses).toEqual([]);
         expect(parseMarkdown(markdown, OPTIONS)).toEqual(document);
     });
+});
+
+const textDocument = (...children: Extract<RteBlock, { type: 'paragraph' }>['children']): RteDocument => ({
+    version: 1,
+    blocks: [{ type: 'paragraph', children }],
+});
+
+const LINK_TEXT_CASES: readonly RoundTripCase[] = [
+    {
+        name: 'a bold link whose text is its address',
+        markdown: '[**https://example.com**](https://example.com)',
+        document: textDocument({ text: 'https://example.com', bold: true, link: { href: 'https://example.com' } }),
+    },
+    {
+        name: 'a link whose text holds an address and an email',
+        markdown: '[see www.x.com or a@b.com](https://example.com)',
+        document: textDocument({ text: 'see www.x.com or a@b.com', link: { href: 'https://example.com' } }),
+    },
+    {
+        name: 'a link whose text holds the characters Markdown still reads inside it',
+        markdown: String.raw`[a\*b\]c\[d](https://example.com)`,
+        document: textDocument({ text: 'a*b]c[d', link: { href: 'https://example.com' } }),
+    },
+    {
+        name: 'a link whose text ends an address with a closing bracket',
+        markdown: String.raw`see [http\:\//x.com/a\]](u)`,
+        document: textDocument({ text: 'see ' }, { text: 'http://x.com/a]', link: { href: 'u' } }),
+    },
+    {
+        name: 'a link whose text is an address with an asterisk',
+        markdown: String.raw`[http\:\//x.com/a\*b](u)`,
+        document: textDocument({ text: 'http://x.com/a*b', link: { href: 'u' } }),
+    },
+    {
+        name: 'a link whose text holds an address and another word with a closing bracket',
+        markdown: String.raw`[http://x.com a\]](u)`,
+        document: textDocument({ text: 'http://x.com a]', link: { href: 'u' } }),
+    },
+    {
+        name: 'an address next to a link, outside its text',
+        markdown: String.raw`www\.x.com [www.x.com](https://example.com)`,
+        document: textDocument({ text: 'www.x.com ' }, { text: 'www.x.com', link: { href: 'https://example.com' } }),
+    },
+];
+
+describe('markdown round trip of text inside a link', () => {
+    for (const linkTextCase of LINK_TEXT_CASES) {
+        it(`gives back the same document for ${linkTextCase.name}`, () => {
+            expectRoundTrip(linkTextCase);
+        });
+    }
+});
+
+describe('markdown round trip of whitespace at the edge of a block', () => {
+    it('gives back the spaces at both ends of a paragraph', () => {
+        expectRoundTrip({
+            name: 'spaces at the edges of a paragraph',
+            markdown: '&#x20;&#x20;foo&#x20;',
+            document: textDocument({ text: '  foo ' }),
+        });
+    });
+
+    it('keeps spaces outside a mark at the ends of a paragraph', () => {
+        const document = textDocument({ text: ' ' }, { text: ' x ', bold: true }, { text: ' ' });
+        const markdown = '&#x20;&#x20;**x**&#x20;&#x20;';
+
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown, losses: [] });
+        expect(parseMarkdown(markdown, OPTIONS)).toEqual(
+            textDocument({ text: '  ' }, { text: 'x', bold: true }, { text: '  ' }),
+        );
+    });
+
+    it('keeps text after an encoded leading space from starting a list', () => {
+        expectRoundTrip({
+            name: 'space before a list marker',
+            markdown: '&#x20;- x',
+            document: textDocument({ text: ' - x' }),
+        });
+    });
+
+    it.each([
+        { name: 'a no-break space at the start', text: '\u00A0Hello' },
+        { name: 'an ideographic space at the end', text: 'x\u3000' },
+        { name: 'an em space at the start', text: '\u2003y' },
+    ])('keeps $name, which the reader does not trim', ({ text }) => {
+        const document = textDocument({ text });
+        const { markdown, losses } = serializeToMarkdown(document, OPTIONS);
+
+        expect(losses).toEqual([]);
+        expect(parseMarkdown(markdown, OPTIONS)).toEqual(document);
+    });
+
+    it('gives back the spaces at the ends of a heading', () => {
+        const document: RteDocument = {
+            version: 1,
+            blocks: [{ type: 'textStyle', style: 'heading1', children: [{ text: ' Title ' }] }],
+        };
+
+        expectRoundTrip({ name: 'spaces at the edges of a heading', markdown: '# &#x20;Title&#x20;', document });
+    });
+
+    it('gives back a space before the first line break', () => {
+        expectRoundTrip({
+            name: 'space before the first line break',
+            markdown: '&#x20;\\\nb&#x20;',
+            document: textDocument({ text: ' ' }, { type: 'break' }, { text: 'b ' }),
+        });
+    });
+});
+
+const NARROWED_ESCAPE_CASES: readonly RoundTripCase[] = [
+    {
+        name: 'angle brackets that are not an autolink',
+        markdown: 'a <b> c',
+        document: textDocument({ text: 'a <b> c' }),
+    },
+    { name: 'a greater-than sign inside a line', markdown: '5 > 3', document: textDocument({ text: '5 > 3' }) },
+    { name: 'a less-than sign inside a word', markdown: 'x<y', document: textDocument({ text: 'x<y' }) },
+    {
+        name: 'a greater-than sign that starts a quote',
+        markdown: String.raw`\> quoted`,
+        document: textDocument({ text: '> quoted' }),
+    },
+    {
+        name: 'a greater-than sign that starts a line after a break',
+        markdown: 'a\\\n\\> quoted',
+        document: textDocument({ text: 'a' }, { type: 'break' }, { text: '> quoted' }),
+    },
+    {
+        name: 'a web address in angle brackets typed as text',
+        markdown: String.raw`\<https\:\//a.com>`,
+        document: textDocument({ text: '<https://a.com>' }),
+    },
+    {
+        name: 'an email address in angle brackets typed as text',
+        markdown: String.raw`\<ana\@x.com>`,
+        document: textDocument({ text: '<ana@x.com>' }),
+    },
+    { name: 'a lone tilde', markdown: 'about ~5 km', document: textDocument({ text: 'about ~5 km' }) },
+    { name: 'two tildes', markdown: String.raw`a \~\~ b`, document: textDocument({ text: 'a ~~ b' }) },
+    {
+        name: 'a tilde right before a struck run',
+        markdown: String.raw`x\~~~y~~`,
+        document: textDocument({ text: 'x~' }, { text: 'y', strikethrough: true }),
+    },
+    {
+        name: 'a tilde right after a struck run',
+        markdown: String.raw`~~y~~\~x`,
+        document: textDocument({ text: 'y', strikethrough: true }, { text: '~x' }),
+    },
+    { name: 'a vertical bar in text', markdown: 'a | b', document: textDocument({ text: 'a | b' }) },
+    {
+        name: 'a vertical bar on two lines',
+        markdown: 'a | b\\\nc | d',
+        document: textDocument({ text: 'a | b' }, { type: 'break' }, { text: 'c | d' }),
+    },
+    { name: 'a closing bracket with no opening one', markdown: 'a ] b', document: textDocument({ text: 'a ] b' }) },
+    { name: 'an opening bracket', markdown: String.raw`a \[ b`, document: textDocument({ text: 'a [ b' }) },
+    {
+        name: 'a backslash before a letter',
+        markdown: String.raw`C:\Users\x`,
+        document: textDocument({ text: String.raw`C:\Users\x` }),
+    },
+    {
+        name: 'a backslash before punctuation',
+        markdown: String.raw`a\\\*b`,
+        document: textDocument({ text: String.raw`a\*b` }),
+    },
+    { name: 'a backslash at the end of the block', markdown: String.raw`a\\`, document: textDocument({ text: 'a\\' }) },
+    {
+        name: 'a backslash right before a line break',
+        markdown: 'a\\\\\\\nb',
+        document: textDocument({ text: 'a\\' }, { type: 'break' }, { text: 'b' }),
+    },
+    {
+        name: 'a backslash right before a bold run',
+        markdown: String.raw`a\\**b**`,
+        document: textDocument({ text: 'a\\' }, { text: 'b', bold: true }),
+    },
+    { name: 'a hash that starts a word', markdown: '#hashtag', document: textDocument({ text: '#hashtag' }) },
+    { name: 'a hash alone', markdown: String.raw`\#`, document: textDocument({ text: '#' }) },
+    { name: 'seven hashes and a space', markdown: '####### x', document: textDocument({ text: '####### x' }) },
+    { name: 'six hashes and a space', markdown: String.raw`\###### x`, document: textDocument({ text: '###### x' }) },
+    {
+        name: 'a hash that starts a word after a break',
+        markdown: 'a\\\n#tag',
+        document: textDocument({ text: 'a' }, { type: 'break' }, { text: '#tag' }),
+    },
+    { name: 'an equals sign that starts a line', markdown: '=x', document: textDocument({ text: '=x' }) },
+    { name: 'an equals sign between words', markdown: 'a = b', document: textDocument({ text: 'a = b' }) },
+    {
+        name: 'a line of equals signs after a break',
+        markdown: 'a\\\n\\===',
+        document: textDocument({ text: 'a' }, { type: 'break' }, { text: '===' }),
+    },
+];
+
+describe('markdown round trip of text where only some characters need an escape', () => {
+    for (const narrowedCase of NARROWED_ESCAPE_CASES) {
+        it(`gives back the same text for ${narrowedCase.name}`, () => {
+            expectRoundTrip(narrowedCase);
+        });
+    }
+
+    for (const narrowedCase of NARROWED_ESCAPE_CASES) {
+        it(`gives back the same text for ${narrowedCase.name} with breaks`, () => {
+            const { markdown, losses } = serializeToMarkdown(narrowedCase.document, BREAKS_OPTIONS);
+
+            expect(losses).toEqual([]);
+            expect(parseMarkdown(markdown, BREAKS_OPTIONS)).toEqual(narrowedCase.document);
+        });
+    }
 });

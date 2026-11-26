@@ -2,7 +2,8 @@
 
 // A text block's inlines laid out as the tokens of one stretch of Markdown, before any of it is written.
 
-import { canBeReferenced, isMarkdownWhitespace } from './markdownIt';
+import { type TextScope } from './escape';
+import { canBeReferenced, isMarkdownWhitespace, isTrimmedAtBlockEdge } from './markdownIt';
 
 /** The open and the close delimiter of one mark, which share it: `paths` is every text the mark covers. */
 export type DelimiterPair = { mark: string; paths: readonly (readonly number[])[] };
@@ -14,6 +15,7 @@ export type CharToken = {
     entity: boolean;
     /** Written as is, never escaped (inline code). */
     verbatim: boolean;
+    scope: TextScope;
 };
 
 export type DelimiterToken = {
@@ -46,9 +48,8 @@ export const isReferenceable = (token: CharToken): boolean => {
     return canBeReferenced(codePoint);
 };
 
-/** Whether a reader strips the character at the edge of a line: markdown-it trims it with `String.prototype.trim`. */
 const isTrimmedToken = (token: InlineToken | undefined): token is CharToken =>
-    token?.kind === 'char' && token.char.trim() === '';
+    token?.kind === 'char' && isTrimmedAtBlockEdge(token.char);
 
 // A trimmed character no reference can spell stays as it is: nothing makes it survive.
 const encodeTrimmedRun = (run: readonly InlineToken[]): void => {

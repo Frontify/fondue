@@ -485,6 +485,11 @@ export type MarkdownDelimiters = {
      * @default false
      */
     literal?: boolean;
+    /**
+     * The text inside is a link's text, where Markdown reads no other link.
+     * @default false
+     */
+    linkText?: boolean;
 };
 
 /** Where an item sits in its list, counted from 0. */

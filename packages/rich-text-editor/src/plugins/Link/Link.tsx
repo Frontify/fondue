@@ -6,13 +6,11 @@ import {
     defineContent,
     defineMark,
     definePlugin,
-    LOOK_PROPERTIES,
     lookProperties,
     type MarkdownDelimiters,
     type MarkdownMarkContent,
     type RteContent,
     type RteHotkey,
-    type TextLook,
 } from '#/core';
 import { translatedLabel } from '#/ui/translation';
 
@@ -28,7 +26,10 @@ import {
     type ButtonLook,
     isLinkAppearance,
     linkClassName,
+    linkLookClassName,
     NO_APPEARANCES,
+    TEXT_LINK_LOOK_FIELDS,
+    type TextLinkLook,
 } from './helpers/appearance';
 import { type LinkSearch } from './helpers/destination';
 import { openNewLinkForm } from './helpers/newLinkForms';
@@ -49,11 +50,6 @@ export type LinkMark = {
      */
     link?: LinkValue;
 };
-
-/**
- * How text links look. A link keeps its underline, and vertical margins do nothing on inline text, so neither is a field.
- */
-export type TextLinkLook = Omit<TextLook, 'textDecoration' | 'marginTop' | 'marginBottom'>;
 
 /** How each kind of link looks. */
 export type LinkLook = {
@@ -126,7 +122,7 @@ const writeLink = (href: string, { text, marked }: MarkdownMarkContent): Markdow
         return { open: '<', close: '>', literal: true };
     }
 
-    return { open: '[', close: `](${markdownDestination(href)})` };
+    return { open: '[', close: `](${markdownDestination(href)})`, linkText: true };
 };
 
 /** A stored document may hold anything here (`{}`, `true`), so its shape is not taken on trust. */
@@ -293,8 +289,9 @@ export const linkContent = ({ kinds = DEFAULT_LINK_KINDS, look }: LinkContentOpt
 
     return defineContent({
         marks: { link: mark },
+        contentClassName: linkLookClassName(look?.text ?? {}, look?.button ?? {}),
         contentProperties: {
-            ...lookProperties(LINK_LOOK_NAME, look?.text ?? {}, LOOK_PROPERTIES),
+            ...lookProperties(LINK_LOOK_NAME, look?.text ?? {}, TEXT_LINK_LOOK_FIELDS),
             ...buttonLookProperties(look?.button ?? {}),
         },
     });
