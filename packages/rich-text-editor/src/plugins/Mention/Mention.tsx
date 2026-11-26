@@ -45,10 +45,7 @@ const assertMentionTrigger = (trigger: string, factory: string): void => {
     }
 };
 
-/**
- * Only whitespace, control and format characters (such as a zero-width space or a direction mark): nothing a
- * reader sees.
- */
+/** Only whitespace, control and format characters, such as a zero-width space or a direction mark. */
 const INVISIBLE_ONLY = /^[\s\p{Cc}\p{Cf}]*$/u;
 
 /**

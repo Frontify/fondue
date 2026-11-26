@@ -17,6 +17,7 @@ const GERMAN_LABELS = { user: 'Unbekannte Person', group: 'Unbekannte Gruppe', a
 
 const RIGHT_TO_LEFT_OVERRIDE = String.fromCodePoint(0x202e);
 const LEFT_TO_RIGHT_MARK = String.fromCodePoint(0x200e);
+const ZERO_WIDTH_NON_JOINER = String.fromCodePoint(0x200c);
 
 const mentionFor = (href?: string) =>
     mentionPlugin({ items: [JANE], href: href === undefined ? undefined : () => href }).content?.inlines?.mention;
@@ -106,6 +107,10 @@ describe('the labels for a stored mention with no username', () => {
         expect(() => mentionPlugin({ items: [JANE], unknownLabels: { user: '   ' } })).toThrow(/unknownLabels\.user/);
         expect(() => mentionContent({ unknownLabels: { all: RIGHT_TO_LEFT_OVERRIDE } })).toThrow(/unknownLabels\.all/);
         expect(() => mentionContent({ unknownLabels: { user: LEFT_TO_RIGHT_MARK } })).toThrow(/unknownLabels\.user/);
+    });
+
+    it('accept a label that joins its letters with a zero-width non-joiner', () => {
+        expect(() => mentionContent({ unknownLabels: { user: `می${ZERO_WIDTH_NON_JOINER}خواهم` } })).not.toThrow();
     });
 
     it('are the ones the host gave to mentionPlugin', () => {
