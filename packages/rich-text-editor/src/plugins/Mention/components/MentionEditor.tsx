@@ -2,7 +2,7 @@
 
 import { type EditProps } from '#/core';
 
-import { mentionDisplay } from '../helpers/display';
+import { mentionDisplay, type ResolvedUnknownLabels } from '../helpers/display';
 import { mentionValueOf } from '../helpers/mention';
 import { type MentionHref, type MentionItems, type MentionValue } from '../types';
 
@@ -13,6 +13,7 @@ type MentionEditorProps = EditProps<MentionValue, MentionValue | null> & {
     items: MentionItems;
     trigger: string;
     href: MentionHref | undefined;
+    unknownLabels: ResolvedUnknownLabels;
 };
 
 /**
@@ -28,6 +29,7 @@ export const MentionEditor = ({
     items,
     trigger,
     href,
+    unknownLabels,
 }: MentionEditorProps) => {
     if (value === null) {
         return (
@@ -53,5 +55,5 @@ export const MentionEditor = ({
             />
         );
     }
-    return <MentionLink value={value} display={mentionDisplay(value, { href, trigger })} placesCaret />;
+    return <MentionLink value={value} display={mentionDisplay(value, { href, trigger, unknownLabels })} placesCaret />;
 };

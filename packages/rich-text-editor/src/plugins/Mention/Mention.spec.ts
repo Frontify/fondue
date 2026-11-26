@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 
 import { mentionValueOf } from './helpers/mention';
 import { mentionContent, mentionPlugin } from './Mention';
+import { type MentionKind } from './types';
 
 const JANE = { id: 'jane', username: 'jane', name: 'Jane Doe' };
 const DESIGN = { id: 'design', username: 'design', name: 'Design team', kind: 'group' } as const;
@@ -69,8 +70,8 @@ describe('a stored mention that is missing a field', () => {
 });
 
 describe('the labels for a stored mention with no username', () => {
-    const emptyOf = (kind: 'user' | 'group' | 'all') => ({ id: 'x', username: '', name: '', kind });
-    const labelsIn = (mention: ReturnType<typeof mentionContent>['inlines']['mention']) => ({
+    const emptyOf = (kind: MentionKind) => ({ id: 'x', username: '', name: '', kind });
+    const labelsIn = (mention: ReturnType<typeof mentionFor>) => ({
         user: mention?.toHtml(emptyOf('user')).children,
         group: mention?.toHtml(emptyOf('group')).children,
         all: mention?.toHtml(emptyOf('all')).children,

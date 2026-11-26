@@ -4,9 +4,15 @@ import { defineContent, defineInline, definePlugin, type RtePlugin } from '#/cor
 
 import { MentionEditor } from './components/MentionEditor';
 import { MentionLink } from './components/MentionLink';
-import { mentionAttributes, mentionDisplay } from './helpers/display';
+import { mentionAttributes, mentionDisplay, resolvedUnknownLabels } from './helpers/display';
 import styles from './mention.module.scss';
-import { type MentionHref, type MentionItem, type MentionItems, type MentionValue } from './types';
+import {
+    type MentionHref,
+    type MentionItem,
+    type MentionItems,
+    type MentionUnknownLabels,
+    type MentionValue,
+} from './types';
 
 export type MentionContentOptions = {
     /**
@@ -19,6 +25,13 @@ export type MentionContentOptions = {
      * @default '@'
      */
     trigger?: string;
+    /**
+     * What a stored mention with no username shows, for each kind. The label is content, so the
+     * editor's locale does not apply: pass text in the document's language. A kind left out keeps
+     * its English label.
+     * @default { user: 'Unknown person', group: 'Unknown group', all: 'Unknown mention' }
+     */
+    unknownLabels?: MentionUnknownLabels;
 };
 
 /**
@@ -34,15 +47,17 @@ const assertMentionTrigger = (trigger: string, factory: string): void => {
 /**
  * A mention, shown as the username linked to the person or group, with the full name on hover
  */
-export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = {}) => {
+export const mentionContent = ({ href, trigger = '@', unknownLabels }: MentionContentOptions = {}) => {
     assertMentionTrigger(trigger, 'mentionContent');
+    const labels = resolvedUnknownLabels(unknownLabels);
+
     return defineContent({
         inlines: {
             mention: defineInline<MentionValue>({
                 // Portable markup for the clipboard: a plain link (or text, with
                 // nowhere to link to), no tooltip.
                 toHtml: (mention) => {
-                    const shown = mentionDisplay(mention, { href, trigger });
+                    const shown = mentionDisplay(mention, { href, trigger, unknownLabels: labels });
                     return {
                         tag: shown.href === undefined ? 'span' : 'a',
                         attrs: {
@@ -63,7 +78,7 @@ export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = 
                     component: ({ value }) => (
                         <MentionLink
                             value={value}
-                            display={mentionDisplay(value, { href, trigger })}
+                            display={mentionDisplay(value, { href, trigger, unknownLabels: labels })}
                             placesCaret={false}
                         />
                     ),
@@ -97,7 +112,7 @@ export const searchIn =
  * Mentions a person or group: typing the trigger (`@` by default) opens a list to choose from
  */
 export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
-    const { href, trigger = '@' } = options;
+    const { href, trigger = '@', unknownLabels } = options;
     assertMentionTrigger(trigger, 'mentionPlugin');
     let items: MentionItems;
     if (typeof options.items === 'function') {
@@ -105,11 +120,14 @@ export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
     } else {
         items = searchIn(options.items);
     }
+    const labels = resolvedUnknownLabels(unknownLabels);
 
     return definePlugin({
-        content: mentionContent({ href, trigger }),
+        content: mentionContent({ href, trigger, unknownLabels }),
         edit: {
-            mention: (props) => <MentionEditor {...props} items={items} trigger={trigger} href={href} />,
+            mention: (props) => (
+                <MentionEditor {...props} items={items} trigger={trigger} href={href} unknownLabels={labels} />
+            ),
         },
         hotkeys: {
             // Inserts an empty mention that the `edit` view takes over.

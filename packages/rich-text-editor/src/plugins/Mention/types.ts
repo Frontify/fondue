@@ -17,6 +17,9 @@ export type MentionValue = {
     kind?: MentionKind;
 };
 
+/** The label of a stored mention with no username, for each kind. */
+export type MentionUnknownLabels = Partial<Record<MentionKind, string>>;
+
 /** Someone who can be mentioned, as the picker lists them. */
 export type MentionItem = MentionValue & {
     /** Avatar URL, shown in the picker only; the document does not keep it. */
