@@ -280,6 +280,10 @@ describe('textStylePlugin', () => {
 });
 
 describe('columnBreakPlugin', () => {
+    it('declares the break a separator, so one is not inserted where it would separate nothing', () => {
+        expect(columnBreakPlugin().content?.blocks?.columnBreak?.separator).toBe(true);
+    });
+
     it('marks the break up as a separator for assistive technology', () => {
         const html = serializeToHtml(
             { version: 1, blocks: [{ type: 'columnBreak' }] },

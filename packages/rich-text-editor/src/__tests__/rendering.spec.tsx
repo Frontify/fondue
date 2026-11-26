@@ -16,7 +16,14 @@ import {
     type RtePlugin,
     serializeToHtml,
 } from '../index';
-import { columnBreakPlugin, defaultContent, defaultPlugins, linkPlugin, textStyleContent } from '../plugins';
+import {
+    checkListPlugin,
+    columnBreakPlugin,
+    defaultContent,
+    defaultPlugins,
+    linkPlugin,
+    textStyleContent,
+} from '../plugins';
 
 // The readonly view and export draw the same tree, so they are tested side by
 // side: the renderer as React in the test DOM, export as the string it returns.
@@ -319,5 +326,68 @@ describe('a link in a reading view and in export', () => {
         expect(window.document.activeElement).toBe(container.querySelector('a'));
         act(() => root.unmount());
         container.remove();
+    });
+});
+
+describe('stored content the check list and column break limits keep out of new content', () => {
+    // `RteDocument` names no plugin block, so these need the cast.
+    const checkItem = (checked: boolean | 'inProgress', ...children: unknown[]): unknown => ({
+        type: 'checkItem',
+        checked,
+        children,
+    });
+    const checkList = (...items: unknown[]): RteDocument =>
+        ({ version: 1, blocks: [{ type: 'checkList', children: items }] }) as RteDocument;
+    const note = { type: 'paragraph', children: [{ text: 'Note' }] };
+    const withoutCheckList = defaultPlugins.filter((plugin) => plugin.id !== 'check-list');
+
+    it('draws a stored item in progress as a mixed checkbox when `inProgress` is false', () => {
+        const doc = checkList(checkItem('inProgress', note));
+
+        const container = rendered(<RichTextRenderer value={doc} plugins={[checkListPlugin({ inProgress: false })]} />);
+        const box = container.querySelector('input');
+
+        expect(box?.indeterminate).toBe(true);
+        expect(box?.checked).toBe(false);
+    });
+
+    it('draws a list stored inside an item when `nested` is false', () => {
+        const inner = {
+            type: 'bulletList',
+            children: [{ type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'Inner' }] }] }],
+        };
+        const doc = checkList(checkItem(false, note, inner));
+        const plugins = [...withoutCheckList, checkListPlugin({ nested: false })];
+
+        const container = rendered(<RichTextRenderer value={doc} plugins={plugins} />);
+
+        expect(container.querySelector('li[data-checked] ul li')?.textContent).toBe('Inner');
+    });
+
+    it('draws the break of a stored document that starts with one', () => {
+        const doc = {
+            version: 1,
+            blocks: [{ type: 'columnBreak' }, { type: 'paragraph', children: [{ text: 'a' }] }],
+        } as RteDocument;
+
+        const container = rendered(<RichTextRenderer value={doc} plugins={[...defaultPlugins, columnBreakPlugin()]} />);
+
+        expect(container.querySelectorAll('[data-column-break]')).toHaveLength(1);
+    });
+
+    it('draws both breaks of a stored document that holds two in a row', () => {
+        const doc = {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'columnBreak' },
+                { type: 'columnBreak' },
+                { type: 'paragraph', children: [{ text: 'b' }] },
+            ],
+        } as RteDocument;
+
+        const container = rendered(<RichTextRenderer value={doc} plugins={[...defaultPlugins, columnBreakPlugin()]} />);
+
+        expect(container.querySelectorAll('[data-column-break]')).toHaveLength(2);
     });
 });
