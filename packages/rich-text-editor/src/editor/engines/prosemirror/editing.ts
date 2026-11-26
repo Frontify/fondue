@@ -24,6 +24,7 @@ import { createMarkViews, createNodeViews, LiveViews } from './nodeViews';
 import { placeholderPlugin } from './placeholder';
 import { buildSchema } from './schema';
 import { createSelectionRectReader } from './selectionRect';
+import { separatorPlacementPlugin } from './separatorPlacement';
 import { HOST_DOC } from './transactionMeta';
 import './engine.scss';
 
@@ -129,6 +130,7 @@ const mount = ({
             doc: toEngineDocument(initialDoc, schema),
             plugins: [
                 ...keystrokePipeline(registry, schema, api),
+                separatorPlacementPlugin(registry),
                 copiedExtrasPlugin(),
                 placeholderPlugin(() => currentPlaceholder, placeholderClassName),
                 // Drawn in the view's offset parent, outside the text, so `currentColor` would be the host's colour.
@@ -148,10 +150,13 @@ const mount = ({
             return false;
         },
         dispatchTransaction(transaction) {
+            const previousDoc = editorView.state.doc;
             editorView.updateState(editorView.state.apply(transaction));
             repaintViews();
+            // A refused transaction leaves the document as it was, so there is nothing to report.
+            const isApplied = transaction.docChanged && editorView.state.doc !== previousDoc;
             // Host-originated changes are not reported back to the host.
-            if (transaction.docChanged && transaction.getMeta(HOST_DOC) !== true) {
+            if (isApplied && transaction.getMeta(HOST_DOC) !== true) {
                 const emitted = toRteDocument(editorView.state.doc, rootExtras);
                 record = recordReport(record);
                 reportOrders.set(emitted, record.reportCount);
