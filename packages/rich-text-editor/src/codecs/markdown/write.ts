@@ -673,6 +673,9 @@ const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, cont
     tokens.push(delimiterOf(delimiters.open, true, pair, literal));
     appendAll(tokens, inner.slice(start, end));
     tokens.push(delimiterOf(delimiters.close, false, pair, literal));
+    if (written.suffix !== undefined && written.suffix !== '') {
+        tokens.push({ kind: 'delimiter', text: written.suffix, open: false, pair, emphasis: false });
+    }
     appendAll(tokens, inner.slice(end));
 };
 
@@ -809,8 +812,12 @@ type Attempt = {
 
 const isOpeningDelimiter = (token: InlineToken): token is DelimiterToken => token.kind === 'delimiter' && token.open;
 
-const isAsteriskPair = (tokens: readonly InlineToken[], pair: DelimiterPair): boolean =>
-    tokens.every((token) => token.kind !== 'delimiter' || token.pair !== pair || token.text === ASTERISK);
+// Only the emphasis delimiters decide: a suffix is a delimiter token of the pair too, and is never `*`.
+const isAsteriskPair = (tokens: readonly InlineToken[], pair: DelimiterPair): boolean => {
+    const emphasis = tokens.filter((token) => token.kind === 'delimiter' && token.pair === pair && token.emphasis);
+
+    return emphasis.length > 0 && emphasis.every((token) => token.kind === 'delimiter' && token.text === ASTERISK);
+};
 
 const attemptOf = (
     pieces: readonly Piece[],

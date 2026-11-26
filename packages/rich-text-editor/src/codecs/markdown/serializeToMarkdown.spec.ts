@@ -14,6 +14,7 @@ import { type RteDocument, type RteDocumentWith } from '../../documentFormat';
 import { columnBreakContent, defaultContent, mentionContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
+import { linkTargetOverrideOptions } from './markSuffixOverride.fixture';
 import { mentionOverrideOptions } from './mentionOverride.fixture';
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
@@ -758,6 +759,171 @@ describe('serializeToMarkdown mentions', () => {
             markdown: 'Hi&#x20;',
             losses: [{ path: [0, 1], type: 'mention' }],
         });
+    });
+});
+
+describe('serializeToMarkdown mark suffixes', () => {
+    const HREF = 'https://example.test';
+
+    it('writes the suffix of a link right after its close, with no loss', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'a', link: { href: HREF, openInNewTab: true } }, { text: ' after' }],
+                },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, linkTargetOverrideOptions)).toEqual({
+            markdown: `[a](${HREF}){target="_blank"} after`,
+            losses: [],
+        });
+    });
+
+    it('writes a link whose text equals its href in the bracket form so its suffix is read back', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: HREF, link: { href: HREF, openInNewTab: true } }],
+                },
+            ],
+        };
+
+        const result = serializeToMarkdown(document, linkTargetOverrideOptions);
+
+        expect(result).toEqual({
+            markdown: `[https://example.test](${HREF}){target="_blank"}`,
+            losses: [],
+        });
+        expect(parseMarkdown(result.markdown, linkTargetOverrideOptions)).toEqual(document);
+    });
+
+    it('writes no suffix for a link the override gives none', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a', link: { href: HREF } }] }],
+        };
+
+        expect(serializeToMarkdown(document, linkTargetOverrideOptions)).toEqual({
+            markdown: `[a](${HREF})`,
+            losses: [],
+        });
+    });
+
+    it('writes the suffix after the underscore close of italic that asterisks do not read back', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'a', italic: true },
+                        { text: 'c', bold: true, italic: true },
+                        { text: 'b', bold: true },
+                    ],
+                },
+            ],
+        };
+
+        expect(
+            serializeToMarkdown(document, {
+                plugins: defaultContent,
+                overrides: {
+                    marks: {
+                        italic: {
+                            read: [
+                                {
+                                    token: 'em_open',
+                                    suffix: { pattern: /\{\.note\}/, value: (value) => value },
+                                },
+                            ],
+                            // Only the second italic has a suffix, so the first still touches the bold that follows it.
+                            write: (_value, { text }) => {
+                                if (text === 'c') {
+                                    return { open: '*', close: '*', suffix: '{.note}' };
+                                }
+
+                                return { open: '*', close: '*' };
+                            },
+                        },
+                    },
+                },
+            }),
+        ).toEqual({ markdown: '_a_**_c_{.note}b**', losses: [] });
+    });
+
+    it('retries an italic with a suffix with underscores when asterisks do not read back', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'a', bold: true, italic: true },
+                        { text: 'b', bold: true },
+                        { text: 'c', bold: true, italic: true },
+                    ],
+                },
+            ],
+        };
+
+        expect(
+            serializeToMarkdown(document, {
+                plugins: defaultContent,
+                overrides: {
+                    marks: {
+                        italic: {
+                            read: [
+                                {
+                                    token: 'em_open',
+                                    suffix: { pattern: /\{\.note\}/, value: (value) => value },
+                                },
+                            ],
+                            write: () => ({ open: '*', close: '*', suffix: '{.note}' }),
+                        },
+                    },
+                },
+            }),
+        ).toEqual({ markdown: '**_a_{.note}&#x62;_c_{.note}**', losses: [] });
+    });
+
+    it('reports the paragraph as a loss when text typed after a link reads back as its suffix', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'a', link: { href: HREF } }, { text: '{.new}' }],
+                },
+            ],
+        };
+
+        expect(
+            serializeToMarkdown(document, {
+                plugins: defaultContent,
+                overrides: {
+                    marks: {
+                        link: {
+                            read: [
+                                {
+                                    token: 'link_open',
+                                    value: ({ attrs }) => ({ href: attrs.href }),
+                                    suffix: {
+                                        pattern: /\{\.new\}/,
+                                        value: (value) => ({ ...value, openInNewTab: true }),
+                                    },
+                                },
+                            ],
+                            write: ({ href }) => ({ open: '[', close: `](${String(href)})` }),
+                        },
+                    },
+                },
+            }),
+        ).toEqual({ markdown: `[a](${HREF}){.new}`, losses: [{ path: [0], type: 'paragraph' }] });
     });
 });
 

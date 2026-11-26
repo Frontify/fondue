@@ -453,6 +453,19 @@ export type MarkdownToken = {
 /** Reads a token as a node. `value` returns null for a token that is not this node, and the next rule is tried. */
 export type MarkdownReadRule<TValue> = { token: string; value?: (token: MarkdownToken) => TValue | null };
 
+/**
+ * Reads the start of the text right after a mark. The match is taken out of that text, and `value` gives the mark's
+ * new value; null keeps the text and the value. Only a mark that wraps its text, such as a link, reads a suffix; a
+ * mark read from one token, such as inline code, does not.
+ */
+export type MarkdownSuffixPattern<TValue> = {
+    pattern: RegExp;
+    value: (value: TValue, match: RegExpExecArray) => TValue | null;
+};
+
+/** A read rule for a mark, which can also take attributes written right after it, such as `{target="_blank"}`. */
+export type MarkdownMarkReadRule<TValue> = MarkdownReadRule<TValue> & { suffix?: MarkdownSuffixPattern<TValue> };
+
 /** Reads text the writer did not escape as an inline, by pattern. */
 export type MarkdownTextPattern<TValue> = { pattern: RegExp; value: (match: RegExpExecArray) => TValue | null };
 
@@ -466,6 +479,8 @@ export type MarkdownLinePrefix = { first: string; rest: string | null };
 export type MarkdownDelimiters = {
     open: string;
     close: string;
+    /** Written as is right after `close`, such as attributes. */
+    suffix?: string;
     /**
      * The text inside is written as is, never escaped.
      * @default false
@@ -511,7 +526,7 @@ export type MarkdownMarkContent = {
 
 /** How a mark reads from and writes to Markdown. */
 export type MarkdownMarkForm<TValue = Record<string, unknown>> = {
-    read: readonly MarkdownReadRule<TValue>[];
+    read: readonly MarkdownMarkReadRule<TValue>[];
     /** Null: this value has no Markdown form, which is a loss. */
     write: (value: TValue, content: MarkdownMarkContent) => MarkdownDelimiters | null;
 };

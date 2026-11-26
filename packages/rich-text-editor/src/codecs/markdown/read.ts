@@ -18,7 +18,7 @@ import {
 
 import { sameValue } from './canonical';
 import { EMPTY_BLOCK_ENTITY } from './emptyBlock';
-import { matchToken, type MarkdownForms, type TextReader } from './forms';
+import { matchToken, type MarkdownForms, type MarkRule, type ReadMatch, type TextReader } from './forms';
 import { INLINE_TOKEN, type MarkdownTokenNode, PARAGRAPH_OPEN, tokenize } from './markdownIt';
 
 /** A Markdown feature the document could not keep, with the one-based line where its block starts. */
@@ -89,6 +89,9 @@ type InlineState = {
 
 type PatternHit = { index: number; length: number; node: RteInlineNode };
 
+/** Where the reader is in its own copy of an inline token stream, so a suffix can be taken out of a later token. */
+type InlineCursor = { tokens: MarkdownTokenNode[]; index: number };
+
 const isTextNode = (node: RteInlineNode): node is RteTextNode => node.text !== undefined;
 
 const marksOf = (open: readonly OpenMark[]): MarkSet => {
@@ -138,7 +141,47 @@ const storedMarkOf = (value: NodeValue): StoredMarkValue => {
     return value;
 };
 
-const openMark = (token: MarkdownTokenNode, line: number, context: ReadContext): OpenMark => {
+/** The index of the token that closes the one at `openIndex`, or past the end when none does. */
+const closingIndexOf = (tokens: readonly MarkdownTokenNode[], openIndex: number): number => {
+    let depth = 0;
+    for (let index = openIndex; index < tokens.length; index++) {
+        depth += tokens[index]?.nesting ?? SELF_CLOSING;
+        if (depth === 0) {
+            return index;
+        }
+    }
+
+    return tokens.length;
+};
+
+/**
+ * The mark's value with the suffix read off the start of the text token at `index`. The match is cut out of the
+ * cursor's copy of that token; a value of null, or no text there, leaves both as they are.
+ */
+const suffixedValueOf = (match: ReadMatch<MarkRule>, cursor: InlineCursor, index: number): NodeValue => {
+    const { suffix } = match.rule;
+    const candidate = cursor.tokens[index];
+    if (suffix === undefined || candidate?.type !== TEXT) {
+        return match.value;
+    }
+
+    suffix.pattern.lastIndex = 0;
+    const found = suffix.pattern.exec(candidate.content);
+    if (found === null || found[0].length === 0) {
+        return match.value;
+    }
+
+    const suffixed = suffix.value(match.value, found);
+    if (suffixed === null) {
+        return match.value;
+    }
+
+    cursor.tokens[index] = { ...candidate, content: candidate.content.slice(found[0].length) };
+
+    return suffixed;
+};
+
+const openMark = (token: MarkdownTokenNode, line: number, context: ReadContext, cursor: InlineCursor): OpenMark => {
     const match = matchToken(context.forms.markReaders, token);
     if (match === null) {
         reportLoss(context, token.type, line);
@@ -151,7 +194,13 @@ const openMark = (token: MarkdownTokenNode, line: number, context: ReadContext):
         reportLoss(context, LINK_TITLE, line);
     }
 
-    return { kind: 'mark', name: match.name, stored: storedMarkOf(match.value) };
+    if (match.rule.suffix === undefined) {
+        return { kind: 'mark', name: match.name, stored: storedMarkOf(match.value) };
+    }
+
+    const value = suffixedValueOf(match, cursor, closingIndexOf(cursor.tokens, cursor.index) + 1);
+
+    return { kind: 'mark', name: match.name, stored: storedMarkOf(value) };
 };
 
 const patternHitsIn = (text: string, readers: readonly TextReader[]): PatternHit[] => {
@@ -237,10 +286,17 @@ export const readInlines = (inline: MarkdownTokenNode, context: ReadContext): Rt
     }
 
     const state: InlineState = { nodes: [], open: [], line: inline.line };
-    for (const token of inline.children) {
+    const copy = [...inline.children];
+    for (let index = 0; index < copy.length; index++) {
+        const token = copy[index];
+        if (token === undefined) {
+            continue;
+        }
+
+        const cursor: InlineCursor = { tokens: copy, index };
         switch (token.nesting) {
             case OPENING:
-                state.open.push(openMark(token, state.line, context));
+                state.open.push(openMark(token, state.line, context, cursor));
                 break;
             case CLOSING:
                 state.open.pop();

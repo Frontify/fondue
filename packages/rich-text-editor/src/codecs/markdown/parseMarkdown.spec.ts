@@ -6,6 +6,7 @@ import { type MarkdownMarkForm } from '../../core';
 import { bulletListContent, defaultContent, mentionContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, parseMarkdownWithLosses } from '../index';
 
+import { linkTargetOverrideOptions } from './markSuffixOverride.fixture';
 import { mentionOverrideOptions } from './mentionOverride.fixture';
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
@@ -391,6 +392,108 @@ describe('parseMarkdown mentions', () => {
         expect(parseMarkdown('`@[user:1]`', mentionOverrideOptions)).toEqual({
             version: 1,
             blocks: [{ type: 'paragraph', children: [{ text: '@[user:1]', code: true }] }],
+        });
+    });
+});
+
+describe('parseMarkdown mark suffixes', () => {
+    const HREF = 'https://example.test';
+
+    it('reads the suffix right after a link into the link and keeps the text after it', () => {
+        expect(parseMarkdown(`[a](${HREF}){target="_blank"} after`, linkTargetOverrideOptions)).toEqual({
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'a', link: { href: HREF, openInNewTab: true } }, { text: ' after' }],
+                },
+            ],
+        });
+    });
+
+    it('leaves a suffix whose value reads as null as text and the link without it', () => {
+        expect(parseMarkdown(`[a](${HREF}){target="_self"}`, linkTargetOverrideOptions)).toEqual({
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'a', link: { href: HREF } }, { text: '{target="_self"}' }],
+                },
+            ],
+        });
+    });
+
+    it('leaves a suffix after a space as text', () => {
+        expect(parseMarkdown(`[a](${HREF}) {target="_blank"}`, linkTargetOverrideOptions)).toEqual({
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'a', link: { href: HREF } }, { text: ' {target="_blank"}' }],
+                },
+            ],
+        });
+    });
+
+    it('leaves an escaped suffix as text', () => {
+        expect(parseMarkdown(String.raw`[a](${HREF})\{target="_blank"}`, linkTargetOverrideOptions)).toEqual({
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'a', link: { href: HREF } }, { text: '{target="_blank"}' }],
+                },
+            ],
+        });
+    });
+
+    it('consumes nothing when the suffix value throws', () => {
+        const options: MarkdownOptions = {
+            plugins: defaultContent,
+            overrides: {
+                marks: {
+                    link: {
+                        read: [
+                            {
+                                token: 'link_open',
+                                value: ({ attrs }) => ({ href: attrs.href }),
+                                suffix: {
+                                    pattern: /\{target="([^"]*)"\}/,
+                                    value: () => {
+                                        throw new Error('suffix value');
+                                    },
+                                },
+                            },
+                        ],
+                        write: ({ href }) => ({ open: '[', close: `](${String(href)})` }),
+                    },
+                },
+            },
+        };
+
+        expect(parseMarkdown(`[a](${HREF}){target="_blank"}`, options)).toEqual({
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'a', link: { href: HREF } }, { text: '{target="_blank"}' }],
+                },
+            ],
+        });
+    });
+
+    it('reads the suffix of a link inside italic, and keeps the italic on the text after it', () => {
+        expect(parseMarkdown(`*[a](${HREF}){target="_blank"} b*`, linkTargetOverrideOptions)).toEqual({
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'a', italic: true, link: { href: HREF, openInNewTab: true } },
+                        { text: ' b', italic: true },
+                    ],
+                },
+            ],
         });
     });
 });
