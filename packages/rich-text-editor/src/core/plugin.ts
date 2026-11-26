@@ -455,7 +455,8 @@ export type MarkdownReadRule<TValue> = { token: string; value?: (token: Markdown
 
 /**
  * Reads the start of the text right after a mark. The match is taken out of that text, and `value` gives the mark's
- * new value; null keeps the text and the value.
+ * new value; null keeps the text and the value. Only a mark that wraps its text, such as a link, reads a suffix; a
+ * mark read from one token, such as inline code, does not.
  */
 export type MarkdownSuffixPattern<TValue> = {
     pattern: RegExp;

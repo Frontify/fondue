@@ -782,6 +782,26 @@ describe('serializeToMarkdown mark suffixes', () => {
         });
     });
 
+    it('writes a link whose text equals its href in the bracket form so its suffix is read back', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: HREF, link: { href: HREF, openInNewTab: true } }],
+                },
+            ],
+        };
+
+        const result = serializeToMarkdown(document, linkTargetOverrideOptions);
+
+        expect(result).toEqual({
+            markdown: `[https://example.test](${HREF}){target="_blank"}`,
+            losses: [],
+        });
+        expect(parseMarkdown(result.markdown, linkTargetOverrideOptions)).toEqual(document);
+    });
+
     it('writes no suffix for a link the override gives none', () => {
         const document: RteDocumentOf = {
             version: 1,

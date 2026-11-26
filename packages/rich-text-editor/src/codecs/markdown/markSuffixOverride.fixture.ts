@@ -33,7 +33,7 @@ export const linkTargetOverrideOptions: MarkdownOptions = {
                     },
                 ],
                 write: ({ href, openInNewTab }) => {
-                    const delimiters: MarkdownDelimiters = { open: '[', close: `](${String(href)})` };
+                    const delimiters: MarkdownDelimiters = { open: '[', close: `](${String(href)})`, linkText: true };
                     if (openInNewTab === true) {
                         delimiters.suffix = NEW_TAB_SUFFIX;
                     }
