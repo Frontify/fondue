@@ -66,6 +66,11 @@ export const isMarkdownWhitespace = (char: string): boolean => scannedCodeIs(cha
 /** Whether the reader counts the character as punctuation when it decides where emphasis opens and closes. */
 export const isMarkdownPunctuation = (char: string): boolean => scannedCodeIs(char, isPunctuationCode);
 
+const TRIMMED_AT_BLOCK_EDGE = new Set([' ', '\t', '\n', '\r']);
+
+/** Whether the reader strips the character at the edge of a paragraph or heading: it trims ASCII space, tab, line feed and carriage return only. */
+export const isTrimmedAtBlockEdge = (char: string): boolean => TRIMMED_AT_BLOCK_EDGE.has(char);
+
 /** Whether a numeric character reference reads back as this code point, and not as U+FFFD. */
 export const canBeReferenced = (codePoint: number): boolean => isValidEntityCode(codePoint);
 

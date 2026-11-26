@@ -126,7 +126,7 @@ const writeLink = (href: string, { text, marked }: MarkdownMarkContent): Markdow
         return { open: '<', close: '>', literal: true };
     }
 
-    return { open: '[', close: `](${markdownDestination(href)})` };
+    return { open: '[', close: `](${markdownDestination(href)})`, linkText: true };
 };
 
 /** A stored document may hold anything here (`{}`, `true`), so its shape is not taken on trust. */

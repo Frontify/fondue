@@ -93,9 +93,11 @@ const markdownPrefixOf = ({ tag }: Preset): string | undefined => {
 /** The markdown shortcut for a preset that has one (`## ` for a level-2 heading), so it follows the configured presets. */
 export const markdownRuleFor = (preset: Preset): RteInputRule[] => {
     const match = markdownPrefixOf(preset);
-    return match === undefined
-        ? []
-        : [{ kind: 'block', match, block: 'textStyle', attributes: { style: preset.name } }];
+    if (match === undefined) {
+        return [];
+    }
+
+    return [{ kind: 'block', match, block: 'textStyle', attributes: { style: preset.name } }];
 };
 
 /** How Markdown headings map to the offered presets: by tag on read, by the `#` prefix on write. */

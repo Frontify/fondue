@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Arc, type PieArcDatum } from 'd3-shape';
+import { type PieArcDatum } from 'd3-shape';
 import { useState } from 'react';
 
 import { type PieChartDatum } from '@components/PieChart';
@@ -9,9 +9,15 @@ import { colorAccessorByIndex, hoverColorAccessorByIndex } from '@components/com
 const STROKE = 'var(--fc-base-color)';
 const STROKE_WIDTH = '2px';
 
+/** The arc generator visx passes. d3-shape 3.2's `Arc<void>` is not that value. */
+export type PieArcPath = {
+    (datum: PieArcDatum<PieChartDatum>): string | null;
+    centroid(datum: PieArcDatum<PieChartDatum>): [number, number];
+};
+
 type ArcsProps = {
     arcDatum: PieArcDatum<PieChartDatum>;
-    path: Arc<void, PieArcDatum<PieChartDatum>>;
+    path: PieArcPath;
     onMouseEnter: () => void;
     onMouseLeave: () => void;
 };
