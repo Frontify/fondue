@@ -445,6 +445,22 @@ const FONDUE_LINK_BOX_COMPUTED: Record<string, string> = {
     'border-top-left-radius': '0px',
 };
 
+/** What a text link draws under `HOST_ANCHOR_CSS` where the host's look sets no box: the host rule's box. */
+const HOST_ANCHOR_COMPUTED: Record<string, string> = {
+    'padding-top': '5px',
+    'padding-right': '5px',
+    'padding-bottom': '5px',
+    'padding-left': '5px',
+    'background-color': 'rgb(0, 200, 0)',
+    'border-top-style': 'solid',
+    'border-top-width': '3px',
+    'border-top-color': 'rgb(200, 0, 0)',
+    'border-top-left-radius': '9px',
+};
+
+/** The margin `HOST_ANCHOR_CSS` gives a link. */
+const HOST_ANCHOR_MARGIN = '7px';
+
 /** The left and right edge of a box or a line of text, in viewport pixels. */
 type HorizontalSpan = { left: number; right: number };
 
@@ -844,7 +860,9 @@ test.describe('the document next to a host page stylesheet', () => {
         }
     });
 
-    test("keeps Fondue's link box and button margins under a host rule for anchors", async ({ mount }) => {
+    test("leaves a link's box and a button's margins to a host rule for anchors when the look sets none", async ({
+        mount,
+    }) => {
         const component = await mount(<HostResetPair hostCss={HOST_ANCHOR_CSS} value={BUTTON_LINKS_DOCUMENT} />);
 
         for (const surface of SURFACES) {
@@ -852,12 +870,44 @@ test.describe('the document next to a host page stylesheet', () => {
             const textLink = section.getByRole('link', { name: PLAIN_LINK_TEXT, exact: true });
             const button = section.getByRole('link', { name: BUTTON_LINK_TEXT, exact: true });
 
-            for (const [property, value] of Object.entries(FONDUE_LINK_BOX_COMPUTED)) {
+            for (const [property, value] of Object.entries(HOST_ANCHOR_COMPUTED)) {
                 await expect(textLink).toHaveCSS(property, value);
             }
 
-            await expect(button).toHaveCSS('margin-top', '0px');
-            await expect(button).toHaveCSS('margin-bottom', '0px');
+            // WebKit may only know the prefixed property.
+            const decorationBreak = await textLink.evaluate(
+                (element) =>
+                    getComputedStyle(element).getPropertyValue('box-decoration-break') ||
+                    getComputedStyle(element).getPropertyValue('-webkit-box-decoration-break'),
+            );
+            expect(decorationBreak).toBe('slice');
+
+            await expect(button).toHaveCSS('margin-top', HOST_ANCHOR_MARGIN);
+            await expect(button).toHaveCSS('margin-bottom', HOST_ANCHOR_MARGIN);
+        }
+    });
+
+    test("draws the look's link box and button margins over a host rule for anchors", async ({ mount }) => {
+        const component = await mount(
+            <HostResetPair
+                hostCss={HOST_ANCHOR_CSS}
+                link={HOST_LINK_BOX_LOOK}
+                buttons={{ primary: HOST_BUTTON_LOOK }}
+                value={BUTTON_LINKS_DOCUMENT}
+            />,
+        );
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            const textLink = section.getByRole('link', { name: PLAIN_LINK_TEXT, exact: true });
+            const button = section.getByRole('link', { name: BUTTON_LINK_TEXT, exact: true });
+
+            for (const [property, value] of Object.entries(HOST_LINK_BOX_COMPUTED)) {
+                await expect(textLink).toHaveCSS(property, value);
+            }
+
+            await expect(button).toHaveCSS('margin-top', HOST_BUTTON_COMPUTED['margin-top'] ?? '');
+            await expect(button).toHaveCSS('margin-bottom', HOST_BUTTON_COMPUTED['margin-bottom'] ?? '');
         }
     });
 });

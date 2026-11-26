@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use 'sass:list';
 @use 'sass:map';
 
 @use '../../styles/look.module.scss';
@@ -24,25 +25,6 @@ $border-width: 1px;
             ),
             $except: (text-decoration, margin-top, margin-bottom)
         );
-        padding-top: var(--rte-link-padding-top, 0);
-        padding-bottom: var(--rte-link-padding-bottom, 0);
-        padding-left: var(--rte-link-padding-inline-start, 0);
-        padding-right: var(--rte-link-padding-inline-end, 0);
-        background-color: var(--rte-link-background-color, transparent);
-        border-color: var(--rte-link-border-color, currentcolor);
-        border-width: var(--rte-link-border-width, #{$border-width});
-        border-radius: var(--rte-link-border-radius, 0);
-        border-style: var(--rte-link-border-style, none);
-
-        // A link that wraps draws its box, padding and border on each line.
-        -webkit-box-decoration-break: clone;
-        box-decoration-break: clone;
-
-        // The start and end fields follow the `dir` attribute, not the CSS `direction` property.
-        &:dir(rtl) {
-            padding-left: var(--rte-link-padding-inline-end, 0);
-            padding-right: var(--rte-link-padding-inline-start, 0);
-        }
     }
 
     @include link.underline;
@@ -83,6 +65,40 @@ $buttons: (
     ),
 );
 
+// The button classes as selectors, which a text link's box leaves out.
+$button-selectors: ();
+@each $class in map.keys($buttons) {
+    $button-selectors: list.append($button-selectors, '.#{$class}', $separator: comma);
+}
+
+// A text link's box, only where the host's look sets one, so a page's own rule for anchors reaches links until then.
+// Buttons are excluded by class because the editor's anchor carries no `data-appearance`.
+.linkBox .link:not(#{$button-selectors}) {
+    &,
+    &:link,
+    &:visited {
+        padding-top: var(--rte-link-padding-top, 0);
+        padding-bottom: var(--rte-link-padding-bottom, 0);
+        padding-left: var(--rte-link-padding-inline-start, 0);
+        padding-right: var(--rte-link-padding-inline-end, 0);
+        background-color: var(--rte-link-background-color, transparent);
+        border-color: var(--rte-link-border-color, currentcolor);
+        border-width: var(--rte-link-border-width, #{$border-width});
+        border-radius: var(--rte-link-border-radius, 0);
+        border-style: var(--rte-link-border-style, none);
+
+        // A link that wraps draws its box, padding and border on each line.
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+
+        // The start and end fields follow the `dir` attribute, not the CSS `direction` property.
+        &:dir(rtl) {
+            padding-left: var(--rte-link-padding-inline-end, 0);
+            padding-right: var(--rte-link-padding-inline-start, 0);
+        }
+    }
+}
+
 // A button link: the host's `--rte-button-<kind>-<property>`, falling back to Fondue's Button. It is written after
 // `.link` with the same selectors, so where both set a property the button wins.
 @each $class, $button in $buttons {
@@ -107,8 +123,6 @@ $buttons: (
             letter-spacing: var(--rte-button-#{$kind}-letter-spacing, inherit);
             text-transform: var(--rte-button-#{$kind}-text-transform, inherit);
             text-decoration: var(--rte-button-#{$kind}-text-decoration, none);
-            margin-top: var(--rte-button-#{$kind}-margin-top, 0);
-            margin-bottom: var(--rte-button-#{$kind}-margin-bottom, 0);
             color: var(--rte-button-#{$kind}-color, #{map.get($button, color)});
             padding-top: var(--rte-button-#{$kind}-padding-top, var(--spacing-x-small));
             padding-bottom: var(--rte-button-#{$kind}-padding-bottom, var(--spacing-x-small));
@@ -157,6 +171,16 @@ $buttons: (
         // The coloured-run underline of `.link` does not draw on a button.
         [style*='color'] {
             text-decoration: none;
+        }
+    }
+
+    // Only where the host's look sets a margin, so a page's own rule for anchors reaches buttons until then.
+    .#{$class}Margins .#{$class} {
+        &,
+        &:link,
+        &:visited {
+            margin-top: var(--rte-button-#{$kind}-margin-top, 0);
+            margin-bottom: var(--rte-button-#{$kind}-margin-bottom, 0);
         }
     }
 }

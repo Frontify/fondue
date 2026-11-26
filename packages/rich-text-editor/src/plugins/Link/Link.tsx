@@ -24,6 +24,7 @@ import {
     type ButtonLook,
     isLinkAppearance,
     linkClassName,
+    linkLookClassName,
     NO_APPEARANCES,
     TEXT_LINK_LOOK_FIELDS,
     type TextLinkLook,
@@ -241,6 +242,7 @@ export const linkContent = ({ kinds = DEFAULT_LINK_KINDS, look }: LinkContentOpt
 
     return defineContent({
         marks: { link: mark },
+        contentClassName: linkLookClassName(look?.text ?? {}, look?.button ?? {}),
         contentProperties: {
             ...lookProperties(LINK_LOOK_NAME, look?.text ?? {}, TEXT_LINK_LOOK_FIELDS),
             ...buttonLookProperties(look?.button ?? {}),

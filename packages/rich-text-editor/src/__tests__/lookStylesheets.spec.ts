@@ -11,6 +11,7 @@ import {
     BUTTON_HOVER_LOOK_FIELDS,
     BUTTON_LOOK_FIELDS,
     BUTTON_PHYSICAL_PADDING_FIELDS,
+    TEXT_LINK_BOX_FIELDS,
     TEXT_LINK_LOOK_FIELDS,
 } from '../plugins/Link/helpers/appearance';
 import { ALL_LINK_APPEARANCES, type LinkAppearance } from '../plugins/Link/helpers/value';
@@ -24,7 +25,7 @@ const STYLES_DIRECTORY = fileURLToPath(new URL('../styles/', import.meta.url));
 const TEXT_STYLE_STYLESHEET = fileURLToPath(new URL('../plugins/TextStyle/textStyle.module.scss', import.meta.url));
 
 /** The characters of a selector that a regular expression reads as more than themselves. */
-const SELECTOR_PUNCTUATION = /[.:()]/g;
+const SELECTOR_PUNCTUATION = /[.:[\]()]/g;
 
 const LINK_STYLESHEET = fileURLToPath(new URL('../plugins/Link/link.module.scss', import.meta.url));
 
@@ -118,6 +119,10 @@ describe('the link stylesheet', () => {
         tertiary: 'buttonTertiary',
     };
 
+    const TEXT_LINK_BOX_SELECTOR = `.linkBox .link:not(${Object.values(BUTTON_CLASSES)
+        .map((name) => `.${name}`)
+        .join(', ')})`;
+
     /** The body of the rule with exactly this selector list, which a button writes for its link states. */
     const ruleBodyForSelector = (selector: string): string => {
         const escaped = selector.replaceAll(SELECTOR_PUNCTUATION, String.raw`\$&`);
@@ -147,12 +152,6 @@ describe('the link stylesheet', () => {
         return property;
     };
 
-    const declarationsOf = (kind: string, fields: Record<string, string>): LookDeclaration[] =>
-        Object.values(fields).map((property) => ({
-            property: declaredPropertyOf(property),
-            variable: lookVariableName(kind, property),
-        }));
-
     /** What the right-to-left rule reads: the end field on the left side, the start field on the right side. */
     const rightToLeftPaddingsOf = (kind: string): LookDeclaration[] => [
         { property: 'padding-left', variable: lookVariableName(kind, 'padding-inline-end') },
@@ -166,21 +165,44 @@ describe('the link stylesheet', () => {
     const rightToLeftSelectorOf = (className: string): string =>
         `.${className}:dir(rtl), .${className}:link:dir(rtl), .${className}:visited:dir(rtl)`;
 
-    /** A button's own fields, without the physical paddings that its look keeps only for compatibility. */
-    const BUTTON_OWN_LOOK_FIELDS = Object.fromEntries(
-        Object.entries(BUTTON_LOOK_FIELDS).filter(([field]) => !(field in BUTTON_PHYSICAL_PADDING_FIELDS)),
+    const declarationsOf = (kind: string, properties: readonly string[]): LookDeclaration[] =>
+        properties.map((property) => ({
+            property: declaredPropertyOf(property),
+            variable: lookVariableName(kind, property),
+        }));
+
+    // The box and the margins sit in rules under a content class, which the link plugin adds where a look sets them.
+    const TEXT_LINK_BOX_PROPERTIES: string[] = Object.values(TEXT_LINK_BOX_FIELDS);
+    const TEXT_LINK_FONT_PROPERTIES = Object.values(TEXT_LINK_LOOK_FIELDS).filter(
+        (property) => !TEXT_LINK_BOX_PROPERTIES.includes(property),
+    );
+
+    const BUTTON_MARGIN_PROPERTIES: string[] = [LOOK_PROPERTIES.marginTop, LOOK_PROPERTIES.marginBottom];
+    const BUTTON_PHYSICAL_PADDING_PROPERTIES: string[] = Object.values(BUTTON_PHYSICAL_PADDING_FIELDS);
+    // The physical paddings stay in the look only for compatibility; the stylesheet reads them as fallbacks.
+    const BUTTON_OWN_PROPERTIES = Object.values(BUTTON_LOOK_FIELDS).filter(
+        (property) =>
+            !BUTTON_MARGIN_PROPERTIES.includes(property) && !BUTTON_PHYSICAL_PADDING_PROPERTIES.includes(property),
     );
 
     it('reads the text link look from the variables the link plugin sets', () => {
         expect(lookDeclarationsIn(ruleBodyForSelector('.link, .link:link, .link:visited'))).toEqual(
-            declarationsOf('link', TEXT_LINK_LOOK_FIELDS),
+            declarationsOf('link', TEXT_LINK_FONT_PROPERTIES),
+        );
+    });
+
+    it('reads the text link box from the variables the link plugin sets, under its content class', () => {
+        const selector = `${TEXT_LINK_BOX_SELECTOR}, ${TEXT_LINK_BOX_SELECTOR}:link, ${TEXT_LINK_BOX_SELECTOR}:visited`;
+
+        expect(lookDeclarationsIn(ruleBodyForSelector(selector))).toEqual(
+            declarationsOf('link', TEXT_LINK_BOX_PROPERTIES),
         );
     });
 
     it('reads the end padding on the left and the start padding on the right of a text link in right-to-left text', () => {
-        expect(lookDeclarationsIn(ruleBodyForSelector(rightToLeftSelectorOf('link')))).toEqual(
-            rightToLeftPaddingsOf('link'),
-        );
+        const selector = `${TEXT_LINK_BOX_SELECTOR}:dir(rtl), ${TEXT_LINK_BOX_SELECTOR}:link:dir(rtl), ${TEXT_LINK_BOX_SELECTOR}:visited:dir(rtl)`;
+
+        expect(lookDeclarationsIn(ruleBodyForSelector(selector))).toEqual(rightToLeftPaddingsOf('link'));
     });
 
     for (const appearance of ALL_LINK_APPEARANCES) {
@@ -190,7 +212,15 @@ describe('the link stylesheet', () => {
             const selector = `.${className}, .${className}:link, .${className}:visited`;
 
             expect(lookDeclarationsIn(ruleBodyForSelector(selector))).toEqual(
-                declarationsOf(`button-${appearance}`, BUTTON_OWN_LOOK_FIELDS),
+                declarationsOf(`button-${appearance}`, BUTTON_OWN_PROPERTIES),
+            );
+        });
+
+        it(`reads the ${appearance} button margins from the variables the link plugin sets, under its content class`, () => {
+            const selector = `.${className}Margins .${className}, .${className}Margins .${className}:link, .${className}Margins .${className}:visited`;
+
+            expect(lookDeclarationsIn(ruleBodyForSelector(selector))).toEqual(
+                declarationsOf(`button-${appearance}`, BUTTON_MARGIN_PROPERTIES),
             );
         });
 
@@ -225,7 +255,7 @@ describe('the link stylesheet', () => {
 
         it(`reads the ${appearance} button hover look from the variables the link plugin sets`, () => {
             expect(lookDeclarationsIn(ruleBodyForSelector(`.${className}:hover`))).toEqual(
-                declarationsOf(`button-${appearance}-hover`, BUTTON_HOVER_LOOK_FIELDS),
+                declarationsOf(`button-${appearance}-hover`, Object.values(BUTTON_HOVER_LOOK_FIELDS)),
             );
         });
     }
