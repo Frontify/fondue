@@ -1368,6 +1368,39 @@ describe('insert of a separator block', () => {
         expect(editor.view.state.doc.childCount).toBe(3);
         expect(editor.onDocChange).not.toHaveBeenCalled();
     });
+
+    describe('refused in a turn', () => {
+        // History merges typing closer together than its group delay, so the clock is frozen: only closeHistory can separate the steps.
+        beforeEach(() => {
+            vi.useFakeTimers({ toFake: ['Date'] });
+            vi.setSystemTime(FROZEN_TIME);
+        });
+        afterEach(() => {
+            vi.useRealTimers();
+        });
+
+        it('does not start the turn, so the command after it keeps its own undo step', () => {
+            const editor = editorWith(separators, [paragraph(text('ab'))]);
+            editor.caretAfter('ab');
+            editor.type('x');
+            editor.caretBefore('ab');
+
+            editor.api.insert('rule');
+            editor.api.insertText('y');
+            editor.api.history.undo();
+
+            expect(editor.stored()).toEqual([paragraph(text('abx'))]);
+        });
+    });
+
+    it('has no placement rule in an editor without a separator block', () => {
+        const filters = (editor: ReturnType<typeof editorWith>): number =>
+            editor.view.state.plugins.filter((plugin) => plugin.spec.filterTransaction !== undefined).length;
+        const without = editorWith(defaultPlugins, [paragraph(text('ab'))]);
+        const withSeparator = editorWith(separators, [paragraph(text('ab'))]);
+
+        expect(filters(withSeparator) - filters(without)).toBe(1);
+    });
 });
 
 describe('loading a check item that holds a list when `nested` is false', () => {

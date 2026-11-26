@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { dropCursor } from 'prosemirror-dropcursor';
-import { EditorState, Selection, TextSelection } from 'prosemirror-state';
+import { EditorState, type Plugin, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { type RteDocumentOf } from '#/core';
@@ -113,7 +113,20 @@ const mount = ({
     };
     const api = createControlApi(getView, schema, registry, openEditors);
 
-    // 3. The view: node/mark views, clipboard, the initial state, and the
+    // 3. The plugins; the placement rule is only there when a block asks for it.
+    const plugins: Plugin[] = keystrokePipeline(registry, schema, api);
+    const hasSeparatorBlock = [...registry.blocks.values()].some((definition) => definition.separator === true);
+    if (hasSeparatorBlock) {
+        plugins.push(separatorPlacementPlugin(registry));
+    }
+    plugins.push(
+        copiedExtrasPlugin(),
+        placeholderPlugin(() => currentPlaceholder, placeholderClassName),
+        // Drawn in the view's offset parent, outside the text, so `currentColor` would be the host's colour.
+        dropCursor({ color: 'var(--color-primary-default)', width: 2 }),
+    );
+
+    // 4. The view: node/mark views, clipboard, the initial state, and the
     //    transaction loop that feeds the host.
     const editorView: EditorView = new EditorView(container, {
         attributes: editableAttributes(attributes),
@@ -128,14 +141,7 @@ const mount = ({
             handlePasteIntoEmptyBlock(pasteView, event, slice),
         state: EditorState.create({
             doc: toEngineDocument(initialDoc, schema),
-            plugins: [
-                ...keystrokePipeline(registry, schema, api),
-                separatorPlacementPlugin(registry),
-                copiedExtrasPlugin(),
-                placeholderPlugin(() => currentPlaceholder, placeholderClassName),
-                // Drawn in the view's offset parent, outside the text, so `currentColor` would be the host's colour.
-                dropCursor({ color: 'var(--color-primary-default)', width: 2 }),
-            ],
+            plugins,
         }),
         // Clicking an inline atom (mention, ...) puts the caret after it rather than selecting it.
         handleClickOn(_view, _pos, node, nodePos) {
@@ -168,7 +174,7 @@ const mount = ({
     view = editorView;
     onDocApplied(initialDoc);
 
-    // 4. What the host gets back.
+    // 5. What the host gets back.
     const applyDoc = (doc: RteDocumentOf): void => {
         const next = toEngineDocument(doc, schema);
         // Drafts (an inline still being made) are in no document the host holds,

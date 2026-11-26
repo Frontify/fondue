@@ -558,6 +558,10 @@ export const createControlApi = (
         }
     };
     const dispatch: Dispatch = (transaction) => {
+        const view = getView();
+        const previousDoc = view.state.doc;
+        const previousTurnState = turnState;
+
         switch (turnState.kind) {
             case 'idle': {
                 if (transaction.docChanged) {
@@ -573,7 +577,13 @@ export const createControlApi = (
                 break;
             }
         }
-        getView().dispatch(transaction);
+
+        view.dispatch(transaction);
+
+        // A refused transaction leaves the document as it was, so it does not start or join the turn.
+        if (view.state.doc === previousDoc) {
+            turnState = previousTurnState;
+        }
     };
 
     return {
