@@ -1,0 +1,23 @@
+packages/rich-text-editor/src/__tests__/browser/hostStylingValues.ts
+  s_db5f68c365cb9f::t_c9fbe7b017e938 139
+.changeset/link-look-margins-and-box.md
+  s_db5f68c365cb9f::t_0e9bf3b9f70225 5
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_db5f68c365cb9f::t_c9fbe7b017e938 766-771,853-856
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "039c2dde3af1dc8f590c43c18db54e5e7d753b7b",
+  "prompts": {},
+  "sessions": {
+    "s_db5f68c365cb9f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "245973ea-0e7e-42d4-994f-f58a9d266a50",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
