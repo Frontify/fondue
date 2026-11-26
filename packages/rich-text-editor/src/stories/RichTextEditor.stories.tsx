@@ -414,7 +414,12 @@ export const Renderer: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={SURFACE}>
-                    <RichTextRenderer value={doc} plugins={defaultPlugins} />
+                    <RichTextRenderer
+                        id="rendered-document"
+                        value={doc}
+                        plugins={defaultPlugins}
+                        data-test-id="rendered-document"
+                    />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
