@@ -12,6 +12,7 @@ import {
     type MentionItems,
     type MentionUnknownLabels,
     type MentionValue,
+    MENTION_KINDS,
 } from './types';
 
 export type MentionContentOptions = {
@@ -28,7 +29,7 @@ export type MentionContentOptions = {
     /**
      * What a stored mention with no username shows, for each kind. The label is content, so the
      * editor's locale does not apply: pass text in the document's language. A kind left out keeps
-     * its English label.
+     * its English label. A blank label throws.
      * @default { user: 'Unknown person', group: 'Unknown group', all: 'Unknown mention' }
      */
     unknownLabels?: MentionUnknownLabels;
@@ -45,10 +46,25 @@ const assertMentionTrigger = (trigger: string, factory: string): void => {
 };
 
 /**
+ * Throws when a label the host gave is blank
+ */
+const assertUnknownLabels = (unknownLabels: MentionUnknownLabels | undefined, factory: string): void => {
+    for (const kind of MENTION_KINDS) {
+        const label = unknownLabels?.[kind];
+
+        // A blank label draws a mention with no text and no accessible name.
+        if (label !== undefined && label.trim() === '') {
+            throw new Error(`${factory}: \`unknownLabels.${kind}\` must not be blank.`);
+        }
+    }
+};
+
+/**
  * A mention, shown as the username linked to the person or group, with the full name on hover
  */
 export const mentionContent = ({ href, trigger = '@', unknownLabels }: MentionContentOptions = {}) => {
     assertMentionTrigger(trigger, 'mentionContent');
+    assertUnknownLabels(unknownLabels, 'mentionContent');
     const labels = resolvedUnknownLabels(unknownLabels);
 
     return defineContent({
@@ -114,6 +130,7 @@ export const searchIn =
 export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
     const { href, trigger = '@', unknownLabels } = options;
     assertMentionTrigger(trigger, 'mentionPlugin');
+    assertUnknownLabels(unknownLabels, 'mentionPlugin');
     let items: MentionItems;
     if (typeof options.items === 'function') {
         items = options.items;

@@ -98,6 +98,11 @@ describe('the labels for a stored mention with no username', () => {
         });
     });
 
+    it('refuse a blank label, in the content too', () => {
+        expect(() => mentionContent({ unknownLabels: { group: '' } })).toThrow(/unknownLabels\.group/);
+        expect(() => mentionPlugin({ items: [JANE], unknownLabels: { user: '   ' } })).toThrow(/unknownLabels\.user/);
+    });
+
     it('are the ones the host gave to mentionPlugin', () => {
         const labels = labelsIn(
             mentionPlugin({ items: [JANE], unknownLabels: GERMAN_LABELS }).content?.inlines?.mention,
