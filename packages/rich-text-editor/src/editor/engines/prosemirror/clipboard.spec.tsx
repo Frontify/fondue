@@ -7,7 +7,7 @@ import { NodeSelection } from 'prosemirror-state';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { type RteBlockNode } from '#/core';
-import { defaultPlugins } from '#/plugins';
+import { codeBlockPlugin, defaultPlugins } from '#/plugins';
 
 import { clipboardSerializer, COPIED_FROM_EDITOR } from './clipboard';
 import { destroyEditors, editorWith, paragraph, text } from './testEditor';
@@ -87,6 +87,17 @@ describe('copying', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('a'), { type: 'break' }, text('b'))]);
 
         expect(copied(editor)).toBe('<p>a<br>b</p>');
+    });
+
+    it('pastes an empty block of code back empty, with no line break in it', () => {
+        const plugins = [...defaultPlugins, codeBlockPlugin()];
+        const source = editorWith(plugins, [{ type: 'codeBlock', children: [] } as RteBlockNode]);
+        const target = editorWith(plugins, [paragraph()]);
+        target.view.focus();
+
+        target.pasteHTML(copied(source));
+
+        expect(target.stored()).toEqual([{ type: 'codeBlock', children: [] }]);
     });
 });
 

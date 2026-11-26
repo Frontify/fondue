@@ -146,6 +146,7 @@ const nodeOf = (token: Token, line: number): MarkdownTokenNode => ({
     tag: token.tag,
     attrs: Object.fromEntries((token.attrs ?? []).map(([name, value]) => [name, String(value)])),
     content: token.content,
+    info: token.info,
     nesting: token.nesting,
     children: (token.children ?? []).map((child) => nodeOf(child, line)),
     line,

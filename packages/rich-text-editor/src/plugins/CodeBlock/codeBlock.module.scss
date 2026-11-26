@@ -1,0 +1,20 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../styles/look.module.scss';
+
+.codeBlock {
+    @include look.look('code-block', $only: (margin-top, margin-bottom));
+    padding: var(--spacing-small);
+    overflow-x: auto;
+    border-radius: var(--border-radius-small);
+    background: var(--color-container-secondary-default);
+    // Relative, so a code block stays proportional to the text around it.
+    font-size: 0.9em;
+    font-family: var(--typography-font-family-monospace);
+    white-space: pre;
+
+    // A host rule that sets the font on every element would otherwise reach the `code` inside.
+    & > code {
+        font-family: inherit;
+    }
+}

@@ -383,8 +383,8 @@ class ReactBlockView extends ReactNodeView<Record<string, unknown>> {
         const container = wrapper('span');
         this.dom.append(container);
         if (definition.content !== undefined) {
-            // Inline content in a span, blocks in a div; neither adds a box.
-            this.contentDOM = wrapper(definition.content === 'text' ? 'span' : 'div');
+            // Text in a span, blocks in a div; neither adds a box.
+            this.contentDOM = wrapper(definition.content === 'text' || definition.content === 'code' ? 'span' : 'div');
             this.dom.append(this.contentDOM);
         }
         this.start(container);

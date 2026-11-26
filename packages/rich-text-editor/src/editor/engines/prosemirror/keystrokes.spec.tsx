@@ -19,7 +19,7 @@ import {
     type RteBlockNode,
     type RtePlugin,
 } from '#/core';
-import { defaultPlugins } from '#/plugins';
+import { codeBlockPlugin, defaultPlugins } from '#/plugins';
 
 import { trimTrailingPunctuation } from './autolink';
 import { destroyEditors, editorWith, paragraph, shipped, text, TOKEN_TRIM } from './testEditor';
@@ -30,6 +30,8 @@ import { destroyEditors, editorWith, paragraph, shipped, text, TOKEN_TRIM } from
  */
 
 const empty = (): RteBlockNode[] => [paragraph()];
+
+const withCodeBlock: readonly RtePlugin[] = [...defaultPlugins, codeBlockPlugin()];
 
 const typed = (value: string, plugins: readonly RtePlugin[] = defaultPlugins): RteBlockNode[] | null => {
     const editor = editorWith(plugins, empty());
@@ -130,6 +132,51 @@ describe('typing a block shortcut at the start of a line', () => {
 
     it('does nothing in the middle of a line', () => {
         expect(typed('a ## b')).toEqual([paragraph(text('a ## b'))]);
+    });
+
+    it('turns a fence of three backticks and a space into an empty code block', () => {
+        expect(typed('``` ', withCodeBlock)).toEqual([{ type: 'codeBlock', children: [] }]);
+    });
+
+    it('does not read the backticks of that fence as inline code', () => {
+        expect(typed('``` const a = 1;', withCodeBlock)).toEqual([
+            { type: 'codeBlock', children: [{ text: 'const a = 1;' }] },
+        ]);
+    });
+});
+
+describe('typing in a code block', () => {
+    it('keeps backticks and emphasis as typed', () => {
+        expect(typed('``` `a` **b** *c*', withCodeBlock)).toEqual([
+            { type: 'codeBlock', children: [{ text: '`a` **b** *c*' }] },
+        ]);
+    });
+
+    it('starts a new line on Enter', () => {
+        const editor = editorWith(withCodeBlock, [{ type: 'codeBlock', children: [{ text: 'ab' }] }]);
+        editor.caretAfter('a');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([{ type: 'codeBlock', children: [{ text: 'a\nb' }] }]);
+    });
+
+    it('starts a new line on Shift-Enter', () => {
+        const editor = editorWith(withCodeBlock, [{ type: 'codeBlock', children: [{ text: 'ab' }] }]);
+        editor.caretAfter('a');
+
+        expect(press(editor.view, 'Enter', { shiftKey: true })).toBe(true);
+
+        expect(editor.stored()).toEqual([{ type: 'codeBlock', children: [{ text: 'a\nb' }] }]);
+    });
+
+    it('leaves the block for a new paragraph after it on Mod-Enter', () => {
+        const editor = editorWith(withCodeBlock, [{ type: 'codeBlock', children: [{ text: 'ab' }] }]);
+        editor.caretAfter('ab');
+
+        expect(press(editor.view, 'Enter', mod)).toBe(true);
+
+        expect(editor.stored()).toEqual([{ type: 'codeBlock', children: [{ text: 'ab' }] }, paragraph()]);
     });
 });
 
@@ -428,6 +475,20 @@ const verbatimPlugin = definePlugin({
     hotkeys: { 'Mod-q': { label: 'Verbatim', run: (api) => api.marks.toggle('verbatim') } },
 });
 
+/** A block of code of the spec's own: the engine reads the `code` content, not which plugin declares it. */
+const preformattedPlugin: RtePlugin = definePlugin({
+    id: 'preformatted',
+    content: defineContent({
+        blocks: {
+            preformatted: defineBlock({
+                content: 'code',
+                toHtml: () => ({ tag: 'pre', children: true }),
+                parse: [{ tag: 'pre' }],
+            }),
+        },
+    }),
+});
+
 describe('a feature hotkey', () => {
     it('runs when its keys are pressed — Shift-Enter breaks the line', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('ab'))]);
@@ -519,6 +580,20 @@ describe('a feature hotkey', () => {
 
         expect(mention).not.toHaveBeenCalled();
         expect(editor.stored()).toEqual([paragraph(text('noah@frontify.com'))]);
+    });
+
+    it('naming a character is typed as it is in a block of code', () => {
+        const mention = vi.fn<(api: EditorControlApi) => void>();
+        const editor = editorWith(
+            [preformattedPlugin, definePlugin({ id: 'mention', hotkeys: { '@': { label: 'Mention', run: mention } } })],
+            [{ type: 'preformatted', children: [{ text: 'x ' }] }],
+        );
+        editor.caretAfter('x ');
+
+        editor.type('@a');
+
+        expect(mention).not.toHaveBeenCalled();
+        expect(editor.stored()).toEqual([{ type: 'preformatted', children: [{ text: 'x @a' }] }]);
     });
 
     it('naming a character fires on that character being typed, and the character is not inserted', () => {
@@ -810,6 +885,32 @@ describe('a block shortcut on a block with attributes every text block carries',
         expect(editor.stored()).toEqual([
             { type: 'textStyle', style: 'heading2', align: 'center', children: [{ text: 'Title' }] },
         ]);
+    });
+});
+
+describe('a block shortcut for a code block before an inline element', () => {
+    const tagPlugin: RtePlugin = definePlugin({
+        id: 'tag',
+        content: defineContent({
+            inlines: {
+                tag: defineInline<{ name: string }>({
+                    toHtml: ({ name }) => ({ tag: 'span', children: name }),
+                    parse: [],
+                }),
+            },
+        }),
+    });
+
+    it('writes the inline element as the plain text it gives', () => {
+        const editor = editorWith(
+            [...defaultPlugins, codeBlockPlugin(), tagPlugin],
+            [paragraph(text('``'), { type: 'tag', name: 'Ada' }, text(' rest'))],
+        );
+        editor.caretAfter('``');
+
+        editor.type('` ');
+
+        expect(editor.stored()).toEqual([{ type: 'codeBlock', children: [{ text: 'Ada rest' }] }]);
     });
 });
 

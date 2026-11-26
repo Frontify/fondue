@@ -12,6 +12,7 @@ export const deCH: RichTextStrings = {
     RichTextEditor_bulletedList: 'Aufzählung',
     RichTextEditor_cancel: 'Abbrechen',
     RichTextEditor_code: 'Code',
+    RichTextEditor_codeBlock: 'Codeblock',
     RichTextEditor_colorBlue: 'Blau',
     RichTextEditor_colorGray: 'Grau',
     RichTextEditor_colorGreen: 'Grün',

@@ -3,7 +3,13 @@
 import { chainCommands, setBlockType as pmSetBlockType } from 'prosemirror-commands';
 import { closeHistory, redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
 import { undoInputRule } from 'prosemirror-inputrules';
-import { type Mark as PmMark, type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
+import {
+    type Mark as PmMark,
+    type MarkType as PmMarkType,
+    type Node as PmNode,
+    type NodeType as PmNodeType,
+    type Schema,
+} from 'prosemirror-model';
 import {
     type Command,
     type EditorState,
@@ -19,6 +25,7 @@ import {
     type ClearMarksScope,
     type EditorControlApi,
     INLINE_PLACEHOLDER,
+    inlinePlainText,
     type PluginRegistry,
     type RteMarkState,
     type RteSelectionSnapshot,
@@ -26,7 +33,7 @@ import {
 
 import { keepCarriedAttrs } from './carriedAttrs';
 import { type Dispatch } from './dispatch';
-import { blockToEngine, markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
+import { blockToEngine, markValueOf, shallowBlock, VALUE_ATTR, valueAttrsFor } from './documentConversion';
 import { createGridApi, gridOfSelection, textOfSelectedSlots } from './grid';
 import { createListApi, liftOutOfLists } from './lists';
 import { warnUnknownType } from './warnings';
@@ -397,6 +404,55 @@ const createMarkApi = (
 // --- Blocks ---
 
 /**
+ * Replaces inline elements with plain text in selected blocks that can change type.
+ *
+ * Removes elements that provide no text. ProseMirror converts line breaks
+ * and removes unfinished inline elements during the block type change.
+ *
+ * @param nodeType - The target block type.
+ * @returns A transaction whose mapped positions the caller uses to change the block type.
+ */
+export const withInlinesAsText = (state: EditorState, registry: PluginRegistry, nodeType: PmNodeType): Transaction => {
+    const transaction = state.tr;
+    const replaced: { from: number; to: number; text: string }[] = [];
+    for (const { $from, $to } of state.selection.ranges) {
+        state.doc.nodesBetween($from.pos, $to.pos, (block, blockPos, parent, index) => {
+            if (!block.isTextblock) {
+                return true;
+            }
+            // Only the blocks the engine's set-type turns, so the others keep their inline elements.
+            if (block.type === nodeType || !parent?.canReplaceWith(index, index + 1, nodeType)) {
+                return false;
+            }
+            let offset = 0;
+            for (let childIndex = 0; childIndex < block.childCount; childIndex++) {
+                const child = block.child(childIndex);
+                const from = blockPos + 1 + offset;
+                offset += child.nodeSize;
+                const value = child.attrs[VALUE_ATTR] as Record<string, unknown> | null | undefined;
+                // A draft has no value to read yet, and the engine drops it as it does any other it cannot keep.
+                if (child.isText || child.type.spec.linebreakReplacement === true || value === null) {
+                    continue;
+                }
+                const text = inlinePlainText({ type: child.type.name, ...value }, registry);
+                replaced.push({ from, to: from + child.nodeSize, text });
+            }
+
+            return false;
+        });
+    }
+    // Last first, so an earlier position is not moved by a later change.
+    for (const { from, to, text } of replaced.reverse()) {
+        if (text === '') {
+            transaction.delete(from, to);
+        } else {
+            transaction.replaceWith(from, to, state.schema.text(text));
+        }
+    }
+    return transaction;
+};
+
+/**
  * Block types and the attributes on them. Which block the selection is in is
  * not here: features read that off the selection snapshot.
  */
@@ -450,6 +506,13 @@ const createBlockApi = (
             }
             // The engine's command only says whether the type can be set here;
             // the change itself keeps each block's carried attributes.
+            if (nodeType.spec.code === true) {
+                const written = withInlinesAsText(current, registry, nodeType);
+                for (const step of written.steps) {
+                    combined.step(step);
+                }
+                current = current.apply(written);
+            }
             const applied = pmSetBlockType(nodeType, value ?? {})(current);
             if (applied) {
                 const typed = current.tr;

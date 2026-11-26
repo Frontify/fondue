@@ -12,6 +12,7 @@ export const ptPT: RichTextStrings = {
     RichTextEditor_bulletedList: 'Lista com marcadores',
     RichTextEditor_cancel: 'Cancelar',
     RichTextEditor_code: 'Código',
+    RichTextEditor_codeBlock: 'Bloco de código',
     RichTextEditor_colorBlue: 'Azul',
     RichTextEditor_colorGray: 'Cinzento',
     RichTextEditor_colorGreen: 'Verde',

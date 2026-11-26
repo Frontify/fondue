@@ -5,13 +5,21 @@
 import { describe, expect, it } from 'vitest';
 
 import { parseHtml, type RteDocument, type RteDocumentWith, serializeToHtml } from '../index';
-import { columnBreakPlugin, defaultContent, defaultPlugins, mentionPlugin } from '../plugins';
+import {
+    codeBlockContent,
+    codeBlockPlugin,
+    columnBreakPlugin,
+    defaultContent,
+    defaultPlugins,
+    mentionPlugin,
+} from '../plugins';
 
 // A host that stores HTML opens it with `parseHtml` and saves it with
 // `serializeToHtml`: each save and open must give back the document it saved.
 
 const plugins = [
     ...defaultPlugins,
+    codeBlockPlugin(),
     mentionPlugin({ items: [], href: (mention) => (mention.kind === 'all' ? undefined : `/people/${mention.id}`) }),
     columnBreakPlugin(),
 ];
@@ -100,5 +108,87 @@ describe('parseHtml', () => {
         expect(parseHtml(serializeToHtml(shipped, { plugins: defaultContent }), { plugins: defaultContent })).toEqual(
             shipped,
         );
+    });
+});
+
+describe('parseHtml code blocks', () => {
+    const codeBlockOf = (html: string) => parseHtml(html, { plugins: [...defaultContent, codeBlockContent] }).blocks;
+
+    it('reads the language from the class of the code element', () => {
+        expect(codeBlockOf('<pre><code class="language-ts">const a = 1;\nconst b = 2;</code></pre>')).toEqual([
+            { type: 'codeBlock', language: 'ts', children: [{ text: 'const a = 1;\nconst b = 2;' }] },
+        ]);
+    });
+
+    it('reads the language from a class with the shorter prefix', () => {
+        expect(codeBlockOf('<pre><code class="hljs lang-python">a</code></pre>')).toEqual([
+            { type: 'codeBlock', language: 'python', children: [{ text: 'a' }] },
+        ]);
+    });
+
+    it('reads a pre with no code element, keeping its line breaks and spaces', () => {
+        expect(codeBlockOf('<pre>one\n  two</pre>')).toEqual([
+            { type: 'codeBlock', children: [{ text: 'one\n  two' }] },
+        ]);
+    });
+
+    it.each([
+        ['has characters a language never holds', 'language-a%b'],
+        ['is longer than 64 characters', `language-${'a'.repeat(65)}`],
+        ['is empty', 'language-'],
+    ])('stores no language when the class %s', (_name, className) => {
+        expect(codeBlockOf(`<pre><code class="${className}">a</code></pre>`)).toEqual([
+            { type: 'codeBlock', children: [{ text: 'a' }] },
+        ]);
+    });
+
+    it('reads a line written as a block inside the pre as a line of the one code block', () => {
+        expect(codeBlockOf('<pre><code><div>a</div><div>b</div></code></pre>')).toEqual([
+            { type: 'codeBlock', children: [{ text: 'a\nb' }] },
+        ]);
+    });
+
+    it('reads a break inside the pre as a new line', () => {
+        expect(codeBlockOf('<pre><code>a<br>b</code></pre>')).toEqual([
+            { type: 'codeBlock', children: [{ text: 'a\nb' }] },
+        ]);
+    });
+
+    it('reads the language from the class of the pre when the code element has none', () => {
+        expect(codeBlockOf('<pre class="language-ts">x</pre>')).toEqual([
+            { type: 'codeBlock', language: 'ts', children: [{ text: 'x' }] },
+        ]);
+    });
+
+    it('reads markup inside as plain text with no marks', () => {
+        expect(codeBlockOf('<pre><code>a <strong>b</strong> *c*</code></pre>')).toEqual([
+            { type: 'codeBlock', children: [{ text: 'a b *c*' }] },
+        ]);
+    });
+
+    it('reads an empty pre as a code block with no text', () => {
+        expect(codeBlockOf('<pre><code class="language-ts"></code></pre>')).toEqual([
+            { type: 'codeBlock', language: 'ts', children: [] },
+        ]);
+    });
+
+    it('still reads a code element in a paragraph as inline code', () => {
+        expect(codeBlockOf('<p>a <code>b</code></p>')).toEqual([
+            { type: 'paragraph', children: [{ text: 'a ' }, { text: 'b', code: true }] },
+        ]);
+    });
+
+    it('gives back the code blocks serializeToHtml wrote', () => {
+        const document: RteDocument = {
+            version: 1,
+            blocks: [
+                { type: 'codeBlock', language: 'ts', children: [{ text: 'const a = "<b>" && 1;\n\tindented\n' }] },
+                { type: 'codeBlock', children: [{ text: '\nstarts with a line break' }] },
+                { type: 'codeBlock', children: [{ text: '```\nfence\n```' }] },
+                { type: 'codeBlock', children: [] },
+            ],
+        };
+
+        expect(parseHtml(serializeToHtml(document, { plugins }), { plugins })).toEqual(document);
     });
 });

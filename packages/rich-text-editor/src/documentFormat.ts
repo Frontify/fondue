@@ -15,6 +15,7 @@ import { type AlignAttribute } from './plugins/Align';
 import { type BoldMark } from './plugins/Bold';
 import { type CheckItemBlock, type CheckListBlock } from './plugins/CheckList';
 import { type CodeMark } from './plugins/Code';
+import { type CodeBlockBlock } from './plugins/CodeBlock';
 import { type ColumnBreakBlock } from './plugins/ColumnBreak';
 import { type FontColorMark } from './plugins/FontColor';
 import { type ItalicMark } from './plugins/Italic';
@@ -110,6 +111,7 @@ type OfficialList<TExtraInline extends RteInlineNode> =
  */
 export type RteBlock<TExtraInline extends RteInlineNode = never> =
     | WithOfficialChildren<ParagraphBlock | QuoteBlock | TextStyleBlock, TExtraInline>
+    | CodeBlockBlock
     | ColumnBreakBlock
     | OfficialList<TExtraInline>
     | OfficialTable<TExtraInline>;

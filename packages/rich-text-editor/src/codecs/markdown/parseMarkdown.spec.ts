@@ -3,12 +3,14 @@
 import { describe, expect, it } from 'vitest';
 
 import { type MarkdownMarkForm } from '../../core';
-import { bulletListContent, defaultContent, mentionContent } from '../../plugins';
+import { bulletListContent, codeBlockContent, defaultContent, mentionContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, parseMarkdownWithLosses } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
 
-const OPTIONS: MarkdownOptions = { plugins: defaultContent };
+const OPTIONS: MarkdownOptions = { plugins: [...defaultContent, codeBlockContent] };
+
+const WITHOUT_CODE_BLOCK: MarkdownOptions = { plugins: defaultContent };
 
 const EMPTY_DOCUMENT = { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '' }] }] };
 
@@ -248,6 +250,104 @@ describe('parseMarkdown lists', () => {
     });
 });
 
+describe('parseMarkdown code blocks', () => {
+    const FENCE = '```';
+
+    const plain = (text: string) => ({ version: 1, blocks: [{ type: 'codeBlock', children: [{ text }] }] });
+    const inLanguage = (text: string, language: string) => ({
+        version: 1,
+        blocks: [{ type: 'codeBlock', language, children: [{ text }] }],
+    });
+
+    it('reads a fence as a code block holding its lines', () => {
+        expect(parseMarkdownWithLosses('```\none\ntwo\n```', OPTIONS)).toEqual({
+            document: plain('one\ntwo'),
+            losses: [],
+        });
+    });
+
+    it('reads the first word of the info string as the language', () => {
+        expect(parseMarkdown('```ts title="a.ts"\nlet a;\n```', OPTIONS)).toEqual(inLanguage('let a;', 'ts'));
+    });
+
+    it('reads a tilde fence like a backtick fence', () => {
+        expect(parseMarkdown('~~~py\nx = 1\n~~~', OPTIONS)).toEqual(inLanguage('x = 1', 'py'));
+    });
+
+    it.each(['c++', 'c#', 'objective-c', 'x.y', 'a_b'])('keeps the language %s', (language) => {
+        expect(parseMarkdown(`${FENCE}${language}\nx\n${FENCE}`, OPTIONS)).toEqual(inLanguage('x', language));
+    });
+
+    it.each([['{r}'], ['a/b'], ['a'.repeat(65)]])('stores no language for the info string %s', (info) => {
+        expect(parseMarkdown(`${FENCE}${info}\nx\n${FENCE}`, OPTIONS)).toEqual(plain('x'));
+    });
+
+    it('reads a fence with no lines as a code block with no text', () => {
+        expect(parseMarkdown('```ts\n```', OPTIONS)).toEqual({
+            version: 1,
+            blocks: [{ type: 'codeBlock', language: 'ts', children: [] }],
+        });
+    });
+
+    it('reads a fence that is never closed up to the end of the document', () => {
+        expect(parseMarkdown('```\na\nb', OPTIONS)).toEqual(plain('a\nb'));
+    });
+
+    it('reads blank lines, indentation and Markdown characters as they are', () => {
+        expect(parseMarkdown('```\n  *a* _b_\n\n# c\n```', OPTIONS)).toEqual(plain('  *a* _b_\n\n# c'));
+    });
+
+    it('reads a longer fence around a shorter one', () => {
+        expect(parseMarkdown('````\n```\nx\n```\n````', OPTIONS)).toEqual(plain('```\nx\n```'));
+    });
+
+    it('reads an indented code block as a code block with no language', () => {
+        expect(parseMarkdown('    one\n    two', OPTIONS)).toEqual(plain('one\ntwo'));
+    });
+
+    it('keeps the blocks around it', () => {
+        expect(parseMarkdown('a\n\n```\nx\n```\n\nb', OPTIONS).blocks).toEqual([
+            { type: 'paragraph', children: [{ text: 'a' }] },
+            { type: 'codeBlock', children: [{ text: 'x' }] },
+            { type: 'paragraph', children: [{ text: 'b' }] },
+        ]);
+    });
+
+    it('reads a fence inside a quote as a code block between two quotes, in order', () => {
+        expect(parseMarkdown('> a\n>\n> ```\n> x\n> ```\n>\n> b', OPTIONS).blocks).toEqual([
+            { type: 'quote', children: [{ text: 'a' }] },
+            { type: 'codeBlock', children: [{ text: 'x' }] },
+            { type: 'quote', children: [{ text: 'b' }] },
+        ]);
+    });
+
+    it('reads a fence as one paragraph of its lines where a list item holds no code block', () => {
+        expect(parseMarkdown('- ```ts\n  a\n  b\n  ```', OPTIONS)).toEqual({
+            version: 1,
+            blocks: [
+                {
+                    type: 'bulletList',
+                    children: [
+                        {
+                            type: 'listItem',
+                            children: [
+                                { type: 'paragraph', children: [{ text: 'a' }, { type: 'break' }, { text: 'b' }] },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        });
+    });
+
+    it('reads a fence as one paragraph of its lines with no code block content given', () => {
+        expect(parseMarkdown('```ts\na\nb\n```', { plugins: [bulletListContent()] })).toEqual({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a b' }] }],
+        });
+    });
+});
+
 describe('parseMarkdown with no text to put in a block', () => {
     const EMPTY_ITEM_LIST = {
         version: 1,
@@ -292,7 +392,7 @@ describe('parseMarkdown with nothing to read a token by', () => {
     });
 
     it('reads a code fence as one paragraph with its lines joined by breaks', () => {
-        expect(parseMarkdown('```\none\n\ntwo\n```', OPTIONS)).toEqual({
+        expect(parseMarkdown('```\none\n\ntwo\n```', WITHOUT_CODE_BLOCK)).toEqual({
             version: 1,
             blocks: [
                 {
@@ -304,18 +404,18 @@ describe('parseMarkdown with nothing to read a token by', () => {
     });
 
     it('drops the empty lines at the end of a code fence', () => {
-        expect(parseMarkdown('```\nfoo\n\n```', OPTIONS)).toEqual({
+        expect(parseMarkdown('```\nfoo\n\n```', WITHOUT_CODE_BLOCK)).toEqual({
             version: 1,
             blocks: [{ type: 'paragraph', children: [{ text: 'foo' }] }],
         });
     });
 
     it('reads a code fence of empty lines as the empty document', () => {
-        expect(parseMarkdown('```\n\n\n```', OPTIONS)).toEqual(EMPTY_DOCUMENT);
+        expect(parseMarkdown('```\n\n\n```', WITHOUT_CODE_BLOCK)).toEqual(EMPTY_DOCUMENT);
     });
 
     it('keeps a literal non-breaking space from a code fence', () => {
-        expect(parseMarkdown('```\n\u00A0\n```', OPTIONS)).toEqual({
+        expect(parseMarkdown('```\n\u00A0\n```', WITHOUT_CODE_BLOCK)).toEqual({
             version: 1,
             blocks: [{ type: 'paragraph', children: [{ text: '\u00A0' }] }],
         });

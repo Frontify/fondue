@@ -15,7 +15,7 @@ import {
     type RteBlockNode,
     type RtePlugin,
 } from '#/core';
-import { defaultPlugins } from '#/plugins';
+import { codeBlockPlugin, defaultPlugins, tablePlugin } from '#/plugins';
 
 import { toEngineDocument } from './documentConversion';
 import { destroyEditors, editorWith, paragraph, text, tokenPlugin } from './testEditor';
@@ -67,7 +67,7 @@ const emphasisPlugin: RtePlugin = definePlugin({
     }),
 });
 
-const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin, tokenPlugin()];
+const plugins: RtePlugin[] = [...defaultPlugins, codeBlockPlugin(), dividerPlugin, tagPlugin, tokenPlugin()];
 
 /** The engine's own fixtures, never a shipped plugin. */
 const fixtures: RtePlugin[] = [...fixturePlugins, dividerPlugin, tagPlugin, pinPlugin];
@@ -673,6 +673,94 @@ describe('blocks.setType', () => {
             { type: 'quote', children: [{ text: 'one' }] },
             { type: 'quote', children: [{ text: 'two' }] },
         ]);
+    });
+});
+
+describe('blocks.setType to a block of code', () => {
+    it('turns a paragraph into a code block, with its text', () => {
+        const editor = editorWith(plugins, [paragraph(text('const a = 1;'))]);
+        editor.caretAfter('const');
+
+        editor.api.blocks.setType('codeBlock', { language: 'ts' });
+
+        expect(editor.stored()).toEqual([{ type: 'codeBlock', language: 'ts', children: [{ text: 'const a = 1;' }] }]);
+    });
+
+    it('takes the marks off the text, which a code block cannot hold', () => {
+        const editor = editorWith(plugins, [
+            paragraph(text('a', { bold: true }), text('b', { code: true }), text('c')),
+        ]);
+        editor.caretAfter('a');
+
+        editor.api.blocks.setType('codeBlock');
+
+        expect(editor.stored()).toEqual([{ type: 'codeBlock', children: [{ text: 'abc' }] }]);
+    });
+
+    it('writes a line break as a new line, and a new line back as a line break', () => {
+        const editor = editorWith(plugins, [paragraph(text('a'), { type: 'break' }, text('b'))]);
+        editor.caretAfter('a');
+
+        editor.api.blocks.setType('codeBlock');
+
+        expect(editor.stored()).toEqual([{ type: 'codeBlock', children: [{ text: 'a\nb' }] }]);
+
+        editor.api.blocks.setType('paragraph');
+
+        expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('b'))]);
+    });
+
+    it('writes an inline element as the plain text it gives, where a code block cannot hold it', () => {
+        const editor = editorWith(plugins, [paragraph(text('hi '), { type: 'tag', name: 'Ada' })]);
+        editor.caretAfter('hi');
+
+        editor.api.blocks.setType('codeBlock');
+
+        expect(editor.stored()).toEqual([{ type: 'codeBlock', children: [{ text: 'hi Ada' }] }]);
+    });
+
+    it('keeps an inline element in a block the code block cannot replace', () => {
+        const cellParagraph = paragraph(text('cell '), { type: 'tag', name: 'Ada' });
+        const editor = editorWith(
+            [...defaultPlugins, codeBlockPlugin(), tablePlugin(), tagPlugin],
+            [
+                paragraph(text('top')),
+                {
+                    type: 'table',
+                    children: [
+                        {
+                            type: 'tableRow',
+                            children: [{ type: 'tableCell', colspan: 1, rowspan: 1, children: [cellParagraph] }],
+                        },
+                    ],
+                },
+            ],
+        );
+        editor.selectBetween('top', 'cell');
+
+        editor.api.blocks.setType('codeBlock');
+
+        expect(editor.stored()).toEqual([
+            { type: 'codeBlock', children: [{ text: 'top' }] },
+            {
+                type: 'table',
+                children: [
+                    {
+                        type: 'tableRow',
+                        children: [{ type: 'tableCell', colspan: 1, rowspan: 1, children: [cellParagraph] }],
+                    },
+                ],
+            },
+        ]);
+    });
+
+    it('leaves the alignment of the paragraph behind', () => {
+        const editor = editorWith(plugins, [{ type: 'paragraph', align: 'center', children: [{ text: 'a' }] }]);
+        editor.caretAfter('a');
+
+        editor.api.blocks.setType('codeBlock');
+
+        expect(editor.stored()).toEqual([{ type: 'codeBlock', children: [{ text: 'a' }] }]);
     });
 });
 

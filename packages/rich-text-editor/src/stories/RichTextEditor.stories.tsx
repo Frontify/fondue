@@ -8,6 +8,7 @@ import {
     type MarkdownLoss,
     type MarkdownOptions,
     type MarkdownReadLoss,
+    parseMarkdown,
     parseMarkdownWithLosses,
     serializeToMarkdown,
 } from '../codecs';
@@ -22,6 +23,7 @@ import {
     bulletListPlugin,
     checkListContent,
     checkListPlugin,
+    codeBlockPlugin,
     columnBreakPlugin,
     defaultPlugins,
     italicPlugin,
@@ -837,6 +839,39 @@ export const Markdown: Story = {
                     <pre className={MARKDOWN_PANEL}>{markdown}</pre>
                     <pre className={MARKDOWN_PANEL}>{lossesText}</pre>
                 </div>
+            </div>
+        );
+    },
+};
+
+/** An annotation with a paragraph and a fenced block, whose second line is indented and whose last line holds a backtick. */
+const STORED_CODE_ANNOTATION = `The spacing helper returns the wrong value:
+
+\`\`\`ts
+const gap = (size: number) => {
+    return size * 4; // the \`gap\` in px
+};
+\`\`\``;
+
+const CODE_BLOCK_PLUGINS = [...defaultPlugins, codeBlockPlugin()];
+
+const CODE_BLOCK_MARKDOWN_OPTIONS: MarkdownOptions = { plugins: CODE_BLOCK_PLUGINS, breaks: true };
+
+/**
+ * A fenced block of code in Markdown becomes a code block that keeps its lines, indentation and language.
+ * Type three backticks and a space in an empty paragraph to start one, `Mod-Enter` leaves it.
+ */
+export const CodeBlock: Story = {
+    render: () => {
+        const [doc, setDoc] = useState(() => parseMarkdown(STORED_CODE_ANNOTATION, CODE_BLOCK_MARKDOWN_OPTIONS));
+        const { markdown } = useMemo(() => serializeToMarkdown(doc, CODE_BLOCK_MARKDOWN_OPTIONS), [doc]);
+
+        return (
+            <div className={LAYOUT}>
+                <div className={FRAME}>
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={CODE_BLOCK_PLUGINS} />
+                </div>
+                <pre className={MARKDOWN_PANEL}>{markdown}</pre>
             </div>
         );
     },

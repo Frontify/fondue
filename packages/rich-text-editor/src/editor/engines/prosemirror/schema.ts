@@ -66,6 +66,9 @@ const contentExpression = (
     if (content === 'text') {
         return 'inline*';
     }
+    if (content === 'code') {
+        return 'text*';
+    }
     if ('items' in content) {
         // Thrown, as with `blocks` below: left out, the list would lose its items on the way out.
         if (!known.has(content.items)) {
@@ -112,7 +115,7 @@ const blockNodeSpec = (
     // Attributes every text block carries are engine attributes of each one.
     const carried = definition.content === 'text' ? [...registry.blockAttributes] : [];
 
-    return {
+    const spec: PmNodeSpec = {
         content: contentExpression(type, definition, known, lists),
         atom: isVoid,
         // Mod-click selects the innermost selectable node whole; for a block of
@@ -134,12 +137,22 @@ const blockNodeSpec = (
         parseDOM: blockParseRules(definition, carried),
         toDOM: (node) => htmlSpecToDom(blockHtml(registry, definition, node.attrs)),
     };
+    if (definition.content === 'code') {
+        // Plain text that keeps its spaces and line breaks, and takes the marks off what is turned into it.
+        spec.marks = '';
+        spec.code = true;
+        spec.whitespace = 'pre';
+    }
+
+    return spec;
 };
 
-const inlineNodeSpec = (definition: InlineDefinition, hasEditView: boolean): PmNodeSpec => ({
+const inlineNodeSpec = (definition: InlineDefinition, hasEditView: boolean, hasCodeBlock: boolean): PmNodeSpec => ({
     group: 'inline',
     inline: true,
     atom: true,
+    // Swapped for a new line when a block turns into code, and back; without a code block a raw new line must keep reading as a space.
+    linebreakReplacement: hasCodeBlock && definition.lineBreak === true,
     // With editing UI, a node inserted without a value is a draft (null) the UI
     // completes; without it, it stores the declared defaults.
     attrs: { [VALUE_ATTR]: { default: hasEditView ? null : (definition.defaults ?? {}) } },
@@ -222,8 +235,17 @@ export const buildSchema = (registry: PluginRegistry): Schema => {
     for (const [type, block] of registry.blocks) {
         nodes[type] = blockNodeSpec(type, block, { registry, isHeld: heldTypes.has(type), known, lists });
     }
+    const hasCodeBlock = [...registry.blocks.values()].some((block) => block.content === 'code');
+    let lineBreakType: string | undefined;
     for (const [type, inline] of registry.inlines) {
-        nodes[type] = inlineNodeSpec(inline, registry.edits.has(type));
+        if (inline.lineBreak === true) {
+            // One only: the engine swaps a single node type for a new line.
+            if (lineBreakType !== undefined) {
+                throw new Error(`Inlines "${lineBreakType}" and "${type}" are both a line break; a document has one.`);
+            }
+            lineBreakType = type;
+        }
+        nodes[type] = inlineNodeSpec(inline, registry.edits.has(type), hasCodeBlock);
     }
     nodes[UNKNOWN_BLOCK] = unknownBlockSpec;
     nodes[UNKNOWN_INLINE] = unknownInlineSpec;

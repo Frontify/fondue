@@ -268,8 +268,8 @@ type DefaultsWhenValued<TValue> = [keyof TValue] extends [never]
       : { defaults: TValue };
 
 /**
- * Type a node's callbacks by its value, then erase the type so the definition
- * fits a plugin's map beside nodes with other values.
+ * Types a block's callbacks with the value declared by the plugin.
+ * The registry stores definitions with different value types together.
  * @example
  * const quote = defineBlock({
  *     content: 'text',
@@ -277,24 +277,37 @@ type DefaultsWhenValued<TValue> = [keyof TValue] extends [never]
  *     parse: [{ tag: 'blockquote' }],
  * });
  */
-export const defineBlock = <TValue extends object = Record<string, never>>(
-    definition: BlockDefinition<TValue> & DefaultsWhenValued<TValue>,
-): BlockDefinition => definition as unknown as BlockDefinition;
+export const defineBlock: DefineBlock = <TValue extends object>(
+    definition: BlockDefinition<TValue>,
+): BlockDefinition => {
+    // The registry builds callback values using the keys and defaults from this definition.
+    return definition as BlockDefinition;
+};
 
 /**
- * A block type. Its value is the attributes it stores, flat on the document
- * node; `defaults` declares them — an attribute missing there is not stored.
+ * The first two signatures infer Markdown callback parameters for new definitions.
+ * The last signature accepts definitions that already have the union type.
  */
-export type BlockDefinition<TValue = Record<string, unknown>> = {
-    content?: ContentModel;
+type DefineBlock = {
+    <TValue extends object = Record<string, never>>(
+        definition: BlockDefinitionBase<TValue> & BlockCode<TValue> & DefaultsWhenValued<TValue>,
+    ): BlockDefinition;
+    <TValue extends object = Record<string, never>>(
+        definition: BlockDefinitionBase<TValue> & BlockLines<TValue> & DefaultsWhenValued<TValue>,
+    ): BlockDefinition;
+    <TValue extends object = Record<string, never>>(
+        definition: BlockDefinition<TValue> & DefaultsWhenValued<TValue>,
+    ): BlockDefinition;
+};
+
+/** What every block type has, whatever it holds. */
+type BlockDefinitionBase<TValue> = {
     defaults?: TValue;
     /** Styles the block's own tags show by default, which pasted HTML repeats without meaning them as formatting. */
     defaultStyles?: readonly DefaultStyle[];
     /** The block's markup. `children: true` is where its content goes. */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<Partial<TValue>>[];
-    /** How the block reads from and writes to Markdown. Without it, the block is a loss on write. */
-    markdown?: MarkdownBlockForm<TValue>;
     /**
      * The block's place in a grid: a block laid out in rows and columns that
      * the editor edits as one, with a selection that spans slots, and keys
@@ -309,6 +322,27 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
         component?: ComponentType<{ value: TValue; children?: ReactNode; style?: CSSProperties }>;
     };
 };
+
+/** A block that holds anything but code, and writes to Markdown as lines. */
+type BlockLines<TValue> = {
+    content?: Exclude<ContentModel, 'code'>;
+    /** How the block reads from and writes to Markdown. Without it, the block is a loss on write. */
+    markdown?: MarkdownBlockForm<TValue>;
+};
+
+/** A block that holds code, and writes to Markdown as a fence. */
+type BlockCode<TValue> = {
+    content: 'code';
+    /** How the block reads from and writes to Markdown. Without it, the block is a loss on write. */
+    markdown?: MarkdownCodeForm<TValue>;
+};
+
+/**
+ * A block type. Its value is the attributes it stores, flat on the document
+ * node; `defaults` declares them — an attribute missing there is not stored.
+ */
+export type BlockDefinition<TValue = Record<string, unknown>> = BlockDefinitionBase<TValue> &
+    (BlockLines<TValue> | BlockCode<TValue>);
 
 /**
  * Where a block sits in a grid:
@@ -347,6 +381,8 @@ export const gridSpanOf = (value: unknown): number => {
  * What a block holds:
  * - omit            → nothing editable (column break)
  * - `'text'`        → text and inline elements (paragraph, quote, heading)
+ * - `'code'`        → text kept as written: no marks or inline elements. Spaces
+ *                     and line breaks are kept; a line break is a `\n` in the text.
  * - `{ items }`     → a list of that item type
  * - `{ blocks }`    → those block types (a list item)
  * - `{ parts }`     → one or more of those types, in any order, which exist
@@ -356,7 +392,12 @@ export const gridSpanOf = (value: unknown): number => {
  *                     never offered as something to insert or turn into.
  *                     Unlike `{ items }`, the block is not a list.
  */
-export type ContentModel = 'text' | { items: string } | { blocks: readonly string[] } | { parts: readonly string[] };
+export type ContentModel =
+    | 'text'
+    | 'code'
+    | { items: string }
+    | { blocks: readonly string[] }
+    | { parts: readonly string[] };
 
 /**
  * A mark that is only a tag: `tag` stands in for `toHtml` and, unless given, `parse`
@@ -433,6 +474,11 @@ export type InlineDefinition<TValue = Record<string, unknown>> = {
     parse: readonly ParseRule<TValue>[];
     /** How the inline reads from and writes to Markdown. Without it, the inline is a loss on write. */
     markdown?: MarkdownInlineForm<TValue>;
+    /**
+     * The inline is a line break, which a block of `'code'` holds as `\n`. At most one inline is.
+     * @default false
+     */
+    lineBreak?: boolean;
     render?: {
         /** Readonly view in place of `toHtml`. */
         component?: ComponentType<{ value: TValue }>;
@@ -448,6 +494,8 @@ export type MarkdownToken = {
     /** Any attribute name, such as `href` or `start`. */
     attrs: Readonly<Record<string, string>>;
     content: string;
+    /** The info string of a fence, such as `ts title="a.ts"`, and `''` for any other token. */
+    info: string;
 };
 
 /** Reads a token as a node. `value` returns null for a token that is not this node, and the next rule is tried. */
@@ -499,6 +547,16 @@ export type MarkdownBlockForm<TValue = Record<string, unknown>> = {
     read: readonly MarkdownReadRule<Partial<TValue>>[];
     /** For a list, called once per item. Null: this value has no Markdown form, which is a loss. */
     write: (value: TValue, item: MarkdownListItem) => MarkdownLinePrefix | null;
+};
+
+/** The lines a fenced block writes before and after its code. */
+export type MarkdownFence = { open: string; close: string };
+
+/** How a code block reads from and writes to Markdown. */
+export type MarkdownCodeForm<TValue = Record<string, unknown>> = {
+    read: readonly MarkdownReadRule<Partial<TValue>>[];
+    /** Null: this value has no Markdown form, which is a loss. */
+    write: (value: TValue, code: string) => MarkdownFence | null;
 };
 
 /** What a mark wraps, as its form reads it to choose its delimiters. */

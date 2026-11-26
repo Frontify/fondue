@@ -32,7 +32,7 @@ export {
     type RteTextNode,
     type StoredMarkValue,
 } from './document';
-export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
+export { inlinePlainText, isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
 export {
     type HotkeyEvent,
     type HotkeyModifier,
@@ -61,7 +61,9 @@ export {
     type HotkeyHandler,
     type InlineDefinition,
     type MarkdownBlockForm,
+    type MarkdownCodeForm,
     type MarkdownDelimiters,
+    type MarkdownFence,
     type MarkdownInlineForm,
     type MarkdownInlineOutput,
     type MarkdownLinePrefix,

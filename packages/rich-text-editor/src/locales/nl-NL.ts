@@ -12,6 +12,7 @@ export const nlNL: RichTextStrings = {
     RichTextEditor_bulletedList: 'Lijst met opsommingstekens',
     RichTextEditor_cancel: 'Annuleren',
     RichTextEditor_code: 'Code',
+    RichTextEditor_codeBlock: 'Codeblok',
     RichTextEditor_colorBlue: 'Blauw',
     RichTextEditor_colorGray: 'Grijs',
     RichTextEditor_colorGreen: 'Groen',

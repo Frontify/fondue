@@ -6,7 +6,9 @@
 import {
     type ContentRegistry,
     type MarkdownBlockForm,
+    type MarkdownCodeForm,
     type MarkdownDelimiters,
+    type MarkdownFence,
     type MarkdownInlineForm,
     type MarkdownInlineOutput,
     type MarkdownLinePrefix,
@@ -19,6 +21,8 @@ import {
 /** Replaces a node's Markdown form, by the name the node is stored under. */
 export type MarkdownOverrides = {
     blocks?: Record<string, MarkdownBlockForm>;
+    /** Replaces the fence a block of code writes and the tokens it reads. */
+    codeBlocks?: Record<string, MarkdownCodeForm>;
     marks?: Record<string, MarkdownMarkForm>;
     inlines?: Record<string, MarkdownInlineForm>;
 };
@@ -50,9 +54,11 @@ export type OverriddenForms = {
 
 export type MarkdownForms = {
     blocks: ReadonlyMap<string, MarkdownBlockForm>;
+    codeBlocks: ReadonlyMap<string, MarkdownCodeForm>;
     marks: ReadonlyMap<string, MarkdownMarkForm>;
     inlines: ReadonlyMap<string, MarkdownInlineForm>;
     blockReaders: ReadersByToken;
+    codeReaders: ReadersByToken;
     markReaders: ReadersByToken;
     inlineReaders: ReadersByToken;
     /** In registry order, which is the order a pattern wins a tie. */
@@ -74,6 +80,9 @@ const isRecord = (value: unknown): value is NodeValue =>
 
 const isLinePrefix = (value: unknown): value is MarkdownLinePrefix =>
     isRecord(value) && typeof value.first === 'string' && (typeof value.rest === 'string' || value.rest === null);
+
+const isFence = (value: unknown): value is MarkdownFence =>
+    isRecord(value) && typeof value.open === 'string' && typeof value.close === 'string';
 
 const isDelimiters = (value: unknown): value is MarkdownDelimiters =>
     isRecord(value) && typeof value.open === 'string' && typeof value.close === 'string';
@@ -171,6 +180,12 @@ const checkedBlockForm = (form: unknown): MarkdownBlockForm => {
     return { read: checkedReadRules(read).filter(isTokenRule), write: guarded(write, isLinePrefix) };
 };
 
+const checkedCodeForm = (form: unknown): MarkdownCodeForm => {
+    const { read, write } = formPartsOf(form);
+
+    return { read: checkedReadRules(read).filter(isTokenRule), write: guarded(write, isFence) };
+};
+
 const checkedMarkForm = (form: unknown): MarkdownMarkForm => {
     const { read, write } = formPartsOf(form);
 
@@ -266,16 +281,35 @@ const textReadersOf = (forms: ReadonlyMap<string, MarkdownInlineForm>): TextRead
     return readers;
 };
 
+/** A block holding code has a fence for its form, any other block lines, so the two are read and written apart. */
+const splitByContent = (registry: ContentRegistry) => {
+    const lines = new Map<string, FormedDefinition<MarkdownBlockForm>>();
+    const code = new Map<string, FormedDefinition<MarkdownCodeForm>>();
+    for (const [name, definition] of registry.blocks) {
+        if (definition.content === 'code') {
+            code.set(name, definition);
+        } else {
+            lines.set(name, definition);
+        }
+    }
+
+    return { lines, code };
+};
+
 export const buildForms = (registry: ContentRegistry, overrides: MarkdownOverrides | undefined): MarkdownForms => {
-    const blocks = formsOf(registry.blocks, overrides?.blocks, checkedBlockForm);
+    const definitions = splitByContent(registry);
+    const blocks = formsOf(definitions.lines, overrides?.blocks, checkedBlockForm);
+    const codeBlocks = formsOf(definitions.code, overrides?.codeBlocks, checkedCodeForm);
     const marks = formsOf(registry.marks, overrides?.marks, checkedMarkForm);
     const inlines = formsOf(registry.inlines, overrides?.inlines, checkedInlineForm);
 
     return {
         blocks,
+        codeBlocks,
         marks,
         inlines,
         blockReaders: readersByToken(blocks),
+        codeReaders: readersByToken(codeBlocks),
         markReaders: readersByToken(marks),
         inlineReaders: readersByToken(inlines),
         textReaders: textReadersOf(inlines),

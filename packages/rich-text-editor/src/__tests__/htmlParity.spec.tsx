@@ -17,7 +17,7 @@ import {
     type RtePlugin,
     serializeToHtml,
 } from '../index';
-import { columnBreakPlugin, defaultPlugins, mentionPlugin } from '../plugins';
+import { codeBlockPlugin, columnBreakPlugin, defaultPlugins, mentionPlugin } from '../plugins';
 import { documentTree } from '../renderer/documentTree';
 import { toReact } from '../renderer/toReact';
 
@@ -34,6 +34,7 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 const plugins = [
     ...defaultPlugins,
+    codeBlockPlugin(),
     mentionPlugin({ items: [], href: (mention) => (mention.kind === 'all' ? undefined : `/people/${mention.id}`) }),
     columnBreakPlugin(),
 ];
@@ -66,6 +67,8 @@ const doc: RteDocumentWith<{ block: { type: 'columnBreak' } }> = {
         },
         { type: 'paragraph', children: [{ text: '' }] },
         { type: 'quote', children: [{ text: 'A quote' }] },
+        { type: 'codeBlock', language: 'ts', children: [{ text: 'const a = 1;\nconst b = 2;' }] },
+        { type: 'codeBlock', children: [] },
         {
             type: 'numberedList',
             start: 3,

@@ -62,6 +62,9 @@ const LINE_BREAK_TEXT = ' ';
 
 const LINE_SEPARATOR = '\n';
 
+/** The one line break a block of code's token ends with. */
+const TRAILING_NEWLINE = /\n$/;
+
 /** The text without the newlines that end it. A loop, as a `\n+$` pattern backtracks on long runs. */
 const withoutTrailingNewlines = (text: string): string => {
     let end = text.length;
@@ -443,8 +446,29 @@ const readInline = (frame: Frame, token: MarkdownTokenNode, context: ReadContext
     emitText(frame, block, readInlines(token, context), context);
 };
 
-/** A block of code is one paragraph: its lines joined by breaks, or by spaces when no plugin has a break. */
+/** The block of code's text, which has the line break the token ends with dropped, or no text at all when it is empty. */
+const codeChildrenOf = (token: MarkdownTokenNode): RteTextNode[] => {
+    const text = token.content.replace(TRAILING_NEWLINE, '');
+    if (text === '') {
+        return [];
+    }
+
+    return [{ text }];
+};
+
+/**
+ * Adds a code block to the current frame if a plugin reads the token and the surrounding block allows it.
+ * Otherwise, adds the code as a paragraph. The paragraph uses spaces between lines if no plugin reads line breaks.
+ */
 const readCode = (frame: Frame, token: MarkdownTokenNode, context: ReadContext): void => {
+    const match = matchToken(context.forms.codeReaders, token);
+    if (match !== null && allowedIn(frame, match.name, context)) {
+        frame.blocks.push({ type: match.name, ...match.value, children: codeChildrenOf(token) });
+        return;
+    }
+
+    reportLoss(context, token.type, token.line);
+
     const content = withoutTrailingNewlines(token.content);
     if (content === '') {
         return;
@@ -469,7 +493,6 @@ const readSelfClosingBlock = (frame: Frame, token: MarkdownTokenNode, context: R
             break;
         case FENCE:
         case CODE_BLOCK:
-            reportLoss(context, token.type, token.line);
             readCode(frame, token, context);
             break;
         default:

@@ -11,6 +11,8 @@ import {
     isEmpty,
     type MarkDefinition,
     type MarkdownBlockForm as CoreMarkdownBlockForm,
+    type MarkdownCodeForm as CoreMarkdownCodeForm,
+    type MarkdownFence as CoreMarkdownFence,
     type MarkdownInlineForm as CoreMarkdownInlineForm,
     type MarkdownMarkForm as CoreMarkdownMarkForm,
     type MarkdownToken as CoreMarkdownToken,
@@ -158,5 +160,7 @@ export declare namespace RtePlugin {
     export type MarkdownBlockForm<TValue = Record<string, unknown>> = CoreMarkdownBlockForm<TValue>;
     export type MarkdownMarkForm<TValue = Record<string, unknown>> = CoreMarkdownMarkForm<TValue>;
     export type MarkdownInlineForm<TValue = Record<string, unknown>> = CoreMarkdownInlineForm<TValue>;
+    export type MarkdownCodeForm<TValue = Record<string, unknown>> = CoreMarkdownCodeForm<TValue>;
+    export type MarkdownFence = CoreMarkdownFence;
     export type MarkdownToken = CoreMarkdownToken;
 }

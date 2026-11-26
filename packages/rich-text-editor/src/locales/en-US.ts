@@ -14,6 +14,7 @@ export const enUS = {
     RichTextEditor_bulletedList: 'Bulleted list',
     RichTextEditor_cancel: 'Cancel',
     RichTextEditor_code: 'Code',
+    RichTextEditor_codeBlock: 'Code block',
     RichTextEditor_colorBlue: 'Blue',
     RichTextEditor_colorGray: 'Gray',
     RichTextEditor_colorGreen: 'Green',

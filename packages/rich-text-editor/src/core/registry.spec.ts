@@ -360,6 +360,27 @@ describe('the type a toolbar entry toggles', () => {
         expect(registry.toolbarItems[0]?.own).toEqual({ kind: 'mark', type: 'bold' });
     });
 
+    it('is a text block for a block that keeps its text as written', () => {
+        const registry = buildPluginRegistry([
+            definePlugin({
+                id: 'verbatim',
+                content: defineContent({
+                    blocks: {
+                        verbatim: defineBlock({
+                            content: 'code',
+                            toHtml: () => ({ tag: 'pre', children: true }),
+                            parse: [],
+                        }),
+                    },
+                }),
+                toolbar: [{ icon, label: 'Verbatim', menu: {} }],
+            }),
+        ]);
+
+        expect(registry.toolbarItems[0]?.own).toEqual({ kind: 'textBlock', type: 'verbatim' });
+        expect(registry.commands[0]).toMatchObject({ label: 'Verbatim', group: 'turnInto' });
+    });
+
     it('is the one named, among several', () => {
         const registry = buildPluginRegistry([
             definePlugin({

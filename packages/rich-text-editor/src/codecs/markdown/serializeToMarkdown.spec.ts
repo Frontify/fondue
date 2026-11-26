@@ -11,7 +11,7 @@ import {
     type RteDocumentOf,
 } from '../../core';
 import { type RteDocument, type RteDocumentWith } from '../../documentFormat';
-import { columnBreakContent, defaultContent, mentionContent } from '../../plugins';
+import { codeBlockContent, columnBreakContent, defaultContent, mentionContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
@@ -663,6 +663,176 @@ describe('serializeToMarkdown losses', () => {
         expect(serializeToMarkdown(document, OPTIONS)).toEqual({
             markdown: 'x',
             losses: [{ path: [0, 0], type: 'link' }],
+        });
+    });
+});
+
+describe('serializeToMarkdown code blocks', () => {
+    const WITH_CODE_BLOCK: MarkdownOptions = { plugins: [...defaultContent, codeBlockContent] };
+
+    const documentOf = (...blocks: unknown[]): RteDocumentOf => ({ version: 1, blocks }) as unknown as RteDocumentOf;
+
+    // Generic fixtures: a code block with no way into Markdown, one that refuses its value, and a quote that holds blocks.
+    const unwrittenCodeContent = defineContent({
+        blocks: {
+            unwrittenCode: defineBlock({
+                content: 'code',
+                toHtml: () => ({ tag: 'pre', children: true }),
+                parse: [{ tag: 'pre' }],
+            }),
+            refusedCode: defineBlock({
+                content: 'code',
+                toHtml: () => ({ tag: 'pre', children: true }),
+                parse: [],
+                markdown: { read: [], write: () => null },
+            }),
+        },
+    });
+    const containerQuoteContent = defineContent({
+        blocks: {
+            containerQuote: defineBlock({
+                content: { blocks: ['paragraph', 'codeBlock'] },
+                toHtml: () => ({ tag: 'blockquote', children: true }),
+                parse: [],
+                markdown: { read: [], write: () => ({ first: '> ', rest: '> ' }) },
+            }),
+        },
+    });
+
+    it('writes a fence naming the language, around the lines as written', () => {
+        const document = documentOf({ type: 'codeBlock', language: 'ts', children: [{ text: 'let a;\n  let b;' }] });
+
+        expect(serializeToMarkdown(document, WITH_CODE_BLOCK)).toEqual({
+            markdown: '```ts\nlet a;\n  let b;\n```',
+            losses: [],
+        });
+    });
+
+    it('writes the fence a host override gives the code block', () => {
+        const document = documentOf({ type: 'codeBlock', children: [{ text: 'x' }] });
+        const overrides: MarkdownOptions['overrides'] = {
+            codeBlocks: { codeBlock: { read: [], write: () => ({ open: '~~~', close: '~~~' }) } },
+        };
+
+        expect(serializeToMarkdown(document, { ...WITH_CODE_BLOCK, overrides })).toEqual({
+            markdown: '~~~\nx\n~~~',
+            losses: [],
+        });
+    });
+
+    it('writes a fence with no language when the block has none', () => {
+        const document = documentOf({ type: 'codeBlock', children: [{ text: 'x' }] });
+
+        expect(serializeToMarkdown(document, WITH_CODE_BLOCK)).toEqual({ markdown: '```\nx\n```', losses: [] });
+    });
+
+    it('writes a bare fence for a stored language that is not a language token', () => {
+        const document = documentOf({ type: 'codeBlock', language: 'x\n```', children: [{ text: 'a' }] });
+
+        expect(serializeToMarkdown(document, WITH_CODE_BLOCK)).toEqual({ markdown: '```\na\n```', losses: [] });
+    });
+
+    it('writes an empty block as a fence with no lines', () => {
+        const document = documentOf({ type: 'codeBlock', language: 'ts', children: [] });
+
+        expect(serializeToMarkdown(document, WITH_CODE_BLOCK)).toEqual({ markdown: '```ts\n```', losses: [] });
+    });
+
+    it('writes the text without escaping it', () => {
+        const document = documentOf({ type: 'codeBlock', children: [{ text: '*a* _b_ # c\n1. d\n> e\n[f](g)' }] });
+
+        expect(serializeToMarkdown(document, WITH_CODE_BLOCK)).toEqual({
+            markdown: '```\n*a* _b_ # c\n1. d\n> e\n[f](g)\n```',
+            losses: [],
+        });
+    });
+
+    it('keeps blank lines inside the fence', () => {
+        const document = documentOf({ type: 'codeBlock', children: [{ text: 'a\n\nb' }] });
+
+        expect(serializeToMarkdown(document, WITH_CODE_BLOCK).markdown).toBe('```\na\n\nb\n```');
+    });
+
+    it.each([
+        ['three backticks', '```\nx\n```', '````'],
+        ['four backticks', 'a ```` b', '`````'],
+        ['a single backtick', 'a ` b', '```'],
+        ['a backtick run in the middle of a line', 'a``b', '```'],
+    ])('writes a fence longer than the backticks in the text: %s', (_name, text, fence) => {
+        const document = documentOf({ type: 'codeBlock', language: 'js', children: [{ text }] });
+
+        expect(serializeToMarkdown(document, WITH_CODE_BLOCK)).toEqual({
+            markdown: `${fence}js\n${text}\n${fence}`,
+            losses: [],
+        });
+    });
+
+    it('writes a blank line between it and the blocks around it', () => {
+        const document = documentOf(
+            { type: 'paragraph', children: [{ text: 'a' }] },
+            { type: 'codeBlock', children: [{ text: 'x' }] },
+            { type: 'paragraph', children: [{ text: 'b' }] },
+        );
+
+        expect(serializeToMarkdown(document, WITH_CODE_BLOCK).markdown).toBe('a\n\n```\nx\n```\n\nb');
+    });
+
+    it('prefixes every line of it inside a list item', () => {
+        const document = documentOf({
+            type: 'bulletList',
+            children: [
+                {
+                    type: 'listItem',
+                    children: [
+                        { type: 'paragraph', children: [{ text: 'a' }] },
+                        { type: 'codeBlock', language: 'ts', children: [{ text: 'x\n\ny' }] },
+                    ],
+                },
+            ],
+        });
+
+        expect(serializeToMarkdown(document, WITH_CODE_BLOCK)).toEqual({
+            markdown: '- a\n\n  ```ts\n  x\n\n  y\n  ```',
+            losses: [],
+        });
+    });
+
+    it('prefixes every line of it inside a quote', () => {
+        const document = documentOf({
+            type: 'containerQuote',
+            children: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'codeBlock', children: [{ text: 'x\n\ny' }] },
+            ],
+        });
+
+        expect(
+            serializeToMarkdown(document, { plugins: [...defaultContent, codeBlockContent, containerQuoteContent] }),
+        ).toEqual({
+            markdown: '> a\n>\n> ```\n> x\n>\n> y\n> ```',
+            losses: [],
+        });
+    });
+
+    it('writes the text of a code block with no Markdown form as an escaped paragraph and reports it', () => {
+        const document = documentOf({ type: 'unwrittenCode', children: [{ text: '*a*' }] });
+
+        expect(
+            serializeToMarkdown(document, { plugins: [...defaultContent, codeBlockContent, unwrittenCodeContent] }),
+        ).toEqual({
+            markdown: String.raw`\*a\*`,
+            losses: [{ path: [0], type: 'unwrittenCode' }],
+        });
+    });
+
+    it('writes the text of a code block whose form writes nothing as an escaped paragraph and reports it', () => {
+        const document = documentOf({ type: 'refusedCode', children: [{ text: '*a*' }] });
+
+        expect(
+            serializeToMarkdown(document, { plugins: [...defaultContent, codeBlockContent, unwrittenCodeContent] }),
+        ).toEqual({
+            markdown: String.raw`\*a\*`,
+            losses: [{ path: [0], type: 'refusedCode' }],
         });
     });
 });

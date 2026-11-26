@@ -119,14 +119,14 @@ const defaultFloatingPlacement = (own: OwnType): ToolbarEntry['floating'] =>
     own.kind === 'mark' ? 'inline' : 'hidden';
 
 /**
- * A block type, by what its content holds: nothing, text, items, or other
+ * A block type, by what its content holds: nothing, text (or code), items, or other
  * blocks or parts. Neither of the last two is something a selection turns into.
  */
 const ownBlockTypeOf = (block: BlockDefinition, type: string): OwnType => {
     if (block.content === undefined) {
         return { kind: 'voidBlock', type };
     }
-    if (block.content === 'text') {
+    if (block.content === 'text' || block.content === 'code') {
         return { kind: 'textBlock', type };
     }
     if ('items' in block.content) {

@@ -262,6 +262,95 @@ describe('buildSchema', () => {
         });
     });
 
+    describe('a block of code', () => {
+        // Generic names: a block that keeps its text as written.
+        const verbatim = definePlugin({
+            id: 'verbatim',
+            content: defineContent({
+                blocks: {
+                    verbatim: defineBlock({
+                        content: 'code',
+                        toHtml: () => ({ tag: 'pre', children: true }),
+                        parse: [{ tag: 'pre' }],
+                    }),
+                },
+            }),
+        });
+
+        it('holds plain text that keeps its whitespace, and stays a block of its own', () => {
+            const schema = buildSchema([verbatim]);
+
+            expect(schema.nodes.verbatim?.spec.content).toBe('text*');
+            expect(schema.nodes.verbatim?.spec.marks).toBe('');
+            expect(schema.nodes.verbatim?.spec.code).toBe(true);
+            expect(schema.nodes.verbatim?.spec.whitespace).toBe('pre');
+            expect(schema.nodes.verbatim?.spec.defining).toBe(true);
+            expect(schema.nodes.verbatim?.spec.group).toBe('block');
+        });
+
+        it('carries no block attribute of the plugins around it, such as alignment', () => {
+            const schema = buildSchema([...shipped('align'), verbatim]);
+
+            expect(Object.keys(schema.nodes.paragraph?.spec.attrs ?? {})).toContain('align');
+            expect(Object.keys(schema.nodes.verbatim?.spec.attrs ?? {})).not.toContain('align');
+        });
+
+        it('round-trips its text through the engine, line breaks and empty block included', () => {
+            const schema = buildSchema([verbatim]);
+            const stored = {
+                version: 1,
+                blocks: [
+                    { type: 'verbatim', children: [{ text: 'one\n  two\n' }] },
+                    { type: 'verbatim', children: [] },
+                ],
+            } as RteDocumentOf;
+
+            expect(toRteDocument(toEngineDocument(stored, schema))).toEqual(stored);
+        });
+    });
+
+    describe('an inline that is a line break', () => {
+        const inlineWith = (id: string, lineBreak?: boolean) =>
+            definePlugin({
+                id,
+                content: defineContent({
+                    inlines: { [id]: defineInline({ lineBreak, toHtml: () => ({ tag: 'br' }), parse: [] }) },
+                }),
+            });
+
+        const codeBlock = definePlugin({
+            id: 'verbatim',
+            content: defineContent({
+                blocks: {
+                    verbatim: defineBlock({
+                        content: 'code',
+                        toHtml: () => ({ tag: 'pre', children: true }),
+                        parse: [{ tag: 'pre' }],
+                    }),
+                },
+            }),
+        });
+
+        it('is the one the engine swaps for a new line when a block turns into a block of code', () => {
+            const schema = buildSchema([inlineWith('newline', true), inlineWith('chip'), codeBlock]);
+
+            expect(schema.nodes.newline?.spec.linebreakReplacement).toBe(true);
+            expect(schema.nodes.chip?.spec.linebreakReplacement).toBe(false);
+        });
+
+        it('is not swapped where no block holds code, so a raw new line keeps reading as a space', () => {
+            const schema = buildSchema([inlineWith('newline', true)]);
+
+            expect(schema.nodes.newline?.spec.linebreakReplacement).toBe(false);
+        });
+
+        it('refuses a second one', () => {
+            expect(() => buildSchema([inlineWith('first', true), inlineWith('second', true)])).toThrow(
+                'Inlines "first" and "second" are both a line break; a document has one.',
+            );
+        });
+    });
+
     it('refuses a mark style rule whose property is not a CSS property name', () => {
         expect(() =>
             buildSchema([

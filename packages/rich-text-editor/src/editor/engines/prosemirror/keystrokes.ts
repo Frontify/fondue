@@ -29,7 +29,7 @@ import {
 
 import { autolinkOnEnter, markPatternRule } from './autolink';
 import { keepCarriedAttrs, withCarriedAttrs } from './carriedAttrs';
-import { undoStep } from './controlApi';
+import { undoStep, withInlinesAsText } from './controlApi';
 import { EXTRA_ATTR } from './documentConversion';
 import { gridEditing, gridKeys, hasGrids, outsideGrids } from './grid';
 import { deleteEmptyBlockBesideList, listKeys } from './lists';
@@ -55,7 +55,7 @@ import {
  * 1. Undo / redo, and Backspace right after a typing rewrite (takes the rewrite back).
  * 2. Enter and Shift-Enter link the address before the caret once the key has acted;
  *    Backspace right after takes the link back.
- * 3. Feature hotkeys (Mod-b, ...). Before the list keys so a feature can take a
+ * 3. Shift-Enter in a block of code, then feature hotkeys (Mod-b, ...). Before the list keys so a feature can take a
  *    key lists would claim (`blurOnBreak` takes Enter).
  * 4. Grid keys, then list keys; each only when a grid or a list exists. Grid
  *    keys come first, so Tab in a list inside a slot moves to the next slot.
@@ -91,6 +91,8 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         // 2
         ...autolinkOnEnter(registry, schema),
         // 3
+        // A block of code holds a line break as text, so a feature's Shift-Enter break stays out of it.
+        keymap({ 'Shift-Enter': newlineInCode }),
         keymap(featureHotkeys(registry.hotkeys, api)),
         characterHotkeys(registry.hotkeys, excludedMarks, api),
         // 4
@@ -174,11 +176,13 @@ const isAtWordStart = (state: EditorState, from: number): boolean => {
     return WORD_BOUNDARY_BEFORE.test(before);
 };
 
+const isInCode = (state: EditorState, from: number): boolean => state.doc.resolve(from).parent.type.spec.code === true;
+
 /**
  * Character hotkeys fire on the character being TYPED, not on the keys pressed
  * (on a Swiss Mac `@` is Option-G, which a keymap would read as `Alt-@`). They
  * only fire at a word start: `@` in `noah@frontify.com` is not a mention.
- * Text carrying a mark that opts out of rules (inline code) is typed as is.
+ * Text carrying a mark that opts out of rules (inline code), and text in a block of code, is typed as is.
  */
 const characterHotkeys = (
     hotkeys: PluginRegistry['hotkeys'],
@@ -200,6 +204,9 @@ const characterHotkeys = (
                     return false;
                 }
                 if (isInExcludedMark(view.state, excludedMarks, from)) {
+                    return false;
+                }
+                if (isInCode(view.state, from)) {
                     return false;
                 }
                 return runUntilHandled(handlers, api);
@@ -365,8 +372,10 @@ const blockRule = (rule: RuleOfKind<'block'>, { schema, registry }: RuleContext)
         if (!$start.node(-1).canReplaceWith($start.index(-1), $start.indexAfter(-1), nodeType)) {
             return null;
         }
-        return state.tr
-            .delete(start, end)
+        // A code block cannot hold an inline element, and the engine's set-type would drop it.
+        const transaction = nodeType.spec.code === true ? withInlinesAsText(state, registry, nodeType) : state.tr;
+        return transaction
+            .delete(transaction.mapping.map(start), transaction.mapping.map(end))
             .setBlockType(start, start, nodeType, keepCarriedAttrs(registry, nodeType, rule.attributes));
     });
 };

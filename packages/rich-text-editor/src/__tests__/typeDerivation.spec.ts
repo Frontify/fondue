@@ -153,6 +153,8 @@ const valuedBlockWithoutDefaults = defineBlock<{ tone: string }>({
 // A block without a value needs none
 const plainBlock = defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [] });
 
+const defineTypedBlock = (definition: RtePlugin.BlockDefinition) => defineBlock(definition);
+
 // A link keeps its underline, and vertical margins do nothing on inline text
 // @ts-expect-error a link look has no text decoration
 const linkDecoration = linkPlugin({ look: { text: { textDecoration: 'none' } } });
@@ -191,6 +193,7 @@ export const __typeAssertions = [
     valuedBlock,
     valuedBlockWithoutDefaults,
     plainBlock,
+    defineTypedBlock,
     linkDecoration,
     linkMarginTop,
     linkMarginBottom,

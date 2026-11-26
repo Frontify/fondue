@@ -12,6 +12,7 @@ export const esES: RichTextStrings = {
     RichTextEditor_bulletedList: 'Lista con viñetas',
     RichTextEditor_cancel: 'Cancelar',
     RichTextEditor_code: 'Código',
+    RichTextEditor_codeBlock: 'Bloque de código',
     RichTextEditor_colorBlue: 'Azul',
     RichTextEditor_colorGray: 'Gris',
     RichTextEditor_colorGreen: 'Verde',
