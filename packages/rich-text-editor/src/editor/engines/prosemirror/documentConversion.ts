@@ -18,7 +18,7 @@ import {
 } from '#/core';
 
 import { withSpansInRange } from './grid';
-import { warnUndeclaredKey, warnUnknownContent } from './warnings';
+import { warnUndeclaredKey, warnUnholdableBlock, warnUnknownContent } from './warnings';
 
 /**
  * The document boundary: RTE format <-> engine format. The only place either
@@ -177,8 +177,8 @@ export const mapExtras = (
  * A document whose blocks are all known but do not fit together — a list
  * holding a paragraph where its items belong. Thrown rather than repaired, for
  * the same reason an unknown type is: the next `onChange` would otherwise write
- * back a different document than the host handed over. Where the parent holds
- * blocks, a known block it can never hold stands as an unknown one instead.
+ * back a different document than the host handed over. A parent with room for
+ * an unknown block never gets here: a block it cannot hold stands as one.
  */
 const invalidDocument = (nodeType: PmNodeType, content: readonly PmNode[]): Error =>
     new Error(
@@ -188,7 +188,8 @@ const invalidDocument = (nodeType: PmNodeType, content: readonly PmNode[]): Erro
     );
 
 /**
- * `create`, refusing content the type does not allow there. Content that is
+ * `create`, refusing content the type does not allow there, where no unknown
+ * block can stand in for it (see `blocksToEngine`). Content that is
  * merely missing (no blocks at all, a list without items) is filled in with
  * empty blocks, as an empty document is.
  */
@@ -278,10 +279,19 @@ const standsAsUnknown = (parent: PmNodeType, block: RteBlockNode): boolean => {
     return reached.has(UNKNOWN_BLOCK) && !reached.has(block.type);
 };
 
+const warnStandsAsUnknown = (parent: PmNodeType, block: RteBlockNode, schema: Schema): void => {
+    const nodeType = schema.nodes[block.type];
+    if (nodeType === undefined || nodeType.isInline || nodeType === schema.topNodeType) {
+        warnUnknownContent('block', block.type);
+        return;
+    }
+    warnUnholdableBlock(parent.name, block.type);
+};
+
 const blocksToEngine = (parent: PmNodeType, blocks: RteBlockNode[], schema: Schema): PmNode[] =>
     blocks.map((block) => {
         if (standsAsUnknown(parent, block)) {
-            warnUnknownContent('block', block.type);
+            warnStandsAsUnknown(parent, block, schema);
             return schema.node(UNKNOWN_BLOCK, { [RAW_ATTR]: block });
         }
         return blockToEngine(block, schema);
@@ -341,20 +351,13 @@ export const toEngineDocument = (doc: RteDocumentOf, schema: Schema): PmNode => 
     // A block the host repeats comes in as one engine node: each place gets its own
     // extras, so an edit never takes one for a copy of the other.
     const seen = new Set<Record<string, unknown>>();
-    return mapExtras(
-        createFilled(
-            docType,
-            null,
-            doc.blocks.map((block) => blockToEngine(block, schema)),
-        ),
-        (extras) => {
-            if (seen.has(extras)) {
-                return { ...extras };
-            }
-            seen.add(extras);
-            return extras;
-        },
-    );
+    return mapExtras(createFilled(docType, null, blocksToEngine(docType, doc.blocks, schema)), (extras) => {
+        if (seen.has(extras)) {
+            return { ...extras };
+        }
+        seen.add(extras);
+        return extras;
+    });
 };
 
 // --- Engine -> RTE format ---

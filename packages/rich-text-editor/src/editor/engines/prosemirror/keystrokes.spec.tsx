@@ -799,6 +799,36 @@ describe('the list keys', () => {
     });
 });
 
+describe('a list whose items cannot hold a list', () => {
+    const flatListPlugin: RtePlugin = definePlugin({
+        id: 'test-flat-list',
+        content: defineContent({
+            blocks: {
+                flatList: defineBlock({
+                    content: { items: 'flatRow' },
+                    toHtml: () => ({ tag: 'ul', children: true }),
+                    parse: [{ tag: 'ul' }],
+                }),
+                flatRow: defineBlock({
+                    content: { blocks: [PARAGRAPH] },
+                    toHtml: () => ({ tag: 'li', children: true }),
+                    parse: [{ tag: 'li' }],
+                }),
+            },
+        }),
+    });
+    const flatRow = (label: string): RteBlockNode => ({ type: 'flatRow', children: [paragraph(text(label))] });
+
+    it('does not nest an item on Tab', () => {
+        const editor = editorWith([flatListPlugin], [{ type: 'flatList', children: [flatRow('one'), flatRow('two')] }]);
+        editor.caretAfter('tw');
+
+        press(editor.view, 'Tab');
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+});
+
 describe('typing rewrites when a composition ends', () => {
     const composition = (view: EditorView, type: 'compositionstart' | 'compositionend'): void => {
         view.dom.dispatchEvent(new CompositionEvent(type, { bubbles: true }));

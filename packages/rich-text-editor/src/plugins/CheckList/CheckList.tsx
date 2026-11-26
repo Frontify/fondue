@@ -252,10 +252,12 @@ const inputRulesOf = (inProgress: boolean): readonly RteInputRule[] => {
 /**
  * A to-do list with a toolbar button and `/` entry, and `[] ` while typing starts one
  */
-export const checkListPlugin = (options: CheckListPluginOptions = {}) =>
-    definePlugin({
+export const checkListPlugin = (options: CheckListPluginOptions = {}) => {
+    const resolved = optionsWithDefaults(options);
+
+    return definePlugin({
         id: 'check-list',
-        content: checkListContent(options),
+        content: checkListContent(resolved),
         toolbarGroup: 'lists',
         toolbar: [
             {
@@ -267,5 +269,6 @@ export const checkListPlugin = (options: CheckListPluginOptions = {}) =>
         ],
         // Only what is inside: the item keeps the `<li>` from `toHtml`.
         edit: { checkItem: EditCheckItem },
-        inputRules: inputRulesOf(optionsWithDefaults(options).inProgress),
+        inputRules: inputRulesOf(resolved.inProgress),
     });
+};

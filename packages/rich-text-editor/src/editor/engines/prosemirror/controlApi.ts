@@ -519,7 +519,7 @@ export type OpenEditors = { type: string | null; repaint: () => void };
  * top-level block or an empty one, or after the top-level block the caret is
  * in, with the caret at its first place for text.
  */
-const insertWhole = (view: EditorView, node: PmNode, dispatch: Dispatch): void => {
+const insertWhole = (view: EditorView, node: PmNode): Transaction => {
     const { selection } = view.state;
     const { $from } = selection;
     const top = $from.depth >= 1 ? $from.node(1) : null;
@@ -538,8 +538,7 @@ const insertWhole = (view: EditorView, node: PmNode, dispatch: Dispatch): void =
     }
 
     transaction.setSelection(Selection.near(transaction.doc.resolve(position + 1)));
-    dispatch(transaction.scrollIntoView());
-    view.focus();
+    return transaction.scrollIntoView();
 };
 
 /** Where the first node of `type` stands in the range the transaction's step changed, or null when none does. */
@@ -557,7 +556,7 @@ const landedPosition = (transaction: Transaction, type: PmNodeType): number | nu
     return landed;
 };
 
-/** Whether a separator the transaction inserted stands first in the document or right after one of its own type. */
+/** Whether a separator the transaction inserted stands first in the document or next to one of its own type. */
 const separatesNothing = (transaction: Transaction, type: PmNodeType): boolean => {
     const position = landedPosition(transaction, type);
     if (position === null) {
@@ -568,7 +567,10 @@ const separatesNothing = (transaction: Transaction, type: PmNodeType): boolean =
     if ($position.depth === 0 && $position.index() === 0) {
         return true;
     }
-    return $position.nodeBefore?.type === type;
+    if ($position.nodeBefore?.type === type) {
+        return true;
+    }
+    return $position.parent.maybeChild($position.index() + 1)?.type === type;
 };
 
 /** The flat members act on the editor as a whole rather than on one kind of thing in it. */
@@ -623,20 +625,21 @@ export const createControlApi = (
             }
             const view = getView();
             const children: unknown = value?.children;
+            let transaction: Transaction;
             if (!nodeType.isInline && Array.isArray(children)) {
-                insertWhole(view, blockToEngine({ ...value, type, children }, schema), dispatch);
-                return;
+                transaction = insertWhole(view, blockToEngine({ ...value, type, children }, schema));
+            } else {
+                transaction = view.state.tr;
+                const { selection } = view.state;
+                // A block goes in AFTER selected text rather than over it; a selected node is replaced.
+                if (!nodeType.isInline && !(selection instanceof NodeSelection) && !selection.empty) {
+                    transaction.setSelection(TextSelection.create(transaction.doc, selection.to));
+                }
+                // Inline elements keep their value in one attribute; blocks keep theirs flat.
+                const engineAttrs = nodeType.isInline ? valueAttrsFor(value) : value;
+                // Inline elements carry no marks, so they must not inherit the caret's.
+                transaction.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline);
             }
-            const transaction = view.state.tr;
-            const { selection } = view.state;
-            // A block goes in AFTER selected text rather than over it; a selected node is replaced.
-            if (!nodeType.isInline && !(selection instanceof NodeSelection) && !selection.empty) {
-                transaction.setSelection(TextSelection.create(transaction.doc, selection.to));
-            }
-            // Inline elements keep their value in one attribute; blocks keep theirs flat.
-            const engineAttrs = nodeType.isInline ? valueAttrsFor(value) : value;
-            // Inline elements carry no marks, so they must not inherit the caret's.
-            transaction.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline);
             if (registry.blocks.get(type)?.separator === true && separatesNothing(transaction, nodeType)) {
                 return;
             }

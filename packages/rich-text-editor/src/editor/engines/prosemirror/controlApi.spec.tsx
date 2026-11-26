@@ -1310,6 +1310,42 @@ describe('insert of a separator block', () => {
         expect(editor.onDocChange).not.toHaveBeenCalled();
     });
 
+    it('does nothing right before a separator', () => {
+        const editor = editorWith(separators, [paragraph(text('a')), RULE, paragraph(text('b'))]);
+        editor.caretAfter('a');
+
+        editor.api.insert('rule');
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('does nothing in an empty paragraph right before a separator', () => {
+        const editor = editorWith(separators, [paragraph(text('a')), paragraph(), RULE]);
+        const { doc } = editor.view.state;
+        editor.view.dispatch(editor.view.state.tr.setSelection(TextSelection.near(doc.resolve(doc.child(0).nodeSize))));
+
+        editor.api.insert('rule');
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('does nothing when given its content at the start of the document', () => {
+        const editor = editorWith(separators, [paragraph()]);
+
+        editor.api.insert('rule', { children: [] });
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('goes after a paragraph when given its content', () => {
+        const editor = editorWith(separators, [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        editor.api.insert('rule', { children: [] });
+
+        expect(editor.stored()).toEqual([paragraph(text('a')), RULE]);
+    });
+
     it('goes after a paragraph that follows a separator', () => {
         const editor = editorWith(separators, [RULE, paragraph(text('ab'))]);
         editor.caretAfter('a');

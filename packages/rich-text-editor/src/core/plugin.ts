@@ -300,9 +300,9 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
      */
     gridRole?: GridRole;
     /**
-     * A void block that only stands between content. Inserting it where it would be the first block of the document,
-     * or directly after another block of its type, does nothing, as it would only separate nothing. Stored documents
-     * load and show as they are.
+     * A void block that only stands between content. Inserting it through the editor (toolbar, `/` menu, `insert`)
+     * where it would be the first block of the document, or next to another block of its type, does nothing, as it
+     * would only separate nothing. Paste is not covered, and stored documents load and show as they are.
      * @default false
      */
     separator?: boolean;

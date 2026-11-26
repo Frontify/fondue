@@ -17,7 +17,7 @@ import {
     type RtePlugin,
 } from '#/core';
 
-import { EXTRA_ATTR, rootExtrasOf, toEngineDocument, toRteDocument } from './documentConversion';
+import { EXTRA_ATTR, rootExtrasOf, toEngineDocument, toRteDocument, UNKNOWN_BLOCK } from './documentConversion';
 import { buildSchema } from './schema';
 
 /**
@@ -193,6 +193,29 @@ describe('the document boundary', () => {
                     { text: ' after!' },
                 ]);
                 expect(edited.blocks.slice(1)).toEqual(withUnknown.blocks.slice(1));
+            } finally {
+                warn.mockRestore();
+            }
+        });
+    });
+
+    describe('a known block its parent cannot hold', () => {
+        const itemAtRoot = {
+            version: 1,
+            blocks: [{ type: 'listItem', children: [{ type: PARAGRAPH, children: [{ text: 'orphan' }] }] }],
+        } as RteDocumentOf;
+
+        it('is kept as it was when stored at the root, warning once', () => {
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            try {
+                const engineDoc = toEngineDocument(itemAtRoot, schema);
+
+                expect(engineDoc.firstChild?.type.name).toBe(UNKNOWN_BLOCK);
+                expect(toRteDocument(engineDoc)).toEqual(itemAtRoot);
+                expect(warn).toHaveBeenCalledWith(
+                    expect.stringContaining('Block type "listItem" kept as it is but cannot be edited'),
+                );
+                expect(warn).toHaveBeenCalledWith(expect.stringContaining('"doc" cannot hold it'));
             } finally {
                 warn.mockRestore();
             }
