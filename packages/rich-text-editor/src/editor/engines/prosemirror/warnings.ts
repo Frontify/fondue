@@ -21,6 +21,17 @@ export const warnUnknownContent = (kind: 'block' | 'inline' | 'mark', type: stri
     );
 };
 
+/** Dev-only warning, once per parent and type, for a known block its parent can never hold; it is kept as it is. */
+export const warnUnholdableBlock = (parent: string, type: string): void => {
+    if (process.env.NODE_ENV === 'production' || warnedUnknown.has(`unholdable:${parent}:${type}`)) {
+        return;
+    }
+    warnedUnknown.add(`unholdable:${parent}:${type}`);
+    console.warn(
+        `[RichTextEditor] Block type "${type}" kept as it is but cannot be edited: its parent "${parent}" cannot hold it.`,
+    );
+};
+
 /** Dev-only warning, once per owner and key, for a stored key that no mounted plugin declares; it is kept as it is. */
 export const warnUndeclaredKey = (owner: string, key: string): void => {
     if (process.env.NODE_ENV === 'production' || warnedUnknown.has(`key:${owner}:${key}`)) {

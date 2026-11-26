@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { EditorState } from 'prosemirror-state';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import {
     ANY_LIST,
@@ -17,7 +17,7 @@ import {
     type RtePlugin,
 } from '#/core';
 
-import { EXTRA_ATTR, rootExtrasOf, toEngineDocument, toRteDocument } from './documentConversion';
+import { EXTRA_ATTR, rootExtrasOf, toEngineDocument, toRteDocument, UNKNOWN_BLOCK } from './documentConversion';
 import { buildSchema } from './schema';
 
 /**
@@ -260,6 +260,99 @@ describe('the document boundary', () => {
 
         expect(echoed.child(1)).toBe(doc.child(1));
         expect(echoed.eq(doc)).toBe(true);
+    });
+});
+
+describe('a known block its parent can never hold', () => {
+    const container = definePlugin({
+        id: 'container',
+        content: defineContent({
+            blocks: {
+                container: defineBlock({
+                    content: { blocks: [PARAGRAPH] },
+                    toHtml: () => ({ tag: 'div', children: true }),
+                    parse: [{ tag: 'div' }],
+                }),
+            },
+        }),
+    });
+    const containerSchema = buildSchema(buildPluginRegistry([...plugins, container]));
+    const paragraphOf = (text: string) => ({ type: PARAGRAPH, children: [{ text }] });
+    const listInContainer = {
+        version: 1,
+        blocks: [
+            {
+                type: 'container',
+                children: [
+                    {
+                        type: 'bulletList',
+                        children: [{ type: 'listItem', children: [paragraphOf('inside')] }],
+                    },
+                ],
+            },
+        ],
+    } as RteDocumentOf;
+
+    let warn: MockInstance<typeof console.warn>;
+
+    beforeEach(() => {
+        warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        warn.mockRestore();
+    });
+
+    it('loads without throwing', () => {
+        expect(() => toEngineDocument(listInContainer, containerSchema)).not.toThrow();
+    });
+
+    it('loads as an unknown block in the parent', () => {
+        const engineDoc = toEngineDocument(listInContainer, containerSchema);
+
+        expect(engineDoc.firstChild?.childCount).toBe(1);
+        expect(engineDoc.firstChild?.firstChild?.type.name).toBe(UNKNOWN_BLOCK);
+    });
+
+    it('converts back to the stored document unchanged', () => {
+        expect(toRteDocument(toEngineDocument(listInContainer, containerSchema))).toEqual(listInContainer);
+    });
+
+    it('warns once per parent and type, however many are loaded', () => {
+        const dividersInContainer = {
+            version: 1,
+            blocks: [{ type: 'container', children: [{ type: 'divider' }, { type: 'divider' }] }],
+        } as RteDocumentOf;
+
+        toEngineDocument(dividersInContainer, containerSchema);
+        toEngineDocument(dividersInContainer, containerSchema);
+
+        expect(warn).toHaveBeenCalledTimes(1);
+        expect(warn).toHaveBeenCalledWith(
+            expect.stringContaining('Block type "divider" kept as it is but cannot be edited'),
+        );
+    });
+
+    it('still throws for a list holding a paragraph', () => {
+        const listHoldingParagraph = {
+            version: 1,
+            blocks: [{ type: 'bulletList', children: [paragraphOf('x')] }],
+        } as RteDocumentOf;
+
+        expect(() => toEngineDocument(listHoldingParagraph, containerSchema)).toThrow(
+            'Invalid document: a "bulletList" cannot hold "paragraph".',
+        );
+    });
+
+    it('still throws for a block at the document root that only a container can hold', () => {
+        const itemAtRoot = {
+            version: 1,
+            blocks: [{ type: 'listItem', children: [paragraphOf('x')] }],
+        } as RteDocumentOf;
+
+        expect(() => toEngineDocument(itemAtRoot, containerSchema)).toThrow(
+            'Invalid document: a "doc" cannot hold "listItem".',
+        );
     });
 });
 

@@ -15,7 +15,7 @@ import {
     type RteBlockNode,
     type RtePlugin,
 } from '#/core';
-import { defaultPlugins } from '#/plugins';
+import { checkListPlugin, defaultPlugins } from '#/plugins';
 
 import { toEngineDocument } from './documentConversion';
 import { destroyEditors, editorWith, paragraph, text, tokenPlugin } from './testEditor';
@@ -1378,5 +1378,32 @@ describe('insert of a separator block', () => {
 
         expect(editor.view.state.doc.childCount).toBe(3);
         expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+});
+
+describe('loading a check item that holds a list when `nested` is false', () => {
+    const flat = [...defaultPlugins.filter((plugin) => plugin.id !== 'check-list'), checkListPlugin({ nested: false })];
+    const stored = [
+        {
+            type: 'checkList',
+            children: [
+                {
+                    type: 'checkItem',
+                    checked: false,
+                    children: [
+                        paragraph(text('one')),
+                        {
+                            type: 'bulletList',
+                            children: [{ type: 'listItem', children: [paragraph(text('two'))] }],
+                        },
+                    ],
+                },
+            ],
+        },
+        // `RteBlockNode` names no plugin attribute, so `checked` needs the cast.
+    ] as RteBlockNode[];
+
+    it('loads the stored document without throwing', () => {
+        expect(() => editorWith(flat, stored)).not.toThrow();
     });
 });
