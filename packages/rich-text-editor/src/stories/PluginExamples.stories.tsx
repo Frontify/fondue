@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type ReactNode, useRef, useState } from 'react';
+import { type ReactNode, useMemo, useRef, useState } from 'react';
 
 // Stories import only the package public API. The consumer-plugin stories at
 // the bottom double as proof that the plugin contract is open: they define a
@@ -32,6 +32,7 @@ import {
     type ButtonLook,
     bulletListPlugin,
     checkListPlugin,
+    type CheckListPluginOptions,
     codePlugin,
     columnBreakPlugin,
     defaultContent,
@@ -692,9 +693,15 @@ export const NumberedList: Story = {
     },
 };
 
-/** A to-do list: the same nesting, plus a `checked` attribute per item. */
-export const CheckList: Story = {
-    render: () => {
+type CheckListStoryArgs = Required<CheckListPluginOptions>;
+
+/** A to-do list: the same nesting, plus a `checked` attribute per item. With a limit off, stored content still loads. */
+export const CheckList: StoryObj<CheckListStoryArgs> = {
+    args: { inProgress: true, nested: true },
+    argTypes: { inProgress: { control: 'boolean' }, nested: { control: 'boolean' } },
+    // The meta's editor props are not this story's args, so Controls lists only the limits.
+    parameters: { controls: { include: ['inProgress', 'nested'] } },
+    render: ({ inProgress, nested }) => {
         const [doc, setDoc] = useState<RteDocument>({
             version: 1,
             blocks: [
@@ -710,15 +717,40 @@ export const CheckList: Story = {
                             type: 'checkItem',
                             children: [{ type: 'paragraph', children: [{ text: 'Still to do' }] }],
                         },
+                        {
+                            type: 'checkItem',
+                            checked: 'inProgress',
+                            children: [{ type: 'paragraph', children: [{ text: 'Stored in progress' }] }],
+                        },
+                        {
+                            type: 'checkItem',
+                            children: [
+                                { type: 'paragraph', children: [{ text: 'Holds a list' }] },
+                                {
+                                    type: 'bulletList',
+                                    children: [
+                                        {
+                                            type: 'listItem',
+                                            children: [{ type: 'paragraph', children: [{ text: 'A nested bullet' }] }],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
                     ],
                 },
             ],
         });
+        // The editor reads a new plugin list as a new configuration, so it only changes with the args.
+        const plugins = useMemo(
+            () => [checkListPlugin({ inProgress, nested }), bulletListPlugin()],
+            [inProgress, nested],
+        );
 
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[checkListPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={plugins} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
