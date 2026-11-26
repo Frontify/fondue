@@ -5,7 +5,7 @@ $two-column-min-width: 440px;
 $many-column-min-width: 740px;
 
 // The element around the content measures the room the columns have.
-:where(:has(> .columns)) {
+:where(:has(> .fromSmall, > .fromMedium)) {
     container: rte-columns / inline-size;
 }
 

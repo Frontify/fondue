@@ -12,10 +12,10 @@ const SURFACES = ['renderer', 'editor'] as const;
 const TWO_COLUMNS = 2;
 const THREE_COLUMNS = 3;
 
-const TWO_COLUMNS_ROOMY_WIDTH = 460;
-const TWO_COLUMNS_NARROW_WIDTH = 420;
-const THREE_COLUMNS_ROOMY_WIDTH = 760;
-const THREE_COLUMNS_NARROW_WIDTH = 720;
+const TWO_COLUMNS_ROOMY_WIDTH = 440;
+const TWO_COLUMNS_NARROW_WIDTH = 439;
+const THREE_COLUMNS_ROOMY_WIDTH = 740;
+const THREE_COLUMNS_NARROW_WIDTH = 739;
 const THREE_COLUMNS_NARROWER_WIDTH = 600;
 
 /** How far two paragraphs of one row may differ in top, in pixels. */
