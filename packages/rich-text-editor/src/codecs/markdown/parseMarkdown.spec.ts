@@ -72,6 +72,39 @@ describe('parseMarkdownWithLosses', () => {
     });
 });
 
+describe('parseMarkdownWithLosses task items and reference definitions', () => {
+    it.each(['- [x] done', '- [ ] todo', '- [X] done', '1. [x]\tdone'])('reports the task item in %j', (markdown) => {
+        expect(parseMarkdownWithLosses(markdown, OPTIONS).losses).toEqual([{ type: 'task_list_item', line: 1 }]);
+    });
+
+    it('reports a task item on the line where its item starts', () => {
+        expect(parseMarkdownWithLosses('- a\n- [x] b', OPTIONS).losses).toEqual([{ type: 'task_list_item', line: 2 }]);
+    });
+
+    it.each(['- [link] text', '- x', '- [x]', '[x] done'])('reports no task item in %j', (markdown) => {
+        expect(parseMarkdownWithLosses(markdown, OPTIONS).losses).toEqual([]);
+    });
+
+    it('reports a reference definition on the first line, as markdown-it gives none', () => {
+        expect(parseMarkdownWithLosses('[a]: http://x', OPTIONS).losses).toEqual([
+            { type: 'reference_definition', line: 1 },
+        ]);
+    });
+
+    it('reads a reference link as before and reports its definition', () => {
+        const { document, losses } = parseMarkdownWithLosses('[x][a]\n\n[a]: http://x', OPTIONS);
+
+        expect(document).toEqual(parseMarkdown('[x](http://x)', OPTIONS));
+        expect(losses).toEqual([{ type: 'reference_definition', line: 1 }]);
+    });
+
+    it('reports one loss per reference definition', () => {
+        const markdown = '[a]: http://x\n[b]: http://y';
+
+        expect(parseMarkdownWithLosses(markdown, OPTIONS).losses).toHaveLength(2);
+    });
+});
+
 describe('parseMarkdown line breaks', () => {
     it('reads a single newline as a space by default', () => {
         expect(parseMarkdown('a\nb', OPTIONS)).toEqual({

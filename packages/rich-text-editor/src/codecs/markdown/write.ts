@@ -37,10 +37,11 @@ import {
     type InlineToken,
     isSpaceToken,
 } from './inlineTokens';
-import { isMarkdownWhitespace, type Tokenize } from './markdownIt';
+import { type Tokenize } from './markdownIt';
 import {
     addInlineRun,
     addTextRun,
+    appendRuns,
     type Lost,
     readBackOf,
     type ReadBackResult,
@@ -360,14 +361,9 @@ const addReadRuns = (runs: Run[], read: readonly Run[], marks: readonly RunMark[
     }
 };
 
-/** The runs a line break reads as, from the Markdown that writes one between two probes. */
-const lineBreakRunsOf = (state: WriteState): Run[] => {
-    let lineBreak = HARD_BREAK;
-    if (state.breaks) {
-        lineBreak = LINE_SEPARATOR;
-    }
-
-    const read = readRuns(`${PROBE}${lineBreak}${PROBE}`, state, state.tokenize) ?? [];
+/** The runs some Markdown reads as on its own, read between two probes so its edge space and indent are kept. */
+const runsBetweenProbesOf = (markdown: string, state: WriteState): Run[] => {
+    const read = readRuns(`${PROBE}${markdown}${PROBE}`, state, state.tokenize) ?? [];
     const first = read[0];
     if (first?.kind === 'text') {
         read[0] = { ...first, text: first.text.slice(PROBE.length) };
@@ -389,21 +385,49 @@ const addOverrideRuns = (runs: Run[], { output }: OutputPiece, marks: readonly R
             addTextRun(runs, output.text, marks);
             break;
         case 'markdown':
-            addReadRuns(runs, readRuns(output.markdown, state, state.tokenize) ?? [], marks);
+            addReadRuns(runs, runsBetweenProbesOf(output.markdown, state), marks);
             break;
         case 'lineBreak':
-            addReadRuns(runs, lineBreakRunsOf(state), marks);
+            addReadRuns(runs, runsBetweenProbesOf(lineBreakMarkdownOf(state), state), marks);
             break;
     }
 };
 
-/** Whether the mark writes no delimiters, as the text it wraps is only whitespace. */
-const wrapsOnlySpace = (pieces: readonly Piece[]): boolean =>
-    !hasInnerMarkup(pieces) && [...plainTextOf(pieces)].every(isMarkdownWhitespace);
+const lineBreakMarkdownOf = (state: WriteState): string => {
+    if (state.breaks) {
+        return LINE_SEPARATOR;
+    }
+
+    return HARD_BREAK;
+};
+
+type TrimmedRuns = { leading: string; runs: Run[]; trailing: string };
+
+/** The runs without the first `start` and last `end` characters of their text, which a mark's delimiters leave outside. */
+const trimmedBy = (runs: readonly Run[], start: number, end: number): TrimmedRuns => {
+    const kept = [...runs];
+    let leading = '';
+    const first = kept[0];
+    if (first?.kind === 'text') {
+        leading = first.text.slice(0, start);
+        kept[0] = { ...first, text: first.text.slice(start) };
+    }
+
+    let trailing = '';
+    const lastIndex = kept.length - 1;
+    const last = kept[lastIndex];
+    if (last?.kind === 'text') {
+        const keptLength = last.text.length - end;
+        trailing = last.text.slice(keptLength);
+        kept[lastIndex] = { ...last, text: last.text.slice(0, keptLength) };
+    }
+
+    return { leading, runs: kept, trailing };
+};
 
 /**
  * What a mark an override wrote reads back as on its own: the runs its delimiters read as around the text they wrap,
- * and the marks they put on that text.
+ * and the marks they put on that text. The delimiters sit where the writer put them, inside the edge whitespace.
  */
 const addOverrideMarkRuns = (
     runs: Run[],
@@ -413,9 +437,12 @@ const addOverrideMarkRuns = (
     state: WriteState,
 ): void => {
     const { mark, pieces } = piece;
+    const inner: InlineToken[] = [];
+    appendTokens(inner, pieces, 'escaped', { losses: [], emphasis: ASTERISK });
+    const { start, end } = edgesOf(inner);
     const delimiters = mark.form.write(mark.value, { text: plainTextOf(pieces), marked: hasInnerMarkup(pieces) });
     let read: Run[] = [];
-    if (delimiters !== null && !wrapsOnlySpace(pieces)) {
+    if (delimiters !== null && start !== end) {
         read = readRuns(`${delimiters.open}${PROBE}${delimiters.close}`, state, state.tokenize) ?? [];
     }
 
@@ -429,11 +456,17 @@ const addOverrideMarkRuns = (
 
     const at = probed.text.indexOf(PROBE);
     const probedMarks = [...marks, ...probed.marks];
+    const wrapped: Run[] = [];
+    addRuns(wrapped, pieces, probedMarks, dropped, state);
+    const { leading, runs: inside, trailing } = trimmedBy(wrapped, start, inner.length - end);
+
+    addTextRun(runs, leading, marks);
     addReadRuns(runs, read.slice(0, index), marks);
     addTextRun(runs, probed.text.slice(0, at), probedMarks);
-    addRuns(runs, pieces, probedMarks, dropped, state);
+    appendRuns(runs, inside);
     addTextRun(runs, probed.text.slice(at + PROBE.length), probedMarks);
     addReadRuns(runs, read.slice(index + 1), marks);
+    addTextRun(runs, trailing, marks);
 };
 
 const addRuns = (
@@ -592,6 +625,20 @@ const delimiterOf = (text: string, open: boolean, pair: DelimiterPair, literal: 
     emphasis: !literal && isEmphasisDelimiter(text),
 });
 
+/** Where a mark's tokens start and end once the whitespace at their edges, which goes outside the delimiters, is left out. */
+const edgesOf = (inner: readonly InlineToken[]): { start: number; end: number } => {
+    let start = 0;
+    while (start < inner.length && isSpaceToken(inner[start])) {
+        start++;
+    }
+    let end = inner.length;
+    while (end > start && isSpaceToken(inner[end - 1])) {
+        end--;
+    }
+
+    return { start, end };
+};
+
 const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, context: TokenContext): void => {
     const { mark, paths, pieces } = piece;
     const written = mark.form.write(mark.value, { text: plainTextOf(pieces), marked: hasInnerMarkup(pieces) });
@@ -613,15 +660,7 @@ const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, cont
     const inner: InlineToken[] = [];
     appendTokens(inner, pieces, innerMode, context);
 
-    // The whitespace at the edges of the marked text goes outside the delimiters, where Markdown reads them as emphasis.
-    let start = 0;
-    while (start < inner.length && isSpaceToken(inner[start])) {
-        start++;
-    }
-    let end = inner.length;
-    while (end > start && isSpaceToken(inner[end - 1])) {
-        end--;
-    }
+    const { start, end } = edgesOf(inner);
     if (start === end) {
         appendAll(tokens, inner);
 
