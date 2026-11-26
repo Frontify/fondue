@@ -17,14 +17,18 @@ import {
 } from '#/core';
 
 import { sameValue } from './canonical';
-import { EMPTY_BLOCK_TEXT } from './emptyBlock';
+import { EMPTY_BLOCK_ENTITY } from './emptyBlock';
 import { matchToken, type MarkdownForms, type MarkRule, type ReadMatch, suffixMatchOf, type TextReader } from './forms';
-import { INLINE_TOKEN, type MarkdownTokenNode, tokenize } from './markdownIt';
+import { INLINE_TOKEN, type MarkdownTokenNode, PARAGRAPH_OPEN, tokenize } from './markdownIt';
+
+/** A Markdown feature the document could not keep, with the one-based line where its block starts. */
+export type MarkdownReadLoss = { type: string; line: number };
 
 export type ReadContext = {
     registry: ContentRegistry;
     forms: MarkdownForms;
     breaks: boolean;
+    reportLoss?: (loss: MarkdownReadLoss) => void;
 };
 
 const OPENING = 1;
@@ -37,6 +41,11 @@ const SOFT_BREAK = 'softbreak';
 const HARD_BREAK = 'hardbreak';
 const FENCE = 'fence';
 const CODE_BLOCK = 'code_block';
+const LINK_OPEN = 'link_open';
+const LINK_TITLE = 'link_title';
+const reportLoss = (context: ReadContext, type: string, line: number): void => {
+    context.reportLoss?.({ type, line });
+};
 
 /** What a line break reads as when no plugin has a break. */
 const LINE_BREAK_TEXT = ' ';
@@ -65,6 +74,7 @@ type OpenMark = { kind: 'mark'; name: string; stored: StoredMarkValue } | { kind
 type InlineState = {
     nodes: RteInlineNode[];
     open: OpenMark[];
+    line: number;
 };
 
 type PatternHit = { index: number; length: number; node: RteInlineNode };
@@ -160,17 +170,23 @@ const suffixedValueOf = (match: ReadMatch<MarkRule>, cursor: InlineCursor, index
     return suffixed;
 };
 
-const openMark = (token: MarkdownTokenNode, forms: MarkdownForms, cursor: InlineCursor): OpenMark => {
-    const match = matchToken(forms.markReaders, token);
+const openMark = (token: MarkdownTokenNode, context: ReadContext, cursor: InlineCursor): OpenMark => {
+    const match = matchToken(context.forms.markReaders, token);
     if (match === null) {
+        reportLoss(context, token.type, token.line);
+
         return { kind: 'ignored' };
     }
 
-    if (match.rule.suffix === undefined) {
-        return { kind: 'mark', name: match.name, stored: storedMarkOf(match.value) };
+    let value = match.value;
+    if (match.rule.suffix !== undefined) {
+        value = suffixedValueOf(match, cursor, closingIndexOf(cursor.tokens, cursor.index) + 1);
     }
 
-    const value = suffixedValueOf(match, cursor, closingIndexOf(cursor.tokens, cursor.index) + 1);
+    const { title } = token.attrs;
+    if (token.type === LINK_OPEN && title !== undefined && value.title !== title) {
+        reportLoss(context, LINK_TITLE, token.line);
+    }
 
     return { kind: 'mark', name: match.name, stored: storedMarkOf(value) };
 };
@@ -215,14 +231,14 @@ const plainTextOf = (token: MarkdownTokenNode): string => {
 };
 
 /** A token standing alone that is not text: an inline element, a mark on its own content (code), or its content. */
-const readLeaf = (state: InlineState, token: MarkdownTokenNode, forms: MarkdownForms, cursor: InlineCursor): void => {
-    const inline = matchToken(forms.inlineReaders, token);
+const readLeaf = (state: InlineState, token: MarkdownTokenNode, context: ReadContext, cursor: InlineCursor): void => {
+    const inline = matchToken(context.forms.inlineReaders, token);
     if (inline !== null) {
         state.nodes.push({ type: inline.name, ...inline.value });
         return;
     }
 
-    const mark = matchToken(forms.markReaders, token);
+    const mark = matchToken(context.forms.markReaders, token);
     if (mark !== null) {
         const value = suffixedValueOf(mark, cursor, cursor.index + 1);
 
@@ -230,6 +246,7 @@ const readLeaf = (state: InlineState, token: MarkdownTokenNode, forms: MarkdownF
         return;
     }
 
+    reportLoss(context, token.type, state.line);
     addText(state.nodes, plainTextOf(token), marksOf(state.open));
 };
 
@@ -248,19 +265,23 @@ const readSelfClosing = (
             break;
         case SOFT_BREAK:
             if (context.breaks) {
-                readLeaf(state, { ...token, type: HARD_BREAK }, context.forms, cursor);
+                readLeaf(state, { ...token, type: HARD_BREAK }, context, cursor);
             } else {
                 addText(state.nodes, LINE_BREAK_TEXT, marksOf(state.open));
             }
             break;
         default:
-            readLeaf(state, token, context.forms, cursor);
+            readLeaf(state, token, context, cursor);
     }
 };
 
-export const readInlines = (tokens: readonly MarkdownTokenNode[], context: ReadContext): RteInlineNode[] => {
-    const state: InlineState = { nodes: [], open: [] };
-    const copy = [...tokens];
+export const readInlines = (inline: MarkdownTokenNode, context: ReadContext): RteInlineNode[] => {
+    if (inline.content === EMPTY_BLOCK_ENTITY) {
+        return [];
+    }
+
+    const state: InlineState = { nodes: [], open: [], line: inline.line };
+    const copy = [...inline.children];
     for (let index = 0; index < copy.length; index++) {
         const token = copy[index];
         if (token === undefined) {
@@ -270,7 +291,7 @@ export const readInlines = (tokens: readonly MarkdownTokenNode[], context: ReadC
         const cursor: InlineCursor = { tokens: copy, index };
         switch (token.nesting) {
             case OPENING:
-                state.open.push(openMark(token, context.forms, cursor));
+                state.open.push(openMark(token, context, cursor));
                 break;
             case CLOSING:
                 state.open.pop();
@@ -282,16 +303,6 @@ export const readInlines = (tokens: readonly MarkdownTokenNode[], context: ReadC
     }
 
     return state.nodes;
-};
-
-/** A text block holding only a non-breaking space is the empty one, as the writer spells it. */
-export const withoutPlaceholder = (nodes: RteInlineNode[]): RteInlineNode[] => {
-    const texts = nodes.filter(isTextNode);
-    if (texts.length === nodes.length && texts.map((node) => node.text).join('') === EMPTY_BLOCK_TEXT) {
-        return [];
-    }
-
-    return nodes;
 };
 
 // --- Blocks ---
@@ -308,7 +319,7 @@ type FrameKind =
     /** A text block whose tokens hold one `inline` token (a paragraph, a heading). */
     | { kind: 'text'; block: ReadBlock }
     /** A text block's token that holds paragraphs (a quote): each becomes one block of its type. */
-    | { kind: 'textContainer'; block: ReadBlock };
+    | { kind: 'textContainer'; block: ReadBlock; source: Pick<MarkdownTokenNode, 'type' | 'line'> };
 
 /** A container token still open; the frames link up through `parent` to the root, as a stack. */
 type Frame = { blocks: RteBlockNode[] } & (
@@ -382,6 +393,10 @@ const openFrame = (
     const block = resolveBlock(token, context);
 
     if (block === null) {
+        if (token.type !== PARAGRAPH_OPEN) {
+            reportLoss(context, token.type, token.line);
+        }
+
         // A heading, or a table cell, that no plugin reads is a paragraph.
         if (holdsInline) {
             return { kind: 'text', parent, block: PARAGRAPH_BLOCK, blocks: [] };
@@ -390,15 +405,20 @@ const openFrame = (
         return { kind: 'passthrough', parent, blocks: [] };
     }
 
+    const allowed = allowedIn(parent, block.type, context);
+    if (!allowed) {
+        reportLoss(context, token.type, token.line);
+    }
+
     const content = context.registry.blocks.get(block.type)?.content;
     if (content === 'text') {
         if (holdsInline) {
             return { kind: 'text', parent, block, blocks: [] };
         }
 
-        return { kind: 'textContainer', parent, block, blocks: [] };
+        return { kind: 'textContainer', parent, block, source: token, blocks: [] };
     }
-    if (typeof content === 'object' && allowedIn(parent, block.type, context)) {
+    if (typeof content === 'object' && allowed) {
         return { kind: 'container', parent, block, blocks: [] };
     }
 
@@ -434,6 +454,13 @@ const closeFrame = (frame: Frame, context: ReadContext): Frame => {
         return frame;
     }
 
+    if (frame.kind === 'textContainer' && allowedIn(frame.parent, frame.block.type, context)) {
+        const [first, second] = frame.blocks;
+        if (first?.type !== frame.block.type || second !== undefined || textContainerOf(frame.parent) !== null) {
+            reportLoss(context, frame.source.type, frame.source.line);
+        }
+    }
+
     for (const block of finishedBlocks(frame, context)) {
         frame.parent.blocks.push(block);
     }
@@ -464,7 +491,7 @@ const readInline = (frame: Frame, token: MarkdownTokenNode, context: ReadContext
         block = frame.block;
     }
 
-    emitText(frame, block, withoutPlaceholder(readInlines(token.children, context)), context);
+    emitText(frame, block, readInlines(token, context), context);
 };
 
 /** A block of code is one paragraph: its lines joined by breaks, or by spaces when no plugin has a break. */
@@ -474,16 +501,17 @@ const readCode = (frame: Frame, token: MarkdownTokenNode, context: ReadContext):
         return;
     }
 
-    const state: InlineState = { nodes: [], open: [] };
+    const state: InlineState = { nodes: [], open: [], line: token.line };
     const lineBreak: MarkdownTokenNode = { ...token, type: HARD_BREAK };
+    const cursor: InlineCursor = { tokens: [lineBreak], index: 0 };
     for (const [index, line] of content.split(LINE_SEPARATOR).entries()) {
         if (index > 0) {
-            readLeaf(state, lineBreak, context.forms, { tokens: [lineBreak], index: 0 });
+            readLeaf(state, lineBreak, context, cursor);
         }
         addText(state.nodes, line, {});
     }
 
-    emitText(frame, PARAGRAPH_BLOCK, withoutPlaceholder(state.nodes), context);
+    emitText(frame, PARAGRAPH_BLOCK, state.nodes, context);
 };
 
 /** A token standing alone: its text, or a block of code. A rule (`hr`) is dropped, as no plugin reads it. */
@@ -494,8 +522,11 @@ const readSelfClosingBlock = (frame: Frame, token: MarkdownTokenNode, context: R
             break;
         case FENCE:
         case CODE_BLOCK:
+            reportLoss(context, token.type, token.line);
             readCode(frame, token, context);
             break;
+        default:
+            reportLoss(context, token.type, token.line);
     }
 };
 
