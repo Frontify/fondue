@@ -19,9 +19,17 @@ import {
 
 import { MAX_DEPTH, sameValue } from './canonical';
 import { EMPTY_BLOCK_ENTITY } from './emptyBlock';
-import { entityOf, escapeClosingHashes, escapeText, escapeTrailingBang, type TextPosition } from './escape';
+import {
+    entityOf,
+    escapeClosingHashes,
+    escapeText,
+    escapeTrailingBang,
+    type TextNeighbours,
+    type TextPosition,
+    type TextScope,
+} from './escape';
 import { fixFlanking, isEmphasisDelimiter } from './flanking';
-import { type MarkdownForms } from './forms';
+import { type MarkdownForms, type OverriddenForms } from './forms';
 import {
     type DelimiterPair,
     type DelimiterToken,
@@ -33,9 +41,11 @@ import { type Tokenize } from './markdownIt';
 import {
     addInlineRun,
     addTextRun,
+    appendRuns,
     type Lost,
     readBackOf,
     type ReadBackResult,
+    readRuns,
     type Run,
     type RunMark,
 } from './readBack';
@@ -70,6 +80,8 @@ const LINE_SEPARATOR = '\n';
 const CARRIAGE_RETURN = '\r';
 const HARD_BREAK = '\\\n';
 
+const NO_PATH: Path = [];
+
 const NO_PREFIX: MarkdownLinePrefix = { first: '', rest: '' };
 
 /** What goes between two blocks' lines: a blank line, except where a list item's list follows its paragraph. */
@@ -99,8 +111,8 @@ type OpenMark = Extract<Piece, { kind: 'mark' }>;
 
 type OutputPiece = Extract<Piece, { kind: 'output' }>;
 
-/** Whether the text a mark wraps is escaped, or written as is (inline code). */
-type TextMode = 'escaped' | 'literal';
+/** Whether the text a mark wraps is escaped, escaped as a link's text, or written as is (inline code). */
+type TextMode = 'escaped' | 'linkText' | 'literal';
 
 /** The delimiter a mark that writes `*` is written with: `*`, or `_` on the retry where `*` did not read back. */
 type EmphasisDelimiter = '*' | '_';
@@ -333,11 +345,136 @@ const plainTextOutputOf = (output: MarkdownInlineOutput): string | null => {
     return null;
 };
 
+/** Stands for the text a mark wraps, or for the text around a line break, when only the Markdown around it is read. */
+const PROBE = '\uE000';
+
+const addReadRuns = (runs: Run[], read: readonly Run[], marks: readonly RunMark[]): void => {
+    for (const run of read) {
+        switch (run.kind) {
+            case 'text':
+                addTextRun(runs, run.text, [...marks, ...run.marks]);
+                break;
+            case 'inline':
+                addInlineRun(runs, run.type, run.value, NO_PATH, run.written);
+                break;
+        }
+    }
+};
+
+/** The runs some Markdown reads as on its own, read between two probes so its edge space and indent are kept. */
+const runsBetweenProbesOf = (markdown: string, state: WriteState): Run[] => {
+    const read = readRuns(`${PROBE}${markdown}${PROBE}`, state, state.tokenize) ?? [];
+    const first = read[0];
+    if (first?.kind === 'text') {
+        read[0] = { ...first, text: first.text.slice(PROBE.length) };
+    }
+
+    const lastIndex = read.length - 1;
+    const last = read[lastIndex];
+    if (last?.kind === 'text') {
+        read[lastIndex] = { ...last, text: last.text.slice(0, -PROBE.length) };
+    }
+
+    return read;
+};
+
+/** What an inline element an override wrote reads back as on its own, so the reference holds that and never the element. */
+const addOverrideRuns = (runs: Run[], { output }: OutputPiece, marks: readonly RunMark[], state: WriteState): void => {
+    switch (output.kind) {
+        case 'text':
+            addTextRun(runs, output.text, marks);
+            break;
+        case 'markdown':
+            addReadRuns(runs, runsBetweenProbesOf(output.markdown, state), marks);
+            break;
+        case 'lineBreak':
+            addReadRuns(runs, runsBetweenProbesOf(lineBreakMarkdownOf(state), state), marks);
+            break;
+    }
+};
+
+const lineBreakMarkdownOf = (state: WriteState): string => {
+    if (state.breaks) {
+        return LINE_SEPARATOR;
+    }
+
+    return HARD_BREAK;
+};
+
+type TrimmedRuns = { leading: string; runs: Run[]; trailing: string };
+
+/** The runs without the first `start` and last `end` characters of their text, which a mark's delimiters leave outside. */
+const trimmedBy = (runs: readonly Run[], start: number, end: number): TrimmedRuns => {
+    const kept = [...runs];
+    let leading = '';
+    const first = kept[0];
+    if (first?.kind === 'text') {
+        leading = first.text.slice(0, start);
+        kept[0] = { ...first, text: first.text.slice(start) };
+    }
+
+    let trailing = '';
+    const lastIndex = kept.length - 1;
+    const last = kept[lastIndex];
+    if (last?.kind === 'text') {
+        const keptLength = last.text.length - end;
+        trailing = last.text.slice(keptLength);
+        kept[lastIndex] = { ...last, text: last.text.slice(0, keptLength) };
+    }
+
+    return { leading, runs: kept, trailing };
+};
+
+/**
+ * What a mark an override wrote reads back as on its own: the runs its delimiters read as around the text they wrap,
+ * and the marks they put on that text. The delimiters sit where the writer put them, inside the edge whitespace.
+ */
+const addOverrideMarkRuns = (
+    runs: Run[],
+    piece: OpenMark,
+    marks: readonly RunMark[],
+    dropped: readonly MarkdownLoss[],
+    state: WriteState,
+): void => {
+    const { mark, pieces } = piece;
+    const inner: InlineToken[] = [];
+    appendTokens(inner, pieces, 'escaped', { losses: [], emphasis: ASTERISK });
+    const { start, end } = edgesOf(inner);
+    const delimiters = mark.form.write(mark.value, { text: plainTextOf(pieces), marked: hasInnerMarkup(pieces) });
+    let read: Run[] = [];
+    if (delimiters !== null && start !== end) {
+        read = readRuns(`${delimiters.open}${PROBE}${delimiters.close}`, state, state.tokenize) ?? [];
+    }
+
+    const index = read.findIndex((run) => run.kind === 'text' && run.text.includes(PROBE));
+    const probed = read[index];
+    if (probed?.kind !== 'text') {
+        addRuns(runs, pieces, marks, dropped, state);
+
+        return;
+    }
+
+    const at = probed.text.indexOf(PROBE);
+    const probedMarks = [...marks, ...probed.marks];
+    const wrapped: Run[] = [];
+    addRuns(wrapped, pieces, probedMarks, dropped, state);
+    const { leading, runs: inside, trailing } = trimmedBy(wrapped, start, inner.length - end);
+
+    addTextRun(runs, leading, marks);
+    addReadRuns(runs, read.slice(0, index), marks);
+    addTextRun(runs, probed.text.slice(0, at), probedMarks);
+    appendRuns(runs, inside);
+    addTextRun(runs, probed.text.slice(at + PROBE.length), probedMarks);
+    addReadRuns(runs, read.slice(index + 1), marks);
+    addTextRun(runs, trailing, marks);
+};
+
 const addRuns = (
     runs: Run[],
     pieces: readonly Piece[],
     marks: readonly RunMark[],
     dropped: readonly MarkdownLoss[],
+    state: WriteState,
 ) => {
     for (const piece of pieces) {
         switch (piece.kind) {
@@ -345,28 +482,43 @@ const addRuns = (
                 addTextRun(runs, piece.text, marks);
                 break;
             case 'output':
+                if (state.forms.overridden.inlines.has(piece.type)) {
+                    addOverrideRuns(runs, piece, marks, state);
+
+                    break;
+                }
+
                 addInlineRun(runs, piece.type, piece.value, piece.path, plainTextOutputOf(piece.output));
                 break;
             case 'mark':
                 if (isDropped(piece, dropped)) {
-                    addRuns(runs, piece.pieces, marks, dropped);
-                } else {
-                    addRuns(
-                        runs,
-                        piece.pieces,
-                        [...marks, { name: piece.mark.name, value: piece.mark.value, paths: piece.paths }],
-                        dropped,
-                    );
+                    addRuns(runs, piece.pieces, marks, dropped, state);
+
+                    break;
                 }
+
+                if (state.forms.overridden.marks.has(piece.mark.name)) {
+                    addOverrideMarkRuns(runs, piece, marks, dropped, state);
+
+                    break;
+                }
+
+                addRuns(
+                    runs,
+                    piece.pieces,
+                    [...marks, { name: piece.mark.name, value: piece.mark.value, paths: piece.paths }],
+                    dropped,
+                    state,
+                );
                 break;
         }
     }
 };
 
 /** What the document holds once the marks the writer reported lost are taken off: what its Markdown should read back as. */
-const referenceOf = (pieces: readonly Piece[], dropped: readonly MarkdownLoss[]): Run[] => {
+const referenceOf = (pieces: readonly Piece[], dropped: readonly MarkdownLoss[], state: WriteState): Run[] => {
     const runs: Run[] = [];
-    addRuns(runs, pieces, [], dropped);
+    addRuns(runs, pieces, [], dropped, state);
 
     return runs;
 };
@@ -421,11 +573,19 @@ const appendAll = (tokens: InlineToken[], added: readonly InlineToken[]): void =
     }
 };
 
+const scopeOf = (mode: TextMode): TextScope => {
+    if (mode === 'linkText') {
+        return 'linkText';
+    }
+
+    return 'text';
+};
+
 const appendChars = (tokens: InlineToken[], text: string, mode: TextMode): void => {
     for (const char of text) {
         // A line separator is a reference, so it never ends a line of the Markdown.
-        const entity = mode === 'escaped' && (char === LINE_SEPARATOR || char === CARRIAGE_RETURN);
-        tokens.push({ kind: 'char', char, entity, verbatim: mode === 'literal' });
+        const entity = mode !== 'literal' && (char === LINE_SEPARATOR || char === CARRIAGE_RETURN);
+        tokens.push({ kind: 'char', char, entity, verbatim: mode === 'literal', scope: scopeOf(mode) });
     }
 };
 
@@ -465,6 +625,20 @@ const delimiterOf = (text: string, open: boolean, pair: DelimiterPair, literal: 
     emphasis: !literal && isEmphasisDelimiter(text),
 });
 
+/** Where a mark's tokens start and end once the whitespace at their edges, which goes outside the delimiters, is left out. */
+const edgesOf = (inner: readonly InlineToken[]): { start: number; end: number } => {
+    let start = 0;
+    while (start < inner.length && isSpaceToken(inner[start])) {
+        start++;
+    }
+    let end = inner.length;
+    while (end > start && isSpaceToken(inner[end - 1])) {
+        end--;
+    }
+
+    return { start, end };
+};
+
 const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, context: TokenContext): void => {
     const { mark, paths, pieces } = piece;
     const written = mark.form.write(mark.value, { text: plainTextOf(pieces), marked: hasInnerMarkup(pieces) });
@@ -479,20 +653,14 @@ const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, cont
     let innerMode = mode;
     if (literal) {
         innerMode = 'literal';
+    } else if (written.linkText === true && mode === 'escaped') {
+        innerMode = 'linkText';
     }
 
     const inner: InlineToken[] = [];
     appendTokens(inner, pieces, innerMode, context);
 
-    // The whitespace at the edges of the marked text goes outside the delimiters, where Markdown reads them as emphasis.
-    let start = 0;
-    while (start < inner.length && isSpaceToken(inner[start])) {
-        start++;
-    }
-    let end = inner.length;
-    while (end > start && isSpaceToken(inner[end - 1])) {
-        end--;
-    }
+    const { start, end } = edgesOf(inner);
     if (start === end) {
         appendAll(tokens, inner);
 
@@ -525,7 +693,7 @@ const appendTokens = (tokens: InlineToken[], pieces: readonly Piece[], mode: Tex
 };
 
 /** What is escaped as one stretch of text, or written as is, or the end of a line. */
-type Segment = { kind: 'text'; text: string } | { kind: 'written'; text: string } | { kind: 'break' };
+type Segment = { kind: 'text'; text: string; scope: TextScope } | { kind: 'written'; text: string } | { kind: 'break' };
 
 const writtenTextOf = (token: Exclude<InlineToken, { kind: 'break' }>): string => {
     switch (token.kind) {
@@ -544,14 +712,20 @@ const writtenTextOf = (token: Exclude<InlineToken, { kind: 'break' }>): string =
 const segmentsOf = (tokens: readonly InlineToken[]): Segment[] => {
     const segments: Segment[] = [];
     let text = '';
+    let scope: TextScope = 'text';
     for (const token of tokens) {
         if (token.kind === 'char' && !token.entity && !token.verbatim) {
+            if (text !== '' && token.scope !== scope) {
+                segments.push({ kind: 'text', text, scope });
+                text = '';
+            }
+            scope = token.scope;
             text += token.char;
             continue;
         }
 
         if (text !== '') {
-            segments.push({ kind: 'text', text });
+            segments.push({ kind: 'text', text, scope });
             text = '';
         }
         if (token.kind === 'break') {
@@ -562,10 +736,18 @@ const segmentsOf = (tokens: readonly InlineToken[]): Segment[] => {
     }
 
     if (text !== '') {
-        segments.push({ kind: 'text', text });
+        segments.push({ kind: 'text', text, scope });
     }
 
     return segments;
+};
+
+const writtenTextNextTo = (segment: Segment | undefined): string => {
+    if (segment?.kind === 'written') {
+        return segment.text;
+    }
+
+    return '';
 };
 
 const writeSegments = (segments: readonly Segment[], state: WriteState): string => {
@@ -579,8 +761,14 @@ const writeSegments = (segments: readonly Segment[], state: WriteState): string 
                     position = 'lineStart';
                 }
 
-                let text = escapeText(segment.text, position);
+                const previous = segments[index - 1];
                 const next = segments[index + 1];
+                const neighbours: TextNeighbours = {
+                    before: writtenTextNextTo(previous),
+                    after: writtenTextNextTo(next),
+                };
+
+                let text = escapeText(segment.text, position, segment.scope, neighbours);
                 if (next?.kind === 'written' && next.text.startsWith(LINK_OPEN)) {
                     text = escapeTrailingBang(text);
                 }
@@ -656,27 +844,41 @@ const attemptOf = (
         losses,
         marks,
         writesAsterisks,
-        readBack: readBackOf(text, referenceOf(pieces, losses), state, state.tokenize),
+        readBack: readBackOf(text, referenceOf(pieces, losses, state), state, state.tokenize),
     };
 };
 
 /** What a block lost when its Markdown does not read back as written: what differs where that is known, else each mark and inline element it holds, or the block itself. */
-const unreadableLosses = (
-    lost: readonly Lost[],
-    marks: readonly DelimiterPair[],
-    inlineElements: readonly MarkdownLoss[],
-    block: RteBlockNode,
-    path: Path,
-): MarkdownLoss[] => {
+type UnreadableLossesParams = {
+    lost: readonly Lost[];
+    marks: readonly DelimiterPair[];
+    inlineElements: readonly MarkdownLoss[];
+    block: RteBlockNode;
+    path: Path;
+    overridden: OverriddenForms;
+};
+
+const unreadableLosses = ({
+    lost,
+    marks,
+    inlineElements,
+    block,
+    path,
+    overridden,
+}: UnreadableLossesParams): MarkdownLoss[] => {
     if (lost.length > 0) {
         return [...lost];
     }
 
+    // What an override wrote is the host's to answer for, so it is never listed.
+    const lostMarks = marks.filter(({ mark }) => !overridden.marks.has(mark));
+    const lostElements = inlineElements.filter(({ type }) => !overridden.inlines.has(type));
+
     const losses: MarkdownLoss[] = [];
-    for (const { mark, paths } of marks) {
+    for (const { mark, paths } of lostMarks) {
         reportMarkLoss(losses, mark, paths);
     }
-    losses.push(...inlineElements);
+    losses.push(...lostElements);
     if (losses.length === 0) {
         return [{ path, type: typeNameOf(block) }];
     }
@@ -699,13 +901,14 @@ const writeInlines = (block: RteBlockNode, path: Path, lineMode: LineMode, state
         reportLoss(state.losses, loss);
     }
     if (chosen.readBack.kind === 'differs') {
-        for (const loss of unreadableLosses(
-            chosen.readBack.lost,
-            chosen.marks,
-            inlineElementsOf(pieces),
+        for (const loss of unreadableLosses({
+            lost: chosen.readBack.lost,
+            marks: chosen.marks,
+            inlineElements: inlineElementsOf(pieces),
             block,
             path,
-        )) {
+            overridden: state.forms.overridden,
+        })) {
             reportLoss(state.losses, loss);
         }
     }

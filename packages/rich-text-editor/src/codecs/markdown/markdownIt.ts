@@ -2,7 +2,7 @@
 
 // The one place markdown-it is imported: it turns Markdown into tokens of this package's own type.
 
-import MarkdownItParser, { type MarkdownIt, type Token } from 'markdown-it';
+import MarkdownItParser, { type Env, type MarkdownIt, type Token } from 'markdown-it/browser';
 
 import { type MarkdownToken } from '#/core';
 
@@ -13,6 +13,13 @@ export type TokenNesting = -1 | 0 | 1;
 export type MarkdownTokenNode = MarkdownToken & {
     nesting: TokenNesting;
     children: readonly MarkdownTokenNode[];
+    line: number;
+};
+
+/** The tokens of a document and the labels of the link reference definitions it holds, which produce no token. */
+export type Tokenized = {
+    tokens: MarkdownTokenNode[];
+    referenceLabels: string[];
 };
 
 export type TokenizeOptions = {
@@ -66,6 +73,11 @@ export const isMarkdownWhitespace = (char: string): boolean => scannedCodeIs(cha
 /** Whether the reader counts the character as punctuation when it decides where emphasis opens and closes. */
 export const isMarkdownPunctuation = (char: string): boolean => scannedCodeIs(char, isPunctuationCode);
 
+const TRIMMED_AT_BLOCK_EDGE = new Set([' ', '\t', '\n', '\r']);
+
+/** Whether the reader strips the character at the edge of a paragraph or heading: it trims ASCII space, tab, line feed and carriage return only. */
+export const isTrimmedAtBlockEdge = (char: string): boolean => TRIMMED_AT_BLOCK_EDGE.has(char);
+
 /** Whether a numeric character reference reads back as this code point, and not as U+FFFD. */
 export const canBeReferenced = (codePoint: number): boolean => isValidEntityCode(codePoint);
 
@@ -118,18 +130,39 @@ const parserFor = (breaks: boolean): MarkdownIt => {
     return parser;
 };
 
-const nodeOf = (token: Token): MarkdownTokenNode => ({
+const FIRST_SOURCE_LINE = 1;
+
+const sourceLineOf = (token: Token, precedingLine: number): number => {
+    const start = token.map?.[0];
+    if (start === undefined) {
+        return precedingLine;
+    }
+
+    return start + FIRST_SOURCE_LINE;
+};
+
+const nodeOf = (token: Token, line: number): MarkdownTokenNode => ({
     type: token.type,
     tag: token.tag,
     attrs: Object.fromEntries((token.attrs ?? []).map(([name, value]) => [name, String(value)])),
     content: token.content,
     info: token.info,
     nesting: token.nesting,
-    children: (token.children ?? []).map(nodeOf),
+    children: (token.children ?? []).map((child) => nodeOf(child, line)),
+    line,
 });
 
 /** The Markdown as a flat token stream: block tokens, each `inline` one holding its inline tokens. */
-export const tokenize = (markdown: string, { breaks }: TokenizeOptions): MarkdownTokenNode[] =>
-    parserFor(breaks).parse(markdown, {}).map(nodeOf);
+export const tokenize = (markdown: string, { breaks }: TokenizeOptions): Tokenized => {
+    const env: Env = {};
+    const tokens: MarkdownTokenNode[] = [];
+    let line = FIRST_SOURCE_LINE;
+    for (const token of parserFor(breaks).parse(markdown, env)) {
+        line = sourceLineOf(token, line);
+        tokens.push(nodeOf(token, line));
+    }
+
+    return { tokens, referenceLabels: Object.keys(env.references ?? {}) };
+};
 
 export type Tokenize = typeof tokenize;

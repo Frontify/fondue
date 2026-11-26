@@ -7,7 +7,7 @@ import { INLINE_PLACEHOLDER, type RteInlineNode } from '#/core';
 import { canonicalOf, sameValue } from './canonical';
 import { isWhitespace } from './escape';
 import { INLINE_TOKEN, PARAGRAPH_CLOSE, PARAGRAPH_OPEN, type Tokenize } from './markdownIt';
-import { readInlines, type ReadContext, withoutPlaceholder } from './read';
+import { readInlines, type ReadContext } from './read';
 
 type Path = readonly number[];
 
@@ -99,8 +99,8 @@ const runsOfNodes = (nodes: readonly RteInlineNode[]): Run[] => {
 };
 
 /** The runs the Markdown reads as, or null when it does not read as one paragraph. */
-const readRuns = (markdown: string, context: ReadContext, tokenize: Tokenize): Run[] | null => {
-    const blocks = tokenize(markdown, { breaks: context.breaks });
+export const readRuns = (markdown: string, context: ReadContext, tokenize: Tokenize): Run[] | null => {
+    const { tokens: blocks } = tokenize(markdown, { breaks: context.breaks });
     const [open, inline, close] = blocks;
     if (
         blocks.length !== 3 ||
@@ -111,7 +111,45 @@ const readRuns = (markdown: string, context: ReadContext, tokenize: Tokenize): R
         return null;
     }
 
-    return runsOfNodes(withoutPlaceholder(readInlines(inline.children, context)));
+    return runsOfNodes(readInlines(inline, context));
+};
+
+/** Adds a run as it is, joined to the text run before it when both carry the same marks. */
+const pushRun = (runs: Run[], run: Run): void => {
+    const previous = runs[runs.length - 1];
+    if (run.kind === 'text' && run.text === '') {
+        return;
+    }
+
+    if (run.kind === 'text' && previous?.kind === 'text' && sameMarks(previous.marks, run.marks)) {
+        runs[runs.length - 1] = { ...previous, text: previous.text + run.text };
+
+        return;
+    }
+
+    runs.push(run);
+};
+
+/** Adds runs that are already in their final form, so their marks are not canonicalized again. */
+export const appendRuns = (runs: Run[], added: readonly Run[]): void => {
+    for (const run of added) {
+        pushRun(runs, run);
+    }
+};
+
+/** The runs without the marks a host's override writes, whose own fidelity is the host's to answer for. */
+const withoutMarks = (runs: readonly Run[], names: ReadonlySet<string>): Run[] => {
+    const kept: Run[] = [];
+    for (const run of runs) {
+        if (run.kind === 'inline') {
+            pushRun(kept, run);
+            continue;
+        }
+
+        pushRun(kept, { ...run, marks: run.marks.filter(({ name }) => !names.has(name)) });
+    }
+
+    return kept;
 };
 
 /** A mark or an inline element of the document that the Markdown does not read back as it was. */
@@ -127,8 +165,21 @@ const placeholder: StandIn = () => INLINE_PLACEHOLDER;
 
 const writtenTextOrPlaceholder: StandIn = ({ written }) => written ?? INLINE_PLACEHOLDER;
 
-const plainTextOf = (runs: readonly Run[], standIn: StandIn): string =>
-    runs.map((run) => (run.kind === 'text' ? run.text : standIn(run))).join('');
+const plainTextOf = (runs: readonly Run[], standIn: StandIn): string => {
+    let text = '';
+    for (const run of runs) {
+        switch (run.kind) {
+            case 'text':
+                text += run.text;
+                break;
+            case 'inline':
+                text += standIn(run);
+                break;
+        }
+    }
+
+    return text;
+};
 
 /** The run each position of the plain text belongs to. */
 const runsByPosition = (runs: readonly Run[], standIn: StandIn): Run[] => {
@@ -168,20 +219,26 @@ const sameRuns = (left: readonly Run[], right: readonly Run[]): boolean =>
         return other !== undefined && sameRun(run, other);
     });
 
+/** What a node is: a mark a run carries, or an inline element. */
+type NodeKind = 'mark' | 'inline';
+
 type LostCollector = {
+    /** What the Markdown does not read back. */
     lost: Lost[];
-    report: (type: string, path: Path) => void;
+    report: (kind: NodeKind, type: string, path: Path) => void;
 };
 
 const createLostCollector = (): LostCollector => {
     const lost: Lost[] = [];
     const reported = new Set<string>();
-    const report = (type: string, path: Path): void => {
-        const key = `${type}:${path.join('.')}`;
-        if (!reported.has(key)) {
-            reported.add(key);
-            lost.push({ type, path });
+    const report = (kind: NodeKind, type: string, path: Path): void => {
+        const key = `${kind}:${type}:${path.join('.')}`;
+        if (reported.has(key)) {
+            return;
         }
+
+        reported.add(key);
+        lost.push({ type, path });
     };
 
     return { lost, report };
@@ -197,9 +254,14 @@ type LostAtPositionParams = {
 
 const lostAtPosition = ({ run, index, plain, readPositions, report }: LostAtPositionParams): void => {
     if (run.kind === 'inline') {
+        // An inline spliced in for what an override wrote has no path, so it is never reported.
+        if (run.path.length === 0) {
+            return;
+        }
+
         const read = readPositions[index];
         if (read === undefined || !sameRun(run, read)) {
-            report(run.type, run.path);
+            report('inline', run.type, run.path);
         }
 
         return;
@@ -212,7 +274,7 @@ const lostAtPosition = ({ run, index, plain, readPositions, report }: LostAtPosi
     for (const mark of run.marks) {
         if (!carriesMark(readPositions[index], mark)) {
             for (const path of mark.paths) {
-                report(mark.name, path);
+                report('mark', mark.name, path);
             }
         }
     }
@@ -252,13 +314,17 @@ export const readBackOf = (
     context: ReadContext,
     tokenize: Tokenize,
 ): ReadBackResult => {
-    const runs = readRuns(markdown, context, tokenize);
-    if (runs === null) {
+    const read = readRuns(markdown, context, tokenize);
+    if (read === null) {
         return { kind: 'differs', lost: [] };
     }
-    if (sameRuns(runs, reference)) {
+
+    const { marks } = context.forms.overridden;
+    const runs = withoutMarks(read, marks);
+    const written = withoutMarks(reference, marks);
+    if (sameRuns(runs, written)) {
         return { kind: 'same' };
     }
 
-    return { kind: 'differs', lost: lostOf(reference, runs) };
+    return { kind: 'differs', lost: lostOf(written, runs) };
 };
