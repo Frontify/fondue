@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Arc as ArcType, type PieArcDatum } from 'd3-shape';
+import { type PieArcDatum } from 'd3-shape';
 import { type Dispatch, Fragment, type SetStateAction, useState } from 'react';
 
 import { type Padding, type PieChartDatum } from '@components/PieChart';
-import { ArcPath } from '@components/PieChart/components/ArcPath';
+import { ArcPath, type PieArcPath } from '@components/PieChart/components/ArcPath';
 import { Label } from '@components/PieChart/components/Label';
 import { resizeArcIfZero } from '@components/PieChart/helpers/resizeArcIfZero';
 import { type ValueFormatter } from '@components/common/types';
@@ -12,7 +12,7 @@ import { type ValueFormatter } from '@components/common/types';
 type ArcProps = {
     arc: PieArcDatum<PieChartDatum>;
     previousArc?: PieArcDatum<PieChartDatum>;
-    path: ArcType<void, PieArcDatum<PieChartDatum>>;
+    path: PieArcPath;
     numberOfArcs: number;
     radius: number;
     isLabelHidden: boolean;
