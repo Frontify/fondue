@@ -285,9 +285,7 @@ describe('an inline no plugin defines', () => {
     it.each(UNKNOWN_INLINE_CASES)('draws %s between the text around it', (_name, inline, expected) => {
         const container = rendered(<RichTextRenderer value={documentWith(inline)} plugins={plugins} />);
 
-        expect(container.textContent).toContain('Before ');
-        expect(container.textContent).toContain(expected);
-        expect(container.textContent).toContain(' after');
+        expect(container.textContent).toContain(`Before ${expected} after`);
     });
 
     it('draws the text run beside a child that is not an object', () => {

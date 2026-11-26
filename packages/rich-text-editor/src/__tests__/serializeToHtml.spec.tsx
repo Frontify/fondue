@@ -136,6 +136,7 @@ describe('a numbered list serialized to HTML', () => {
 
 describe('an inline no plugin defines, serialized to HTML', () => {
     const plugins = [...defaultPlugins, mentionPlugin({ items: [] })];
+    const HTML_TAG = /<[^>]*>/g;
 
     beforeEach(() => {
         vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -148,9 +149,7 @@ describe('an inline no plugin defines, serialized to HTML', () => {
     it.each(UNKNOWN_INLINE_CASES)('writes %s', (_name, inline, expected) => {
         const html = serializeToHtml(documentWith(inline), { plugins });
 
-        expect(html).toContain('Before ');
-        expect(html).toContain(expected);
-        expect(html).toContain(' after');
+        expect(html.replace(HTML_TAG, '')).toContain(`Before ${expected} after`);
     });
 
     it('draws the text run beside a child that is not an object', () => {

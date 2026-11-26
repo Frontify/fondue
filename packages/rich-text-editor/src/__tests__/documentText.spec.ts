@@ -44,7 +44,7 @@ describe('an inline no plugin defines, read as plain text', () => {
         expect(toPlainText(documentWith(inline), { plugins })).toBe(`Before ${expected} after`);
     });
 
-    it('draws the text run beside a child that is not an object', () => {
+    it('reads the text run beside a child that is not an object', () => {
         expect(toPlainText(documentWith(UNKNOWN_WITH_NULL_CHILD), { plugins })).toBe('Before Read more after');
     });
 });

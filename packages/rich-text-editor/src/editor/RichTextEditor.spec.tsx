@@ -14,6 +14,7 @@ import {
     UNKNOWN_AROUND_MENTION,
     UNKNOWN_INLINE_CASES,
     UNKNOWN_WITH_EXTRA_KEYS,
+    UNKNOWN_WITH_NULL_CHILD,
 } from '#/__tests__/fixtures/unknownInlines';
 import { type RteToolbarGroup } from '#/core';
 import { deDE } from '#/locales/de-DE';
@@ -268,7 +269,17 @@ describe('an inline no plugin defines', () => {
 
         ready();
 
-        expect(editableIn(container).textContent).toContain(expected);
+        expect(editableIn(container).textContent).toContain(`Before ${expected} after`);
+    });
+
+    it('shows the text run beside a child that is not an object', () => {
+        const { container, ready } = mount((onChange) => (
+            <RichTextEditor value={documentWith(UNKNOWN_WITH_NULL_CHILD)} onChange={onChange} plugins={plugins} />
+        ));
+
+        ready();
+
+        expect(editableIn(container).textContent).toContain('Before Read more after');
     });
 
     it.each(ROUND_TRIP_CASES)('keeps %s unchanged in the value reported after an edit elsewhere', (_name, inline) => {
