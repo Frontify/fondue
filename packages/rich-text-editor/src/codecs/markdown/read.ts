@@ -518,7 +518,7 @@ const readBlocks = (tokens: readonly MarkdownTokenNode[], context: ReadContext):
 
 export const readDocument = (markdown: string, context: ReadContext): RteDocumentOf => {
     const { tokens, referenceLabels } = tokenize(markdown, { breaks: context.breaks });
-    for (let definition = 0; definition < referenceLabels.length; definition += 1) {
+    for (const _label of referenceLabels) {
         reportLoss(context, REFERENCE_DEFINITION, REFERENCE_DEFINITION_LINE);
     }
 
