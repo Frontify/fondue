@@ -25,26 +25,16 @@ export type ColumnBreakPluginOptions = {
      * @default 'normal'
      */
     gap?: string;
-    /**
-     * Whether an author may insert a column break that leaves a column empty: first in the document, or right after
-     * another break. With `false`, the editor refuses that insert; stored documents load and show as they are.
-     * @default true
-     */
-    emptyColumns?: boolean;
 };
 
 /**
  * Lays the content out in columns, with a block that marks where each column ends
  */
-export const columnBreakContent = ({
-    columns = 2,
-    gap = 'normal',
-    emptyColumns = true,
-}: ColumnBreakPluginOptions = {}) =>
+export const columnBreakContent = ({ columns = 2, gap = 'normal' }: ColumnBreakPluginOptions = {}) =>
     defineContent({
         blocks: {
             columnBreak: defineBlock({
-                separator: !emptyColumns,
+                separator: true,
                 toHtml: () => ({
                     tag: 'div',
                     attrs: {

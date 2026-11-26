@@ -340,7 +340,6 @@ describe('stored content the check list and column break limits keep out of new 
         ({ version: 1, blocks: [{ type: 'checkList', children: items }] }) as RteDocument;
     const note = { type: 'paragraph', children: [{ text: 'Note' }] };
     const withoutCheckList = defaultPlugins.filter((plugin) => plugin.id !== 'check-list');
-    const withoutEmptyColumns = [...defaultPlugins, columnBreakPlugin({ emptyColumns: false })];
 
     it('draws a stored item in progress as a mixed checkbox when `inProgress` is false', () => {
         const doc = checkList(checkItem('inProgress', note));
@@ -371,7 +370,7 @@ describe('stored content the check list and column break limits keep out of new 
             blocks: [{ type: 'columnBreak' }, { type: 'paragraph', children: [{ text: 'a' }] }],
         } as RteDocument;
 
-        const container = rendered(<RichTextRenderer value={doc} plugins={withoutEmptyColumns} />);
+        const container = rendered(<RichTextRenderer value={doc} plugins={[columnBreakPlugin()]} />);
 
         expect(container.querySelectorAll('[data-column-break]')).toHaveLength(1);
     });
@@ -387,7 +386,7 @@ describe('stored content the check list and column break limits keep out of new 
             ],
         } as RteDocument;
 
-        const container = rendered(<RichTextRenderer value={doc} plugins={withoutEmptyColumns} />);
+        const container = rendered(<RichTextRenderer value={doc} plugins={[columnBreakPlugin()]} />);
 
         expect(container.querySelectorAll('[data-column-break]')).toHaveLength(2);
     });

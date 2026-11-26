@@ -35,7 +35,6 @@ import {
     type CheckListPluginOptions,
     codePlugin,
     columnBreakPlugin,
-    type ColumnBreakPluginOptions,
     defaultContent,
     defaultPlugins,
     emojiPlugin,
@@ -1039,19 +1038,12 @@ export const BlurOnBreak: Story = {
     },
 };
 
-type ColumnBreakStoryArgs = Required<Pick<ColumnBreakPluginOptions, 'emptyColumns'>>;
-
 /**
  * Lays the content out in columns and lets the author say where each one ends.
- * The column count belongs to the editor instance, not the document. With `emptyColumns` off, a break that would
- * leave a column empty is refused.
+ * The column count belongs to the editor instance, not the document.
  */
-export const ColumnBreak: StoryObj<ColumnBreakStoryArgs> = {
-    args: { emptyColumns: true },
-    argTypes: { emptyColumns: { control: 'boolean' } },
-    // The meta's editor props are not this story's args, so Controls lists only the limit.
-    parameters: { controls: { include: ['emptyColumns'] } },
-    render: ({ emptyColumns }) => {
+export const ColumnBreak: Story = {
+    render: () => {
         const [doc, setDoc] = useState<RteDocument>({
             version: 1,
             blocks: [
@@ -1060,14 +1052,16 @@ export const ColumnBreak: StoryObj<ColumnBreakStoryArgs> = {
                 { type: 'paragraph', children: [{ text: 'Second column, after the break.' }] },
             ],
         });
-        // The editor reads a new plugin list as a new configuration, so it only changes with the arg.
-        const plugins = useMemo(() => [columnBreakPlugin({ columns: 2, gap: '24px', emptyColumns })], [emptyColumns]);
 
         return (
             <div className={LAYOUT}>
                 <p className={HINT}>The column-break button inserts a break where the caret is.</p>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={plugins} />
+                    <RichTextEditor
+                        value={doc}
+                        onChange={setDoc}
+                        plugins={[columnBreakPlugin({ columns: 2, gap: '24px' })]}
+                    />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>

@@ -280,13 +280,8 @@ describe('textStylePlugin', () => {
 });
 
 describe('columnBreakPlugin', () => {
-    it('declares the break a separator with `emptyColumns: false`', () => {
-        expect(columnBreakPlugin({ emptyColumns: false }).content?.blocks?.columnBreak?.separator).toBe(true);
-    });
-
-    it('does not declare the break a separator by default, nor with `emptyColumns: true`', () => {
-        expect(columnBreakPlugin().content?.blocks?.columnBreak?.separator).toBe(false);
-        expect(columnBreakPlugin({ emptyColumns: true }).content?.blocks?.columnBreak?.separator).toBe(false);
+    it('declares the break a separator', () => {
+        expect(columnBreakPlugin().content?.blocks?.columnBreak?.separator).toBe(true);
     });
 
     it('marks the break up as a separator for assistive technology', () => {
