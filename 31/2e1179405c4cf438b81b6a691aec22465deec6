@@ -1,0 +1,19 @@
+packages/rich-text-editor/src/__tests__/browser/HostLooksPair.tsx
+  s_9d7ebf2f5bd4ea::t_28aa7492198141 49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "312e1179405c4cf438b81b6a691aec22465deec6",
+  "prompts": {},
+  "sessions": {
+    "s_9d7ebf2f5bd4ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a069fd97-821a-4b43-aa47-84dafccc275b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

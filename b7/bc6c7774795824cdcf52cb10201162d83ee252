@@ -1,0 +1,31 @@
+.changeset/docs-v14-import-paths.md
+  s_e303d90a4d1a69::t_e4505f14818288 1-7
+.changeset/quiet-trees-fall.md
+  s_e303d90a4d1a69::t_83138c2cb202bb 5
+fondue/README.md
+  s_e303d90a4d1a69::t_8816be2d61eb9d 3-4,9,31
+packages/components/src/components/ThemeProvider/ThemeProvider.tsx
+  s_e303d90a4d1a69::t_9b44525deda841 31,36
+packages/rte/README.md
+  s_e303d90a4d1a69::t_452c09628569bd 3-4,9,80-83
+packages/sdk/guides/usage/Components.md
+  s_e303d90a4d1a69::t_3bc784d447dee8 22
+packages/sdk/guides/getting-started/Setup.md
+  s_e303d90a4d1a69::t_a84a1a0756c6ad 49-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "b7bc6c7774795824cdcf52cb10201162d83ee252",
+  "prompts": {},
+  "sessions": {
+    "s_e303d90a4d1a69": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b95187bb-e9f1-45de-99f7-7bb025d6a241",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

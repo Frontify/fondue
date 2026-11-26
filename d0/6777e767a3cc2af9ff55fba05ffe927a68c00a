@@ -1,0 +1,19 @@
+packages/components/src/components/SegmentedControl/__tests__/SegmentedControl.ct.tsx
+  s_1a41a1a882a563::t_515f153ca39133 22-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d06777e767a3cc2af9ff55fba05ffe927a68c00a",
+  "prompts": {},
+  "sessions": {
+    "s_1a41a1a882a563": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "0035fcef-10cb-42de-861a-e75a198f6e48",
+        "model": "grok-4.7"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

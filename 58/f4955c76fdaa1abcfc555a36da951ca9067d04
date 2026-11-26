@@ -1,0 +1,23 @@
+packages/components/src/components/Card/__tests__/Card.ct.tsx
+  s_d2fc6bab6d0fea::t_6385973d6829cb 627-630,633,656,659,665
+  s_d2fc6bab6d0fea::t_35bdce089b6d6f 626,642-650,652-653,655
+  s_d2fc6bab6d0fea::t_7d8d4d4a92e9eb 624-625,632,636,654,662
+.changeset/card-banner-transition-sample.md
+  s_d2fc6bab6d0fea::t_c1117ef9995985 1-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "58f4955c76fdaa1abcfc555a36da951ca9067d04",
+  "prompts": {},
+  "sessions": {
+    "s_d2fc6bab6d0fea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "49eacef2-852d-488f-9a68-c17eefa11a39",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
