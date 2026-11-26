@@ -21,6 +21,12 @@ export const UNKNOWN_AROUND_MENTION = {
     children: [{ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' }],
 } as unknown as RteInlineNode;
 
+/** Keeps a child that is not an object beside its text run. */
+export const UNKNOWN_WITH_NULL_CHILD = {
+    type: 'externalLink',
+    children: [null, { text: 'Read more' }],
+} as unknown as RteInlineNode;
+
 /** Keeps its text on itself, with no children. */
 export const UNKNOWN_WITH_TEXT = {
     type: 'widget',

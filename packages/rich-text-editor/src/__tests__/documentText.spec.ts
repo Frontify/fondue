@@ -9,6 +9,7 @@ import {
     documentWith,
     UNKNOWN_AROUND_MENTION,
     UNKNOWN_WITH_EXTRA_KEYS,
+    UNKNOWN_WITH_NULL_CHILD,
     UNKNOWN_WITH_TEXT,
 } from './fixtures/unknownInlines';
 
@@ -51,6 +52,10 @@ describe('an inline no plugin defines, read as plain text', () => {
         ['text of its own', UNKNOWN_WITH_TEXT, 'Fallback text'],
     ])('reads %s in line with the text around it', (_name, inline, expected) => {
         expect(toPlainText(documentWith(inline), { plugins })).toBe(`Before ${expected} after`);
+    });
+
+    it('skips a child that is not an object', () => {
+        expect(toPlainText(documentWith(UNKNOWN_WITH_NULL_CHILD), { plugins })).toBe('Before Read more after');
     });
 });
 

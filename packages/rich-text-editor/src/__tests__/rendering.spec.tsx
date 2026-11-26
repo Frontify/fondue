@@ -29,6 +29,7 @@ import {
     documentWith,
     UNKNOWN_AROUND_MENTION,
     UNKNOWN_WITH_EXTRA_KEYS,
+    UNKNOWN_WITH_NULL_CHILD,
     UNKNOWN_WITH_TEXT,
 } from './fixtures/unknownInlines';
 
@@ -292,6 +293,12 @@ describe('an inline no plugin defines', () => {
         expect(container.textContent).toContain('Before ');
         expect(container.textContent).toContain(expected);
         expect(container.textContent).toContain(' after');
+    });
+
+    it('skips a child that is not an object', () => {
+        const container = rendered(<RichTextRenderer value={documentWith(UNKNOWN_WITH_NULL_CHILD)} plugins={plugins} />);
+
+        expect(container.textContent).toContain('Before Read more after');
     });
 
     it('draws a known inline in its children through the plugin that defines it', () => {

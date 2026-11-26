@@ -9,6 +9,7 @@ import {
     documentWith,
     UNKNOWN_AROUND_MENTION,
     UNKNOWN_WITH_EXTRA_KEYS,
+    UNKNOWN_WITH_NULL_CHILD,
     UNKNOWN_WITH_TEXT,
 } from './fixtures/unknownInlines';
 
@@ -155,6 +156,12 @@ describe('an inline no plugin defines, serialized to HTML', () => {
         expect(html).toContain('Before ');
         expect(html).toContain(expected);
         expect(html).toContain(' after');
+    });
+
+    it('skips a child that is not an object', () => {
+        const html = serializeToHtml(documentWith(UNKNOWN_WITH_NULL_CHILD), { plugins });
+
+        expect(html).toContain('Before Read more after');
     });
 
     it('writes a known inline in its children through the plugin that defines it', () => {

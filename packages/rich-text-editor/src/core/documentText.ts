@@ -59,7 +59,7 @@ const isStoredNode = (child: unknown): boolean => typeof child === 'object' && c
  * or for an element no plugin defines its children's text.
  */
 export const inlineNodeText = (inline: RteInlineNode, registry: ContentRegistry): string => {
-    if (typeof inline.text === 'string') {
+    if (inline.text !== undefined) {
         return inline.text;
     }
 
