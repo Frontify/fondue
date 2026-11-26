@@ -1,9 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type RteDocument, serializeToHtml } from '../index';
-import { defaultContent, defaultPlugins, linkPlugin } from '../plugins';
+import { defaultContent, defaultPlugins, linkPlugin, mentionPlugin } from '../plugins';
+import {
+    documentWith,
+    UNKNOWN_AROUND_MENTION,
+    UNKNOWN_WITH_EXTRA_KEYS,
+    UNKNOWN_WITH_TEXT,
+} from './fixtures/unknownInlines';
 
 // The document as HTML: each node's `toHtml`, matching the readonly view (`htmlParity.spec.tsx`).
 
@@ -124,5 +130,35 @@ describe('a numbered list serialized to HTML', () => {
         expect(serializeToHtml(numbered(10_000), { plugins: defaultContent, wrap: false })).toContain(
             '--rte-list-extra-digits: 3;',
         );
+    });
+});
+
+describe('an inline no plugin defines, serialized to HTML', () => {
+    const plugins = [...defaultPlugins, mentionPlugin({ items: [] })];
+
+    beforeEach(() => {
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    it.each([
+        ['text in its children', UNKNOWN_WITH_EXTRA_KEYS, 'Read more'],
+        ['a known inline in its children', UNKNOWN_AROUND_MENTION, '@jane'],
+        ['text of its own', UNKNOWN_WITH_TEXT, 'Fallback text'],
+    ])('writes %s', (_name, inline, expected) => {
+        const html = serializeToHtml(documentWith(inline), { plugins });
+
+        expect(html).toContain('Before ');
+        expect(html).toContain(expected);
+        expect(html).toContain(' after');
+    });
+
+    it('writes a known inline in its children through the plugin that defines it', () => {
+        const html = serializeToHtml(documentWith(UNKNOWN_AROUND_MENTION), { plugins });
+
+        expect(html).toContain('data-mention-id="jane"');
     });
 });

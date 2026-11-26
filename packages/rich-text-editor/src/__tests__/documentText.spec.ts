@@ -4,6 +4,12 @@ import { describe, expect, it } from 'vitest';
 
 import { isEmpty, type RteDocument, toPlainText } from '../index';
 import { defaultContent, defaultPlugins, mentionPlugin } from '../plugins';
+import {
+    documentWith,
+    UNKNOWN_AROUND_MENTION,
+    UNKNOWN_WITH_EXTRA_KEYS,
+    UNKNOWN_WITH_TEXT,
+} from './fixtures/unknownInlines';
 
 // The document helpers against the shipped plugins; their rules are in `core/documentText.spec.ts`.
 
@@ -32,6 +38,18 @@ describe('toPlainText', () => {
         const plugins = [...defaultPlugins, mentionPlugin({ items: [], href: () => '/', trigger: '#' })];
 
         expect(toPlainText(doc, { plugins })).toMatch(/\nHi #jane$/);
+    });
+});
+
+describe('an inline no plugin defines, read as plain text', () => {
+    const plugins = [...defaultPlugins, mentionPlugin({ items: [] })];
+
+    it.each([
+        ['text in its children', UNKNOWN_WITH_EXTRA_KEYS, 'Read more'],
+        ['a known inline in its children', UNKNOWN_AROUND_MENTION, '@jane'],
+        ['text of its own', UNKNOWN_WITH_TEXT, 'Fallback text'],
+    ])('reads %s in line with the text around it', (_name, inline, expected) => {
+        expect(toPlainText(documentWith(inline), { plugins })).toBe(`Before ${expected} after`);
     });
 });
 
