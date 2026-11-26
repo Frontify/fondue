@@ -16,6 +16,12 @@ export type MarkdownTokenNode = MarkdownToken & {
     line: number;
 };
 
+/** The tokens of a document and the labels of the link reference definitions it holds, which produce no token. */
+export type Tokenized = {
+    tokens: MarkdownTokenNode[];
+    referenceLabels: string[];
+};
+
 export type TokenizeOptions = {
     /** A single newline reads as a `softbreak` token that the reader turns into a break. */
     breaks: boolean;
@@ -146,15 +152,16 @@ const nodeOf = (token: Token, line: number): MarkdownTokenNode => ({
 });
 
 /** The Markdown as a flat token stream: block tokens, each `inline` one holding its inline tokens. */
-export const tokenize = (markdown: string, { breaks }: TokenizeOptions): MarkdownTokenNode[] => {
-    const nodes: MarkdownTokenNode[] = [];
+export const tokenize = (markdown: string, { breaks }: TokenizeOptions): Tokenized => {
+    const env: { references?: Record<string, unknown> } = {};
+    const tokens: MarkdownTokenNode[] = [];
     let line = FIRST_SOURCE_LINE;
-    for (const token of parserFor(breaks).parse(markdown, {})) {
+    for (const token of parserFor(breaks).parse(markdown, env)) {
         line = sourceLineOf(token, line);
-        nodes.push(nodeOf(token, line));
+        tokens.push(nodeOf(token, line));
     }
 
-    return nodes;
+    return { tokens, referenceLabels: Object.keys(env.references ?? {}) };
 };
 
 export type Tokenize = typeof tokenize;

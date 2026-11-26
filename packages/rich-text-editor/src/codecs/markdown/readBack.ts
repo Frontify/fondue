@@ -100,7 +100,7 @@ const runsOfNodes = (nodes: readonly RteInlineNode[]): Run[] => {
 
 /** The runs the Markdown reads as, or null when it does not read as one paragraph. */
 export const readRuns = (markdown: string, context: ReadContext, tokenize: Tokenize): Run[] | null => {
-    const blocks = tokenize(markdown, { breaks: context.breaks });
+    const { tokens: blocks } = tokenize(markdown, { breaks: context.breaks });
     const [open, inline, close] = blocks;
     if (
         blocks.length !== 3 ||
