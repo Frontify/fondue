@@ -113,7 +113,15 @@ const indexesOf = (text: string, patterns: readonly RegExp[]): Set<number> => {
     return indexes;
 };
 
-const isWithin = (index: number, start: number, end: number): boolean => index >= start && index < end;
+const hasEscape = (indexes: ReadonlySet<number>, start: number, end: number): boolean => {
+    for (let index = start; index < end; index++) {
+        if (indexes.has(index)) {
+            return true;
+        }
+    }
+
+    return false;
+};
 
 /** In a link's text a reader takes a backslash into an address, so a word that has an escape also needs its address escapes. */
 const addAddressEscapesInEscapedWords = (text: string, indexes: Set<number>): void => {
@@ -121,12 +129,12 @@ const addAddressEscapesInEscapedWords = (text: string, indexes: Set<number>): vo
     for (const match of text.matchAll(WORD)) {
         const start = match.index;
         const end = start + match[0].length;
-        if (![...indexes].some((index) => isWithin(index, start, end))) {
+        if (!hasEscape(indexes, start, end)) {
             continue;
         }
 
-        for (const index of addressIndexes) {
-            if (isWithin(index, start, end)) {
+        for (let index = start; index < end; index++) {
+            if (addressIndexes.has(index)) {
                 indexes.add(index);
             }
         }

@@ -8,12 +8,12 @@ import { type RteBlock, type RteDocument } from '#/documentFormat';
 
 import { buildForms, type MarkdownOverrides } from './markdown/forms';
 import { tokenize } from './markdown/markdownIt';
-import { readDocument } from './markdown/read';
+import { type MarkdownReadLoss, type ReadContext, readDocument } from './markdown/read';
 import { type MarkdownLoss, writeDocument } from './markdown/write';
 
 export { serializeToHtml } from './html/serializeToHtml';
 export { toPlainText } from './text/toPlainText';
-export type { MarkdownLoss, MarkdownOverrides };
+export type { MarkdownLoss, MarkdownOverrides, MarkdownReadLoss };
 
 export type MarkdownOptions = {
     /** The plugins, or only their content, whose Markdown forms to read and write with. */
@@ -27,21 +27,20 @@ export type MarkdownOptions = {
     overrides?: MarkdownOverrides;
 };
 
+export type ParseMarkdownResult = {
+    document: RteDocument<RteBlockNode>;
+    losses: MarkdownReadLoss[];
+};
+
 export type SerializeToMarkdownResult = {
     markdown: string;
     losses: MarkdownLoss[];
 };
 
-/**
- * Markdown as a document. What no plugin reads stays as its text. Raw HTML in the
- * Markdown is text, never markup. The host passes the plugins whose content the Markdown uses.
- *
- * @example
- * const value = parseMarkdown('**Hello**', { plugins: defaultContent });
- */
-export const parseMarkdown = (
+const readMarkdown = (
     markdown: string,
     { plugins, breaks = false, overrides }: MarkdownOptions,
+    reportLoss?: ReadContext['reportLoss'],
 ): RteDocument<RteBlockNode> => {
     // A JS host can pass any value, and the document of a value that is no Markdown is the empty one.
     if (typeof markdown !== 'string') {
@@ -50,7 +49,36 @@ export const parseMarkdown = (
 
     const registry = buildContentRegistry(plugins);
 
-    return readDocument(markdown, { registry, forms: buildForms(registry, overrides), breaks });
+    return readDocument(markdown, { registry, forms: buildForms(registry, overrides), breaks, reportLoss });
+};
+
+/**
+ * Markdown as a document for display. Raw HTML reads as text.
+ * Use `parseMarkdownWithLosses` before editing and saving stored Markdown.
+ *
+ * @example
+ * const value = parseMarkdown('**Hello**', { plugins: defaultContent });
+ */
+export const parseMarkdown = (markdown: string, options: MarkdownOptions): RteDocument<RteBlockNode> =>
+    readMarkdown(markdown, options);
+
+/**
+ * Markdown as a document, with any features it could not keep. Check `losses` before
+ * saving over the original Markdown.
+ *
+ * @example
+ * const { document, losses } = parseMarkdownWithLosses(storedMarkdown, { plugins: defaultContent });
+ * if (losses.length === 0) {
+ *     setEditableDocument(document);
+ * }
+ */
+export const parseMarkdownWithLosses = (markdown: string, options: MarkdownOptions): ParseMarkdownResult => {
+    const losses: MarkdownReadLoss[] = [];
+    const document = readMarkdown(markdown, options, (loss) => {
+        losses.push(loss);
+    });
+
+    return { document, losses };
 };
 
 const DOCUMENT_TYPE = 'document';

@@ -6,9 +6,8 @@ import { INLINE_PLACEHOLDER, type RteInlineNode } from '#/core';
 
 import { canonicalOf, sameValue } from './canonical';
 import { isWhitespace } from './escape';
-import { isBlank, isEdgeSpace } from './inlineTokens';
-import { INLINE_TOKEN, isTrimmedAtBlockEdge, PARAGRAPH_CLOSE, PARAGRAPH_OPEN, type Tokenize } from './markdownIt';
-import { readInlines, type ReadContext, withoutPlaceholder } from './read';
+import { INLINE_TOKEN, PARAGRAPH_CLOSE, PARAGRAPH_OPEN, type Tokenize } from './markdownIt';
+import { readInlines, type ReadContext } from './read';
 
 type Path = readonly number[];
 
@@ -112,7 +111,7 @@ export const readRuns = (markdown: string, context: ReadContext, tokenize: Token
         return null;
     }
 
-    return runsOfNodes(withoutPlaceholder(readInlines(inline.children, context)));
+    return runsOfNodes(readInlines(inline, context));
 };
 
 /** The runs without the marks a host's override writes, whose own fidelity is the host's to answer for. */
@@ -135,67 +134,6 @@ const withoutMarks = (runs: readonly Run[], names: ReadonlySet<string>): Run[] =
     }
 
     return kept;
-};
-
-type Edge = 'start' | 'end';
-
-/** The characters without the edge space at their start, which the writer leaves out and a reader trims. */
-const withoutLeadingEdgeSpace = (chars: readonly string[]): string[] => {
-    let start = 0;
-    for (const char of chars) {
-        if (!isTrimmedAtBlockEdge(char)) {
-            break;
-        }
-        start++;
-    }
-
-    return [...chars.slice(0, start).filter((char) => !isEdgeSpace(char)), ...chars.slice(start)];
-};
-
-const withoutEdgeSpace = (text: string, edge: Edge): string => {
-    const chars = [...text];
-    if (edge === 'start') {
-        return withoutLeadingEdgeSpace(chars).join('');
-    }
-
-    chars.reverse();
-    const trimmed = withoutLeadingEdgeSpace(chars);
-    trimmed.reverse();
-
-    return trimmed.join('');
-};
-
-const trimEdgeRun = (runs: Run[], edge: Edge): void => {
-    let index = 0;
-    if (edge === 'end') {
-        index = runs.length - 1;
-    }
-
-    const run = runs[index];
-    if (run?.kind !== 'text') {
-        return;
-    }
-
-    const text = withoutEdgeSpace(run.text, edge);
-    if (text === '') {
-        runs.splice(index, 1);
-    } else {
-        runs[index] = { ...run, text };
-    }
-};
-
-/** The runs of a block without the whitespace the writer leaves out at the start of its first line and the end of its last. */
-const withoutBlockEdgeSpace = (runs: readonly Run[]): Run[] => {
-    // A block of only blanks is the empty block.
-    if (runs.every((run) => run.kind === 'text' && [...run.text].every(isBlank))) {
-        return [];
-    }
-
-    const trimmed = [...runs];
-    trimEdgeRun(trimmed, 'start');
-    trimEdgeRun(trimmed, 'end');
-
-    return trimmed;
 };
 
 /** A mark or an inline element of the document that the Markdown does not read back as it was. */
@@ -367,7 +305,7 @@ export const readBackOf = (
 
     const { marks } = context.forms.overridden;
     const runs = withoutMarks(read, marks);
-    const written = withoutBlockEdgeSpace(withoutMarks(reference, marks));
+    const written = withoutMarks(reference, marks);
     if (sameRuns(runs, written)) {
         return { kind: 'same' };
     }
