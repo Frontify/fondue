@@ -118,8 +118,8 @@ export const BUTTON_PHYSICAL_PADDING_FIELDS = {
 } as const satisfies Record<keyof ButtonPhysicalPaddingLook, string>;
 
 /**
- * How a button link looks. Each value is any CSS value, a guideline variable
- * (`var(--f-theme-settings-button-primary-color)`) included. A field left out keeps Fondue's look.
+ * How a button link looks. Each value is any CSS value, a host variable
+ * (`var(--brand-button-color)`) included. A field left out keeps Fondue's look.
  */
 export type ButtonLook = TextLook & LinkBoxLook & ButtonPhysicalPaddingLook & { hover?: ButtonHoverLook };
 
