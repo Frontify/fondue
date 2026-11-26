@@ -51,7 +51,7 @@ const storedText = (field: unknown): string => withoutControlCharacters(storedSt
  * Names a mention the document stores without a username. They belong to the content,
  * whose language the editor does not know, so the host can give its own and these are the default.
  */
-export const ENGLISH_UNKNOWN_LABELS = {
+const ENGLISH_UNKNOWN_LABELS = {
     user: 'Unknown person',
     group: 'Unknown group',
     all: 'Unknown mention',
