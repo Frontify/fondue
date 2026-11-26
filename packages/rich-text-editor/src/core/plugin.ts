@@ -268,8 +268,8 @@ type DefaultsWhenValued<TValue> = [keyof TValue] extends [never]
       : { defaults: TValue };
 
 /**
- * Type a node's callbacks by its value, then erase the type so the definition
- * fits a plugin's map beside nodes with other values.
+ * Types a block's callbacks with the value declared by the plugin.
+ * The registry stores definitions with different value types together.
  * @example
  * const quote = defineBlock({
  *     content: 'text',
@@ -277,12 +277,16 @@ type DefaultsWhenValued<TValue> = [keyof TValue] extends [never]
  *     parse: [{ tag: 'blockquote' }],
  * });
  */
-// The overloads of `DefineBlock` check each content model; the implementation only erases the value type.
-export const defineBlock: DefineBlock = (definition: unknown) => definition as BlockDefinition;
+export const defineBlock: DefineBlock = <TValue extends object>(
+    definition: BlockDefinition<TValue>,
+): BlockDefinition => {
+    // The registry builds callback values using the keys and defaults from this definition.
+    return definition as BlockDefinition;
+};
 
 /**
- * One signature per content model: a union of both would leave the callbacks of `markdown` untyped,
- * since their parameters differ and `content` alone does not tell them apart for a `{ items }` content.
+ * The first two signatures infer Markdown callback parameters for new definitions.
+ * The last signature accepts definitions that already have the union type.
  */
 type DefineBlock = {
     <TValue extends object = Record<string, never>>(
@@ -290,6 +294,9 @@ type DefineBlock = {
     ): BlockDefinition;
     <TValue extends object = Record<string, never>>(
         definition: BlockDefinitionBase<TValue> & BlockLines<TValue> & DefaultsWhenValued<TValue>,
+    ): BlockDefinition;
+    <TValue extends object = Record<string, never>>(
+        definition: BlockDefinition<TValue> & DefaultsWhenValued<TValue>,
     ): BlockDefinition;
 };
 
