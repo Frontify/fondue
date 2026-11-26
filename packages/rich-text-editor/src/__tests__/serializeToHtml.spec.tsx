@@ -137,7 +137,7 @@ describe('a numbered list serialized to HTML', () => {
 
 describe('an inline no plugin defines, serialized to HTML', () => {
     const plugins = [...defaultPlugins, mentionPlugin({ items: [] })];
-    const MENTION_IN_PLACE = /Before <span><span [^>]*data-mention-id="jane"[^>]*>@jane<\/span><\/span> after/;
+    const MENTION_IN_PLACE = /Before <span><span [^>]*data-mention-id="jane"[^>]*><bdi>@jane<\/bdi><\/span><\/span> after/;
 
     beforeEach(() => {
         vi.spyOn(console, 'warn').mockImplementation(() => {});
