@@ -28,7 +28,7 @@ import {
 
 import { BODY_QUOTE_LINK_DOCUMENT } from './hostStylingValues';
 
-type HostLooksPairProps = {
+export type HostLooksPairProps = {
     body?: TextLook;
     quote?: TextLook;
     link?: TextLinkLook;

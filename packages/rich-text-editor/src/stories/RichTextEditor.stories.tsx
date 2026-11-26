@@ -1319,6 +1319,7 @@ const LOOKS_LEGEND_LINES = [
     'Keys for the rest: body (plain paragraphs and list items), quote.',
     `Fields: ${LOOKS_FIELDS.join(', ')}.`,
     'linkPlugin({ look: { text } }) takes the same fields but textDecoration, marginTop and marginBottom.',
+    'It also takes a box: paddingTop, paddingRight, paddingBottom, paddingLeft, backgroundColor, borderColor, borderWidth, borderStyle, borderRadius.',
     "A key or field left out keeps Fondue's look.",
     'A value that could end its CSS declaration early throws.',
 ];
