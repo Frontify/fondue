@@ -28,9 +28,8 @@ import {
 import {
     documentWith,
     UNKNOWN_AROUND_MENTION,
-    UNKNOWN_WITH_EXTRA_KEYS,
+    UNKNOWN_INLINE_CASES,
     UNKNOWN_WITH_NULL_CHILD,
-    UNKNOWN_WITH_TEXT,
 } from './fixtures/unknownInlines';
 
 // The readonly view and export draw the same tree, so they are tested side by
@@ -283,11 +282,7 @@ describe('an inline no plugin defines', () => {
         vi.restoreAllMocks();
     });
 
-    it.each([
-        ['text in its children', UNKNOWN_WITH_EXTRA_KEYS, 'Read more'],
-        ['a known inline in its children', UNKNOWN_AROUND_MENTION, '@jane'],
-        ['text of its own', UNKNOWN_WITH_TEXT, 'Fallback text'],
-    ])('draws %s between the text around it', (_name, inline, expected) => {
+    it.each(UNKNOWN_INLINE_CASES)('draws %s between the text around it', (_name, inline, expected) => {
         const container = rendered(<RichTextRenderer value={documentWith(inline)} plugins={plugins} />);
 
         expect(container.textContent).toContain('Before ');
@@ -295,7 +290,7 @@ describe('an inline no plugin defines', () => {
         expect(container.textContent).toContain(' after');
     });
 
-    it('skips a child that is not an object', () => {
+    it('draws the text run beside a child that is not an object', () => {
         const container = rendered(<RichTextRenderer value={documentWith(UNKNOWN_WITH_NULL_CHILD)} plugins={plugins} />);
 
         expect(container.textContent).toContain('Before Read more after');

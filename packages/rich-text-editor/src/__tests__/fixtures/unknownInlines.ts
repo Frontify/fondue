@@ -33,6 +33,12 @@ export const UNKNOWN_WITH_TEXT = {
     text: 'Fallback text',
 } as unknown as RteInlineNode;
 
+export const UNKNOWN_INLINE_CASES = [
+    ['text in its children', UNKNOWN_WITH_EXTRA_KEYS, 'Read more'],
+    ['a known inline in its children', UNKNOWN_AROUND_MENTION, '@jane'],
+    ['text of its own', UNKNOWN_WITH_TEXT, 'Fallback text'],
+] as const;
+
 export const documentWith = (inline: RteInlineNode): RteDocument => ({
     version: 1,
     blocks: [{ type: 'paragraph', children: [{ text: 'Before ' }, inline, { text: ' after' }] }],

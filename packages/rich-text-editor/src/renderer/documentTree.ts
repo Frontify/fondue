@@ -132,7 +132,7 @@ const sameMark = (left: CarriedMark, right: CarriedMark): boolean =>
     left.type === right.type && sameValue(left.value, right.value);
 
 /** A stored node is not validated, so a child that is not an object has nothing to draw. */
-const isStoredNode = (child: unknown): boolean => typeof child === 'object' && child !== null;
+const isStoredNode = (child: unknown): child is RteInlineNode => typeof child === 'object' && child !== null;
 
 /**
  * An inline element. One no plugin defines draws its children in a plain span, like an unknown block;
@@ -151,12 +151,7 @@ const inlineElement = (
             return null;
         }
 
-        const storedChildren = children.filter(isStoredNode);
-        if (storedChildren.length === 0) {
-            return null;
-        }
-
-        const content = inlineNodes(storedChildren as RteInlineNode[], registry, options);
+        const content = inlineNodes(children.filter(isStoredNode), registry, options);
         if (content.length === 0) {
             return null;
         }

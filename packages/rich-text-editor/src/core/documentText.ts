@@ -52,7 +52,7 @@ const inlineText = (inlines: readonly RteInlineNode[], registry: ContentRegistry
     inlines.map((inline) => inlineNodeText(inline, registry)).join('');
 
 /** A stored node is not validated, so a child that is not an object has nothing to read. */
-const isStoredNode = (child: unknown): boolean => typeof child === 'object' && child !== null;
+const isStoredNode = (child: unknown): child is RteInlineNode => typeof child === 'object' && child !== null;
 
 /**
  * The text one stored inline holds: a run's text, a known element's markup text,

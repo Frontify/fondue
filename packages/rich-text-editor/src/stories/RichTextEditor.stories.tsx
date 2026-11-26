@@ -430,11 +430,12 @@ const EDITOR_HEADING = 'Editor';
 const RENDERER_HEADING = 'Renderer';
 
 /** One paragraph with `inline` between two plain runs, so the surrounding text shows whether the inline kept its place. */
-const unknownInlineParagraph = (inline: object) => ({
+const unknownInlineParagraph = (inline: unknown) => ({
     type: 'paragraph',
     children: [{ text: 'Before ' }, inline, { text: ' after' }],
 });
 
+// Stored JSON is not validated; these inlines have no plugin, so they are outside the document type.
 const UNKNOWN_INLINE_DOCUMENT = {
     version: 1,
     blocks: [

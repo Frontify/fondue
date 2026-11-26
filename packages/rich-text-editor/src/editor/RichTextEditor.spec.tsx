@@ -12,8 +12,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
     documentWith,
     UNKNOWN_AROUND_MENTION,
+    UNKNOWN_INLINE_CASES,
     UNKNOWN_WITH_EXTRA_KEYS,
-    UNKNOWN_WITH_TEXT,
 } from '#/__tests__/fixtures/unknownInlines';
 import { type RteToolbarGroup } from '#/core';
 import { deDE } from '#/locales/de-DE';
@@ -248,11 +248,6 @@ describe('an editable editor', () => {
 describe('an inline no plugin defines', () => {
     const plugins = [...defaultPlugins, mentionPlugin({ items: [] })];
     const EDIT_TEXT = 'x';
-    const CASES = [
-        ['text in its children', UNKNOWN_WITH_EXTRA_KEYS, 'Read more'],
-        ['a known inline in its children', UNKNOWN_AROUND_MENTION, '@jane'],
-        ['text of its own', UNKNOWN_WITH_TEXT, 'Fallback text'],
-    ] as const;
     const ROUND_TRIP_CASES = [
         ['text in its children', UNKNOWN_WITH_EXTRA_KEYS],
         ['a known inline in its children', UNKNOWN_AROUND_MENTION],
@@ -266,7 +261,7 @@ describe('an inline no plugin defines', () => {
         vi.restoreAllMocks();
     });
 
-    it.each(CASES)('shows %s in the editor', (_name, inline, expected) => {
+    it.each(UNKNOWN_INLINE_CASES)('shows %s in the editor', (_name, inline, expected) => {
         const { container, ready } = mount((onChange) => (
             <RichTextEditor value={documentWith(inline)} onChange={onChange} plugins={plugins} />
         ));

@@ -8,9 +8,8 @@ import { defaultContent, defaultPlugins, linkPlugin, mentionPlugin } from '../pl
 import {
     documentWith,
     UNKNOWN_AROUND_MENTION,
-    UNKNOWN_WITH_EXTRA_KEYS,
+    UNKNOWN_INLINE_CASES,
     UNKNOWN_WITH_NULL_CHILD,
-    UNKNOWN_WITH_TEXT,
 } from './fixtures/unknownInlines';
 
 // The document as HTML: each node's `toHtml`, matching the readonly view (`htmlParity.spec.tsx`).
@@ -146,11 +145,7 @@ describe('an inline no plugin defines, serialized to HTML', () => {
         vi.restoreAllMocks();
     });
 
-    it.each([
-        ['text in its children', UNKNOWN_WITH_EXTRA_KEYS, 'Read more'],
-        ['a known inline in its children', UNKNOWN_AROUND_MENTION, '@jane'],
-        ['text of its own', UNKNOWN_WITH_TEXT, 'Fallback text'],
-    ])('writes %s', (_name, inline, expected) => {
+    it.each(UNKNOWN_INLINE_CASES)('writes %s', (_name, inline, expected) => {
         const html = serializeToHtml(documentWith(inline), { plugins });
 
         expect(html).toContain('Before ');
@@ -158,10 +153,10 @@ describe('an inline no plugin defines, serialized to HTML', () => {
         expect(html).toContain(' after');
     });
 
-    it('skips a child that is not an object', () => {
+    it('draws the text run beside a child that is not an object', () => {
         const html = serializeToHtml(documentWith(UNKNOWN_WITH_NULL_CHILD), { plugins });
 
-        expect(html).toContain('Before Read more after');
+        expect(html).toContain('Before <span>Read more</span> after');
     });
 
     it('writes a known inline in its children through the plugin that defines it', () => {
