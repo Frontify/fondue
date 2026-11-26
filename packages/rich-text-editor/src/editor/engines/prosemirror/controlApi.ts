@@ -550,9 +550,11 @@ const landedPosition = (transaction: Transaction, type: PmNodeType): number | nu
             if (landed === null && node.type === type) {
                 landed = position;
             }
+
             return landed === null;
         });
     });
+
     return landed;
 };
 
@@ -570,6 +572,7 @@ const separatesNothing = (transaction: Transaction, type: PmNodeType): boolean =
     if ($position.nodeBefore?.type === type) {
         return true;
     }
+
     return $position.parent.maybeChild($position.index() + 1)?.type === type;
 };
 

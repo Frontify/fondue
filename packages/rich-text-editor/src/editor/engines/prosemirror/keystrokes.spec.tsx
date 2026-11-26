@@ -180,6 +180,7 @@ describe('typing a list shortcut at the start of a line', () => {
 describe('a check list shortcut inside a check list', () => {
     // `RteBlockNode` names no plugin attribute, so the item's `checked` needs the cast.
     const checkItem = (label: string): RteBlockNode =>
+        // Plugin block types are not in the stored format's union.
         ({ type: 'checkItem', checked: false, children: [paragraph(text(label))] }) as RteBlockNode;
     const twoItems = (): RteBlockNode[] => [{ type: 'checkList', children: [checkItem('one'), checkItem('two')] }];
 

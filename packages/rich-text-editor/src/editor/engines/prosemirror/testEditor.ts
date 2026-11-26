@@ -174,6 +174,7 @@ export const childTypesWithin = (blocks: readonly RteBlockNode[], type: string):
 };
 
 export const paragraph = (...children: Record<string, unknown>[]): RteBlockNode =>
+    // Plugin block types are not in the stored format's union.
     ({ type: 'paragraph', children }) as RteBlockNode;
 
 export const text = (value: string, marks: Record<string, unknown> = {}): Record<string, unknown> => ({

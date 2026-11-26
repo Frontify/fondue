@@ -177,9 +177,9 @@ export const mapExtras = (
  * A document whose blocks are all known but do not fit together — a list
  * holding a paragraph where its items belong. Thrown rather than repaired, for
  * the same reason an unknown type is: the next `onChange` would otherwise write
- * back a different document than the host handed over. A parent that holds
- * blocks, other than the document root, never gets here: a block it cannot hold
- * stands as an unknown one.
+ * back a different document than the host handed over. Below the document root,
+ * a parent with room for an unknown block never gets here: a known block it
+ * cannot hold loads as an unknown block, kept unchanged.
  */
 const invalidDocument = (nodeType: PmNodeType, content: readonly PmNode[]): Error =>
     new Error(
@@ -189,8 +189,9 @@ const invalidDocument = (nodeType: PmNodeType, content: readonly PmNode[]): Erro
     );
 
 /**
- * `create`, refusing content the type does not allow there, at the document root,
- * where no unknown block can stand in for it (see `blocksToEngine`). Content that is
+ * `create`, refusing content the type does not allow there. Still throws for the
+ * root and for parents with no room for an unknown block, such as lists over
+ * items (see `blocksToEngine`). Content that is
  * merely missing (no blocks at all, a list without items) is filled in with
  * empty blocks, as an empty document is.
  */
@@ -268,9 +269,11 @@ const reachableTypesOf = (nodeType: PmNodeType): ReadonlySet<string> => {
     if (remembered !== undefined) {
         return remembered;
     }
+
     const reached = new Set<string>();
     collectReachableTypes(nodeType.contentMatch, reached, new Set());
     reachableTypes.set(nodeType, reached);
+
     return reached;
 };
 
