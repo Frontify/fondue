@@ -430,3 +430,48 @@ describe('parseMarkdown with a host that sends no usable value', () => {
         });
     });
 });
+
+describe('parseMarkdown text that needs no escape', () => {
+    const TEXT_CASES = [
+        'a <b> c',
+        '5 > 3',
+        'x<y',
+        'about ~5 km',
+        'a | b',
+        'a ] b',
+        String.raw`C:\Users\x`,
+        '#hashtag',
+        '####### x',
+        '=x',
+        String.raw`\<https\:\//a.com>`,
+        String.raw`\<ana\@x.com>`,
+    ] as const;
+
+    for (const markdown of TEXT_CASES) {
+        it(`reads ${JSON.stringify(markdown)} as one paragraph of text`, () => {
+            const document = parseMarkdown(markdown, OPTIONS);
+
+            expect(document.blocks.map((block) => block.type)).toEqual(['paragraph']);
+            expect(JSON.stringify(document)).not.toContain('"link"');
+        });
+    }
+
+    it('reads an escaped address in angle brackets as its text', () => {
+        expect(parseMarkdown(String.raw`\<https\:\//a.com>`, OPTIONS)).toEqual({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: '<https://a.com>' }] }],
+        });
+    });
+
+    it('reads an address inside a link text as the text of the link', () => {
+        expect(parseMarkdown('[see www.x.com or a@b.com](https://example.com)', OPTIONS)).toEqual({
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'see www.x.com or a@b.com', link: { href: 'https://example.com' } }],
+                },
+            ],
+        });
+    });
+});

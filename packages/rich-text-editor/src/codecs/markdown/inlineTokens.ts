@@ -2,6 +2,7 @@
 
 // A text block's inlines laid out as the tokens of one stretch of Markdown, before any of it is written.
 
+import { type TextScope } from './escape';
 import { canBeReferenced, isMarkdownWhitespace } from './markdownIt';
 
 /** The open and the close delimiter of one mark, which share it: `paths` is every text the mark covers. */
@@ -14,6 +15,7 @@ export type CharToken = {
     entity: boolean;
     /** Written as is, never escaped (inline code). */
     verbatim: boolean;
+    scope: TextScope;
 };
 
 export type DelimiterToken = {
@@ -47,8 +49,20 @@ export const isReferenceable = (token: CharToken): boolean => {
 };
 
 /** Whether a reader strips the character at the edge of a line: markdown-it trims it with `String.prototype.trim`. */
+export const isTrimmed = (char: string): boolean => char.trim() === '';
+
+/** Whether the character is trimmed at the edge of a block and a reference could spell it, so the writer leaves it out there. */
+export const isEdgeSpace = (char: string): boolean => {
+    const codePoint = char.codePointAt(0);
+    if (codePoint === undefined) {
+        return false;
+    }
+
+    return isTrimmed(char) && canBeReferenced(codePoint);
+};
+
 const isTrimmedToken = (token: InlineToken | undefined): token is CharToken =>
-    token?.kind === 'char' && token.char.trim() === '';
+    token?.kind === 'char' && isTrimmed(token.char);
 
 // A trimmed character no reference can spell stays as it is: nothing makes it survive.
 const encodeTrimmedRun = (run: readonly InlineToken[]): void => {
@@ -78,4 +92,25 @@ export const encodeLineEdges = (tokens: readonly InlineToken[]): void => {
     }
 
     encodeEdgesOf(tokens.slice(lineStart));
+};
+
+const isEdgeSpaceToken = (token: InlineToken): boolean => token.kind === 'char' && isEdgeSpace(token.char);
+
+/** The tokens without the whitespace at the start of the first line and the end of the last, which a reader trims. */
+export const withoutBlockEdgeSpace = (tokens: readonly InlineToken[]): InlineToken[] => {
+    let start = 0;
+    while (isTrimmedToken(tokens[start])) {
+        start++;
+    }
+
+    let end = tokens.length;
+    while (end > start && isTrimmedToken(tokens[end - 1])) {
+        end--;
+    }
+
+    return [
+        ...tokens.slice(0, start).filter((token) => !isEdgeSpaceToken(token)),
+        ...tokens.slice(start, end),
+        ...tokens.slice(end).filter((token) => !isEdgeSpaceToken(token)),
+    ];
 };

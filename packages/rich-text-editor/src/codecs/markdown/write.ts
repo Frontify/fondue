@@ -19,15 +19,24 @@ import {
 
 import { MAX_DEPTH, sameValue } from './canonical';
 import { EMPTY_BLOCK_ENTITY } from './emptyBlock';
-import { entityOf, escapeClosingHashes, escapeText, escapeTrailingBang, type TextPosition } from './escape';
+import {
+    entityOf,
+    escapeClosingHashes,
+    escapeText,
+    escapeTrailingBang,
+    type TextNeighbours,
+    type TextPosition,
+    type TextScope,
+} from './escape';
 import { fixFlanking, isEmphasisDelimiter } from './flanking';
-import { type MarkdownForms } from './forms';
+import { type MarkdownForms, type OverriddenForms } from './forms';
 import {
     type DelimiterPair,
     type DelimiterToken,
     encodeLineEdges,
     type InlineToken,
     isSpaceToken,
+    withoutBlockEdgeSpace,
 } from './inlineTokens';
 import { type Tokenize } from './markdownIt';
 import {
@@ -99,8 +108,8 @@ type OpenMark = Extract<Piece, { kind: 'mark' }>;
 
 type OutputPiece = Extract<Piece, { kind: 'output' }>;
 
-/** Whether the text a mark wraps is escaped, or written as is (inline code). */
-type TextMode = 'escaped' | 'literal';
+/** Whether the text a mark wraps is escaped, escaped as a link's text, or written as is (inline code). */
+type TextMode = 'escaped' | 'linkText' | 'literal';
 
 /** The delimiter a mark that writes `*` is written with: `*`, or `_` on the retry where `*` did not read back. */
 type EmphasisDelimiter = '*' | '_';
@@ -421,11 +430,19 @@ const appendAll = (tokens: InlineToken[], added: readonly InlineToken[]): void =
     }
 };
 
+const scopeOf = (mode: TextMode): TextScope => {
+    if (mode === 'linkText') {
+        return 'linkText';
+    }
+
+    return 'text';
+};
+
 const appendChars = (tokens: InlineToken[], text: string, mode: TextMode): void => {
     for (const char of text) {
         // A line separator is a reference, so it never ends a line of the Markdown.
-        const entity = mode === 'escaped' && (char === LINE_SEPARATOR || char === CARRIAGE_RETURN);
-        tokens.push({ kind: 'char', char, entity, verbatim: mode === 'literal' });
+        const entity = mode !== 'literal' && (char === LINE_SEPARATOR || char === CARRIAGE_RETURN);
+        tokens.push({ kind: 'char', char, entity, verbatim: mode === 'literal', scope: scopeOf(mode) });
     }
 };
 
@@ -479,6 +496,8 @@ const appendMark = (tokens: InlineToken[], piece: OpenMark, mode: TextMode, cont
     let innerMode = mode;
     if (literal) {
         innerMode = 'literal';
+    } else if (written.linkText === true && mode === 'escaped') {
+        innerMode = 'linkText';
     }
 
     const inner: InlineToken[] = [];
@@ -525,7 +544,7 @@ const appendTokens = (tokens: InlineToken[], pieces: readonly Piece[], mode: Tex
 };
 
 /** What is escaped as one stretch of text, or written as is, or the end of a line. */
-type Segment = { kind: 'text'; text: string } | { kind: 'written'; text: string } | { kind: 'break' };
+type Segment = { kind: 'text'; text: string; scope: TextScope } | { kind: 'written'; text: string } | { kind: 'break' };
 
 const writtenTextOf = (token: Exclude<InlineToken, { kind: 'break' }>): string => {
     switch (token.kind) {
@@ -544,14 +563,20 @@ const writtenTextOf = (token: Exclude<InlineToken, { kind: 'break' }>): string =
 const segmentsOf = (tokens: readonly InlineToken[]): Segment[] => {
     const segments: Segment[] = [];
     let text = '';
+    let scope: TextScope = 'text';
     for (const token of tokens) {
         if (token.kind === 'char' && !token.entity && !token.verbatim) {
+            if (text !== '' && token.scope !== scope) {
+                segments.push({ kind: 'text', text, scope });
+                text = '';
+            }
+            scope = token.scope;
             text += token.char;
             continue;
         }
 
         if (text !== '') {
-            segments.push({ kind: 'text', text });
+            segments.push({ kind: 'text', text, scope });
             text = '';
         }
         if (token.kind === 'break') {
@@ -562,10 +587,18 @@ const segmentsOf = (tokens: readonly InlineToken[]): Segment[] => {
     }
 
     if (text !== '') {
-        segments.push({ kind: 'text', text });
+        segments.push({ kind: 'text', text, scope });
     }
 
     return segments;
+};
+
+const writtenTextNextTo = (segment: Segment | undefined): string => {
+    if (segment?.kind === 'written') {
+        return segment.text;
+    }
+
+    return '';
 };
 
 const writeSegments = (segments: readonly Segment[], state: WriteState): string => {
@@ -579,8 +612,14 @@ const writeSegments = (segments: readonly Segment[], state: WriteState): string 
                     position = 'lineStart';
                 }
 
-                let text = escapeText(segment.text, position);
+                const previous = segments[index - 1];
                 const next = segments[index + 1];
+                const neighbours: TextNeighbours = {
+                    before: writtenTextNextTo(previous),
+                    after: writtenTextNextTo(next),
+                };
+
+                let text = escapeText(segment.text, position, segment.scope, neighbours);
                 if (next?.kind === 'written' && next.text.startsWith(LINK_OPEN)) {
                     text = escapeTrailingBang(text);
                 }
@@ -633,9 +672,10 @@ const attemptOf = (
     const losses: MarkdownLoss[] = [];
     const laidOut: InlineToken[] = [];
     appendTokens(laidOut, pieces, 'escaped', { losses, emphasis });
-    encodeLineEdges(laidOut);
+    const trimmed = withoutBlockEdgeSpace(laidOut);
+    encodeLineEdges(trimmed);
 
-    const { tokens, dropped } = fixFlanking(laidOut);
+    const { tokens, dropped } = fixFlanking(trimmed);
     for (const { paths, mark } of dropped) {
         reportMarkLoss(losses, mark, paths);
     }
@@ -661,23 +701,37 @@ const attemptOf = (
 };
 
 /** What a block lost when its Markdown does not read back as written: what differs where that is known, else each mark and inline element it holds, or the block itself. */
-const unreadableLosses = (
-    lost: readonly Lost[],
-    marks: readonly DelimiterPair[],
-    inlineElements: readonly MarkdownLoss[],
-    block: RteBlockNode,
-    path: Path,
-): MarkdownLoss[] => {
+type UnreadableLossesParams = {
+    lost: readonly Lost[];
+    marks: readonly DelimiterPair[];
+    inlineElements: readonly MarkdownLoss[];
+    block: RteBlockNode;
+    path: Path;
+    overridden: OverriddenForms;
+};
+
+const unreadableLosses = ({
+    lost,
+    marks,
+    inlineElements,
+    block,
+    path,
+    overridden,
+}: UnreadableLossesParams): MarkdownLoss[] => {
     if (lost.length > 0) {
         return [...lost];
     }
 
+    const lostMarks = marks.filter(({ mark }) => !overridden.marks.has(mark));
+    const lostElements = inlineElements.filter(({ type }) => !overridden.inlines.has(type));
+    const writtenByOverride = lostMarks.length < marks.length || lostElements.length < inlineElements.length;
+
     const losses: MarkdownLoss[] = [];
-    for (const { mark, paths } of marks) {
+    for (const { mark, paths } of lostMarks) {
         reportMarkLoss(losses, mark, paths);
     }
-    losses.push(...inlineElements);
-    if (losses.length === 0) {
+    losses.push(...lostElements);
+    if (losses.length === 0 && !writtenByOverride) {
         return [{ path, type: typeNameOf(block) }];
     }
 
@@ -699,13 +753,14 @@ const writeInlines = (block: RteBlockNode, path: Path, lineMode: LineMode, state
         reportLoss(state.losses, loss);
     }
     if (chosen.readBack.kind === 'differs') {
-        for (const loss of unreadableLosses(
-            chosen.readBack.lost,
-            chosen.marks,
-            inlineElementsOf(pieces),
+        for (const loss of unreadableLosses({
+            lost: chosen.readBack.lost,
+            marks: chosen.marks,
+            inlineElements: inlineElementsOf(pieces),
             block,
             path,
-        )) {
+            overridden: state.forms.overridden,
+        })) {
             reportLoss(state.losses, loss);
         }
     }

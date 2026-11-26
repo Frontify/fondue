@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { defineBlock, defineContent, defineMark, type RteDocumentOf } from '../../core';
+import { defineBlock, defineContent, defineInline, defineMark, type RteDocumentOf } from '../../core';
 import { type RteDocument, type RteDocumentWith } from '../../documentFormat';
 import { columnBreakContent, defaultContent, mentionContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
@@ -24,6 +24,37 @@ const sampleContent = defineContent({
         sampleMark: defineMark({ tag: 'mark' }),
     },
 });
+
+// Marks and inlines whose own Markdown form writes what it does not read back, declared on content and not as overrides.
+const unreadableContent = defineContent({
+    marks: {
+        plusMark: defineMark({
+            tag: 'ins',
+            markdown: { read: [{ token: 'em_open' }], write: () => ({ open: '++', close: '++' }) },
+        }),
+        emptyMark: defineMark({
+            tag: 'u',
+            markdown: { read: [{ token: 'strong_open' }], write: () => ({ open: '', close: '' }) },
+        }),
+    },
+    inlines: {
+        tagInline: defineInline({
+            toHtml: () => ({ tag: 'span' }),
+            parse: [],
+            markdown: { read: [], write: () => ({ kind: 'markdown', markdown: '<b>' }) },
+        }),
+        userInline: defineInline({
+            toHtml: () => ({ tag: 'span' }),
+            parse: [],
+            markdown: {
+                read: [{ pattern: /@\[user:(\d+)\]/, value: (match: RegExpExecArray) => ({ id: match[1] }) }],
+                write: (value) => ({ kind: 'markdown', markdown: `@[user:${String(value.id)}]` }),
+            },
+        }),
+    },
+});
+
+const UNREADABLE_OPTIONS: MarkdownOptions = { plugins: [...defaultContent, unreadableContent] };
 
 describe('serializeToMarkdown', () => {
     it('writes the empty document as an empty string', () => {
@@ -142,7 +173,7 @@ describe('serializeToMarkdown trailing breaks', () => {
 });
 
 describe('serializeToMarkdown whitespace-only text', () => {
-    it('writes a text block of spaces as numeric references, not as the empty block', () => {
+    it('writes a text block of spaces as the empty block', () => {
         const document: RteDocumentOf = {
             version: 1,
             blocks: [
@@ -151,19 +182,19 @@ describe('serializeToMarkdown whitespace-only text', () => {
             ],
         };
 
-        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: 'a\n\n&#x20;&#x20;', losses: [] });
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: 'a\n\n&nbsp;', losses: [] });
     });
 
-    it('reports the block when its text is only a non-breaking space, which reads back as the empty block', () => {
+    it('writes a block of only a non-breaking space as the empty block', () => {
         const document: RteDocumentOf = {
             version: 1,
-            blocks: [{ type: 'paragraph', children: [{ text: '\u00A0' }] }],
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'paragraph', children: [{ text: '\u00A0' }] },
+            ],
         };
 
-        expect(serializeToMarkdown(document, OPTIONS)).toEqual({
-            markdown: '&#xA0;',
-            losses: [{ path: [0], type: 'paragraph' }],
-        });
+        expect(serializeToMarkdown(document, OPTIONS)).toEqual({ markdown: 'a\n\n&nbsp;', losses: [] });
     });
 });
 
@@ -646,9 +677,42 @@ describe('serializeToMarkdown mentions', () => {
         });
     });
 
-    it('writes a mention as the override gives it and reports the fields the override does not read back', () => {
+    it('writes a mention as the override gives it and reports nothing for the fields the override does not read back', () => {
         expect(serializeToMarkdown(document, mentionOverrideOptions)).toEqual({
             markdown: 'Hi @[user:123]',
+            losses: [],
+        });
+    });
+
+    it('reports a mention whose override writes nothing', () => {
+        const options: MarkdownOptions = {
+            plugins: [...defaultContent, mentionContent()],
+            overrides: { inlines: { mention: { read: [], write: () => null } } },
+        };
+
+        expect(serializeToMarkdown(document, options)).toEqual({
+            markdown: 'Hi',
+            losses: [{ path: [0, 1], type: 'mention' }],
+        });
+    });
+
+    it('reports a mention whose override throws', () => {
+        const options: MarkdownOptions = {
+            plugins: [...defaultContent, mentionContent()],
+            overrides: {
+                inlines: {
+                    mention: {
+                        read: [],
+                        write: () => {
+                            throw new Error('no form');
+                        },
+                    },
+                },
+            },
+        };
+
+        expect(serializeToMarkdown(document, options)).toEqual({
+            markdown: 'Hi',
             losses: [{ path: [0, 1], type: 'mention' }],
         });
     });
@@ -698,15 +762,15 @@ describe('serializeToMarkdown text that does not read back', () => {
         },
     };
 
-    it('keeps the first attempt and reports each mark in the block when no italic delimiter reads back', () => {
+    it('keeps the first attempt and reports each mark in the block when no delimiter of the mark reads back', () => {
         const document: RteDocumentOf = {
             version: 1,
-            blocks: [{ type: 'paragraph', children: [{ text: 'a' }, { text: 'b', italic: true }] }],
+            blocks: [{ type: 'paragraph', children: [{ text: 'a' }, { text: 'b', plusMark: true }] }],
         };
 
-        expect(serializeToMarkdown(document, ITALIC_AS_PLUSES)).toEqual({
+        expect(serializeToMarkdown(document, UNREADABLE_OPTIONS)).toEqual({
             markdown: 'a++b++',
-            losses: [{ path: [0, 1], type: 'italic' }],
+            losses: [{ path: [0, 1], type: 'plusMark' }],
         });
     });
 
@@ -716,18 +780,39 @@ describe('serializeToMarkdown text that does not read back', () => {
             blocks: [
                 {
                     type: 'paragraph',
-                    children: [{ text: 'a', italic: true }, { text: 'b', italic: true }, { text: 'c' }],
+                    children: [{ text: 'a', plusMark: true }, { text: 'b', plusMark: true }, { text: 'c' }],
                 },
             ],
         };
 
-        expect(serializeToMarkdown(document, ITALIC_AS_PLUSES).losses).toEqual([
-            { path: [0, 0], type: 'italic' },
-            { path: [0, 1], type: 'italic' },
+        expect(serializeToMarkdown(document, UNREADABLE_OPTIONS).losses).toEqual([
+            { path: [0, 0], type: 'plusMark' },
+            { path: [0, 1], type: 'plusMark' },
         ]);
     });
 
+    it('reports nothing for a mark whose override delimiters do not read back', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a' }, { text: 'b', italic: true }] }],
+        };
+
+        expect(serializeToMarkdown(document, ITALIC_AS_PLUSES)).toEqual({ markdown: 'a++b++', losses: [] });
+    });
+
     it('reports the inline element when the block holds no mark and its Markdown does not read back', () => {
+        const document: RteDocumentWith<{ inline: { type: 'tagInline' } }> = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ type: 'tagInline' }] }],
+        };
+
+        expect(serializeToMarkdown(document, UNREADABLE_OPTIONS)).toEqual({
+            markdown: '<b>',
+            losses: [{ path: [0, 0], type: 'tagInline' }],
+        });
+    });
+
+    it('reports nothing for an inline element whose override Markdown does not read back', () => {
         const document: RteDocumentWith<{ inline: { type: 'mention'; id: string } }> = {
             version: 1,
             blocks: [{ type: 'paragraph', children: [{ type: 'mention', id: '1' }] }],
@@ -740,10 +825,52 @@ describe('serializeToMarkdown text that does not read back', () => {
                     inlines: { mention: { read: [], write: () => ({ kind: 'markdown', markdown: '<b>' }) } },
                 },
             }),
-        ).toEqual({ markdown: '<b>', losses: [{ path: [0, 0], type: 'mention' }] });
+        ).toEqual({ markdown: '<b>', losses: [] });
     });
 
-    it('reports only the mark that does not read back when the mention beside it reads back exactly', () => {
+    it('reports only the mark that does not read back when the inline beside it reads back exactly', () => {
+        const document: RteDocumentWith<{ inline: { type: 'userInline'; id: string } }> = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'a', emptyMark: true },
+                        { type: 'userInline', id: '1' },
+                    ],
+                },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, UNREADABLE_OPTIONS)).toEqual({
+            markdown: 'a@[user:1]',
+            losses: [{ path: [0, 0], type: 'emptyMark' }],
+        });
+    });
+
+    it('reports a mark that does not read back although an overridden mention sits beside it', () => {
+        const document: RteDocumentWith<{ inline: { type: 'mention'; id: string } }> = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'a', plusMark: true },
+                        { type: 'mention', id: '1' },
+                    ],
+                },
+            ],
+        };
+
+        expect(
+            serializeToMarkdown(document, {
+                plugins: [...defaultContent, mentionContent(), unreadableContent],
+                overrides: mentionOverrideOptions.overrides,
+            }),
+        ).toEqual({ markdown: '++a++@[user:1]', losses: [{ path: [0, 0], type: 'plusMark' }] });
+    });
+
+    it('reports nothing for an overridden mark that does not read back beside a mention that reads back exactly', () => {
         const NO_DELIMITERS_FOR_BOLD: MarkdownOptions = {
             plugins: [...defaultContent, mentionContent()],
             overrides: {
@@ -764,10 +891,7 @@ describe('serializeToMarkdown text that does not read back', () => {
             ],
         };
 
-        expect(serializeToMarkdown(document, NO_DELIMITERS_FOR_BOLD)).toEqual({
-            markdown: 'a@[user:1]',
-            losses: [{ path: [0, 0], type: 'bold' }],
-        });
+        expect(serializeToMarkdown(document, NO_DELIMITERS_FOR_BOLD)).toEqual({ markdown: 'a@[user:1]', losses: [] });
     });
 
     it('does not throw on text with unpaired surrogates, controls and every escaped character', () => {
@@ -854,5 +978,58 @@ describe('serializeToMarkdown with a form that throws', () => {
                 },
             }),
         ).toEqual({ markdown: 'ab', losses: [{ path: [0, 1], type: 'mention' }] });
+    });
+});
+
+describe('serializeToMarkdown text inside a link', () => {
+    const linkDocument = (text: string): RteDocumentOf => ({
+        version: 1,
+        blocks: [{ type: 'paragraph', children: [{ text, link: { href: 'https://example.com' } }] }],
+    });
+
+    it('writes the address escapes of a link text as they are', () => {
+        expect(serializeToMarkdown(linkDocument('see www.x.com or a@b.com or http://c.d'), OPTIONS)).toEqual({
+            markdown: '[see www.x.com or a@b.com or http://c.d](https://example.com)',
+            losses: [],
+        });
+    });
+
+    it('still escapes what Markdown reads inside a link text', () => {
+        expect(serializeToMarkdown(linkDocument('a*b_c]d[e|f~~g&copy;h'), OPTIONS).markdown).toBe(
+            String.raw`[a\*b_c\]d\[e|f\~\~g\&copy;h](https://example.com)`,
+        );
+    });
+
+    it('writes the address escapes outside the link text and none inside it', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'www.x.com ' }, { text: 'www.x.com', link: { href: 'https://example.com' } }],
+                },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, OPTIONS).markdown).toBe(
+            String.raw`www\.x.com [www.x.com](https://example.com)`,
+        );
+    });
+
+    it('writes the address escapes of a mark nested in a link text as they are', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'a ', link: { href: 'https://example.com' } },
+                        { text: 'www.x.com', italic: true, link: { href: 'https://example.com' } },
+                    ],
+                },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, OPTIONS).markdown).toBe('[a *www.x.com*](https://example.com)');
     });
 });

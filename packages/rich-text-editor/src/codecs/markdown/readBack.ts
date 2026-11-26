@@ -6,6 +6,8 @@ import { INLINE_PLACEHOLDER, type RteInlineNode } from '#/core';
 
 import { canonicalOf, sameValue } from './canonical';
 import { isWhitespace } from './escape';
+import { type OverriddenForms } from './forms';
+import { isEdgeSpace, isTrimmed } from './inlineTokens';
 import { INLINE_TOKEN, PARAGRAPH_CLOSE, PARAGRAPH_OPEN, type Tokenize } from './markdownIt';
 import { readInlines, type ReadContext, withoutPlaceholder } from './read';
 
@@ -114,6 +116,58 @@ const readRuns = (markdown: string, context: ReadContext, tokenize: Tokenize): R
     return runsOfNodes(withoutPlaceholder(readInlines(inline.children, context)));
 };
 
+type Edge = 'start' | 'end';
+
+/** The characters without the edge space at their start, which the writer leaves out and a reader trims. */
+const withoutLeadingEdgeSpace = (chars: readonly string[]): string[] => {
+    let start = 0;
+    for (const char of chars) {
+        if (!isTrimmed(char)) {
+            break;
+        }
+        start++;
+    }
+
+    return [...chars.slice(0, start).filter((char) => !isEdgeSpace(char)), ...chars.slice(start)];
+};
+
+const withoutEdgeSpace = (text: string, edge: Edge): string => {
+    const chars = [...text];
+    if (edge === 'start') {
+        return withoutLeadingEdgeSpace(chars).join('');
+    }
+
+    return withoutLeadingEdgeSpace(chars.reverse()).reverse().join('');
+};
+
+const trimEdgeRun = (runs: Run[], edge: Edge): void => {
+    let index = 0;
+    if (edge === 'end') {
+        index = runs.length - 1;
+    }
+
+    const run = runs[index];
+    if (run?.kind !== 'text') {
+        return;
+    }
+
+    const text = withoutEdgeSpace(run.text, edge);
+    if (text === '') {
+        runs.splice(index, 1);
+    } else {
+        runs[index] = { ...run, text };
+    }
+};
+
+/** The runs of a block without the whitespace the writer leaves out at the start of its first line and the end of its last. */
+const withoutBlockEdgeSpace = (runs: readonly Run[]): Run[] => {
+    const trimmed = [...runs];
+    trimEdgeRun(trimmed, 'start');
+    trimEdgeRun(trimmed, 'end');
+
+    return trimmed;
+};
+
 /** A mark or an inline element of the document that the Markdown does not read back as it was. */
 export type Lost = { type: string; path: Path };
 
@@ -168,23 +222,38 @@ const sameRuns = (left: readonly Run[], right: readonly Run[]): boolean =>
         return other !== undefined && sameRun(run, other);
     });
 
+/** What a node is: a mark a run carries, or an inline element. */
+type NodeKind = 'mark' | 'inline';
+
 type LostCollector = {
+    /** What the Markdown does not read back. */
     lost: Lost[];
-    report: (type: string, path: Path) => void;
+    /** What the Markdown does not read back, and a host's override wrote. */
+    overridden: Lost[];
+    report: (kind: NodeKind, type: string, path: Path) => void;
 };
 
-const createLostCollector = (): LostCollector => {
+const createLostCollector = (overriddenForms: OverriddenForms): LostCollector => {
     const lost: Lost[] = [];
+    const overridden: Lost[] = [];
     const reported = new Set<string>();
-    const report = (type: string, path: Path): void => {
-        const key = `${type}:${path.join('.')}`;
-        if (!reported.has(key)) {
-            reported.add(key);
+    const report = (kind: NodeKind, type: string, path: Path): void => {
+        const key = `${kind}:${type}:${path.join('.')}`;
+        if (reported.has(key)) {
+            return;
+        }
+
+        reported.add(key);
+        if (kind === 'mark' && overriddenForms.marks.has(type)) {
+            overridden.push({ type, path });
+        } else if (kind === 'inline' && overriddenForms.inlines.has(type)) {
+            overridden.push({ type, path });
+        } else {
             lost.push({ type, path });
         }
     };
 
-    return { lost, report };
+    return { lost, overridden, report };
 };
 
 type LostAtPositionParams = {
@@ -199,7 +268,7 @@ const lostAtPosition = ({ run, index, plain, readPositions, report }: LostAtPosi
     if (run.kind === 'inline') {
         const read = readPositions[index];
         if (read === undefined || !sameRun(run, read)) {
-            report(run.type, run.path);
+            report('inline', run.type, run.path);
         }
 
         return;
@@ -212,7 +281,7 @@ const lostAtPosition = ({ run, index, plain, readPositions, report }: LostAtPosi
     for (const mark of run.marks) {
         if (!carriesMark(readPositions[index], mark)) {
             for (const path of mark.paths) {
-                report(mark.name, path);
+                report('mark', mark.name, path);
             }
         }
     }
@@ -224,7 +293,11 @@ const lostAtPosition = ({ run, index, plain, readPositions, report }: LostAtPosi
  * differ, an inline element that wrote plain text stands for that text, so it is lost by itself and the marks around it
  * still line up. None when they differ still, as the two sides cannot be lined up then.
  */
-const lostOf = (reference: readonly Run[], read: readonly Run[]): Lost[] => {
+const lostOf = (
+    reference: readonly Run[],
+    read: readonly Run[],
+    overriddenForms: OverriddenForms,
+): Pick<LostCollector, 'lost' | 'overridden'> => {
     let standIn = placeholder;
     if (plainTextOf(reference, placeholder) !== plainTextOf(read, placeholder)) {
         standIn = writtenTextOrPlaceholder;
@@ -232,17 +305,17 @@ const lostOf = (reference: readonly Run[], read: readonly Run[]): Lost[] => {
 
     const plain = plainTextOf(reference, standIn);
     if (plain !== plainTextOf(read, standIn)) {
-        return [];
+        return { lost: [], overridden: [] };
     }
 
     const readPositions = runsByPosition(read, standIn);
-    const collector = createLostCollector();
+    const collector = createLostCollector(overriddenForms);
 
     for (const [index, run] of runsByPosition(reference, standIn).entries()) {
         lostAtPosition({ run, index, plain, readPositions, report: collector.report });
     }
 
-    return collector.lost;
+    return { lost: collector.lost, overridden: collector.overridden };
 };
 
 /** Reads the Markdown again as one paragraph with the reader's own parser, and compares what it gives with the document's runs. */
@@ -256,9 +329,17 @@ export const readBackOf = (
     if (runs === null) {
         return { kind: 'differs', lost: [] };
     }
-    if (sameRuns(runs, reference)) {
+
+    const written = withoutBlockEdgeSpace(reference);
+    if (sameRuns(runs, written)) {
         return { kind: 'same' };
     }
 
-    return { kind: 'differs', lost: lostOf(reference, runs) };
+    const { lost, overridden } = lostOf(written, runs, context.forms.overridden);
+    // Everything that differs is what an override wrote, which is the host's to answer for.
+    if (lost.length === 0 && overridden.length > 0) {
+        return { kind: 'same' };
+    }
+
+    return { kind: 'differs', lost };
 };

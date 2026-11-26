@@ -42,6 +42,12 @@ export type ReadMatch = { name: string; value: NodeValue };
 
 export type ReadersByToken = ReadonlyMap<string, readonly Reader[]>;
 
+/** The names of the marks and inline elements whose Markdown form a host's override replaced. */
+export type OverriddenForms = {
+    marks: ReadonlySet<string>;
+    inlines: ReadonlySet<string>;
+};
+
 export type MarkdownForms = {
     blocks: ReadonlyMap<string, MarkdownBlockForm>;
     marks: ReadonlyMap<string, MarkdownMarkForm>;
@@ -53,6 +59,8 @@ export type MarkdownForms = {
     textReaders: readonly TextReader[];
     /** The block types that are a list's items, which only a list holds. */
     itemTypes: ReadonlySet<string>;
+    /** What a host's override writes, so what it does not read back is the host's to answer for. */
+    overridden: OverriddenForms;
 };
 
 type FormedDefinition<TForm> = { markdown?: TForm };
@@ -199,6 +207,21 @@ const formsOf = <TForm>(
     return forms;
 };
 
+/** The names an override replaces the form of: those a definition declares, as a name no definition has is ignored. */
+const overriddenNamesOf = (
+    definitions: ReadonlyMap<string, FormedDefinition<unknown>>,
+    overrides: Readonly<Record<string, unknown>> | undefined,
+): Set<string> => {
+    const names = new Set<string>();
+    for (const [name, form] of Object.entries(overrides ?? {})) {
+        if (form !== undefined && definitions.has(name)) {
+            names.add(name);
+        }
+    }
+
+    return names;
+};
+
 const readersByToken = (forms: ReadonlyMap<string, FormWithRules>): Map<string, Reader[]> => {
     const index = new Map<string, Reader[]>();
     for (const [name, form] of forms) {
@@ -241,6 +264,10 @@ export const buildForms = (registry: ContentRegistry, overrides: MarkdownOverrid
         inlineReaders: readersByToken(inlines),
         textReaders: textReadersOf(inlines),
         itemTypes: new Set(registry.itemTypeByList.values()),
+        overridden: {
+            marks: overriddenNamesOf(registry.marks, overrides?.marks),
+            inlines: overriddenNamesOf(registry.inlines, overrides?.inlines),
+        },
     };
 };
 
