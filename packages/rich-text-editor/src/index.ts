@@ -24,8 +24,6 @@ import {
     type RtePlugin as CorePlugin,
     type RteSelectionSnapshot,
     type ToolbarItemProps,
-    toPlainText as plainText,
-    type ToPlainTextOptions,
 } from './core';
 import { type RteBlock, type RteDocument } from './documentFormat';
 import {
@@ -35,12 +33,7 @@ import {
     type ParseHtmlOptions,
 } from './editor';
 import { defaultPlugins } from './plugins/defaultPlugins';
-import {
-    type RendererProps,
-    RichTextRenderer as Renderer,
-    serializeToHtml as serialize,
-    type SerializeToHtmlOptions,
-} from './renderer';
+import { type RendererProps, RichTextRenderer as Renderer } from './renderer';
 
 // The public API. Layers import inward only (core ← plugins ← renderer ← editor);
 // see the README. Plugin authoring types live under `RtePlugin.*`.
@@ -73,21 +66,7 @@ export const RichTextRenderer: <TBlock extends RteBlockNode = RteBlock>(
     props: RichTextRendererProps<TBlock>,
 ) => ReactNode = Renderer;
 
-/**
- * The document as an HTML string, the same markup the editor copies to the
- * clipboard. No React or browser needed. The host passes the plugins whose
- * content the document uses; `wrap: false` leaves out the root element. Style
- * it with this package's stylesheet (emails need the styles inlined).
- * @example
- * const html = serializeToHtml(
- *     { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'Hello', bold: true }] }] },
- *     { plugins: [boldContent], wrap: false },
- * );
- */
-export const serializeToHtml: <TBlock extends RteBlockNode = RteBlock>(
-    doc: RteDocument<TBlock>,
-    options: SerializeToHtmlOptions,
-) => string = serialize;
+export { serializeToHtml } from './codecs/html/serializeToHtml';
 
 /**
  * HTML as a document, read by the same rules as a paste into the editor, but
@@ -112,14 +91,7 @@ export { isEmpty };
 
 export { type RteDocumentIssue, type RteDocumentValidation, validateDocument } from './core';
 
-/**
- * The document's text, one line per text block. Inlines read as their plugin's
- * markup (a mention as `@jane`). The host passes the plugins whose content the document uses.
- */
-export const toPlainText: <TBlock extends RteBlockNode = RteBlock>(
-    doc: RteDocument<TBlock>,
-    options: ToPlainTextOptions,
-) => string = plainText;
+export { toPlainText } from './codecs/text/toPlainText';
 
 // --- Plugin authoring ---
 

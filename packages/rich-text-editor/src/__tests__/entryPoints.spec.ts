@@ -8,7 +8,6 @@ import { describe, expect, it } from 'vitest';
 const PACKAGE_ROOT = resolve(__dirname, '../..');
 const ROOT_ENTRY = resolve(PACKAGE_ROOT, 'src/index.ts');
 const PLUGINS_ENTRY = resolve(PACKAGE_ROOT, 'src/plugins/index.ts');
-const CODECS_ENTRY = resolve(PACKAGE_ROOT, 'src/codecs/index.ts');
 
 const readCompilerOptions = (): ts.CompilerOptions => {
     const parsed = ts.getParsedCommandLineOfConfigFile(
@@ -42,22 +41,13 @@ const exportNames = (program: ts.Program, entry: string): string[] => {
 };
 
 describe('package entries', () => {
-    it('export each name from exactly one entry', () => {
-        const program = ts.createProgram([ROOT_ENTRY, PLUGINS_ENTRY, CODECS_ENTRY], readCompilerOptions());
+    it('keep root and plugin exports separate', () => {
+        const program = ts.createProgram([ROOT_ENTRY, PLUGINS_ENTRY], readCompilerOptions());
         const rootNames = exportNames(program, ROOT_ENTRY);
-        const pluginNames = exportNames(program, PLUGINS_ENTRY);
-        const codecsNames = exportNames(program, CODECS_ENTRY);
+        const pluginNames = new Set(exportNames(program, PLUGINS_ENTRY));
 
         expect(rootNames).not.toHaveLength(0);
-        expect(pluginNames).not.toHaveLength(0);
-        expect(codecsNames).not.toHaveLength(0);
-
-        const exportCounts = new Map<string, number>();
-        for (const name of [...rootNames, ...pluginNames, ...codecsNames]) {
-            exportCounts.set(name, (exportCounts.get(name) ?? 0) + 1);
-        }
-        const sharedNames = [...exportCounts].filter(([, count]) => count > 1).map(([name]) => name);
-
-        expect(sharedNames).toEqual([]);
+        expect(pluginNames.size).not.toBe(0);
+        expect(rootNames.filter((name) => pluginNames.has(name))).toEqual([]);
     });
 });

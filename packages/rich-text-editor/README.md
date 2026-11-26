@@ -90,7 +90,8 @@ src/
 ├── plugins/         One folder per feature (Bold, Link, List, …). Each imports only core, ui, locales and plugins/shared.
 ├── ui/              Controls the shell and the plugins both draw with (ToolbarButton), and the translator. Imports at most core and locales.
 ├── locales/         The strings of the editor and its shipped plugins, one file per language. Imports nothing.
-├── renderer/        Readonly view and HTML export, both from each feature's content (`toHtml`).
+├── renderer/        Readonly view, drawn from each feature's content (`toHtml`).
+├── codecs/          The `./codecs` entry: Markdown, HTML and plain text, without ProseMirror, React or the editor. Imports the core and the renderer's document tree.
 ├── editor/          The editing shell.
 │   ├── RichTextEditor.tsx   The component a host mounts.
 │   ├── parseHtml.ts         Stored HTML to a document; with useEditorHandle, the only file that loads the engine.

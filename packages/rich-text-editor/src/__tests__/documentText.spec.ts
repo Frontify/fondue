@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { isEmpty, type RteDocument, toPlainText } from '../index';
 import { defaultContent, defaultPlugins, mentionPlugin } from '../plugins';
 
-// The document helpers against the shipped plugins; their rules are in `core/documentText.spec.ts`.
+// The document helpers against the shipped plugins; their rules are in `core/isEmpty.spec.ts` and `codecs/text/toPlainText.spec.ts`.
 
 const doc: RteDocument = {
     version: 1,

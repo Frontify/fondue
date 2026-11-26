@@ -2,15 +2,20 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type RteBlockNode, type RteDocumentOf } from './document';
-import { isEmpty, toPlainText } from './documentText';
-import { defineBlock, defineContent, defineInline, definePlugin, type RtePlugin } from './plugin';
-import { emptyDocument } from './vocabulary';
+import {
+    defineBlock,
+    defineContent,
+    defineInline,
+    definePlugin,
+    type HtmlSpec,
+    type RteBlockNode,
+    type RteDocumentOf,
+    type RtePlugin,
+} from '#/core';
 
-/**
- * Both read the stored JSON alone. `isEmpty` needs no plugins; `toPlainText`
- * asks them only how an inline element reads as text.
- */
+import { toPlainText } from './toPlainText';
+
+// `toPlainText` reads the stored JSON alone and asks the plugins only how an inline element reads as text.
 
 const doc = (...blocks: RteBlockNode[]): RteDocumentOf => ({ version: 1, blocks });
 const paragraph = (...children: NonNullable<RteBlockNode['children']>): RteBlockNode => ({
@@ -22,6 +27,7 @@ const list = (...items: RteBlockNode[][]): RteBlockNode => ({
     children: items.map((content) => ({ type: 'item', children: content })),
 });
 const mention = { type: 'mention', id: '1', username: 'jane' };
+const STRAY_TEXT = 'stray';
 
 const plugins: RtePlugin[] = [
     definePlugin({
@@ -67,30 +73,6 @@ const plugins: RtePlugin[] = [
         }),
     }),
 ];
-
-describe('isEmpty', () => {
-    it('is true for the document an editor starts from, no blocks, or no document', () => {
-        expect(isEmpty(emptyDocument())).toBe(true);
-        expect(isEmpty(doc())).toBe(true);
-        expect(isEmpty(null)).toBe(true);
-        expect(isEmpty(undefined)).toBe(true);
-    });
-
-    it('is true when the only text is whitespace, across any number of blocks and lists', () => {
-        expect(isEmpty(doc(paragraph({ text: ' \n\t' }), paragraph(), paragraph({ text: '', bold: true })))).toBe(true);
-        expect(isEmpty(doc(list([paragraph({ text: '' })])))).toBe(true);
-    });
-
-    it('is false once there is text, however deep', () => {
-        expect(isEmpty(doc(paragraph({ text: 'a' })))).toBe(false);
-        expect(isEmpty(doc(paragraph(), list([list([paragraph({ text: ' x ' })])])))).toBe(false);
-    });
-
-    it('is false for an inline element or a void block, which are content without text', () => {
-        expect(isEmpty(doc(paragraph(mention)))).toBe(false);
-        expect(isEmpty(doc(paragraph(), { type: 'divider' }))).toBe(false);
-    });
-});
 
 describe('toPlainText', () => {
     it('puts each text block on its own line, an empty one kept as an empty line', () => {
@@ -140,5 +122,29 @@ describe('toPlainText', () => {
                 plugins: [],
             }),
         ).toBe('a\nb');
+    });
+
+    it('gives nothing for a stray string inside a block no plugin defines', () => {
+        // Malformed on purpose: a stored value the types cannot describe.
+        const stray = { type: 'unknown', children: [STRAY_TEXT] } as unknown as RteBlockNode;
+
+        expect(toPlainText(doc(stray), { plugins: [] })).toBe('');
+    });
+
+    it('gives nothing for an inline whose untyped markup holds children that are neither text nor a list', () => {
+        const flag = definePlugin({
+            id: 'flag',
+            content: defineContent({
+                inlines: {
+                    // Untyped on purpose: a JavaScript plugin can return any `children`.
+                    flag: defineInline({
+                        toHtml: () => ({ tag: 'span', children: false }) as unknown as HtmlSpec,
+                        parse: [],
+                    }),
+                },
+            }),
+        });
+
+        expect(toPlainText(doc(paragraph({ text: 'a' }, { type: 'flag' })), { plugins: [flag] })).toBe('a');
     });
 });

@@ -1,32 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// What a stored document says, read off its JSON alone: whether it says
-// anything at all, and its words without formatting. No DOM, no engine, so
-// both run on a server beside the stored value.
+// The document's words without formatting, read off its JSON alone. No DOM, no
+// engine, so it runs on a server beside the stored value.
 
-import { buildContentRegistry, type ContentRegistry } from './contentRegistry';
-import { type RteBlockNode, type RteDocumentOf, type RteInlineNode } from './document';
-import { type HtmlSpec } from './htmlSpec';
-import { type RteContent, type RtePlugin } from './plugin';
+import {
+    buildContentRegistry,
+    type ContentRegistry,
+    type HtmlSpec,
+    type RteBlockNode,
+    type RteContent,
+    type RteInlineNode,
+    type RtePlugin,
+} from '#/core';
+import { type RteBlock, type RteDocument } from '#/documentFormat';
 
-type AnyNode = RteBlockNode | RteInlineNode;
-
-/** Whitespace-only text, an empty block, a block of those. A node without `children` (a mention, a column break) is content. */
-const isBlank = (node: AnyNode): boolean => {
-    if ('text' in node && typeof node.text === 'string') {
-        return !/\S/.test(node.text);
+const childText = (child: HtmlSpec | string): string => {
+    if (typeof child === 'string') {
+        return child;
     }
-    return Array.isArray(node.children) && (node.children as AnyNode[]).every(isBlank);
-};
 
-/**
- * Whether the document holds nothing a reader would see: no blocks, or only
- * text blocks (and lists of them) whose text is empty or whitespace — what an
- * untouched editor emits, or one cleared again. Any inline element (a mention,
- * a line break) or void block (a column break) makes it non-empty. A missing
- * document is empty, for a value not stored yet.
- */
-export const isEmpty = (doc: RteDocumentOf | null | undefined): boolean => !doc || doc.blocks.every(isBlank);
+    return specText(child);
+};
 
 /**
  * The text an inline element's markup holds — a mention's `@jane`. A `<br>`
@@ -36,15 +30,20 @@ const specText = (spec: HtmlSpec): string => {
     if (spec.tag === 'br') {
         return '\n';
     }
+
     if (spec.tag === 'img') {
         return spec.attrs?.alt ?? '';
     }
+
     if (typeof spec.children === 'string') {
         return spec.children;
     }
-    return typeof spec.children === 'object'
-        ? spec.children.map((child) => (typeof child === 'string' ? child : specText(child))).join('')
-        : '';
+
+    if (typeof spec.children !== 'object') {
+        return '';
+    }
+
+    return spec.children.map(childText).join('');
 };
 
 /** A text block's runs as one line; an inline no plugin defines has no text to give. */
@@ -54,9 +53,15 @@ const inlineText = (inlines: readonly RteInlineNode[], registry: ContentRegistry
             if (inline.text !== undefined) {
                 return inline.text;
             }
+
             const definition = registry.inlines.get(inline.type);
+            if (!definition) {
+                return '';
+            }
+
             const { type: _type, text: _text, ...value } = inline;
-            return definition ? specText(definition.toHtml(value)) : '';
+
+            return specText(definition.toHtml(value));
         })
         .join('');
 
@@ -69,7 +74,12 @@ const holdsBlocks = (block: RteBlockNode, registry: ContentRegistry): boolean =>
     if (definition) {
         return typeof definition.content === 'object';
     }
-    return (block.children ?? []).some((child) => Array.isArray((child as AnyNode).children));
+
+    if (block.children === undefined) {
+        return false;
+    }
+
+    return block.children.some((child) => Array.isArray(child.children));
 };
 
 /** One line per text block, lists flattened; a void block (a column break) adds none. */
@@ -78,9 +88,13 @@ const blockLines = (blocks: readonly RteBlockNode[], registry: ContentRegistry):
         if (block.children === undefined) {
             return [];
         }
-        return holdsBlocks(block, registry)
-            ? blockLines(block.children as RteBlockNode[], registry)
-            : [inlineText(block.children as RteInlineNode[], registry)];
+
+        // `children` is inlines or blocks; the block's plugin definition decides which, not the type.
+        if (holdsBlocks(block, registry)) {
+            return blockLines(block.children as RteBlockNode[], registry);
+        }
+
+        return [inlineText(block.children as RteInlineNode[], registry)];
     });
 
 export type ToPlainTextOptions = {
@@ -96,7 +110,9 @@ export type ToPlainTextOptions = {
  * items included, joined by `\n` — an empty paragraph stays an empty line.
  * Marks drop away. An inline element is the text of its plugin's `toHtml`
  * (a mention's `@jane`, a line break's `\n`), so no plugin declares a plain
- * form of its own.
+ * form of its own. The host passes the plugins whose content the document uses.
  */
-export const toPlainText = (doc: RteDocumentOf, { plugins }: ToPlainTextOptions): string =>
-    blockLines(doc.blocks, buildContentRegistry(plugins)).join('\n');
+export const toPlainText = <TBlock extends RteBlockNode = RteBlock>(
+    doc: RteDocument<TBlock>,
+    { plugins }: ToPlainTextOptions,
+): string => blockLines(doc.blocks, buildContentRegistry(plugins)).join('\n');

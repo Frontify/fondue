@@ -12,15 +12,16 @@ const MARKDOWN_IT = /node_modules\/markdown-it\//;
 const PROSEMIRROR = /node_modules\/prosemirror-/;
 const REACT = /node_modules\/react(-dom)?\//;
 const EDITOR_LAYER = /^src\/editor\//;
+const CODEC_EXPORTS = ['serializeToHtml', 'toPlainText'];
 const ROOT_EXTERNALS = ['react', 'react-dom', 'react/jsx-runtime'];
 const BUNDLE_TIMEOUT = 30_000;
 
-type BundleInputsOptions = {
+type BundleOptions = {
     /** What the bundle leaves to the host; a package left out is bundled, so its files show up as inputs. */
     external: string[];
 };
 
-const bundleInputs = async (exportLine: string, { external }: BundleInputsOptions): Promise<string[]> => {
+const bundle = async (exportLine: string, { external }: BundleOptions) => {
     const result = await build({
         stdin: {
             contents: exportLine,
@@ -41,35 +42,30 @@ const bundleInputs = async (exportLine: string, { external }: BundleInputsOption
         tsconfig: fileURLToPath(new URL('../../tsconfig.json', import.meta.url)),
     });
 
-    // Only what lands in the output: `metafile.inputs` also lists every file esbuild parsed and then shook out.
     const [output] = Object.values(result.metafile.outputs);
-    const shipped = Object.entries(output?.inputs ?? {}).filter(([, input]) => input.bytesInOutput > 0);
-    return shipped.map(([path]) => path);
+    if (output === undefined) {
+        throw new Error('Expected a JavaScript bundle.');
+    }
+
+    // The input list also includes files that the bundler removed.
+    const shippedInputs = Object.entries(output.inputs).filter(([, input]) => input.bytesInOutput > 0);
+
+    return { inputPaths: shippedInputs.map(([path]) => path), exportedNames: output.exports };
 };
 
 describe('the bundles', () => {
-    it('stays out of the root bundle: it holds no markdown-it', { timeout: BUNDLE_TIMEOUT }, async () => {
-        const inputs = await bundleInputs(ROOT_ENTRY, { external: ROOT_EXTERNALS });
+    it('keeps the Markdown parser out of the root bundle', { timeout: BUNDLE_TIMEOUT }, async () => {
+        const { inputPaths } = await bundle(ROOT_ENTRY, { external: ROOT_EXTERNALS });
 
-        expect(inputs.filter((path) => MARKDOWN_IT.test(path))).toEqual([]);
+        expect(inputPaths.filter((path) => MARKDOWN_IT.test(path))).toEqual([]);
     });
 
-    // Proves the matchers can match, so the checks below cannot pass by matching nothing
-    it('bundles markdown-it', { timeout: BUNDLE_TIMEOUT }, async () => {
-        const inputs = await bundleInputs(CODECS_ENTRY, { external: [] });
+    it('exports the HTML and plain text codecs without editor dependencies', { timeout: BUNDLE_TIMEOUT }, async () => {
+        const { inputPaths, exportedNames } = await bundle(CODECS_ENTRY, { external: [] });
 
-        expect(inputs.filter((path) => MARKDOWN_IT.test(path)).length).toBeGreaterThan(0);
-    });
-
-    it('bundles without ProseMirror', { timeout: BUNDLE_TIMEOUT }, async () => {
-        const inputs = await bundleInputs(CODECS_ENTRY, { external: [] });
-
-        expect(inputs.filter((path) => PROSEMIRROR.test(path))).toEqual([]);
-    });
-
-    it('bundles without React or the editor', { timeout: BUNDLE_TIMEOUT }, async () => {
-        const inputs = await bundleInputs(CODECS_ENTRY, { external: [] });
-
-        expect(inputs.filter((path) => REACT.test(path) || EDITOR_LAYER.test(path))).toEqual([]);
+        expect(exportedNames).toEqual(expect.arrayContaining(CODEC_EXPORTS));
+        expect(inputPaths.some((path) => MARKDOWN_IT.test(path))).toBe(true);
+        expect(inputPaths.filter((path) => PROSEMIRROR.test(path))).toEqual([]);
+        expect(inputPaths.filter((path) => REACT.test(path) || EDITOR_LAYER.test(path))).toEqual([]);
     });
 });
