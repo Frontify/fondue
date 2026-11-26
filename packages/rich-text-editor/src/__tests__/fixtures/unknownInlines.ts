@@ -39,7 +39,12 @@ export const UNKNOWN_INLINE_CASES = [
     ['text of its own', UNKNOWN_WITH_TEXT, 'Fallback text'],
 ] as const;
 
-export const documentWith = (inline: RteInlineNode): RteDocument => ({
-    version: 1,
-    blocks: [{ type: 'paragraph', children: [{ text: 'Before ' }, inline, { text: ' after' }] }],
-});
+export const documentWith = (inline: RteInlineNode): RteDocument => {
+    const stored = {
+        version: 1,
+        blocks: [{ type: 'paragraph', children: [{ text: 'Before ' }, inline, { text: ' after' }] }],
+    };
+
+    // A host passes stored JSON as the official document, unknown inlines included.
+    return stored as RteDocument;
+};

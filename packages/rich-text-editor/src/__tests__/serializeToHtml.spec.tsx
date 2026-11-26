@@ -149,7 +149,7 @@ describe('an inline no plugin defines, serialized to HTML', () => {
     it.each(UNKNOWN_INLINE_CASES)('writes %s', (_name, inline, expected) => {
         const html = serializeToHtml(documentWith(inline), { plugins });
 
-        expect(html.replace(HTML_TAG, '')).toContain(`Before ${expected} after`);
+        expect(html.replaceAll(HTML_TAG, '')).toContain(`Before ${expected} after`);
     });
 
     it('draws the text run beside a child that is not an object', () => {
