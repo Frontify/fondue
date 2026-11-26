@@ -94,8 +94,8 @@ type BlockGap = 'blankLine' | 'itemChildren';
 const BLANK_LINE: readonly string[] = [''];
 const NO_LINES: readonly string[] = [];
 
-/** Whether a line break stays one, or the block holds a single line and the break writes as a space. */
-type LineMode = 'multiline' | 'singleLine';
+/** A heading or a table cell holds one line, so a break in it writes as a space. */
+type LineMode = 'multiline' | 'singleLine' | 'tableCell';
 
 const SPACE = ' ';
 
@@ -243,7 +243,7 @@ const inlinePieceOf = (
 
         return null;
     }
-    if (output.kind === 'lineBreak' && lineMode === 'singleLine') {
+    if (output.kind === 'lineBreak' && lineMode !== 'multiline') {
         reportLoss(state.losses, { path, type });
 
         return { kind: 'text', text: SPACE };
@@ -716,7 +716,7 @@ const writtenTextNextTo = (segment: Segment | undefined): string => {
     return '';
 };
 
-const writeSegments = (segments: readonly Segment[], state: WriteState): string => {
+const writeSegments = (segments: readonly Segment[], lineMode: LineMode, state: WriteState): string => {
     let written = '';
     let atLineStart = true;
     for (const [index, segment] of segments.entries()) {
@@ -735,6 +735,9 @@ const writeSegments = (segments: readonly Segment[], state: WriteState): string 
                 };
 
                 let text = escapeText(segment.text, position, segment.scope, neighbours);
+                if (lineMode === 'tableCell') {
+                    text = text.replaceAll(PIPE, ESCAPED_PIPE);
+                }
                 if (next?.kind === 'written' && next.text.startsWith(LINK_OPEN)) {
                     text = escapeTrailingBang(text);
                 }
@@ -800,8 +803,8 @@ const attemptOf = (
     // A block with no text at all is the empty block, which is its only spelling.
     let text = EMPTY_BLOCK_ENTITY;
     if (tokens.length > 0) {
-        text = writeSegments(segmentsOf(tokens), state);
-        if (lineMode === 'singleLine') {
+        text = writeSegments(segmentsOf(tokens), lineMode, state);
+        if (lineMode !== 'multiline') {
             text = escapeClosingHashes(text);
         }
     }
@@ -1269,7 +1272,7 @@ const writeGridCell = ({ paragraph, paragraphPath }: GridCell, state: WriteState
     reportGridForm(paragraph, paragraphPath, state);
     reportBlockAttributes(paragraph, paragraphPath, state);
 
-    const text = writeInlines(paragraph, paragraphPath, 'singleLine', state);
+    const text = writeInlines(paragraph, paragraphPath, 'tableCell', state);
     if (text === EMPTY_BLOCK_ENTITY) {
         return '';
     }
