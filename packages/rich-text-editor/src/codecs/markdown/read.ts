@@ -457,8 +457,8 @@ const codeChildrenOf = (token: MarkdownTokenNode): RteTextNode[] => {
 };
 
 /**
- * A block of code: a block of its own where a plugin reads it and the place allows it, else one paragraph with its
- * lines joined by breaks, or by spaces when no plugin has a break.
+ * Adds a code block to the current frame if a plugin reads the token and the surrounding block allows it.
+ * Otherwise, adds the code as a paragraph. The paragraph uses spaces between lines if no plugin reads line breaks.
  */
 const readCode = (frame: Frame, token: MarkdownTokenNode, context: ReadContext): void => {
     const match = matchToken(context.forms.codeReaders, token);
@@ -466,6 +466,8 @@ const readCode = (frame: Frame, token: MarkdownTokenNode, context: ReadContext):
         frame.blocks.push({ type: match.name, ...match.value, children: codeChildrenOf(token) });
         return;
     }
+
+    reportLoss(context, token.type, token.line);
 
     const content = withoutTrailingNewlines(token.content);
     if (content === '') {
@@ -491,7 +493,6 @@ const readSelfClosingBlock = (frame: Frame, token: MarkdownTokenNode, context: R
             break;
         case FENCE:
         case CODE_BLOCK:
-            reportLoss(context, token.type, token.line);
             readCode(frame, token, context);
             break;
         default:

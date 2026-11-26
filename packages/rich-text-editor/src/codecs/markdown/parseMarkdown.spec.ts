@@ -260,7 +260,10 @@ describe('parseMarkdown code blocks', () => {
     });
 
     it('reads a fence as a code block holding its lines', () => {
-        expect(parseMarkdown('```\none\ntwo\n```', OPTIONS)).toEqual(plain('one\ntwo'));
+        expect(parseMarkdownWithLosses('```\none\ntwo\n```', OPTIONS)).toEqual({
+            document: plain('one\ntwo'),
+            losses: [],
+        });
     });
 
     it('reads the first word of the info string as the language', () => {

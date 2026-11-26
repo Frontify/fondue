@@ -22,7 +22,10 @@ const readTags = (schema: Schema): string[] => {
     return tags;
 };
 
-/** Each line block becomes its content and a new line, except the last, innermost first. */
+/**
+ * Preserves line boundaries when highlighted HTML wraps each code line in a div or paragraph.
+ * Updates the existing pre element so ProseMirror can read its contents as one block.
+ */
 const flattenLineBlocks = (pre: Element): void => {
     for (const block of [...pre.querySelectorAll(LINE_BLOCKS)].reverse()) {
         const content: (Node | string)[] = [...block.childNodes];

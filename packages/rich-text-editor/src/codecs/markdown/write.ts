@@ -1052,7 +1052,12 @@ const codeTextOf = (block: RteBlockNode): string => {
     return text;
 };
 
-/** A fenced block, its text written as it is. Without a fence for its value, it is an escaped paragraph and a loss. */
+/**
+ * Writes code as literal text between the fences from its Markdown form.
+ * If the form cannot provide a fence, writes an escaped paragraph and records a loss.
+ *
+ * @returns Lines before the caller adds a list or quote prefix.
+ */
 const writeCodeBlock = (block: RteBlockNode, path: Path, state: WriteState): string[] => {
     const definition = state.registry.blocks.get(block.type);
     const form = state.forms.codeBlocks.get(block.type);

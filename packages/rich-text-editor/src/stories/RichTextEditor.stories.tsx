@@ -8,6 +8,7 @@ import {
     type MarkdownLoss,
     type MarkdownOptions,
     type MarkdownReadLoss,
+    parseMarkdown,
     parseMarkdownWithLosses,
     serializeToMarkdown,
 } from '../codecs';
