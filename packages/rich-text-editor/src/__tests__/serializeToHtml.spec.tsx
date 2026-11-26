@@ -8,8 +8,9 @@ import { defaultContent, defaultPlugins, linkPlugin, mentionPlugin } from '../pl
 import {
     documentWith,
     UNKNOWN_AROUND_MENTION,
-    UNKNOWN_INLINE_CASES,
+    UNKNOWN_WITH_EXTRA_KEYS,
     UNKNOWN_WITH_NULL_CHILD,
+    UNKNOWN_WITH_TEXT,
 } from './fixtures/unknownInlines';
 
 // The document as HTML: each node's `toHtml`, matching the readonly view (`htmlParity.spec.tsx`).
@@ -136,7 +137,7 @@ describe('a numbered list serialized to HTML', () => {
 
 describe('an inline no plugin defines, serialized to HTML', () => {
     const plugins = [...defaultPlugins, mentionPlugin({ items: [] })];
-    const HTML_TAG = /<[^>]*>/g;
+    const MENTION_IN_PLACE = /Before <span><span [^>]*data-mention-id="jane"[^>]*>@jane<\/span><\/span> after/;
 
     beforeEach(() => {
         vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -146,10 +147,15 @@ describe('an inline no plugin defines, serialized to HTML', () => {
         vi.restoreAllMocks();
     });
 
-    it.each(UNKNOWN_INLINE_CASES)('writes %s', (_name, inline, expected) => {
-        const html = serializeToHtml(documentWith(inline), { plugins });
+    it.each([
+        ['text in its children', UNKNOWN_WITH_EXTRA_KEYS, 'Before <span>Read more</span> after'],
+        ['text of its own', UNKNOWN_WITH_TEXT, 'Before Fallback text after'],
+    ])('writes %s', (_name, inline, expected) => {
+        expect(serializeToHtml(documentWith(inline), { plugins })).toContain(expected);
+    });
 
-        expect(html.replaceAll(HTML_TAG, '')).toContain(`Before ${expected} after`);
+    it('writes a known inline in its children in place', () => {
+        expect(serializeToHtml(documentWith(UNKNOWN_AROUND_MENTION), { plugins })).toMatch(MENTION_IN_PLACE);
     });
 
     it('draws the text run beside a child that is not an object', () => {
