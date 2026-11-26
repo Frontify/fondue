@@ -15,9 +15,7 @@ import {
 import { blockNode, documentRootSpec } from './documentTree';
 import { specToReact, toReact } from './toReact';
 
-export type RendererProps<TBlock extends RteBlockNode = RteBlockNode> = {
-    /** The id of the element the document sits in. */
-    id?: HtmlAttributes['id'];
+export type RendererProps<TBlock extends RteBlockNode = RteBlockNode> = Pick<HtmlAttributes, 'id'> & {
     value: RteDocumentOf<TBlock>;
     /**
      * The plugins, or only their content, whose markup draws the document. A node
@@ -29,9 +27,7 @@ export type RendererProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * A class for the element the document sits in, beside the document's own
      */
     className?: string;
-    /** The test id of the element the document sits in. */
-    'data-test-id'?: HtmlAttributes['data-test-id'];
-};
+} & Partial<Pick<HtmlAttributes, 'data-test-id'>>;
 
 type RegistryRendererProps = Pick<RendererProps, 'id'> & {
     value: RteDocumentOf;
