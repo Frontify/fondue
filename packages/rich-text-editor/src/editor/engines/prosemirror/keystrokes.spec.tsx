@@ -22,7 +22,17 @@ import {
 import { checkListPlugin, defaultPlugins } from '#/plugins';
 
 import { trimTrailingPunctuation } from './autolink';
-import { childTypesWithin, destroyEditors, editorWith, paragraph, shipped, text, TOKEN_TRIM } from './testEditor';
+import {
+    childTypesWithin,
+    destroyEditors,
+    editorWith,
+    paragraph,
+    RULE,
+    rulePlugin,
+    shipped,
+    text,
+    TOKEN_TRIM,
+} from './testEditor';
 
 /**
  * What typing and key presses do, through the pipeline `keystrokePipeline`
@@ -1379,5 +1389,51 @@ describe('Backspace and Delete beside a list on an empty line', () => {
         undo(editor.view.state, editor.view.dispatch);
 
         expect(editor.stored()).toEqual(blocks);
+    });
+});
+
+describe('Backspace and Delete beside a block that only separates', () => {
+    const separators = [...defaultPlugins, rulePlugin];
+
+    /** Puts the caret in the empty paragraph that starts at `from`. */
+    const caretInEmptyLineAt = (view: EditorView, from: number): void => {
+        view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, from + 1)));
+    };
+
+    it('Backspace in an empty line between two of them leaves the document as it is', () => {
+        const editor = editorWith(separators, [paragraph(text('a')), RULE, paragraph(), RULE, paragraph(text('b'))]);
+        const { doc } = editor.view.state;
+        caretInEmptyLineAt(editor.view, doc.child(0).nodeSize + doc.child(1).nodeSize);
+
+        press(editor.view, 'Backspace');
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('Delete in an empty first line before one leaves the document as it is', () => {
+        const editor = editorWith(separators, [paragraph(), RULE, paragraph(text('b'))]);
+        caretInEmptyLineAt(editor.view, 0);
+
+        press(editor.view, 'Delete');
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('Backspace at the start of a paragraph after one still removes it', () => {
+        const editor = editorWith(separators, [paragraph(text('a')), RULE, paragraph(text('b'))]);
+        editor.caretBefore('b');
+
+        press(editor.view, 'Backspace');
+
+        expect(editor.stored()).toEqual([paragraph(text('a')), paragraph(text('b'))]);
+    });
+
+    it('keeps a stored document that starts with one editable', () => {
+        const editor = editorWith(separators, [RULE, paragraph(text('ab'))]);
+        editor.caretAfter('ab');
+
+        editor.type('c');
+
+        expect(editor.stored()).toEqual([RULE, paragraph(text('abc'))]);
     });
 });

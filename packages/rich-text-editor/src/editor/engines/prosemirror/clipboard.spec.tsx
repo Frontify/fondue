@@ -10,7 +10,7 @@ import { type RteBlockNode } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { clipboardSerializer, COPIED_FROM_EDITOR } from './clipboard';
-import { destroyEditors, editorWith, paragraph, text } from './testEditor';
+import { destroyEditors, editorWith, paragraph, RULE, rulePlugin, text } from './testEditor';
 
 /**
  * What survives the clipboard: content copied out has to read the same in
@@ -182,6 +182,23 @@ describe('dragging a block inside the editor', () => {
         const editor = dragged([paragraph(text('stay')), drag()], 'stay'.length + 2, () => 0, true);
 
         expect(editor.stored()).toEqual([paragraph(text('drag')), paragraph(text('stay')), drag()]);
+    });
+});
+
+describe('dropping a block that only separates', () => {
+    it('at the start of the document leaves it as it is', () => {
+        const editor = editorWith([...defaultPlugins, rulePlugin], [paragraph(text('stay')), RULE]);
+        const { view } = editor;
+        const from = view.state.doc.child(0).nodeSize;
+        view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, from)));
+        const dataTransfer = new DataTransfer();
+        // A block one position wide is only dragged from its own start.
+        dragAt(editor, from);
+        fireDrag(editor, 'dragstart', dataTransfer);
+        dragAt(editor, 0);
+        fireDrag(editor, 'drop', dataTransfer);
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
     });
 });
 

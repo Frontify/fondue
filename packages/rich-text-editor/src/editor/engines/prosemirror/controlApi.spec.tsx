@@ -18,7 +18,7 @@ import {
 import { checkListPlugin, defaultPlugins } from '#/plugins';
 
 import { toEngineDocument } from './documentConversion';
-import { destroyEditors, editorWith, paragraph, text, tokenPlugin } from './testEditor';
+import { destroyEditors, editorWith, paragraph, RULE, rulePlugin, text, tokenPlugin } from './testEditor';
 import { fixturePlugins } from './testFixtures';
 
 /**
@@ -63,16 +63,6 @@ const emphasisPlugin: RtePlugin = definePlugin({
     content: defineContent({
         marks: {
             emphasis: defineMark({ toHtml: () => ({ tag: 'em', children: true }), parse: [] }),
-        },
-    }),
-});
-
-/** A void block that only stands between content, declared the way the engine reads it. */
-const rulePlugin: RtePlugin = definePlugin({
-    id: 'rule',
-    content: defineContent({
-        blocks: {
-            rule: defineBlock({ separator: true, toHtml: () => ({ tag: 'hr' }), parse: [{ tag: 'hr' }] }),
         },
     }),
 });
@@ -1272,7 +1262,6 @@ describe('the commands of one turn', () => {
 });
 
 describe('insert of a separator block', () => {
-    const RULE: RteBlockNode = { type: 'rule' };
     const separators = [...defaultPlugins, rulePlugin];
 
     it('does nothing at the start of the first paragraph', () => {
