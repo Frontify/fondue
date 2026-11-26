@@ -16,6 +16,9 @@ export default defineConfig({
             name: 'FondueRichTextEditorCodecs',
             fileName: 'fondue-rich-text-editor-codecs',
         },
+        rollupOptions: {
+            external: ['@frontify/fondue-rich-text-editor/codecs'],
+        },
         outDir: 'dist/packages/rich-text-editor/codecs',
     },
 });

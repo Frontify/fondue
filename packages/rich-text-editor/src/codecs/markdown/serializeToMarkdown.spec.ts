@@ -69,6 +69,9 @@ const UNREADABLE_OPTIONS: MarkdownOptions = { plugins: [...defaultContent, unrea
 
 // An inline that reads text matching a pattern, and one with no form of its own for a host to override.
 const overridableContent = defineContent({
+    marks: {
+        overridableMark: defineMark({ tag: 'u' }),
+    },
     inlines: {
         patternInline: defineInline({
             toHtml: () => ({ tag: 'span' }),
@@ -90,6 +93,13 @@ const writesOutput = (output: MarkdownInlineOutput): MarkdownOptions => ({
     plugins: [...defaultContent, unreadableContent, overridableContent],
     overrides: { inlines: { overridableInline: { read: [], write: () => output } } },
 });
+
+const MARK_AS_TAGS: MarkdownOptions = {
+    plugins: [overridableContent, ...defaultContent],
+    overrides: {
+        marks: { overridableMark: { read: [], write: () => ({ open: '<u>', close: '</u>' }) } },
+    },
+};
 
 const writesMarkdown = (markdown: string): MarkdownOptions => writesOutput({ kind: 'markdown', markdown });
 
@@ -1245,6 +1255,61 @@ describe('serializeToMarkdown text that does not read back', () => {
 
         expect(serializeToMarkdown(document, writesMarkdown('*x*'))).toEqual({
             markdown: '**a***x*',
+            losses: [],
+        });
+    });
+
+    it('reports nothing for an overridden mark whose text has whitespace at its edges', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'hello' }, { text: ' world ', overridableMark: true }, { text: '!' }],
+                },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, MARK_AS_TAGS)).toEqual({ markdown: 'hello <u>world</u> !', losses: [] });
+    });
+
+    it('reports nothing for an overridden mark around whitespace only that carries another mark too', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'a', bold: true },
+                        { text: ' ', overridableMark: true, bold: true },
+                    ],
+                },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, MARK_AS_TAGS).losses).toEqual([]);
+    });
+
+    it('reports nothing for an overridden inline whose Markdown ends in a space', () => {
+        const document: RteDocumentWith<{ inline: { type: 'overridableInline' } }> = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a' }, { type: 'overridableInline' }, { text: 'b' }] }],
+        };
+
+        expect(serializeToMarkdown(document, writesMarkdown('@bob '))).toEqual({
+            markdown: 'a@bob b',
+            losses: [],
+        });
+    });
+
+    it('reports nothing for an overridden inline whose Markdown starts with an indent', () => {
+        const document: RteDocumentWith<{ inline: { type: 'overridableInline' } }> = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a' }, { type: 'overridableInline' }, { text: 'b' }] }],
+        };
+
+        expect(serializeToMarkdown(document, writesMarkdown('    x'))).toEqual({
+            markdown: 'a    xb',
             losses: [],
         });
     });

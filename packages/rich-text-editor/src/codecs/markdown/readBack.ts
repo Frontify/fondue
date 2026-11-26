@@ -100,7 +100,7 @@ const runsOfNodes = (nodes: readonly RteInlineNode[]): Run[] => {
 
 /** The runs the Markdown reads as, or null when it does not read as one paragraph. */
 export const readRuns = (markdown: string, context: ReadContext, tokenize: Tokenize): Run[] | null => {
-    const blocks = tokenize(markdown, { breaks: context.breaks });
+    const { tokens: blocks } = tokenize(markdown, { breaks: context.breaks });
     const [open, inline, close] = blocks;
     if (
         blocks.length !== 3 ||
@@ -114,23 +114,39 @@ export const readRuns = (markdown: string, context: ReadContext, tokenize: Token
     return runsOfNodes(readInlines(inline, context));
 };
 
+/** Adds a run as it is, joined to the text run before it when both carry the same marks. */
+const pushRun = (runs: Run[], run: Run): void => {
+    const previous = runs[runs.length - 1];
+    if (run.kind === 'text' && run.text === '') {
+        return;
+    }
+
+    if (run.kind === 'text' && previous?.kind === 'text' && sameMarks(previous.marks, run.marks)) {
+        runs[runs.length - 1] = { ...previous, text: previous.text + run.text };
+
+        return;
+    }
+
+    runs.push(run);
+};
+
+/** Adds runs that are already in their final form, so their marks are not canonicalized again. */
+export const appendRuns = (runs: Run[], added: readonly Run[]): void => {
+    for (const run of added) {
+        pushRun(runs, run);
+    }
+};
+
 /** The runs without the marks a host's override writes, whose own fidelity is the host's to answer for. */
 const withoutMarks = (runs: readonly Run[], names: ReadonlySet<string>): Run[] => {
     const kept: Run[] = [];
     for (const run of runs) {
         if (run.kind === 'inline') {
-            kept.push(run);
+            pushRun(kept, run);
             continue;
         }
 
-        const marks = run.marks.filter(({ name }) => !names.has(name));
-        const previous = kept[kept.length - 1];
-        if (previous?.kind === 'text' && sameMarks(previous.marks, marks)) {
-            kept[kept.length - 1] = { ...previous, text: previous.text + run.text };
-            continue;
-        }
-
-        kept.push({ ...run, marks });
+        pushRun(kept, { ...run, marks: run.marks.filter(({ name }) => !names.has(name)) });
     }
 
     return kept;

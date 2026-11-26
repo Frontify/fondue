@@ -421,6 +421,42 @@ test('should handle keyboard navigation', async ({ mount, page }) => {
     await expect(component.getByTestId('action-btn-3')).toBeFocused();
 });
 
+test('should skip rows that are not focusable when tabbing', async ({ mount, page }) => {
+    const wrapper = await mount(
+        <Table.Root aria-label="Selectable rows">
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell>Select</Table.HeaderCell>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                <Table.Row focusable={false} data-test-id="row-1">
+                    <Table.RowCell>
+                        <input type="checkbox" aria-label="Select Test 1" data-test-id="checkbox-1" />
+                    </Table.RowCell>
+                    <Table.RowCell>Test 1</Table.RowCell>
+                </Table.Row>
+                <Table.Row focusable={false} data-test-id="row-2">
+                    <Table.RowCell>
+                        <input type="checkbox" aria-label="Select Test 2" data-test-id="checkbox-2" />
+                    </Table.RowCell>
+                    <Table.RowCell>Test 2</Table.RowCell>
+                </Table.Row>
+            </Table.Body>
+        </Table.Root>,
+    );
+
+    await expect(wrapper.getByTestId('row-1')).not.toHaveAttribute('tabindex');
+
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Tab');
+    await expect(wrapper.getByTestId('checkbox-1')).toBeFocused();
+
+    await page.keyboard.press('Tab');
+    await expect(wrapper.getByTestId('checkbox-2')).toBeFocused();
+});
+
 test('should set title when content is truncated', async ({ mount }) => {
     const wrapper = await mount(
         <div style={{ width: '200px' }}>
