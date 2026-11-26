@@ -88,6 +88,15 @@ export const BODY_QUOTE_LINK_DOCUMENT: RteDocument = {
     ],
 };
 
+export const WRAPPING_LINK_TEXT =
+    'Read the whole guideline before you change any of the brand colours, type scales or spacing rules, because every team that ships a page depends on the same shared values and a small edit here reaches all of their work';
+
+/** One paragraph that is a single text link, long enough to wrap onto several lines in both surfaces. */
+export const WRAPPING_LINK_DOCUMENT: RteDocument = {
+    version: 1,
+    blocks: [{ type: 'paragraph', children: [{ text: WRAPPING_LINK_TEXT, link: { href: 'https://example.com' } }] }],
+};
+
 export const BUTTON_LINK_TEXT = 'Buy now';
 export const PLAIN_LINK_TEXT = 'Read more';
 
@@ -125,6 +134,9 @@ export const HOST_RESET_CSS = 'p, blockquote { margin: 0; }';
 
 /** A host rule scoped to a class, as a prose stylesheet writes it. */
 export const HOST_SCOPED_CSS = `.${HOST_PAGE_CLASS} p { margin-bottom: 50px; }`;
+
+/** A host rule for anchors, which reaches a link's box and margins until a look sets them. */
+export const HOST_ANCHOR_CSS = `.${HOST_PAGE_CLASS} a { padding: 5px; background-color: rgb(0, 200, 0); border: 3px solid rgb(200, 0, 0); margin: 7px; border-radius: 9px; }`;
 
 /** A bulleted list five levels deep and a numbered list four deep, past the three levels whose looks repeat. */
 export const NESTED_LISTS_DOCUMENT: RteDocument = {
