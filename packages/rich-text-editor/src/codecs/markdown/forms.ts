@@ -186,6 +186,9 @@ const checkedInlineForm = (form: unknown): MarkdownInlineForm => {
     return { read: checkedReadRules(read), write: guarded(write, isInlineOutput) };
 };
 
+/** Whether a host's override is there: a `null` or missing form leaves the definition's own form in use. */
+const isOverridePresent = <TForm>(form: TForm | null | undefined): form is TForm => form !== undefined && form !== null;
+
 /**
  * An override replaces the definition's form for the node of that name; a name no definition has is ignored.
  * Each form comes back checked, so a form that throws or returns the wrong shape never reaches the reader or the writer.
@@ -198,7 +201,12 @@ const formsOf = <TForm>(
     const replaced = new Map(Object.entries(overrides ?? {}));
     const forms = new Map<string, TForm>();
     for (const [name, definition] of definitions) {
-        const form = replaced.get(name) ?? definition.markdown;
+        let form = definition.markdown;
+        const override = replaced.get(name);
+        if (isOverridePresent(override)) {
+            form = override;
+        }
+
         if (form !== undefined) {
             forms.set(name, check(form));
         }
@@ -214,7 +222,7 @@ const overriddenNamesOf = (
 ): Set<string> => {
     const names = new Set<string>();
     for (const [name, form] of Object.entries(overrides ?? {})) {
-        if (form !== undefined && definitions.has(name)) {
+        if (isOverridePresent(form) && definitions.has(name)) {
             names.add(name);
         }
     }

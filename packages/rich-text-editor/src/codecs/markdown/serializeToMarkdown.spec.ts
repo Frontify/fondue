@@ -2,7 +2,14 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { defineBlock, defineContent, defineInline, defineMark, type RteDocumentOf } from '../../core';
+import {
+    defineBlock,
+    defineContent,
+    defineInline,
+    defineMark,
+    type MarkdownInlineOutput,
+    type RteDocumentOf,
+} from '../../core';
 import { type RteDocument, type RteDocumentWith } from '../../documentFormat';
 import { columnBreakContent, defaultContent, mentionContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
@@ -55,6 +62,32 @@ const unreadableContent = defineContent({
 });
 
 const UNREADABLE_OPTIONS: MarkdownOptions = { plugins: [...defaultContent, unreadableContent] };
+
+// An inline that reads text matching a pattern, and one with no form of its own for a host to override.
+const overridableContent = defineContent({
+    inlines: {
+        patternInline: defineInline({
+            toHtml: () => ({ tag: 'span' }),
+            parse: [],
+            markdown: {
+                read: [{ pattern: /@\w+/, value: (match: RegExpExecArray) => ({ id: match[0] }) }],
+                write: (value) => ({ kind: 'markdown', markdown: String(value.id) }),
+            },
+        }),
+        overridableInline: defineInline({
+            toHtml: () => ({ tag: 'span' }),
+            parse: [],
+            markdown: { read: [], write: () => ({ kind: 'markdown', markdown: '-' }) },
+        }),
+    },
+});
+
+const writesOutput = (output: MarkdownInlineOutput): MarkdownOptions => ({
+    plugins: [...defaultContent, unreadableContent, overridableContent],
+    overrides: { inlines: { overridableInline: { read: [], write: () => output } } },
+});
+
+const writesMarkdown = (markdown: string): MarkdownOptions => writesOutput({ kind: 'markdown', markdown });
 
 describe('serializeToMarkdown', () => {
     it('writes the empty document as an empty string', () => {
@@ -892,6 +925,78 @@ describe('serializeToMarkdown text that does not read back', () => {
         };
 
         expect(serializeToMarkdown(document, NO_DELIMITERS_FOR_BOLD)).toEqual({ markdown: 'a@[user:1]', losses: [] });
+    });
+
+    it('reports the block when the text before an overridden inline turns into an inline element beside what the override wrote', () => {
+        const document: RteDocumentWith<{ inline: { type: 'overridableInline' } }> = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: '@bob ' }, { type: 'overridableInline' }] }],
+        };
+
+        expect(serializeToMarkdown(document, writesMarkdown('x'))).toEqual({
+            markdown: '@bob x',
+            losses: [{ path: [0], type: 'paragraph' }],
+        });
+    });
+
+    it('reports the block when overridden inlines written around text make the reader add a mark to it', () => {
+        const document: RteDocumentWith<{ inline: { type: 'overridableInline' } }> = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ type: 'overridableInline' }, { text: 'b' }, { type: 'overridableInline' }],
+                },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, writesMarkdown('**'))).toEqual({
+            markdown: '**b**',
+            losses: [{ path: [0], type: 'paragraph' }],
+        });
+    });
+
+    it('reports nothing for an overridden inline whose Markdown reads as emphasis after a bold run', () => {
+        const document: RteDocumentWith<{ inline: { type: 'overridableInline' } }> = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'a', bold: true }, { type: 'overridableInline' }],
+                },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, writesMarkdown('*x*'))).toEqual({
+            markdown: '**a***x*',
+            losses: [],
+        });
+    });
+
+    it('reports nothing for an overridden inline that writes a line break', () => {
+        const document: RteDocumentWith<{ inline: { type: 'overridableInline' } }> = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a' }, { type: 'overridableInline' }, { text: 'b' }] }],
+        };
+
+        expect(serializeToMarkdown(document, writesOutput({ kind: 'lineBreak' }))).toEqual({
+            markdown: 'a\\\nb',
+            losses: [],
+        });
+    });
+
+    it('writes a mark with its own form and reports it when its override is null', () => {
+        // oxlint-disable-next-line typescript/no-unsafe-assignment -- a host can send null where the type asks for a form, and parsed JSON is the cast-free way to build it.
+        const overrides: MarkdownOptions['overrides'] = JSON.parse('{ "marks": { "plusMark": null } }');
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a' }, { text: 'b', plusMark: true }] }],
+        };
+
+        expect(serializeToMarkdown(document, { plugins: UNREADABLE_OPTIONS.plugins, overrides })).toEqual({
+            markdown: 'a++b++',
+            losses: [{ path: [0, 1], type: 'plusMark' }],
+        });
     });
 
     it('does not throw on text with unpaired surrogates, controls and every escaped character', () => {

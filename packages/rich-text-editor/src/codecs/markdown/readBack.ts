@@ -6,7 +6,6 @@ import { INLINE_PLACEHOLDER, type RteInlineNode } from '#/core';
 
 import { canonicalOf, sameValue } from './canonical';
 import { isWhitespace } from './escape';
-import { type OverriddenForms } from './forms';
 import { isBlank, isEdgeSpace } from './inlineTokens';
 import { INLINE_TOKEN, isTrimmedAtBlockEdge, PARAGRAPH_CLOSE, PARAGRAPH_OPEN, type Tokenize } from './markdownIt';
 import { readInlines, type ReadContext, withoutPlaceholder } from './read';
@@ -101,7 +100,7 @@ const runsOfNodes = (nodes: readonly RteInlineNode[]): Run[] => {
 };
 
 /** The runs the Markdown reads as, or null when it does not read as one paragraph. */
-const readRuns = (markdown: string, context: ReadContext, tokenize: Tokenize): Run[] | null => {
+export const readRuns = (markdown: string, context: ReadContext, tokenize: Tokenize): Run[] | null => {
     const blocks = tokenize(markdown, { breaks: context.breaks });
     const [open, inline, close] = blocks;
     if (
@@ -114,6 +113,28 @@ const readRuns = (markdown: string, context: ReadContext, tokenize: Tokenize): R
     }
 
     return runsOfNodes(withoutPlaceholder(readInlines(inline.children, context)));
+};
+
+/** The runs without the marks a host's override writes, whose own fidelity is the host's to answer for. */
+const withoutMarks = (runs: readonly Run[], names: ReadonlySet<string>): Run[] => {
+    const kept: Run[] = [];
+    for (const run of runs) {
+        if (run.kind === 'inline') {
+            kept.push(run);
+            continue;
+        }
+
+        const marks = run.marks.filter(({ name }) => !names.has(name));
+        const previous = kept[kept.length - 1];
+        if (previous?.kind === 'text' && sameMarks(previous.marks, marks)) {
+            kept[kept.length - 1] = { ...previous, text: previous.text + run.text };
+            continue;
+        }
+
+        kept.push({ ...run, marks });
+    }
+
+    return kept;
 };
 
 type Edge = 'start' | 'end';
@@ -246,14 +267,11 @@ type NodeKind = 'mark' | 'inline';
 type LostCollector = {
     /** What the Markdown does not read back. */
     lost: Lost[];
-    /** What the Markdown does not read back, and a host's override wrote. */
-    overridden: Lost[];
     report: (kind: NodeKind, type: string, path: Path) => void;
 };
 
-const createLostCollector = (overriddenForms: OverriddenForms): LostCollector => {
+const createLostCollector = (): LostCollector => {
     const lost: Lost[] = [];
-    const overridden: Lost[] = [];
     const reported = new Set<string>();
     const report = (kind: NodeKind, type: string, path: Path): void => {
         const key = `${kind}:${type}:${path.join('.')}`;
@@ -262,16 +280,10 @@ const createLostCollector = (overriddenForms: OverriddenForms): LostCollector =>
         }
 
         reported.add(key);
-        if (kind === 'mark' && overriddenForms.marks.has(type)) {
-            overridden.push({ type, path });
-        } else if (kind === 'inline' && overriddenForms.inlines.has(type)) {
-            overridden.push({ type, path });
-        } else {
-            lost.push({ type, path });
-        }
+        lost.push({ type, path });
     };
 
-    return { lost, overridden, report };
+    return { lost, report };
 };
 
 type LostAtPositionParams = {
@@ -284,6 +296,11 @@ type LostAtPositionParams = {
 
 const lostAtPosition = ({ run, index, plain, readPositions, report }: LostAtPositionParams): void => {
     if (run.kind === 'inline') {
+        // An inline spliced in for what an override wrote has no path, so it is never reported.
+        if (run.path.length === 0) {
+            return;
+        }
+
         const read = readPositions[index];
         if (read === undefined || !sameRun(run, read)) {
             report('inline', run.type, run.path);
@@ -311,11 +328,7 @@ const lostAtPosition = ({ run, index, plain, readPositions, report }: LostAtPosi
  * differ, an inline element that wrote plain text stands for that text, so it is lost by itself and the marks around it
  * still line up. None when they differ still, as the two sides cannot be lined up then.
  */
-const lostOf = (
-    reference: readonly Run[],
-    read: readonly Run[],
-    overriddenForms: OverriddenForms,
-): Pick<LostCollector, 'lost' | 'overridden'> => {
+const lostOf = (reference: readonly Run[], read: readonly Run[]): Lost[] => {
     let standIn = placeholder;
     if (plainTextOf(reference, placeholder) !== plainTextOf(read, placeholder)) {
         standIn = writtenTextOrPlaceholder;
@@ -323,17 +336,17 @@ const lostOf = (
 
     const plain = plainTextOf(reference, standIn);
     if (plain !== plainTextOf(read, standIn)) {
-        return { lost: [], overridden: [] };
+        return [];
     }
 
     const readPositions = runsByPosition(read, standIn);
-    const collector = createLostCollector(overriddenForms);
+    const collector = createLostCollector();
 
     for (const [index, run] of runsByPosition(reference, standIn).entries()) {
         lostAtPosition({ run, index, plain, readPositions, report: collector.report });
     }
 
-    return { lost: collector.lost, overridden: collector.overridden };
+    return collector.lost;
 };
 
 /** Reads the Markdown again as one paragraph with the reader's own parser, and compares what it gives with the document's runs. */
@@ -343,21 +356,17 @@ export const readBackOf = (
     context: ReadContext,
     tokenize: Tokenize,
 ): ReadBackResult => {
-    const runs = readRuns(markdown, context, tokenize);
-    if (runs === null) {
+    const read = readRuns(markdown, context, tokenize);
+    if (read === null) {
         return { kind: 'differs', lost: [] };
     }
 
-    const written = withoutBlockEdgeSpace(reference);
+    const { marks } = context.forms.overridden;
+    const runs = withoutMarks(read, marks);
+    const written = withoutBlockEdgeSpace(withoutMarks(reference, marks));
     if (sameRuns(runs, written)) {
         return { kind: 'same' };
     }
 
-    const { lost, overridden } = lostOf(written, runs, context.forms.overridden);
-    // Everything that differs is what an override wrote, which is the host's to answer for.
-    if (lost.length === 0 && overridden.length > 0) {
-        return { kind: 'same' };
-    }
-
-    return { kind: 'differs', lost };
+    return { kind: 'differs', lost: lostOf(written, runs) };
 };
