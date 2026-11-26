@@ -1272,8 +1272,7 @@ describe('the commands of one turn', () => {
 });
 
 describe('insert of a separator block', () => {
-    // The stored format types blocks by plugin; the test plugin's `rule` is not in that union.
-    const RULE = { type: 'rule' } as RteBlockNode;
+    const RULE: RteBlockNode = { type: 'rule' };
     const separators = [...defaultPlugins, rulePlugin];
 
     it('does nothing at the start of the first paragraph', () => {
@@ -1401,7 +1400,7 @@ describe('loading a check item that holds a list when `nested` is false', () => 
                 },
             ],
         },
-        // Plugin block types are not in the stored format's union.
+        // `RteBlockNode` names no plugin attribute, so `checked` needs the cast.
     ] as RteBlockNode[];
 
     it('loads the stored document without throwing', () => {
