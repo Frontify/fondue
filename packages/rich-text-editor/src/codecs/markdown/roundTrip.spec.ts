@@ -2,8 +2,9 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { type RteDocumentOf } from '../../core';
 import { type RteBlock, type RteDocument, type RteDocumentWith } from '../../documentFormat';
-import { bulletListContent, defaultContent } from '../../plugins';
+import { bulletListContent, defaultContent, tableContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
@@ -15,6 +16,8 @@ type RoundTripCase = {
 };
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
+
+const TABLE_OPTIONS: MarkdownOptions = { plugins: [...defaultContent, tableContent] };
 
 const expectRoundTrip = ({ markdown, document }: RoundTripCase, options: MarkdownOptions = OPTIONS) => {
     expect(parseMarkdown(markdown, options)).toEqual(document);
@@ -1078,6 +1081,59 @@ describe('markdown round trip with list content only', () => {
         };
 
         expectRoundTrip({ name: 'bullet list', markdown: '- one', document }, { plugins: [bulletListContent()] });
+    });
+});
+
+describe('markdown round trip of tables', () => {
+    const cellOf = (type: 'tableHeader' | 'tableCell', children: object[]) => ({
+        type,
+        children: [{ type: 'paragraph', children }],
+    });
+    const tableBlock = {
+        type: 'table',
+        children: [
+            {
+                type: 'tableRow',
+                children: [cellOf('tableHeader', [{ text: 'a' }]), cellOf('tableHeader', [{ text: 'b' }])],
+            },
+            {
+                type: 'tableRow',
+                children: [
+                    cellOf('tableCell', [{ text: 'bold', bold: true }]),
+                    cellOf('tableCell', [{ text: 'x|y', code: true }]),
+                ],
+            },
+            {
+                type: 'tableRow',
+                children: [cellOf('tableCell', [{ text: 'p|q' }]), cellOf('tableCell', [])],
+            },
+        ],
+    };
+    const tableMarkdown = `| a | b |
+| --- | --- |
+| **bold** | \`x\\|y\` |
+| p\\\\|q |  |`;
+
+    it('gives back a table with marks, pipes and an empty cell', () => {
+        const document: RteDocumentOf = { version: 1, blocks: [tableBlock] };
+
+        expect(parseMarkdown(tableMarkdown, TABLE_OPTIONS)).toEqual(document);
+        expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({ markdown: tableMarkdown, losses: [] });
+    });
+
+    it('gives back a table between two paragraphs', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'before' }] },
+                tableBlock,
+                { type: 'paragraph', children: [{ text: 'after' }] },
+            ],
+        };
+        const markdown = `before\n\n${tableMarkdown}\n\nafter`;
+
+        expect(parseMarkdown(markdown, TABLE_OPTIONS)).toEqual(document);
+        expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({ markdown, losses: [] });
     });
 });
 

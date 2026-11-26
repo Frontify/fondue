@@ -53,6 +53,9 @@ const TASK_MARKER = /^\[[ xX]\][ \t]/;
 /** markdown-it gives a reference definition no token and no line, so it is reported at the first line. */
 const REFERENCE_DEFINITION_LINE = 1;
 
+// The header and body sections group rows without storing any state of their own.
+const TABLE_SECTION_TOKENS = new Set(['thead_open', 'tbody_open']);
+
 const reportLoss = (context: ReadContext, type: string, line: number): void => {
     context.reportLoss?.({ type, line });
 };
@@ -342,7 +345,7 @@ const openFrame = (
     const block = resolveBlock(token, context);
 
     if (block === null) {
-        if (token.type !== PARAGRAPH_OPEN) {
+        if (token.type !== PARAGRAPH_OPEN && !TABLE_SECTION_TOKENS.has(token.type)) {
             reportLoss(context, token.type, token.line);
         }
 

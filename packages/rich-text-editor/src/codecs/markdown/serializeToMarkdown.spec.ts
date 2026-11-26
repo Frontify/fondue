@@ -8,15 +8,19 @@ import {
     defineInline,
     defineMark,
     type MarkdownInlineOutput,
+    type RteBlockNode,
     type RteDocumentOf,
+    type RteInlineNode,
 } from '../../core';
 import { type RteDocument, type RteDocumentWith } from '../../documentFormat';
-import { columnBreakContent, defaultContent, mentionContent } from '../../plugins';
+import { columnBreakContent, defaultContent, mentionContent, tableContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
+
+const TABLE_OPTIONS: MarkdownOptions = { plugins: [...defaultContent, tableContent] };
 
 // Declared with an HTML form only, so neither has a Markdown form.
 const sampleContent = defineContent({
@@ -182,6 +186,275 @@ describe('serializeToMarkdown single-line blocks', () => {
         expect(serializeToMarkdown(document, { plugins: defaultContent, breaks: true })).toEqual({
             markdown: '# a b',
             losses: [{ path: [0, 1], type: 'break' }],
+        });
+    });
+});
+
+describe('serializeToMarkdown tables', () => {
+    type CellType = 'tableHeader' | 'tableCell';
+
+    const paragraphOf = (children: RteInlineNode[]): RteBlockNode => ({ type: 'paragraph', children });
+    const cellOf = (type: CellType, children: RteInlineNode[], attributes: object = {}): RteBlockNode => ({
+        type,
+        ...attributes,
+        children: [paragraphOf(children)],
+    });
+    const headerOf = (text: string) => cellOf('tableHeader', [{ text }]);
+    const cell = (text: string) => cellOf('tableCell', [{ text }]);
+    const rowOf = (...cells: RteBlockNode[]): RteBlockNode => ({ type: 'tableRow', children: cells });
+    const documentOf = (...blocks: RteBlockNode[]): RteDocumentOf => ({ version: 1, blocks });
+    const tableOf = (...rows: RteBlockNode[]): RteBlockNode => ({ type: 'table', children: rows });
+
+    it('writes a header row, a delimiter row and a body row', () => {
+        const document = documentOf(tableOf(rowOf(headerOf('a'), headerOf('b')), rowOf(cell('c'), cell('d'))));
+
+        expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({
+            markdown: '| a | b |\n| --- | --- |\n| c | d |',
+            losses: [],
+        });
+    });
+
+    it('escapes a pipe in text and in inline code', () => {
+        const document = documentOf(
+            tableOf(
+                rowOf(headerOf('a'), headerOf('b')),
+                rowOf(cell('a|b'), cellOf('tableCell', [{ text: 'x|y', code: true }])),
+            ),
+        );
+
+        expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({
+            markdown: `| a | b |
+| --- | --- |
+| a\\\\|b | \`x\\|y\` |`,
+            losses: [],
+        });
+    });
+
+    it('writes an empty cell as nothing between its pipes', () => {
+        const document = documentOf(
+            tableOf(
+                rowOf(headerOf('a'), headerOf('b')),
+                rowOf(cellOf('tableCell', []), cellOf('tableCell', [{ text: '' }])),
+            ),
+        );
+
+        expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({
+            markdown: '| a | b |\n| --- | --- |\n|  |  |',
+            losses: [],
+        });
+    });
+
+    it('writes a break in a cell as a space and reports the break', () => {
+        const document = documentOf(
+            tableOf(
+                rowOf(headerOf('a'), headerOf('b')),
+                rowOf(cellOf('tableCell', [{ text: 'c' }, { type: 'break' }, { text: 'd' }]), cell('e')),
+            ),
+        );
+
+        expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({
+            markdown: '| a | b |\n| --- | --- |\n| c d | e |',
+            losses: [{ path: [0, 1, 0, 0, 1], type: 'break' }],
+        });
+    });
+
+    it('writes a first row of table cells as the header row and reports each cell', () => {
+        const document = documentOf(tableOf(rowOf(cell('a'), cell('b')), rowOf(cell('c'), cell('d'))));
+
+        expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({
+            markdown: '| a | b |\n| --- | --- |\n| c | d |',
+            losses: [
+                { path: [0, 0, 0], type: 'tableCell' },
+                { path: [0, 0, 1], type: 'tableCell' },
+            ],
+        });
+    });
+
+    it('writes a header cell in a body row as a body cell and reports it', () => {
+        const document = documentOf(tableOf(rowOf(headerOf('a'), headerOf('b')), rowOf(headerOf('c'), cell('d'))));
+
+        expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({
+            markdown: '| a | b |\n| --- | --- |\n| c | d |',
+            losses: [{ path: [0, 1, 0], type: 'tableHeader' }],
+        });
+    });
+
+    it('writes a first-row header cell with a row scope as a header cell and reports it', () => {
+        const document = documentOf(
+            tableOf(
+                rowOf(cellOf('tableHeader', [{ text: 'a' }], { scope: 'row' }), headerOf('b')),
+                rowOf(cell('c'), cell('d')),
+            ),
+        );
+
+        expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({
+            markdown: '| a | b |\n| --- | --- |\n| c | d |',
+            losses: [{ path: [0, 0, 0], type: 'tableHeader' }],
+        });
+    });
+
+    it('pads a row shorter than the widest row and reports the row', () => {
+        const document = documentOf(tableOf(rowOf(headerOf('a'), headerOf('b')), rowOf(cell('c'))));
+
+        expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({
+            markdown: '| a | b |\n| --- | --- |\n| c |  |',
+            losses: [{ path: [0, 1], type: 'tableRow' }],
+        });
+    });
+
+    it('writes the cells of a table with a merged cell as paragraphs and reports the table and the cell', () => {
+        const document = documentOf(
+            tableOf(rowOf(headerOf('a'), headerOf('b')), rowOf(cellOf('tableCell', [{ text: 'c' }], { colspan: 2 }))),
+        );
+
+        expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({
+            markdown: 'a\n\nb\n\nc',
+            losses: [
+                { path: [0], type: 'table' },
+                { path: [0, 1, 0], type: 'tableCell' },
+            ],
+        });
+    });
+
+    it('writes the blocks of a table with a two-paragraph cell as paragraphs and reports the cell', () => {
+        const twoParagraphs = {
+            type: 'tableCell',
+            children: [paragraphOf([{ text: 'c' }]), paragraphOf([{ text: 'd' }])],
+        };
+        const document = documentOf(tableOf(rowOf(headerOf('a')), rowOf(twoParagraphs)));
+
+        expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({
+            markdown: 'a\n\nc\n\nd',
+            losses: [
+                { path: [0], type: 'table' },
+                { path: [0, 1, 0], type: 'tableCell' },
+            ],
+        });
+    });
+
+    it('writes nothing for a table with no rows and reports the table', () => {
+        expect(serializeToMarkdown(documentOf({ type: 'table', children: [] }), TABLE_OPTIONS)).toEqual({
+            markdown: '',
+            losses: [{ path: [0], type: 'table' }],
+        });
+    });
+
+    it('writes only the paragraph before a table with no rows and reports the table', () => {
+        const document = documentOf(paragraphOf([{ text: 'a' }]), { type: 'table', children: [] });
+
+        expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({
+            markdown: 'a',
+            losses: [{ path: [1], type: 'table' }],
+        });
+    });
+
+    it('separates a table from the paragraphs around it with a blank line', () => {
+        const document = documentOf(
+            paragraphOf([{ text: 'a' }]),
+            tableOf(rowOf(headerOf('h')), rowOf(cell('c'))),
+            paragraphOf([{ text: 'b' }]),
+        );
+
+        expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({
+            markdown: 'a\n\n| h |\n| --- |\n| c |\n\nb',
+            losses: [],
+        });
+    });
+
+    it('keeps the text of an aligned cell paragraph and reports the attribute at the paragraph path', () => {
+        const document = documentOf(
+            tableOf(
+                rowOf(headerOf('a'), headerOf('b')),
+                rowOf(
+                    { type: 'tableCell', children: [{ ...paragraphOf([{ text: 'c' }]), align: 'center' }] },
+                    cell('d'),
+                ),
+            ),
+        );
+
+        expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({
+            markdown: '| a | b |\n| --- | --- |\n| c | d |',
+            losses: [{ path: [0, 1, 0, 0], type: 'align' }],
+        });
+    });
+
+    it('reports a cell paragraph whose children are not a list', () => {
+        const lostCell = { type: 'tableCell', children: [{ type: 'paragraph', children: 'lost' }] };
+        const document = documentOf(tableOf(rowOf(headerOf('h')), rowOf(lostCell)));
+
+        expect(serializeToMarkdown(document, TABLE_OPTIONS)).toEqual({
+            markdown: 'h\n\n&nbsp;',
+            losses: [
+                { path: [0], type: 'table' },
+                { path: [0, 1, 0], type: 'tableCell' },
+                { path: [0, 1, 0, 0], type: 'paragraph' },
+            ],
+        });
+    });
+
+    it('reports a cell paragraph that a host override gives no form', () => {
+        const document = documentOf(tableOf(rowOf(headerOf('h')), rowOf(cell('c'))));
+        const options: MarkdownOptions = {
+            plugins: [...defaultContent, tableContent],
+            overrides: { blocks: { paragraph: { read: [{ token: 'paragraph_open' }], write: () => null } } },
+        };
+
+        expect(serializeToMarkdown(document, options)).toEqual({
+            markdown: '| h |\n| --- |\n| c |',
+            losses: [
+                { path: [0, 0, 0, 0], type: 'paragraph' },
+                { path: [0, 1, 0, 0], type: 'paragraph' },
+            ],
+        });
+    });
+
+    it('prefixes each line of a table with the prefix of its host form', () => {
+        const document = documentOf(tableOf(rowOf(headerOf('a'), headerOf('b')), rowOf(cell('c'), cell('d'))));
+        const options: MarkdownOptions = {
+            plugins: [...defaultContent, tableContent],
+            overrides: {
+                blocks: { table: { read: [{ token: 'table_open' }], write: () => ({ first: '> ', rest: '> ' }) } },
+            },
+        };
+
+        expect(serializeToMarkdown(document, options)).toEqual({
+            markdown: '> | a | b |\n> | --- | --- |\n> | c | d |',
+            losses: [],
+        });
+    });
+
+    it('writes the cells of a table as paragraphs and reports the table when its host form has a one-line prefix', () => {
+        const document = documentOf(tableOf(rowOf(headerOf('a'), headerOf('b')), rowOf(cell('c'), cell('d'))));
+        const options: MarkdownOptions = {
+            plugins: [...defaultContent, tableContent],
+            overrides: {
+                blocks: { table: { read: [{ token: 'table_open' }], write: () => ({ first: '> ', rest: null }) } },
+            },
+        };
+
+        expect(serializeToMarkdown(document, options)).toEqual({
+            markdown: 'a\n\nb\n\nc\n\nd',
+            losses: [{ path: [0], type: 'table' }],
+        });
+    });
+
+    it('writes a table unchanged and reports each body cell whose form has a prefix', () => {
+        const document = documentOf(tableOf(rowOf(headerOf('a'), headerOf('b')), rowOf(cell('c'), cell('d'))));
+        const options: MarkdownOptions = {
+            plugins: [...defaultContent, tableContent],
+            overrides: {
+                blocks: {
+                    tableCell: { read: [{ token: 'td_open' }], write: () => ({ first: '- ', rest: '  ' }) },
+                },
+            },
+        };
+
+        expect(serializeToMarkdown(document, options)).toEqual({
+            markdown: '| a | b |\n| --- | --- |\n| c | d |',
+            losses: [
+                { path: [0, 1, 0], type: 'tableCell' },
+                { path: [0, 1, 1], type: 'tableCell' },
+            ],
         });
     });
 });

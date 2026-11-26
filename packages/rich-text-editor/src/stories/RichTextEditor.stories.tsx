@@ -34,6 +34,7 @@ import {
     numberedListPlugin,
     quoteContent,
     quotePlugin,
+    tablePlugin,
     type TextLinkLook,
     textStyleContent,
     textStylePlugin,
@@ -800,46 +801,70 @@ const formatLoss = ({ type, path }: MarkdownLoss): string => `${type} at ${path.
 
 const formatReadLoss = ({ type, line }: MarkdownReadLoss): string => `${type} on source line ${line}`;
 
+type MarkdownRoundTripProps = {
+    markdown: string;
+    options: MarkdownOptions;
+    plugins: readonly RtePlugin[];
+};
+
+const MarkdownRoundTrip = ({ markdown: stored, options, plugins }: MarkdownRoundTripProps) => {
+    const [{ document, losses: readLosses }] = useState(() => parseMarkdownWithLosses(stored, options));
+    const [doc, setDoc] = useState(document);
+    const { markdown, losses } = useMemo(() => serializeToMarkdown(doc, options), [doc, options]);
+    const lossMessages = [...readLosses.map(formatReadLoss), ...losses.map(formatLoss)];
+
+    let lossesText = NO_LOSSES;
+    if (lossMessages.length > 0) {
+        lossesText = lossMessages.join('\n');
+    }
+
+    return (
+        <div className={LAYOUT}>
+            <p className={HINT}>
+                Stored Markdown is read into the editor. Edit it: the Markdown on the right is what a host would save.
+            </p>
+            <div className={FRAME}>
+                <RichTextEditor value={doc} onChange={setDoc} plugins={plugins} readonly={readLosses.length > 0} />
+            </div>
+            <div className="tw-flex tw-flex-col tw-gap-4">
+                <pre className={MARKDOWN_PANEL}>{markdown}</pre>
+                <pre className={MARKDOWN_PANEL}>{lossesText}</pre>
+            </div>
+        </div>
+    );
+};
+
 /**
  * Markdown in, an editable document, Markdown out. The stored Markdown is read into the editor with
  * `parseMarkdownWithLosses`. The editor stays read-only if the source contains features it cannot keep.
  * `serializeToMarkdown` lists any losses when the document is written.
  */
 export const Markdown: Story = {
-    render: () => {
-        const [{ document, losses: readLosses }] = useState(() =>
-            parseMarkdownWithLosses(STORED_ANNOTATION, MARKDOWN_OPTIONS),
-        );
-        const [doc, setDoc] = useState(document);
-        const { markdown, losses } = useMemo(() => serializeToMarkdown(doc, MARKDOWN_OPTIONS), [doc]);
-        const lossMessages = [...readLosses.map(formatReadLoss), ...losses.map(formatLoss)];
+    render: () => (
+        <MarkdownRoundTrip markdown={STORED_ANNOTATION} options={MARKDOWN_OPTIONS} plugins={defaultPlugins} />
+    ),
+};
 
-        let lossesText = NO_LOSSES;
-        if (lossMessages.length > 0) {
-            lossesText = lossMessages.join('\n');
-        }
+/** A heading and a table as a host stored them: bold in a cell, and inline code holding an escaped pipe. */
+const STORED_TABLE = `## Type scale
 
-        return (
-            <div className={LAYOUT}>
-                <p className={HINT}>
-                    Stored Markdown is read into the editor. Edit it: the Markdown on the right is what a host would
-                    save.
-                </p>
-                <div className={FRAME}>
-                    <RichTextEditor
-                        value={doc}
-                        onChange={setDoc}
-                        plugins={defaultPlugins}
-                        readonly={readLosses.length > 0}
-                    />
-                </div>
-                <div className="tw-flex tw-flex-col tw-gap-4">
-                    <pre className={MARKDOWN_PANEL}>{markdown}</pre>
-                    <pre className={MARKDOWN_PANEL}>{lossesText}</pre>
-                </div>
-            </div>
-        );
-    },
+| Size | Weight | Use |
+| --- | --- | --- |
+| 12 | **bold** | Caption |
+| 16 | regular | \`a\\|b\` |`;
+
+const TABLE_PLUGINS = [...defaultPlugins, tablePlugin()];
+
+const MARKDOWN_TABLE_OPTIONS: MarkdownOptions = { plugins: TABLE_PLUGINS, breaks: true };
+
+/**
+ * A GFM table read into the editor. Edit a cell and the Markdown on the right follows. Merge two cells from the
+ * table menu and the table is written as paragraphs, with a loss listed.
+ */
+export const MarkdownTable: Story = {
+    render: () => (
+        <MarkdownRoundTrip markdown={STORED_TABLE} options={MARKDOWN_TABLE_OPTIONS} plugins={TABLE_PLUGINS} />
+    ),
 };
 
 /**
