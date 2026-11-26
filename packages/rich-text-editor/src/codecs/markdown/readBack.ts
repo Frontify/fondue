@@ -181,8 +181,21 @@ const placeholder: StandIn = () => INLINE_PLACEHOLDER;
 
 const writtenTextOrPlaceholder: StandIn = ({ written }) => written ?? INLINE_PLACEHOLDER;
 
-const plainTextOf = (runs: readonly Run[], standIn: StandIn): string =>
-    runs.map((run) => (run.kind === 'text' ? run.text : standIn(run))).join('');
+const plainTextOf = (runs: readonly Run[], standIn: StandIn): string => {
+    let text = '';
+    for (const run of runs) {
+        switch (run.kind) {
+            case 'text':
+                text += run.text;
+                break;
+            case 'inline':
+                text += standIn(run);
+                break;
+        }
+    }
+
+    return text;
+};
 
 /** The run each position of the plain text belongs to. */
 const runsByPosition = (runs: readonly Run[], standIn: StandIn): Run[] => {

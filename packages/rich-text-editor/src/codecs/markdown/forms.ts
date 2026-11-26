@@ -235,14 +235,22 @@ const readersByToken = (forms: ReadonlyMap<string, FormWithRules>): Map<string, 
     return index;
 };
 
+/** The pattern with the global flag, so every match in a text is found. */
+const globalPatternOf = (pattern: RegExp): RegExp => {
+    if (pattern.flags.includes(GLOBAL_FLAG)) {
+        return new RegExp(pattern.source, pattern.flags);
+    }
+
+    return new RegExp(pattern.source, `${pattern.flags}${GLOBAL_FLAG}`);
+};
+
 const textReadersOf = (forms: ReadonlyMap<string, MarkdownInlineForm>): TextReader[] => {
     const readers: TextReader[] = [];
     for (const [name, form] of forms) {
         for (const rule of form.read) {
             if (!isTokenRule(rule)) {
                 const { pattern, value } = rule;
-                const flags = pattern.flags.includes(GLOBAL_FLAG) ? pattern.flags : `${pattern.flags}${GLOBAL_FLAG}`;
-                readers.push({ name, pattern: new RegExp(pattern.source, flags), value });
+                readers.push({ name, pattern: globalPatternOf(pattern), value });
             }
         }
     }
