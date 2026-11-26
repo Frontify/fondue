@@ -282,6 +282,9 @@ export const documentTree = (doc: RteDocumentOf, registry: ContentRegistry, opti
     doc.blocks.flatMap((block) => blockNode(block, registry, options) ?? []);
 
 export type DocumentRootSpecOptions = Pick<HtmlAttributes, 'id'> & {
+    /**
+     * A class for the element the document sits in, beside the document's own
+     */
     className?: string;
 } & Partial<Pick<HtmlAttributes, 'data-test-id'>>;
 

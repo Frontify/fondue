@@ -5,17 +5,16 @@ import { memo, type ReactNode, useMemo } from 'react';
 import {
     buildContentRegistry,
     type ContentRegistry,
-    type HtmlAttributes,
     type RteBlockNode,
     type RteContent,
     type RteDocumentOf,
     type RtePlugin,
 } from '#/core';
 
-import { blockNode, documentRootSpec } from './documentTree';
+import { blockNode, documentRootSpec, type DocumentRootSpecOptions } from './documentTree';
 import { specToReact, toReact } from './toReact';
 
-export type RendererProps<TBlock extends RteBlockNode = RteBlockNode> = Pick<HtmlAttributes, 'id'> & {
+export type RendererProps<TBlock extends RteBlockNode = RteBlockNode> = DocumentRootSpecOptions & {
     value: RteDocumentOf<TBlock>;
     /**
      * The plugins, or only their content, whose markup draws the document. A node
@@ -23,17 +22,12 @@ export type RendererProps<TBlock extends RteBlockNode = RteBlockNode> = Pick<Htm
      * missing is skipped (a block keeps its content), with a warning in development.
      */
     plugins: readonly (RtePlugin | RteContent)[];
-    /**
-     * A class for the element the document sits in, beside the document's own
-     */
-    className?: string;
-} & Partial<Pick<HtmlAttributes, 'data-test-id'>>;
+};
 
-type RegistryRendererProps = Pick<RendererProps, 'id'> & {
+type RegistryRendererProps = DocumentRootSpecOptions & {
     value: RteDocumentOf;
     registry: ContentRegistry;
-    className?: string;
-} & Pick<RendererProps, 'data-test-id'>;
+};
 
 type BlockProps = {
     block: RteBlockNode;
