@@ -49,9 +49,11 @@ export type CheckListPluginOptions = {
     nested?: boolean;
 };
 
+const DEFAULT_OPTIONS: Required<CheckListPluginOptions> = { inProgress: true, nested: true };
+
 const optionsWithDefaults = ({
-    inProgress = true,
-    nested = true,
+    inProgress = DEFAULT_OPTIONS.inProgress,
+    nested = DEFAULT_OPTIONS.nested,
 }: CheckListPluginOptions): Required<CheckListPluginOptions> => ({ inProgress, nested });
 
 type CheckValue = { checked: boolean | 'inProgress' };
@@ -194,7 +196,7 @@ const checkListContentWith = ({ inProgress, nested }: Required<CheckListPluginOp
 /**
  * A to-do list whose items each have a checkbox
  */
-export const checkListContent = checkListContentWith(optionsWithDefaults({}));
+export const checkListContent = checkListContentWith(DEFAULT_OPTIONS);
 
 type EditCheckItemProps = {
     value: CheckValue;
@@ -250,7 +252,7 @@ const inputRulesOf = (inProgress: boolean): readonly RteInputRule[] => {
 
 /** The default options mount `checkListContent` itself, so what the plugin adds is the same definition as ever. */
 const contentOf = (options: Required<CheckListPluginOptions>) => {
-    if (options.inProgress && options.nested) {
+    if (options.inProgress === DEFAULT_OPTIONS.inProgress && options.nested === DEFAULT_OPTIONS.nested) {
         return checkListContent;
     }
     return checkListContentWith(options);

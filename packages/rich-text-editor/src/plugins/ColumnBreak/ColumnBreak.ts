@@ -57,7 +57,7 @@ export const columnBreakContent = ({ columns = 2, gap = 'normal' }: ColumnBreakP
     });
 
 /**
- * Lays the content out in columns, with a toolbar button and `/` entry that insert a column break
+ * Lays the content out in columns, with a toolbar button and `/` entry that insert a column break. Inserting a break at the start of the document or next to another break does nothing, as it would only make an empty column.
  */
 export const columnBreakPlugin = (options: ColumnBreakPluginOptions = {}) =>
     definePlugin({
