@@ -3,7 +3,7 @@
 // @vitest-environment happy-dom
 
 import { undo } from 'prosemirror-history';
-import { TextSelection } from 'prosemirror-state';
+import { NodeSelection, TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -1417,6 +1417,44 @@ describe('Backspace and Delete beside a block that only separates', () => {
         press(editor.view, 'Delete');
 
         expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('Backspace in an empty line between two of them selects the one before it', () => {
+        const editor = editorWith(separators, [paragraph(text('a')), RULE, paragraph(), RULE, paragraph(text('b'))]);
+        const { doc } = editor.view.state;
+        const lineStart = doc.child(0).nodeSize + doc.child(1).nodeSize;
+        caretInEmptyLineAt(editor.view, lineStart);
+
+        press(editor.view, 'Backspace');
+
+        const { selection } = editor.view.state;
+        expect(selection).toBeInstanceOf(NodeSelection);
+        expect([selection.from, selection.to]).toEqual([lineStart - doc.child(1).nodeSize, lineStart]);
+        expect(editor.view.state.doc.eq(doc)).toBe(true);
+    });
+
+    it('a second Backspace removes the one the first selected', () => {
+        const editor = editorWith(separators, [paragraph(text('a')), RULE, paragraph(), RULE, paragraph(text('b'))]);
+        const { doc } = editor.view.state;
+        caretInEmptyLineAt(editor.view, doc.child(0).nodeSize + doc.child(1).nodeSize);
+        press(editor.view, 'Backspace');
+
+        press(editor.view, 'Backspace');
+
+        expect(editor.stored()).toEqual([paragraph(text('a')), paragraph(), RULE, paragraph(text('b'))]);
+    });
+
+    it('Delete in an empty first line before one selects it', () => {
+        const editor = editorWith(separators, [paragraph(), RULE, paragraph(text('b'))]);
+        const { doc } = editor.view.state;
+        caretInEmptyLineAt(editor.view, 0);
+
+        press(editor.view, 'Delete');
+
+        const { selection } = editor.view.state;
+        expect(selection).toBeInstanceOf(NodeSelection);
+        expect([selection.from, selection.to]).toEqual([doc.child(0).nodeSize, doc.child(0).nodeSize + doc.child(1).nodeSize]);
+        expect(editor.view.state.doc.eq(doc)).toBe(true);
     });
 
     it('Backspace at the start of a paragraph after one still removes it', () => {
