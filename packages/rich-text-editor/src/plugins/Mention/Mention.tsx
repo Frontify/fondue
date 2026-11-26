@@ -5,6 +5,7 @@ import { defineContent, defineInline, definePlugin, type RtePlugin } from '#/cor
 import { MentionEditor } from './components/MentionEditor';
 import { MentionLink } from './components/MentionLink';
 import { mentionAttributes, mentionDisplay, resolvedUnknownLabels } from './helpers/display';
+import { withoutControlCharacters } from './helpers/text';
 import styles from './mention.module.scss';
 import {
     type MentionHref,
@@ -53,7 +54,7 @@ const assertUnknownLabels = (unknownLabels: MentionUnknownLabels | undefined, fa
         const label = unknownLabels?.[kind];
 
         // A blank label draws a mention with no text and no accessible name.
-        if (label !== undefined && label.trim() === '') {
+        if (label !== undefined && withoutControlCharacters(label).trim() === '') {
             throw new Error(`${factory}: \`unknownLabels.${kind}\` must not be blank.`);
         }
     }

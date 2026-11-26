@@ -66,7 +66,7 @@ export const resolvedUnknownLabels = (labels: MentionUnknownLabels = {}): Resolv
     for (const kind of MENTION_KINDS) {
         const given = labels[kind];
         if (given !== undefined) {
-            resolved[kind] = given;
+            resolved[kind] = withoutControlCharacters(given);
         }
     }
 
