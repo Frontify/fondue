@@ -7,13 +7,29 @@ import styles from '../link.module.scss';
 
 import { ALL_LINK_APPEARANCES, type ButtonLink, type LinkAppearance, type LinkValue } from './value';
 
-type AppearanceEntry = { label: PlainStringKey; className: string | undefined };
+type AppearanceEntry = {
+    label: PlainStringKey;
+    className: string | undefined;
+    marginsClassName: string | undefined;
+};
 
 /** What an appearance shows in the link form and the class that draws it. Every rule per appearance reads this table. */
 export const APPEARANCES = {
-    primary: { label: 'RichTextEditor_linkButtonPrimary', className: styles.buttonPrimary },
-    secondary: { label: 'RichTextEditor_linkButtonSecondary', className: styles.buttonSecondary },
-    tertiary: { label: 'RichTextEditor_linkButtonTertiary', className: styles.buttonTertiary },
+    primary: {
+        label: 'RichTextEditor_linkButtonPrimary',
+        className: styles.buttonPrimary,
+        marginsClassName: styles.buttonPrimaryMargins,
+    },
+    secondary: {
+        label: 'RichTextEditor_linkButtonSecondary',
+        className: styles.buttonSecondary,
+        marginsClassName: styles.buttonSecondaryMargins,
+    },
+    tertiary: {
+        label: 'RichTextEditor_linkButtonTertiary',
+        className: styles.buttonTertiary,
+        marginsClassName: styles.buttonTertiaryMargins,
+    },
 } as const satisfies Record<LinkAppearance, AppearanceEntry>;
 
 /** The appearances an editor offers when it is given none. */
@@ -95,6 +111,12 @@ export const BUTTON_LOOK_FIELDS = {
 export type TextLinkLook = Omit<TextLook, 'textDecoration' | 'marginTop' | 'marginBottom'> &
     LinkBoxLook & { borderStyle?: string };
 
+/** The CSS property each field of a text link's box sets. */
+export const TEXT_LINK_BOX_FIELDS = {
+    ...LINK_BOX_LOOK_FIELDS,
+    borderStyle: 'border-style',
+} as const satisfies Record<keyof LinkBoxLook | 'borderStyle', string>;
+
 /** The CSS property each field of a text link's look sets. `link.module.scss` spells the same names. */
 export const TEXT_LINK_LOOK_FIELDS = {
     fontFamily: LOOK_PROPERTIES.fontFamily,
@@ -105,8 +127,7 @@ export const TEXT_LINK_LOOK_FIELDS = {
     letterSpacing: LOOK_PROPERTIES.letterSpacing,
     textTransform: LOOK_PROPERTIES.textTransform,
     color: LOOK_PROPERTIES.color,
-    ...LINK_BOX_LOOK_FIELDS,
-    borderStyle: 'border-style',
+    ...TEXT_LINK_BOX_FIELDS,
 } as const satisfies Record<keyof TextLinkLook, string>;
 
 /** The CSS property each field of a button's hover look sets. */
@@ -143,4 +164,42 @@ export const buttonLookProperties = (
     }
 
     return properties;
+};
+
+/**
+ * The content classes that turn on the parts of a link look a page's own anchor rule keeps until a host sets them.
+ */
+export const linkLookClassName = (
+    text: TextLinkLook,
+    buttons: Readonly<Partial<Record<LinkAppearance, ButtonLook>>>,
+): string | undefined => {
+    const classNames: string[] = [];
+
+    // The generic narrows the look to the box fields, which `TEXT_LINK_BOX_FIELDS` covers.
+    const boxProperties = lookProperties<Pick<TextLinkLook, keyof typeof TEXT_LINK_BOX_FIELDS>>(
+        'link',
+        text,
+        TEXT_LINK_BOX_FIELDS,
+    );
+    if (Object.keys(boxProperties).length > 0 && styles.linkBox !== undefined) {
+        classNames.push(styles.linkBox);
+    }
+
+    for (const appearance of ALL_LINK_APPEARANCES) {
+        const look = buttons[appearance];
+        const marginsClassName = APPEARANCES[appearance].marginsClassName;
+        if (look === undefined || marginsClassName === undefined) {
+            continue;
+        }
+
+        if (look.marginTop !== undefined || look.marginBottom !== undefined) {
+            classNames.push(marginsClassName);
+        }
+    }
+
+    if (classNames.length === 0) {
+        return undefined;
+    }
+
+    return classNames.join(' ');
 };

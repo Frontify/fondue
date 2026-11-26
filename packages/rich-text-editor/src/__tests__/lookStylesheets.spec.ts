@@ -10,6 +10,7 @@ import { LOOK_PROPERTIES, lookVariableName } from '../core/look';
 import {
     BUTTON_HOVER_LOOK_FIELDS,
     BUTTON_LOOK_FIELDS,
+    TEXT_LINK_BOX_FIELDS,
     TEXT_LINK_LOOK_FIELDS,
 } from '../plugins/Link/helpers/appearance';
 import { ALL_LINK_APPEARANCES, type LinkAppearance } from '../plugins/Link/helpers/value';
@@ -23,7 +24,7 @@ const STYLES_DIRECTORY = fileURLToPath(new URL('../styles/', import.meta.url));
 const TEXT_STYLE_STYLESHEET = fileURLToPath(new URL('../plugins/TextStyle/textStyle.module.scss', import.meta.url));
 
 /** The characters of a selector that a regular expression reads as more than themselves. */
-const SELECTOR_PUNCTUATION = /[.:]/g;
+const SELECTOR_PUNCTUATION = /[.:[\]()]/g;
 
 const LINK_STYLESHEET = fileURLToPath(new URL('../plugins/Link/link.module.scss', import.meta.url));
 
@@ -129,15 +130,37 @@ describe('the link stylesheet', () => {
         return body;
     };
 
-    const declarationsOf = (kind: string, fields: Record<string, string>): LookDeclaration[] =>
-        Object.values(fields).map((property) => ({
+    const declarationsOf = (kind: string, properties: readonly string[]): LookDeclaration[] =>
+        properties.map((property) => ({
             property,
             variable: lookVariableName(kind, property),
         }));
 
+    // The box and the margins sit in rules under a content class, which the link plugin adds where a look sets them.
+    const TEXT_LINK_BOX_PROPERTIES: string[] = Object.values(TEXT_LINK_BOX_FIELDS);
+    const TEXT_LINK_FONT_PROPERTIES = Object.values(TEXT_LINK_LOOK_FIELDS).filter(
+        (property) => !TEXT_LINK_BOX_PROPERTIES.includes(property),
+    );
+
+    const BUTTON_MARGIN_PROPERTIES: string[] = [LOOK_PROPERTIES.marginTop, LOOK_PROPERTIES.marginBottom];
+    const BUTTON_OWN_PROPERTIES = Object.values(BUTTON_LOOK_FIELDS).filter(
+        (property) => !BUTTON_MARGIN_PROPERTIES.includes(property),
+    );
+
     it('reads the text link look from the variables the link plugin sets', () => {
         expect(lookDeclarationsIn(ruleBodyForSelector('.link, .link:link, .link:visited'))).toEqual(
-            declarationsOf('link', TEXT_LINK_LOOK_FIELDS),
+            declarationsOf('link', TEXT_LINK_FONT_PROPERTIES),
+        );
+    });
+
+    it('reads the text link box from the variables the link plugin sets, under its content class', () => {
+        const textLink = `.linkBox .link:not(${Object.values(BUTTON_CLASSES)
+            .map((name) => `.${name}`)
+            .join(', ')})`;
+        const selector = `${textLink}, ${textLink}:link, ${textLink}:visited`;
+
+        expect(lookDeclarationsIn(ruleBodyForSelector(selector))).toEqual(
+            declarationsOf('link', TEXT_LINK_BOX_PROPERTIES),
         );
     });
 
@@ -148,13 +171,21 @@ describe('the link stylesheet', () => {
             const selector = `.${className}, .${className}:link, .${className}:visited`;
 
             expect(lookDeclarationsIn(ruleBodyForSelector(selector))).toEqual(
-                declarationsOf(`button-${appearance}`, BUTTON_LOOK_FIELDS),
+                declarationsOf(`button-${appearance}`, BUTTON_OWN_PROPERTIES),
+            );
+        });
+
+        it(`reads the ${appearance} button margins from the variables the link plugin sets, under its content class`, () => {
+            const selector = `.${className}Margins .${className}, .${className}Margins .${className}:link, .${className}Margins .${className}:visited`;
+
+            expect(lookDeclarationsIn(ruleBodyForSelector(selector))).toEqual(
+                declarationsOf(`button-${appearance}`, BUTTON_MARGIN_PROPERTIES),
             );
         });
 
         it(`reads the ${appearance} button hover look from the variables the link plugin sets`, () => {
             expect(lookDeclarationsIn(ruleBodyForSelector(`.${className}:hover`))).toEqual(
-                declarationsOf(`button-${appearance}-hover`, BUTTON_HOVER_LOOK_FIELDS),
+                declarationsOf(`button-${appearance}-hover`, Object.values(BUTTON_HOVER_LOOK_FIELDS)),
             );
         });
     }
