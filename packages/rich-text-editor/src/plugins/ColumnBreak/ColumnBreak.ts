@@ -31,7 +31,7 @@ const MANY_COLUMNS = 3;
 const TWO_COLUMNS = 2;
 
 /** The classes of the content: the gap, and the layout that shows the columns once the container has room for all of them. */
-const contentClassNameFor = (columns: number): string => {
+const contentClassNameFor = (columns: number): string | undefined => {
     if (columns >= MANY_COLUMNS) {
         return `${styles.columns} ${styles.fromMedium}`;
     }
