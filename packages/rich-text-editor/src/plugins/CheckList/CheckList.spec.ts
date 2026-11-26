@@ -4,11 +4,11 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { ANY_LIST, type HtmlSpec, PARAGRAPH } from '#/core';
+import { ANY_LIST, type HtmlSpec, PARAGRAPH, type RteContent } from '#/core';
 
 import { checkListContent, checkListPlugin } from './CheckList';
 
-const checkItem = checkListContent().blocks?.checkItem;
+const checkItem = checkListContent.blocks?.checkItem;
 
 /** The `[~] ` rule of a plugin, which is the only one that starts an item in progress. */
 const startsInProgress = (inputRules: ReturnType<typeof checkListPlugin>['inputRules']): boolean =>
@@ -39,30 +39,36 @@ describe('the check item', () => {
 });
 
 describe('the check item parsed from HTML', () => {
-    const parsedChecked = (content: ReturnType<typeof checkListContent>, data: string): unknown => {
+    const parsedChecked = (content: RteContent | undefined, data: string): unknown => {
         const element = window.document.createElement('li');
         element.dataset.checked = data;
-        return content.blocks?.checkItem?.parse[0]?.value?.(element);
+        return content?.blocks?.checkItem?.parse[0]?.value?.(element);
     };
 
     it('reads data-checked="inProgress" as in progress by default', () => {
-        expect(parsedChecked(checkListContent(), 'inProgress')).toEqual({ checked: 'inProgress' });
-        expect(parsedChecked(checkListContent({ inProgress: true }), 'inProgress')).toEqual({
+        expect(parsedChecked(checkListContent, 'inProgress')).toEqual({ checked: 'inProgress' });
+        expect(parsedChecked(checkListPlugin().content, 'inProgress')).toEqual({ checked: 'inProgress' });
+        expect(parsedChecked(checkListPlugin({ inProgress: true }).content, 'inProgress')).toEqual({
             checked: 'inProgress',
         });
     });
 
     it('reads data-checked="inProgress" as not done with `inProgress: false`', () => {
-        expect(parsedChecked(checkListContent({ inProgress: false }), 'inProgress')).toEqual({ checked: false });
+        expect(parsedChecked(checkListPlugin({ inProgress: false }).content, 'inProgress')).toEqual({
+            checked: false,
+        });
     });
 
     it('still reads the other two states with `inProgress: false`', () => {
-        expect(parsedChecked(checkListContent({ inProgress: false }), 'true')).toEqual({ checked: true });
-        expect(parsedChecked(checkListContent({ inProgress: false }), 'false')).toEqual({ checked: false });
+        const { content } = checkListPlugin({ inProgress: false });
+
+        expect(parsedChecked(content, 'true')).toEqual({ checked: true });
+        expect(parsedChecked(content, 'false')).toEqual({ checked: false });
     });
 
     it('still exports an item stored in progress as in progress with `inProgress: false`', () => {
-        const item = checkListContent({ inProgress: false }).blocks?.checkItem?.toHtml({ checked: 'inProgress' });
+        const { content } = checkListPlugin({ inProgress: false });
+        const item = content?.blocks?.checkItem?.toHtml({ checked: 'inProgress' });
 
         expect(item?.attrs?.['data-checked']).toBe('inProgress');
     });
@@ -83,20 +89,24 @@ describe('the `[~] ` input rule', () => {
 });
 
 describe('what a check item holds', () => {
-    it('is paragraphs and lists by default', () => {
-        expect(checkListContent().blocks?.checkItem?.content).toEqual({ blocks: [PARAGRAPH, ANY_LIST] });
-        expect(checkListContent({ nested: true }).blocks?.checkItem?.content).toEqual({
-            blocks: [PARAGRAPH, ANY_LIST],
+    it('is paragraphs and lists in `checkListContent`', () => {
+        expect(checkItem?.content).toEqual({ blocks: [PARAGRAPH, ANY_LIST] });
+    });
+
+    it('is `checkListContent` itself in a plugin with the default options', () => {
+        expect(checkListPlugin().content).toBe(checkListContent);
+        expect(checkListPlugin({ inProgress: true, nested: true }).content).toBe(checkListContent);
+    });
+
+    it('is paragraphs only in a plugin with `nested: false`', () => {
+        expect(checkListPlugin({ nested: false }).content?.blocks?.checkItem?.content).toEqual({
+            blocks: [PARAGRAPH],
         });
     });
 
-    it('is paragraphs only with `nested: false`', () => {
-        expect(checkListContent({ nested: false }).blocks?.checkItem?.content).toEqual({ blocks: [PARAGRAPH] });
-    });
-
-    it('is what the plugin mounts, so `checkListPlugin` passes its options on', () => {
-        expect(checkListPlugin({ nested: false }).content?.blocks?.checkItem?.content).toEqual({
-            blocks: [PARAGRAPH],
+    it('is still paragraphs and lists in a plugin that only sets `inProgress: false`', () => {
+        expect(checkListPlugin({ inProgress: false }).content?.blocks?.checkItem?.content).toEqual({
+            blocks: [PARAGRAPH, ANY_LIST],
         });
     });
 });

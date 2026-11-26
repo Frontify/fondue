@@ -370,7 +370,7 @@ describe('stored content the check list and column break limits keep out of new 
             blocks: [{ type: 'columnBreak' }, { type: 'paragraph', children: [{ text: 'a' }] }],
         } as RteDocument;
 
-        const container = rendered(<RichTextRenderer value={doc} plugins={[...defaultPlugins, columnBreakPlugin()]} />);
+        const container = rendered(<RichTextRenderer value={doc} plugins={[columnBreakPlugin()]} />);
 
         expect(container.querySelectorAll('[data-column-break]')).toHaveLength(1);
     });
@@ -386,7 +386,7 @@ describe('stored content the check list and column break limits keep out of new 
             ],
         } as RteDocument;
 
-        const container = rendered(<RichTextRenderer value={doc} plugins={[...defaultPlugins, columnBreakPlugin()]} />);
+        const container = rendered(<RichTextRenderer value={doc} plugins={[columnBreakPlugin()]} />);
 
         expect(container.querySelectorAll('[data-column-break]')).toHaveLength(2);
     });

@@ -1079,7 +1079,7 @@ const HOST_STYLING_CONTENT = [
     textStyleContent({ look: GUIDELINE_LOOKS }),
     bulletListContent({ look: GUIDELINE_BULLET_LOOK }),
     numberedListContent({ look: GUIDELINE_NUMBERED_LOOK }),
-    checkListContent(),
+    checkListContent,
     quoteContent,
     linkContent({ look: { text: GUIDELINE_LINK_LOOK } }),
 ];

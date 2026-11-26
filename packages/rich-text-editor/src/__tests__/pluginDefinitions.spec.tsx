@@ -280,7 +280,7 @@ describe('textStylePlugin', () => {
 });
 
 describe('columnBreakPlugin', () => {
-    it('declares the break a separator, so one is not inserted where it would separate nothing', () => {
+    it('declares the break a separator', () => {
         expect(columnBreakPlugin().content?.blocks?.columnBreak?.separator).toBe(true);
     });
 
