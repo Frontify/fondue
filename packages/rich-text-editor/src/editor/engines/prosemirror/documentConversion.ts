@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    type ContentMatch,
     Fragment,
     type Mark as PmMark,
     type Node as PmNode,
@@ -18,7 +17,7 @@ import {
 } from '#/core';
 
 import { withSpansInRange } from './grid';
-import { warnUndeclaredKey, warnUnholdableBlock, warnUnknownContent } from './warnings';
+import { warnUndeclaredKey, warnUnknownContent } from './warnings';
 
 /**
  * The document boundary: RTE format <-> engine format. The only place either
@@ -177,9 +176,7 @@ export const mapExtras = (
  * A document whose blocks are all known but do not fit together — a list
  * holding a paragraph where its items belong. Thrown rather than repaired, for
  * the same reason an unknown type is: the next `onChange` would otherwise write
- * back a different document than the host handed over. Below the document root,
- * a parent with room for an unknown block never gets here: a known block it
- * cannot hold loads as an unknown block, kept unchanged.
+ * back a different document than the host handed over.
  */
 const invalidDocument = (nodeType: PmNodeType, content: readonly PmNode[]): Error =>
     new Error(
@@ -189,9 +186,7 @@ const invalidDocument = (nodeType: PmNodeType, content: readonly PmNode[]): Erro
     );
 
 /**
- * `create`, refusing content the type does not allow there. Still throws for the
- * root and for parents with no room for an unknown block, such as lists over
- * items (see `blocksToEngine`). Content that is
+ * `create`, refusing content the type does not allow there. Content that is
  * merely missing (no blocks at all, a list without items) is filled in with
  * empty blocks, as an empty document is.
  */
@@ -248,59 +243,6 @@ const inlinesToEngine = (children: RteInlineNode[], schema: Schema): PmNode[] =>
     return nodes;
 };
 
-/** Every node type a content match can reach, so one it cannot is one the parent can never hold. */
-const collectReachableTypes = (match: ContentMatch, reached: Set<string>, visited: Set<ContentMatch>): void => {
-    if (visited.has(match)) {
-        return;
-    }
-    visited.add(match);
-    for (let index = 0; index < match.edgeCount; index++) {
-        const { type, next } = match.edge(index);
-        reached.add(type.name);
-        collectReachableTypes(next, reached, visited);
-    }
-};
-
-/** Keyed on the node type, so entries go away with its schema. */
-const reachableTypes = new WeakMap<PmNodeType, ReadonlySet<string>>();
-
-const reachableTypesOf = (nodeType: PmNodeType): ReadonlySet<string> => {
-    const remembered = reachableTypes.get(nodeType);
-    if (remembered !== undefined) {
-        return remembered;
-    }
-
-    const reached = new Set<string>();
-    collectReachableTypes(nodeType.contentMatch, reached, new Set());
-    reachableTypes.set(nodeType, reached);
-
-    return reached;
-};
-
-/** A block the parent can never hold, where the parent has room for an unknown one to stand in for it. */
-const standsAsUnknown = (parent: PmNodeType, block: RteBlockNode): boolean => {
-    const reached = reachableTypesOf(parent);
-    return reached.has(UNKNOWN_BLOCK) && !reached.has(block.type);
-};
-
-const warnStandsAsUnknown = (parent: PmNodeType, block: RteBlockNode, schema: Schema): void => {
-    const nodeType = schema.nodes[block.type];
-    if (nodeType === undefined || nodeType.isInline || nodeType === schema.topNodeType) {
-        warnUnknownContent('block', block.type);
-        return;
-    }
-    warnUnholdableBlock(parent.name, block.type);
-};
-
-const blocksToEngine = (parent: PmNodeType, blocks: RteBlockNode[], schema: Schema): PmNode[] =>
-    blocks.map((block) => {
-        if (standsAsUnknown(parent, block)) {
-            warnStandsAsUnknown(parent, block, schema);
-            return schema.node(UNKNOWN_BLOCK, { [RAW_ATTR]: block });
-        }
-        return blockToEngine(block, schema);
-    });
-
 /**
  * A block's children are inlines or blocks depending on what the block type
  * declared — the schema decides, so the document format needs no marker.
@@ -312,7 +254,7 @@ const childrenToEngine = (
 ): PmNode[] =>
     nodeType.isTextblock
         ? inlinesToEngine(children as RteInlineNode[], schema)
-        : blocksToEngine(nodeType, children as RteBlockNode[], schema);
+        : (children as RteBlockNode[]).map((child) => blockToEngine(child, schema));
 
 export const blockToEngine = (block: RteBlockNode, schema: Schema): PmNode => {
     // A block this editor handed out: reuse the node it came from (see `engineNodeOf`).

@@ -39,14 +39,6 @@ describe('the default content', () => {
                 expect(toHtml(actual[0].definition)).toEqual(toHtml(expected[0]?.definition));
                 continue;
             }
-            // The check list is built from options too.
-            if (actual[0]?.type === 'checkList') {
-                const toHtml = (definition: unknown) => (definition as BlockDefinition).toHtml({ checked: true });
-                expect(actual.map(({ definition }) => toHtml(definition))).toEqual(
-                    expected.map(({ definition }) => toHtml(definition)),
-                );
-                continue;
-            }
             for (const [position, { definition }] of actual.entries()) {
                 expect(definition).toBe(expected[position]?.definition);
             }

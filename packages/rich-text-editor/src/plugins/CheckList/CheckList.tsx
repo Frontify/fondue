@@ -142,13 +142,8 @@ const ReadonlyCheckItem = ({ value, children, style }: ReadonlyCheckItemProps): 
     );
 };
 
-/**
- * A to-do list whose items each have a checkbox
- */
-export const checkListContent = (options: CheckListPluginOptions = {}) => {
-    const { inProgress, nested } = optionsWithDefaults(options);
-
-    return defineContent({
+const checkListContentWith = ({ inProgress, nested }: Required<CheckListPluginOptions>) =>
+    defineContent({
         blocks: {
             checkList: defineBlock({
                 content: { items: 'checkItem' },
@@ -195,7 +190,11 @@ export const checkListContent = (options: CheckListPluginOptions = {}) => {
             }),
         },
     });
-};
+
+/**
+ * A to-do list whose items each have a checkbox
+ */
+export const checkListContent = checkListContentWith(optionsWithDefaults({}));
 
 type EditCheckItemProps = {
     value: CheckValue;
@@ -249,6 +248,14 @@ const inputRulesOf = (inProgress: boolean): readonly RteInputRule[] => {
     return CHECK_LIST_INPUT_RULES;
 };
 
+/** The default options mount `checkListContent` itself, so what the plugin adds is the same definition as ever. */
+const contentOf = (options: Required<CheckListPluginOptions>) => {
+    if (options.inProgress && options.nested) {
+        return checkListContent;
+    }
+    return checkListContentWith(options);
+};
+
 /**
  * A to-do list with a toolbar button and `/` entry, and `[] ` while typing starts one
  */
@@ -257,7 +264,7 @@ export const checkListPlugin = (options: CheckListPluginOptions = {}) => {
 
     return definePlugin({
         id: 'check-list',
-        content: checkListContent(resolved),
+        content: contentOf(resolved),
         toolbarGroup: 'lists',
         toolbar: [
             {

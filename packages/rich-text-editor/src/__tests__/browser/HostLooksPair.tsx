@@ -64,7 +64,7 @@ const contentWithLooks = ({ body, quote, link, buttons, bulletLook, numberedLook
     textStyleContent({ look: { body, quote } }),
     bulletListContent({ look: bulletLook }),
     numberedListContent({ look: numberedLook }),
-    checkListContent(),
+    checkListContent,
     fontColorContent,
     quoteContent,
     linkContent({ look: { text: link, button: buttons } }),
