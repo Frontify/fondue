@@ -1,0 +1,27 @@
+packages/charts/src/components/PieChart/components/Arc.tsx
+  s_0a6227365f6357::t_aa188e83896418 15
+  s_0a6227365f6357::t_56b8bc0ae6566a 3,7
+packages/rich-text-editor/package.json
+  s_0a6227365f6357::t_a651a8524072a1 73
+packages/charts/src/components/PieChart/components/ArcPath.tsx
+  s_0a6227365f6357::t_033d83869bbc4d 3
+  s_0a6227365f6357::t_b54d37ccca8a11 12-17,20
+pnpm-lock.yaml
+  s_0a6227365f6357::t_6794b3619dc3f9 110,159,252,340,352,355,358,379,479,551,557,595-596,615,633,693,696,928,1087,1093,1133,1136,1224,8034-8035,9326,9331,9335,9366,9371,9373,9376,9399,9404,9415,10306,10322,10344,11166,11168,12279,12283,12287,12291,12295,12299,12303,12307,12311,12323,12338,12628,12633,12676,13380,13392,13404,13416,13428,13448,13513,15578,17007,17013,17040,17048,17054,17139-17140,17912,17914,18132,18145,18151,18164,18206,18212,18239,18245
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "551bdaa1d8e575fc32c93c404b654bc3686a7a8b",
+  "prompts": {},
+  "sessions": {
+    "s_0a6227365f6357": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "eceeb3b4-8e18-47d1-a193-9e5129f05d6e",
+        "model": "grok-4.7"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

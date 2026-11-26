@@ -1,0 +1,19 @@
+pnpm-workspace.yaml
+  s_0a6227365f6357::t_81ae6615b05f20 18-31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "96a03db487fa935f3f4df368212bf80eb6f9f68e",
+  "prompts": {},
+  "sessions": {
+    "s_0a6227365f6357": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "eceeb3b4-8e18-47d1-a193-9e5129f05d6e",
+        "model": "grok-4.7"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
