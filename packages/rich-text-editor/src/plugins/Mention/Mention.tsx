@@ -5,7 +5,6 @@ import { defineContent, defineInline, definePlugin, type RtePlugin } from '#/cor
 import { MentionEditor } from './components/MentionEditor';
 import { MentionLink } from './components/MentionLink';
 import { mentionAttributes, mentionDisplay, resolvedUnknownLabels } from './helpers/display';
-import { withoutControlCharacters } from './helpers/text';
 import styles from './mention.module.scss';
 import {
     type MentionHref,
@@ -47,6 +46,12 @@ const assertMentionTrigger = (trigger: string, factory: string): void => {
 };
 
 /**
+ * Only whitespace, control and format characters (such as a zero-width space or a direction mark): nothing a
+ * reader sees.
+ */
+const INVISIBLE_ONLY = /^[\s\p{Cc}\p{Cf}]*$/u;
+
+/**
  * Throws when a label the host gave is blank
  */
 const assertUnknownLabels = (unknownLabels: MentionUnknownLabels | undefined, factory: string): void => {
@@ -54,7 +59,7 @@ const assertUnknownLabels = (unknownLabels: MentionUnknownLabels | undefined, fa
         const label = unknownLabels?.[kind];
 
         // A blank label draws a mention with no text and no accessible name.
-        if (label !== undefined && withoutControlCharacters(label).trim() === '') {
+        if (label !== undefined && INVISIBLE_ONLY.test(label)) {
             throw new Error(`${factory}: \`unknownLabels.${kind}\` must not be blank.`);
         }
     }

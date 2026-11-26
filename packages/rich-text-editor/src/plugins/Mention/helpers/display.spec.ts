@@ -4,8 +4,9 @@ import { describe, expect, it } from 'vitest';
 
 import { type MentionValue } from '../types';
 
-import { mentionAttributes, mentionDisplay } from './display';
+import { mentionAttributes, mentionDisplay, resolvedUnknownLabels } from './display';
 
+const RIGHT_TO_LEFT_OVERRIDE = String.fromCodePoint(0x202e);
 const JANE: MentionValue = { id: 'jane', username: 'jane', name: 'Jane Doe' };
 const href = (mention: MentionValue): string => `/u/${mention.id}`;
 const ENGLISH_LABELS = { user: 'Unknown person', group: 'Unknown group', all: 'Unknown mention' } as const;
@@ -84,5 +85,9 @@ describe('mentionDisplay', () => {
 
         expect(mentionAttributes(wrongKind)['data-mention-kind']).toBeUndefined();
         expect(mentionAttributes({ ...JANE, kind: 'group' })['data-mention-kind']).toBe('group');
+    });
+
+    it('strips control characters from a label the host gave', () => {
+        expect(resolvedUnknownLabels({ user: `Unbekannt${RIGHT_TO_LEFT_OVERRIDE}` }).user).toBe('Unbekannt');
     });
 });

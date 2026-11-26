@@ -16,6 +16,7 @@ const ENGLISH_LABELS = { user: 'Unknown person', group: 'Unknown group', all: 'U
 const GERMAN_LABELS = { user: 'Unbekannte Person', group: 'Unbekannte Gruppe', all: 'Unbekannte Erwähnung' } as const;
 
 const RIGHT_TO_LEFT_OVERRIDE = String.fromCodePoint(0x202e);
+const LEFT_TO_RIGHT_MARK = String.fromCodePoint(0x200e);
 
 const mentionFor = (href?: string) =>
     mentionPlugin({ items: [JANE], href: href === undefined ? undefined : () => href }).content?.inlines?.mention;
@@ -104,6 +105,7 @@ describe('the labels for a stored mention with no username', () => {
         expect(() => mentionContent({ unknownLabels: { group: '' } })).toThrow(/unknownLabels\.group/);
         expect(() => mentionPlugin({ items: [JANE], unknownLabels: { user: '   ' } })).toThrow(/unknownLabels\.user/);
         expect(() => mentionContent({ unknownLabels: { all: RIGHT_TO_LEFT_OVERRIDE } })).toThrow(/unknownLabels\.all/);
+        expect(() => mentionContent({ unknownLabels: { user: LEFT_TO_RIGHT_MARK } })).toThrow(/unknownLabels\.user/);
     });
 
     it('are the ones the host gave to mentionPlugin', () => {
