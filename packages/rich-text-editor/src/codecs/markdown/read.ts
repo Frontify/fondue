@@ -43,6 +43,16 @@ const FENCE = 'fence';
 const CODE_BLOCK = 'code_block';
 const LINK_OPEN = 'link_open';
 const LINK_TITLE = 'link_title';
+const LIST_ITEM_OPEN = 'list_item_open';
+const TASK_LIST_ITEM = 'task_list_item';
+const REFERENCE_DEFINITION = 'reference_definition';
+
+/** A GFM task marker at the start of an item: a checkbox of a space, `x` or `X`, then a space or tab. */
+const TASK_MARKER = /^\[[ xX]\][ \t]/;
+
+/** markdown-it gives a reference definition no token and no line, so it is reported at the first line. */
+const REFERENCE_DEFINITION_LINE = 1;
+
 const reportLoss = (context: ReadContext, type: string, line: number): void => {
     context.reportLoss?.({ type, line });
 };
@@ -486,9 +496,29 @@ const readSelfClosingBlock = (frame: Frame, token: MarkdownTokenNode, context: R
     }
 };
 
+/** The list item opened two tokens before the `inline` token, when that token is its first paragraph and starts with a task marker. */
+const taskItemOf = (tokens: readonly MarkdownTokenNode[], index: number): MarkdownTokenNode | null => {
+    const [item, paragraph, inline] = tokens.slice(index - 2, index + 1);
+    if (item?.type !== LIST_ITEM_OPEN || paragraph?.type !== PARAGRAPH_OPEN || inline === undefined) {
+        return null;
+    }
+    if (!TASK_MARKER.test(inline.content)) {
+        return null;
+    }
+
+    return item;
+};
+
 const readBlocks = (tokens: readonly MarkdownTokenNode[], context: ReadContext): RteBlockNode[] => {
     let frame: Frame = { kind: 'root', parent: null, blocks: [] };
     for (const [index, token] of tokens.entries()) {
+        if (token.type === INLINE_TOKEN) {
+            const taskItem = taskItemOf(tokens, index);
+            if (taskItem !== null) {
+                reportLoss(context, TASK_LIST_ITEM, taskItem.line);
+            }
+        }
+
         switch (token.nesting) {
             case OPENING:
                 frame = openFrame(frame, token, tokens[index + 1], context);
@@ -506,7 +536,12 @@ const readBlocks = (tokens: readonly MarkdownTokenNode[], context: ReadContext):
 };
 
 export const readDocument = (markdown: string, context: ReadContext): RteDocumentOf => {
-    const blocks = readBlocks(tokenize(markdown, { breaks: context.breaks }), context);
+    const { tokens, referenceLabels } = tokenize(markdown, { breaks: context.breaks });
+    for (const _label of referenceLabels) {
+        reportLoss(context, REFERENCE_DEFINITION, REFERENCE_DEFINITION_LINE);
+    }
+
+    const blocks = readBlocks(tokens, context);
     if (blocks.length === 0) {
         return emptyDocument();
     }

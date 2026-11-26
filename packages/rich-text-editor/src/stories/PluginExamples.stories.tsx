@@ -514,6 +514,8 @@ const BUTTON_LOOKS: Record<LinkAppearance, ButtonLook> = {
         paddingRight: '20px',
         paddingBottom: '8px',
         paddingLeft: '20px',
+        marginTop: '10px',
+        marginBottom: '10px',
         hover: { backgroundColor: '#3f27c4', borderColor: '#3f27c4' },
     },
     secondary: {

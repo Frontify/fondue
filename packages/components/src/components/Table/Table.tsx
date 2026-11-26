@@ -407,12 +407,27 @@ type TableRowProps = {
      * Accessible label for the row
      */
     'aria-label'?: string;
+    /**
+     * Whether the row is a Tab stop that arrow keys move between.
+     * Set to `false` when the row already holds its own focusable control, such as a selection checkbox,
+     * so keyboard users don't get two Tab stops per row.
+     * @default true
+     */
+    focusable?: boolean;
     'data-test-id'?: string;
 };
 
 export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
     (
-        { disabled = false, selected = false, onClick, children, 'aria-label': ariaLabel, 'data-test-id': dataTestId },
+        {
+            disabled = false,
+            selected = false,
+            focusable = true,
+            onClick,
+            children,
+            'aria-label': ariaLabel,
+            'data-test-id': dataTestId,
+        },
         ref,
     ) => {
         const isInteractive = onClick !== undefined && !disabled;
@@ -446,7 +461,7 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
             <tr
                 ref={ref}
                 className={styles.row}
-                tabIndex={0}
+                tabIndex={focusable ? 0 : undefined}
                 role={isInteractive ? 'button' : 'row'}
                 data-disabled={disabled}
                 data-interactive={isInteractive}
