@@ -15,6 +15,7 @@ import {
 import { APPEARANCES } from './helpers/appearance';
 import { ALL_LINK_APPEARANCES, type LinkKind } from './helpers/value';
 import { type LinkContentOptions, linkContent, linkPlugin, type LinkPluginOptions } from './Link';
+import styles from './link.module.scss';
 
 const BUTTON_KINDS: readonly LinkKind[] = ['text', 'button'];
 
@@ -303,6 +304,27 @@ describe('the link content', () => {
         };
 
         expect(linkContent(options)).toEqual(linkPlugin(options).content);
+    });
+});
+
+describe('the link content class', () => {
+    const contentClassOf = (look: LinkPluginOptions['look']): string | undefined =>
+        linkPlugin({ look }).content?.contentClassName;
+
+    it('is not set when the look has no box or margin field', () => {
+        expect(contentClassOf({ text: { color: 'red' } })).toBeUndefined();
+    });
+
+    it('turns on the text link box for a padding field', () => {
+        expect(contentClassOf({ text: { paddingTop: '2px' } })).toBe(styles.linkBox);
+    });
+
+    it('turns on the text link box for a border style alone', () => {
+        expect(contentClassOf({ text: { borderStyle: 'solid' } })).toBe(styles.linkBox);
+    });
+
+    it('turns on the margins of the button whose look sets one', () => {
+        expect(contentClassOf({ button: { primary: { marginTop: '10px' } } })).toBe(styles.buttonPrimaryMargins);
     });
 });
 

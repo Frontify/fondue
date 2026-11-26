@@ -1,9 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use 'sass:list';
 @use 'sass:map';
 
 @use '../../styles/look.module.scss';
 @use './underline' as link;
+
+// The width a border draws with when the host gives it a style but no width; with the style `none` it computes to 0.
+$border-width: 1px;
 
 /** A stylesheet rule, not inline, so an explicit font colour (written inline) still wins. */
 .link {
@@ -36,8 +40,6 @@
     }
 }
 
-$button-border-width: 1px;
-
 // Fondue's own Button colours for each kind, where the host sets no look.
 $buttons: (
     buttonPrimary: (
@@ -62,6 +64,34 @@ $buttons: (
         color-hover: var(--color-primary-hover),
     ),
 );
+
+// The button classes as selectors, which a text link's box leaves out.
+$button-selectors: ();
+@each $class in map.keys($buttons) {
+    $button-selectors: list.append($button-selectors, '.#{$class}', $separator: comma);
+}
+
+// A text link's box, only where the host's look sets one, so a page's own rule for anchors reaches links until then.
+// Buttons are excluded by class because the editor's anchor carries no `data-appearance`.
+.linkBox .link:not(#{$button-selectors}) {
+    &,
+    &:link,
+    &:visited {
+        padding-top: var(--rte-link-padding-top, 0);
+        padding-right: var(--rte-link-padding-right, 0);
+        padding-bottom: var(--rte-link-padding-bottom, 0);
+        padding-left: var(--rte-link-padding-left, 0);
+        background-color: var(--rte-link-background-color, transparent);
+        border-color: var(--rte-link-border-color, currentcolor);
+        border-width: var(--rte-link-border-width, #{$border-width});
+        border-radius: var(--rte-link-border-radius, 0);
+        border-style: var(--rte-link-border-style, none);
+
+        // A link that wraps draws its box, padding and border on each line.
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+    }
+}
 
 // A button link: the host's `--rte-button-<kind>-<property>`, falling back to Fondue's Button. It is written after
 // `.link` with the same selectors, so where both set a property the button wins.
@@ -94,7 +124,7 @@ $buttons: (
             padding-left: var(--rte-button-#{$kind}-padding-left, var(--spacing-small));
             background-color: var(--rte-button-#{$kind}-background-color, #{map.get($button, background)});
             border-color: var(--rte-button-#{$kind}-border-color, transparent);
-            border-width: var(--rte-button-#{$kind}-border-width, #{$button-border-width});
+            border-width: var(--rte-button-#{$kind}-border-width, #{$border-width});
             border-radius: var(--rte-button-#{$kind}-border-radius, var(--border-radius-medium));
         }
 
@@ -117,6 +147,16 @@ $buttons: (
         // The coloured-run underline of `.link` does not draw on a button.
         [style*='color'] {
             text-decoration: none;
+        }
+    }
+
+    // Only where the host's look sets a margin, so a page's own rule for anchors reaches buttons until then.
+    .#{$class}Margins .#{$class} {
+        &,
+        &:link,
+        &:visited {
+            margin-top: var(--rte-button-#{$kind}-margin-top, 0);
+            margin-bottom: var(--rte-button-#{$kind}-margin-bottom, 0);
         }
     }
 }
