@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type RteBlockNode, type RteDocumentOf } from './document';
+import { type RteBlockNode, type RteDocumentOf, type RteInlineNode } from './document';
 import { isEmpty } from './isEmpty';
 import { emptyDocument } from './vocabulary';
 
@@ -30,6 +30,13 @@ describe('isEmpty', () => {
     it('is true when the only text is whitespace, across any number of blocks and lists', () => {
         expect(isEmpty(doc(paragraph({ text: ' \n\t' }), paragraph(), paragraph({ text: '', bold: true })))).toBe(true);
         expect(isEmpty(doc(list([paragraph({ text: '' })])))).toBe(true);
+    });
+
+    it('is true when a text block has only an empty child slot', () => {
+        const childSlots = 1;
+        const children = Array<RteInlineNode>(childSlots);
+
+        expect(isEmpty(doc({ type: 'paragraph', children }))).toBe(true);
     });
 
     it('is false once there is text, however deep', () => {

@@ -18,13 +18,7 @@ const isBlank = (node: AnyNode): boolean => {
     }
 
     // An inline element's open attributes type `children` as unknown; a stored document nests only nodes.
-    for (const child of node.children as AnyNode[]) {
-        if (!isBlank(child)) {
-            return false;
-        }
-    }
-
-    return true;
+    return (node.children as AnyNode[]).every(isBlank);
 };
 
 /**
