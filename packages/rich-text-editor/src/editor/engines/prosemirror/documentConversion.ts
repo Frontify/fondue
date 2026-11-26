@@ -51,6 +51,18 @@ export const RAW_ATTR = 'raw';
 /** The attribute a document node or known block keeps its undeclared stored keys in, as one object (or null). */
 export const EXTRA_ATTR = '__rteExtra';
 
+/** The words in a piece of unknown content, for its placeholder to show. */
+export const plainTextOf = (raw: unknown): string => {
+    if (typeof raw !== 'object' || raw === null) {
+        return '';
+    }
+    const { text, children } = raw as { text?: unknown; children?: unknown };
+    if (typeof text === 'string') {
+        return text;
+    }
+    return Array.isArray(children) ? children.map(plainTextOf).join('') : '';
+};
+
 // --- Reading engine nodes: shared by both directions and the control API ---
 
 /** ProseMirror nodes are not iterable — children have to be indexed. */
@@ -190,12 +202,11 @@ const inlinesToEngine = (children: RteInlineNode[], schema: Schema): PmNode[] =>
     const nodes: PmNode[] = [];
     for (const child of children) {
         // Text nodes carry `text`, inline elements `type`; reading one discriminates the union.
-        // A node with both is a run; its `type` is a foreign key and rides in the unknown marks.
         if (child.text !== undefined) {
             if (child.text === '') {
                 continue;
             }
-            const { text, ...markValues } = child;
+            const { text, type: _type, ...markValues } = child;
             // `false` and `null` say the mark is off, as absent does.
             const marks: PmMark[] = [];
             const unknownMarks: Record<string, unknown> = {};

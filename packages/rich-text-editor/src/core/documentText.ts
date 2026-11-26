@@ -76,24 +76,16 @@ export const inlineNodeText = (inline: RteInlineNode, registry: ContentRegistry)
     return inlineText(children.filter(isStoredNode), registry);
 };
 
-/** A child stored as a block (it has a type the plugins know, or children of its own) rather than an inline. */
-export const isBlockLike = (node: unknown, registry: ContentRegistry): boolean => {
-    const { type, children } = node as { type?: unknown; children?: unknown };
-    return Array.isArray(children) || (typeof type === 'string' && registry.blocks.has(type));
-};
-
 /**
  * Whether a block holds other blocks, by its declared `content`; for a block
- * no plugin defines, by whether it has children and all of them are blocks.
+ * no plugin defines, by whether any child has children of its own.
  */
 const holdsBlocks = (block: RteBlockNode, registry: ContentRegistry): boolean => {
     const definition = registry.blocks.get(block.type);
     if (definition) {
         return typeof definition.content === 'object';
     }
-
-    const children = block.children ?? [];
-    return children.length > 0 && children.every((child) => isBlockLike(child, registry));
+    return (block.children ?? []).some((child) => Array.isArray((child as AnyNode).children));
 };
 
 /** One line per text block, lists flattened; a void block (a column break) adds none. */
@@ -106,10 +98,6 @@ const blockLines = (blocks: readonly RteBlockNode[], registry: ContentRegistry):
             ? blockLines(block.children as RteBlockNode[], registry)
             : [inlineText(block.children as RteInlineNode[], registry)];
     });
-
-/** The text one stored block holds, one line per text block, as `toPlainText` reads it. */
-export const blockText = (block: RteBlockNode, registry: ContentRegistry): string =>
-    blockLines([block], registry).join('\n');
 
 export type ToPlainTextOptions = {
     /**

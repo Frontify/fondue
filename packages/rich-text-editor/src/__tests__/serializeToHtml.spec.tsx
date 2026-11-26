@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type RteDocument, serializeToHtml } from '../index';
 import { defaultContent, defaultPlugins, linkPlugin, mentionPlugin } from '../plugins';
+
 import {
     documentWith,
     UNKNOWN_AROUND_MENTION,

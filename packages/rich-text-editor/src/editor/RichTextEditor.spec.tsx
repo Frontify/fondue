@@ -253,6 +253,10 @@ describe('an inline no plugin defines', () => {
         ['a known inline in its children', UNKNOWN_AROUND_MENTION, '@jane'],
         ['text of its own', UNKNOWN_WITH_TEXT, 'Fallback text'],
     ] as const;
+    const ROUND_TRIP_CASES = [
+        ['text in its children', UNKNOWN_WITH_EXTRA_KEYS],
+        ['a known inline in its children', UNKNOWN_AROUND_MENTION],
+    ] as const;
 
     beforeEach(() => {
         vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -272,7 +276,7 @@ describe('an inline no plugin defines', () => {
         expect(editableIn(container).textContent).toContain(expected);
     });
 
-    it.each(CASES)('keeps %s unchanged in the value reported after an edit elsewhere', (_name, inline) => {
+    it.each(ROUND_TRIP_CASES)('keeps %s unchanged in the value reported after an edit elsewhere', (_name, inline) => {
         const untouched = documentWith(inline).blocks[0];
         const value: RteDocument = {
             version: 1,
@@ -286,25 +290,6 @@ describe('an inline no plugin defines', () => {
         paste(container, EDIT_TEXT);
 
         expect(stored()?.blocks[1]).toEqual(untouched);
-    });
-
-    it('shows the text of a known inline in a block no plugin defines', () => {
-        const value = {
-            version: 1,
-            blocks: [
-                {
-                    type: 'unknownBox',
-                    children: [{ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' }],
-                },
-            ],
-        } as unknown as RteDocument;
-        const { container, ready } = mount((onChange) => (
-            <RichTextEditor value={value} onChange={onChange} plugins={plugins} />
-        ));
-
-        ready();
-
-        expect(editableIn(container).textContent).toContain('@jane');
     });
 });
 

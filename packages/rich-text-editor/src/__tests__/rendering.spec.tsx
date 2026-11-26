@@ -24,6 +24,7 @@ import {
     mentionPlugin,
     textStyleContent,
 } from '../plugins';
+
 import {
     documentWith,
     UNKNOWN_AROUND_MENTION,
@@ -294,9 +295,7 @@ describe('an inline no plugin defines', () => {
     });
 
     it('draws a known inline in its children through the plugin that defines it', () => {
-        const container = rendered(
-            <RichTextRenderer value={documentWith(UNKNOWN_AROUND_MENTION)} plugins={plugins} />,
-        );
+        const container = rendered(<RichTextRenderer value={documentWith(UNKNOWN_AROUND_MENTION)} plugins={plugins} />);
 
         expect(container.querySelector(MENTION_MARKUP)).not.toBeNull();
     });
