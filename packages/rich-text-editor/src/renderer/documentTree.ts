@@ -43,7 +43,7 @@ type Options = { useComponents: boolean };
 /**
  * A node no plugin passed in defines — a plugin left out, or a document from
  * a newer version. Drawing what can be drawn beats losing the whole document,
- * so it is skipped (a block keeps its content) and, in development, named once.
+ * so a block or inline draws its content, a mark is skipped and, in development, each is named once.
  */
 const warnedUnknown = new Set<string>();
 const warnUnknownType = (kind: 'block' | 'inline' | 'mark', type: string): void => {

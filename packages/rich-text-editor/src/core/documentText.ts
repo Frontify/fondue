@@ -102,7 +102,7 @@ const blockLines = (blocks: readonly RteBlockNode[], registry: ContentRegistry):
 export type ToPlainTextOptions = {
     /**
      * The plugins, or only their content, whose inlines to read. An inline
-     * whose plugin is missing contributes nothing.
+     * whose plugin is missing contributes its children's text, or its own `text`.
      */
     plugins: readonly (RtePlugin | RteContent)[];
 };
