@@ -5,11 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { isEmpty, type RteDocument, toPlainText } from '../index';
 import { defaultContent, defaultPlugins, mentionPlugin } from '../plugins';
 
-import {
-    documentWith,
-    UNKNOWN_INLINE_CASES,
-    UNKNOWN_WITH_NULL_CHILD,
-} from './fixtures/unknownInlines';
+import { documentWith, UNKNOWN_INLINE_CASES, UNKNOWN_WITH_NULL_CHILD } from './fixtures/unknownInlines';
 
 // The document helpers against the shipped plugins; their rules are in `core/documentText.spec.ts`.
 

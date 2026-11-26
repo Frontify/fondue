@@ -291,7 +291,9 @@ describe('an inline no plugin defines', () => {
     });
 
     it('draws the text run beside a child that is not an object', () => {
-        const container = rendered(<RichTextRenderer value={documentWith(UNKNOWN_WITH_NULL_CHILD)} plugins={plugins} />);
+        const container = rendered(
+            <RichTextRenderer value={documentWith(UNKNOWN_WITH_NULL_CHILD)} plugins={plugins} />,
+        );
 
         expect(container.textContent).toContain('Before Read more after');
     });
