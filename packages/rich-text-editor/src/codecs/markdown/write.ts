@@ -753,35 +753,48 @@ const writtenTextNextTo = (segment: Segment | undefined): string => {
     return '';
 };
 
+type WriteTextSegmentParams = {
+    segment: Extract<Segment, { kind: 'text' }>;
+    segments: readonly Segment[];
+    index: number;
+    atLineStart: boolean;
+    lineMode: LineMode;
+};
+
+/** A text segment escaped for where it sits: its line position, the written text beside it, and a table cell's pipes. */
+const writeTextSegment = ({ segment, segments, index, atLineStart, lineMode }: WriteTextSegmentParams): string => {
+    let position: TextPosition = 'inline';
+    if (atLineStart) {
+        position = 'lineStart';
+    }
+
+    const previous = segments[index - 1];
+    const next = segments[index + 1];
+    const neighbours: TextNeighbours = {
+        before: writtenTextNextTo(previous),
+        after: writtenTextNextTo(next),
+    };
+
+    let text = escapeText(segment.text, position, segment.scope, neighbours);
+    if (lineMode === 'tableCell') {
+        text = text.replaceAll(PIPE, ESCAPED_PIPE);
+    }
+    if (next?.kind === 'written' && next.text.startsWith(LINK_OPEN)) {
+        text = escapeTrailingBang(text);
+    }
+
+    return text;
+};
+
 const writeSegments = (segments: readonly Segment[], lineMode: LineMode, state: WriteState): string => {
     let written = '';
     let atLineStart = true;
     for (const [index, segment] of segments.entries()) {
         switch (segment.kind) {
-            case 'text': {
-                let position: TextPosition = 'inline';
-                if (atLineStart) {
-                    position = 'lineStart';
-                }
-
-                const previous = segments[index - 1];
-                const next = segments[index + 1];
-                const neighbours: TextNeighbours = {
-                    before: writtenTextNextTo(previous),
-                    after: writtenTextNextTo(next),
-                };
-
-                let text = escapeText(segment.text, position, segment.scope, neighbours);
-                if (lineMode === 'tableCell') {
-                    text = text.replaceAll(PIPE, ESCAPED_PIPE);
-                }
-                if (next?.kind === 'written' && next.text.startsWith(LINK_OPEN)) {
-                    text = escapeTrailingBang(text);
-                }
-                written += text;
+            case 'text':
+                written += writeTextSegment({ segment, segments, index, atLineStart, lineMode });
                 atLineStart = false;
                 break;
-            }
             case 'written':
                 written += segment.text;
                 atLineStart = false;
