@@ -31,6 +31,7 @@ export const BarChart = <DataPointDetails extends Record<string, any> | void = v
     allowDecimalTickValues = true,
     legendPosition = 'top',
     valueFormatter = DEFAULT_VALUE_FORMATTER,
+    tooltipValueFormatter,
     labelFormatter = DEFAULT_LABEL_FORMATTER,
     maxLabelLength = DEFAULT_MAX_LABEL_LENGTH,
     onBarClick,
@@ -103,7 +104,7 @@ export const BarChart = <DataPointDetails extends Record<string, any> | void = v
                         colorAccessor={(key) => colorAccessorByKey(key, series)}
                         horizontal={horizontal}
                         scalePadding={scalePadding}
-                        valueFormatter={valueFormatter}
+                        valueFormatter={tooltipValueFormatter ?? valueFormatter}
                         labelFormatter={labelFormatter}
                     />
                 </XYChart>

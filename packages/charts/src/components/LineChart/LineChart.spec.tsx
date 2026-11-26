@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { render } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type * as CommonComponents from '@components/common/components';
 import { LineChart } from '@components/LineChart';
 
 const dataWithMissingValues = [
@@ -28,11 +29,25 @@ vi.mock('@visx/scale', () => ({
     }),
 }));
 
+const tooltipProps = vi.hoisted(() => vi.fn());
+
+vi.mock('@components/common/components', async (importOriginal) => ({
+    ...(await importOriginal<typeof CommonComponents>()),
+    Tooltip: (props: unknown) => {
+        tooltipProps(props);
+        return null;
+    },
+}));
+
 vi.mock('@components/common/hooks', () => ({
     useMargin: vi.fn().mockReturnValue({ top: 0, right: 0, bottom: 0, left: 0 }),
 }));
 
 describe('LineChart', () => {
+    beforeEach(() => {
+        tooltipProps.mockClear();
+    });
+
     it('Should read the data-ready attribute and set the value', () => {
         const { container } = render(<LineChart series={dataWithMissingValues} width={400} height={200} />);
 
@@ -40,5 +55,30 @@ describe('LineChart', () => {
 
         expect(svgContainer?.getAttribute('width')).toBe('400');
         expect(svgContainer?.getAttribute('height')).toBe('200');
+    });
+
+    it('Should format the tooltip values with the tooltip value formatter when given', () => {
+        const valueFormatter = vi.fn();
+        const tooltipValueFormatter = vi.fn();
+
+        render(
+            <LineChart
+                series={dataWithMissingValues}
+                width={400}
+                height={200}
+                valueFormatter={valueFormatter}
+                tooltipValueFormatter={tooltipValueFormatter}
+            />,
+        );
+
+        expect(tooltipProps).toHaveBeenCalledWith(expect.objectContaining({ valueFormatter: tooltipValueFormatter }));
+    });
+
+    it('Should format the tooltip values with the value formatter when no tooltip value formatter is given', () => {
+        const valueFormatter = vi.fn();
+
+        render(<LineChart series={dataWithMissingValues} width={400} height={200} valueFormatter={valueFormatter} />);
+
+        expect(tooltipProps).toHaveBeenCalledWith(expect.objectContaining({ valueFormatter }));
     });
 });

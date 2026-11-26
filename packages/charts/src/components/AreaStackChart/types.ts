@@ -26,6 +26,7 @@ export type AreaStackChartProps = {
     legendPosition?: LegendPosition;
     markLine?: MarkLineProps;
     valueFormatter?: ValueFormatter;
+    tooltipValueFormatter?: ValueFormatter;
     domain?: 'storage' | 'count';
     dateGranularity?: DateGranularity;
 };

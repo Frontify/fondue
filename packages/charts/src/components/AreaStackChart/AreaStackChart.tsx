@@ -32,6 +32,7 @@ export const AreaStackChart = ({
     legendPosition = LEGEND_POSITION_TOP,
     markLine,
     valueFormatter,
+    tooltipValueFormatter,
     childSumLabel,
     domain = COUNT_DOMAIN,
     dateGranularity,
@@ -83,7 +84,7 @@ export const AreaStackChart = ({
                     colorAccessor={(key) => colorAccessorByKey(key, series)}
                     missingValueLabel={missingValueLabel}
                     childSumLabel={childSumLabel}
-                    valueFormatter={valueFormatter}
+                    valueFormatter={tooltipValueFormatter ?? valueFormatter}
                     locale={locale}
                     stackingGlyphs
                     dateGranularity={dateGranularity}

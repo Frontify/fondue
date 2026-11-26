@@ -39,6 +39,7 @@ export type BarChartProps<DataPointDetails extends Record<string, any> | void = 
     allowDecimalTickValues?: boolean;
     legendPosition?: LegendPosition;
     valueFormatter?: ValueFormatter;
+    tooltipValueFormatter?: ValueFormatter;
     labelFormatter?: LabelFormatter;
     maxLabelLength?: number;
     onBarClick?: (e: BarChartClickHandlerParams<DataPointDetails>) => void;

@@ -34,5 +34,6 @@ export type LineChartProps = {
     highlightNegativeValues?: boolean;
     markLine?: MarkLineProps;
     valueFormatter?: ValueFormatter;
+    tooltipValueFormatter?: ValueFormatter;
     dateGranularity?: DateGranularity;
 };

@@ -27,6 +27,7 @@ export const LineChart = ({
     highlightNegativeValues = false,
     markLine,
     valueFormatter,
+    tooltipValueFormatter,
     dateGranularity,
 }: LineChartProps) => {
     const backfilledSeries = createBackfilledSeries(series);
@@ -82,7 +83,7 @@ export const LineChart = ({
                     hideGlyphs={false}
                     colorAccessor={(key) => colorAccessorByKey(key, series)}
                     missingValueLabel={missingValueLabel}
-                    valueFormatter={valueFormatter}
+                    valueFormatter={tooltipValueFormatter ?? valueFormatter}
                     locale={locale}
                     dateGranularity={dateGranularity}
                 />
