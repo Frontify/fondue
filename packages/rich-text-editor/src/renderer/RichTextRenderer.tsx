@@ -53,16 +53,13 @@ export const RegistryRenderer = ({
     registry,
     className,
     'data-test-id': dataTestId,
-}: RegistryRendererProps): ReactNode => {
-    const root = documentRootSpec(registry, className);
-
-    return specToReact(
-        { ...root, attrs: { id, ...root.attrs, 'data-test-id': dataTestId } },
+}: RegistryRendererProps): ReactNode =>
+    specToReact(
+        documentRootSpec(registry, { id, className, 'data-test-id': dataTestId }),
         // Blocks carry no id; position is the only key, and the memo skips unchanged ones.
         // eslint-disable-next-line @eslint-react/no-array-index-key
         value.blocks.map((block, index) => <Block key={index} block={block} registry={registry} />),
     );
-};
 
 /** A stored document as React, with no editing engine: readonly display, client or server. */
 export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlockNode>({
