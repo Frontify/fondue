@@ -581,18 +581,21 @@ const splitKeepingCarriedAttrs =
  */
 const selectWhenJoinRefused =
     (join: Command, select: Command): Command =>
-    (state, dispatch) => {
+    (state, dispatch, view) => {
         const recorded: Transaction[] = [];
-        if (!join(state, (transaction) => recorded.push(transaction))) {
+        if (!join(state, (transaction) => recorded.push(transaction), view)) {
             return false;
         }
-        const transaction = recorded.at(0);
+
+        const transaction = recorded[0];
         if (transaction === undefined) {
             return true;
         }
-        if (!state.filterTransaction(transaction)) {
-            return select(state, dispatch);
+        // A filter that refuses the join applies nothing.
+        if (state.applyTransaction(transaction).transactions.length === 0) {
+            return select(state, dispatch, view);
         }
+
         dispatch?.(transaction);
         return true;
     };
