@@ -51,6 +51,15 @@ describe('an inline no plugin defines, read as plain text', () => {
     ])('reads %s in line with the text around it', (_name, inline, expected) => {
         expect(toPlainText(documentWith(inline), { plugins })).toBe(`Before ${expected} after`);
     });
+
+    it('reads a run and an inline in a block no plugin defines', () => {
+        const unknownBox = {
+            type: 'unknownBox',
+            children: [{ text: 'hi ' }, UNKNOWN_WITH_EXTRA_KEYS],
+        } as unknown as RteDocument['blocks'][number];
+
+        expect(toPlainText({ version: 1, blocks: [unknownBox] }, { plugins })).toBe('hi Read more');
+    });
 });
 
 describe('isEmpty', () => {

@@ -6,18 +6,19 @@ import {
     ANY_LIST,
     type BlockDefinition,
     blockHtml,
+    blockText,
     type ContentRegistry,
     type InlineDefinition,
     inlineNodeText,
     type MarkDefinition,
     PARAGRAPH,
     type PluginRegistry,
+    type RteBlockNode,
     type RteInlineNode,
 } from '#/core';
 
 import {
     EXTRA_ATTR,
-    plainTextOf,
     RAW_ATTR,
     UNKNOWN_BLOCK,
     UNKNOWN_INLINE,
@@ -183,13 +184,18 @@ const markSpec = (
 // Shown, never edited: the words it holds, in a box the caret steps over. No
 // parse rules, so pasting one in elsewhere brings its words, not the node.
 
-const unknownBlockSpec: PmNodeSpec = {
+const unknownBlockSpec = (registry: ContentRegistry): PmNodeSpec => ({
     group: 'block',
     atom: true,
     selectable: true,
     attrs: { [RAW_ATTR]: {} },
-    toDOM: (node) => ['div', { 'data-rte-unknown': '', contenteditable: 'false' }, plainTextOf(node.attrs[RAW_ATTR])],
-};
+    toDOM: (node) => [
+        'div',
+        { 'data-rte-unknown': '', contenteditable: 'false' },
+        // The raw attribute holds the stored node as it came in.
+        blockText(node.attrs[RAW_ATTR] as RteBlockNode, registry),
+    ],
+});
 
 const unknownInlineSpec = (registry: ContentRegistry): PmNodeSpec => ({
     group: 'inline',
@@ -233,7 +239,7 @@ export const buildSchema = (registry: PluginRegistry): Schema => {
     for (const [type, inline] of registry.inlines) {
         nodes[type] = inlineNodeSpec(inline, registry.edits.has(type));
     }
-    nodes[UNKNOWN_BLOCK] = unknownBlockSpec;
+    nodes[UNKNOWN_BLOCK] = unknownBlockSpec(registry);
     nodes[UNKNOWN_INLINE] = unknownInlineSpec(registry);
 
     // invariant (2): the registry already holds marks in nesting order.

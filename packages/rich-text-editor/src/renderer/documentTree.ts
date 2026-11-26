@@ -15,6 +15,7 @@ import {
     blockValueOf,
     type ContentRegistry,
     type HtmlSpec,
+    isBlockLike,
     type MarkDefinition,
     type RteBlockNode,
     type RteDocumentOf,
@@ -227,12 +228,6 @@ const textBlockContent = (block: RteBlockNode, registry: ContentRegistry, option
         content.push(html({ tag: 'br' }));
     }
     return content;
-};
-
-/** A child stored as a block (it has a type the plugins know, or children of its own) rather than an inline. */
-const isBlockLike = (node: unknown, registry: ContentRegistry): boolean => {
-    const { type, children } = node as { type?: unknown; children?: unknown };
-    return Array.isArray(children) || (typeof type === 'string' && registry.blocks.has(type));
 };
 
 /**

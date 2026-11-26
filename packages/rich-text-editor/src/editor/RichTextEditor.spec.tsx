@@ -9,6 +9,12 @@ import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import {
+    documentWith,
+    UNKNOWN_AROUND_MENTION,
+    UNKNOWN_WITH_EXTRA_KEYS,
+    UNKNOWN_WITH_TEXT,
+} from '#/__tests__/fixtures/unknownInlines';
 import { type RteToolbarGroup } from '#/core';
 import { deDE } from '#/locales/de-DE';
 
@@ -33,12 +39,6 @@ import {
     mentionPlugin,
     textStylePlugin,
 } from '../plugins';
-import {
-    documentWith,
-    UNKNOWN_AROUND_MENTION,
-    UNKNOWN_WITH_EXTRA_KEYS,
-    UNKNOWN_WITH_TEXT,
-} from '../__tests__/fixtures/unknownInlines';
 
 import { useFocusWithin } from './hooks/useFocusWithin';
 
@@ -286,6 +286,25 @@ describe('an inline no plugin defines', () => {
         paste(container, EDIT_TEXT);
 
         expect(stored()?.blocks[1]).toEqual(untouched);
+    });
+
+    it('shows the text of a known inline in a block no plugin defines', () => {
+        const value = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'unknownBox',
+                    children: [{ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' }],
+                },
+            ],
+        } as unknown as RteDocument;
+        const { container, ready } = mount((onChange) => (
+            <RichTextEditor value={value} onChange={onChange} plugins={plugins} />
+        ));
+
+        ready();
+
+        expect(editableIn(container).textContent).toContain('@jane');
     });
 });
 
