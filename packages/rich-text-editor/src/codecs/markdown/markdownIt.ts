@@ -2,7 +2,7 @@
 
 // The one place markdown-it is imported: it turns Markdown into tokens of this package's own type.
 
-import MarkdownItParser, { type MarkdownIt, type Token } from 'markdown-it';
+import MarkdownItParser, { type MarkdownIt, type Token } from 'markdown-it/browser';
 
 import { type MarkdownToken } from '#/core';
 
@@ -13,6 +13,7 @@ export type TokenNesting = -1 | 0 | 1;
 export type MarkdownTokenNode = MarkdownToken & {
     nesting: TokenNesting;
     children: readonly MarkdownTokenNode[];
+    line: number;
 };
 
 export type TokenizeOptions = {
@@ -123,17 +124,37 @@ const parserFor = (breaks: boolean): MarkdownIt => {
     return parser;
 };
 
-const nodeOf = (token: Token): MarkdownTokenNode => ({
+const FIRST_SOURCE_LINE = 1;
+
+const sourceLineOf = (token: Token, precedingLine: number): number => {
+    const start = token.map?.[0];
+    if (start === undefined) {
+        return precedingLine;
+    }
+
+    return start + FIRST_SOURCE_LINE;
+};
+
+const nodeOf = (token: Token, line: number): MarkdownTokenNode => ({
     type: token.type,
     tag: token.tag,
     attrs: Object.fromEntries((token.attrs ?? []).map(([name, value]) => [name, String(value)])),
     content: token.content,
     nesting: token.nesting,
-    children: (token.children ?? []).map(nodeOf),
+    children: (token.children ?? []).map((child) => nodeOf(child, line)),
+    line,
 });
 
 /** The Markdown as a flat token stream: block tokens, each `inline` one holding its inline tokens. */
-export const tokenize = (markdown: string, { breaks }: TokenizeOptions): MarkdownTokenNode[] =>
-    parserFor(breaks).parse(markdown, {}).map(nodeOf);
+export const tokenize = (markdown: string, { breaks }: TokenizeOptions): MarkdownTokenNode[] => {
+    const nodes: MarkdownTokenNode[] = [];
+    let line = FIRST_SOURCE_LINE;
+    for (const token of parserFor(breaks).parse(markdown, {})) {
+        line = sourceLineOf(token, line);
+        nodes.push(nodeOf(token, line));
+    }
+
+    return nodes;
+};
 
 export type Tokenize = typeof tokenize;

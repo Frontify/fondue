@@ -16,6 +16,10 @@ const externalCandidates = [...Object.keys(dependenciesMap), ...Object.keys(peer
 const matchesExternalCandidate = (id: string) =>
     externalCandidates.some((pkg) => id === pkg || id.startsWith(`${pkg}/`));
 
+const MARKDOWN_PARSER_MODULE = '/node_modules/markdown-it/';
+const MARKDOWN_PARSER_OUTPUT = 'codecs/markdown/parser.es.js';
+const MODULE_FILE_NAME = '[name].es.js';
+
 const STYLE_FILE = /\.(css|scss|sass|less|styl)(\?|$)/;
 
 const externalizeJsDeps = (): Plugin => ({
@@ -111,7 +115,6 @@ export default defineConfig({
                 plugins: './src/plugins/index.ts',
                 codecs: './src/codecs/index.ts',
             },
-            fileName: (format: string) => `[name].${format}.js`,
             formats: ['es'],
             cssFileName: 'style',
         },
@@ -123,6 +126,14 @@ export default defineConfig({
                     format: 'es',
                     preserveModules: true,
                     preserveModulesRoot: 'src',
+                    entryFileNames: ({ facadeModuleId }) => {
+                        // npm omits node_modules from a tarball, including preserved modules.
+                        if (facadeModuleId?.includes(MARKDOWN_PARSER_MODULE)) {
+                            return MARKDOWN_PARSER_OUTPUT;
+                        }
+
+                        return MODULE_FILE_NAME;
+                    },
                 },
             ],
         },
