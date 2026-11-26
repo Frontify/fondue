@@ -179,6 +179,25 @@ describe('the element a document sits in', () => {
         expect(view?.classList.length).toBe(3);
     });
 
+    it('carries the id and the test id the host gives it', () => {
+        const root = rendered(
+            <RichTextRenderer id="doc-1" value={doc} plugins={plugins} data-test-id="reading-view" />,
+        ).firstElementChild;
+
+        expect(root?.getAttribute('id')).toBe('doc-1');
+        expect(root?.getAttribute('data-test-id')).toBe('reading-view');
+    });
+
+    it('has no id or test id when the host gives none', () => {
+        const root = rendered(<RichTextRenderer value={doc} plugins={plugins} />).firstElementChild;
+        const withUndefined = rendered(
+            <RichTextRenderer id={undefined} value={doc} plugins={plugins} data-test-id={undefined} />,
+        ).firstElementChild;
+
+        expect([...(root?.getAttributeNames() ?? [])].sort()).toEqual(['class', 'style']);
+        expect(root?.outerHTML).toBe(withUndefined?.outerHTML);
+    });
+
     it('is left out of export with wrap: false', () => {
         expect(serializeToHtml(doc, { plugins, wrap: false })).toBe('<p>Hello</p>');
     });
