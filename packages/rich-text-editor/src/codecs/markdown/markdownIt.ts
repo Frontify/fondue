@@ -2,7 +2,7 @@
 
 // The one place markdown-it is imported: it turns Markdown into tokens of this package's own type.
 
-import MarkdownItParser, { type MarkdownIt, type Token } from 'markdown-it/browser';
+import MarkdownItParser, { type Env, type MarkdownIt, type Token } from 'markdown-it/browser';
 
 import { type MarkdownToken } from '#/core';
 
@@ -153,7 +153,7 @@ const nodeOf = (token: Token, line: number): MarkdownTokenNode => ({
 
 /** The Markdown as a flat token stream: block tokens, each `inline` one holding its inline tokens. */
 export const tokenize = (markdown: string, { breaks }: TokenizeOptions): Tokenized => {
-    const env: { references?: Record<string, unknown> } = {};
+    const env: Env = {};
     const tokens: MarkdownTokenNode[] = [];
     let line = FIRST_SOURCE_LINE;
     for (const token of parserFor(breaks).parse(markdown, env)) {
