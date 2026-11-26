@@ -26,6 +26,7 @@ export const ptPT: RichTextStrings = {
     RichTextEditor_custom1: 'Personalizado 1',
     RichTextEditor_custom2: 'Personalizado 2',
     RichTextEditor_custom3: 'Personalizado 3',
+    RichTextEditor_divider: 'Divisor',
     RichTextEditor_edit: 'Editar',
     RichTextEditor_editor: 'Editor de texto formatado',
     RichTextEditor_editorFailed: 'O editor deixou de funcionar. Tente carregá-lo novamente.',

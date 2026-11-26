@@ -3,12 +3,15 @@
 import { describe, expect, it } from 'vitest';
 
 import { type MarkdownMarkForm } from '../../core';
-import { bulletListContent, defaultContent, mentionContent } from '../../plugins';
+import { bulletListContent, defaultContent, horizontalRuleContent, mentionContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, parseMarkdownWithLosses } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
+import { starBreakContent } from './starBreak.fixture';
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
+
+const RULE_OPTIONS: MarkdownOptions = { plugins: [...defaultContent, horizontalRuleContent] };
 
 const EMPTY_DOCUMENT = { version: 1, blocks: [{ type: 'paragraph', children: [{ text: '' }] }] };
 
@@ -248,6 +251,48 @@ describe('parseMarkdown lists', () => {
     });
 });
 
+const HORIZONTAL_RULE_DOCUMENT = { version: 1, blocks: [{ type: 'horizontalRule' }] };
+
+describe('parseMarkdown horizontal rules', () => {
+    it('reads a rule between two paragraphs as a horizontal rule block', () => {
+        expect(parseMarkdown('a\n\n---\n\nb', RULE_OPTIONS)).toEqual({
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'horizontalRule' },
+                { type: 'paragraph', children: [{ text: 'b' }] },
+            ],
+        });
+    });
+
+    it.each(['---', '***', '___', '* * *'])('reads %s alone as only a horizontal rule block', (markdown) => {
+        expect(parseMarkdownWithLosses(markdown, RULE_OPTIONS)).toEqual({
+            document: HORIZONTAL_RULE_DOCUMENT,
+            losses: [],
+        });
+    });
+
+    it('reads a dashed line right under a paragraph as a level 2 heading, not a rule', () => {
+        expect(parseMarkdown('a\n---', RULE_OPTIONS)).toEqual({
+            version: 1,
+            blocks: [{ type: 'textStyle', style: 'heading2', children: [{ text: 'a' }] }],
+        });
+    });
+});
+
+describe('parseMarkdown a void block with a Markdown form', () => {
+    it('reads its marker alone between two paragraphs as that block', () => {
+        expect(parseMarkdown('a\n\n***\n\nb', { plugins: [...defaultContent, starBreakContent] })).toEqual({
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'starBreak' },
+                { type: 'paragraph', children: [{ text: 'b' }] },
+            ],
+        });
+    });
+});
+
 describe('parseMarkdown with no text to put in a block', () => {
     const EMPTY_ITEM_LIST = {
         version: 1,
@@ -265,10 +310,6 @@ describe('parseMarkdown with no text to put in a block', () => {
 
     it('reads a list marker followed by a space as an item holding one empty paragraph', () => {
         expect(parseMarkdown('- ', OPTIONS)).toEqual(EMPTY_ITEM_LIST);
-    });
-
-    it('reads Markdown that is only a horizontal rule as the empty document', () => {
-        expect(parseMarkdown('---', OPTIONS)).toEqual(EMPTY_DOCUMENT);
     });
 
     it('reads Markdown that is only an empty quote as the empty document', () => {
@@ -328,8 +369,8 @@ describe('parseMarkdown with nothing to read a token by', () => {
         });
     });
 
-    it('drops a horizontal rule', () => {
-        expect(parseMarkdown('a\n\n---\n\nb', OPTIONS)).toEqual({
+    it('drops a horizontal rule when no plugin has one', () => {
+        expect(parseMarkdown('a\n\n---\n\nb', { plugins: [] })).toEqual({
             version: 1,
             blocks: [
                 { type: 'paragraph', children: [{ text: 'a' }] },

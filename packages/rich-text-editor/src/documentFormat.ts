@@ -17,6 +17,7 @@ import { type CheckItemBlock, type CheckListBlock } from './plugins/CheckList';
 import { type CodeMark } from './plugins/Code';
 import { type ColumnBreakBlock } from './plugins/ColumnBreak';
 import { type FontColorMark } from './plugins/FontColor';
+import { type HorizontalRuleBlock } from './plugins/HorizontalRule';
 import { type ItalicMark } from './plugins/Italic';
 import { type LinkMark } from './plugins/Link';
 import { type BulletListBlock, type ListItemBlock, type NumberedListBlock } from './plugins/List';
@@ -111,6 +112,7 @@ type OfficialList<TExtraInline extends RteInlineNode> =
 export type RteBlock<TExtraInline extends RteInlineNode = never> =
     | WithOfficialChildren<ParagraphBlock | QuoteBlock | TextStyleBlock, TExtraInline>
     | ColumnBreakBlock
+    | HorizontalRuleBlock
     | OfficialList<TExtraInline>
     | OfficialTable<TExtraInline>;
 

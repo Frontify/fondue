@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { type RteBlock, type RteDocument, type RteDocumentWith } from '../../documentFormat';
-import { bulletListContent, defaultContent } from '../../plugins';
+import { bulletListContent, defaultContent, horizontalRuleContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
@@ -15,6 +15,8 @@ type RoundTripCase = {
 };
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
+
+const RULE_OPTIONS: MarkdownOptions = { plugins: [...defaultContent, horizontalRuleContent] };
 
 const expectRoundTrip = ({ markdown, document }: RoundTripCase, options: MarkdownOptions = OPTIONS) => {
     expect(parseMarkdown(markdown, options)).toEqual(document);
@@ -409,6 +411,63 @@ describe('markdown round trip with breaks', () => {
 
         expect(losses).toEqual([]);
         expect(parseMarkdown(markdown, BREAKS_OPTIONS)).toEqual(document);
+    });
+});
+
+const RULE_CASES: readonly RoundTripCase[] = [
+    {
+        name: 'a rule between paragraphs',
+        markdown: 'a\n\n---\n\nb',
+        document: {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'horizontalRule' },
+                { type: 'paragraph', children: [{ text: 'b' }] },
+            ],
+        },
+    },
+    {
+        name: 'a rule first',
+        markdown: '---\n\na',
+        document: {
+            version: 1,
+            blocks: [{ type: 'horizontalRule' }, { type: 'paragraph', children: [{ text: 'a' }] }],
+        },
+    },
+    {
+        name: 'a rule last',
+        markdown: 'a\n\n---',
+        document: {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a' }] }, { type: 'horizontalRule' }],
+        },
+    },
+];
+
+describe('markdown round trip of horizontal rules', () => {
+    for (const ruleCase of RULE_CASES) {
+        it(`gives back the same Markdown and document for ${ruleCase.name}`, () => {
+            expectRoundTrip(ruleCase, RULE_OPTIONS);
+        });
+
+        it(`gives back the same Markdown and document for ${ruleCase.name} with breaks: true`, () => {
+            expectRoundTrip(ruleCase, { ...RULE_OPTIONS, breaks: true });
+        });
+    }
+});
+
+describe('markdown round trip of a paragraph that looks like a horizontal rule', () => {
+    it.each([
+        ['-- -', String.raw`\-- -`],
+        ['--- -', String.raw`\--- -`],
+        ['-- --', String.raw`\-- --`],
+        ['** *', String.raw`\*\* \*`],
+        ['__ _', String.raw`\_\_ \_`],
+    ])('keeps %s a paragraph', (text, markdown) => {
+        const document: RteDocument = { version: 1, blocks: [{ type: 'paragraph', children: [{ text }] }] };
+
+        expectRoundTrip({ name: text, markdown, document }, RULE_OPTIONS);
     });
 });
 

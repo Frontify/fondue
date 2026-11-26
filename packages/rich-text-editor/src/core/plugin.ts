@@ -459,6 +459,7 @@ export type MarkdownTextPattern<TValue> = { pattern: RegExp; value: (match: RegE
 /**
  * What a block writes before its first line and before every later line. `rest` is null for a block that holds
  * one line (a heading): a line break inside it writes as a space, and is a loss.
+ * A void block writes its `first` alone as its line.
  */
 export type MarkdownLinePrefix = { first: string; rest: string | null };
 

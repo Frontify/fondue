@@ -3,7 +3,7 @@
 // @vitest-environment happy-dom
 
 import { undo } from 'prosemirror-history';
-import { TextSelection } from 'prosemirror-state';
+import { NodeSelection, TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -19,7 +19,7 @@ import {
     type RteBlockNode,
     type RtePlugin,
 } from '#/core';
-import { defaultPlugins } from '#/plugins';
+import { defaultPlugins, horizontalRulePlugin } from '#/plugins';
 
 import { trimTrailingPunctuation } from './autolink';
 import { destroyEditors, editorWith, paragraph, shipped, text, TOKEN_TRIM } from './testEditor';
@@ -362,7 +362,25 @@ describe('undoing a typing rewrite', () => {
     });
 });
 
+// After the first paragraph, which takes three positions.
+const RULE_POSITION = 3;
+
 describe('Backspace', () => {
+    it('removes a selected horizontal rule', () => {
+        const editor = editorWith(
+            [...defaultPlugins, horizontalRulePlugin()],
+            [paragraph(text('a')), { type: 'horizontalRule' }, paragraph(text('b'))],
+        );
+        editor.view.dispatch(
+            editor.view.state.tr.setSelection(NodeSelection.create(editor.view.state.doc, RULE_POSITION)),
+        );
+        expect(editor.view.dom.querySelector('hr')).not.toBeNull();
+
+        expect(press(editor.view, 'Backspace')).toBe(true);
+
+        expect(editor.stored()).toEqual([paragraph(text('a')), paragraph(text('b'))]);
+    });
+
     it('turns an emptied, centred heading back into a plain paragraph', () => {
         const editor = editorWith(defaultPlugins, [
             { type: 'textStyle', style: 'heading1', align: 'center', children: [] },

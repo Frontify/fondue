@@ -26,6 +26,7 @@ export const deDE: RichTextStrings = {
     RichTextEditor_custom1: 'Benutzerdefiniert 1',
     RichTextEditor_custom2: 'Benutzerdefiniert 2',
     RichTextEditor_custom3: 'Benutzerdefiniert 3',
+    RichTextEditor_divider: 'Trennlinie',
     RichTextEditor_edit: 'Bearbeiten',
     RichTextEditor_editor: 'Rich-Text-Editor',
     RichTextEditor_editorFailed: 'Der Editor funktioniert nicht mehr. Versuchen Sie erneut, ihn zu laden.',

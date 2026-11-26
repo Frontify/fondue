@@ -28,6 +28,7 @@ export const enUS = {
     RichTextEditor_custom1: 'Custom 1',
     RichTextEditor_custom2: 'Custom 2',
     RichTextEditor_custom3: 'Custom 3',
+    RichTextEditor_divider: 'Divider',
     RichTextEditor_edit: 'Edit',
     RichTextEditor_editor: 'Rich text editor',
     RichTextEditor_editorFailed: 'The editor stopped working. Try again to load it.',

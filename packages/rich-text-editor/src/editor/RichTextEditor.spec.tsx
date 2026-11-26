@@ -29,6 +29,7 @@ import {
     boldPlugin,
     checkListPlugin,
     defaultPlugins,
+    horizontalRulePlugin,
     linkPlugin,
     mentionPlugin,
     textStylePlugin,
@@ -891,6 +892,24 @@ describe('the toolbar', () => {
             expect(island?.getAttribute('contenteditable')).toBe('false');
             expect(isMousedownAllowed(island as Element)).toBe(false);
         });
+    });
+
+    it('inserts a horizontal rule when the Divider button is clicked', () => {
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor
+                value={paragraph('a')}
+                plugins={[...defaultPlugins, horizontalRulePlugin()]}
+                toolbarPlacement="top"
+                onChange={onChange}
+            />
+        ));
+        ready();
+        const divider = container.querySelector<HTMLButtonElement>('[aria-label="Divider"]');
+        expect(divider).not.toBeNull();
+
+        act(() => divider?.click());
+
+        expect(stored()?.blocks).toContainEqual({ type: 'horizontalRule' });
     });
 
     it('keeps Undo and Redo current as edits are made and taken back', () => {

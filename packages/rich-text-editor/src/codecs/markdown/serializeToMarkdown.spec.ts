@@ -11,12 +11,17 @@ import {
     type RteDocumentOf,
 } from '../../core';
 import { type RteDocument, type RteDocumentWith } from '../../documentFormat';
-import { columnBreakContent, defaultContent, mentionContent } from '../../plugins';
+import { columnBreakContent, defaultContent, horizontalRuleContent, mentionContent } from '../../plugins';
 import { type MarkdownOptions, parseMarkdown, serializeToMarkdown } from '../index';
 
 import { mentionOverrideOptions } from './mentionOverride.fixture';
+import { starBreakContent } from './starBreak.fixture';
 
 const OPTIONS: MarkdownOptions = { plugins: defaultContent };
+
+const RULE_OPTIONS: MarkdownOptions = { plugins: [...defaultContent, horizontalRuleContent] };
+
+const ESCAPED_DASHES = String.raw`\---`;
 
 // Declared with an HTML form only, so neither has a Markdown form.
 const sampleContent = defineContent({
@@ -162,6 +167,144 @@ describe('serializeToMarkdown line breaks', () => {
             markdown: 'a\nb',
             losses: [],
         });
+    });
+});
+
+describe('serializeToMarkdown horizontal rules', () => {
+    it('writes a rule between two paragraphs as three dashes on their own line', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'horizontalRule' },
+                { type: 'paragraph', children: [{ text: 'b' }] },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, RULE_OPTIONS)).toEqual({ markdown: 'a\n\n---\n\nb', losses: [] });
+    });
+
+    it('writes a rule between two paragraphs the same way with breaks: true', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'horizontalRule' },
+                { type: 'paragraph', children: [{ text: 'b' }] },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, { ...RULE_OPTIONS, breaks: true })).toEqual({
+            markdown: 'a\n\n---\n\nb',
+            losses: [],
+        });
+    });
+
+    it('separates two rules in a row by a blank line', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'horizontalRule' }, { type: 'horizontalRule' }],
+        };
+
+        expect(serializeToMarkdown(document, RULE_OPTIONS)).toEqual({ markdown: '---\n\n---', losses: [] });
+    });
+
+    it('writes a paragraph whose text is three dashes with the first one escaped', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: '---' }] }],
+        };
+
+        expect(serializeToMarkdown(document, RULE_OPTIONS)).toEqual({ markdown: ESCAPED_DASHES, losses: [] });
+    });
+
+    it.each(['-- -', '--- -', '-- --'])('writes a paragraph whose text is %s with the first dash escaped', (text) => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text }] }],
+        };
+
+        expect(serializeToMarkdown(document, RULE_OPTIONS)).toEqual({ markdown: `\\${text}`, losses: [] });
+    });
+
+    it('writes nothing for a rule when no plugin has one and reports the block', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'horizontalRule' },
+                { type: 'paragraph', children: [{ text: 'b' }] },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, { plugins: [] })).toEqual({
+            markdown: 'a\n\nb',
+            losses: [{ path: [1], type: 'horizontalRule' }],
+        });
+    });
+});
+
+describe('serializeToMarkdown a void block with a Markdown form', () => {
+    it('writes its marker alone on its line between two paragraphs', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'a' }] },
+                { type: 'starBreak' },
+                { type: 'paragraph', children: [{ text: 'b' }] },
+            ],
+        };
+
+        expect(serializeToMarkdown(document, { plugins: [...defaultContent, starBreakContent] })).toEqual({
+            markdown: 'a\n\n***\n\nb',
+            losses: [],
+        });
+    });
+});
+
+describe('serializeToMarkdown a void block that loses content', () => {
+    it('reports a void block that holds children, which the Markdown cannot hold', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'starBreak', children: [{ text: 'a' }] }],
+        };
+
+        expect(serializeToMarkdown(document, { plugins: [...defaultContent, starBreakContent] })).toEqual({
+            markdown: '***',
+            losses: [{ path: [0], type: 'starBreak' }],
+        });
+    });
+
+    it('reports a void block whose form writes an empty line', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'a' }] }, { type: 'starBreak' }],
+        };
+
+        expect(
+            serializeToMarkdown(document, {
+                plugins: [...defaultContent, starBreakContent],
+                overrides: {
+                    blocks: { starBreak: { read: [], write: () => ({ first: '', rest: null }) } },
+                },
+            }),
+        ).toEqual({ markdown: 'a', losses: [{ path: [1], type: 'starBreak' }] });
+    });
+
+    it('reports a void block that holds children and whose form writes an empty line once', () => {
+        const document: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'starBreak', children: [{ text: 'a' }] }],
+        };
+
+        expect(
+            serializeToMarkdown(document, {
+                plugins: [...defaultContent, starBreakContent],
+                overrides: {
+                    blocks: { starBreak: { read: [], write: () => ({ first: '', rest: null }) } },
+                },
+            }),
+        ).toEqual({ markdown: '', losses: [{ path: [0], type: 'starBreak' }] });
     });
 });
 
