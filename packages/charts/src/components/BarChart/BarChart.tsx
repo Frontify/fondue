@@ -32,6 +32,7 @@ export const BarChart = <DataPointDetails extends Record<string, any> | void = v
     legendPosition = 'top',
     valueFormatter = DEFAULT_VALUE_FORMATTER,
     tooltipValueFormatter,
+    ariaLabel,
     labelFormatter = DEFAULT_LABEL_FORMATTER,
     maxLabelLength = DEFAULT_MAX_LABEL_LENGTH,
     onBarClick,
@@ -62,6 +63,7 @@ export const BarChart = <DataPointDetails extends Record<string, any> | void = v
             )}
             <span className={onBarClick ? 'bar-chart-cursor-pointer' : ''}>
                 <XYChart
+                    accessibilityLabel={ariaLabel}
                     theme={theme}
                     width={width}
                     height={height}

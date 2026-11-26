@@ -35,6 +35,20 @@ describe('BarChart', () => {
         tooltipProps.mockClear();
     });
 
+    it('Should label the chart with the aria label', () => {
+        const { container } = render(
+            <BarChart series={series} width={400} height={200} ariaLabel="Active users by country" />,
+        );
+
+        expect(container.querySelector('svg')?.getAttribute('aria-label')).toBe('Active users by country');
+    });
+
+    it('Should keep the default label when no aria label is given', () => {
+        const { container } = render(<BarChart series={series} width={400} height={200} />);
+
+        expect(container.querySelector('svg')?.getAttribute('aria-label')).toBe('XYChart');
+    });
+
     it('Should format the tooltip values with the tooltip value formatter when given', () => {
         const valueFormatter = vi.fn();
         const tooltipValueFormatter = vi.fn();

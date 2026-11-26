@@ -37,6 +37,7 @@ export type BarChartProps<DataPointDetails extends Record<string, any> | void = 
     horizontal?: boolean;
     hideLegend?: boolean;
     allowDecimalTickValues?: boolean;
+    ariaLabel?: string;
     legendPosition?: LegendPosition;
     valueFormatter?: ValueFormatter;
     tooltipValueFormatter?: ValueFormatter;

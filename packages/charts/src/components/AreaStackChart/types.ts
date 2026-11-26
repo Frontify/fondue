@@ -27,6 +27,7 @@ export type AreaStackChartProps = {
     markLine?: MarkLineProps;
     valueFormatter?: ValueFormatter;
     tooltipValueFormatter?: ValueFormatter;
+    ariaLabel?: string;
     domain?: 'storage' | 'count';
     dateGranularity?: DateGranularity;
 };

@@ -57,6 +57,20 @@ describe('LineChart', () => {
         expect(svgContainer?.getAttribute('height')).toBe('200');
     });
 
+    it('Should label the chart with the aria label', () => {
+        const { container } = render(
+            <LineChart series={dataWithMissingValues} width={400} height={200} ariaLabel="Active users over time" />,
+        );
+
+        expect(container.querySelector('svg')?.getAttribute('aria-label')).toBe('Active users over time');
+    });
+
+    it('Should keep the default label when no aria label is given', () => {
+        const { container } = render(<LineChart series={dataWithMissingValues} width={400} height={200} />);
+
+        expect(container.querySelector('svg')?.getAttribute('aria-label')).toBe('XYChart');
+    });
+
     it('Should format the tooltip values with the tooltip value formatter when given', () => {
         const valueFormatter = vi.fn();
         const tooltipValueFormatter = vi.fn();

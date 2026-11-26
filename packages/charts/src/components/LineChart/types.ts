@@ -35,5 +35,6 @@ export type LineChartProps = {
     markLine?: MarkLineProps;
     valueFormatter?: ValueFormatter;
     tooltipValueFormatter?: ValueFormatter;
+    ariaLabel?: string;
     dateGranularity?: DateGranularity;
 };

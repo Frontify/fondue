@@ -33,6 +33,7 @@ export const AreaStackChart = ({
     markLine,
     valueFormatter,
     tooltipValueFormatter,
+    ariaLabel,
     childSumLabel,
     domain = COUNT_DOMAIN,
     dateGranularity,
@@ -60,6 +61,7 @@ export const AreaStackChart = ({
                 <Legend names={series.map((series) => series.name)} style="line" />
             )}
             <XYChart
+                accessibilityLabel={ariaLabel}
                 theme={theme}
                 xScale={{ type: 'time' }}
                 yScale={{ type: 'linear', domain: transformedYDomain }}

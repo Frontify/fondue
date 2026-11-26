@@ -35,6 +35,20 @@ describe('AreaStackChart', () => {
         tooltipProps.mockClear();
     });
 
+    it('Should label the chart with the aria label', () => {
+        const { container } = render(
+            <AreaStackChart series={series} width={400} height={200} ariaLabel="Storage usage over time" />,
+        );
+
+        expect(container.querySelector('svg')?.getAttribute('aria-label')).toBe('Storage usage over time');
+    });
+
+    it('Should keep the default label when no aria label is given', () => {
+        const { container } = render(<AreaStackChart series={series} width={400} height={200} />);
+
+        expect(container.querySelector('svg')?.getAttribute('aria-label')).toBe('XYChart');
+    });
+
     it('Should format the tooltip values with the tooltip value formatter when given', () => {
         const valueFormatter = vi.fn();
         const tooltipValueFormatter = vi.fn();
