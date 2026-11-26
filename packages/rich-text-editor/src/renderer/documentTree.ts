@@ -131,7 +131,10 @@ const sameValue = (left: unknown, right: unknown): boolean => {
 const sameMark = (left: CarriedMark, right: CarriedMark): boolean =>
     left.type === right.type && sameValue(left.value, right.value);
 
-/** An inline element, or null for one no plugin defines: it has no text of its own to fall back to. */
+/**
+ * An inline element. One no plugin defines draws its children in a plain span, like an unknown block;
+ * one with `text` of its own never gets here, as `inlineNodes` draws it as a run.
+ */
 const inlineElement = (
     inline: Exclude<RteInlineNode, RteTextNode>,
     registry: ContentRegistry,
@@ -140,7 +143,17 @@ const inlineElement = (
     const definition = registry.inlines.get(inline.type);
     if (!definition) {
         warnUnknownType('inline', inline.type);
-        return null;
+        const { children } = inline;
+        if (!Array.isArray(children) || children.length === 0) {
+            return null;
+        }
+
+        const content = inlineNodes(children as RteInlineNode[], registry, options);
+        if (content.length === 0) {
+            return null;
+        }
+
+        return html({ tag: 'span', children: true }, content);
     }
     const { type: _type, text: _text, ...value } = inline;
     return component(definition.render?.component, { value }, [], options) ?? html(definition.toHtml(value));

@@ -47,18 +47,34 @@ const specText = (spec: HtmlSpec): string => {
         : '';
 };
 
-/** A text block's runs as one line; an inline no plugin defines has no text to give. */
+/** A text block's runs as one line; an inline no plugin defines gives its children's text. */
 const inlineText = (inlines: readonly RteInlineNode[], registry: ContentRegistry): string =>
-    inlines
-        .map((inline) => {
-            if (inline.text !== undefined) {
-                return inline.text;
-            }
-            const definition = registry.inlines.get(inline.type);
-            const { type: _type, text: _text, ...value } = inline;
-            return definition ? specText(definition.toHtml(value)) : '';
-        })
-        .join('');
+    inlines.map((inline) => inlineNodeText(inline, registry)).join('');
+
+/** A stored node is not validated, so a child that is not an object has nothing to read. */
+const isStoredNode = (child: unknown): boolean => typeof child === 'object' && child !== null;
+
+/**
+ * The text one stored inline holds: a run's text, a known element's markup text,
+ * or for an element no plugin defines its children's text.
+ */
+export const inlineNodeText = (inline: RteInlineNode, registry: ContentRegistry): string => {
+    if (typeof inline.text === 'string') {
+        return inline.text;
+    }
+
+    const definition = registry.inlines.get(inline.type);
+    if (definition) {
+        const { type: _type, text: _text, ...value } = inline;
+        return specText(definition.toHtml(value));
+    }
+
+    const { children } = inline;
+    if (!Array.isArray(children)) {
+        return '';
+    }
+    return inlineText(children.filter(isStoredNode), registry);
+};
 
 /**
  * Whether a block holds other blocks, by its declared `content`; for a block
