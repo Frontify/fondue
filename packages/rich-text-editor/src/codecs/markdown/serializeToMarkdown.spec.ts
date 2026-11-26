@@ -862,7 +862,9 @@ describe('serializeToMarkdown text that does not read back', () => {
     });
 
     it('reports only the mark that does not read back when the inline beside it reads back exactly', () => {
-        const document: RteDocumentWith<{ inline: { type: 'userInline'; id: string } }> = {
+        const document: RteDocumentWith<
+            { mark: { emptyMark: boolean } } | { inline: { type: 'userInline'; id: string } }
+        > = {
             version: 1,
             blocks: [
                 {
@@ -882,18 +884,19 @@ describe('serializeToMarkdown text that does not read back', () => {
     });
 
     it('reports a mark that does not read back although an overridden mention sits beside it', () => {
-        const document: RteDocumentWith<{ inline: { type: 'mention'; id: string } }> = {
-            version: 1,
-            blocks: [
-                {
-                    type: 'paragraph',
-                    children: [
-                        { text: 'a', plusMark: true },
-                        { type: 'mention', id: '1' },
-                    ],
-                },
-            ],
-        };
+        const document: RteDocumentWith<{ mark: { plusMark: boolean } } | { inline: { type: 'mention'; id: string } }> =
+            {
+                version: 1,
+                blocks: [
+                    {
+                        type: 'paragraph',
+                        children: [
+                            { text: 'a', plusMark: true },
+                            { type: 'mention', id: '1' },
+                        ],
+                    },
+                ],
+            };
 
         expect(
             serializeToMarkdown(document, {

@@ -158,7 +158,11 @@ const withoutEdgeSpace = (text: string, edge: Edge): string => {
         return withoutLeadingEdgeSpace(chars).join('');
     }
 
-    return withoutLeadingEdgeSpace(chars.reverse()).reverse().join('');
+    chars.reverse();
+    const trimmed = withoutLeadingEdgeSpace(chars);
+    trimmed.reverse();
+
+    return trimmed.join('');
 };
 
 const trimEdgeRun = (runs: Run[], edge: Edge): void => {
