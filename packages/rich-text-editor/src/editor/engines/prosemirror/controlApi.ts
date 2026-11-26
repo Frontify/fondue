@@ -3,7 +3,13 @@
 import { chainCommands, setBlockType as pmSetBlockType } from 'prosemirror-commands';
 import { closeHistory, redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
 import { undoInputRule } from 'prosemirror-inputrules';
-import { type Mark as PmMark, type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
+import {
+    type Mark as PmMark,
+    type MarkType as PmMarkType,
+    type Node as PmNode,
+    type NodeType as PmNodeType,
+    type Schema,
+} from 'prosemirror-model';
 import {
     type Command,
     type EditorState,
@@ -536,6 +542,35 @@ const insertWhole = (view: EditorView, node: PmNode, dispatch: Dispatch): void =
     view.focus();
 };
 
+/** Where the first node of `type` stands in the range the transaction's step changed, or null when none does. */
+const landedPosition = (transaction: Transaction, type: PmNodeType): number | null => {
+    let landed: number | null = null;
+    // oxlint-disable-next-line unicorn/no-array-for-each -- a step map, not an array; `forEach` is how it lists ranges.
+    transaction.mapping.maps[0]?.forEach((_oldStart, _oldEnd, newStart, newEnd) => {
+        transaction.doc.nodesBetween(newStart, newEnd, (node, position) => {
+            if (landed === null && node.type === type) {
+                landed = position;
+            }
+            return landed === null;
+        });
+    });
+    return landed;
+};
+
+/** Whether a separator the transaction inserted stands first in the document or right after one of its own type. */
+const separatesNothing = (transaction: Transaction, type: PmNodeType): boolean => {
+    const position = landedPosition(transaction, type);
+    if (position === null) {
+        return false;
+    }
+
+    const $position = transaction.doc.resolve(position);
+    if ($position.depth === 0 && $position.index() === 0) {
+        return true;
+    }
+    return $position.nodeBefore?.type === type;
+};
+
 /** The flat members act on the editor as a whole rather than on one kind of thing in it. */
 export const createControlApi = (
     getView: () => EditorView,
@@ -601,7 +636,11 @@ export const createControlApi = (
             // Inline elements keep their value in one attribute; blocks keep theirs flat.
             const engineAttrs = nodeType.isInline ? valueAttrsFor(value) : value;
             // Inline elements carry no marks, so they must not inherit the caret's.
-            dispatch(transaction.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline));
+            transaction.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline);
+            if (registry.blocks.get(type)?.separator === true && separatesNothing(transaction, nodeType)) {
+                return;
+            }
+            dispatch(transaction);
             view.focus();
         },
         insertText(text, marks = {}, options = {}) {

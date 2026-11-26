@@ -441,8 +441,6 @@ describe('pasting into a check list with options', () => {
         editor.pasteHTML('<ul><li>a<ul><li>b</li></ul></li></ul>');
 
         expect(editor.stored()).not.toBeNull();
-        expect(childTypesWithin(editor.stored() ?? [], 'checkItem').filter((type) => type !== 'paragraph')).toEqual(
-            [],
-        );
+        expect(childTypesWithin(editor.stored() ?? [], 'checkItem').filter((type) => type !== 'paragraph')).toEqual([]);
     });
 });

@@ -34,6 +34,7 @@ export const columnBreakContent = ({ columns = 2, gap = 'normal' }: ColumnBreakP
     defineContent({
         blocks: {
             columnBreak: defineBlock({
+                separator: true,
                 toHtml: () => ({
                     tag: 'div',
                     attrs: {

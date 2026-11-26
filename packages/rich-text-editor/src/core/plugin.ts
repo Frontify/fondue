@@ -299,6 +299,13 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
      * that move from slot to slot. See `GridRole`.
      */
     gridRole?: GridRole;
+    /**
+     * A void block that only stands between content. Inserting it where it would be the first block of the document,
+     * or directly after another block of its type, does nothing, as it would only separate nothing. Stored documents
+     * load and show as they are.
+     * @default false
+     */
+    separator?: boolean;
     render?: {
         /**
          * Readonly view in place of `toHtml`. `style` carries what every text

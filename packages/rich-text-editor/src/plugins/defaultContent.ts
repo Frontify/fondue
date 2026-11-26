@@ -39,7 +39,7 @@ export const defaultContent: readonly RteContent[] = Object.freeze([
     alignContent,
     bulletListContent(),
     numberedListContent(),
-    checkListContent,
+    checkListContent(),
     quoteContent,
     softBreakContent,
 ]);
