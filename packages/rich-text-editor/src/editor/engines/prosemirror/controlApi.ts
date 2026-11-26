@@ -636,7 +636,10 @@ export const createControlApi = (
                     transaction.setSelection(TextSelection.create(transaction.doc, selection.to));
                 }
                 // Inline elements keep their value in one attribute; blocks keep theirs flat.
-                const engineAttrs = nodeType.isInline ? valueAttrsFor(value) : value;
+                let engineAttrs = value;
+                if (nodeType.isInline) {
+                    engineAttrs = valueAttrsFor(value);
+                }
                 // Inline elements carry no marks, so they must not inherit the caret's.
                 transaction.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline);
             }
