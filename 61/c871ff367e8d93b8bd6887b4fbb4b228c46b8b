@@ -1,0 +1,19 @@
+packages/components/src/components/ColorPicker/ColorValueInput.tsx
+  s_633c096294772a::t_d5e19513cdf18e 107-109
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "61c871ff367e8d93b8bd6887b4fbb4b228c46b8b",
+  "prompts": {},
+  "sessions": {
+    "s_633c096294772a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8c387756-7c76-42c2-b66e-b8e1fa1cfe04",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

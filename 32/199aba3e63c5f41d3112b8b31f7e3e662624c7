@@ -1,0 +1,43 @@
+packages/rich-text-editor/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_d9c0469efce250::t_72cca60b1a7e6d 9-10,13,31,35,44-53,57-62
+packages/rich-text-editor/src/plugins/Align/index.ts
+  s_d9c0469efce250::t_61467e63e068b0 3
+packages/rich-text-editor/src/plugins/BlurOnBreak/index.ts
+  s_d9c0469efce250::t_61467e63e068b0 3
+packages/rich-text-editor/src/index.ts
+  s_d9c0469efce250::t_61467e63e068b0 148
+packages/rich-text-editor/src/plugins/ResetFormatting/index.ts
+  s_d9c0469efce250::t_61467e63e068b0 3
+packages/rich-text-editor/src/plugins/BlurOnBreak/BlurOnBreak.tsx
+  s_d9c0469efce250::t_cd46c6f7fcd981 5-6,9,21,34,39,55,57,61,63,72
+packages/rich-text-editor/src/plugins/Align/Align.tsx
+  s_d9c0469efce250::t_96387d71e38ca0 98
+  s_d9c0469efce250::t_4c6de36aaa6167 77-78,84,96,102,110,127,137-151,155-161
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_d9c0469efce250::t_61467e63e068b0 538
+  s_d9c0469efce250::t_708878db6db341 881
+.changeset/feat-rte-shortcuts-submit.md
+  s_d9c0469efce250::t_3a3e7f36d92717 5
+packages/rich-text-editor/src/plugins/index.ts
+  s_d9c0469efce250::t_61467e63e068b0 49,54
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_d9c0469efce250::t_708878db6db341 316-317,319,321,336,360,402,413,437
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_d9c0469efce250::t_61467e63e068b0 1109,1667
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "32199aba3e63c5f41d3112b8b31f7e3e662624c7",
+  "prompts": {},
+  "sessions": {
+    "s_d9c0469efce250": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "548bafad-28bd-4e36-949b-abe6993012cf",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

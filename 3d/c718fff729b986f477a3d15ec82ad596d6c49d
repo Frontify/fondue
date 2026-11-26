@@ -1,0 +1,77 @@
+packages/rich-text-editor/src/editor/index.ts
+  s_c56bde808bb5f7::t_61db68435f5421 3
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.ts
+  s_c56bde808bb5f7::t_61db68435f5421 18,97,101
+packages/rich-text-editor/src/index.ts
+  s_c56bde808bb5f7::t_61db68435f5421 27-32,93-107
+  s_c56bde808bb5f7::t_c2a0a72e1c01b2 108
+packages/rich-text-editor/src/editor/port.ts
+  s_c56bde808bb5f7::t_61db68435f5421 17-27
+packages/rich-text-editor/src/editor/engines/prosemirror/index.ts
+  s_c56bde808bb5f7::t_61db68435f5421 4
+packages/rich-text-editor/src/__tests__/browser/HostLooksPair.tsx
+  s_c56bde808bb5f7::t_61db68435f5421 9,18-20,36-37,45-52,54-55,63,65-66,73
+packages/rich-text-editor/src/plugins/List/List.spec.ts
+  s_c56bde808bb5f7::t_61db68435f5421 1-44
+packages/rich-text-editor/src/__tests__/parseHtml.node.spec.ts
+  s_c56bde808bb5f7::t_61db68435f5421 1-66
+packages/rich-text-editor/src/editor/engines/prosemirror/parseHtml.spec.tsx
+  s_c56bde808bb5f7::t_61db68435f5421 1-59
+packages/rich-text-editor/src/plugins/defaultContent.ts
+  s_c56bde808bb5f7::t_61db68435f5421 39-40
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_c56bde808bb5f7::t_61db68435f5421 6-15,23,31-32,634-801
+  s_c56bde808bb5f7::t_2dcf018e96dd02 802
+packages/rich-text-editor/src/__tests__/parseHtml.spec.tsx
+  s_c56bde808bb5f7::t_61db68435f5421 1-102
+packages/rich-text-editor/lint-fixtures/src/editor/parseHtml.ts
+  s_c56bde808bb5f7::t_61db68435f5421 1-15
+.changeset/feat-rte-parse-html.md
+  s_c56bde808bb5f7::t_61db68435f5421 1-5
+packages/rich-text-editor/README.md
+  s_c56bde808bb5f7::t_61db68435f5421 97,101
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_c56bde808bb5f7::t_61db68435f5421 14,25-27,858-863,882-887,926-945,948-949,958-959,980-1032,1154,1236-1237
+packages/rich-text-editor/src/__tests__/lookStylesheets.spec.ts
+  s_c56bde808bb5f7::t_61db68435f5421 12,153-193
+  s_c56bde808bb5f7::t_40095d1dc5f1f3 194
+packages/rich-text-editor/src/plugins/List/List.ts
+  s_c56bde808bb5f7::t_61db68435f5421 10,15,133-134,136-159,162,164-245,250,284,287,299,302
+packages/rich-text-editor/src/editor/hooks/useEditorHandle.ts
+  s_c56bde808bb5f7::t_61db68435f5421 6-7
+packages/rich-text-editor/src/editor/parseHtml.ts
+  s_c56bde808bb5f7::t_61db68435f5421 1-35
+packages/rich-text-editor/src/editor/engines/prosemirror/parseHtml.ts
+  s_c56bde808bb5f7::t_61db68435f5421 1-68
+packages/rich-text-editor/src/plugins/List/list.module.scss
+  s_c56bde808bb5f7::t_61db68435f5421 3-8,11-15,17-21,23-31,33-40,43-69,78-80,84-85,87-95
+packages/rich-text-editor/src/plugins/List/index.ts
+  s_c56bde808bb5f7::t_61db68435f5421 9-11,13,15-17
+packages/rich-text-editor/src/editor/engines/prosemirror/unreadStructure.ts
+  s_c56bde808bb5f7::t_61db68435f5421 1-41
+packages/rich-text-editor/src/plugins/index.ts
+  s_c56bde808bb5f7::t_61db68435f5421 58-66
+packages/rich-text-editor/src/__tests__/browser/hostStylingValues.ts
+  s_c56bde808bb5f7::t_61db68435f5421 128-248
+packages/rich-text-editor/oxlint.config.ts
+  s_c56bde808bb5f7::t_61db68435f5421 76,79-85,316,388-400
+  s_c56bde808bb5f7::t_753501e140e124 401-405
+.changeset/rte-list-marker-looks.md
+  s_c56bde808bb5f7::t_61db68435f5421 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3dc718fff729b986f477a3d15ec82ad596d6c49d",
+  "prompts": {},
+  "sessions": {
+    "s_c56bde808bb5f7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "67ddf8bd-870f-4212-974e-54afa59d04ad",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,94 @@
+packages/components/src/components/Tree/components/TreeRoot.ct.tsx
+  s_60acb4f95d52c9::t_bfe151d0bf2bb5 1068-1076,1078-1081,1087-1091,1762,1765-1779
+  s_60acb4f95d52c9::t_c3b5e6794dde10 1067,1077,1082-1086,1763-1764
+  s_60acb4f95d52c9::t_2216f50e03b4f6 1780
+  s_14ce5cc0103714::t_a1f03ddbf8f0a3 1799-1800,1812-1814
+  s_14ce5cc0103714::t_802cbfa60b0fb5 1782,1784-1798,1801-1802,1817-1818
+  s_28d1cd127ab00d::t_bcee0713a91ed9 1803-1811,1815-1816
+  s_28d1cd127ab00d::t_48cd7d54ca3ded 1781,1783
+  s_ea90b709d5035d::t_b0ba027af77fb7 8,1781-1818,1836-1870
+packages/components/src/components/Tree/components/TreeRoot.tsx
+  s_60acb4f95d52c9::t_baee085a2defbe 77,207-211
+  s_28d1cd127ab00d::t_552f588525df25 48,185-189,195-199
+  s_17e6325854cf61::t_f74b26f5cd02e4 13,19,154-155,158,160
+.changeset/tree-feature-toggle-remount.md
+  s_60acb4f95d52c9::t_baee085a2defbe 1-4,6-7
+  s_60acb4f95d52c9::t_8e740c2560eacc 5
+packages/components/src/components/Tree/styles/tree.module.scss
+  s_14ce5cc0103714::t_802cbfa60b0fb5 123
+  s_28d1cd127ab00d::t_f0d1565f26abd4 135-137,138-139
+  s_28d1cd127ab00d::t_42a29f3e03ee12 273
+  s_28d1cd127ab00d::t_6f073cab1cc3c3 120
+  s_17e6325854cf61::t_29f363e2a47f12 7-17,69-70,73,116,120-124,128-129,135-139,227-228,230-236,244,246,252,258,260,277-278,280
+packages/components/src/components/Tree/components/TreeRow.tsx
+  s_28d1cd127ab00d::t_3c8e065f49463e 206
+  s_17e6325854cf61::t_a57ebfbb6772c4 206
+packages/components/src/components/Tree/components/TreeLoadingRow.tsx
+  s_28d1cd127ab00d::t_552f588525df25 13,16,26
+  s_28d1cd127ab00d::t_8d16bb34b0dac7 20-24
+  s_17e6325854cf61::t_ca867d0999f0be 20-24
+packages/components/src/components/Tree/components/TreeDragLine.ct.tsx
+  s_28d1cd127ab00d::t_715d34b4fe73ff 49,52
+  s_28d1cd127ab00d::t_83fcf428b1d840 41,44
+  s_17e6325854cf61::t_7d1e266b32ebbc 5,20,27,36,41-42,44,49-50,52-72
+packages/components/src/components/Tree/components/testutils/DragLineHarness.tsx
+  s_17e6325854cf61::t_d30a7f6931ba3a 1-19
+packages/components/src/components/Tree/constants.ts
+  s_17e6325854cf61::t_3bd84d6c8bde0a 14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "64301ceb88436477fe8bf8d1243b11a68ca2019b",
+  "prompts": {},
+  "sessions": {
+    "s_14ce5cc0103714": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "83da3adc-d2a0-4b6b-aac3-afe8d2a7b2f2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_17e6325854cf61": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5dd182d0-d7de-40a0-8dd8-b9746fb93e26",
+        "model": "unknown"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_28d1cd127ab00d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bdcad5ff-b316-4577-9c81-c09e1f3f38b8",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_34c90dc0f927ba": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d1a230f3-cb1d-4fce-8633-117791bf1497",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_60acb4f95d52c9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b0fbce44-f734-4f54-9ea9-ce5b85c1d3b5",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_ea90b709d5035d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1428986e-53c5-4148-bc0d-2fe370854309",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

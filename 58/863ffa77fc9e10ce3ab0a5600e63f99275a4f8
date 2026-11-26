@@ -1,0 +1,30 @@
+packages/rich-text-editor/src/editor/components/Toolbar.tsx
+  s_62dd4fdeda599c::t_e79eabcbf2b41d 122,160-170
+  s_62dd4fdeda599c::t_ec0845976af385 30,84-86,108-112,118-119,231-242
+.changeset/quiet-dividers-hide.md
+  s_62dd4fdeda599c::t_64f15fdcca34b5 1-5
+packages/rich-text-editor/src/__tests__/browser/ToolbarDividersHost.tsx
+  s_62dd4fdeda599c::t_80effd4a49926d 1-57
+packages/rich-text-editor/src/__tests__/browser/toolbarDividers.ct.tsx
+  s_62dd4fdeda599c::t_1e11f783b3384e 1-122
+packages/rich-text-editor/src/__tests__/browser/toolbarDividersValues.ts
+  s_62dd4fdeda599c::t_ca25bdbbc6a041 1-4
+packages/rich-text-editor/src/editor/hooks/useEmptySlots.ts
+  s_62dd4fdeda599c::t_ce80ee09134ee6 1-65
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "58863ffa77fc9e10ce3ab0a5600e63f99275a4f8",
+  "prompts": {},
+  "sessions": {
+    "s_62dd4fdeda599c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6e4034c4-4b94-4cc9-956c-e1f4bba935d7",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

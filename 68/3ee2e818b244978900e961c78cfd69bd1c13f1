@@ -1,0 +1,35 @@
+.changeset/rte-required-and-status.md
+  s_e5729440019c3f::t_657f655edddbe7 1-5
+packages/rich-text-editor/src/__tests__/browser/editor.ct.tsx
+  s_e5729440019c3f::t_f79e9c18cf65e4 375-399
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_e5729440019c3f::t_8d2e157c87cdb2 571-634
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_e5729440019c3f::t_164b29992f139d 45-47,126-142,328-330,358-360,364-375,645-669,678-698
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_7d531087615ec5::t_8704409bcc9843 68-76,183-239
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "683ee2e818b244978900e961c78cfd69bd1c13f1",
+  "prompts": {},
+  "sessions": {
+    "s_7d531087615ec5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7c3ccc75-362b-4b44-9c1b-d677654d1ae0",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_e5729440019c3f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0d18152d-a028-445d-a0fa-d13e10d34317",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
