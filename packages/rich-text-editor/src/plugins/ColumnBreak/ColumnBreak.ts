@@ -25,16 +25,29 @@ export type ColumnBreakPluginOptions = {
      * @default 'normal'
      */
     gap?: string;
+    /**
+     * Shows one column until the container has room for every column: 440px for 2, 740px for more, as the legacy editor did.
+     * The element around the content then becomes an inline-size container, so it takes its width from its own parent, not from the text.
+     * @default false
+     */
+    collapse?: boolean;
 };
 
 const MANY_COLUMNS = 3;
 const TWO_COLUMNS = 2;
 
-/** The classes of the content: the gap, and the layout that shows the columns once the container has room for all of them. */
-const contentClassNameFor = (columns: number): string | undefined => {
+type ContentClassNameOptions = Required<Pick<ColumnBreakPluginOptions, 'columns' | 'collapse'>>;
+
+/** The classes of the content: the gap, and with collapse the layout that shows the columns once the container has room for all of them. */
+const contentClassNameFor = ({ columns, collapse }: ContentClassNameOptions): string | undefined => {
+    if (!collapse) {
+        return styles.columns;
+    }
+
     if (columns >= MANY_COLUMNS) {
         return `${styles.columns} ${styles.fromMedium}`;
     }
+
     if (columns === TWO_COLUMNS) {
         return `${styles.columns} ${styles.fromSmall}`;
     }
@@ -43,11 +56,9 @@ const contentClassNameFor = (columns: number): string | undefined => {
 };
 
 /**
- * Lays the content out in columns, with a block that marks where each column ends.
- * The content shows one column until the container has room for every column: 440px for 2, 740px for more.
- * The element around the content becomes an inline-size container, so it takes its width from its own parent and not from the text.
+ * Lays the content out in columns, with a block that marks where each column ends
  */
-export const columnBreakContent = ({ columns = 2, gap = 'normal' }: ColumnBreakPluginOptions = {}) =>
+export const columnBreakContent = ({ columns = 2, gap = 'normal', collapse = false }: ColumnBreakPluginOptions = {}) =>
     defineContent({
         blocks: {
             columnBreak: defineBlock({
@@ -65,7 +76,7 @@ export const columnBreakContent = ({ columns = 2, gap = 'normal' }: ColumnBreakP
         },
         // The layout belongs to the content as a whole, so it goes on the editable
         // element; the options reach the stylesheet as custom properties.
-        contentClassName: contentClassNameFor(columns),
+        contentClassName: contentClassNameFor({ columns, collapse }),
         contentProperties: {
             '--rte-columns': String(columns),
             '--rte-column-gap': gap,

@@ -1,5 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+/**
+ * Goes on the editable element itself — the layout is the content's, not one
+ * block's. The values come from the plugin's arguments, which reach CSS as
+ * custom properties on the wrapper.
+ */
+.columns {
+    columns: var(--rte-columns, 1);
+    column-gap: var(--rte-column-gap, var(--spacing-large));
+}
+
 // The container widths below which the columns collapse to one, as in the legacy editor.
 $two-column-min-width: 440px;
 $many-column-min-width: 740px;
@@ -9,16 +19,13 @@ $many-column-min-width: 740px;
     container: rte-columns / inline-size;
 }
 
-/**
- * Goes on the editable element itself — the layout is the content's, not one
- * block's. The values come from the plugin's arguments, which reach CSS as
- * custom properties on the wrapper.
- */
-.columns {
-    column-gap: var(--rte-column-gap, var(--spacing-large));
-}
-
 @mixin columns-from($min-width) {
+    columns: 1;
+
+    > .break {
+        break-after: auto;
+    }
+
     @container rte-columns (min-width: #{$min-width}) {
         columns: var(--rte-columns);
 
@@ -28,12 +35,12 @@ $many-column-min-width: 740px;
     }
 }
 
-/** The layout for 2 columns: one column until the container has room for both. */
+/** The layout for 2 columns with `collapse: true`: one column until the container has room for both. */
 .fromSmall {
     @include columns-from($two-column-min-width);
 }
 
-/** The layout for 3 or more columns: one column until the container has room for all of them. */
+/** The layout for 3 or more columns with `collapse: true`: one column until the container has room for all of them. */
 .fromMedium {
     @include columns-from($many-column-min-width);
 }
@@ -46,4 +53,5 @@ $many-column-min-width: 740px;
     height: 0;
     margin-inline: 0;
     border-top: var(--border-width-default) dashed var(--color-line-mid);
+    break-after: column;
 }
