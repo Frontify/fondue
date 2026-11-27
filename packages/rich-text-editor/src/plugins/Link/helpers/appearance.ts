@@ -120,6 +120,7 @@ export const BUTTON_PHYSICAL_PADDING_FIELDS = {
 /**
  * How a button link looks. Each value is any CSS value, a host variable
  * (`var(--brand-button-color)`) included. A field left out keeps Fondue's look.
+ * A look throws if `isAllowedLookValue` rejects a value. Use the check before passing values from external sources.
  */
 export type ButtonLook = TextLook & LinkBoxLook & ButtonPhysicalPaddingLook & { hover?: ButtonHoverLook };
 
@@ -167,7 +168,7 @@ export const BUTTON_HOVER_LOOK_FIELDS = {
 /**
  * The custom properties the buttons' looks set, which `link.module.scss` reads with Fondue's look as the fallback.
  *
- * @throws When a value is empty or could break out of its declaration, naming the appearance and the field.
+ * @throws When `isAllowedLookValue` rejects a value, naming the appearance and the field.
  */
 export const buttonLookProperties = (
     looks: Readonly<Partial<Record<LinkAppearance, ButtonLook>>>,

@@ -57,8 +57,8 @@ const CSS_PROPERTY = /^-{0,2}[a-zA-Z][a-zA-Z0-9-]*$/;
  */
 const UNSAFE_CSS_VALUE = /[;{}\\<]|url\(|expression\(/i;
 
-/** Whether a value cannot break out of its declaration. */
-export const isSafeCssValue = (value: string): boolean => !UNSAFE_CSS_VALUE.test(value);
+/** Whether a value cannot end its declaration, open a rule, load a resource or leave the style attribute. */
+export const staysInDeclaration = (value: string): boolean => !UNSAFE_CSS_VALUE.test(value);
 
 /**
  * The declarations safe to write: a property that is a property name, a value
@@ -67,7 +67,7 @@ export const isSafeCssValue = (value: string): boolean => !UNSAFE_CSS_VALUE.test
  */
 export const safeStyleEntries = (style: StyleMap): [string, string][] =>
     Object.entries(style).filter(
-        ([property, value]) => CSS_PROPERTY.test(property) && typeof value === 'string' && isSafeCssValue(value),
+        ([property, value]) => CSS_PROPERTY.test(property) && typeof value === 'string' && staysInDeclaration(value),
     );
 
 /** `{ 'text-align': 'center' }` → `text-align: center;`, the way browsers write a style attribute. */

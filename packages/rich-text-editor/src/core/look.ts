@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { isSafeCssValue } from './htmlSpec';
+import { staysInDeclaration } from './htmlSpec';
 
 /**
  * How a text style looks. Each value is any CSS value, a guideline variable
  * (`var(--f-theme-settings-heading1-font-size)`) included. A field left out keeps Fondue's look.
+ * A look throws if `isAllowedLookValue` rejects a value. Use the check before passing values from external sources.
  */
 export type TextLook = {
     fontFamily?: string;
@@ -54,11 +55,22 @@ export const lookVariableName = (key: string, property: string): string =>
     `${LOOK_VARIABLE_PREFIX}${kebabCase(key)}-${property}`;
 
 /**
+ * Returns whether a look accepts the value. If the check returns `false`, omit the field to keep Fondue's default.
+ *
+ * @example
+ * let color: string | undefined;
+ * if (isAllowedLookValue(setting)) {
+ *     color = setting;
+ * }
+ */
+export const isAllowedLookValue = (value: string): boolean => value.trim() !== '' && staysInDeclaration(value);
+
+/**
  * The custom properties a style's look sets, which the stylesheet reads with Fondue's look as the fallback.
  *
  * @param key - The style's name, such as `imageTitle`.
  * @param fields - The name each field's variable ends in, such as `LOOK_PROPERTIES` for a text look.
- * @throws When a value is empty or could break out of its declaration, rather than dropping it silently.
+ * @throws When `isAllowedLookValue` rejects a value.
  */
 export const lookProperties = <TLook extends Partial<Record<string, string>>>(
     key: string,
@@ -72,7 +84,7 @@ export const lookProperties = <TLook extends Partial<Record<string, string>>>(
         if (value === undefined) {
             continue;
         }
-        if (value.trim() === '' || !isSafeCssValue(value)) {
+        if (!isAllowedLookValue(value)) {
             throw new Error(`The "${field}" of the "${key}" look is not a usable CSS value: ${JSON.stringify(value)}`);
         }
         properties[lookVariableName(key, property)] = value;

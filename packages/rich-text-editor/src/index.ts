@@ -121,6 +121,8 @@ export const toPlainText: <TBlock extends RteBlockNode = RteBlock>(
 
 export { defineBlock, defineContent, defineInline, defineMark, definePlugin } from './core';
 
+export { isAllowedLookValue } from './core';
+
 /** A plugin. The types to write one with are nested: `RtePlugin.EditorControlApi`, `RtePlugin.BlockDefinition<T>`, … */
 export type RtePlugin = CorePlugin;
 
