@@ -7,6 +7,7 @@ import { vi } from 'vitest';
 
 import {
     buildPluginRegistry,
+    defineBlock,
     defineContent,
     defineMark,
     definePlugin,
@@ -86,6 +87,18 @@ type BlockInput = RteBlockNode | (Record<string, unknown> & { type: string });
 
 /** Shipped plugins by id, taken from `defaultPlugins` — the one plugin import this folder may make. */
 export const shipped = (...ids: string[]): RtePlugin[] => defaultPlugins.filter((plugin) => ids.includes(plugin.id));
+
+/** A void block that only stands between content, declared the way the engine reads it. */
+export const rulePlugin: RtePlugin = definePlugin({
+    id: 'rule',
+    content: defineContent({
+        blocks: {
+            rule: defineBlock({ separator: true, toHtml: () => ({ tag: 'hr' }), parse: [{ tag: 'hr' }] }),
+        },
+    }),
+});
+
+export const RULE: RteBlockNode = { type: 'rule' };
 
 export const editorWith = (
     plugins: readonly RtePlugin[],

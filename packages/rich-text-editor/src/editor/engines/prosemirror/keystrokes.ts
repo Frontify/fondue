@@ -4,8 +4,12 @@ import {
     baseKeymap,
     chainCommands,
     createParagraphNear,
+    joinBackward,
+    joinForward,
     liftEmptyBlock,
     newlineInCode,
+    selectNodeBackward,
+    selectNodeForward,
     setBlockType,
     splitBlock,
 } from 'prosemirror-commands';
@@ -13,7 +17,14 @@ import { history, redo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { type Mark as PmMark, type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
-import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, TextSelection } from 'prosemirror-state';
+import {
+    type Command,
+    type EditorState,
+    Plugin,
+    type Plugin as PmPlugin,
+    TextSelection,
+    type Transaction,
+} from 'prosemirror-state';
 import { canJoin, findWrapping } from 'prosemirror-transform';
 
 import {
@@ -62,7 +73,8 @@ import {
  * 5. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`); held until a composition ends.
  * 6. Enter keeping the attributes every text block carries, then the baseline
  *    keymap, plus Backspace resetting an emptied first heading, and Backspace
- *    or Delete removing an empty line beside a list instead of wrapping it into the list.
+ *    or Delete removing an empty line beside a list instead of wrapping it into the list,
+ *    and Backspace or Delete selecting the block to join with when the join is refused.
  *
  * Mark input rules build their own transaction instead of calling
  * `api.marks.toggle`, because the input-rule machinery owns undo grouping.
@@ -103,8 +115,12 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
             Backspace: chainCommands(
                 resetEmptyFirstBlock,
                 deleteEmptyBlockBesideList(registry.itemTypeByList, 'backward'),
+                selectWhenJoinRefused(joinBackward, selectNodeBackward),
             ),
-            Delete: deleteEmptyBlockBesideList(registry.itemTypeByList, 'forward'),
+            Delete: chainCommands(
+                deleteEmptyBlockBesideList(registry.itemTypeByList, 'forward'),
+                selectWhenJoinRefused(joinForward, selectNodeForward),
+            ),
             Enter: splitKeepingCarriedAttrs(registry),
         }),
         keymap(baseKeymap),
@@ -557,6 +573,31 @@ const splitKeepingCarriedAttrs =
             });
         };
         return chainCommands(newlineInCode, createParagraphNear, liftEmptyBlock, split)(state, dispatch);
+    };
+
+/**
+ * The join, unless a document rule refuses the transaction it makes: then the block to join
+ * with is selected instead, as for a block that cannot be joined, so the next press removes it.
+ */
+const selectWhenJoinRefused =
+    (join: Command, select: Command): Command =>
+    (state, dispatch, view) => {
+        const recorded: Transaction[] = [];
+        if (!join(state, (transaction) => recorded.push(transaction), view)) {
+            return false;
+        }
+
+        const transaction = recorded[0];
+        if (transaction === undefined) {
+            return true;
+        }
+        // A filter that refuses the join applies nothing.
+        if (state.applyTransaction(transaction).transactions.length === 0) {
+            return select(state, dispatch, view);
+        }
+
+        dispatch?.(transaction);
+        return true;
     };
 
 /**

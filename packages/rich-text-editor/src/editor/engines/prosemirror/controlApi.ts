@@ -7,7 +7,6 @@ import {
     type Mark as PmMark,
     type MarkType as PmMarkType,
     type Node as PmNode,
-    type NodeType as PmNodeType,
     type Schema,
 } from 'prosemirror-model';
 import {
@@ -541,41 +540,6 @@ const insertWhole = (view: EditorView, node: PmNode): Transaction => {
     return transaction.scrollIntoView();
 };
 
-/** Where the first node of `type` stands in the range the transaction's step changed, or null when none does. */
-const landedPosition = (transaction: Transaction, type: PmNodeType): number | null => {
-    let landed: number | null = null;
-    // oxlint-disable-next-line unicorn/no-array-for-each -- a step map, not an array; `forEach` is how it lists ranges.
-    transaction.mapping.maps[0]?.forEach((_oldStart, _oldEnd, newStart, newEnd) => {
-        transaction.doc.nodesBetween(newStart, newEnd, (node, position) => {
-            if (landed === null && node.type === type) {
-                landed = position;
-            }
-
-            return landed === null;
-        });
-    });
-
-    return landed;
-};
-
-/** Whether a separator the transaction inserted stands first in the document or next to one of its own type. */
-const separatesNothing = (transaction: Transaction, type: PmNodeType): boolean => {
-    const position = landedPosition(transaction, type);
-    if (position === null) {
-        return false;
-    }
-
-    const $position = transaction.doc.resolve(position);
-    if ($position.depth === 0 && $position.index() === 0) {
-        return true;
-    }
-    if ($position.nodeBefore?.type === type) {
-        return true;
-    }
-
-    return $position.parent.maybeChild($position.index() + 1)?.type === type;
-};
-
 /** The flat members act on the editor as a whole rather than on one kind of thing in it. */
 export const createControlApi = (
     getView: () => EditorView,
@@ -594,6 +558,10 @@ export const createControlApi = (
         }
     };
     const dispatch: Dispatch = (transaction) => {
+        const view = getView();
+        const previousDoc = view.state.doc;
+        const previousTurnState = turnState;
+
         switch (turnState.kind) {
             case 'idle': {
                 if (transaction.docChanged) {
@@ -609,7 +577,13 @@ export const createControlApi = (
                 break;
             }
         }
-        getView().dispatch(transaction);
+
+        view.dispatch(transaction);
+
+        // A refused transaction leaves the document as it was, so it does not start or join the turn.
+        if (view.state.doc === previousDoc) {
+            turnState = previousTurnState;
+        }
     };
 
     return {
@@ -645,9 +619,6 @@ export const createControlApi = (
                 }
                 // Inline elements carry no marks, so they must not inherit the caret's.
                 transaction.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline);
-            }
-            if (registry.blocks.get(type)?.separator === true && separatesNothing(transaction, nodeType)) {
-                return;
             }
             dispatch(transaction);
             view.focus();

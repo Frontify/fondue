@@ -13,6 +13,8 @@ import {
     destroyEditors,
     editorWith,
     paragraph,
+    RULE,
+    rulePlugin,
     shipped,
     text,
     token,
@@ -442,5 +444,37 @@ describe('pasting into a check list with options', () => {
 
         expect(editor.stored()).not.toBeNull();
         expect(childTypesWithin(editor.stored() ?? [], 'checkItem').filter((type) => type !== 'paragraph')).toEqual([]);
+    });
+});
+
+describe('pasting a block that only separates', () => {
+    const separators = [...defaultPlugins, rulePlugin];
+    const PASTED_RULE = '<hr>';
+
+    it('at the start of the document leaves it as it is', () => {
+        const editor = editorWith(separators, [paragraph(text('a'))]);
+        editor.caretBefore('a');
+
+        editor.pasteHTML(PASTED_RULE);
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('right after one leaves the document as it is', () => {
+        const editor = editorWith(separators, [paragraph(text('a')), RULE, paragraph(text('b'))]);
+        editor.caretBefore('b');
+
+        editor.pasteHTML(PASTED_RULE);
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('between two paragraphs puts it there', () => {
+        const editor = editorWith(separators, [paragraph(text('a')), paragraph(text('b'))]);
+        editor.caretBefore('b');
+
+        editor.pasteHTML(PASTED_RULE);
+
+        expect(editor.stored()).toEqual([paragraph(text('a')), RULE, paragraph(text('b'))]);
     });
 });
