@@ -1,5 +1,25 @@
 # @frontify/fondue-rich-text-editor
 
+## 0.1.0-rc.3
+
+### Minor Changes
+
+- [#3128](https://github.com/Frontify/fondue/pull/3128) [`89ac8c1`](https://github.com/Frontify/fondue/commit/89ac8c1c1a9b75feca6a26f7a3deb760a07889a2) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(RichTextEditor): `linkPlugin({ look })` takes `paddingInlineStart` and `paddingInlineEnd` for button links and for the text link box. They follow the `dir` attribute on the page or on an element around the editor: the start is the left in left-to-right text and the right in right-to-left text. Text links take these instead of `paddingLeft` and `paddingRight`. On button links, `paddingLeft` and `paddingRight` work as before and always stay on their side, but are deprecated: in left-to-right text use `paddingInlineStart` for the left and `paddingInlineEnd` for the right, and in right-to-left text the other way round. Where a button sets both kinds for the same side, the start or end field wins, so a host can add the new fields before it removes the old ones. A page that sets right-to-left only through the CSS `direction` property gets the start on the left: set `dir="rtl"` as HTML asks.
+
+- [#3120](https://github.com/Frontify/fondue/pull/3120) [`61dd224`](https://github.com/Frontify/fondue/commit/61dd22401b86c5e651fd54ceec6a03a5687605c9) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(RichTextEditor): `linkPlugin({ look })` takes `marginTop` and `marginBottom` for button links, and a box for text links: `paddingTop`, `paddingRight`, `paddingBottom`, `paddingLeft`, `backgroundColor`, `borderColor`, `borderWidth`, `borderStyle` and `borderRadius`. A field left out keeps Fondue's look, so links look the same until a host sets one.
+
+- [#3122](https://github.com/Frontify/fondue/pull/3122) [`b444bed`](https://github.com/Frontify/fondue/commit/b444bed43b95c8f47de9541550fd718124e70b27) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(RichTextEditor): set the gap between a list marker and its item text with `gap` in a bullet or numbered list level's look. A string marker such as `'•'` gets no room of its own, so set `gap` to keep it off the text. With `gap` set, leave the trailing space out of the string: the space adds to the gap. Left out, the look does not change in left-to-right text. In right-to-left text a list's indent now sits on the right, the side its markers hang on, where it used to sit on the left.
+
+- [#3119](https://github.com/Frontify/fondue/pull/3119) [`9256274`](https://github.com/Frontify/fondue/commit/9256274436a43daa374c78c25999cd6473906dd2) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(RichTextEditor): add `validateDocument`, which tells whether a stored value is a structurally valid document without the editor, the DOM or ProseMirror, so it runs in Node. It returns `{ valid: true, document }` or `{ valid: false, issues }`, each issue a `reason` (`not-an-object`, `unsupported-version`, `not-an-array`, `missing-type`, `malformed-text`, `cycle`) and the JSON Pointer `path` of the offending value. It reports at most 100 issues, the first ones in document order, with a repeated node's issues at every path, and never throws on parsed JSON. Unknown block, inline and mark types and extra keys pass, because the editor keeps them.
+
+### Patch Changes
+
+- [#3113](https://github.com/Frontify/fondue/pull/3113) [`d9a247d`](https://github.com/Frontify/fondue/commit/d9a247dded33222334b9da1122f0f3e019bb7053) Thanks [@jcosta33](https://github.com/jcosta33)! - Update dependencies to the latest patch and minor versions the current ranges already allow. Scroll area moves to 1.4.0, which includes the thumb-tracking fix, and the local patch is removed.
+
+- [#3118](https://github.com/Frontify/fondue/pull/3118) [`1f20c5c`](https://github.com/Frontify/fondue/commit/1f20c5c8d75fea36e3ae54ebee2c9db39a2466f2) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(RichTextEditor): open a link in a new tab when its HTML target is `_blank` or `_new` in any letter case, such as `_BLANK` or `_NEW`
+
+- [#3095](https://github.com/Frontify/fondue/pull/3095) [`7842775`](https://github.com/Frontify/fondue/commit/78427757a54152d73cf7a212392afc51d32c7716) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(RichTextEditor): draw toolbar dividers only between groups that show a control
+
 ## 0.1.0-rc.2
 
 ### Minor Changes

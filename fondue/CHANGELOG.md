@@ -1,5 +1,18 @@
 # @frontify/fondue
 
+## 14.0.0-rc.4
+
+### Patch Changes
+
+- [#3113](https://github.com/Frontify/fondue/pull/3113) [`d9a247d`](https://github.com/Frontify/fondue/commit/d9a247dded33222334b9da1122f0f3e019bb7053) Thanks [@jcosta33](https://github.com/jcosta33)! - Update dependencies to the latest patch and minor versions the current ranges already allow. Scroll area moves to 1.4.0, which includes the thumb-tracking fix, and the local patch is removed.
+
+- Updated dependencies [[`d9a247d`](https://github.com/Frontify/fondue/commit/d9a247dded33222334b9da1122f0f3e019bb7053), [`89ac8c1`](https://github.com/Frontify/fondue/commit/89ac8c1c1a9b75feca6a26f7a3deb760a07889a2), [`61dd224`](https://github.com/Frontify/fondue/commit/61dd22401b86c5e651fd54ceec6a03a5687605c9), [`1f20c5c`](https://github.com/Frontify/fondue/commit/1f20c5c8d75fea36e3ae54ebee2c9db39a2466f2), [`b444bed`](https://github.com/Frontify/fondue/commit/b444bed43b95c8f47de9541550fd718124e70b27), [`7842775`](https://github.com/Frontify/fondue/commit/78427757a54152d73cf7a212392afc51d32c7716), [`9256274`](https://github.com/Frontify/fondue/commit/9256274436a43daa374c78c25999cd6473906dd2), [`854df6f`](https://github.com/Frontify/fondue/commit/854df6f8ee2febc5ac1d68aeca956146be287a48), [`a5a5a2c`](https://github.com/Frontify/fondue/commit/a5a5a2cacb8c2ffd2a1756485b58d38d05bce09d)]:
+  - @frontify/fondue-components@37.0.0-rc.4
+  - @frontify/fondue-rich-text-editor@0.1.0-rc.3
+  - @frontify/fondue-rte@0.2.0-rc.1
+  - @frontify/fondue-sdk@1.0.0-rc.4
+  - @frontify/fondue-tokens@6.0.0-rc.1
+
 ## 14.0.0-rc.3
 
 ### Patch Changes
