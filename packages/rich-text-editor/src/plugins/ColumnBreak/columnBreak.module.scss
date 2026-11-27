@@ -10,6 +10,41 @@
     column-gap: var(--rte-column-gap, var(--spacing-large));
 }
 
+// The container widths below which the columns collapse to one, as in the legacy editor.
+$two-column-min-width: 440px;
+$many-column-min-width: 740px;
+
+// The element around the content measures the room the columns have.
+:where(:has(> .fromSmall, > .fromMedium)) {
+    container: rte-columns / inline-size;
+}
+
+@mixin columns-from($min-width) {
+    columns: 1;
+
+    > .break {
+        break-after: auto;
+    }
+
+    @container rte-columns (min-width: #{$min-width}) {
+        columns: var(--rte-columns);
+
+        > .break {
+            break-after: column;
+        }
+    }
+}
+
+/** The layout for 2 columns with `collapse: true`: one column until the container has room for both. */
+.fromSmall {
+    @include columns-from($two-column-min-width);
+}
+
+/** The layout for 3 or more columns with `collapse: true`: one column until the container has room for all of them. */
+.fromMedium {
+    @include columns-from($many-column-min-width);
+}
+
 /** The break itself: a hairline the author can see, taking up no space. */
 .break {
     --rte-own-margin-top: var(--spacing-xx-small);

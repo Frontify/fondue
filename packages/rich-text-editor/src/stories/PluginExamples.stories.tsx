@@ -1039,6 +1039,38 @@ export const ColumnBreak: Story = {
     },
 };
 
+/**
+ * The same columns with `collapse: true`: one column until the editor is at least 440px wide.
+ */
+export const CollapsingColumnBreak: Story = {
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'First column.' }] },
+                { type: 'columnBreak' },
+                { type: 'paragraph', children: [{ text: 'Second column, after the break.' }] },
+            ],
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <p className={HINT}>
+                    Narrow the window below about 440px of editor width: the second column moves under the first.
+                </p>
+                <div className={FRAME}>
+                    <RichTextEditor
+                        value={doc}
+                        onChange={setDoc}
+                        plugins={[columnBreakPlugin({ columns: 2, gap: '24px', collapse: true })]}
+                    />
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
 /** Cells as the story writes them: one paragraph of text. */
 const tableCell = (text: string, colspan?: number) => ({
     type: 'tableCell' as const,
