@@ -7,13 +7,15 @@ import {
     defineMark,
     definePlugin,
     lookProperties,
+    type MarkdownDelimiters,
+    type MarkdownMarkContent,
     type RteContent,
     type RteHotkey,
 } from '#/core';
 import { translatedLabel } from '#/ui/translation';
 
 import { withoutDecorationLine } from '../shared/helpers/declaredStyle';
-import { isLinkablePaste, isSafeHref, LINKABLE_ADDRESS, toHref } from '../shared/helpers/href';
+import { isLinkablePaste, isSafeHref, LINKABLE_ADDRESS, markdownDestination, toHref } from '../shared/helpers/href';
 
 import { LinkEditor } from './components/LinkEditor';
 import { LinkToolbarButton } from './components/LinkToolbarButton';
@@ -96,6 +98,31 @@ type LinkAnchorAttrs = {
     href?: string;
     target?: string;
     rel?: string;
+};
+
+const MAILTO_PREFIX = 'mailto:';
+
+const WEB_AUTOLINK = /^https?:[^\s<>]*$/i;
+
+const EMAIL_LOCAL_PART = String.raw`[a-z0-9.!#$%&'*+/=?^_\`{|}~-]+`;
+
+const DOMAIN_LABEL = '[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?';
+
+/** CommonMark's email autolink: its local part, then dot-joined domain labels of at most 63 characters. */
+const EMAIL_AUTOLINK = new RegExp(String.raw`^mailto:${EMAIL_LOCAL_PART}@${DOMAIN_LABEL}(?:\.${DOMAIN_LABEL})*$`, 'i');
+
+/** The Markdown a link writes: `<address>` when its bare text is the address, `[text](address)` otherwise. */
+const writeLink = (href: string, { text, marked }: MarkdownMarkContent): MarkdownDelimiters => {
+    let shownAddress = href;
+    if (href.startsWith(MAILTO_PREFIX)) {
+        shownAddress = href.slice(MAILTO_PREFIX.length);
+    }
+
+    if (!marked && (WEB_AUTOLINK.test(href) || EMAIL_AUTOLINK.test(href)) && text === shownAddress) {
+        return { open: '<', close: '>', literal: true };
+    }
+
+    return { open: '[', close: `](${markdownDestination(href)})`, linkText: true };
 };
 
 /** A stored document may hold anything here (`{}`, `true`), so its shape is not taken on trust. */
@@ -182,6 +209,26 @@ const linkMarkFor = (appearances: readonly LinkAppearance[]): MarkDefinition =>
         defaultStyles: LINK_DEFAULT_STYLES,
 
         parse: [{ tag: 'a[href]', value: (element) => linkFromElement(element, appearances) }],
+
+        markdown: {
+            read: [
+                {
+                    token: 'link_open',
+                    value: ({ attrs }) => {
+                        if (isSafeHref(attrs.href)) {
+                            return { href: attrs.href };
+                        }
+                        return null;
+                    },
+                },
+            ],
+            write: ({ href }, content) => {
+                if (isSafeHref(href)) {
+                    return writeLink(href, content);
+                }
+                return null;
+            },
+        },
     });
 
 // Shared so every link content with the same offer declares the very same mark, which the registry requires.

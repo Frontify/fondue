@@ -33,6 +33,7 @@ export const boldContent = defineContent({
                 { style: 'font-weight', value: markWhen(isBoldWeight) },
                 { style: 'font-weight', clears: isNormalWeight },
             ],
+            markdown: { read: [{ token: 'strong_open' }], write: () => ({ open: '**', close: '**' }) },
         }),
     },
 });

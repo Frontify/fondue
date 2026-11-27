@@ -26,6 +26,7 @@ export const strikethroughContent = defineContent({
             tag: 's',
             // A decorated element counts too, as Google Docs writes it; `text-decoration: none` never removes it, as in a browser.
             parse: [{ tag: 's' }, { tag: 'del' }, { tag: 'strike' }, ...decorationLineRules('line-through')],
+            markdown: { read: [{ token: 's_open' }], write: () => ({ open: '~~', close: '~~' }) },
         }),
     },
 });

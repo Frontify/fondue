@@ -10,6 +10,10 @@ import {
     type InlineDefinition,
     isEmpty,
     type MarkDefinition,
+    type MarkdownBlockForm as CoreMarkdownBlockForm,
+    type MarkdownInlineForm as CoreMarkdownInlineForm,
+    type MarkdownMarkForm as CoreMarkdownMarkForm,
+    type MarkdownToken as CoreMarkdownToken,
     type PasteHandler,
     type RteBlockCommand,
     type RteLabel,
@@ -151,4 +155,8 @@ export declare namespace RtePlugin {
     export type LabelContext = RteLabelContext;
     export type PasteHandler = OnPaste;
     export type HtmlSpec = Html;
+    export type MarkdownBlockForm<TValue = Record<string, unknown>> = CoreMarkdownBlockForm<TValue>;
+    export type MarkdownMarkForm<TValue = Record<string, unknown>> = CoreMarkdownMarkForm<TValue>;
+    export type MarkdownInlineForm<TValue = Record<string, unknown>> = CoreMarkdownInlineForm<TValue>;
+    export type MarkdownToken = CoreMarkdownToken;
 }

@@ -4,6 +4,13 @@ import { ThemeProvider } from '@frontify/fondue-components';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type CSSProperties, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
+import {
+    type MarkdownLoss,
+    type MarkdownOptions,
+    type MarkdownReadLoss,
+    parseMarkdownWithLosses,
+    serializeToMarkdown,
+} from '../codecs';
 // Stories import only the package public API. The plugins have their own story
 // file (`PluginExamples.stories.tsx`); this one is about the editor itself — the props
 // that are its own rather than a plugin's.
@@ -762,6 +769,74 @@ export const ControlledValue: Story = {
                     <RichTextEditor value={doc} onChange={setDoc} plugins={defaultPlugins} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/** An annotation as a host stored it: a heading, inline formatting, a line break, an empty paragraph, a hand-typed list, a quote and a bare URL. */
+const STORED_ANNOTATION = `## Feedback
+
+The **new logo** is *close*, see the [brand guide](https://example.com/guide).
+The second line stays in the same paragraph.
+
+&nbsp;
+
+- First point
+- Second point
+
+> Keep the margins as they are.
+
+https://example.com`;
+
+const MARKDOWN_OPTIONS: MarkdownOptions = { plugins: defaultPlugins, breaks: true };
+
+/** The Markdown and the losses wrap, so a long line shows whole. */
+const MARKDOWN_PANEL = `${JSON_PANEL} tw-whitespace-pre-wrap tw-break-words`;
+
+const NO_LOSSES = 'No losses';
+
+const formatLoss = ({ type, path }: MarkdownLoss): string => `${type} at ${path.join('.')}`;
+
+const formatReadLoss = ({ type, line }: MarkdownReadLoss): string => `${type} on source line ${line}`;
+
+/**
+ * Markdown in, an editable document, Markdown out. The stored Markdown is read into the editor with
+ * `parseMarkdownWithLosses`. The editor stays read-only if the source contains features it cannot keep.
+ * `serializeToMarkdown` lists any losses when the document is written.
+ */
+export const Markdown: Story = {
+    render: () => {
+        const [{ document, losses: readLosses }] = useState(() =>
+            parseMarkdownWithLosses(STORED_ANNOTATION, MARKDOWN_OPTIONS),
+        );
+        const [doc, setDoc] = useState(document);
+        const { markdown, losses } = useMemo(() => serializeToMarkdown(doc, MARKDOWN_OPTIONS), [doc]);
+        const lossMessages = [...readLosses.map(formatReadLoss), ...losses.map(formatLoss)];
+
+        let lossesText = NO_LOSSES;
+        if (lossMessages.length > 0) {
+            lossesText = lossMessages.join('\n');
+        }
+
+        return (
+            <div className={LAYOUT}>
+                <p className={HINT}>
+                    Stored Markdown is read into the editor. Edit it: the Markdown on the right is what a host would
+                    save.
+                </p>
+                <div className={FRAME}>
+                    <RichTextEditor
+                        value={doc}
+                        onChange={setDoc}
+                        plugins={defaultPlugins}
+                        readonly={readLosses.length > 0}
+                    />
+                </div>
+                <div className="tw-flex tw-flex-col tw-gap-4">
+                    <pre className={MARKDOWN_PANEL}>{markdown}</pre>
+                    <pre className={MARKDOWN_PANEL}>{lossesText}</pre>
+                </div>
             </div>
         );
     },

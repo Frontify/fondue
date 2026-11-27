@@ -8,6 +8,7 @@ import {
     defineContent,
     definePlugin,
     lookProperties,
+    MAX_ORDINAL_DIGITS,
     PARAGRAPH,
     type RteBlockNode,
     type RteContent,
@@ -49,6 +50,7 @@ const listItem = defineBlock({
     content: { blocks: [PARAGRAPH, ANY_LIST] },
     toHtml: () => ({ tag: 'li', attrs: { class: styles.item }, children: true }),
     parse: [{ tag: 'li' }],
+    markdown: { read: [{ token: 'list_item_open' }], write: () => ({ first: '', rest: '' }) },
 });
 
 /**
@@ -58,6 +60,15 @@ const bulletList = defineBlock({
     content: { items: 'listItem' },
     toHtml: () => ({ tag: 'ul', attrs: { class: styles.bulletList }, children: true }),
     parse: [{ tag: 'ul' }],
+    markdown: {
+        read: [{ token: 'bullet_list_open' }],
+        write: (_value, { alternate }) => {
+            if (alternate) {
+                return { first: '+ ', rest: '  ' };
+            }
+            return { first: '- ', rest: '  ' };
+        },
+    },
 });
 
 /**
@@ -97,6 +108,12 @@ const storedStart = (value: unknown): number | null => {
 };
 
 /**
+ * The numbers Markdown can start an ordered list item with: at most nine digits, never negative
+ */
+const MIN_MARKDOWN_NUMBER = 0;
+const MAX_MARKDOWN_NUMBER = 10 ** MAX_ORDINAL_DIGITS - 1;
+
+/**
  * The numbered list, which stores where its numbering starts only when that is not 1
  */
 const numberedList = defineBlock<NumberedListValue>({
@@ -127,6 +144,32 @@ const numberedList = defineBlock<NumberedListValue>({
             },
         },
     ],
+    markdown: {
+        read: [
+            {
+                token: 'ordered_list_open',
+                value: ({ attrs }) => {
+                    const start = storedStart(Number.parseInt(attrs.start ?? '', 10));
+                    if (start === null) {
+                        return {};
+                    }
+                    return { start };
+                },
+            },
+        ],
+        write: ({ start }, { index, alternate }) => {
+            const number = (storedStart(start) ?? 1) + index;
+            if (number < MIN_MARKDOWN_NUMBER || number > MAX_MARKDOWN_NUMBER) {
+                return null;
+            }
+            let terminator = '.';
+            if (alternate) {
+                terminator = ')';
+            }
+            const marker = `${number}${terminator} `;
+            return { first: marker, rest: ' '.repeat(marker.length) };
+        },
+    },
 });
 
 /**

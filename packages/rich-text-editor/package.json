@@ -28,6 +28,10 @@
             "types": "./dist/plugins.d.ts",
             "import": "./dist/plugins.es.js"
         },
+        "./codecs": {
+            "types": "./dist/codecs.d.ts",
+            "import": "./dist/codecs.es.js"
+        },
         "./styles": "./dist/style.css"
     },
     "files": [
@@ -93,6 +97,7 @@
         "autoprefixer": "^10.7.0",
         "esbuild": "^0.28.2",
         "happy-dom": "^21.0.4",
+        "markdown-it": "^15.0.3",
         "oxfmt": "^0.74.0",
         "oxlint": "^1.95.0",
         "oxlint-tsgolint": "^0.23.0",

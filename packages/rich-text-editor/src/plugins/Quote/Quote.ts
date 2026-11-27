@@ -24,6 +24,7 @@ export const quoteContent = defineContent({
             content: 'text',
             toHtml: () => ({ tag: 'blockquote', attrs: { class: styles.quote }, children: true }),
             parse: [{ tag: 'blockquote' }],
+            markdown: { read: [{ token: 'blockquote_open' }], write: () => ({ first: '> ', rest: '> ' }) },
         }),
     },
 });

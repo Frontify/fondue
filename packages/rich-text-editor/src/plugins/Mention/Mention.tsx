@@ -59,6 +59,12 @@ export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = 
                 // markup reads as the link or text it is, and only the picker inserts one.
                 parse: [],
 
+                // Markdown text never creates a mention either; a host that has its own syntax overrides this form.
+                markdown: {
+                    read: [],
+                    write: (mention) => ({ kind: 'text', text: mentionDisplay(mention, { trigger }).label }),
+                },
+
                 render: {
                     component: ({ value }) => (
                         <MentionLink

@@ -8,6 +8,8 @@ import { i8 } from '#/core'; // banned
 import { i7 } from '#/index'; // banned
 import { i9 } from '#/plugins'; // banned
 
+import { i13 } from '../codecs';
+import { i14 } from '../codecs/markdown/read'; // banned
 import { i3 } from '../core'; // banned
 import { i4 } from '../documentFormat'; // banned
 import { i5 } from '../editor'; // banned
@@ -17,4 +19,4 @@ import { i2 } from '../plugins/Bold'; // banned
 
 import { i6 } from './helper'; // banned
 
-export const all = [i0, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12];
+export const all = [i0, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14];

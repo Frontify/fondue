@@ -293,6 +293,8 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
     /** The block's markup. `children: true` is where its content goes. */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<Partial<TValue>>[];
+    /** How the block reads from and writes to Markdown. Without it, the block is a loss on write. */
+    markdown?: MarkdownBlockForm<TValue>;
     /**
      * The block's place in a grid: a block laid out in rows and columns that
      * the editor edits as one, with a selection that spans slots, and keys
@@ -405,6 +407,8 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
     /** The mark's markup around its text, which goes where `children: true` is. */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly MarkParseRule<TValue>[];
+    /** How the mark reads from and writes to Markdown. Without it, the mark is a loss on write. */
+    markdown?: MarkdownMarkForm<TValue>;
     render?: {
         /** Readonly view in place of `toHtml`. */
         component?: ComponentType<{ value: TValue; children: ReactNode }>;
@@ -427,10 +431,96 @@ export type InlineDefinition<TValue = Record<string, unknown>> = {
     defaults?: TValue;
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<TValue>[];
+    /** How the inline reads from and writes to Markdown. Without it, the inline is a loss on write. */
+    markdown?: MarkdownInlineForm<TValue>;
     render?: {
         /** Readonly view in place of `toHtml`. */
         component?: ComponentType<{ value: TValue }>;
     };
+};
+
+/** A token as the Markdown reader hands it to a read rule. */
+export type MarkdownToken = {
+    /** The markdown-it token type: `heading_open`, `link_open`, `code_inline`. */
+    type: string;
+    /** The element name: `h2`, `a`. */
+    tag: string;
+    /** Any attribute name, such as `href` or `start`. */
+    attrs: Readonly<Record<string, string>>;
+    content: string;
+};
+
+/** Reads a token as a node. `value` returns null for a token that is not this node, and the next rule is tried. */
+export type MarkdownReadRule<TValue> = { token: string; value?: (token: MarkdownToken) => TValue | null };
+
+/** Reads text the writer did not escape as an inline, by pattern. */
+export type MarkdownTextPattern<TValue> = { pattern: RegExp; value: (match: RegExpExecArray) => TValue | null };
+
+/**
+ * What a block writes before its first line and before every later line. `rest` is null for a block that holds
+ * one line (a heading): a line break inside it writes as a space, and is a loss.
+ */
+export type MarkdownLinePrefix = { first: string; rest: string | null };
+
+/** What a mark writes before and after its text. */
+export type MarkdownDelimiters = {
+    open: string;
+    close: string;
+    /**
+     * The text inside is written as is, never escaped.
+     * @default false
+     */
+    literal?: boolean;
+    /**
+     * The text inside is a link's text, where Markdown reads no other link.
+     * @default false
+     */
+    linkText?: boolean;
+};
+
+/** Where an item sits in its list, counted from 0. */
+export type MarkdownListItem = {
+    index: number;
+    /** True for a list that directly follows a list of the same type, which must use its other marker to stay apart. */
+    alternate: boolean;
+};
+
+/**
+ * What an inline writes: `text` is escaped, `markdown` is written as is, and
+ * `lineBreak` is a backslash and a newline, or a bare newline with `breaks: true`.
+ */
+export type MarkdownInlineOutput =
+    | { kind: 'text'; text: string }
+    | { kind: 'markdown'; markdown: string }
+    | { kind: 'lineBreak' };
+
+/** How a block reads from and writes to Markdown. */
+export type MarkdownBlockForm<TValue = Record<string, unknown>> = {
+    read: readonly MarkdownReadRule<Partial<TValue>>[];
+    /** For a list, called once per item. Null: this value has no Markdown form, which is a loss. */
+    write: (value: TValue, item: MarkdownListItem) => MarkdownLinePrefix | null;
+};
+
+/** What a mark wraps, as its form reads it to choose its delimiters. */
+export type MarkdownMarkContent = {
+    /** The plain text of the mark's run. */
+    text: string;
+    /** True when other marks or inline elements sit inside this mark's run. */
+    marked: boolean;
+};
+
+/** How a mark reads from and writes to Markdown. */
+export type MarkdownMarkForm<TValue = Record<string, unknown>> = {
+    read: readonly MarkdownReadRule<TValue>[];
+    /** Null: this value has no Markdown form, which is a loss. */
+    write: (value: TValue, content: MarkdownMarkContent) => MarkdownDelimiters | null;
+};
+
+/** How an inline reads from and writes to Markdown. */
+export type MarkdownInlineForm<TValue = Record<string, unknown>> = {
+    read: readonly (MarkdownReadRule<TValue> | MarkdownTextPattern<TValue>)[];
+    /** Null: this value has no Markdown form, which is a loss. */
+    write: (value: TValue) => MarkdownInlineOutput | null;
 };
 
 /**

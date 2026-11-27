@@ -2,7 +2,7 @@
 
 import { IconCode } from '@frontify/fondue-icons';
 
-import { defineContent, defineMark, definePlugin } from '#/core';
+import { defineContent, defineMark, definePlugin, type MarkdownDelimiters } from '#/core';
 import { translatedLabel } from '#/ui/translation';
 
 import styles from './code.module.scss';
@@ -17,6 +17,28 @@ export type CodeMark = {
     code?: true;
 };
 
+const BACKTICK = '`';
+
+const BACKTICK_RUN = /`+/g;
+
+/**
+ * A fence one backtick longer than any run in the text, with a space inside each end when the text starts or ends
+ * with a backtick, which the reader strips again
+ */
+const codeDelimiters = (text: string): MarkdownDelimiters => {
+    let longestRun = 0;
+    for (const [run] of text.matchAll(BACKTICK_RUN)) {
+        longestRun = Math.max(longestRun, run.length);
+    }
+
+    const fence = BACKTICK.repeat(longestRun + 1);
+    if (text.startsWith(BACKTICK) || text.endsWith(BACKTICK)) {
+        return { open: `${fence} `, close: ` ${fence}`, literal: true };
+    }
+
+    return { open: fence, close: fence, literal: true };
+};
+
 /**
  * Inline code, written as `<code>`
  */
@@ -29,6 +51,10 @@ export const codeContent = defineContent({
             inclusive: false,
             toHtml: () => ({ tag: 'code', attrs: { class: styles.code ?? '' }, children: true }),
             parse: [{ tag: 'code' }],
+            markdown: {
+                read: [{ token: 'code_inline' }],
+                write: (_value, content) => codeDelimiters(content.text),
+            },
         }),
     },
 });
