@@ -22,6 +22,18 @@ test('should render as button when clickable', async ({ mount }) => {
     await expect(component).toHaveRole('button');
 });
 
+test('disabled status keeps its status and marks the dot disabled', async ({ mount }) => {
+    const wrapper = await mount(
+        <Badge data-test-id="badge-root" disabled status="positive">
+            {BADGE_TEXT}
+        </Badge>,
+    );
+    const status = wrapper.getByTestId('badge-status');
+
+    await expect(status).toHaveAttribute('data-disabled', 'true');
+    await expect(status).toHaveAttribute('data-status', 'positive');
+});
+
 test('should render status indicator when provided', async ({ mount }) => {
     const wrapper = await mount(
         <Badge data-test-id="badge-root" status="positive">

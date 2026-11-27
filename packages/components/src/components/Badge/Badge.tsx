@@ -105,7 +105,9 @@ export const Badge = ({
                     disabled={disabled}
                     onClick={onClick}
                 >
-                    <BadgeContent status={status}>{children}</BadgeContent>
+                    <BadgeContent disabled={disabled} status={status}>
+                        {children}
+                    </BadgeContent>
                 </button>
                 {dismissButton}
             </div>
@@ -115,14 +117,18 @@ export const Badge = ({
     if (onClick) {
         return (
             <button type="button" disabled={disabled} {...commonProps} onClick={onClick}>
-                <BadgeContent status={status}>{children}</BadgeContent>
+                <BadgeContent disabled={disabled} status={status}>
+                    {children}
+                </BadgeContent>
             </button>
         );
     }
 
     return (
         <div {...commonProps}>
-            <BadgeContent status={status}>{children}</BadgeContent>
+            <BadgeContent disabled={disabled} status={status}>
+                {children}
+            </BadgeContent>
             {dismissButton}
         </div>
     );
@@ -130,9 +136,17 @@ export const Badge = ({
 
 Badge.displayName = 'Badge';
 
-const BadgeContent = ({ children, status }: { children: ReactNode; status?: BadgeStatusProps['status'] }) => (
+const BadgeContent = ({
+    children,
+    disabled = false,
+    status,
+}: {
+    children: ReactNode;
+    disabled?: boolean;
+    status?: BadgeStatusProps['status'];
+}) => (
     <>
-        {status && <BadgeStatus status={status} />}
+        {status && <BadgeStatus disabled={disabled} status={status} />}
         {children}
     </>
 );

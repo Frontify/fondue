@@ -61,11 +61,11 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
         }
 
         .triggerLabelActive {
-            font-weight: 500;
+            font-weight: var(--typography-font-weight-medium);
         }
 
         .triggerLabelInactive {
-            font-weight: 400;
+            font-weight: var(--typography-font-weight-regular);
         }
 
         .activeIndicator {
@@ -106,19 +106,26 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
             }
 
             .triggerList {
-                padding: sizeToken.get(3);
+                padding: 0 sizeToken.get(3);
             }
         }
 
         .triggerList {
-            height: auto;
-            padding: sizeToken.get(3);
+            height: sizeToken.get(12);
+            align-items: center;
+            padding: 0 sizeToken.get(3);
+        }
+
+        .triggerList[data-size='large'] {
+            height: sizeToken.get(12);
         }
 
         .trigger {
             color: var(--color-primary-default);
             font-size: var(--typography-font-size-small);
-            font-weight: 500;
+            font-weight: var(--typography-font-weight-medium);
+            box-sizing: border-box;
+            height: sizeToken.get(7);
             line-height: var(--typography-line-height-tight);
             white-space: nowrap;
             display: flex;
@@ -157,29 +164,33 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
                 background-color: var(--color-container-secondary-active);
             }
         }
+
+        .triggerList[data-size='large'] .trigger {
+            height: sizeToken.get(8);
+        }
     }
 
     &[data-tabs-content-padding='tight'] {
         .content {
-            padding: sizeToken.get(2);
+            padding-block-start: sizeToken.get(2);
         }
     }
 
     &[data-tabs-content-padding='compact'] {
         .content {
-            padding: sizeToken.get(3);
+            padding-block-start: sizeToken.get(3);
         }
     }
 
     &[data-tabs-content-padding='comfortable'] {
         .content {
-            padding: sizeToken.get(4);
+            padding-block-start: sizeToken.get(4);
         }
     }
 
     &[data-tabs-content-padding='spacious'] {
         .content {
-            padding: sizeToken.get(6);
+            padding-block-start: sizeToken.get(6);
         }
     }
 }

@@ -14,6 +14,15 @@ type LinkColor = 'primary' | 'secondary' | 'error' | 'success' | 'warning' | 'hi
 type LinkOnContainerColor = 'secondary' | 'disabled' | 'error' | 'success' | 'warning' | 'highlight';
 type LinkWrap = 'wrap' | 'nowrap';
 type LinkUnderline = 'auto' | 'always' | 'hover' | 'none';
+type LinkVariant = 'inline' | 'standalone';
+
+const underlineForVariant = (variant: LinkVariant): LinkUnderline => {
+    if (variant === 'standalone') {
+        return 'hover';
+    }
+
+    return 'always';
+};
 
 export type LinkProps = CommonGlobalProps & {
     children?: ReactNode;
@@ -34,9 +43,15 @@ export type LinkProps = CommonGlobalProps & {
     /**
      * Weight of the font
      *
-     * @default 'regular'
+     * @default 'medium'
      */
     weight?: LinkWeight;
+    /**
+     * Inline stays underlined. Standalone underlines on hover.
+     *
+     * @default 'inline'
+     */
+    variant?: LinkVariant;
     /**
      * Color of the text
      *
@@ -59,8 +74,7 @@ export type LinkProps = CommonGlobalProps & {
      */
     wrap?: LinkWrap;
     /**
-     * Underline behavior of the link
-     * @default 'auto'
+     * Underline behavior of the link. When omitted, an inline link stays underlined and a standalone link underlines on hover.
      */
     underline?: LinkUnderline;
     /**
@@ -107,10 +121,11 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
             className,
             children,
             size = 'medium',
-            weight = 'regular',
+            weight = 'medium',
+            variant = 'inline',
             truncate = false,
             wrap = 'nowrap',
-            underline = 'auto',
+            underline,
             color = 'primary',
             href,
             onContainer,
@@ -154,6 +169,7 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
         const computedColor = disabled
             ? styles.disabled
             : styles[onContainer ? `color-on-container-${onContainer}` : `color-${color}`];
+        const resolvedUnderline = underline ?? underlineForVariant(variant);
 
         return (
             <a
@@ -163,7 +179,7 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
                     styles[`size-${size}`],
                     styles[`weight-${weight}`],
                     styles[`wrap-${wrap}`],
-                    styles[`underline-${underline}`],
+                    styles[`underline-${resolvedUnderline}`],
                     truncate && styles.truncate,
                     computedColor,
                     className,

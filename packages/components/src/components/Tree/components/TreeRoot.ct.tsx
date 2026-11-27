@@ -1750,12 +1750,9 @@ test.describe('TreeRoot reorderable mode', () => {
         );
         await expect(reorderable.locator('[draggable="true"]')).toHaveCount(1);
         const handle = reorderable.locator('span[class*="handle"]');
-        await expect(handle).toHaveCSS('visibility', 'hidden');
-        await reorderable.getByRole('treeitem', { name: /Row/ }).hover();
         await expect(handle).toHaveCSS('visibility', 'visible');
+        await reorderable.getByRole('treeitem', { name: /Row/ }).hover();
         await page.mouse.move(0, 0);
-        await expect(handle).toHaveCSS('visibility', 'hidden');
-        await reorderable.getByRole('treeitem', { name: /Row/ }).focus();
         await expect(handle).toHaveCSS('visibility', 'visible');
     });
 

@@ -20,6 +20,10 @@
     @include variant(highlight, --color-highlight-default);
     @include variant(warning, --color-warning-default);
     @include variant(negative, --color-error-default);
+
+    &[data-disabled='true'] {
+        background-color: var(--color-container-disabled-on-disabled-container);
+    }
 }
 
 /**
@@ -59,6 +63,10 @@
         // For custom colors, use currentColor as fallback
         &:not([data-status]) {
             background-color: currentColor !important;
+        }
+
+        &[data-disabled='true'] {
+            background-color: GrayText !important;
         }
     }
 }
