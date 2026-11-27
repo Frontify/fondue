@@ -6,6 +6,7 @@ import {
     IconDotsVertical,
     IconExclamationMarkTriangle,
     IconFolder,
+    IconFolderFilled,
     IconHome,
     IconIcon,
     IconImageStack,
@@ -107,7 +108,7 @@ const BannerImagePaddingDemo = ({ padding, fit }: BannerImagePaddingControls) =>
 
             <Card.Action>
                 <Card.ActionButton aria-label="More actions">
-                    <IconDotsVertical size={20} />
+                    <IconDotsVertical size={16} />
                 </Card.ActionButton>
             </Card.Action>
         </Card.Root>
@@ -130,7 +131,7 @@ const BannerToneInvertedDemo = () => {
 
             <Card.Action>
                 <Card.ActionButton aria-label="More actions">
-                    <IconDotsVertical size={20} />
+                    <IconDotsVertical size={16} />
                 </Card.ActionButton>
             </Card.Action>
         </Card.Root>
@@ -174,14 +175,14 @@ const BannerDescriptionDemo = ({ description, title, banner, selectable = true }
 
             <Card.Action>
                 <Card.ActionButton aria-label="Settings">
-                    <IconCog size={20} />
+                    <IconCog size={16} />
                 </Card.ActionButton>
             </Card.Action>
             <Card.Action>
                 <Dropdown.Root>
                     <Dropdown.Trigger>
                         <Card.ActionButton aria-label="More actions">
-                            <IconDotsVertical size={20} />
+                            <IconDotsVertical size={16} />
                         </Card.ActionButton>
                     </Dropdown.Trigger>
                     <Dropdown.Content>
@@ -215,14 +216,14 @@ const ActionsVisibilityDemo = ({ actionsVisibility, title }: ActionsVisibilityDe
 
             <Card.Action>
                 <Card.ActionButton aria-label="Settings">
-                    <IconCog size={20} />
+                    <IconCog size={16} />
                 </Card.ActionButton>
             </Card.Action>
             <Card.Action>
                 <Dropdown.Root>
                     <Dropdown.Trigger>
                         <Card.ActionButton aria-label="More actions">
-                            <IconDotsVertical size={20} />
+                            <IconDotsVertical size={16} />
                         </Card.ActionButton>
                     </Dropdown.Trigger>
                     <Dropdown.Content>
@@ -236,53 +237,6 @@ const ActionsVisibilityDemo = ({ actionsVisibility, title }: ActionsVisibilityDe
 };
 
 const ACTIONS_LONG_TITLE = 'Summer campaign hero image final approved version.jpg';
-
-const BannerToneDimComparison = () => {
-    const [selectedDefault, setSelectedDefault] = useState(false);
-    const [selectedDim, setSelectedDim] = useState(false);
-
-    return (
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <div style={{ width: 280 }}>
-                <Card.Root href="#" selected={selectedDefault} onSelect={() => setSelectedDefault((s) => !s)}>
-                    <Card.Banner>
-                        <Card.BannerIcon>
-                            <IconImageStack size={32} />
-                        </Card.BannerIcon>
-                    </Card.Banner>
-
-                    <Card.Title>Default (no tone)</Card.Title>
-                    <Card.Description>Hover → banner brightens</Card.Description>
-
-                    <Card.Action>
-                        <Card.ActionButton aria-label="More actions">
-                            <IconDotsVertical size={20} />
-                        </Card.ActionButton>
-                    </Card.Action>
-                </Card.Root>
-            </div>
-
-            <div style={{ width: 280 }}>
-                <Card.Root href="#" selected={selectedDim} onSelect={() => setSelectedDim((s) => !s)}>
-                    <Card.Banner tone="dim">
-                        <Card.BannerIcon>
-                            <IconImageStack size={32} />
-                        </Card.BannerIcon>
-                    </Card.Banner>
-
-                    <Card.Title>tone=&quot;dim&quot;</Card.Title>
-                    <Card.Description>Hover → banner stays dim</Card.Description>
-
-                    <Card.Action>
-                        <Card.ActionButton aria-label="More actions">
-                            <IconDotsVertical size={20} />
-                        </Card.ActionButton>
-                    </Card.Action>
-                </Card.Root>
-            </div>
-        </div>
-    );
-};
 
 export const Default: Story = {
     decorators: singleCardDecorators,
@@ -304,14 +258,14 @@ export const Default: Story = {
 
                 <Card.Action>
                     <Card.ActionButton aria-label="Settings">
-                        <IconCog size={20} />
+                        <IconCog size={16} />
                     </Card.ActionButton>
                 </Card.Action>
                 <Card.Action>
                     <Dropdown.Root>
                         <Dropdown.Trigger>
                             <Card.ActionButton aria-label="More actions">
-                                <IconDotsVertical size={20} />
+                                <IconDotsVertical size={16} />
                             </Card.ActionButton>
                         </Dropdown.Trigger>
                         <Dropdown.Content>
@@ -367,12 +321,12 @@ export const WithBadges: Story = {
 
                 <Card.Action>
                     <Card.ActionButton aria-label="Settings">
-                        <IconCog size={20} />
+                        <IconCog size={16} />
                     </Card.ActionButton>
                 </Card.Action>
                 <Card.Action>
                     <Card.ActionButton aria-label="More actions">
-                        <IconDotsVertical size={20} />
+                        <IconDotsVertical size={16} />
                     </Card.ActionButton>
                 </Card.Action>
             </Card.Root>
@@ -425,12 +379,12 @@ export const SmallBannerWithImages: Story = {
 
                 <Card.Action>
                     <Card.ActionButton aria-label="Settings">
-                        <IconCog size={20} />
+                        <IconCog size={16} />
                     </Card.ActionButton>
                 </Card.Action>
                 <Card.Action>
                     <Card.ActionButton aria-label="More actions">
-                        <IconDotsVertical size={20} />
+                        <IconDotsVertical size={16} />
                     </Card.ActionButton>
                 </Card.Action>
             </Card.Root>
@@ -456,12 +410,12 @@ export const SmallBannerWithIcon: Story = {
 
                 <Card.Action>
                     <Card.ActionButton aria-label="Settings">
-                        <IconCog size={20} />
+                        <IconCog size={16} />
                     </Card.ActionButton>
                 </Card.Action>
                 <Card.Action>
                     <Card.ActionButton aria-label="More actions">
-                        <IconDotsVertical size={20} />
+                        <IconDotsVertical size={16} />
                     </Card.ActionButton>
                 </Card.Action>
             </Card.Root>
@@ -472,21 +426,6 @@ export const SmallBannerWithIcon: Story = {
 export const BannerToneInverted: Story = {
     decorators: singleCardDecorators,
     render: () => <BannerToneInvertedDemo />,
-};
-
-export const BannerToneDim: Story = {
-    name: 'BannerTone dim (hover to compare)',
-    parameters: {
-        docs: {
-            description: {
-                story:
-                    'The effect of `tone="dim"` only shows on hover. A tone-less banner that contains a ' +
-                    '`Card.BannerIcon` brightens to `surface-hover` when the interactive card is hovered; ' +
-                    '`tone="dim"` pins `surface-dim` and opts out of that shift. Hover each card to compare.',
-            },
-        },
-    },
-    render: () => <BannerToneDimComparison />,
 };
 
 export const BannerDescription: StoryObj<BannerDescriptionDemoProps> = {
@@ -621,12 +560,58 @@ export const BannerIconWithThumbnail: Story = {
 
                 <Card.Action>
                     <Card.ActionButton aria-label="More actions">
-                        <IconDotsVertical size={20} />
+                        <IconDotsVertical size={16} />
                     </Card.ActionButton>
                 </Card.Action>
             </Card.Root>
         );
     },
+};
+
+const FOLDER_COLORS = [
+    { name: 'No color', color: undefined },
+    { name: 'Red folder', color: '#FD7D7F' },
+    { name: 'Orange folder', color: '#FDBD43' },
+    { name: 'Yellow folder', color: '#F4E447' },
+    { name: 'Green folder', color: '#B5DF3A' },
+    { name: 'Blue folder', color: '#83C9FD' },
+    { name: 'Purple folder', color: '#E3A7FD' },
+];
+
+export const FolderColors: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Pass `customColor` to `Card.BannerIcon` and `Card.ThumbnailIcon` to paint the icons in a custom ' +
+                    'color, such as a folder color. Without it, the icons use the default color. The cards show the ' +
+                    'folder colors users can pick in the library.',
+            },
+        },
+    },
+    render: () => (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+            {FOLDER_COLORS.map(({ name, color }) => (
+                <Card.Root key={name} href="#" aria-label={name}>
+                    <Card.Banner>
+                        <Card.BannerIcon customColor={color}>
+                            <IconFolderFilled size={32} />
+                        </Card.BannerIcon>
+                    </Card.Banner>
+                    <Card.ThumbnailIcon customColor={color}>
+                        <IconFolderFilled size={20} />
+                    </Card.ThumbnailIcon>
+                    <Card.Title>{name}</Card.Title>
+                    <Card.Description>1,837 assets · No status</Card.Description>
+                    <Card.Action>
+                        <Card.ActionButton aria-label="More actions">
+                            <IconDotsVertical size={16} />
+                        </Card.ActionButton>
+                    </Card.Action>
+                </Card.Root>
+            ))}
+        </div>
+    ),
 };
 
 export const WithThumbnailImage: Story = {
@@ -646,12 +631,12 @@ export const WithThumbnailImage: Story = {
 
                 <Card.Action>
                     <Card.ActionButton aria-label="Favorite">
-                        <IconStar size={20} />
+                        <IconStar size={16} />
                     </Card.ActionButton>
                 </Card.Action>
                 <Card.Action>
                     <Card.ActionButton aria-label="More actions">
-                        <IconDotsVertical size={20} />
+                        <IconDotsVertical size={16} />
                     </Card.ActionButton>
                 </Card.Action>
             </Card.Root>
@@ -677,12 +662,12 @@ export const MultipleBannerImages: Story = {
 
                 <Card.Action>
                     <Card.ActionButton aria-label="Favorite">
-                        <IconStar size={20} />
+                        <IconStar size={16} />
                     </Card.ActionButton>
                 </Card.Action>
                 <Card.Action>
                     <Card.ActionButton aria-label="More actions">
-                        <IconDotsVertical size={20} />
+                        <IconDotsVertical size={16} />
                     </Card.ActionButton>
                 </Card.Action>
             </Card.Root>
@@ -706,7 +691,7 @@ export const WithoutBanner: Story = {
 
             <Card.Action>
                 <Card.ActionButton aria-label="More actions">
-                    <IconDotsVertical size={20} />
+                    <IconDotsVertical size={16} />
                 </Card.ActionButton>
             </Card.Action>
         </Card.Root>
@@ -784,17 +769,17 @@ export const ResponsiveGrid: Story = {
 
                             <Card.Action>
                                 <Card.ActionButton aria-label="Favorite">
-                                    <IconStar size={20} />
+                                    <IconStar size={16} />
                                 </Card.ActionButton>
                             </Card.Action>
                             <Card.Action>
                                 <Card.ActionButton aria-label="Settings">
-                                    <IconCog size={20} />
+                                    <IconCog size={16} />
                                 </Card.ActionButton>
                             </Card.Action>
                             <Card.Action>
                                 <Card.ActionButton aria-label="More actions">
-                                    <IconDotsVertical size={20} />
+                                    <IconDotsVertical size={16} />
                                 </Card.ActionButton>
                             </Card.Action>
                         </Card.Root>
@@ -822,7 +807,7 @@ export const LinkOnly: Story = {
 
             <Card.Action>
                 <Card.ActionButton aria-label="More actions">
-                    <IconDotsVertical size={20} />
+                    <IconDotsVertical size={16} />
                 </Card.ActionButton>
             </Card.Action>
         </Card.Root>
@@ -846,7 +831,7 @@ export const NonInteractive: Story = {
 
             <Card.Action>
                 <Card.ActionButton aria-label="More actions">
-                    <IconDotsVertical size={20} />
+                    <IconDotsVertical size={16} />
                 </Card.ActionButton>
             </Card.Action>
         </Card.Root>
@@ -874,14 +859,14 @@ export const FullExample: Story = {
 
                 <Card.Action>
                     <Card.ActionButton aria-label="Settings">
-                        <IconCog size={20} />
+                        <IconCog size={16} />
                     </Card.ActionButton>
                 </Card.Action>
                 <Card.Action>
                     <Dropdown.Root>
                         <Dropdown.Trigger>
                             <Card.ActionButton aria-label="More actions">
-                                <IconDotsVertical size={20} />
+                                <IconDotsVertical size={16} />
                             </Card.ActionButton>
                         </Dropdown.Trigger>
                         <Dropdown.Content>

@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ForwardedRef, type ReactNode } from 'react';
+import { type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
 
 import { useCardContext } from './CardContext';
+import { getCardIconColorStyle } from './cardIconColor';
 import styles from './styles/card.module.scss';
 
 export type CardBadgesProps = {
@@ -45,15 +46,27 @@ CardThumbnailImage.displayName = 'Card.ThumbnailImage';
 
 export type CardThumbnailIconProps = {
     'data-test-id'?: string;
+    /**
+     * Custom icon color, such as a folder color.
+     *
+     * Accepts any CSS color value or token (e.g., `'#E3A7FD'`, `'var(--color-primary-default)'`)
+     */
+    customColor?: CSSProperties['color'];
     children?: ReactNode;
 };
 
 export const CardThumbnailIcon = (
-    { 'data-test-id': dataTestId = 'fondue-card-thumbnail-icon', children }: CardThumbnailIconProps,
+    { 'data-test-id': dataTestId = 'fondue-card-thumbnail-icon', customColor, children }: CardThumbnailIconProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div ref={ref} className={styles.thumbnailIcon} data-test-id={dataTestId} aria-hidden="true">
+        <div
+            ref={ref}
+            className={styles.thumbnailIcon}
+            data-test-id={dataTestId}
+            style={getCardIconColorStyle(customColor)}
+            aria-hidden="true"
+        >
             {children}
         </div>
     );
