@@ -11,10 +11,10 @@
         },
         {
             "type": "paragraph",
-            "align": "left",
+            "align": "start",
             "children": [
                 {
-                    "text": "aligned left"
+                    "text": "aligned start"
                 }
             ]
         },
@@ -29,10 +29,10 @@
         },
         {
             "type": "paragraph",
-            "align": "right",
+            "align": "end",
             "children": [
                 {
-                    "text": "aligned right"
+                    "text": "aligned end"
                 }
             ]
         },

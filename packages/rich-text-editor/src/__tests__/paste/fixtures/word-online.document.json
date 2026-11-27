@@ -3,7 +3,7 @@
     "blocks": [
         {
             "type": "paragraph",
-            "align": "left",
+            "align": "start",
             "children": [
                 {
                     "text": "Quarterly "

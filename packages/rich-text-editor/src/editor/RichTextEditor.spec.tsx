@@ -1121,6 +1121,35 @@ describe('the toolbar from the keyboard', () => {
         expect(radios.map((radio) => radio.getAttribute('data-emphasis'))).toEqual(['default', 'weak', 'weak', 'weak']);
     });
 
+    it('keeps a stored alignment outside the four and gives it no style', () => {
+        // Values outside the type, as an older document can hold them.
+        const value = {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', children: [{ text: 'edit' }] },
+                { type: 'paragraph', align: 'inherit', children: [{ text: 'inherits' }] },
+                { type: 'paragraph', align: 'left', children: [{ text: 'left' }] },
+            ],
+        } as unknown as RteDocument;
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor value={value} onChange={onChange} plugins={plugins} />
+        ));
+        ready();
+
+        paste(container, '<p>pasted</p>');
+
+        expect(stored()?.blocks).toContainEqual(expect.objectContaining({ align: 'inherit' }));
+        expect(stored()?.blocks).toContainEqual(expect.objectContaining({ align: 'left' }));
+        const paragraphs = [...container.querySelectorAll<HTMLElement>('[contenteditable] p')];
+        const styled = paragraphs.filter(
+            (element) => element.textContent === 'inherits' || element.textContent === 'left',
+        );
+        expect(styled).toHaveLength(2);
+        for (const element of styled) {
+            expect(element.style.textAlign).toBe('');
+        }
+    });
+
     describe('in a narrow top row', () => {
         // Every slot and More are 30 wide; the row is as wide as `rowWidth`.
         let rowWidth = 200;
@@ -2867,7 +2896,7 @@ describe('pasting', () => {
         it('reads only the alignments it offers', () => {
             const doc = pasted('<p style="text-align: start">start</p><p style="text-align: center">centre</p>');
 
-            expect(doc?.blocks[0]).not.toHaveProperty('align');
+            expect(doc?.blocks[0]).toHaveProperty('align', 'start');
             expect(doc?.blocks[1]).toHaveProperty('align', 'center');
         });
     });

@@ -845,7 +845,7 @@ describe('block attributes', () => {
         ]);
         editor.caretAfter('it');
 
-        editor.api.blocks.updateAttributes({ align: 'right' });
+        editor.api.blocks.updateAttributes({ align: 'end' });
 
         expect(editor.stored()).toEqual([
             {
@@ -853,7 +853,7 @@ describe('block attributes', () => {
                 children: [
                     {
                         type: 'listItem',
-                        children: [{ type: 'paragraph', align: 'right', children: [{ text: 'item' }] }],
+                        children: [{ type: 'paragraph', align: 'end', children: [{ text: 'item' }] }],
                     },
                 ],
             },
@@ -863,7 +863,7 @@ describe('block attributes', () => {
     it('go back to their defaults on reset, the block type kept', () => {
         const editor = editorWith(plugins, [
             { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },
-            { type: 'textStyle', style: 'heading2', align: 'right', children: [{ text: 'two' }] },
+            { type: 'textStyle', style: 'heading2', align: 'end', children: [{ text: 'two' }] },
         ]);
         editor.selectBetween('one', 'two');
 
@@ -1165,7 +1165,7 @@ describe('blocks.setType with attributes every text block carries', () => {
     it('keeps each block its own across a range', () => {
         const editor = editorWith(plugins, [
             { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },
-            { type: 'paragraph', align: 'right', children: [{ text: 'two' }] },
+            { type: 'paragraph', align: 'end', children: [{ text: 'two' }] },
         ]);
         editor.selectBetween('one', 'two');
 
@@ -1173,7 +1173,7 @@ describe('blocks.setType with attributes every text block carries', () => {
 
         expect(editor.stored()).toEqual([
             { type: 'quote', align: 'center', children: [{ text: 'one' }] },
-            { type: 'quote', align: 'right', children: [{ text: 'two' }] },
+            { type: 'quote', align: 'end', children: [{ text: 'two' }] },
         ]);
     });
 });
