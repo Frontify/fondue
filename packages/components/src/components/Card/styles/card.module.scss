@@ -518,27 +518,3 @@ $selection-mark-clearance: calc(var(--spacing-medium) + #{sizeToken.get(5)} + va
     display: flex;
     align-items: center;
 }
-
-.actionButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: sizeToken.get(6);
-    height: sizeToken.get(6);
-    border-radius: var(--border-radius-medium);
-    border: var(--border-width-default) solid transparent;
-    background: transparent;
-    cursor: pointer;
-    outline: none;
-    @include transitions.transition-colors;
-
-    &:hover,
-    &[data-state='open'] {
-        color: var(--color-primary-default);
-        background-color: var(--color-container-secondary-default);
-    }
-
-    &:focus-visible {
-        outline: 4px solid var(--color-focus-default);
-    }
-}
