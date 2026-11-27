@@ -167,6 +167,13 @@ export default defineConfig({
             },
         },
         {
+            // Tests and stories set the editor's `autoFocus` as a host does. DOM elements stay checked.
+            files: ['src/**/*.spec.tsx', 'src/**/*.ct.tsx', 'src/stories/**/*.tsx'],
+            rules: {
+                'jsx-a11y/no-autofocus': ['error', { ignoreNonDOM: true }],
+            },
+        },
+        {
             files: ['**/*.stories.tsx'],
             rules: {
                 '@eslint-react/rules-of-hooks': 'off',

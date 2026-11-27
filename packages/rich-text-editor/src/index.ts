@@ -6,6 +6,7 @@ import {
     type BlockDefinition,
     type EditorControlApi,
     type EditProps,
+    type FocusPosition as CoreFocusPosition,
     type HtmlSpec,
     type InlineDefinition,
     isEmpty,
@@ -138,6 +139,7 @@ type Html = HtmlSpec;
 export declare namespace RtePlugin {
     export type EditorControlApi = ControlApi;
     export type SelectionSnapshot = RteSelectionSnapshot;
+    export type FocusPosition = CoreFocusPosition;
     export type ToolbarItemProps = ToolbarProps;
     export type EditProps<TValue, TCurrent = TValue> = EditComponentProps<TValue, TCurrent>;
     export type BlockNode = RteBlockNode;

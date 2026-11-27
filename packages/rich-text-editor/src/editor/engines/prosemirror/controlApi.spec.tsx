@@ -1061,6 +1061,92 @@ describe('history', () => {
     });
 });
 
+describe('focus', () => {
+    it('puts a collapsed caret before the first character and takes focus', () => {
+        const editor = editorWith(plugins, [paragraph(text('first')), paragraph(text('last'))]);
+
+        editor.api.focus('start');
+
+        const { selection } = editor.view.state;
+        expect(selection).toBeInstanceOf(TextSelection);
+        expect(selection.empty).toBe(true);
+        expect(selection.from).toBe(1);
+        expect(window.document.activeElement).toBe(editor.view.dom);
+    });
+
+    it('puts a collapsed caret after the last character of the last paragraph and takes focus', () => {
+        const editor = editorWith(plugins, [paragraph(text('first')), paragraph(text('last'))]);
+
+        editor.api.focus('end');
+
+        const { selection } = editor.view.state;
+        expect(selection.empty).toBe(true);
+        expect(selection.from).toBe(editor.view.state.doc.content.size - 1);
+        expect(window.document.activeElement).toBe(editor.view.dom);
+    });
+
+    it('keeps a range selected when given no position', () => {
+        const editor = editorWith(plugins, [paragraph(text('hello world'))]);
+        editor.select('world');
+
+        editor.api.focus();
+
+        expect(editor.api.selection.get().text).toBe('world');
+        expect(window.document.activeElement).toBe(editor.view.dom);
+    });
+
+    it('lands inside the last paragraph, not on a void block after it', () => {
+        const editor = editorWith(plugins, [paragraph(text('one')), paragraph(text('two')), { type: 'divider' }]);
+
+        editor.api.focus('end');
+
+        const { selection } = editor.view.state;
+        expect(selection).toBeInstanceOf(TextSelection);
+        expect(selection).not.toBeInstanceOf(NodeSelection);
+        expect(selection.$from.parent.textContent).toBe('two');
+        expect(selection.$from.parentOffset).toBe(3);
+    });
+
+    it('lands inside the first paragraph, not on a void block before it', () => {
+        const editor = editorWith(plugins, [{ type: 'divider' }, paragraph(text('one'))]);
+
+        editor.api.focus('start');
+
+        const { selection } = editor.view.state;
+        expect(selection).toBeInstanceOf(TextSelection);
+        expect(selection.$from.parent.textContent).toBe('one');
+        expect(selection.$from.parentOffset).toBe(0);
+    });
+
+    it.each(['start', 'end'] as const)(
+        'puts the caret in the empty paragraph of an empty document at %s',
+        (position) => {
+            const editor = editorWith(plugins, [paragraph()]);
+
+            editor.api.focus(position);
+
+            const { selection } = editor.view.state;
+            expect(selection).toBeInstanceOf(TextSelection);
+            expect(selection.empty).toBe(true);
+            expect(selection.$from.parent.type.name).toBe('paragraph');
+        },
+    );
+
+    it.each([
+        ['start', 0],
+        ['end', 1],
+    ] as const)('selects the first or last block of a void-only document at %s', (position, from) => {
+        const editor = editorWith(plugins, [{ type: 'divider' }, { type: 'divider' }]);
+
+        editor.api.focus(position);
+
+        const { selection } = editor.view.state;
+        expect(selection).toBeInstanceOf(NodeSelection);
+        expect(selection.from).toBe(from);
+        expect(window.document.activeElement).toBe(editor.view.dom);
+    });
+});
+
 describe('insertText', () => {
     it('types at the caret with the marks there', () => {
         const editor = editorWith(plugins, [paragraph(text('bold', { bold: true }))]);

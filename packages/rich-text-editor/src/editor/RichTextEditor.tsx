@@ -23,6 +23,7 @@ import {
     emptyDocument,
     matchesHotkey,
     newerVersionOf,
+    type FocusPosition,
     type PluginRegistry,
     type RteBlockNode,
     type RteDocumentOf,
@@ -133,6 +134,13 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      */
     showEditor?: boolean;
     /**
+     * Puts the caret before the first text or after the last when the editor first mounts, and scrolls to it.
+     * Use it only when the person opened the editor (a Reply or Edit button), never on page load.
+     * Left out, the editor takes no focus. Ignored while `readonly` and when editing turns on later.
+     * A later `value` with other content moves the selection to the document's end.
+     */
+    autoFocus?: FocusPosition;
+    /**
      * The most lines of body text the content shows before it scrolls inside
      * the editor. The toolbar stays above the content, not scrolled. Unset, the
      * content grows with the text.
@@ -182,8 +190,8 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
 /** Whether the editor was brought back by Try again, and whether the pressed button had focus. */
 type RetryFocus = 'fresh' | 'focused' | 'unfocused';
 
-/** What a freshly mounted shell focuses: nothing, the text to edit, or the readonly view. */
-type MountFocusTarget = 'none' | 'text' | 'view';
+/** What a new shell focuses: nothing, the text at a caret position, or the readonly view. */
+type MountFocusTarget = { kind: 'none' } | { kind: 'text'; position: FocusPosition } | { kind: 'view' };
 
 export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     value,
@@ -331,6 +339,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     toolbarPlacement = 'top',
     readonly: readonlyProp = false,
     showEditor = true,
+    autoFocus,
     maxRows,
     placeholder = '',
     required = false,
@@ -422,20 +431,41 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
 
     // A pending focus request is spent once, never claiming focus when editing is turned on later.
     // A readonly retry has no text to focus, so the view takes the focus the pressed Retry held.
-    const [mountFocus] = useState(() => mountFocusTarget(retryFocus, readOnly));
-    const focusPendingRef = useRef(mountFocus === 'text');
+    const [mountFocus] = useState(() => mountFocusTarget({ retryFocus, readOnly, autoFocus }));
+    const focusPendingRef = useRef(mountFocus.kind === 'text');
     const readonlyViewRef = useRef<HTMLDivElement | null>(null);
     useEffect(() => {
-        if (mountFocus === 'view') {
+        if (mountFocus.kind === 'view') {
             readonlyViewRef.current?.focus();
         }
     }, [mountFocus]);
     useEffect(() => {
-        if (focusPendingRef.current && handle !== null) {
-            focusPendingRef.current = false;
-            handle.focusAtEnd();
+        if (!focusPendingRef.current) {
+            return;
         }
-    }, [handle]);
+
+        // Turning editing off cancels the request, so editing that comes back takes no focus.
+        if (readOnly) {
+            focusPendingRef.current = false;
+            return;
+        }
+
+        if (handle === null) {
+            return;
+        }
+
+        // The newer handle from the same commit takes the focus.
+        if (handle.isDestroyed()) {
+            return;
+        }
+
+        if (mountFocus.kind !== 'text') {
+            return;
+        }
+
+        focusPendingRef.current = false;
+        handle.api.focus(mountFocus.position);
+    }, [handle, mountFocus, readOnly]);
 
     const { focusWithin, focusProps } = useFocusWithin();
     useKeyboardFocus({ elementRef: containerRef, isMounted: !readOnly });
@@ -544,7 +574,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
         readonlyViewId = editableId;
     }
     let readonlyViewTabIndex: number | undefined;
-    if (mountFocus === 'view') {
+    if (mountFocus.kind === 'view') {
         readonlyViewTabIndex = FOCUSABLE_BY_SCRIPT_ONLY;
     }
 
@@ -641,21 +671,30 @@ const groupAttributesOf = (hostLabels: HostLabels, isNamed: boolean): GroupAttri
     return { role: GROUP_ROLE, ...hostLabels };
 };
 
+type MountFocusTargetParams = {
+    retryFocus: RetryFocus;
+    readOnly: boolean;
+    autoFocus: EditorShellProps['autoFocus'];
+};
+
 /** What the first render of a shell focuses, given how the editor came to be mounted. */
-const mountFocusTarget = (retryFocus: RetryFocus, readOnly: boolean): MountFocusTarget => {
+const mountFocusTarget = ({ retryFocus, readOnly, autoFocus }: MountFocusTargetParams): MountFocusTarget => {
     switch (retryFocus) {
         case 'fresh':
-            return 'none';
+            if (readOnly || autoFocus === undefined) {
+                return { kind: 'none' };
+            }
+            return { kind: 'text', position: autoFocus };
         case 'focused':
             if (readOnly) {
-                return 'view';
+                return { kind: 'view' };
             }
-            return 'text';
+            return { kind: 'text', position: 'end' };
         case 'unfocused':
             if (readOnly) {
-                return 'none';
+                return { kind: 'none' };
             }
-            return 'text';
+            return { kind: 'text', position: 'end' };
     }
 };
 

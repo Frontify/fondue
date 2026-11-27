@@ -9,6 +9,7 @@ export {
     EDITOR_SHORTCUTS,
     type EditorControlApi,
     type EditorShortcut,
+    type FocusPosition,
     type InsertTextOptions,
     type InsertTextUndo,
     REDO_HOTKEY,

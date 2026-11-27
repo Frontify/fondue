@@ -4,7 +4,7 @@
 
 import { Dialog, ThemeProvider } from '@frontify/fondue-components';
 import { deDE as fondueDeDE } from '@frontify/fondue-components/locales/de-DE';
-import { act, Profiler, type ReactNode, useState } from 'react';
+import { act, Profiler, type ReactNode, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -1607,6 +1607,143 @@ describe('the toolbar from the keyboard', () => {
     });
 });
 
+const FIRST_FIXTURE_PLUGIN = definePlugin({ id: 'first' });
+const SECOND_FIXTURE_PLUGIN = definePlugin({ id: 'second' });
+const FIXTURE_PLUGINS = [FIRST_FIXTURE_PLUGIN];
+
+/** A host that changes its plugins on mount, so the engine is replaced before it takes the focus. */
+const PluginsChangeOnMount = (): ReactNode => {
+    const [plugins, setPlugins] = useState<readonly RtePlugin[]>(() => [FIRST_FIXTURE_PLUGIN]);
+
+    useEffect(() => {
+        // Intentional: only a mount effect lands in the editor's first commit.
+        // eslint-disable-next-line @eslint-react/set-state-in-effect
+        setPlugins([FIRST_FIXTURE_PLUGIN, SECOND_FIXTURE_PLUGIN]);
+    }, []);
+
+    return <RichTextEditor value={paragraph('current')} plugins={plugins} autoFocus="end" />;
+};
+
+type ReadonlyOnMountProps = {
+    editable: boolean;
+};
+
+/** A host that turns on `readonly` on mount, so the engine is destroyed before it takes the focus. */
+const ReadonlyOnMount = ({ editable }: ReadonlyOnMountProps): ReactNode => {
+    const [readonlyOnMount, setReadonlyOnMount] = useState(false);
+
+    useEffect(() => {
+        // Intentional: only a mount effect lands in the editor's first commit.
+        // eslint-disable-next-line @eslint-react/set-state-in-effect
+        setReadonlyOnMount(true);
+    }, []);
+
+    return (
+        <RichTextEditor
+            value={paragraph('current')}
+            plugins={FIXTURE_PLUGINS}
+            autoFocus="end"
+            readonly={readonlyOnMount && !editable}
+        />
+    );
+};
+
+describe('autoFocus', () => {
+    it('focuses the text with the caret at its end when it mounts', () => {
+        const { container, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={FIXTURE_PLUGINS} autoFocus="end" />
+        ));
+        ready();
+
+        const selection = window.getSelection();
+        expect(window.document.activeElement).toBe(editableIn(container));
+        expect(selection?.isCollapsed).toBe(true);
+        expect(selection?.anchorNode?.textContent).toBe('current');
+        expect(selection?.anchorOffset).toBe('current'.length);
+    });
+
+    it('focuses the text with the caret at its end when the host changes the plugins on mount', () => {
+        const { container, ready } = mount(() => <PluginsChangeOnMount />);
+        ready();
+
+        const selection = window.getSelection();
+        expect(window.document.activeElement).toBe(editableIn(container));
+        expect(selection?.isCollapsed).toBe(true);
+        expect(selection?.anchorNode?.textContent).toBe('current');
+        expect(selection?.anchorOffset).toBe('current'.length);
+    });
+
+    it('takes no focus when editing is turned off on mount and back on later', () => {
+        const { container, rerender, ready } = mount(() => <ReadonlyOnMount editable={false} />);
+
+        rerender(<ReadonlyOnMount editable />);
+        ready();
+
+        expect(window.document.activeElement).not.toBe(editableIn(container));
+    });
+
+    it('puts the caret before the first character at start', () => {
+        const { container, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={FIXTURE_PLUGINS} autoFocus="start" />
+        ));
+        ready();
+
+        const selection = window.getSelection();
+        expect(window.document.activeElement).toBe(editableIn(container));
+        expect(selection?.anchorNode?.textContent).toBe('current');
+        expect(selection?.anchorOffset).toBe(0);
+    });
+
+    it('takes no focus when left out', () => {
+        const { container, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={FIXTURE_PLUGINS} />
+        ));
+        ready();
+
+        expect(container.contains(window.document.activeElement)).toBe(false);
+    });
+
+    it('takes no focus while readonly', () => {
+        const { container } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={FIXTURE_PLUGINS} autoFocus="end" readonly />
+        ));
+
+        expect(container.contains(window.document.activeElement)).toBe(false);
+    });
+
+    it('does not claim focus when editing is turned on later', () => {
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={FIXTURE_PLUGINS} autoFocus="end" readonly />
+        ));
+
+        rerender(<RichTextEditor value={paragraph('current')} plugins={FIXTURE_PLUGINS} autoFocus="end" />);
+        ready();
+
+        expect(container.contains(window.document.activeElement)).toBe(false);
+    });
+
+    it('spends the focus on the first mount, so a remounted engine leaves it where it went', () => {
+        const outside = window.document.createElement('input');
+        window.document.body.append(outside);
+        teardown.push(() => outside.remove());
+        const { rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={FIXTURE_PLUGINS} autoFocus="end" />
+        ));
+        ready();
+        act(() => outside.focus());
+
+        rerender(
+            <RichTextEditor
+                value={paragraph('current')}
+                plugins={[FIRST_FIXTURE_PLUGIN, SECOND_FIXTURE_PLUGIN]}
+                autoFocus="end"
+            />,
+        );
+
+        expect(window.document.activeElement).toBe(outside);
+    });
+});
+
 describe('focus within', () => {
     /** A trigger inside, and a field it portals out of the subtree — a flyout. */
     const Probe = (): ReactNode => {
@@ -2083,6 +2220,25 @@ describe('an editor that crashes', () => {
         expect(editableIn(container).parentElement?.closest('[tabindex]')).toBeNull();
         // Typing goes on after the text, not before it.
         const caret = window.getSelection();
+        expect(caret?.isCollapsed).toBe(true);
+        expect(caret?.anchorNode?.textContent).toBe('text');
+        expect(caret?.anchorOffset).toBe('text'.length);
+    });
+
+    it('puts the caret after the text when Retry was pressed without taking focus', () => {
+        silenceReact();
+        const state = { broken: true };
+        const flaky = flakyPlugin(state);
+        const { container, ready } = mount(() => <RichTextEditor value={paragraph('text')} plugins={[flaky]} />);
+
+        state.broken = false;
+        act(() => {
+            retryButton(container).click();
+        });
+        ready();
+
+        const caret = window.getSelection();
+        expect(window.document.activeElement).toBe(editableIn(container));
         expect(caret?.isCollapsed).toBe(true);
         expect(caret?.anchorNode?.textContent).toBe('text');
         expect(caret?.anchorOffset).toBe('text'.length);
