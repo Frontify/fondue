@@ -422,6 +422,66 @@ export const Renderer: Story = {
     },
 };
 
+const UNKNOWN_INLINE_PLUGINS: readonly RtePlugin[] = [...defaultPlugins, mentionPlugin({ items: [] })];
+const UNKNOWN_INLINE_PANES = 'tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-items-start tw-gap-4 tw-p-4 tw-font-primary';
+const UNKNOWN_INLINE_PANE = 'tw-flex tw-min-w-0 tw-flex-col tw-gap-2';
+const UNKNOWN_INLINE_HEADING = 'tw-m-0 tw-body-small tw-text-secondary';
+const EDITOR_HEADING = 'Editor';
+const RENDERER_HEADING = 'Renderer';
+
+/** One paragraph with `inline` between two plain runs, so the surrounding text shows whether the inline kept its place. */
+const unknownInlineParagraph = (inline: unknown) => ({
+    type: 'paragraph',
+    children: [{ text: 'Before ' }, inline, { text: ' after' }],
+});
+
+// Stored JSON is not validated; these inlines have no plugin, so they are outside the document type.
+const UNKNOWN_INLINE_DOCUMENT = {
+    version: 1,
+    blocks: [
+        unknownInlineParagraph({
+            type: 'externalLink',
+            url: 'https://example.com',
+            target: '_blank',
+            children: [{ text: 'Read more' }],
+        }),
+        unknownInlineParagraph({
+            type: 'externalLink',
+            url: 'https://example.com',
+            children: [{ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' }],
+        }),
+        unknownInlineParagraph({ type: 'widget', text: 'Fallback text' }),
+    ],
+} as unknown as RteDocument;
+
+/**
+ * An inline no plugin defines, from a plugin left out or older content, shows its text: its children, or its own `text`.
+ */
+export const UnknownInline: Story = {
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>(UNKNOWN_INLINE_DOCUMENT);
+
+        return (
+            <div className={UNKNOWN_INLINE_PANES}>
+                <div className={UNKNOWN_INLINE_PANE}>
+                    <h3 className={UNKNOWN_INLINE_HEADING}>{EDITOR_HEADING}</h3>
+                    <div className={FRAME}>
+                        <RichTextEditor value={doc} onChange={setDoc} plugins={UNKNOWN_INLINE_PLUGINS} />
+                    </div>
+                    <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+                </div>
+                <div className={UNKNOWN_INLINE_PANE}>
+                    <h3 className={UNKNOWN_INLINE_HEADING}>{RENDERER_HEADING}</h3>
+                    <div className={SURFACE}>
+                        <RichTextRenderer value={doc} plugins={UNKNOWN_INLINE_PLUGINS} />
+                    </div>
+                    <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+                </div>
+            </div>
+        );
+    },
+};
+
 /**
  * `readonly` shows the content without allowing edits — the toolbar goes with
  * it. A readonly editor draws the document the way `RichTextRenderer` does, so

@@ -9,6 +9,13 @@ import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import {
+    documentWith,
+    UNKNOWN_AROUND_MENTION,
+    UNKNOWN_INLINE_CASES,
+    UNKNOWN_WITH_EXTRA_KEYS,
+    UNKNOWN_WITH_NULL_CHILD,
+} from '#/__tests__/fixtures/unknownInlines';
 import { type RteToolbarGroup } from '#/core';
 import { deDE } from '#/locales/de-DE';
 
@@ -236,6 +243,59 @@ describe('an editable editor', () => {
         const editable = editableIn(container);
         expect(editable.querySelectorAll('p')).toHaveLength(1);
         expect(editable.textContent).toBe('already here');
+    });
+});
+
+describe('an inline no plugin defines', () => {
+    const plugins = [...defaultPlugins, mentionPlugin({ items: [] })];
+    const EDIT_TEXT = 'x';
+    const ROUND_TRIP_CASES = [
+        ['text in its children', UNKNOWN_WITH_EXTRA_KEYS],
+        ['a known inline in its children', UNKNOWN_AROUND_MENTION],
+    ] as const;
+
+    beforeEach(() => {
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    it.each(UNKNOWN_INLINE_CASES)('shows %s in the editor', (_name, inline, expected) => {
+        const { container, ready } = mount((onChange) => (
+            <RichTextEditor value={documentWith(inline)} onChange={onChange} plugins={plugins} />
+        ));
+
+        ready();
+
+        expect(editableIn(container).textContent).toContain(`Before ${expected} after`);
+    });
+
+    it('shows the text run beside a child that is not an object', () => {
+        const { container, ready } = mount((onChange) => (
+            <RichTextEditor value={documentWith(UNKNOWN_WITH_NULL_CHILD)} onChange={onChange} plugins={plugins} />
+        ));
+
+        ready();
+
+        expect(editableIn(container).textContent).toContain('Before Read more after');
+    });
+
+    it.each(ROUND_TRIP_CASES)('keeps %s unchanged in the value reported after an edit elsewhere', (_name, inline) => {
+        const untouched = documentWith(inline).blocks[0];
+        const value: RteDocument = {
+            version: 1,
+            blocks: [...paragraph('Start').blocks, ...documentWith(inline).blocks],
+        };
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor value={value} onChange={onChange} plugins={plugins} />
+        ));
+        ready();
+
+        paste(container, EDIT_TEXT);
+
+        expect(stored()?.blocks[1]).toEqual(untouched);
     });
 });
 

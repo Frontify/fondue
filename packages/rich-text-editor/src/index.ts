@@ -110,7 +110,8 @@ export { type RteDocumentIssue, type RteDocumentValidation, validateDocument } f
 
 /**
  * The document's text, one line per text block. Inlines read as their plugin's
- * markup (a mention as `@jane`). The host passes the plugins whose content the document uses.
+ * markup (a mention as `@jane`); one no plugin defines, as its children's text.
+ * The host passes the plugins whose content the document uses.
  */
 export const toPlainText: <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,

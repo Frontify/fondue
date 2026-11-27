@@ -6,10 +6,13 @@ import {
     ANY_LIST,
     type BlockDefinition,
     blockHtml,
+    type ContentRegistry,
     type InlineDefinition,
+    inlineNodeText,
     type MarkDefinition,
     PARAGRAPH,
     type PluginRegistry,
+    type RteInlineNode,
 } from '#/core';
 
 import {
@@ -188,13 +191,18 @@ const unknownBlockSpec: PmNodeSpec = {
     toDOM: (node) => ['div', { 'data-rte-unknown': '', contenteditable: 'false' }, plainTextOf(node.attrs[RAW_ATTR])],
 };
 
-const unknownInlineSpec: PmNodeSpec = {
+const unknownInlineSpec = (registry: ContentRegistry): PmNodeSpec => ({
     group: 'inline',
     inline: true,
     atom: true,
     attrs: { [RAW_ATTR]: {} },
-    toDOM: (node) => ['span', { 'data-rte-unknown': '', contenteditable: 'false' }, plainTextOf(node.attrs[RAW_ATTR])],
-};
+    toDOM: (node) => [
+        'span',
+        { 'data-rte-unknown': '', contenteditable: 'false' },
+        // The raw attribute holds the stored node as it came in.
+        inlineNodeText(node.attrs[RAW_ATTR] as RteInlineNode, registry),
+    ],
+});
 
 /** Carried along with the text it is on, drawing nothing; typing next to it does not extend it. */
 const unknownMarksSpec: PmMarkSpec = {
@@ -226,7 +234,7 @@ export const buildSchema = (registry: PluginRegistry): Schema => {
         nodes[type] = inlineNodeSpec(inline, registry.edits.has(type));
     }
     nodes[UNKNOWN_BLOCK] = unknownBlockSpec;
-    nodes[UNKNOWN_INLINE] = unknownInlineSpec;
+    nodes[UNKNOWN_INLINE] = unknownInlineSpec(registry);
 
     // invariant (2): the registry already holds marks in nesting order.
     const marks: Record<string, PmMarkSpec> = {};

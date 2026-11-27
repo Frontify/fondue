@@ -1,9 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type RteDocument, serializeToHtml } from '../index';
-import { defaultContent, defaultPlugins, linkPlugin } from '../plugins';
+import { defaultContent, defaultPlugins, linkPlugin, mentionPlugin } from '../plugins';
+
+import {
+    documentWith,
+    UNKNOWN_AROUND_MENTION,
+    UNKNOWN_WITH_EXTRA_KEYS,
+    UNKNOWN_WITH_NULL_CHILD,
+    UNKNOWN_WITH_TEXT,
+} from './fixtures/unknownInlines';
 
 // The document as HTML: each node's `toHtml`, matching the readonly view (`htmlParity.spec.tsx`).
 
@@ -124,5 +132,41 @@ describe('a numbered list serialized to HTML', () => {
         expect(serializeToHtml(numbered(10_000), { plugins: defaultContent, wrap: false })).toContain(
             '--rte-list-extra-digits: 3;',
         );
+    });
+});
+
+describe('an inline no plugin defines, serialized to HTML', () => {
+    const plugins = [...defaultPlugins, mentionPlugin({ items: [] })];
+    const MENTION_IN_PLACE = /Before <span><span [^>]*data-mention-id="jane"[^>]*><bdi>@jane<\/bdi><\/span><\/span> after/;
+
+    beforeEach(() => {
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    it.each([
+        ['text in its children', UNKNOWN_WITH_EXTRA_KEYS, 'Before <span>Read more</span> after'],
+        ['text of its own', UNKNOWN_WITH_TEXT, 'Before Fallback text after'],
+    ])('writes %s', (_name, inline, expected) => {
+        expect(serializeToHtml(documentWith(inline), { plugins })).toContain(expected);
+    });
+
+    it('writes a known inline in its children in place', () => {
+        expect(serializeToHtml(documentWith(UNKNOWN_AROUND_MENTION), { plugins })).toMatch(MENTION_IN_PLACE);
+    });
+
+    it('draws the text run beside a child that is not an object', () => {
+        const html = serializeToHtml(documentWith(UNKNOWN_WITH_NULL_CHILD), { plugins });
+
+        expect(html).toContain('Before <span>Read more</span> after');
+    });
+
+    it('writes a known inline in its children through the plugin that defines it', () => {
+        const html = serializeToHtml(documentWith(UNKNOWN_AROUND_MENTION), { plugins });
+
+        expect(html).toContain('data-mention-id="jane"');
     });
 });

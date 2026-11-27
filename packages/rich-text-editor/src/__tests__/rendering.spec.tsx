@@ -4,7 +4,7 @@
 
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
     defineContent,
@@ -16,7 +16,21 @@ import {
     type RtePlugin,
     serializeToHtml,
 } from '../index';
-import { columnBreakPlugin, defaultContent, defaultPlugins, linkPlugin, textStyleContent } from '../plugins';
+import {
+    columnBreakPlugin,
+    defaultContent,
+    defaultPlugins,
+    linkPlugin,
+    mentionPlugin,
+    textStyleContent,
+} from '../plugins';
+
+import {
+    documentWith,
+    UNKNOWN_AROUND_MENTION,
+    UNKNOWN_INLINE_CASES,
+    UNKNOWN_WITH_NULL_CHILD,
+} from './fixtures/unknownInlines';
 
 // The readonly view and export draw the same tree, so they are tested side by
 // side: the renderer as React in the test DOM, export as the string it returns.
@@ -253,6 +267,39 @@ describe('a node no plugin defines', () => {
         expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown inline type "embed"'));
         expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown mark type "glow"'));
         warn.mockRestore();
+    });
+});
+
+describe('an inline no plugin defines', () => {
+    const MENTION_MARKUP = '[data-mention-id="jane"]';
+    const plugins = [...defaultPlugins, mentionPlugin({ items: [] })];
+
+    beforeEach(() => {
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    it.each(UNKNOWN_INLINE_CASES)('draws %s between the text around it', (_name, inline, expected) => {
+        const container = rendered(<RichTextRenderer value={documentWith(inline)} plugins={plugins} />);
+
+        expect(container.textContent).toContain(`Before ${expected} after`);
+    });
+
+    it('draws the text run beside a child that is not an object', () => {
+        const container = rendered(
+            <RichTextRenderer value={documentWith(UNKNOWN_WITH_NULL_CHILD)} plugins={plugins} />,
+        );
+
+        expect(container.textContent).toContain('Before Read more after');
+    });
+
+    it('draws a known inline in its children through the plugin that defines it', () => {
+        const container = rendered(<RichTextRenderer value={documentWith(UNKNOWN_AROUND_MENTION)} plugins={plugins} />);
+
+        expect(container.querySelector(MENTION_MARKUP)).not.toBeNull();
     });
 });
 

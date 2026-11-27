@@ -43,7 +43,7 @@ type Options = { useComponents: boolean };
 /**
  * A node no plugin passed in defines — a plugin left out, or a document from
  * a newer version. Drawing what can be drawn beats losing the whole document,
- * so it is skipped (a block keeps its content) and, in development, named once.
+ * so a block or inline draws its content, a mark is skipped and, in development, each is named once.
  */
 const warnedUnknown = new Set<string>();
 const warnUnknownType = (kind: 'block' | 'inline' | 'mark', type: string): void => {
@@ -131,7 +131,13 @@ const sameValue = (left: unknown, right: unknown): boolean => {
 const sameMark = (left: CarriedMark, right: CarriedMark): boolean =>
     left.type === right.type && sameValue(left.value, right.value);
 
-/** An inline element, or null for one no plugin defines: it has no text of its own to fall back to. */
+/** A stored node is not validated, so a child that is not an object has nothing to draw. */
+const isStoredNode = (child: unknown): child is RteInlineNode => typeof child === 'object' && child !== null;
+
+/**
+ * An inline element. One no plugin defines draws its children in a plain span, like an unknown block;
+ * one with `text` of its own never gets here, as `inlineNodes` draws it as a run.
+ */
 const inlineElement = (
     inline: Exclude<RteInlineNode, RteTextNode>,
     registry: ContentRegistry,
@@ -140,7 +146,17 @@ const inlineElement = (
     const definition = registry.inlines.get(inline.type);
     if (!definition) {
         warnUnknownType('inline', inline.type);
-        return null;
+        const { children } = inline;
+        if (!Array.isArray(children)) {
+            return null;
+        }
+
+        const content = inlineNodes(children.filter(isStoredNode), registry, options);
+        if (content.length === 0) {
+            return null;
+        }
+
+        return html({ tag: 'span', children: true }, content);
     }
     const { type: _type, text: _text, ...value } = inline;
     return component(definition.render?.component, { value }, [], options) ?? html(definition.toHtml(value));
