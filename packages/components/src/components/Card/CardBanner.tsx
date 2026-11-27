@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCheckMark } from '@frontify/fondue-icons';
-import { type ForwardedRef, type ReactNode, useEffect, useRef } from 'react';
+import { type CSSProperties, type ForwardedRef, type ReactNode, useEffect, useRef } from 'react';
 
 import { useSyncRefs } from '#/hooks/useSyncRefs';
 
 import { useCardContext } from './CardContext';
+import { getCardIconColorStyle } from './cardIconColor';
 import styles from './styles/card.module.scss';
 
 export type CardBannerSize = 'small' | 'large';
@@ -24,14 +25,9 @@ export type CardBannerImagePadding = 'none' | 'small' | 'medium' | 'large';
 /**
  * Background tone of the banner.
  *
- * - `dim` – pins `surface-dim` (the resting default) and opts out of the
- *   implicit hover/active background shift that otherwise kicks in when a
- *   `Card.BannerIcon` is nested.
+ * - `dim` – `surface-dim`, the same as the default.
  * - `inverted` – near-black background (`primary-default`) with a white icon,
  *   for states like a folder drop target.
- *
- * When omitted, the banner keeps its legacy behavior: `surface-dim` at rest,
- * shifting to hover/active surfaces on interaction when a `Card.BannerIcon` is present.
  */
 export type CardBannerTone = 'dim' | 'inverted';
 
@@ -43,9 +39,7 @@ export type CardBannerProps = {
      */
     size?: CardBannerSize;
     /**
-     * Pins the banner background, overriding the implicit hover/active shift
-     * applied when a `Card.BannerIcon` is nested. Leave unset to keep the
-     * default behavior.
+     * Background tone of the banner.
      */
     tone?: CardBannerTone;
     children?: ReactNode;
@@ -128,11 +122,22 @@ export type CardBannerIconProps = {
      * @default 'default'
      */
     variant?: CardBannerIconVariant;
+    /**
+     * Custom icon color, such as a folder color. Takes precedence over `variant` and the banner `tone`.
+     *
+     * Accepts any CSS color value or token (e.g., `'#E3A7FD'`, `'var(--color-primary-default)'`)
+     */
+    customColor?: CSSProperties['color'];
     children?: ReactNode;
 };
 
 export const CardBannerIcon = (
-    { 'data-test-id': dataTestId = 'fondue-card-banner-icon', variant = 'default', children }: CardBannerIconProps,
+    {
+        'data-test-id': dataTestId = 'fondue-card-banner-icon',
+        variant = 'default',
+        customColor,
+        children,
+    }: CardBannerIconProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
@@ -141,6 +146,7 @@ export const CardBannerIcon = (
             className={styles.bannerIcon}
             data-test-id={dataTestId}
             data-variant={variant}
+            style={getCardIconColorStyle(customColor)}
             aria-hidden="true"
         >
             {children}

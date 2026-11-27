@@ -465,6 +465,40 @@ describe('Card Component', () => {
         expect(screen.getByTestId('banner').dataset.tone).toBe('inverted');
     });
 
+    it('should paint the banner and thumbnail icons in a custom color', () => {
+        render(
+            <Card.Root>
+                <Card.Banner>
+                    <Card.BannerIcon data-test-id="banner-icon" customColor="#E3A7FD">
+                        <svg />
+                    </Card.BannerIcon>
+                </Card.Banner>
+                <Card.ThumbnailIcon data-test-id="thumbnail-icon" customColor="#E3A7FD">
+                    <svg />
+                </Card.ThumbnailIcon>
+            </Card.Root>,
+        );
+        expect(screen.getByTestId('banner-icon').style.getPropertyValue('--card-icon-color')).toBe('#E3A7FD');
+        expect(screen.getByTestId('thumbnail-icon').style.getPropertyValue('--card-icon-color')).toBe('#E3A7FD');
+    });
+
+    it('should not set an inline icon color without a custom color', () => {
+        render(
+            <Card.Root>
+                <Card.Banner>
+                    <Card.BannerIcon data-test-id="banner-icon">
+                        <svg />
+                    </Card.BannerIcon>
+                </Card.Banner>
+                <Card.ThumbnailIcon data-test-id="thumbnail-icon">
+                    <svg />
+                </Card.ThumbnailIcon>
+            </Card.Root>,
+        );
+        expect(screen.getByTestId('banner-icon').getAttribute('style')).toBeNull();
+        expect(screen.getByTestId('thumbnail-icon').getAttribute('style')).toBeNull();
+    });
+
     it('should allow tabbing through interactive elements', async () => {
         const handleSelect = vi.fn();
         renderWithRouter(

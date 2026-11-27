@@ -4,54 +4,16 @@
 @use '../../../utilities/sizeToken.module.scss';
 @use '../../../utilities/transitions.module.scss';
 
-// Border overlay shared by the whole card and the banner. Painted above the
-// banner/image so the border stays visible over an image; its box-shadow is set per
-// state in card-state.
-@mixin border-overlay($z-index) {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: $z-index;
-    border-radius: inherit;
-    pointer-events: none;
-    @include transitions.transition-box-shadow;
-}
+$selection-mark-size: sizeToken.get(5);
+$selection-mark-clearance: calc(var(--spacing-x-small) * 2 + #{$selection-mark-size});
 
-// Mixin for card state variants (default, hover, selected, hover+selected).
-@mixin card-state($card-shadow: none, $root-bg: null, $hovered: false, $banner-shadow: none, $banner-radius: 0) {
-    @if $root-bg {
-        background-color: var(--color-#{$root-bg});
-    }
-
-    @if $hovered {
-        &::before {
-            opacity: 1;
-        }
-    }
-
-    &::after {
-        box-shadow: $card-shadow;
-    }
-
-    & .banner {
-        border-radius: $banner-radius;
-    }
-
-    & .banner::after {
-        box-shadow: $banner-shadow;
-    }
-}
-
-// Shared styles for the selection checkbox and the visual-only selection indicator
 @mixin selection-mark {
     position: absolute;
-    top: var(--spacing-medium);
-    left: var(--spacing-medium);
     display: flex;
     align-items: center;
     justify-content: center;
-    width: sizeToken.get(5);
-    height: sizeToken.get(5);
+    width: $selection-mark-size;
+    height: $selection-mark-size;
     border-radius: var(--border-radius-medium);
 }
 
@@ -69,30 +31,26 @@
 
 .root {
     position: relative;
-    min-width: sizeToken.get(60);
+    min-width: sizeToken.get(36);
     display: grid;
     grid-template-areas:
-        'banner     banner   banner   banner'
+        'banner     banner       banner   banner'
         'thumbnail  title        badges   actions'
         'thumbnail  description  badges   actions';
-    grid-template-columns: auto 1fr auto auto;
-    grid-template-rows: auto minmax(calc(#{sizeToken.get(10)} / 2 + var(--spacing-small)), auto) minmax(
-            calc(#{sizeToken.get(10)} / 2 + var(--spacing-small)),
-            auto
-        );
-    border-radius: var(--border-radius-large);
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    grid-template-rows: auto auto auto;
+    padding: var(--spacing-x-small);
+    border-radius: var(--border-radius-x-large);
     box-sizing: border-box;
-    background-color: var(--color-surface-default);
+    background-color: transparent;
     overflow: hidden;
     outline: none;
     // Contains the hover layer's negative z-index so it paints above the card's
     // background but below its content.
     isolation: isolate;
 
-    // Hover/pressed tint. Fading this layer's opacity instead of transitioning the
-    // root's background-color avoids a Chrome flicker: it runs background-color
-    // transitions on the compositor and can paint the start color for one frame
-    // when the transition ends.
+    // Fading this layer instead of transitioning the root's background-color avoids a
+    // Chrome flicker: it can paint the start color for one frame when the transition ends.
     &::before {
         content: '';
         position: absolute;
@@ -105,21 +63,22 @@
         @include transitions.transition-opacity;
     }
 
+    // Selection border, painted above the content so it stays inside the card.
     &::after {
-        @include border-overlay($z-index: 2);
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        border-radius: inherit;
+        box-shadow: none;
+        pointer-events: none;
+        @include transitions.transition-box-shadow;
     }
 
     &:not(:has(> .banner)) {
         background-color: var(--color-surface-dim);
     }
 
-    // Default state
-    @include card-state(
-        $banner-shadow: inset 0 0 0 1px var(--color-line-subtle),
-        $banner-radius: var(--border-radius-large)
-    );
-
-    // Interactive cards only
     &[data-interactive='true'] {
         cursor: pointer;
 
@@ -127,24 +86,19 @@
             @include focusStyle.focus-outline-styles;
         }
 
-        // Hover state (also when a dropdown is open inside the card)
-        &:hover,
-        &:has([data-state='open']) {
-            @include card-state($card-shadow: inset 0 0 0 1px var(--color-line-subtle), $hovered: true);
+        &:hover::before,
+        &:has([data-state='open'])::before {
+            opacity: 1;
         }
 
-        // Selected state
         &[data-selected='true'] {
-            @include card-state($card-shadow: inset 0 0 0 1px var(--color-line-strong), $root-bg: 'surface-default');
+            background-color: var(--color-surface-active);
+
+            &::after {
+                box-shadow: inset 0 0 0 var(--border-width-large) var(--color-line-strong);
+            }
         }
 
-        // Hover + Selected state (also when a dropdown is open inside the card)
-        &[data-selected='true']:hover,
-        &[data-selected='true']:has([data-state='open']) {
-            @include card-state($card-shadow: inset 0 0 0 1px var(--color-line-strong), $hovered: true);
-        }
-
-        // Pressed state (while actively clicking, via :active)
         &:active::before {
             background-color: var(--color-surface-active);
             opacity: 1;
@@ -168,6 +122,8 @@
 .checkbox {
     @include selection-mark;
     @include selection-mark-default;
+    top: var(--spacing-medium);
+    left: var(--spacing-medium);
     z-index: 1;
     padding: 0;
     cursor: pointer;
@@ -200,31 +156,13 @@
     grid-area: banner;
     position: relative;
     display: flex;
+    margin-bottom: var(--spacing-x-small);
+    border-radius: var(--border-radius-large);
     overflow: hidden;
     background-color: var(--color-surface-dim);
     pointer-events: none;
-    // border-radius eases with the root's hover tint so the corners never square off ahead of it.
-    @include transitions.transition(
-        (color, background-color, border-color, text-decoration-color, outline-color, fill, stroke, border-radius)
-    );
+    @include transitions.transition-colors;
 
-    &::after {
-        @include border-overlay($z-index: 1);
-    }
-
-    // Implicit hover/active shift when a BannerIcon is nested. Skipped once a
-    // `tone` is set (data-tone present), so consumers can pin the background.
-    .root[data-interactive='true']:hover &:not([data-tone]):has(> .bannerIcon),
-    .root[data-interactive='true']:has([data-state='open']) &:not([data-tone]):has(> .bannerIcon) {
-        background-color: var(--color-surface-hover);
-    }
-
-    .root[data-interactive='true']:active &:not([data-tone]):has(> .bannerIcon) {
-        background-color: var(--color-surface-active);
-    }
-
-    // Explicit background tones. These pin the background and (for `inverted`)
-    // flip the nested icon color — see the .bannerIcon rules below.
     &[data-tone='dim'] {
         background-color: var(--color-surface-dim);
     }
@@ -238,7 +176,7 @@
     }
 
     &[data-size='large'] {
-        aspect-ratio: 9 / 6;
+        aspect-ratio: 16 / 9;
     }
 }
 
@@ -260,9 +198,8 @@
         object-fit: contain;
     }
 
-    // Inner padding tokens. Mapped by value to the design spec
-    // (small 12px, medium 24px, large 32px), not by matching spacing-token names
-    // (--spacing-medium is 16px). Pairs best with data-fit='contain'.
+    // Mapped by value to the design spec (small 12px, medium 24px, large 32px),
+    // not by token name (--spacing-medium is 16px).
     &[data-padding='small'] {
         padding: var(--spacing-small);
     }
@@ -282,55 +219,52 @@
     justify-content: center;
     width: 100%;
     height: 100%;
-    color: var(--color-low-contrast-default);
+    color: var(--card-icon-color, var(--color-low-contrast-default));
     @include transitions.transition-colors;
 
     > svg {
-        width: sizeToken.get(10);
-        height: sizeToken.get(10);
+        width: sizeToken.get(12);
+        height: sizeToken.get(12);
     }
 
-    // Inverted banner tone forces a white icon on the dark background, winning
-    // over the hover and semantic-variant colors below.
+    // Wins over the hover and semantic-variant colors below.
     .banner[data-tone='inverted'] &,
     .root[data-interactive='true']:hover .banner[data-tone='inverted'] &,
     .root[data-interactive='true']:has([data-state='open']) .banner[data-tone='inverted'] & {
-        color: var(--color-primary-on-primary);
+        color: var(--card-icon-color, var(--color-primary-on-primary));
     }
 
     &[data-variant='primary'] {
-        color: var(--color-primary-default);
+        color: var(--card-icon-color, var(--color-primary-default));
     }
 
     &[data-variant='warning'] {
-        color: var(--color-warning-default);
+        color: var(--card-icon-color, var(--color-warning-default));
 
         .root[data-interactive='true']:hover &,
         .root[data-interactive='true']:has([data-state='open']) & {
-            color: var(--color-warning-hover);
+            color: var(--card-icon-color, var(--color-warning-hover));
         }
     }
 
     &[data-variant='error'] {
-        color: var(--color-error-default);
+        color: var(--card-icon-color, var(--color-error-default));
 
         .root[data-interactive='true']:hover &,
         .root[data-interactive='true']:has([data-state='open']) & {
-            color: var(--color-error-hover);
+            color: var(--card-icon-color, var(--color-error-hover));
         }
     }
 
     &[data-variant='success'] {
-        color: var(--color-success-default);
+        color: var(--card-icon-color, var(--color-success-default));
 
         .root[data-interactive='true']:hover &,
         .root[data-interactive='true']:has([data-state='open']) & {
-            color: var(--color-success-hover);
+            color: var(--card-icon-color, var(--color-success-hover));
         }
     }
 }
-
-$selection-mark-clearance: calc(var(--spacing-medium) + #{sizeToken.get(5)} + var(--spacing-small));
 
 .bannerDescription {
     position: absolute;
@@ -338,30 +272,17 @@ $selection-mark-clearance: calc(var(--spacing-medium) + #{sizeToken.get(5)} + va
     display: flex;
     align-items: center;
     box-sizing: border-box;
-    padding: var(--spacing-medium);
+    padding: var(--spacing-x-small);
     background-color: var(--color-surface-dim);
-    box-shadow: inset 0 -1px 0 var(--color-line-subtle);
     opacity: 0;
     @include transitions.transition(opacity, $duration: 100ms, $timing-function: ease-out);
 
-    .banner[data-size='small'] & {
-        padding: var(--spacing-small) var(--spacing-medium);
-    }
-
     .root[data-selectable='true'] & {
-        padding: $selection-mark-clearance var(--spacing-medium) var(--spacing-medium);
+        padding-top: $selection-mark-clearance;
     }
 
     .root[data-selectable='true'] .banner[data-size='small'] & {
-        padding: var(--spacing-small) var(--spacing-medium) var(--spacing-small) $selection-mark-clearance;
-    }
-
-    .root[data-interactive='true'] & {
-        background-color: var(--color-surface-hover);
-    }
-
-    .root[data-interactive='true']:active & {
-        background-color: var(--color-surface-active);
+        padding: var(--spacing-x-small) var(--spacing-x-small) var(--spacing-x-small) $selection-mark-clearance;
     }
 
     .root:hover &,
@@ -379,14 +300,16 @@ $selection-mark-clearance: calc(var(--spacing-medium) + #{sizeToken.get(5)} + va
     overflow: hidden;
     overflow-wrap: anywhere;
     font-family: var(--typography-font-family-primary);
-    font-size: var(--typography-font-size-small);
+    font-size: var(--typography-font-size-x-small);
     font-weight: var(--typography-font-weight-regular);
-    line-height: var(--typography-line-height-medium);
+    line-height: var(--typography-line-height-tight);
     color: var(--color-secondary-default);
 }
 
 .selectionIndicator {
     @include selection-mark;
+    top: var(--spacing-x-small);
+    left: var(--spacing-x-small);
     display: none;
     pointer-events: none;
 
@@ -417,26 +340,31 @@ $selection-mark-clearance: calc(var(--spacing-medium) + #{sizeToken.get(5)} + va
 
     .root:has(> .banner) & {
         position: absolute;
-        top: var(--spacing-medium);
-        right: var(--spacing-medium);
+        top: calc(var(--spacing-x-small) + var(--spacing-small));
+        right: calc(var(--spacing-x-small) + var(--spacing-small));
+    }
+
+    .root .banner > & {
+        top: var(--spacing-small);
+        right: var(--spacing-small);
     }
 
     .root:not(:has(> .banner)) & {
         grid-area: badges;
         align-self: center;
-        padding: var(--spacing-small) 0;
+        margin-left: var(--spacing-small);
     }
 }
 
 .thumbnailImage,
 .thumbnailIcon {
     grid-area: thumbnail;
-    width: sizeToken.get(10);
-    height: sizeToken.get(10);
-    border-radius: var(--border-radius-medium);
+    width: sizeToken.get(9);
+    height: sizeToken.get(9);
+    margin-right: var(--spacing-small);
+    border-radius: var(--border-radius-large);
     background-color: var(--color-surface-dim);
     align-self: center;
-    margin: var(--spacing-small) 0 var(--spacing-small) var(--spacing-small);
     pointer-events: none;
 }
 
@@ -448,15 +376,19 @@ $selection-mark-clearance: calc(var(--spacing-medium) + #{sizeToken.get(5)} + va
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-low-contrast-default);
+    color: var(--card-icon-color, var(--color-low-contrast-default));
     @include transitions.transition-colors;
+
+    > svg {
+        width: sizeToken.get(5);
+        height: sizeToken.get(5);
+    }
 }
 
 .title {
     grid-area: title;
-    padding: var(--spacing-small) var(--spacing-small) 0;
     font-family: var(--typography-font-family-primary);
-    font-size: var(--typography-font-size-medium);
+    font-size: var(--typography-font-size-small);
     font-weight: var(--typography-font-weight-medium);
     font-kerning: none;
     line-height: var(--typography-line-height-tight);
@@ -471,13 +403,12 @@ $selection-mark-clearance: calc(var(--spacing-medium) + #{sizeToken.get(5)} + va
     .root:not(:has(> .description)) & {
         grid-row: 2 / 4;
         align-self: center;
-        padding-bottom: var(--spacing-small);
     }
 }
 
 .description {
     grid-area: description;
-    padding: var(--spacing-xx-small) var(--spacing-small) 0;
+    padding-top: var(--spacing-xx-small);
     font-family: var(--typography-font-family-primary);
     font-size: var(--typography-font-size-small);
     font-weight: var(--typography-font-weight-regular);
@@ -498,16 +429,16 @@ $selection-mark-clearance: calc(var(--spacing-medium) + #{sizeToken.get(5)} + va
     z-index: 1;
     display: flex;
     align-items: center;
-    align-self: stretch;
+    align-self: center;
     gap: var(--spacing-xx-small);
-    padding: var(--spacing-small);
+    margin-left: var(--spacing-small);
     @include transitions.transition-opacity;
 
     // Collapsed rather than display:none so the buttons stay in the tab order.
     @media (hover: hover) {
         .root[data-actions-visibility='hover']:not(:hover, :has([data-state='open']), :has(:focus-visible)) > & {
             width: 0;
-            padding-inline: 0;
+            margin-left: 0;
             overflow: hidden;
             opacity: 0;
         }

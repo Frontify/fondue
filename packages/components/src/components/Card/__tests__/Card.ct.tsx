@@ -32,8 +32,8 @@ test('should render the border on the selected state', async ({ mount }) => {
 
     const { boxShadow, expectedColor } = await readBorder(card);
 
-    expect(boxShadow).not.toBe('none');
-    expect(boxShadow).toContain(expectedColor);
+    const borderWidth = await resolveToken(card, '--border-width-large', 'width');
+    expect(boxShadow).toBe(`${expectedColor} 0px 0px 0px ${borderWidth} inset`);
 });
 
 test('should keep the border on the selected state while hovered', async ({ mount }) => {
@@ -165,7 +165,7 @@ test('should render the inverted banner tone with a dark background and light ic
     expect(await icon.evaluate((element) => getComputedStyle(element).color)).toBe(expectedIconColor);
 });
 
-test('should keep the dim banner tone on hover instead of the implicit shift', async ({ mount }) => {
+test('should keep the dim banner tone on hover', async ({ mount }) => {
     const wrapper = await mount(
         <RouterProvider navigate={() => {}} useHref={(path) => path}>
             <Card.Root data-test-id={CARD_TEST_ID} href="/page" aria-label="Card">
@@ -182,12 +182,10 @@ test('should keep the dim banner tone on hover instead of the implicit shift', a
 
     await wrapper.getByTestId(CARD_TEST_ID).hover();
 
-    // Pinned tone opts out of the surface-hover shift that a tone-less banner gets.
-    // Poll past the banner's color transition before asserting the settled value.
     await expect.poll(() => banner.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe(expectedDim);
 });
 
-test('should still shift an un-toned banner background on hover', async ({ mount }) => {
+test('should keep an un-toned banner background dim on hover', async ({ mount }) => {
     const wrapper = await mount(
         <RouterProvider navigate={() => {}} useHref={(path) => path}>
             <Card.Root data-test-id={CARD_TEST_ID} href="/page" aria-label="Card">
@@ -200,15 +198,12 @@ test('should still shift an un-toned banner background on hover', async ({ mount
         </RouterProvider>,
     );
     const banner = wrapper.getByTestId('banner');
-    const expectedHover = await resolveToken(banner, '--color-surface-hover');
+    const expectedDim = await resolveToken(banner, '--color-surface-dim');
 
     await wrapper.getByTestId(CARD_TEST_ID).hover();
 
-    // Backward-compatibility guard: without `tone`, the legacy hover shift remains.
-    // Poll past the banner's color transition before asserting the settled value.
-    await expect
-        .poll(() => banner.evaluate((element) => getComputedStyle(element).backgroundColor))
-        .toBe(expectedHover);
+    // The banner sits inside the card padding, so it must stay distinct from the hover tint.
+    await expect.poll(() => banner.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe(expectedDim);
 });
 
 const readHoverLayer = (card: Locator) =>
@@ -250,12 +245,11 @@ test('should fade the hover tint in on hover and out on leave', async ({ mount, 
     );
     const card = wrapper.getByTestId(CARD_TEST_ID);
     const expectedHover = await resolveToken(card, '--color-surface-hover');
-    const expectedDefault = await resolveToken(card, '--color-surface-default');
     expect(await readHoverOpacity(card)).toBe('0');
 
     await card.hover();
     await expect.poll(() => readHoverLayer(card)).toEqual({ opacity: '1', backgroundColor: expectedHover });
-    expect(await card.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe(expectedDefault);
+    expect(await card.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgba(0, 0, 0, 0)');
 
     await page.mouse.move(0, 0);
     await expect.poll(() => readHoverOpacity(card)).toBe('0');
@@ -440,28 +434,29 @@ test('should center the banner description below the checkbox when the card is s
     expect(bannerBox).not.toBeNull();
     expect(textBox).not.toBeNull();
 
-    const spacingSmall = Number.parseFloat(await resolveToken(wrapper, '--spacing-small', 'width'));
-    const spacingMedium = Number.parseFloat(await resolveToken(wrapper, '--spacing-medium', 'width'));
-    const areaTop = checkboxBox!.y + checkboxBox!.height + spacingSmall;
-    const areaBottom = bannerBox!.y + bannerBox!.height - spacingMedium;
+    const spacingXSmall = Number.parseFloat(await resolveToken(wrapper, '--spacing-x-small', 'width'));
+    const areaTop = checkboxBox!.y + checkboxBox!.height + spacingXSmall;
+    const areaBottom = bannerBox!.y + bannerBox!.height - spacingXSmall;
     const textCenter = textBox!.y + textBox!.height / 2;
     expect(textBox!.y).toBeGreaterThanOrEqual(areaTop);
     expect(Math.abs(textCenter - (areaTop + areaBottom) / 2)).toBeLessThanOrEqual(1);
 });
 
-test('should draw a bottom border under the banner description', async ({ mount }) => {
+test('should paint the banner description on the dim surface without a border', async ({ mount }) => {
     const wrapper = await mount(
-        <Card.Root>
-            <Card.Banner>
-                <Card.BannerDescription data-test-id="banner-description">Description</Card.BannerDescription>
-            </Card.Banner>
-        </Card.Root>,
+        <RouterProvider navigate={() => {}} useHref={(path) => path}>
+            <Card.Root href="/page" aria-label="Card">
+                <Card.Banner>
+                    <Card.BannerDescription data-test-id="banner-description">Description</Card.BannerDescription>
+                </Card.Banner>
+            </Card.Root>
+        </RouterProvider>,
     );
     const description = wrapper.getByTestId('banner-description');
-    const lineColor = await resolveToken(description, '--color-line-subtle');
-    const boxShadow = await description.evaluate((element) => getComputedStyle(element).boxShadow);
+    const expectedDim = await resolveToken(description, '--color-surface-dim');
 
-    expect(boxShadow).toBe(`${lineColor} 0px -1px 0px 0px inset`);
+    await expect(description).toHaveCSS('background-color', expectedDim);
+    await expect(description).toHaveCSS('box-shadow', 'none');
 });
 
 const LONG_TITLE = 'A very long asset title that needs every pixel of the card footer to show';
@@ -522,13 +517,14 @@ test('should hide hover-only actions without taking space and give the title the
     const card = page.getByTestId(CARD_TEST_ID);
     const actions = page.getByTestId(ACTIONS_TEST_ID);
     const always = await readWidths(card);
+    const gap = Number.parseFloat(await resolveToken(card, '--spacing-small', 'width'));
 
     await component.update(actionsCard('hover'));
 
     await expect(actions).toHaveCSS('width', '0px');
     await expect(actions).toHaveCSS('opacity', '0');
     const hidden = await readWidths(card);
-    expect(hidden.title).toBe(always.title + always.actions);
+    expect(hidden.title).toBe(always.title + always.actions + gap);
 });
 
 test('should keep hover-only actions hidden on a selected card', async ({ mount, page }) => {
@@ -587,151 +583,192 @@ test('should keep hover-only actions visible while their menu is open', async ({
     await expect(actions).not.toHaveCSS('width', '0px');
 });
 
-const bannerCard = (
+const designCard = (selected: boolean) => (
     <RouterProvider navigate={() => {}} useHref={(path) => path}>
-        <Card.Root data-test-id={CARD_TEST_ID} href="/page" aria-label="Card">
-            <Card.Banner>
-                <Card.BannerImage src={TRANSPARENT_GIF} />
-            </Card.Banner>
-            <Card.Title>Card title</Card.Title>
-        </Card.Root>
+        <div style={{ width: 320 }}>
+            <Card.Root
+                data-test-id={CARD_TEST_ID}
+                href="/page"
+                onSelect={() => {}}
+                selected={selected}
+                aria-label="Card"
+            >
+                <Card.Banner>
+                    <Card.BannerImage src={TRANSPARENT_GIF} />
+                    <Card.Badges>
+                        <span data-test-id="badge">New</span>
+                    </Card.Badges>
+                </Card.Banner>
+                <Card.ThumbnailIcon>
+                    <svg />
+                </Card.ThumbnailIcon>
+                <Card.Title>Card title</Card.Title>
+                <Card.Description>Secondary text</Card.Description>
+                <Card.Action>
+                    <Card.ActionButton aria-label="Settings">
+                        <svg width="16" height="16" />
+                    </Card.ActionButton>
+                </Card.Action>
+            </Card.Root>
+        </div>
     </RouterProvider>
 );
 
-const readTransitionTiming = (card: Locator) =>
-    card.evaluate((root) => {
-        const timingOf = (style: CSSStyleDeclaration, property: string) => {
-            const properties = style.transitionProperty.split(', ');
-            const index = properties.indexOf(property);
-            if (index === -1) {
-                return null;
-            }
-            const durations = style.transitionDuration.split(', ');
-            const easings = style.transitionTimingFunction.split(/, (?![^(]*\))/);
-            return {
-                duration: durations[index % durations.length],
-                easing: easings[index % easings.length],
-            };
-        };
-        const banner = root.querySelector('[data-test-id="fondue-card-banner"]') as Element;
-        return {
-            hoverTint: timingOf(getComputedStyle(root, '::before'), 'opacity'),
-            bannerRadius: timingOf(getComputedStyle(banner), 'border-radius'),
-            bannerBorder: timingOf(getComputedStyle(banner, '::after'), 'box-shadow'),
-        };
-    });
+const boxOf = async (locator: Locator) => {
+    const box = await locator.boundingBox();
+    expect(box).not.toBeNull();
+    return box!;
+};
 
-// WebKit can dispatch transitionrun after a 150ms transition has ended; a long one is still running when frozen.
-const STRETCHED_TRANSITION_MS = 1_000_000;
-
-const BANNER_RADIUS_PROPERTY = 'border-bottom-left-radius';
-
-type BannerMidpoint = { radius: string; overlayRadius: string };
-
-type FreezeAtBannerRadiusMidpointParams = { durationMs: number; property: string };
-
-// Evaluate callbacks share state only through the page window, so they cast it to this shape.
-type BannerMidpointWindow = { bannerMidpoint?: Promise<BannerMidpoint> };
-
-const freezeAtBannerRadiusMidpoint = (card: Locator) =>
-    card.evaluate(
-        (root: HTMLElement, { durationMs, property }: FreezeAtBannerRadiusMidpointParams) => {
-            const state = window as unknown as BannerMidpointWindow;
-            delete state.bannerMidpoint;
-            const banner = root.querySelector('[data-test-id="fondue-card-banner"]') as HTMLElement;
-            banner.style.transitionDuration = `${durationMs}ms`;
-            const onRun = (event: TransitionEvent) => {
-                if (event.target !== banner || event.pseudoElement || event.propertyName !== property) {
-                    return;
-                }
-                root.removeEventListener('transitionrun', onRun);
-                const transition = banner
-                    .getAnimations()
-                    .find(
-                        (animation): animation is CSSTransition =>
-                            animation instanceof CSSTransition && animation.transitionProperty === property,
-                    );
-                if (!transition) {
-                    state.bannerMidpoint = Promise.reject(
-                        new Error(`The banner has no ${property} transition to freeze`),
-                    );
-                    return;
-                }
-
-                transition.pause();
-                transition.currentTime = durationMs / 2;
-
-                state.bannerMidpoint = transition.ready.then(() => ({
-                    radius: getComputedStyle(banner).borderBottomLeftRadius,
-                    overlayRadius: getComputedStyle(banner, '::after').borderBottomLeftRadius,
-                }));
-            };
-            root.addEventListener('transitionrun', onRun);
-        },
-        { durationMs: STRETCHED_TRANSITION_MS, property: BANNER_RADIUS_PROPERTY },
-    );
-
-const readBannerMidpoint = (card: Locator) =>
-    card.evaluate(() => (window as unknown as BannerMidpointWindow).bannerMidpoint);
-
-test('should ease the banner corners and border with the hover tint', async ({ mount, page }) => {
-    await mount(bannerCard);
+test('should inset the banner and the label row by the card padding', async ({ mount, page }) => {
+    await mount(designCard(false));
     const card = page.getByTestId(CARD_TEST_ID);
+    const padding = Number.parseFloat(await resolveToken(card, '--spacing-x-small', 'width'));
 
-    const { hoverTint, bannerRadius, bannerBorder } = await readTransitionTiming(card);
+    const cardBox = await boxOf(card);
+    const bannerBox = await boxOf(card.getByTestId('fondue-card-banner'));
+    const thumbnailBox = await boxOf(card.getByTestId('fondue-card-thumbnail-icon'));
+    const actionsBox = await boxOf(card.getByTestId('fondue-card-actions'));
 
-    expect(hoverTint).toEqual({ duration: '0.15s', easing: 'cubic-bezier(0.4, 0, 0.2, 1)' });
-    expect(bannerRadius).toEqual(hoverTint);
-    expect(bannerBorder).toEqual(hoverTint);
+    expect(bannerBox.x - cardBox.x).toBeCloseTo(padding);
+    expect(bannerBox.y - cardBox.y).toBeCloseTo(padding);
+    expect(thumbnailBox.x).toBeCloseTo(bannerBox.x);
+    expect(thumbnailBox.y - (bannerBox.y + bannerBox.height)).toBeCloseTo(padding);
+    expect(actionsBox.x + actionsBox.width).toBeCloseTo(bannerBox.x + bannerBox.width);
+    expect(cardBox.y + cardBox.height - (thumbnailBox.y + thumbnailBox.height)).toBeCloseTo(padding);
 });
 
-test('should round the banner corners partway through the hover transition in both directions', async ({
-    mount,
-    page,
-}) => {
-    await mount(bannerCard);
+test('should render a 16:9 banner with rounded corners inside a rounded card', async ({ mount, page }) => {
+    await mount(designCard(false));
     const card = page.getByTestId(CARD_TEST_ID);
     const banner = card.getByTestId('fondue-card-banner');
-    const roundedRadius = await resolveToken(card, '--border-radius-large', 'width');
-    const rounded = Number.parseFloat(roundedRadius);
-    await expect(banner).toHaveCSS('border-bottom-left-radius', roundedRadius);
 
-    await freezeAtBannerRadiusMidpoint(card);
-    await card.hover();
-    await expect.poll(() => readBannerMidpoint(card)).toBeDefined();
-    const hoverIn = await readBannerMidpoint(card);
-
-    await card.evaluate((root) => {
-        for (const animation of root.getAnimations({ subtree: true })) {
-            animation.finish();
-        }
-    });
-    await expect(banner).toHaveCSS('border-bottom-left-radius', '0px');
-
-    await freezeAtBannerRadiusMidpoint(card);
-    await page.mouse.move(0, 0);
-    await expect.poll(() => readBannerMidpoint(card)).toBeDefined();
-    const hoverOut = await readBannerMidpoint(card);
-
-    for (const midpoint of [hoverIn, hoverOut]) {
-        const radius = Number.parseFloat(midpoint?.radius ?? '');
-        expect(radius).toBeGreaterThan(0);
-        expect(radius).toBeLessThan(rounded);
-        expect(midpoint?.overlayRadius).toBe(midpoint?.radius);
-    }
+    const bannerBox = await boxOf(banner);
+    expect(bannerBox.width / bannerBox.height).toBeCloseTo(16 / 9, 1);
+    await expect(card).toHaveCSS(
+        'border-top-left-radius',
+        await resolveToken(card, '--border-radius-x-large', 'width'),
+    );
+    await expect(banner).toHaveCSS(
+        'border-top-left-radius',
+        await resolveToken(card, '--border-radius-large', 'width'),
+    );
 });
 
-test('should square the banner corners without a transition when reduced motion is preferred', async ({
-    mount,
-    page,
-}) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await mount(bannerCard);
+test('should keep the banner corners rounded on hover and when selected', async ({ mount, page }) => {
+    const component = await mount(designCard(false));
     const card = page.getByTestId(CARD_TEST_ID);
-
-    const { bannerRadius } = await readTransitionTiming(card);
-    expect(bannerRadius?.duration).toBe('0s');
+    const banner = card.getByTestId('fondue-card-banner');
+    const rounded = await resolveToken(card, '--border-radius-large', 'width');
 
     await card.hover();
-    await expect(card.getByTestId('fondue-card-banner')).toHaveCSS('border-bottom-left-radius', '0px');
+    await expect(banner).toHaveCSS('border-bottom-left-radius', rounded);
+
+    await component.update(designCard(true));
+    await expect(banner).toHaveCSS('border-bottom-left-radius', rounded);
+});
+
+test('should size the thumbnail to 36px with large rounded corners', async ({ mount, page }) => {
+    await mount(designCard(false));
+    const thumbnail = page.getByTestId('fondue-card-thumbnail-icon');
+
+    await expect(thumbnail).toHaveCSS('width', '36px');
+    await expect(thumbnail).toHaveCSS('height', '36px');
+    await expect(thumbnail).toHaveCSS(
+        'border-top-left-radius',
+        await resolveToken(thumbnail, '--border-radius-large', 'width'),
+    );
+});
+
+test('should set the title in the small strong text style', async ({ mount, page }) => {
+    await mount(designCard(false));
+    const title = page.getByTestId('fondue-card-title');
+
+    await expect(title).toHaveCSS('font-size', await resolveToken(title, '--typography-font-size-small', 'width'));
+    await expect(title).toHaveCSS('line-height', await resolveToken(title, '--typography-line-height-tight', 'width'));
+});
+
+test('should fill a selected card with the active surface', async ({ mount, page }) => {
+    await mount(designCard(true));
+    const card = page.getByTestId(CARD_TEST_ID);
+
+    await expect(card).toHaveCSS('background-color', await resolveToken(card, '--color-surface-active'));
+});
+
+test('should place the checkbox inside the banner by the card padding', async ({ mount, page }) => {
+    await mount(designCard(false));
+    const card = page.getByTestId(CARD_TEST_ID);
+    await card.hover();
+    const padding = Number.parseFloat(await resolveToken(card, '--spacing-x-small', 'width'));
+
+    const bannerBox = await boxOf(card.getByTestId('fondue-card-banner'));
+    const checkboxBox = await boxOf(card.getByRole('button', { name: 'Select' }));
+
+    expect(checkboxBox.x - bannerBox.x).toBeCloseTo(padding);
+    expect(checkboxBox.y - bannerBox.y).toBeCloseTo(padding);
+});
+
+test('should place the banner badges by the small spacing from the banner corner', async ({ mount, page }) => {
+    await mount(designCard(false));
+    const card = page.getByTestId(CARD_TEST_ID);
+    const spacing = Number.parseFloat(await resolveToken(card, '--spacing-small', 'width'));
+
+    const bannerBox = await boxOf(card.getByTestId('fondue-card-banner'));
+    const badgesBox = await boxOf(card.getByTestId('fondue-card-badges'));
+
+    expect(badgesBox.y - bannerBox.y).toBeCloseTo(spacing);
+    expect(bannerBox.x + bannerBox.width - (badgesBox.x + badgesBox.width)).toBeCloseTo(spacing);
+});
+
+const folderCard = (color?: string, tone?: 'inverted') => (
+    <RouterProvider navigate={() => {}} useHref={(path) => path}>
+        <div style={{ width: 320 }}>
+            <Card.Root data-test-id={CARD_TEST_ID} href="/page" aria-label="Folder">
+                <Card.Banner tone={tone}>
+                    <Card.BannerIcon data-test-id="banner-icon" customColor={color}>
+                        <svg width="32" height="32" />
+                    </Card.BannerIcon>
+                </Card.Banner>
+                <Card.ThumbnailIcon data-test-id="thumbnail-icon" customColor={color}>
+                    <svg width="20" height="20" />
+                </Card.ThumbnailIcon>
+                <Card.Title>Folder</Card.Title>
+            </Card.Root>
+        </div>
+    </RouterProvider>
+);
+
+test('should size the banner icon to 48px and the thumbnail icon to 20px', async ({ mount, page }) => {
+    await mount(folderCard());
+
+    const bannerIcon = page.getByTestId('banner-icon').locator('svg');
+    const thumbnailIcon = page.getByTestId('thumbnail-icon').locator('svg');
+
+    await expect(bannerIcon).toHaveCSS('width', '48px');
+    await expect(bannerIcon).toHaveCSS('height', '48px');
+    await expect(thumbnailIcon).toHaveCSS('width', '20px');
+    await expect(thumbnailIcon).toHaveCSS('height', '20px');
+});
+
+test('should keep a custom icon color on hover', async ({ mount, page }) => {
+    await mount(folderCard('rgb(227, 167, 253)'));
+    await page.getByTestId(CARD_TEST_ID).hover();
+
+    await expect(page.getByTestId('banner-icon')).toHaveCSS('color', 'rgb(227, 167, 253)');
+    await expect(page.getByTestId('thumbnail-icon')).toHaveCSS('color', 'rgb(227, 167, 253)');
+});
+
+test('should keep the default icon colors without a custom color', async ({ mount, page }) => {
+    await mount(folderCard());
+    const bannerIcon = page.getByTestId('banner-icon');
+    const expected = await resolveToken(bannerIcon, '--color-low-contrast-default');
+
+    await expect(bannerIcon).toHaveCSS('color', expected);
+    await expect(page.getByTestId('thumbnail-icon')).toHaveCSS('color', expected);
+});
+
+test('should paint a custom icon color over the inverted banner tone', async ({ mount, page }) => {
+    await mount(folderCard('rgb(227, 167, 253)', 'inverted'));
+
+    await expect(page.getByTestId('banner-icon')).toHaveCSS('color', 'rgb(227, 167, 253)');
 });
