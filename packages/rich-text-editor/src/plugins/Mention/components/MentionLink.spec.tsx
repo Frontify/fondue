@@ -8,7 +8,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 import { type EditorControlApi } from '#/core';
 
-import { mentionDisplay } from '../helpers/display';
+import { mentionDisplay, resolvedUnknownLabels } from '../helpers/display';
 import { mentionContent } from '../Mention';
 import { type MentionValue } from '../types';
 
@@ -45,7 +45,11 @@ const mount = (node: ReactNode): HTMLElement => {
 describe('a mention with nowhere to link to', () => {
     it('is text with its name isolated, and no tab stop', () => {
         const container = mount(
-            <MentionLink value={JANE} display={mentionDisplay(JANE, { trigger: '@' })} placesCaret={false} />,
+            <MentionLink
+                value={JANE}
+                display={mentionDisplay(JANE, { trigger: '@', unknownLabels: resolvedUnknownLabels() })}
+                placesCaret={false}
+            />,
         );
         const mention = container.querySelector('span[data-mention-id]');
 
@@ -91,6 +95,7 @@ describe('a click on a linked mention', () => {
                 items={() => []}
                 trigger="@"
                 href={href}
+                unknownLabels={resolvedUnknownLabels()}
             />,
         );
 
@@ -113,7 +118,7 @@ describe('a mention stored with a field of the wrong type', () => {
     it('is drawn without throwing, named by its kind and with no kind attribute', () => {
         // Stored documents are not validated, so a field can be missing or the wrong type.
         const wrongType = { id: 'x', username: 7, name: 'X', kind: 7 } as unknown as MentionValue;
-        const display = mentionDisplay(wrongType, { trigger: '@' });
+        const display = mentionDisplay(wrongType, { trigger: '@', unknownLabels: resolvedUnknownLabels() });
         const container = mount(<MentionLink value={wrongType} display={display} placesCaret={false} />);
 
         expect(container.querySelector('[data-mention-id]')?.textContent).toBe('Unknown person');

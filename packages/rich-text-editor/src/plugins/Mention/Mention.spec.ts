@@ -6,10 +6,18 @@ import { describe, expect, it } from 'vitest';
 
 import { mentionValueOf } from './helpers/mention';
 import { mentionContent, mentionPlugin } from './Mention';
+import { type MentionKind } from './types';
 
 const JANE = { id: 'jane', username: 'jane', name: 'Jane Doe' };
 const DESIGN = { id: 'design', username: 'design', name: 'Design team', kind: 'group' } as const;
 const ALL = { id: 'all', username: 'all', name: 'Everyone', kind: 'all' } as const;
+
+const ENGLISH_LABELS = { user: 'Unknown person', group: 'Unknown group', all: 'Unknown mention' } as const;
+const GERMAN_LABELS = { user: 'Unbekannte Person', group: 'Unbekannte Gruppe', all: 'Unbekannte Erwähnung' } as const;
+
+const RIGHT_TO_LEFT_OVERRIDE = String.fromCodePoint(0x202e);
+const LEFT_TO_RIGHT_MARK = String.fromCodePoint(0x200e);
+const ZERO_WIDTH_NON_JOINER = String.fromCodePoint(0x200c);
 
 const mentionFor = (href?: string) =>
     mentionPlugin({ items: [JANE], href: href === undefined ? undefined : () => href }).content?.inlines?.mention;
@@ -62,5 +70,58 @@ describe('a stored mention that is missing a field', () => {
         expect(() => mention?.toHtml(wrongType)).not.toThrow();
         expect(mention?.toHtml(wrongType).children).toEqual([{ tag: 'bdi', children: 'Unknown person' }]);
         expect(mention?.toHtml(wrongType).attrs?.['data-mention-kind']).toBeUndefined();
+    });
+});
+
+describe('the labels for a stored mention with no username', () => {
+    const emptyOf = (kind: MentionKind) => ({ id: 'x', username: '', name: '', kind });
+    const labelsIn = (mention: ReturnType<typeof mentionFor>) => ({
+        user: mention?.toHtml(emptyOf('user')).children,
+        group: mention?.toHtml(emptyOf('group')).children,
+        all: mention?.toHtml(emptyOf('all')).children,
+    });
+    const shown = (label: string) => [{ tag: 'bdi', children: label }];
+
+    it('are the ones the host gave to mentionContent, one per kind', () => {
+        const labels = labelsIn(mentionContent({ unknownLabels: GERMAN_LABELS }).inlines?.mention);
+
+        expect(labels).toEqual({
+            user: shown(GERMAN_LABELS.user),
+            group: shown(GERMAN_LABELS.group),
+            all: shown(GERMAN_LABELS.all),
+        });
+    });
+
+    it('keep their English label for a kind the host left out', () => {
+        const labels = labelsIn(mentionContent({ unknownLabels: { group: GERMAN_LABELS.group } }).inlines?.mention);
+
+        expect(labels).toEqual({
+            user: shown(ENGLISH_LABELS.user),
+            group: shown(GERMAN_LABELS.group),
+            all: shown(ENGLISH_LABELS.all),
+        });
+    });
+
+    it('refuse a blank label, in the content too', () => {
+        expect(() => mentionContent({ unknownLabels: { group: '' } })).toThrow(/unknownLabels\.group/);
+        expect(() => mentionPlugin({ items: [JANE], unknownLabels: { user: '   ' } })).toThrow(/unknownLabels\.user/);
+        expect(() => mentionContent({ unknownLabels: { all: RIGHT_TO_LEFT_OVERRIDE } })).toThrow(/unknownLabels\.all/);
+        expect(() => mentionContent({ unknownLabels: { user: LEFT_TO_RIGHT_MARK } })).toThrow(/unknownLabels\.user/);
+    });
+
+    it('accept a label that joins its letters with a zero-width non-joiner', () => {
+        expect(() => mentionContent({ unknownLabels: { user: `می${ZERO_WIDTH_NON_JOINER}خواهم` } })).not.toThrow();
+    });
+
+    it('are the ones the host gave to mentionPlugin', () => {
+        const labels = labelsIn(
+            mentionPlugin({ items: [JANE], unknownLabels: GERMAN_LABELS }).content?.inlines?.mention,
+        );
+
+        expect(labels).toEqual({
+            user: shown(GERMAN_LABELS.user),
+            group: shown(GERMAN_LABELS.group),
+            all: shown(GERMAN_LABELS.all),
+        });
     });
 });

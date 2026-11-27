@@ -42,6 +42,7 @@ import {
     type LinkAppearance,
     type LinkDestination,
     linkPlugin,
+    type MentionContentOptions,
     type MentionItem,
     mentionPlugin,
     type MentionValue,
@@ -769,6 +770,50 @@ export const Mention: Story = {
                         value={doc}
                         onChange={setDoc}
                         plugins={[mentionPlugin({ items: searchMentionable, href: profileHref })]}
+                    />
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+type MentionWithNoUsernameArgs = Pick<MentionContentOptions, 'unknownLabels'>;
+
+/** A mention stored with no username shows the label the host gives for its kind. */
+export const MentionWithNoUsername: StoryObj<MentionWithNoUsernameArgs> = {
+    args: {
+        unknownLabels: { user: 'Unbekannte Person', group: 'Unbekannte Gruppe', all: 'Unbekannte Erwähnung' },
+    },
+    render: ({ unknownLabels }) => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'Ask ' },
+                        { type: 'mention', id: 'removed-user', username: '', name: '' },
+                        { text: ' or ' },
+                        { type: 'mention', id: 'removed-group', username: '', name: '', kind: 'group' },
+                        { text: ' about it, and tell ' },
+                        { type: 'mention', id: 'removed-all', username: '', name: '', kind: 'all' },
+                        { text: '.' },
+                    ],
+                },
+            ],
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <p className={HINT}>
+                    Edit <code>unknownLabels</code> in Controls.
+                </p>
+                <div className={FRAME}>
+                    <RichTextEditor
+                        value={doc}
+                        onChange={setDoc}
+                        plugins={[mentionPlugin({ items: MENTIONABLE, href: profileHref, unknownLabels })]}
                     />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
