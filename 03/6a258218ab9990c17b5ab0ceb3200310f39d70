@@ -1,0 +1,39 @@
+packages/rich-text-editor/src/editor/components/Toolbar.tsx
+  s_62dd4fdeda599c::t_ba0446949a522c 85,108,116-121,123-128,150,154,157,160-162,166-168,192-203,245-246,250-251
+packages/rich-text-editor/src/__tests__/browser/toolbarDividersValues.ts
+  s_62dd4fdeda599c::t_24be348e1ad5b6 3-4,7-12
+packages/rich-text-editor/src/editor/richTextEditor.module.scss
+  s_62dd4fdeda599c::t_f0a5135d5c475a 88-91
+  s_62dd4fdeda599c::t_aa7cdd960d7ffc 92-93
+packages/rich-text-editor/src/editor/helpers/toolbarFit.ts
+  s_62dd4fdeda599c::t_a91831dc4a7ced 17-18,21,27,30,32-40,63-65
+packages/rich-text-editor/src/__tests__/browser/ToolbarDividersHost.tsx
+  s_62dd4fdeda599c::t_24be348e1ad5b6 19
+  s_62dd4fdeda599c::t_6ce4ff34aeb11c 49-50,54-56,58-59,69-70,72-73
+  s_62dd4fdeda599c::t_ce0cf3b5ef2f1b 47-48,57,64-66,71
+  s_62dd4fdeda599c::t_219f0fe6efadc3 67
+packages/rich-text-editor/src/editor/helpers/toolbarFit.spec.ts
+  s_62dd4fdeda599c::t_a91831dc4a7ced 44-48,50-62
+  s_62dd4fdeda599c::t_73b03382769771 49
+packages/rich-text-editor/src/__tests__/browser/toolbarDividers.ct.tsx
+  s_62dd4fdeda599c::t_aebeb517a98def 20
+  s_62dd4fdeda599c::t_6ce4ff34aeb11c 16-17,113,116-117,122,124
+  s_62dd4fdeda599c::t_398423d93c8db1 112,118,121,125
+  s_62dd4fdeda599c::t_05207bc9b0922d 114-115,119-120,123,126-128
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "036a258218ab9990c17b5ab0ceb3200310f39d70",
+  "prompts": {},
+  "sessions": {
+    "s_62dd4fdeda599c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6e4034c4-4b94-4cc9-956c-e1f4bba935d7",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

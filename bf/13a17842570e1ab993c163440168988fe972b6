@@ -1,0 +1,48 @@
+packages/rich-text-editor/src/__tests__/childSpacing.spec.ts
+  s_db1d4607d5e58e::t_33b7e3705ccc0a 61,79-80,92,103
+packages/rich-text-editor/src/plugins/CheckList/CheckList.tsx
+  s_db1d4607d5e58e::t_a321c9c0da8d0c 94
+  s_db1d4607d5e58e::t_3363359be99ee1 78-83,90
+  s_db1d4607d5e58e::t_f45cf05e0b9f6f 8-9
+  s_db1d4607d5e58e::t_aad4b4bfee607e 107
+  s_db1d4607d5e58e::t_179fff4c1fe913 126
+packages/rich-text-editor/src/__tests__/browser/ownMarginsPlugin.tsx
+  s_db1d4607d5e58e::t_1531e5b017e23d 11
+  s_db1d4607d5e58e::t_64ed3417f5fa78 28-29
+  s_db1d4607d5e58e::t_5de0eb86483f38 19-21
+packages/rich-text-editor/src/__tests__/serializeToHtml.node.spec.tsx
+  s_db1d4607d5e58e::t_c81c3124618c2b 178,182
+  s_db1d4607d5e58e::t_9dc20991ebe0e8 162
+packages/rich-text-editor/src/core/registry.ts
+  s_db1d4607d5e58e::t_0f5a82547e44ac 729-730
+packages/rich-text-editor/src/renderer/inlineLooks.spec.ts
+  s_db1d4607d5e58e::t_0d626cef6fb051 38,40,171,184-188
+  s_db1d4607d5e58e::t_be35e8901e782e 17,41,170,179-183,258-304
+  s_db1d4607d5e58e::t_e5a7ba9d2e0b38 33,37,39,94-95,99,103-108,159-167,173-174,178,194-195,204-205,220,223-225
+  s_db1d4607d5e58e::t_fe3c85cdc50f95 305
+.changeset/rte-structure-spacing.md
+  s_db1d4607d5e58e::t_694a78040cdf92 5
+packages/rich-text-editor/src/renderer/inlineLooks.ts
+  s_db1d4607d5e58e::t_b70244a9018786 27,53-54,62,67-68,71,75,77-87,109,235,237,272
+  s_db1d4607d5e58e::t_a3c11929e49a26 120,123
+  s_db1d4607d5e58e::t_ffe3b90ee0f972 69
+  s_db1d4607d5e58e::t_f40496be463670 25-26,28-29,88-96,98-108,110-119,121-122,124-169,197-199,206,209,211-214
+packages/rich-text-editor/src/renderer/documentTree.ts
+  s_db1d4607d5e58e::t_544cb5a03ee16f 295-296
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bf13a17842570e1ab993c163440168988fe972b6",
+  "prompts": {},
+  "sessions": {
+    "s_db1d4607d5e58e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1084a074-7586-420c-8797-a9dbcd3c7659",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

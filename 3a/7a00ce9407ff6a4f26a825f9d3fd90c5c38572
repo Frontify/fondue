@@ -1,0 +1,73 @@
+packages/rich-text-editor/src/__tests__/browser/editor.ct.tsx
+  s_f829710935f5ae::t_ee1e32774cce8e 255-299
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_f829710935f5ae::t_ee1e32774cce8e 60-67,149-153,166,277-278,280,292-293,297,313,336-337,493,508
+  s_f829710935f5ae::t_848771ed55bead 270,279
+  s_f829710935f5ae::t_b7c4808c4c964d 256-257
+packages/rich-text-editor/src/editor/engines/prosemirror/unreadStructure.ts
+  s_f829710935f5ae::t_ee1e32774cce8e 3-4,9-21,23-25,30,32-33,43-46,61-64
+.changeset/table-paste-frame-test-id.md
+  s_f829710935f5ae::t_ee1e32774cce8e 1-5
+packages/components/src/components/Label/Label.metadata.json
+  s_f829710935f5ae::t_ee1e32774cce8e 4
+packages/rich-text-editor/src/__tests__/browser/ownMargins.ct.tsx
+  s_f829710935f5ae::t_ee1e32774cce8e 14
+packages/rich-text-editor/src/__tests__/browser/tablePaste.ct.tsx
+  s_f829710935f5ae::t_ee1e32774cce8e 1-48
+packages/components/src/components/Label/__tests__/Label.ct.tsx
+  s_f829710935f5ae::t_ee1e32774cce8e 108-137
+packages/rich-text-editor/src/__tests__/browser/TablePasteFrame.tsx
+  s_f829710935f5ae::t_ee1e32774cce8e 1-23
+packages/rich-text-editor/src/__tests__/browser/HostStylingSections.tsx
+  s_f829710935f5ae::t_ee1e32774cce8e 17,20
+packages/rich-text-editor/src/__tests__/browser/HostNoHeadingsPair.tsx
+  s_f829710935f5ae::t_ee1e32774cce8e 36,39
+.changeset/label-focus-textbox.md
+  s_f829710935f5ae::t_ee1e32774cce8e 1-5
+packages/rich-text-editor/src/__tests__/browser/OwnMarginsFrame.tsx
+  s_f829710935f5ae::t_ee1e32774cce8e 53,56
+packages/rich-text-editor/src/__tests__/browser/tablePasteValues.ts
+  s_f829710935f5ae::t_ee1e32774cce8e 1-16
+packages/rich-text-editor/src/__tests__/browser/TableCellFrame.tsx
+  s_f829710935f5ae::t_ee1e32774cce8e 15,18
+packages/rich-text-editor/src/editor/components/EditorFallback.tsx
+  s_f829710935f5ae::t_ee1e32774cce8e 15,31-32,42,51,80
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_f829710935f5ae::t_ee1e32774cce8e 596-635,1752-1766
+  s_f829710935f5ae::t_ffefaa057eccf8 1767
+.changeset/rte-read-tables-from-html.md
+  s_f829710935f5ae::t_ee1e32774cce8e 1-5
+packages/rich-text-editor/playwright.config.ts
+  s_f829710935f5ae::t_ee1e32774cce8e 21
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.ts
+  s_f829710935f5ae::t_ee1e32774cce8e 98,101,108
+packages/components/src/components/Label/Label.tsx
+  s_f829710935f5ae::t_ee1e32774cce8e 34-36,66,69-73,77-82
+packages/rich-text-editor/src/__tests__/browser/HostStylingPair.tsx
+  s_f829710935f5ae::t_ee1e32774cce8e 22,25
+packages/rich-text-editor/src/editor/engines/prosemirror/parseHtml.spec.tsx
+  s_f829710935f5ae::t_ee1e32774cce8e 8,10,61-145
+  s_f829710935f5ae::t_a37bacff544580 146
+packages/rich-text-editor/src/editor/engines/prosemirror/parseHtml.ts
+  s_f829710935f5ae::t_ee1e32774cce8e 65-66,68
+.changeset/rte-id-and-test-id.md
+  s_f829710935f5ae::t_ee1e32774cce8e 1-5
+packages/rich-text-editor/src/__tests__/browser/HostLooksPair.tsx
+  s_f829710935f5ae::t_ee1e32774cce8e 80,83
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3a7a00ce9407ff6a4f26a825f9d3fd90c5c38572",
+  "prompts": {},
+  "sessions": {
+    "s_f829710935f5ae": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ca429fc0-99d9-4a17-ab47-22e5f376ecf5",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

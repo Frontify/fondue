@@ -1,0 +1,19 @@
+scripts/check-bundle-size.mjs
+  s_3da29b36b0ad36::t_160b0e0b664e80 38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b52487961f64e2414a1ca4260faf9702c1c36f86",
+  "prompts": {},
+  "sessions": {
+    "s_3da29b36b0ad36": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52275dbb-cfd4-472c-b295-02ca60ef0ab1",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
