@@ -23,6 +23,7 @@ import { createDropHandler } from '../utils/createDropHandler';
 import { diffSelection } from '../utils/diffSelection';
 import { getFocusFallback, getVisibleIds } from '../utils/getFocusFallback';
 import { getStructureKey } from '../utils/getStructureKey';
+import { rtlDropLevelFeature } from '../utils/rtlDropLevelFeature';
 
 type UseTreeControllerOptions = {
     items: TreeItemData[];
@@ -325,7 +326,7 @@ export const useTreeController = ({
             checkboxesFeature,
             hotkeysCoreFeature,
             ...(multiSelect ? [] : [selectionFeature]),
-            ...(reorderable ? [dragAndDropFeature, keyboardDragAndDropFeature] : []),
+            ...(reorderable ? [dragAndDropFeature, keyboardDragAndDropFeature, rtlDropLevelFeature] : []),
             renamingFeature,
         ],
     });
