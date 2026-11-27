@@ -1,0 +1,33 @@
+packages/rich-text-editor/src/__tests__/lookStylesheets.spec.ts
+  s_39a6b5c343f1f5::t_837b51bf98423f 13,27,139-147,161-185
+packages/rich-text-editor/src/__tests__/browser/hostStyling.ct.tsx
+  s_39a6b5c343f1f5::t_ef5c8925343dee 1286
+  s_39a6b5c343f1f5::t_819dd8efa70afc 403-404,626-627,1219-1285,1287-1325
+  s_39a6b5c343f1f5::t_ff56d9caf7887e 1326
+packages/rich-text-editor/src/plugins/Link/helpers/appearance.ts
+  s_39a6b5c343f1f5::t_2eb09a76b5de96 59-62,72-73,80-103,108,114
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_39a6b5c343f1f5::t_26f9ea53a4dbad 514-515,528-529
+.changeset/link-look-logical-padding.md
+  s_39a6b5c343f1f5::t_b8c3c293761899 1-5
+packages/rich-text-editor/src/plugins/Link/link.module.scss
+  s_39a6b5c343f1f5::t_2eb09a76b5de96 29-30,109-116,121-132
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_39a6b5c343f1f5::t_d7fdbee4207297 1247
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "08fcd33c6837921c1019d5680a5a9f9dc1f252ce",
+  "prompts": {},
+  "sessions": {
+    "s_39a6b5c343f1f5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b38e1e61-b0ff-4582-82c1-f0c893b3ae10",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
