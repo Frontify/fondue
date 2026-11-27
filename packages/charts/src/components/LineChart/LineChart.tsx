@@ -27,6 +27,8 @@ export const LineChart = ({
     highlightNegativeValues = false,
     markLine,
     valueFormatter,
+    tooltipValueFormatter,
+    ariaLabel,
     dateGranularity,
 }: LineChartProps) => {
     const backfilledSeries = createBackfilledSeries(series);
@@ -48,6 +50,7 @@ export const LineChart = ({
                 <Legend names={series.map((series) => series.name)} style={'line'} />
             )}
             <XYChart
+                accessibilityLabel={ariaLabel}
                 theme={theme}
                 xScale={{ type: 'time' }}
                 yScale={{ type: 'linear', domain: yDomain }}
@@ -82,7 +85,7 @@ export const LineChart = ({
                     hideGlyphs={false}
                     colorAccessor={(key) => colorAccessorByKey(key, series)}
                     missingValueLabel={missingValueLabel}
-                    valueFormatter={valueFormatter}
+                    valueFormatter={tooltipValueFormatter ?? valueFormatter}
                     locale={locale}
                     dateGranularity={dateGranularity}
                 />

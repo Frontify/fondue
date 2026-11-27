@@ -32,6 +32,8 @@ export const AreaStackChart = ({
     legendPosition = LEGEND_POSITION_TOP,
     markLine,
     valueFormatter,
+    tooltipValueFormatter,
+    ariaLabel,
     childSumLabel,
     domain = COUNT_DOMAIN,
     dateGranularity,
@@ -59,6 +61,7 @@ export const AreaStackChart = ({
                 <Legend names={series.map((series) => series.name)} style="line" />
             )}
             <XYChart
+                accessibilityLabel={ariaLabel}
                 theme={theme}
                 xScale={{ type: 'time' }}
                 yScale={{ type: 'linear', domain: transformedYDomain }}
@@ -83,7 +86,7 @@ export const AreaStackChart = ({
                     colorAccessor={(key) => colorAccessorByKey(key, series)}
                     missingValueLabel={missingValueLabel}
                     childSumLabel={childSumLabel}
-                    valueFormatter={valueFormatter}
+                    valueFormatter={tooltipValueFormatter ?? valueFormatter}
                     locale={locale}
                     stackingGlyphs
                     dateGranularity={dateGranularity}
