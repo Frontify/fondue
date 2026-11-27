@@ -10,6 +10,7 @@ import { LOOK_PROPERTIES, lookVariableName } from '../core/look';
 import {
     BUTTON_HOVER_LOOK_FIELDS,
     BUTTON_LOOK_FIELDS,
+    BUTTON_PHYSICAL_PADDING_FIELDS,
     TEXT_LINK_BOX_FIELDS,
     TEXT_LINK_LOOK_FIELDS,
 } from '../plugins/Link/helpers/appearance';
@@ -118,6 +119,10 @@ describe('the link stylesheet', () => {
         tertiary: 'buttonTertiary',
     };
 
+    const TEXT_LINK_BOX_SELECTOR = `.linkBox .link:not(${Object.values(BUTTON_CLASSES)
+        .map((name) => `.${name}`)
+        .join(', ')})`;
+
     /** The body of the rule with exactly this selector list, which a button writes for its link states. */
     const ruleBodyForSelector = (selector: string): string => {
         const escaped = selector.replaceAll(SELECTOR_PUNCTUATION, String.raw`\$&`);
@@ -130,9 +135,39 @@ describe('the link stylesheet', () => {
         return body;
     };
 
+    /** The side each inline padding lands on in left-to-right text, where the base rule declares it. */
+    const LEFT_TO_RIGHT_PADDING_SIDES = {
+        'padding-inline-start': 'padding-left',
+        'padding-inline-end': 'padding-right',
+    } as const;
+
+    const isInlinePaddingProperty = (property: string): property is keyof typeof LEFT_TO_RIGHT_PADDING_SIDES =>
+        property in LEFT_TO_RIGHT_PADDING_SIDES;
+
+    const declaredPropertyOf = (property: string): string => {
+        if (isInlinePaddingProperty(property)) {
+            return LEFT_TO_RIGHT_PADDING_SIDES[property];
+        }
+
+        return property;
+    };
+
+    /** What the right-to-left rule reads: the end field on the left side, the start field on the right side. */
+    const rightToLeftPaddingsOf = (kind: string): LookDeclaration[] => [
+        { property: 'padding-left', variable: lookVariableName(kind, 'padding-inline-end') },
+        { property: 'padding-right', variable: lookVariableName(kind, 'padding-inline-start') },
+    ];
+
+    /** The variable a declaration of `property` falls back to when the host's own variable is unset. */
+    const fallbackVariableOf = (body: string, property: string): string | undefined =>
+        new RegExp(`${property}:\\s*var\\(--[a-z0-9-]+,\\s*var\\((--[a-z0-9-]+),`).exec(body)?.[1];
+
+    const rightToLeftSelectorOf = (className: string): string =>
+        `.${className}:dir(rtl), .${className}:link:dir(rtl), .${className}:visited:dir(rtl)`;
+
     const declarationsOf = (kind: string, properties: readonly string[]): LookDeclaration[] =>
         properties.map((property) => ({
-            property,
+            property: declaredPropertyOf(property),
             variable: lookVariableName(kind, property),
         }));
 
@@ -143,8 +178,11 @@ describe('the link stylesheet', () => {
     );
 
     const BUTTON_MARGIN_PROPERTIES: string[] = [LOOK_PROPERTIES.marginTop, LOOK_PROPERTIES.marginBottom];
+    const BUTTON_PHYSICAL_PADDING_PROPERTIES: string[] = Object.values(BUTTON_PHYSICAL_PADDING_FIELDS);
+    // The physical paddings stay in the look only for compatibility; the stylesheet reads them as fallbacks.
     const BUTTON_OWN_PROPERTIES = Object.values(BUTTON_LOOK_FIELDS).filter(
-        (property) => !BUTTON_MARGIN_PROPERTIES.includes(property),
+        (property) =>
+            !BUTTON_MARGIN_PROPERTIES.includes(property) && !BUTTON_PHYSICAL_PADDING_PROPERTIES.includes(property),
     );
 
     it('reads the text link look from the variables the link plugin sets', () => {
@@ -154,14 +192,17 @@ describe('the link stylesheet', () => {
     });
 
     it('reads the text link box from the variables the link plugin sets, under its content class', () => {
-        const textLink = `.linkBox .link:not(${Object.values(BUTTON_CLASSES)
-            .map((name) => `.${name}`)
-            .join(', ')})`;
-        const selector = `${textLink}, ${textLink}:link, ${textLink}:visited`;
+        const selector = `${TEXT_LINK_BOX_SELECTOR}, ${TEXT_LINK_BOX_SELECTOR}:link, ${TEXT_LINK_BOX_SELECTOR}:visited`;
 
         expect(lookDeclarationsIn(ruleBodyForSelector(selector))).toEqual(
             declarationsOf('link', TEXT_LINK_BOX_PROPERTIES),
         );
+    });
+
+    it('reads the end padding on the left and the start padding on the right of a text link in right-to-left text', () => {
+        const selector = `${TEXT_LINK_BOX_SELECTOR}:dir(rtl), ${TEXT_LINK_BOX_SELECTOR}:link:dir(rtl), ${TEXT_LINK_BOX_SELECTOR}:visited:dir(rtl)`;
+
+        expect(lookDeclarationsIn(ruleBodyForSelector(selector))).toEqual(rightToLeftPaddingsOf('link'));
     });
 
     for (const appearance of ALL_LINK_APPEARANCES) {
@@ -180,6 +221,35 @@ describe('the link stylesheet', () => {
 
             expect(lookDeclarationsIn(ruleBodyForSelector(selector))).toEqual(
                 declarationsOf(`button-${appearance}`, BUTTON_MARGIN_PROPERTIES),
+            );
+        });
+
+        it(`falls back to the ${appearance} button's left padding on the left and its right padding on the right`, () => {
+            const selector = `.${className}, .${className}:link, .${className}:visited`;
+            const body = ruleBodyForSelector(selector);
+
+            expect(fallbackVariableOf(body, 'padding-left')).toBe(
+                lookVariableName(`button-${appearance}`, BUTTON_PHYSICAL_PADDING_FIELDS.paddingLeft),
+            );
+            expect(fallbackVariableOf(body, 'padding-right')).toBe(
+                lookVariableName(`button-${appearance}`, BUTTON_PHYSICAL_PADDING_FIELDS.paddingRight),
+            );
+        });
+
+        it(`falls back to the ${appearance} button's left padding on the left and its right padding on the right in right-to-left text`, () => {
+            const body = ruleBodyForSelector(rightToLeftSelectorOf(className));
+
+            expect(fallbackVariableOf(body, 'padding-left')).toBe(
+                lookVariableName(`button-${appearance}`, BUTTON_PHYSICAL_PADDING_FIELDS.paddingLeft),
+            );
+            expect(fallbackVariableOf(body, 'padding-right')).toBe(
+                lookVariableName(`button-${appearance}`, BUTTON_PHYSICAL_PADDING_FIELDS.paddingRight),
+            );
+        });
+
+        it(`reads the ${appearance} button's end padding on the left and its start padding on the right in right-to-left text`, () => {
+            expect(lookDeclarationsIn(ruleBodyForSelector(rightToLeftSelectorOf(className)))).toEqual(
+                rightToLeftPaddingsOf(`button-${appearance}`),
             );
         });
 

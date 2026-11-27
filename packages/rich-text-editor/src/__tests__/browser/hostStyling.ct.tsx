@@ -399,9 +399,9 @@ const HOST_LINK_LOOK: TextLinkLook = {
 /** The box a host draws around a text link's text, which the link look leaves out until a host sets it. */
 const HOST_LINK_BOX_LOOK: TextLinkLook = {
     paddingTop: '2px',
-    paddingRight: '6px',
     paddingBottom: '4px',
-    paddingLeft: '8px',
+    paddingInlineStart: '8px',
+    paddingInlineEnd: '6px',
     backgroundColor: 'rgb(255, 240, 0)',
     borderColor: 'rgb(0, 0, 100)',
     borderWidth: '2px',
@@ -639,8 +639,8 @@ test.describe('host styling of body text, quotes and links', () => {
     test('draws the text link box on each line of a link that wraps', async ({ mount }) => {
         const component = await mount(<HostLooksPair link={HOST_LINK_BOX_LOOK} value={WRAPPING_LINK_DOCUMENT} />);
         const borderWidth = parseFloat(HOST_LINK_BOX_LOOK.borderWidth ?? '');
-        const leftInset = parseFloat(HOST_LINK_BOX_LOOK.paddingLeft ?? '') + borderWidth;
-        const rightInset = parseFloat(HOST_LINK_BOX_LOOK.paddingRight ?? '') + borderWidth;
+        const leftInset = parseFloat(HOST_LINK_BOX_LOOK.paddingInlineStart ?? '') + borderWidth;
+        const rightInset = parseFloat(HOST_LINK_BOX_LOOK.paddingInlineEnd ?? '') + borderWidth;
 
         for (const surface of SURFACES) {
             const link = component.getByTestId(surface).getByRole('link', { name: WRAPPING_LINK_TEXT, exact: true });
@@ -1265,4 +1265,135 @@ test.describe('host styling of list markers', () => {
             }
         });
     }
+});
+
+const PADDING_START = '10px';
+const PADDING_END = '24px';
+const PADDING_LEFT = '13px';
+const PADDING_RIGHT = '31px';
+
+/** The padding a link computes on the sides a test names; a side left out is not checked. */
+type SidePaddings = { left?: string; right?: string };
+
+/** Puts the document of both surfaces in `direction`. */
+const setDirection = async (component: Locator, direction: TextDirection): Promise<void> => {
+    for (const surface of SURFACES) {
+        await component
+            .getByTestId(surface)
+            .evaluate((element, value) => element.setAttribute('dir', value), direction);
+    }
+};
+
+/** Makes both surfaces right-to-left through CSS `direction` alone, as a page does that sets no `dir` attribute. */
+const setCssDirectionRightToLeft = async (component: Locator): Promise<void> => {
+    for (const surface of SURFACES) {
+        await component.getByTestId(surface).evaluate((element) => {
+            element.style.direction = 'rtl';
+        });
+    }
+};
+
+const expectPaddings = async (component: Locator, linkName: string, expected: SidePaddings): Promise<void> => {
+    for (const surface of SURFACES) {
+        const link = component.getByTestId(surface).getByRole('link', { name: linkName, exact: true });
+
+        if (expected.left !== undefined) {
+            await expect(link).toHaveCSS('padding-left', expected.left);
+        }
+        if (expected.right !== undefined) {
+            await expect(link).toHaveCSS('padding-right', expected.right);
+        }
+    }
+};
+
+/** Where the start and end padding land: the start is the left in left-to-right text and the right in right-to-left. */
+const inlinePaddingsIn = (direction: TextDirection): Required<SidePaddings> => {
+    if (direction === 'rtl') {
+        return { left: PADDING_END, right: PADDING_START };
+    }
+
+    return { left: PADDING_START, right: PADDING_END };
+};
+
+test.describe('host styling of link padding in both text directions', () => {
+    for (const direction of DIRECTIONS) {
+        test(`puts the start and end padding of a text link box on the sides they follow, in ${direction}`, async ({
+            mount,
+        }) => {
+            const component = await mount(
+                <HostLooksPair link={{ paddingInlineStart: PADDING_START, paddingInlineEnd: PADDING_END }} />,
+            );
+            await setDirection(component, direction);
+
+            await expectPaddings(component, LOOKED_TEXTS.link, inlinePaddingsIn(direction));
+        });
+
+        test(`puts the start and end padding of a button link on the sides they follow, in ${direction}`, async ({
+            mount,
+        }) => {
+            const component = await mount(
+                <HostLooksPair
+                    value={BUTTON_LINKS_DOCUMENT}
+                    buttons={{ primary: { paddingInlineStart: PADDING_START, paddingInlineEnd: PADDING_END } }}
+                />,
+            );
+            await setDirection(component, direction);
+
+            await expectPaddings(component, BUTTON_LINK_TEXT, inlinePaddingsIn(direction));
+        });
+
+        test(`keeps the left and right padding of a button link on their sides, in ${direction}`, async ({ mount }) => {
+            const component = await mount(
+                <HostLooksPair
+                    value={BUTTON_LINKS_DOCUMENT}
+                    buttons={{ primary: { paddingLeft: PADDING_LEFT, paddingRight: PADDING_RIGHT } }}
+                />,
+            );
+            await setDirection(component, direction);
+
+            await expectPaddings(component, BUTTON_LINK_TEXT, { left: PADDING_LEFT, right: PADDING_RIGHT });
+        });
+    }
+
+    test('keeps the left and right padding of a button link on their sides under CSS direction with no dir attribute', async ({
+        mount,
+    }) => {
+        const component = await mount(
+            <HostLooksPair
+                value={BUTTON_LINKS_DOCUMENT}
+                buttons={{ primary: { paddingLeft: PADDING_LEFT, paddingRight: PADDING_RIGHT } }}
+            />,
+        );
+        await setCssDirectionRightToLeft(component);
+
+        await expectPaddings(component, BUTTON_LINK_TEXT, { left: PADDING_LEFT, right: PADDING_RIGHT });
+    });
+
+    test('lets the start padding win over the left padding of a button link in left-to-right text', async ({
+        mount,
+    }) => {
+        const component = await mount(
+            <HostLooksPair
+                value={BUTTON_LINKS_DOCUMENT}
+                buttons={{ primary: { paddingLeft: PADDING_LEFT, paddingInlineStart: PADDING_START } }}
+            />,
+        );
+        await setDirection(component, 'ltr');
+
+        await expectPaddings(component, BUTTON_LINK_TEXT, { left: PADDING_START });
+    });
+
+    test('lets the start padding win on the right and keeps the left padding on the left of a button link in right-to-left text', async ({
+        mount,
+    }) => {
+        const component = await mount(
+            <HostLooksPair
+                value={BUTTON_LINKS_DOCUMENT}
+                buttons={{ primary: { paddingLeft: PADDING_LEFT, paddingInlineStart: PADDING_START } }}
+            />,
+        );
+        await setDirection(component, 'rtl');
+
+        await expectPaddings(component, BUTTON_LINK_TEXT, { left: PADDING_LEFT, right: PADDING_START });
+    });
 });
