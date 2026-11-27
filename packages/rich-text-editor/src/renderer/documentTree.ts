@@ -14,6 +14,7 @@ import {
     blockHtml,
     blockValueOf,
     type ContentRegistry,
+    type HtmlAttributes,
     type HtmlSpec,
     type MarkDefinition,
     type RteBlockNode,
@@ -280,16 +281,35 @@ export const blockNode = (block: RteBlockNode, registry: ContentRegistry, option
 export const documentTree = (doc: RteDocumentOf, registry: ContentRegistry, options: Options): DrawnNode[] =>
     doc.blocks.flatMap((block) => blockNode(block, registry, options) ?? []);
 
+export type DocumentRootSpecOptions = Pick<HtmlAttributes, 'id'> & {
+    /**
+     * A class for the element the document sits in, beside the document's own
+     */
+    className?: string;
+} & Partial<Pick<HtmlAttributes, 'data-test-id'>>;
+
 /**
  * The element a document sits in: the document's own class, plugins' content
- * classes and their custom properties. Readonly view and export both wrap in
- * it, so a document reads the same in either, and as in the editor.
+ * classes and their custom properties, and the host's id and test id. Readonly
+ * view and export both wrap in it, so a document reads the same in either, and
+ * as in the editor.
  */
-export const documentRootSpec = (registry: ContentRegistry, className?: string): HtmlSpec => ({
-    tag: 'div',
-    attrs: {
+export const documentRootSpec = (
+    registry: ContentRegistry,
+    { id, className, 'data-test-id': dataTestId }: DocumentRootSpecOptions = {},
+): HtmlSpec => {
+    const attrs: HtmlAttributes = {
         class: [styles.document, className, ...registry.contentClassNames].filter(Boolean).join(' '),
         style: { ...registry.contentProperties },
-    },
-    children: true,
-});
+    };
+
+    if (id !== undefined) {
+        attrs.id = id;
+    }
+
+    if (dataTestId !== undefined) {
+        attrs['data-test-id'] = dataTestId;
+    }
+
+    return { tag: 'div', attrs, children: true };
+};

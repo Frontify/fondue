@@ -11,10 +11,10 @@ import {
     type RtePlugin,
 } from '#/core';
 
-import { blockNode, documentRootSpec } from './documentTree';
+import { blockNode, documentRootSpec, type DocumentRootSpecOptions } from './documentTree';
 import { specToReact, toReact } from './toReact';
 
-export type RendererProps<TBlock extends RteBlockNode = RteBlockNode> = {
+export type RendererProps<TBlock extends RteBlockNode = RteBlockNode> = DocumentRootSpecOptions & {
     value: RteDocumentOf<TBlock>;
     /**
      * The plugins, or only their content, whose markup draws the document. A node
@@ -22,16 +22,11 @@ export type RendererProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * missing is skipped (a block keeps its content), with a warning in development.
      */
     plugins: readonly (RtePlugin | RteContent)[];
-    /**
-     * A class for the element the document sits in, beside the document's own
-     */
-    className?: string;
 };
 
-type RegistryRendererProps = {
+type RegistryRendererProps = DocumentRootSpecOptions & {
     value: RteDocumentOf;
     registry: ContentRegistry;
-    className?: string;
 };
 
 type BlockProps = {
@@ -46,9 +41,15 @@ const Block = memo(({ block, registry }: BlockProps): ReactNode => {
 });
 
 /** The renderer for an already built registry, so the editor's readonly view doesn't gather plugins twice. */
-export const RegistryRenderer = ({ value, registry, className }: RegistryRendererProps): ReactNode =>
+export const RegistryRenderer = ({
+    id,
+    value,
+    registry,
+    className,
+    'data-test-id': dataTestId,
+}: RegistryRendererProps): ReactNode =>
     specToReact(
-        documentRootSpec(registry, className),
+        documentRootSpec(registry, { id, className, 'data-test-id': dataTestId }),
         // Blocks carry no id; position is the only key, and the memo skips unchanged ones.
         // eslint-disable-next-line @eslint-react/no-array-index-key
         value.blocks.map((block, index) => <Block key={index} block={block} registry={registry} />),
@@ -56,10 +57,15 @@ export const RegistryRenderer = ({ value, registry, className }: RegistryRendere
 
 /** A stored document as React, with no editing engine: readonly display, client or server. */
 export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlockNode>({
+    id,
     value,
     plugins,
     className,
+    'data-test-id': dataTestId,
 }: RendererProps<TBlock>): ReactNode => {
     const registry = useMemo(() => buildContentRegistry(plugins), [plugins]);
-    return <RegistryRenderer value={value} registry={registry} className={className} />;
+
+    return (
+        <RegistryRenderer id={id} value={value} registry={registry} className={className} data-test-id={dataTestId} />
+    );
 };
