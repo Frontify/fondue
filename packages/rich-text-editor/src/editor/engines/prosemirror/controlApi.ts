@@ -3,7 +3,13 @@
 import { chainCommands, setBlockType as pmSetBlockType } from 'prosemirror-commands';
 import { closeHistory, redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
 import { undoInputRule } from 'prosemirror-inputrules';
-import { type Mark as PmMark, type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
+import {
+    type Mark as PmMark,
+    type MarkType as PmMarkType,
+    type Node as PmNode,
+    type NodeType as PmNodeType,
+    type Schema,
+} from 'prosemirror-model';
 import {
     type Command,
     type EditorState,
@@ -513,7 +519,7 @@ export type OpenEditors = { type: string | null; repaint: () => void };
  * top-level block or an empty one, or after the top-level block the caret is
  * in, with the caret at its first place for text.
  */
-const insertWhole = (view: EditorView, node: PmNode, dispatch: Dispatch): void => {
+const insertWhole = (view: EditorView, node: PmNode): Transaction => {
     const { selection } = view.state;
     const { $from } = selection;
     const top = $from.depth >= 1 ? $from.node(1) : null;
@@ -532,8 +538,42 @@ const insertWhole = (view: EditorView, node: PmNode, dispatch: Dispatch): void =
     }
 
     transaction.setSelection(Selection.near(transaction.doc.resolve(position + 1)));
-    dispatch(transaction.scrollIntoView());
-    view.focus();
+    return transaction.scrollIntoView();
+};
+
+/** Where the first node of `type` stands in the range the transaction's step changed, or null when none does. */
+const landedPosition = (transaction: Transaction, type: PmNodeType): number | null => {
+    let landed: number | null = null;
+    // oxlint-disable-next-line unicorn/no-array-for-each -- a step map, not an array; `forEach` is how it lists ranges.
+    transaction.mapping.maps[0]?.forEach((_oldStart, _oldEnd, newStart, newEnd) => {
+        transaction.doc.nodesBetween(newStart, newEnd, (node, position) => {
+            if (landed === null && node.type === type) {
+                landed = position;
+            }
+
+            return landed === null;
+        });
+    });
+
+    return landed;
+};
+
+/** Whether a separator the transaction inserted stands first in the document or next to one of its own type. */
+const separatesNothing = (transaction: Transaction, type: PmNodeType): boolean => {
+    const position = landedPosition(transaction, type);
+    if (position === null) {
+        return false;
+    }
+
+    const $position = transaction.doc.resolve(position);
+    if ($position.depth === 0 && $position.index() === 0) {
+        return true;
+    }
+    if ($position.nodeBefore?.type === type) {
+        return true;
+    }
+
+    return $position.parent.maybeChild($position.index() + 1)?.type === type;
 };
 
 /** The flat members act on the editor as a whole rather than on one kind of thing in it. */
@@ -588,20 +628,28 @@ export const createControlApi = (
             }
             const view = getView();
             const children: unknown = value?.children;
+            let transaction: Transaction;
             if (!nodeType.isInline && Array.isArray(children)) {
-                insertWhole(view, blockToEngine({ ...value, type, children }, schema), dispatch);
+                transaction = insertWhole(view, blockToEngine({ ...value, type, children }, schema));
+            } else {
+                transaction = view.state.tr;
+                const { selection } = view.state;
+                // A block goes in AFTER selected text rather than over it; a selected node is replaced.
+                if (!nodeType.isInline && !(selection instanceof NodeSelection) && !selection.empty) {
+                    transaction.setSelection(TextSelection.create(transaction.doc, selection.to));
+                }
+                // Inline elements keep their value in one attribute; blocks keep theirs flat.
+                let engineAttrs = value;
+                if (nodeType.isInline) {
+                    engineAttrs = valueAttrsFor(value);
+                }
+                // Inline elements carry no marks, so they must not inherit the caret's.
+                transaction.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline);
+            }
+            if (registry.blocks.get(type)?.separator === true && separatesNothing(transaction, nodeType)) {
                 return;
             }
-            const transaction = view.state.tr;
-            const { selection } = view.state;
-            // A block goes in AFTER selected text rather than over it; a selected node is replaced.
-            if (!nodeType.isInline && !(selection instanceof NodeSelection) && !selection.empty) {
-                transaction.setSelection(TextSelection.create(transaction.doc, selection.to));
-            }
-            // Inline elements keep their value in one attribute; blocks keep theirs flat.
-            const engineAttrs = nodeType.isInline ? valueAttrsFor(value) : value;
-            // Inline elements carry no marks, so they must not inherit the caret's.
-            dispatch(transaction.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline));
+            dispatch(transaction);
             view.focus();
         },
         insertText(text, marks = {}, options = {}) {

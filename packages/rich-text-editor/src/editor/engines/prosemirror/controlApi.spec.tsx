@@ -15,7 +15,7 @@ import {
     type RteBlockNode,
     type RtePlugin,
 } from '#/core';
-import { defaultPlugins } from '#/plugins';
+import { checkListPlugin, defaultPlugins } from '#/plugins';
 
 import { toEngineDocument } from './documentConversion';
 import { destroyEditors, editorWith, paragraph, text, tokenPlugin } from './testEditor';
@@ -63,6 +63,16 @@ const emphasisPlugin: RtePlugin = definePlugin({
     content: defineContent({
         marks: {
             emphasis: defineMark({ toHtml: () => ({ tag: 'em', children: true }), parse: [] }),
+        },
+    }),
+});
+
+/** A void block that only stands between content, declared the way the engine reads it. */
+const rulePlugin: RtePlugin = definePlugin({
+    id: 'rule',
+    content: defineContent({
+        blocks: {
+            rule: defineBlock({ separator: true, toHtml: () => ({ tag: 'hr' }), parse: [{ tag: 'hr' }] }),
         },
     }),
 });
@@ -1258,5 +1268,142 @@ describe('the commands of one turn', () => {
 
             expect(editor.stored()).toEqual([paragraph(text('oney'))]);
         });
+    });
+});
+
+describe('insert of a separator block', () => {
+    const RULE: RteBlockNode = { type: 'rule' };
+    const separators = [...defaultPlugins, rulePlugin];
+
+    it('does nothing at the start of the first paragraph', () => {
+        const editor = editorWith(separators, [paragraph(text('ab'))]);
+        editor.caretBefore('ab');
+
+        editor.api.insert('rule');
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('does nothing in an empty document', () => {
+        const editor = editorWith(separators, [paragraph()]);
+
+        editor.api.insert('rule');
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('does nothing at the start of the paragraph right after a separator', () => {
+        const editor = editorWith(separators, [RULE, paragraph(text('ab'))]);
+        editor.caretBefore('ab');
+
+        editor.api.insert('rule');
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('does nothing in an empty paragraph right after a separator', () => {
+        const editor = editorWith(separators, [paragraph(text('a')), RULE, paragraph()]);
+        editor.view.dispatch(editor.view.state.tr.setSelection(TextSelection.atEnd(editor.view.state.doc)));
+
+        editor.api.insert('rule');
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('does nothing right before a separator', () => {
+        const editor = editorWith(separators, [paragraph(text('a')), RULE, paragraph(text('b'))]);
+        editor.caretAfter('a');
+
+        editor.api.insert('rule');
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('does nothing in an empty paragraph right before a separator', () => {
+        const editor = editorWith(separators, [paragraph(text('a')), paragraph(), RULE]);
+        const { doc } = editor.view.state;
+        editor.view.dispatch(editor.view.state.tr.setSelection(TextSelection.near(doc.resolve(doc.child(0).nodeSize))));
+
+        editor.api.insert('rule');
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('does nothing when given its content at the start of the document', () => {
+        const editor = editorWith(separators, [paragraph()]);
+
+        editor.api.insert('rule', { children: [] });
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('goes after a paragraph when given its content', () => {
+        const editor = editorWith(separators, [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        editor.api.insert('rule', { children: [] });
+
+        expect(editor.stored()).toEqual([paragraph(text('a')), RULE]);
+    });
+
+    it('goes after a paragraph that follows a separator', () => {
+        const editor = editorWith(separators, [RULE, paragraph(text('ab'))]);
+        editor.caretAfter('a');
+
+        editor.api.insert('rule');
+
+        expect(editor.stored()).toEqual([RULE, paragraph(text('a')), RULE, paragraph(text('b'))]);
+    });
+
+    it('goes in between two paragraphs', () => {
+        const editor = editorWith(separators, [paragraph(text('a')), paragraph(text('b'))]);
+        editor.caretBefore('b');
+
+        editor.api.insert('rule');
+
+        expect(editor.stored()).toEqual([paragraph(text('a')), RULE, paragraph(text('b'))]);
+    });
+
+    it('does not stop a block without the declaration from going first', () => {
+        const editor = editorWith(plugins, [paragraph(text('ab'))]);
+        editor.caretBefore('ab');
+
+        editor.api.insert('divider');
+
+        expect(editor.stored()).toEqual([{ type: 'divider' }, paragraph(text('ab'))]);
+    });
+
+    it('loads a stored document that starts with a separator or holds two in a row', () => {
+        const editor = editorWith(separators, [RULE, RULE, paragraph(text('ab'))]);
+
+        expect(editor.view.state.doc.childCount).toBe(3);
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+});
+
+describe('loading a check item that holds a list when `nested` is false', () => {
+    const flat = [...defaultPlugins.filter((plugin) => plugin.id !== 'check-list'), checkListPlugin({ nested: false })];
+    const stored = [
+        {
+            type: 'checkList',
+            children: [
+                {
+                    type: 'checkItem',
+                    checked: false,
+                    children: [
+                        paragraph(text('one')),
+                        {
+                            type: 'bulletList',
+                            children: [{ type: 'listItem', children: [paragraph(text('two'))] }],
+                        },
+                    ],
+                },
+            ],
+        },
+        // `RteBlockNode` names no plugin attribute, so `checked` needs the cast.
+    ] as RteBlockNode[];
+
+    it('loads the stored document without throwing', () => {
+        expect(() => editorWith(flat, stored)).not.toThrow();
     });
 });

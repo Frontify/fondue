@@ -39,6 +39,7 @@ export { underlineContent, underlinePlugin } from './Underline';
 // --- Plugin options ---
 
 export { type BlurOnBreakPluginOptions } from './BlurOnBreak';
+export { type CheckListPluginOptions } from './CheckList';
 export { type ColumnBreakPluginOptions } from './ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './Emoji';
 export {

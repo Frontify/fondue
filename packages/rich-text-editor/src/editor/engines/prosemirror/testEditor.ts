@@ -158,7 +158,23 @@ export const editorWith = (
     };
 };
 
+/** The types of the blocks held directly inside every block of `type`, anywhere in `blocks`. */
+export const childTypesWithin = (blocks: readonly RteBlockNode[], type: string): string[] => {
+    const found: string[] = [];
+    for (const block of blocks) {
+        const { children = [] } = block as { children?: RteBlockNode[] };
+        if (block.type === type) {
+            for (const child of children) {
+                found.push(child.type);
+            }
+        }
+        found.push(...childTypesWithin(children, type));
+    }
+    return found;
+};
+
 export const paragraph = (...children: Record<string, unknown>[]): RteBlockNode =>
+    // The runs are loose records here, not `RteInlineNode`s.
     ({ type: 'paragraph', children }) as RteBlockNode;
 
 export const text = (value: string, marks: Record<string, unknown> = {}): Record<string, unknown> => ({

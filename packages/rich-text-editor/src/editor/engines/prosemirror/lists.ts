@@ -127,6 +127,17 @@ const splitListItem =
         });
     };
 
+/** `sinkListItem`, refused where the item cannot hold its own kind of list, which the schema would reject. */
+const sinkListItemWhereHeld =
+    (itemTypeByList: Map<string, string>, itemType: PmNodeType): Command =>
+    (state, dispatch, view) => {
+        const list = findList(state, itemTypeByList);
+        if (list === null || itemType.contentMatch.matchType(list.node.type) === null) {
+            return false;
+        }
+        return sinkListItem(itemType)(state, dispatch, view);
+    };
+
 /** Joins only same-markup lists, because a join keeps just the first list's attributes. */
 const joiningLists = (command: Command, itemTypeByList: Map<string, string>): Command =>
     autoJoin(command, (before, after) => itemTypeByList.has(before.type.name) && before.sameMarkup(after));
@@ -190,7 +201,7 @@ export const createListApi = (
             }
             view.focus();
         },
-        indent: () => runListCommand(sinkListItem),
+        indent: () => runListCommand((itemType) => sinkListItemWhereHeld(itemTypeByList, itemType)),
         outdent: () => runListCommand(liftListItem),
         split() {
             if (runListCommand((itemType) => splitListItem(registry, itemType))) {

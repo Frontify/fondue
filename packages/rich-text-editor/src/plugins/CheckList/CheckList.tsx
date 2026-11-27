@@ -3,7 +3,15 @@
 import { IconListCheck } from '@frontify/fondue-icons';
 import { type CSSProperties, type ReactNode, useId } from 'react';
 
-import { ANY_LIST, defineBlock, defineContent, definePlugin, PARAGRAPH, type RteBlockNode } from '#/core';
+import {
+    ANY_LIST,
+    defineBlock,
+    defineContent,
+    definePlugin,
+    PARAGRAPH,
+    type RteBlockNode,
+    type RteInputRule,
+} from '#/core';
 import { translatedLabel } from '#/ui/translation';
 
 import styles from './checkList.module.scss';
@@ -25,6 +33,28 @@ export type CheckListBlock<TItem extends RteBlockNode = RteBlockNode> = {
     type: 'checkList';
     children: TItem[];
 };
+
+export type CheckListPluginOptions = {
+    /**
+     * Whether an item can be marked in progress. With `false`, `[~] ` does not start an in-progress item and pasted
+     * in-progress items come in as not done; a stored in-progress item still loads and shows as it is.
+     * @default true
+     */
+    inProgress?: boolean;
+    /**
+     * Whether a check item can hold a list. With `false`, an item holds paragraphs only, so no command, paste or input
+     * rule puts a list inside it; a stored list inside an item still loads.
+     * @default true
+     */
+    nested?: boolean;
+};
+
+const DEFAULT_OPTIONS: Required<CheckListPluginOptions> = { inProgress: true, nested: true };
+
+const optionsWithDefaults = ({
+    inProgress = DEFAULT_OPTIONS.inProgress,
+    nested = DEFAULT_OPTIONS.nested,
+}: CheckListPluginOptions): Required<CheckListPluginOptions> => ({ inProgress, nested });
 
 type CheckValue = { checked: boolean | 'inProgress' };
 
@@ -51,6 +81,23 @@ const stateOfValue = (checked: unknown): CheckState =>
 
 const stateOfData = (data: string | undefined): CheckState =>
     CHECK_STATES.find((state) => state.data === data) ?? NOT_DONE;
+
+/** What a stored `data-checked` reads as: an item in progress reads as not done where items cannot be in progress. */
+const parsedStateOf = (data: string | undefined, inProgress: boolean): CheckState => {
+    const state = stateOfData(data);
+    if (state === STARTED && !inProgress) {
+        return NOT_DONE;
+    }
+    return state;
+};
+
+/** Paragraphs, and lists unless an item is kept flat. */
+const itemBlocksOf = (nested: boolean): readonly string[] => {
+    if (nested) {
+        return [PARAGRAPH, ANY_LIST];
+    }
+    return [PARAGRAPH];
+};
 
 /** A click finishes an item, in progress or not, and reopens a finished one. */
 const afterClick = (state: CheckState): CheckState => {
@@ -97,52 +144,59 @@ const ReadonlyCheckItem = ({ value, children, style }: ReadonlyCheckItemProps): 
     );
 };
 
+const checkListContentWith = ({ inProgress, nested }: Required<CheckListPluginOptions>) =>
+    defineContent({
+        blocks: {
+            checkList: defineBlock({
+                content: { items: 'checkItem' },
+                toHtml: () => ({
+                    tag: 'ul',
+                    attrs: { 'data-check-list': '', class: styles.checkList },
+                    children: true,
+                }),
+                parse: [{ tag: 'ul[data-check-list]' }],
+            }),
+            checkItem: defineBlock<CheckValue>({
+                content: { blocks: itemBlocksOf(nested) },
+                defaults: { checked: false },
+                // Exported HTML cannot be interacted with, so its checkbox is a
+                // disabled one, named by its state.
+                toHtml: (value) => {
+                    const state = stateOfValue(value.checked);
+                    return {
+                        tag: 'li',
+                        attrs: { 'data-checked': state.data, class: styles.item },
+                        children: [
+                            {
+                                tag: 'input',
+                                attrs: {
+                                    type: 'checkbox',
+                                    checked: state === DONE,
+                                    disabled: true,
+                                    'aria-label': state.label,
+                                    class: styles.checkbox,
+                                },
+                            },
+                            { tag: 'div', attrs: { class: styles.label }, children: true },
+                        ],
+                    };
+                },
+                // Read from the attribute, not the checkbox, so it comes back as the stored value.
+                parse: [
+                    {
+                        tag: 'li[data-checked]',
+                        value: (element) => ({ checked: parsedStateOf(element.dataset.checked, inProgress).value }),
+                    },
+                ],
+                render: { component: ReadonlyCheckItem },
+            }),
+        },
+    });
+
 /**
  * A to-do list whose items each have a checkbox
  */
-export const checkListContent = defineContent({
-    blocks: {
-        checkList: defineBlock({
-            content: { items: 'checkItem' },
-            toHtml: () => ({ tag: 'ul', attrs: { 'data-check-list': '', class: styles.checkList }, children: true }),
-            parse: [{ tag: 'ul[data-check-list]' }],
-        }),
-        checkItem: defineBlock<CheckValue>({
-            content: { blocks: [PARAGRAPH, ANY_LIST] },
-            defaults: { checked: false },
-            // Exported HTML cannot be interacted with, so its checkbox is a
-            // disabled one, named by its state.
-            toHtml: (value) => {
-                const state = stateOfValue(value.checked);
-                return {
-                    tag: 'li',
-                    attrs: { 'data-checked': state.data, class: styles.item },
-                    children: [
-                        {
-                            tag: 'input',
-                            attrs: {
-                                type: 'checkbox',
-                                checked: state === DONE,
-                                disabled: true,
-                                'aria-label': state.label,
-                                class: styles.checkbox,
-                            },
-                        },
-                        { tag: 'div', attrs: { class: styles.label }, children: true },
-                    ],
-                };
-            },
-            // Read from the attribute, not the checkbox, so it comes back as the stored value.
-            parse: [
-                {
-                    tag: 'li[data-checked]',
-                    value: (element) => ({ checked: stateOfData(element.dataset.checked).value }),
-                },
-            ],
-            render: { component: ReadonlyCheckItem },
-        }),
-    },
-});
+export const checkListContent = checkListContentWith(DEFAULT_OPTIONS);
 
 type EditCheckItemProps = {
     value: CheckValue;
@@ -174,13 +228,45 @@ const EditCheckItem = ({ value, setValue, children }: EditCheckItemProps): React
     );
 };
 
+// `[] ` and `[ ] ` both start one, the two ways a to-do is written in markdown; `[x] ` starts it done.
+const CHECK_LIST_INPUT_RULES: readonly RteInputRule[] = [
+    { kind: 'list', match: '[] ', list: 'checkList' },
+    { kind: 'list', match: '[ ] ', list: 'checkList' },
+    { kind: 'list', match: '[x] ', list: 'checkList', itemAttributes: { checked: true } },
+    { kind: 'list', match: '[X] ', list: 'checkList', itemAttributes: { checked: true } },
+];
+
+const IN_PROGRESS_INPUT_RULE: RteInputRule = {
+    kind: 'list',
+    match: '[~] ',
+    list: 'checkList',
+    itemAttributes: { checked: IN_PROGRESS },
+};
+
+const inputRulesOf = (inProgress: boolean): readonly RteInputRule[] => {
+    if (inProgress) {
+        return [...CHECK_LIST_INPUT_RULES, IN_PROGRESS_INPUT_RULE];
+    }
+    return CHECK_LIST_INPUT_RULES;
+};
+
+/** The default options mount `checkListContent` itself, so what the plugin adds is the same definition as ever. */
+const contentOf = (options: Required<CheckListPluginOptions>) => {
+    if (options.inProgress === DEFAULT_OPTIONS.inProgress && options.nested === DEFAULT_OPTIONS.nested) {
+        return checkListContent;
+    }
+    return checkListContentWith(options);
+};
+
 /**
  * A to-do list with a toolbar button and `/` entry, and `[] ` while typing starts one
  */
-export const checkListPlugin = () =>
-    definePlugin({
+export const checkListPlugin = (options: CheckListPluginOptions = {}) => {
+    const resolved = optionsWithDefaults(options);
+
+    return definePlugin({
         id: 'check-list',
-        content: checkListContent,
+        content: contentOf(resolved),
         toolbarGroup: 'lists',
         toolbar: [
             {
@@ -192,12 +278,6 @@ export const checkListPlugin = () =>
         ],
         // Only what is inside: the item keeps the `<li>` from `toHtml`.
         edit: { checkItem: EditCheckItem },
-        // `[] ` and `[ ] ` both start one, the two ways a to-do is written in markdown; `[x] ` starts it done, `[~] ` in progress.
-        inputRules: [
-            { kind: 'list', match: '[] ', list: 'checkList' },
-            { kind: 'list', match: '[ ] ', list: 'checkList' },
-            { kind: 'list', match: '[x] ', list: 'checkList', itemAttributes: { checked: true } },
-            { kind: 'list', match: '[X] ', list: 'checkList', itemAttributes: { checked: true } },
-            { kind: 'list', match: '[~] ', list: 'checkList', itemAttributes: { checked: IN_PROGRESS } },
-        ],
+        inputRules: inputRulesOf(resolved.inProgress),
     });
+};

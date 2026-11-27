@@ -19,10 +19,10 @@ import {
     type RteBlockNode,
     type RtePlugin,
 } from '#/core';
-import { defaultPlugins } from '#/plugins';
+import { checkListPlugin, defaultPlugins } from '#/plugins';
 
 import { trimTrailingPunctuation } from './autolink';
-import { destroyEditors, editorWith, paragraph, shipped, text, TOKEN_TRIM } from './testEditor';
+import { childTypesWithin, destroyEditors, editorWith, paragraph, shipped, text, TOKEN_TRIM } from './testEditor';
 
 /**
  * What typing and key presses do, through the pipeline `keystrokePipeline`
@@ -246,6 +246,96 @@ describe('a check list shortcut inside a check list', () => {
                 children: [checkItem('one'), { type: 'checkItem', checked: true, children: [paragraph(text('task'))] }],
             },
         ]);
+    });
+});
+
+describe('a check list that cannot be in progress', () => {
+    const withCheckList = (options: Parameters<typeof checkListPlugin>[0]): RtePlugin[] => [
+        ...defaultPlugins.filter((plugin) => plugin.id !== 'check-list'),
+        checkListPlugin(options),
+    ];
+
+    it('leaves "[~] " as typed instead of starting an item', () => {
+        expect(typed('[~] task', withCheckList({ inProgress: false }))).toEqual([paragraph(text('[~] task'))]);
+    });
+
+    it('still starts a plain item on "[] " and a done one on "[x] "', () => {
+        const plugins = withCheckList({ inProgress: false });
+
+        expect(typed('[] task', plugins)).toEqual([
+            {
+                type: 'checkList',
+                children: [{ type: 'checkItem', checked: false, children: [paragraph(text('task'))] }],
+            },
+        ]);
+        expect(typed('[x] task', plugins)).toEqual([
+            {
+                type: 'checkList',
+                children: [{ type: 'checkItem', checked: true, children: [paragraph(text('task'))] }],
+            },
+        ]);
+    });
+
+    it('starts an item in progress on "[~] " when `inProgress` is left at its default', () => {
+        expect(typed('[~] task', withCheckList({}))).toEqual([
+            {
+                type: 'checkList',
+                children: [{ type: 'checkItem', checked: 'inProgress', children: [paragraph(text('task'))] }],
+            },
+        ]);
+    });
+});
+
+describe('a check list whose items cannot hold a list', () => {
+    // `RteBlockNode` names no plugin attribute, so the item's `checked` needs the cast.
+    const checkItem = (label: string): RteBlockNode =>
+        ({ type: 'checkItem', checked: false, children: [paragraph(text(label))] }) as RteBlockNode;
+    const twoItems = (): RteBlockNode[] => [{ type: 'checkList', children: [checkItem('one'), checkItem('two')] }];
+
+    const flat = [...defaultPlugins.filter((plugin) => plugin.id !== 'check-list'), checkListPlugin({ nested: false })];
+
+    it('does not nest the item on Tab', () => {
+        const editor = editorWith(flat, twoItems());
+        editor.caretAfter('tw');
+
+        press(editor.view, 'Tab');
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('nests the item on Tab by default', () => {
+        const editor = editorWith(defaultPlugins, twoItems());
+        editor.caretAfter('tw');
+
+        expect(press(editor.view, 'Tab')).toBe(true);
+        expect(childTypesWithin(editor.stored() ?? [], 'checkItem')).toContain('checkList');
+    });
+
+    it('does not make a nested list of "- " typed in an item', () => {
+        const editor = editorWith(flat, twoItems());
+        editor.caretBefore('two');
+
+        editor.type('- ');
+
+        expect(childTypesWithin(editor.stored() ?? [], 'checkItem')).toEqual(['paragraph', 'paragraph']);
+    });
+
+    it('does not make a nested list of "[x] " typed in an item', () => {
+        const editor = editorWith(flat, twoItems());
+        editor.caretBefore('two');
+
+        editor.type('[x] ');
+
+        expect(childTypesWithin(editor.stored() ?? [], 'checkItem')).not.toContain('checkList');
+    });
+
+    it('makes a nested list of "- " typed in an item by default', () => {
+        const editor = editorWith(defaultPlugins, twoItems());
+        editor.caretBefore('two');
+
+        editor.type('- ');
+
+        expect(childTypesWithin(editor.stored() ?? [], 'checkItem')).toContain('bulletList');
     });
 });
 
@@ -707,6 +797,36 @@ describe('the list keys', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('one'))]);
 
         expect(press(editor.view, 'Tab')).toBe(false);
+    });
+});
+
+describe('a list whose items cannot hold a list', () => {
+    const flatListPlugin: RtePlugin = definePlugin({
+        id: 'test-flat-list',
+        content: defineContent({
+            blocks: {
+                flatList: defineBlock({
+                    content: { items: 'flatRow' },
+                    toHtml: () => ({ tag: 'ul', children: true }),
+                    parse: [{ tag: 'ul' }],
+                }),
+                flatRow: defineBlock({
+                    content: { blocks: [PARAGRAPH] },
+                    toHtml: () => ({ tag: 'li', children: true }),
+                    parse: [{ tag: 'li' }],
+                }),
+            },
+        }),
+    });
+    const flatRow = (label: string): RteBlockNode => ({ type: 'flatRow', children: [paragraph(text(label))] });
+
+    it('does not nest an item on Tab', () => {
+        const editor = editorWith([flatListPlugin], [{ type: 'flatList', children: [flatRow('one'), flatRow('two')] }]);
+        editor.caretAfter('tw');
+
+        press(editor.view, 'Tab');
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
     });
 });
 

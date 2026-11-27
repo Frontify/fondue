@@ -6,9 +6,18 @@ import { undo } from 'prosemirror-history';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { defineContent, defineMark, definePlugin, type PasteHandler, type RtePlugin } from '#/core';
-import { defaultPlugins } from '#/plugins';
+import { checkListPlugin, defaultPlugins } from '#/plugins';
 
-import { destroyEditors, editorWith, paragraph, shipped, text, token, tokenPlugin } from './testEditor';
+import {
+    childTypesWithin,
+    destroyEditors,
+    editorWith,
+    paragraph,
+    shipped,
+    text,
+    token,
+    tokenPlugin,
+} from './testEditor';
 
 /**
  * A feature's `onPaste` runs before the editor's own paste, and the link
@@ -387,5 +396,51 @@ describe('a paste handler that marks what it inserts at a caret', () => {
         undo(editor.view.state, editor.view.dispatch);
 
         expect(editor.stored()).toEqual([paragraph(text('ab'))]);
+    });
+});
+
+describe('pasting into a check list with options', () => {
+    const withCheckList = (options: Parameters<typeof checkListPlugin>[0]): RtePlugin[] => [
+        ...defaultPlugins.filter((plugin) => plugin.id !== 'check-list'),
+        checkListPlugin(options),
+    ];
+
+    const IN_PROGRESS_ITEM = '<ul data-check-list><li data-checked="inProgress">task</li></ul>';
+
+    it('reads a pasted item in progress as not done when `inProgress` is false', () => {
+        const editor = editorWith(withCheckList({ inProgress: false }), [paragraph()]);
+
+        editor.pasteHTML(IN_PROGRESS_ITEM);
+
+        expect(editor.stored()?.[0]).toMatchObject({
+            type: 'checkList',
+            children: [{ type: 'checkItem', checked: false }],
+        });
+    });
+
+    it('keeps a pasted item in progress by default', () => {
+        const editor = editorWith(defaultPlugins, [paragraph()]);
+
+        editor.pasteHTML(IN_PROGRESS_ITEM);
+
+        expect(editor.stored()?.[0]).toMatchObject({
+            type: 'checkList',
+            children: [{ type: 'checkItem', checked: 'inProgress' }],
+        });
+    });
+
+    it('leaves no list inside an item a nested list is pasted into when `nested` is false', () => {
+        const editor = editorWith(withCheckList({ nested: false }), [
+            {
+                type: 'checkList',
+                children: [{ type: 'checkItem', checked: false, children: [paragraph(text('one'))] }],
+            },
+        ]);
+        editor.caretAfter('one');
+
+        editor.pasteHTML('<ul><li>a<ul><li>b</li></ul></li></ul>');
+
+        expect(editor.stored()).not.toBeNull();
+        expect(childTypesWithin(editor.stored() ?? [], 'checkItem').filter((type) => type !== 'paragraph')).toEqual([]);
     });
 });
